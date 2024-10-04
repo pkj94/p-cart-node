@@ -7,14 +7,14 @@ module.exports = class database {
     constructor(options) {
     }
 
-    getDatabases() {
+    getDatabases(hostname, username, password, database, port = '27017') {
         var dbs = {};
         return new Promise(async (resolve) => {
             switch (DB_DRIVER) {
                 case 'mongo': {
                     let mongo = require('./mongo');
                     let mongoInstance = new mongo();
-                    await mongoInstance.createConnection();
+                    await mongoInstance.createConnection(hostname, username, password, database, port);
                     dbs['mongo'] = mongoInstance;
 
                     break;

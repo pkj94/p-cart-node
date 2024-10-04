@@ -1,4 +1,4 @@
-module.exports = class Request {
+module.exports = class RequestLibrary {
     get = {};
     post = {};
     cookie = {};
@@ -8,7 +8,7 @@ module.exports = class Request {
     constructor(req) {
         this.get = this.clean(req.query);
         this.post = this.clean(req.body);
-        this.cookie = this.clean(req.headers.cookies||{});
+        this.cookie = this.clean(req.cookies||{});
         this.files = this.clean(req.files||{});
         this.server = req;
         this.params = this.clean(req.params);

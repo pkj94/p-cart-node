@@ -1,5 +1,5 @@
 const memcache = require('memcache');
-module.exports = class Mem {
+module.exports = class CacheMemLibrary {
     constructor(expire = 3600) {
         this.expire = expire;
         this.memcache = new memcache.Client();

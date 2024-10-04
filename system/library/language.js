@@ -1,5 +1,5 @@
 const fs = require('fs');
-module.exports = class Language {
+module.exports = class LanguageLibrary {
     constructor(code) {
         this.code = code;
         this.directory = '';

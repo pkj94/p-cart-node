@@ -1,4 +1,4 @@
-module.exports = class Url {
+module.exports = class UrlLibrary {
     constructor(url) {
         this.url = url;
         this.rewrite = [];

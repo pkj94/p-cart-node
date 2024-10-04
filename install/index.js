@@ -30,11 +30,9 @@ module.exports = function () {
         app.use('/install/view/javascript', express.static(DIR_APPLICATION + 'view/javascript'));
         app.use('/install/view/image', express.static(DIR_APPLICATION + 'view/image'));
         app.use('/install/language', express.static(DIR_APPLICATION + '/language'));
+        
+        require(DIR_SYSTEM + 'startup.js');
 
-        // Registry
-        global.registry = new Registry();
-        global.config = new Config();
-        registry.set('config', global.config);
         new Framework().init(req, res, next).then(output => {
             if (registry.get('response').redirect) {
                 res.redirect(registry.get('response').redirect);

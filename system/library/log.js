@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-module.exports = class Log {
+module.exports = class LogLibrary {
     constructor(filename) {
         this.file = DIR_LOGS + filename;
     }

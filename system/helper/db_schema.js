@@ -1,8132 +1,8131 @@
-function oc_db_schema() {
-    var tables;
-    let schemas = {};
-    schemas.push( {
-        "name": "address",
-        "field": {
-            0: {
-                "name": "address_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "customer_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "firstname",
-                "type": "varchar(32)",
-                "not_null": true
-            },
-            3: {
-                "name": "lastname",
-                "type": "varchar(32)",
-                "not_null": true
-            },
-            4: {
-                "name": "company",
-                "type": "varchar(60)",
-                "not_null": true
-            },
-            5: {
-                "name": "address_1",
-                "type": "varchar(128)",
-                "not_null": true
-            },
-            6: {
-                "name": "address_2",
-                "type": "varchar(128)",
-                "not_null": true
-            },
-            7: {
-                "name": "city",
-                "type": "varchar(128)",
-                "not_null": true
-            },
-            8: {
-                "name": "postcode",
-                "type": "varchar(10)",
-                "not_null": true
-            },
-            9: {
-                "name": "country_id",
-                "type": "Number",
-                "not_null": true,
-                "default": "0"
-            },
-            10: {
-                "name": "zone_id",
-                "type": "Number",
-                "not_null": true,
-                "default": "0"
-            },
-            11: {
-                "name": "custom_field",
-                "type": "text",
-                "not_null": true
-            },
-            12: {
-                "name": "default",
-                "type": "tinyint(1)",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "address_id"
-        },
-        "foreign": {
-            0: {
-                "key": "customer_id",
-                "table": "customer",
-                "field": "customer_id"
-            }
-        },
-        "index": {
-            0: {
-                "name": "customer_id",
-                "key": {
-                    0: "customer_id"
+global.oc_db_schema = () => {
+    return [
+        {
+            "name": "address",
+            "field": [
+                {
+                    "name": "address_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "customer_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "firstname",
+                    "type": "varchar(32)",
+                    "not_null": true
+                },
+                {
+                    "name": "lastname",
+                    "type": "varchar(32)",
+                    "not_null": true
+                },
+                {
+                    "name": "company",
+                    "type": "varchar(60)",
+                    "not_null": true
+                },
+                {
+                    "name": "address_1",
+                    "type": "varchar(128)",
+                    "not_null": true
+                },
+                {
+                    "name": "address_2",
+                    "type": "varchar(128)",
+                    "not_null": true
+                },
+                {
+                    "name": "city",
+                    "type": "varchar(128)",
+                    "not_null": true
+                },
+                {
+                    "name": "postcode",
+                    "type": "varchar(10)",
+                    "not_null": true
+                },
+                {
+                    "name": "country_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "default": "0"
+                },
+                {
+                    "name": "zone_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "default": "0"
+                },
+                {
+                    "name": "custom_field",
+                    "type": "text",
+                    "not_null": true
+                },
+                {
+                    "name": "default",
+                    "type": "tinyint(1)",
+                    "not_null": true
                 }
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "address_format",
-        "field": {
-            0: {
-                "name": "address_format_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "name",
-                "type": "varchar(128)",
-                "not_null": true
-            },
-            2: {
-                "name": "address_format",
-                "type": "text",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "address_format_id"
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "api",
-        "field": {
-            0: {
-                "name": "api_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "username",
-                "type": "varchar(64)",
-                "not_null": true
-            },
-            2: {
-                "name": "key",
-                "type": "text",
-                "not_null": true
-            },
-            3: {
-                "name": "status",
-                "type": "tinyint(1)",
-                "not_null": true
-            },
-            4: {
-                "name": "date_added",
-                "type": "datetime",
-                "not_null": true
-            },
-            5: {
-                "name": "date_modified",
-                "type": "datetime",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "api_id"
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "api_ip",
-        "field": {
-            0: {
-                "name": "api_ip_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "api_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "ip",
-                "type": "varchar(40)",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "api_ip_id"
-        },
-        "foreign": {
-            0: {
-                "key": "api_id",
-                "table": "api",
-                "field": "api_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "api_session",
-        "field": {
-            0: {
-                "name": "api_session_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "api_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "session_id",
-                "type": "varchar(32)",
-                "not_null": true
-            },
-            3: {
-                "name": "ip",
-                "type": "varchar(40)",
-                "not_null": true
-            },
-            4: {
-                "name": "date_added",
-                "type": "datetime",
-                "not_null": true
-            },
-            5: {
-                "name": "date_modified",
-                "type": "datetime",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "api_session_id"
-        },
-        "foreign": {
-            0: {
-                "key": "api_id",
-                "table": "api",
-                "field": "api_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "attribute",
-        "field": {
-            0: {
-                "name": "attribute_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "attribute_group_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "sort_order",
-                "type": "Number",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "attribute_id"
-        },
-        "foreign": {
-            0: {
-                "key": "attribute_group_id",
-                "table": "attribute_group",
-                "field": "attribute_group_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "attribute_description",
-        "field": {
-            0: {
-                "name": "attribute_id",
-                "type": "Number",
-                "not_null": true
-            },
-            1: {
-                "name": "language_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "name",
-                "type": "varchar(64)",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "attribute_id",
-            1: "language_id"
-        },
-        "foreign": {
-            0: {
-                "key": "attribute_id",
-                "table": "attribute",
-                "field": "attribute_id"
-            },
-            1: {
-                "key": "language_id",
-                "table": "language",
-                "field": "language_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "attribute_group",
-        "field": {
-            0: {
-                "name": "attribute_group_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "sort_order",
-                "type": "Number",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "attribute_group_id"
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "attribute_group_description",
-        "field": {
-            0: {
-                "name": "attribute_group_id",
-                "type": "Number",
-                "not_null": true
-            },
-            1: {
-                "name": "language_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "name",
-                "type": "varchar(64)",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "attribute_group_id",
-            1: "language_id"
-        },
-        "foreign": {
-            0: {
-                "key": "attribute_group_id",
-                "table": "attribute_group",
-                "field": "attribute_group_id"
-            },
-            1: {
-                "key": "language_id",
-                "table": "language",
-                "field": "language_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "banner",
-        "field": {
-            0: {
-                "name": "banner_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "name",
-                "type": "varchar(64)",
-                "not_null": true
-            },
-            2: {
-                "name": "status",
-                "type": "tinyint(1)",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "banner_id"
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "banner_image",
-        "field": {
-            0: {
-                "name": "banner_image_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "banner_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "language_id",
-                "type": "Number",
-                "not_null": true
-            },
-            3: {
-                "name": "title",
-                "type": "varchar(64)",
-                "not_null": true
-            },
-            4: {
-                "name": "link",
-                "type": "varchar(255)",
-                "not_null": true
-            },
-            5: {
-                "name": "image",
-                "type": "varchar(255)",
-                "not_null": true
-            },
-            6: {
-                "name": "sort_order",
-                "type": "Number",
-                "not_null": true,
-                "default": "0"
-            }
-        },
-        "primary": {
-            0: "banner_image_id"
-        },
-        "foreign": {
-            0: {
-                "key": "banner_id",
-                "table": "banner",
-                "field": "banner_id"
-            },
-            1: {
-                "key": "language_id",
-                "table": "language",
-                "field": "language_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "antispam",
-        "field": {
-            0: {
-                "name": "antispam_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "keyword",
-                "type": "varchar(64)",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "antispam_id"
-        },
-        "index": {
-            0: {
-                "name": "keyword",
-                "key": {
-                    0: "keyword"
+            ],
+            "primary": [
+                "address_id"
+            ],
+            "foreign": [
+                {
+                    "key": "customer_id",
+                    "table": "customer",
+                    "field": "customer_id"
                 }
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "article",
-        "field": {
-            0: {
-                "name": "article_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "topic_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "author",
-                "type": "varchar(64)",
-                "not_null": true
-            },
-            3: {
-                "name": "status",
-                "type": "tinyint(1)",
-                "not_null": true
-            },
-            4: {
-                "name": "date_added",
-                "type": "datetime",
-                "not_null": true
-            },
-            5: {
-                "name": "date_modified",
-                "type": "datetime",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "article_id"
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "article_comment",
-        "field": {
-            0: {
-                "name": "article_comment_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "article_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "customer_id",
-                "type": "Number",
-                "not_null": true
-            },
-            3: {
-                "name": "comment",
-                "type": "text",
-                "not_null": true
-            },
-            4: {
-                "name": "status",
-                "type": "varchar(255)",
-                "not_null": true
-            },
-            5: {
-                "name": "date_added",
-                "type": "datetime",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "article_comment_id"
-        },
-        "foreign": {
-            0: {
-                "key": "article_id",
-                "table": "article",
-                "field": "article_id"
-            },
-            1: {
-                "key": "customer_id",
-                "table": "customer",
-                "field": "customer_id"
-            }
-        },
-        "index": {
-            0: {
-                "name": "article_id",
-                "key": {
-                    0: "article_id"
+            ],
+            "index": [
+                {
+                    "name": "customer_id",
+                    "key": [
+                        "customer_id"
+                    ]
                 }
-            }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
         },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "article_description",
-        "field": {
-            0: {
-                "name": "article_id",
-                "type": "Number",
-                "not_null": true
-            },
-            1: {
-                "name": "language_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "image",
-                "type": "varchar(255)",
-                "not_null": true
-            },
-            3: {
-                "name": "name",
-                "type": "varchar(255)",
-                "not_null": true
-            },
-            4: {
-                "name": "description",
-                "type": "text",
-                "not_null": true
-            },
-            5: {
-                "name": "tag",
-                "type": "text",
-                "not_null": true
-            },
-            6: {
-                "name": "meta_title",
-                "type": "varchar(255)",
-                "not_null": true
-            },
-            7: {
-                "name": "meta_description",
-                "type": "varchar(255)",
-                "not_null": true
-            },
-            8: {
-                "name": "meta_keyword",
-                "type": "varchar(255)",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "article_id",
-            1: "language_id"
-        },
-        "foreign": {
-            0: {
-                "key": "language_id",
-                "table": "language",
-                "field": "language_id"
-            }
-        },
-        "index": {
-            0: {
-                "name": "name",
-                "key": {
-                    0: "name"
+        {
+            "name": "address_format",
+            "field": [
+                {
+                    "name": "address_format_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "name",
+                    "type": "varchar(128)",
+                    "not_null": true
+                },
+                {
+                    "name": "address_format",
+                    "type": "text",
+                    "not_null": true
                 }
-            }
+            ],
+            "primary": [
+                "address_format_id"
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
         },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "article_to_layout",
-        "field": {
-            0: {
-                "name": "article_id",
-                "type": "Number",
-                "not_null": true
-            },
-            1: {
-                "name": "store_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "layout_id",
-                "type": "Number",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "article_id",
-            1: "store_id"
-        },
-        "foreign": {
-            0: {
-                "key": "article_id",
-                "table": "article",
-                "field": "article_id"
-            },
-            1: {
-                "key": "store_id",
-                "table": "store",
-                "field": "store_id"
-            },
-            2: {
-                "key": "layout_id",
-                "table": "layout",
-                "field": "layout_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "article_to_store",
-        "field": {
-            0: {
-                "name": "article_id",
-                "type": "Number",
-                "not_null": true
-            },
-            1: {
-                "name": "store_id",
-                "type": "Number",
-                "not_null": true,
-                "default": "0"
-            }
-        },
-        "primary": {
-            0: "article_id",
-            1: "store_id"
-        },
-        "foreign": {
-            0: {
-                "key": "article_id",
-                "table": "article",
-                "field": "article_id"
-            },
-            1: {
-                "key": "store_id",
-                "table": "store",
-                "field": "store_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "topic",
-        "field": {
-            0: {
-                "name": "topic_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "sort_order",
-                "type": "Number",
-                "not_null": true,
-                "default": "0"
-            },
-            2: {
-                "name": "status",
-                "type": "tinyint(1)",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "topic_id"
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "topic_description",
-        "field": {
-            0: {
-                "name": "topic_id",
-                "type": "Number",
-                "not_null": true
-            },
-            1: {
-                "name": "language_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "image",
-                "type": "varchar(255)",
-                "not_null": true
-            },
-            3: {
-                "name": "name",
-                "type": "varchar(255)",
-                "not_null": true
-            },
-            4: {
-                "name": "description",
-                "type": "text",
-                "not_null": true
-            },
-            5: {
-                "name": "meta_title",
-                "type": "varchar(255)",
-                "not_null": true
-            },
-            6: {
-                "name": "meta_description",
-                "type": "varchar(255)",
-                "not_null": true
-            },
-            7: {
-                "name": "meta_keyword",
-                "type": "varchar(255)",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "topic_id",
-            1: "language_id"
-        },
-        "foreign": {
-            0: {
-                "key": "language_id",
-                "table": "language",
-                "field": "language_id"
-            }
-        },
-        "index": {
-            0: {
-                "name": "name",
-                "key": {
-                    0: "name"
+        {
+            "name": "api",
+            "field": [
+                {
+                    "name": "api_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "username",
+                    "type": "varchar(64)",
+                    "not_null": true
+                },
+                {
+                    "name": "key",
+                    "type": "text",
+                    "not_null": true
+                },
+                {
+                    "name": "status",
+                    "type": "tinyint(1)",
+                    "not_null": true
+                },
+                {
+                    "name": "date_added",
+                    "type": "datetime",
+                    "not_null": true
+                },
+                {
+                    "name": "date_modified",
+                    "type": "datetime",
+                    "not_null": true
                 }
-            }
+            ],
+            "primary": [
+                "api_id"
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
         },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "topic_to_store",
-        "field": {
-            0: {
-                "name": "topic_id",
-                "type": "Number",
-                "not_null": true
-            },
-            1: {
-                "name": "store_id",
-                "type": "Number",
-                "not_null": true,
-                "default": "0"
-            }
-        },
-        "primary": {
-            0: "topic_id",
-            1: "store_id"
-        },
-        "foreign": {
-            0: {
-                "key": "topic_id",
-                "table": "topic",
-                "field": "topic_id"
-            },
-            1: {
-                "key": "store_id",
-                "table": "store",
-                "field": "store_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "cart",
-        "field": {
-            0: {
-                "name": "cart_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "api_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "customer_id",
-                "type": "Number",
-                "not_null": true
-            },
-            3: {
-                "name": "session_id",
-                "type": "varchar(32)",
-                "not_null": true
-            },
-            4: {
-                "name": "product_id",
-                "type": "Number",
-                "not_null": true
-            },
-            5: {
-                "name": "subscription_plan_id",
-                "type": "Number",
-                "not_null": true
-            },
-            6: {
-                "name": "option",
-                "type": "text",
-                "not_null": true
-            },
-            7: {
-                "name": "quantity",
-                "type": "Number",
-                "not_null": true
-            },
-            8: {
-                "name": "override",
-                "type": "tinyint(1)",
-                "not_null": true
-            },
-            9: {
-                "name": "price",
-                "type": "decimal(15,4)",
-                "not_null": true
-            },
-            10: {
-                "name": "date_added",
-                "type": "datetime",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "cart_id"
-        },
-        "foreign": {
-            0: {
-                "key": "api_id",
-                "table": "api",
-                "field": "api_id"
-            },
-            1: {
-                "key": "customer_id",
-                "table": "customer",
-                "field": "customer_id"
-            },
-            2: {
-                "key": "session_id",
-                "table": "session",
-                "field": "session_id"
-            },
-            3: {
-                "key": "product_id",
-                "table": "product",
-                "field": "product_id"
-            },
-            4: {
-                "key": "subscription_plan_id",
-                "table": "subscription_plan",
-                "field": "subscription_plan_id"
-            }
-        },
-        "index": {
-            0: {
-                "name": "cart_id",
-                "key": {
-                    0: "api_id",
-                    1: "customer_id",
-                    2: "session_id",
-                    3: "product_id",
-                    4: "subscription_plan_id"
+        {
+            "name": "api_ip",
+            "field": [
+                {
+                    "name": "api_ip_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "api_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "ip",
+                    "type": "varchar(40)",
+                    "not_null": true
                 }
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "category",
-        "field": {
-            0: {
-                "name": "category_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "image",
-                "type": "varchar(255)",
-                "not_null": true
-            },
-            2: {
-                "name": "parent_id",
-                "type": "Number",
-                "not_null": true,
-                "default": "0"
-            },
-            3: {
-                "name": "top",
-                "type": "tinyint(1)",
-                "not_null": true
-            },
-            4: {
-                "name": "column",
-                "type": "Number",
-                "not_null": true
-            },
-            5: {
-                "name": "sort_order",
-                "type": "Number",
-                "not_null": true,
-                "default": "0"
-            },
-            6: {
-                "name": "status",
-                "type": "tinyint(1)",
-                "not_null": true
-            },
-            7: {
-                "name": "date_added",
-                "type": "datetime",
-                "not_null": true
-            },
-            8: {
-                "name": "date_modified",
-                "type": "datetime",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "category_id"
-        },
-        "index": {
-            0: {
-                "name": "parent_id",
-                "key": {
-                    0: "parent_id"
+            ],
+            "primary": [
+                "api_ip_id"
+            ],
+            "foreign": [
+                {
+                    "key": "api_id",
+                    "table": "api",
+                    "field": "api_id"
                 }
-            }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
         },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "category_description",
-        "field": {
-            0: {
-                "name": "category_id",
-                "type": "Number",
-                "not_null": true
-            },
-            1: {
-                "name": "language_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "name",
-                "type": "varchar(255)",
-                "not_null": true
-            },
-            3: {
-                "name": "description",
-                "type": "text",
-                "not_null": true
-            },
-            4: {
-                "name": "meta_title",
-                "type": "varchar(255)",
-                "not_null": true
-            },
-            5: {
-                "name": "meta_description",
-                "type": "varchar(255)",
-                "not_null": true
-            },
-            6: {
-                "name": "meta_keyword",
-                "type": "varchar(255)",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "category_id",
-            1: "language_id"
-        },
-        "foreign": {
-            0: {
-                "key": "language_id",
-                "table": "language",
-                "field": "language_id"
-            }
-        },
-        "index": {
-            0: {
-                "name": "name",
-                "key": {
-                    0: "name"
+        {
+            "name": "api_session",
+            "field": [
+                {
+                    "name": "api_session_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "api_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "session_id",
+                    "type": "varchar(32)",
+                    "not_null": true
+                },
+                {
+                    "name": "ip",
+                    "type": "varchar(40)",
+                    "not_null": true
+                },
+                {
+                    "name": "date_added",
+                    "type": "datetime",
+                    "not_null": true
+                },
+                {
+                    "name": "date_modified",
+                    "type": "datetime",
+                    "not_null": true
                 }
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "category_filter",
-        "field": {
-            0: {
-                "name": "category_id",
-                "type": "Number",
-                "not_null": true
-            },
-            1: {
-                "name": "filter_id",
-                "type": "Number",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "category_id",
-            1: "filter_id"
-        },
-        "foreign": {
-            0: {
-                "key": "category_id",
-                "table": "category",
-                "field": "category_id"
-            },
-            1: {
-                "key": "filter_id",
-                "table": "filter",
-                "field": "filter_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "category_path",
-        "field": {
-            0: {
-                "name": "category_id",
-                "type": "Number",
-                "not_null": true
-            },
-            1: {
-                "name": "path_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "level",
-                "type": "Number",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "category_id",
-            1: "path_id"
-        },
-        "foreign": {
-            0: {
-                "key": "category_id",
-                "table": "category",
-                "field": "category_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "category_to_layout",
-        "field": {
-            0: {
-                "name": "category_id",
-                "type": "Number",
-                "not_null": true
-            },
-            1: {
-                "name": "store_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "layout_id",
-                "type": "Number",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "category_id",
-            1: "store_id"
-        },
-        "foreign": {
-            0: {
-                "key": "category_id",
-                "table": "category",
-                "field": "category_id"
-            },
-            1: {
-                "key": "store_id",
-                "table": "store",
-                "field": "store_id"
-            },
-            2: {
-                "key": "layout_id",
-                "table": "layout",
-                "field": "layout_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "category_to_store",
-        "field": {
-            0: {
-                "name": "category_id",
-                "type": "Number",
-                "not_null": true
-            },
-            1: {
-                "name": "store_id",
-                "type": "Number",
-                "not_null": true,
-                "default": "0"
-            }
-        },
-        "primary": {
-            0: "category_id",
-            1: "store_id"
-        },
-        "foreign": {
-            0: {
-                "key": "category_id",
-                "table": "category",
-                "field": "category_id"
-            },
-            1: {
-                "key": "store_id",
-                "table": "store",
-                "field": "store_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "country",
-        "field": {
-            0: {
-                "name": "country_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "name",
-                "type": "varchar(128)",
-                "not_null": true
-            },
-            2: {
-                "name": "iso_code_2",
-                "type": "varchar(2)",
-                "not_null": true
-            },
-            3: {
-                "name": "iso_code_3",
-                "type": "varchar(3)",
-                "not_null": true
-            },
-            4: {
-                "name": "address_format_id",
-                "type": "Number",
-                "not_null": true
-            },
-            5: {
-                "name": "postcode_required",
-                "type": "tinyint(1)",
-                "not_null": true
-            },
-            6: {
-                "name": "status",
-                "type": "tinyint(1)",
-                "not_null": true,
-                "default": "1"
-            }
-        },
-        "primary": {
-            0: "country_id"
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "coupon",
-        "field": {
-            0: {
-                "name": "coupon_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "name",
-                "type": "varchar(128)",
-                "not_null": true
-            },
-            2: {
-                "name": "code",
-                "type": "varchar(20)",
-                "not_null": true
-            },
-            3: {
-                "name": "type",
-                "type": "char(1)",
-                "not_null": true
-            },
-            4: {
-                "name": "discount",
-                "type": "decimal(15,4)",
-                "not_null": true
-            },
-            5: {
-                "name": "logged",
-                "type": "tinyint(1)",
-                "not_null": true
-            },
-            6: {
-                "name": "shipping",
-                "type": "tinyint(1)",
-                "not_null": true
-            },
-            7: {
-                "name": "total",
-                "type": "decimal(15,4)",
-                "not_null": true
-            },
-            8: {
-                "name": "date_start",
-                "type": "date",
-                "not_null": true
-            },
-            9: {
-                "name": "date_end",
-                "type": "date",
-                "not_null": true
-            },
-            10: {
-                "name": "uses_total",
-                "type": "Number",
-                "not_null": true
-            },
-            11: {
-                "name": "uses_customer",
-                "type": "Number",
-                "not_null": true
-            },
-            12: {
-                "name": "status",
-                "type": "tinyint(1)",
-                "not_null": true
-            },
-            13: {
-                "name": "date_added",
-                "type": "datetime",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "coupon_id"
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "coupon_category",
-        "field": {
-            0: {
-                "name": "coupon_id",
-                "type": "Number",
-                "not_null": true
-            },
-            1: {
-                "name": "category_id",
-                "type": "Number",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "coupon_id",
-            1: "category_id"
-        },
-        "foreign": {
-            0: {
-                "key": "coupon_id",
-                "table": "coupon",
-                "field": "coupon_id"
-            },
-            1: {
-                "key": "category_id",
-                "table": "category",
-                "field": "category_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "coupon_history",
-        "field": {
-            0: {
-                "name": "coupon_history_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "coupon_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "order_id",
-                "type": "Number",
-                "not_null": true
-            },
-            3: {
-                "name": "customer_id",
-                "type": "Number",
-                "not_null": true
-            },
-            4: {
-                "name": "amount",
-                "type": "decimal(15,4)",
-                "not_null": true
-            },
-            5: {
-                "name": "date_added",
-                "type": "datetime",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "coupon_history_id"
-        },
-        "foreign": {
-            0: {
-                "key": "coupon_id",
-                "table": "coupon",
-                "field": "coupon_id"
-            },
-            1: {
-                "key": "order_id",
-                "table": "order",
-                "field": "order_id"
-            },
-            2: {
-                "key": "customer_id",
-                "table": "customer",
-                "field": "customer_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "coupon_product",
-        "field": {
-            0: {
-                "name": "coupon_product_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "coupon_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "product_id",
-                "type": "Number",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "coupon_product_id"
-        },
-        "foreign": {
-            0: {
-                "key": "coupon_id",
-                "table": "coupon",
-                "field": "coupon_id"
-            },
-            1: {
-                "key": "product_id",
-                "table": "product",
-                "field": "product_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "cron",
-        "field": {
-            0: {
-                "name": "cron_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "code",
-                "type": "varchar(128)",
-                "not_null": true
-            },
-            2: {
-                "name": "description",
-                "type": "text",
-                "not_null": true
-            },
-            3: {
-                "name": "cycle",
-                "type": "varchar(12)",
-                "not_null": true
-            },
-            4: {
-                "name": "action",
-                "type": "text",
-                "not_null": true
-            },
-            5: {
-                "name": "status",
-                "type": "tinyint(1)",
-                "not_null": true
-            },
-            6: {
-                "name": "date_added",
-                "type": "datetime",
-                "not_null": true
-            },
-            7: {
-                "name": "date_modified",
-                "type": "datetime",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "cron_id"
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "currency",
-        "field": {
-            0: {
-                "name": "currency_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "title",
-                "type": "varchar(32)",
-                "not_null": true
-            },
-            2: {
-                "name": "code",
-                "type": "varchar(3)",
-                "not_null": true
-            },
-            3: {
-                "name": "symbol_left",
-                "type": "varchar(12)",
-                "not_null": true
-            },
-            4: {
-                "name": "symbol_right",
-                "type": "varchar(12)",
-                "not_null": true
-            },
-            5: {
-                "name": "decimal_place",
-                "type": "Number",
-                "not_null": true
-            },
-            6: {
-                "name": "value",
-                "type": "double(15,8)",
-                "not_null": true
-            },
-            7: {
-                "name": "status",
-                "type": "tinyint(1)",
-                "not_null": true
-            },
-            8: {
-                "name": "date_modified",
-                "type": "datetime",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "currency_id"
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "customer",
-        "field": {
-            0: {
-                "name": "customer_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "customer_group_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "store_id",
-                "type": "Number",
-                "not_null": true,
-                "default": "0"
-            },
-            3: {
-                "name": "language_id",
-                "type": "Number",
-                "not_null": true
-            },
-            4: {
-                "name": "firstname",
-                "type": "varchar(32)",
-                "not_null": true
-            },
-            5: {
-                "name": "lastname",
-                "type": "varchar(32)",
-                "not_null": true
-            },
-            6: {
-                "name": "email",
-                "type": "varchar(96)",
-                "not_null": true
-            },
-            7: {
-                "name": "telephone",
-                "type": "varchar(32)",
-                "not_null": true
-            },
-            8: {
-                "name": "password",
-                "type": "varchar(255)",
-                "not_null": true
-            },
-            9: {
-                "name": "custom_field",
-                "type": "text",
-                "not_null": true
-            },
-            10: {
-                "name": "newsletter",
-                "type": "tinyint(1)",
-                "not_null": true,
-                "default": "0"
-            },
-            11: {
-                "name": "ip",
-                "type": "varchar(40)",
-                "not_null": true
-            },
-            12: {
-                "name": "status",
-                "type": "tinyint(1)",
-                "not_null": true
-            },
-            13: {
-                "name": "safe",
-                "type": "tinyint(1)",
-                "not_null": true
-            },
-            14: {
-                "name": "token",
-                "type": "text",
-                "not_null": true
-            },
-            15: {
-                "name": "code",
-                "type": "varchar(40)",
-                "not_null": true
-            },
-            16: {
-                "name": "date_added",
-                "type": "datetime",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "customer_id"
-        },
-        "foreign": {
-            0: {
-                "key": "customer_group_id",
-                "table": "customer_group",
-                "field": "customer_group_id"
-            },
-            1: {
-                "key": "store_id",
-                "table": "store",
-                "field": "store_id"
-            },
-            2: {
-                "key": "language_id",
-                "table": "language",
-                "field": "language_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "customer_activity",
-        "field": {
-            0: {
-                "name": "customer_activity_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "customer_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "key",
-                "type": "varchar(64)",
-                "not_null": true
-            },
-            3: {
-                "name": "data",
-                "type": "text",
-                "not_null": true
-            },
-            4: {
-                "name": "ip",
-                "type": "varchar(40)",
-                "not_null": true
-            },
-            5: {
-                "name": "date_added",
-                "type": "datetime",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "customer_activity_id"
-        },
-        "foreign": {
-            0: {
-                "key": "customer_id",
-                "table": "customer",
-                "field": "customer_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "customer_affiliate",
-        "field": {
-            0: {
-                "name": "customer_id",
-                "type": "Number",
-                "not_null": true
-            },
-            1: {
-                "name": "company",
-                "type": "varchar(60)",
-                "not_null": true
-            },
-            2: {
-                "name": "website",
-                "type": "varchar(255)",
-                "not_null": true
-            },
-            3: {
-                "name": "tracking",
-                "type": "varchar(64)",
-                "not_null": true
-            },
-            4: {
-                "name": "balance",
-                "type": "decimal(15,4)",
-                "not_null": true
-            },
-            5: {
-                "name": "commission",
-                "type": "decimal(4,2)",
-                "not_null": true,
-                "default": "0.00"
-            },
-            6: {
-                "name": "tax",
-                "type": "varchar(64)",
-                "not_null": true
-            },
-            7: {
-                "name": "payment_method",
-                "type": "varchar(6)",
-                "not_null": true
-            },
-            8: {
-                "name": "cheque",
-                "type": "varchar(100)",
-                "not_null": true
-            },
-            9: {
-                "name": "paypal",
-                "type": "varchar(64)",
-                "not_null": true
-            },
-            10: {
-                "name": "bank_name",
-                "type": "varchar(64)",
-                "not_null": true
-            },
-            11: {
-                "name": "bank_branch_number",
-                "type": "varchar(64)",
-                "not_null": true
-            },
-            12: {
-                "name": "bank_swift_code",
-                "type": "varchar(64)",
-                "not_null": true
-            },
-            13: {
-                "name": "bank_account_name",
-                "type": "varchar(64)",
-                "not_null": true
-            },
-            14: {
-                "name": "bank_account_number",
-                "type": "varchar(64)",
-                "not_null": true
-            },
-            15: {
-                "name": "custom_field",
-                "type": "text",
-                "not_null": true
-            },
-            16: {
-                "name": "status",
-                "type": "tinyint(1)",
-                "not_null": true
-            },
-            17: {
-                "name": "date_added",
-                "type": "datetime",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "customer_id"
-        },
-        "foreign": {
-            0: {
-                "key": "customer_id",
-                "table": "customer",
-                "field": "customer_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "customer_affiliate_report",
-        "field": {
-            0: {
-                "name": "customer_affiliate_report_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "customer_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "store_id",
-                "type": "Number",
-                "not_null": true
-            },
-            3: {
-                "name": "ip",
-                "type": "varchar(40)",
-                "not_null": true
-            },
-            4: {
-                "name": "country",
-                "type": "varchar(2)",
-                "not_null": true
-            },
-            5: {
-                "name": "date_added",
-                "type": "datetime",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "customer_affiliate_report_id"
-        },
-        "foreign": {
-            0: {
-                "key": "customer_id",
-                "table": "customer",
-                "field": "customer_id"
-            },
-            1: {
-                "key": "store_id",
-                "table": "store",
-                "field": "store_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "customer_approval",
-        "field": {
-            0: {
-                "name": "customer_approval_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "customer_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "type",
-                "type": "varchar(9)",
-                "not_null": true
-            },
-            3: {
-                "name": "date_added",
-                "type": "datetime",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "customer_approval_id"
-        },
-        "foreign": {
-            0: {
-                "key": "customer_id",
-                "table": "customer",
-                "field": "customer_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "customer_group",
-        "field": {
-            0: {
-                "name": "customer_group_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "approval",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "sort_order",
-                "type": "Number",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "customer_group_id"
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "customer_group_description",
-        "field": {
-            0: {
-                "name": "customer_group_id",
-                "type": "Number",
-                "not_null": true
-            },
-            1: {
-                "name": "language_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "name",
-                "type": "varchar(32)",
-                "not_null": true
-            },
-            3: {
-                "name": "description",
-                "type": "text",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "customer_group_id",
-            1: "language_id"
-        },
-        "foreign": {
-            0: {
-                "key": "customer_group_id",
-                "table": "customer_group",
-                "field": "customer_group_id"
-            },
-            1: {
-                "key": "language_id",
-                "table": "language",
-                "field": "language_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "customer_history",
-        "field": {
-            0: {
-                "name": "customer_history_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "customer_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "comment",
-                "type": "text",
-                "not_null": true
-            },
-            3: {
-                "name": "date_added",
-                "type": "datetime",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "customer_history_id"
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "customer_login",
-        "field": {
-            0: {
-                "name": "customer_login_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "email",
-                "type": "varchar(96)",
-                "not_null": true
-            },
-            2: {
-                "name": "ip",
-                "type": "varchar(40)",
-                "not_null": true
-            },
-            3: {
-                "name": "total",
-                "type": "Number",
-                "not_null": true
-            },
-            4: {
-                "name": "date_added",
-                "type": "datetime",
-                "not_null": true
-            },
-            5: {
-                "name": "date_modified",
-                "type": "datetime",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "customer_login_id"
-        },
-        "index": {
-            0: {
-                "name": "email",
-                "key": {
-                    0: "email"
+            ],
+            "primary": [
+                "api_session_id"
+            ],
+            "foreign": [
+                {
+                    "key": "api_id",
+                    "table": "api",
+                    "field": "api_id"
                 }
-            },
-            1: {
-                "name": "ip",
-                "key": {
-                    0: "ip"
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "attribute",
+            "field": [
+                {
+                    "name": "attribute_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "attribute_group_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "sort_order",
+                    "type": "int(3)",
+                    "not_null": true
                 }
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "customer_ip",
-        "field": {
-            0: {
-                "name": "customer_ip_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "customer_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "store_id",
-                "type": "Number",
-                "not_null": true
-            },
-            3: {
-                "name": "ip",
-                "type": "varchar(40)",
-                "not_null": true
-            },
-            4: {
-                "name": "country",
-                "type": "varchar(2)",
-                "not_null": true
-            },
-            5: {
-                "name": "date_added",
-                "type": "datetime",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "customer_ip_id"
-        },
-        "foreign": {
-            0: {
-                "key": "customer_id",
-                "table": "customer",
-                "field": "customer_id"
-            },
-            1: {
-                "key": "store_id",
-                "table": "store",
-                "field": "store_id"
-            }
-        },
-        "index": {
-            0: {
-                "name": "ip",
-                "key": {
-                    0: "ip"
+            ],
+            "primary": [
+                "attribute_id"
+            ],
+            "foreign": [
+                {
+                    "key": "attribute_group_id",
+                    "table": "attribute_group",
+                    "field": "attribute_group_id"
                 }
-            }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
         },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "customer_online",
-        "field": {
-            0: {
-                "name": "ip",
-                "type": "varchar(40)",
-                "not_null": true
-            },
-            1: {
-                "name": "customer_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "url",
-                "type": "text",
-                "not_null": true
-            },
-            3: {
-                "name": "referer",
-                "type": "text",
-                "not_null": true
-            },
-            4: {
-                "name": "date_added",
-                "type": "datetime",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "ip"
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "customer_reward",
-        "field": {
-            0: {
-                "name": "customer_reward_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "customer_id",
-                "type": "Number",
-                "not_null": true,
-                "default": "0"
-            },
-            2: {
-                "name": "order_id",
-                "type": "Number",
-                "not_null": true,
-                "default": "0"
-            },
-            3: {
-                "name": "description",
-                "type": "text",
-                "not_null": true
-            },
-            4: {
-                "name": "points",
-                "type": "Number",
-                "not_null": true,
-                "default": "0"
-            },
-            5: {
-                "name": "date_added",
-                "type": "datetime",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "customer_reward_id"
-        },
-        "foreign": {
-            0: {
-                "key": "customer_id",
-                "table": "customer",
-                "field": "customer_id"
-            },
-            1: {
-                "key": "order_id",
-                "table": "order",
-                "field": "order_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "customer_transaction",
-        "field": {
-            0: {
-                "name": "customer_transaction_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "customer_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "order_id",
-                "type": "Number",
-                "not_null": true
-            },
-            3: {
-                "name": "description",
-                "type": "text",
-                "not_null": true
-            },
-            4: {
-                "name": "amount",
-                "type": "decimal(15,4)",
-                "not_null": true
-            },
-            5: {
-                "name": "date_added",
-                "type": "datetime",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "customer_transaction_id"
-        },
-        "foreign": {
-            0: {
-                "key": "customer_id",
-                "table": "customer",
-                "field": "customer_id"
-            },
-            1: {
-                "key": "order_id",
-                "table": "order",
-                "field": "order_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "customer_search",
-        "field": {
-            0: {
-                "name": "customer_search_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "store_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "language_id",
-                "type": "Number",
-                "not_null": true
-            },
-            3: {
-                "name": "customer_id",
-                "type": "Number",
-                "not_null": true
-            },
-            4: {
-                "name": "keyword",
-                "type": "varchar(255)",
-                "not_null": true
-            },
-            5: {
-                "name": "category_id",
-                "type": "Number",
-                "not_null": true
-            },
-            6: {
-                "name": "sub_category",
-                "type": "tinyint(1)",
-                "not_null": true
-            },
-            7: {
-                "name": "description",
-                "type": "tinyint(1)",
-                "not_null": true
-            },
-            8: {
-                "name": "products",
-                "type": "Number",
-                "not_null": true
-            },
-            9: {
-                "name": "ip",
-                "type": "varchar(40)",
-                "not_null": true
-            },
-            10: {
-                "name": "date_added",
-                "type": "datetime",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "customer_search_id"
-        },
-        "foreign": {
-            0: {
-                "key": "store_id",
-                "table": "store",
-                "field": "store_id"
-            },
-            1: {
-                "key": "language_id",
-                "table": "language",
-                "field": "language_id"
-            },
-            2: {
-                "key": "customer_id",
-                "table": "customer",
-                "field": "customer_id"
-            },
-            3: {
-                "key": "category_id",
-                "table": "category",
-                "field": "category_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "customer_wishlist",
-        "field": {
-            0: {
-                "name": "customer_id",
-                "type": "Number",
-                "not_null": true
-            },
-            1: {
-                "name": "product_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "date_added",
-                "type": "datetime",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "customer_id",
-            1: "product_id"
-        },
-        "foreign": {
-            0: {
-                "key": "customer_id",
-                "table": "customer",
-                "field": "customer_id"
-            },
-            1: {
-                "key": "product_id",
-                "table": "product",
-                "field": "product_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "custom_field",
-        "field": {
-            0: {
-                "name": "custom_field_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "type",
-                "type": "varchar(32)",
-                "not_null": true
-            },
-            2: {
-                "name": "value",
-                "type": "text",
-                "not_null": true
-            },
-            3: {
-                "name": "validation",
-                "type": "varchar(255)",
-                "not_null": true
-            },
-            4: {
-                "name": "location",
-                "type": "varchar(10)",
-                "not_null": true
-            },
-            5: {
-                "name": "status",
-                "type": "tinyint(1)",
-                "not_null": true
-            },
-            6: {
-                "name": "sort_order",
-                "type": "Number",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "custom_field_id"
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "custom_field_customer_group",
-        "field": {
-            0: {
-                "name": "custom_field_id",
-                "type": "Number",
-                "not_null": true
-            },
-            1: {
-                "name": "customer_group_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "required",
-                "type": "tinyint(1)",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "custom_field_id",
-            1: "customer_group_id"
-        },
-        "foreign": {
-            0: {
-                "key": "custom_field_id",
-                "table": "custom_field",
-                "field": "custom_field_id"
-            },
-            1: {
-                "key": "customer_group_id",
-                "table": "customer_group",
-                "field": "customer_group_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "custom_field_description",
-        "field": {
-            0: {
-                "name": "custom_field_id",
-                "type": "Number",
-                "not_null": true
-            },
-            1: {
-                "name": "language_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "name",
-                "type": "varchar(128)",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "custom_field_id",
-            1: "language_id"
-        },
-        "foreign": {
-            0: {
-                "key": "custom_field_id",
-                "table": "custom_field",
-                "field": "custom_field_id"
-            },
-            1: {
-                "key": "language_id",
-                "table": "language",
-                "field": "language_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "custom_field_value",
-        "field": {
-            0: {
-                "name": "custom_field_value_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "custom_field_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "sort_order",
-                "type": "Number",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "custom_field_value_id"
-        },
-        "foreign": {
-            0: {
-                "key": "custom_field_id",
-                "table": "custom_field",
-                "field": "custom_field_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "custom_field_value_description",
-        "field": {
-            0: {
-                "name": "custom_field_value_id",
-                "type": "Number",
-                "not_null": true
-            },
-            1: {
-                "name": "language_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "custom_field_id",
-                "type": "Number",
-                "not_null": true
-            },
-            3: {
-                "name": "name",
-                "type": "varchar(128)",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "custom_field_value_id",
-            1: "language_id"
-        },
-        "foreign": {
-            0: {
-                "key": "language_id",
-                "table": "language",
-                "field": "language_id"
-            },
-            1: {
-                "key": "custom_field_id",
-                "table": "custom_field",
-                "field": "custom_field_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "download",
-        "field": {
-            0: {
-                "name": "download_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "filename",
-                "type": "varchar(160)",
-                "not_null": true
-            },
-            2: {
-                "name": "mask",
-                "type": "varchar(128)",
-                "not_null": true
-            },
-            3: {
-                "name": "date_added",
-                "type": "datetime",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "download_id"
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "download_description",
-        "field": {
-            0: {
-                "name": "download_id",
-                "type": "Number",
-                "not_null": true
-            },
-            1: {
-                "name": "language_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "name",
-                "type": "varchar(64)",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "download_id",
-            1: "language_id"
-        },
-        "foreign": {
-            0: {
-                "key": "language_id",
-                "table": "language",
-                "field": "language_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "download_report",
-        "field": {
-            0: {
-                "name": "download_report_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "download_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "store_id",
-                "type": "Number",
-                "not_null": true
-            },
-            3: {
-                "name": "ip",
-                "type": "varchar(40)",
-                "not_null": true
-            },
-            4: {
-                "name": "country",
-                "type": "varchar(2)",
-                "not_null": true
-            },
-            5: {
-                "name": "date_added",
-                "type": "datetime",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "download_report_id"
-        },
-        "foreign": {
-            0: {
-                "key": "download_id",
-                "table": "download",
-                "field": "download_id"
-            },
-            1: {
-                "key": "store_id",
-                "table": "store",
-                "field": "store_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "event",
-        "field": {
-            0: {
-                "name": "event_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "code",
-                "type": "varchar(128)",
-                "not_null": true
-            },
-            2: {
-                "name": "description",
-                "type": "text",
-                "not_null": true
-            },
-            3: {
-                "name": "trigger",
-                "type": "text",
-                "not_null": true
-            },
-            4: {
-                "name": "action",
-                "type": "text",
-                "not_null": true
-            },
-            5: {
-                "name": "status",
-                "type": "tinyint(1)",
-                "not_null": true,
-                "default": "0"
-            },
-            6: {
-                "name": "sort_order",
-                "type": "Number",
-                "not_null": true,
-                "default": "1"
-            }
-        },
-        "primary": {
-            0: "event_id"
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "extension",
-        "field": {
-            0: {
-                "name": "extension_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "extension",
-                "type": "varchar(255)",
-                "not_null": true
-            },
-            2: {
-                "name": "type",
-                "type": "varchar(32)",
-                "not_null": true
-            },
-            3: {
-                "name": "code",
-                "type": "varchar(128)",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "extension_id"
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "extension_install",
-        "field": {
-            0: {
-                "name": "extension_install_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "extension_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "extension_download_id",
-                "type": "Number",
-                "not_null": true
-            },
-            3: {
-                "name": "name",
-                "type": "varchar(128)",
-                "not_null": true
-            },
-            4: {
-                "name": "code",
-                "type": "varchar(255)",
-                "not_null": true
-            },
-            5: {
-                "name": "version",
-                "type": "varchar(255)",
-                "not_null": true
-            },
-            6: {
-                "name": "author",
-                "type": "varchar(255)",
-                "not_null": true
-            },
-            7: {
-                "name": "link",
-                "type": "varchar(255)",
-                "not_null": true
-            },
-            8: {
-                "name": "status",
-                "type": "tinyint(1)",
-                "not_null": true
-            },
-            9: {
-                "name": "date_added",
-                "type": "datetime",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "extension_install_id"
-        },
-        "foreign": {
-            0: {
-                "key": "extension_id",
-                "table": "extension",
-                "field": "extension_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "extension_path",
-        "field": {
-            0: {
-                "name": "extension_path_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "extension_install_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "path",
-                "type": "varchar(255)",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "extension_path_id"
-        },
-        "foreign": {
-            0: {
-                "key": "extension_install_id",
-                "table": "extension_install",
-                "field": "extension_install_id"
-            }
-        },
-        "index": {
-            0: {
-                "name": "path",
-                "key": {
-                    0: "path"
+        {
+            "name": "attribute_description",
+            "field": [
+                {
+                    "name": "attribute_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "language_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "name",
+                    "type": "varchar(64)",
+                    "not_null": true
                 }
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "filter",
-        "field": {
-            0: {
-                "name": "filter_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "filter_group_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "sort_order",
-                "type": "Number",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "filter_id"
-        },
-        "foreign": {
-            0: {
-                "key": "filter_group_id",
-                "table": "filter_group",
-                "field": "filter_group_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "filter_description",
-        "field": {
-            0: {
-                "name": "filter_id",
-                "type": "Number",
-                "not_null": true
-            },
-            1: {
-                "name": "language_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "filter_group_id",
-                "type": "Number",
-                "not_null": true
-            },
-            3: {
-                "name": "name",
-                "type": "varchar(64)",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "filter_id",
-            1: "language_id"
-        },
-        "foreign": {
-            0: {
-                "key": "language_id",
-                "table": "language",
-                "field": "language_id"
-            },
-            1: {
-                "key": "filter_group_id",
-                "table": "filter_group",
-                "field": "filter_group_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "filter_group",
-        "field": {
-            0: {
-                "name": "filter_group_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "sort_order",
-                "type": "Number",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "filter_group_id"
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "filter_group_description",
-        "field": {
-            0: {
-                "name": "filter_group_id",
-                "type": "Number",
-                "not_null": true
-            },
-            1: {
-                "name": "language_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "name",
-                "type": "varchar(64)",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "filter_group_id",
-            1: "language_id"
-        },
-        "foreign": {
-            0: {
-                "key": "filter_group_id",
-                "table": "filter_group",
-                "field": "filter_group_id"
-            },
-            1: {
-                "key": "language_id",
-                "table": "language",
-                "field": "language_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "gdpr",
-        "field": {
-            0: {
-                "name": "gdpr_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "store_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "language_id",
-                "type": "Number",
-                "not_null": true
-            },
-            3: {
-                "name": "code",
-                "type": "varchar(40)",
-                "not_null": true
-            },
-            4: {
-                "name": "email",
-                "type": "varchar(96)",
-                "not_null": true
-            },
-            5: {
-                "name": "action",
-                "type": "varchar(6)",
-                "not_null": true
-            },
-            6: {
-                "name": "status",
-                "type": "tinyint(1)",
-                "not_null": true
-            },
-            7: {
-                "name": "date_added",
-                "type": "datetime",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "gdpr_id"
-        },
-        "foreign": {
-            0: {
-                "key": "store_id",
-                "table": "store",
-                "field": "store_id"
-            },
-            1: {
-                "key": "language_id",
-                "table": "language",
-                "field": "language_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "geo_zone",
-        "field": {
-            0: {
-                "name": "geo_zone_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "name",
-                "type": "varchar(32)",
-                "not_null": true
-            },
-            2: {
-                "name": "description",
-                "type": "varchar(255)",
-                "not_null": true
-            },
-            3: {
-                "name": "date_added",
-                "type": "datetime",
-                "not_null": true
-            },
-            4: {
-                "name": "date_modified",
-                "type": "datetime",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "geo_zone_id"
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "information",
-        "field": {
-            0: {
-                "name": "information_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "bottom",
-                "type": "Number",
-                "not_null": true,
-                "default": "0"
-            },
-            2: {
-                "name": "sort_order",
-                "type": "Number",
-                "not_null": true,
-                "default": "0"
-            },
-            3: {
-                "name": "status",
-                "type": "tinyint(1)",
-                "not_null": true,
-                "default": "1"
-            }
-        },
-        "primary": {
-            0: "information_id"
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "information_description",
-        "field": {
-            0: {
-                "name": "information_id",
-                "type": "Number",
-                "not_null": true
-            },
-            1: {
-                "name": "language_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "title",
-                "type": "varchar(64)",
-                "not_null": true
-            },
-            3: {
-                "name": "description",
-                "type": "mediumtext",
-                "not_null": true
-            },
-            4: {
-                "name": "meta_title",
-                "type": "varchar(255)",
-                "not_null": true
-            },
-            5: {
-                "name": "meta_description",
-                "type": "varchar(255)",
-                "not_null": true
-            },
-            6: {
-                "name": "meta_keyword",
-                "type": "varchar(255)",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "information_id",
-            1: "language_id"
-        },
-        "foreign": {
-            0: {
-                "key": "language_id",
-                "table": "language",
-                "field": "language_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "information_to_layout",
-        "field": {
-            0: {
-                "name": "information_id",
-                "type": "Number",
-                "not_null": true
-            },
-            1: {
-                "name": "store_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "layout_id",
-                "type": "Number",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "information_id",
-            1: "store_id"
-        },
-        "foreign": {
-            0: {
-                "key": "information_id",
-                "table": "information",
-                "field": "information_id"
-            },
-            1: {
-                "key": "store_id",
-                "table": "store",
-                "field": "store_id"
-            },
-            2: {
-                "key": "layout_id",
-                "table": "layout",
-                "field": "layout_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "information_to_store",
-        "field": {
-            0: {
-                "name": "information_id",
-                "type": "Number",
-                "not_null": true
-            },
-            1: {
-                "name": "store_id",
-                "type": "Number",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "information_id",
-            1: "store_id"
-        },
-        "foreign": {
-            0: {
-                "key": "information_id",
-                "table": "information",
-                "field": "information_id"
-            },
-            1: {
-                "key": "store_id",
-                "table": "store",
-                "field": "store_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "language",
-        "field": {
-            0: {
-                "name": "language_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "name",
-                "type": "varchar(32)",
-                "not_null": true
-            },
-            2: {
-                "name": "code",
-                "type": "varchar(5)",
-                "not_null": true
-            },
-            3: {
-                "name": "locale",
-                "type": "varchar(255)",
-                "not_null": true
-            },
-            4: {
-                "name": "extension",
-                "type": "varchar(255)",
-                "not_null": true
-            },
-            5: {
-                "name": "sort_order",
-                "type": "Number",
-                "not_null": true,
-                "default": "0"
-            },
-            6: {
-                "name": "status",
-                "type": "tinyint(1)",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "language_id"
-        },
-        "index": {
-            0: {
-                "name": "name",
-                "key": {
-                    0: "name"
+            ],
+            "primary": [
+                "attribute_id",
+                "language_id"
+            ],
+            "foreign": [
+                {
+                    "key": "attribute_id",
+                    "table": "attribute",
+                    "field": "attribute_id"
+                },
+                {
+                    "key": "language_id",
+                    "table": "language",
+                    "field": "language_id"
                 }
-            }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
         },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "layout",
-        "field": {
-            0: {
-                "name": "layout_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "name",
-                "type": "varchar(64)",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "layout_id"
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "layout_module",
-        "field": {
-            0: {
-                "name": "layout_module_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "layout_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "code",
-                "type": "varchar(64)",
-                "not_null": true
-            },
-            3: {
-                "name": "position",
-                "type": "varchar(14)",
-                "not_null": true
-            },
-            4: {
-                "name": "sort_order",
-                "type": "Number",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "layout_module_id"
-        },
-        "foreign": {
-            0: {
-                "key": "layout_id",
-                "table": "layout",
-                "field": "layout_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "layout_route",
-        "field": {
-            0: {
-                "name": "layout_route_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "layout_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "store_id",
-                "type": "Number",
-                "not_null": true
-            },
-            3: {
-                "name": "route",
-                "type": "varchar(64)",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "layout_route_id"
-        },
-        "foreign": {
-            0: {
-                "key": "layout_id",
-                "table": "layout",
-                "field": "layout_id"
-            },
-            1: {
-                "key": "store_id",
-                "table": "store",
-                "field": "store_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "length_class",
-        "field": {
-            0: {
-                "name": "length_class_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "value",
-                "type": "decimal(15,8)",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "length_class_id"
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "length_class_description",
-        "field": {
-            0: {
-                "name": "length_class_id",
-                "type": "Number",
-                "not_null": true
-            },
-            1: {
-                "name": "language_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "title",
-                "type": "varchar(32)",
-                "not_null": true
-            },
-            3: {
-                "name": "unit",
-                "type": "varchar(4)",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "length_class_id",
-            1: "language_id"
-        },
-        "foreign": {
-            0: {
-                "key": "length_class_id",
-                "table": "length_class",
-                "field": "length_class_id"
-            },
-            1: {
-                "key": "language_id",
-                "table": "language",
-                "field": "language_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "location",
-        "field": {
-            0: {
-                "name": "location_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "name",
-                "type": "varchar(32)",
-                "not_null": true
-            },
-            2: {
-                "name": "address",
-                "type": "text",
-                "not_null": true
-            },
-            3: {
-                "name": "telephone",
-                "type": "varchar(32)",
-                "not_null": true
-            },
-            4: {
-                "name": "geocode",
-                "type": "varchar(32)",
-                "not_null": true
-            },
-            5: {
-                "name": "image",
-                "type": "varchar(255)",
-                "not_null": true
-            },
-            6: {
-                "name": "open",
-                "type": "text",
-                "not_null": true
-            },
-            7: {
-                "name": "comment",
-                "type": "text",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "location_id"
-        },
-        "index": {
-            0: {
-                "name": "name",
-                "key": {
-                    0: "name"
+        {
+            "name": "attribute_group",
+            "field": [
+                {
+                    "name": "attribute_group_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "sort_order",
+                    "type": "int(3)",
+                    "not_null": true
                 }
-            }
+            ],
+            "primary": [
+                "attribute_group_id"
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
         },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "manufacturer",
-        "field": {
-            0: {
-                "name": "manufacturer_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "name",
-                "type": "varchar(64)",
-                "not_null": true
-            },
-            2: {
-                "name": "image",
-                "type": "varchar(255)",
-                "not_null": true
-            },
-            3: {
-                "name": "sort_order",
-                "type": "Number",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "manufacturer_id"
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "manufacturer_to_layout",
-        "field": {
-            0: {
-                "name": "manufacturer_id",
-                "type": "Number",
-                "not_null": true
-            },
-            1: {
-                "name": "store_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "layout_id",
-                "type": "Number",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "manufacturer_id",
-            1: "store_id"
-        },
-        "foreign": {
-            0: {
-                "key": "manufacturer_id",
-                "table": "manufacturer",
-                "field": "manufacturer_id"
-            },
-            1: {
-                "key": "store_id",
-                "table": "store",
-                "field": "store_id"
-            },
-            2: {
-                "key": "layout_id",
-                "table": "layout",
-                "field": "layout_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "manufacturer_to_store",
-        "field": {
-            0: {
-                "name": "manufacturer_id",
-                "type": "Number",
-                "not_null": true
-            },
-            1: {
-                "name": "store_id",
-                "type": "Number",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "manufacturer_id",
-            1: "store_id"
-        },
-        "foreign": {
-            0: {
-                "key": "manufacturer_id",
-                "table": "manufacturer",
-                "field": "manufacturer_id"
-            },
-            1: {
-                "key": "store_id",
-                "table": "store",
-                "field": "store_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "marketing",
-        "field": {
-            0: {
-                "name": "marketing_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "name",
-                "type": "varchar(32)",
-                "not_null": true
-            },
-            2: {
-                "name": "description",
-                "type": "text",
-                "not_null": true
-            },
-            3: {
-                "name": "code",
-                "type": "varchar(64)",
-                "not_null": true
-            },
-            4: {
-                "name": "clicks",
-                "type": "Number",
-                "not_null": true,
-                "default": "0"
-            },
-            5: {
-                "name": "date_added",
-                "type": "datetime",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "marketing_id"
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "marketing_report",
-        "field": {
-            0: {
-                "name": "marketing_report_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "marketing_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "store_id",
-                "type": "Number",
-                "not_null": true
-            },
-            3: {
-                "name": "ip",
-                "type": "varchar(40)",
-                "not_null": true
-            },
-            4: {
-                "name": "country",
-                "type": "varchar(2)",
-                "not_null": true
-            },
-            5: {
-                "name": "date_added",
-                "type": "datetime",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "marketing_report_id"
-        },
-        "foreign": {
-            0: {
-                "key": "marketing_id",
-                "table": "marketing",
-                "field": "marketing_id"
-            },
-            1: {
-                "key": "store_id",
-                "table": "store",
-                "field": "store_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "module",
-        "field": {
-            0: {
-                "name": "module_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "name",
-                "type": "varchar(64)",
-                "not_null": true
-            },
-            2: {
-                "name": "code",
-                "type": "varchar(64)",
-                "not_null": true
-            },
-            3: {
-                "name": "setting",
-                "type": "text",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "module_id"
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "notification",
-        "field": {
-            0: {
-                "name": "notification_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "title",
-                "type": "varchar(64)",
-                "not_null": true
-            },
-            2: {
-                "name": "text",
-                "type": "text",
-                "not_null": true
-            },
-            3: {
-                "name": "status",
-                "type": "tinyint(11)",
-                "not_null": true
-            },
-            4: {
-                "name": "date_added",
-                "type": "datetime",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "notification_id"
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "option",
-        "field": {
-            0: {
-                "name": "option_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "type",
-                "type": "varchar(32)",
-                "not_null": true
-            },
-            2: {
-                "name": "sort_order",
-                "type": "Number",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "option_id"
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "option_description",
-        "field": {
-            0: {
-                "name": "option_id",
-                "type": "Number",
-                "not_null": true
-            },
-            1: {
-                "name": "language_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "name",
-                "type": "varchar(128)",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "option_id",
-            1: "language_id"
-        },
-        "foreign": {
-            0: {
-                "key": "language_id",
-                "table": "language",
-                "field": "language_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "option_value",
-        "field": {
-            0: {
-                "name": "option_value_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "option_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "image",
-                "type": "varchar(255)",
-                "not_null": true
-            },
-            3: {
-                "name": "sort_order",
-                "type": "Number",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "option_value_id"
-        },
-        "foreign": {
-            0: {
-                "key": "option_id",
-                "table": "option",
-                "field": "option_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "option_value_description",
-        "field": {
-            0: {
-                "name": "option_value_id",
-                "type": "Number",
-                "not_null": true
-            },
-            1: {
-                "name": "language_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "option_id",
-                "type": "Number",
-                "not_null": true
-            },
-            3: {
-                "name": "name",
-                "type": "varchar(128)",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "option_value_id",
-            1: "language_id"
-        },
-        "foreign": {
-            0: {
-                "key": "language_id",
-                "table": "language",
-                "field": "language_id"
-            },
-            1: {
-                "key": "option_id",
-                "table": "option",
-                "field": "option_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "order",
-        "field": {
-            0: {
-                "name": "order_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "subscription_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "invoice_no",
-                "type": "Number",
-                "not_null": true,
-                "default": "0"
-            },
-            3: {
-                "name": "invoice_prefix",
-                "type": "varchar(26)",
-                "not_null": true
-            },
-            4: {
-                "name": "transaction_id",
-                "type": "varchar(100)",
-                "not_null": true
-            },
-            5: {
-                "name": "store_id",
-                "type": "Number",
-                "not_null": true,
-                "default": "0"
-            },
-            6: {
-                "name": "store_name",
-                "type": "varchar(64)",
-                "not_null": true
-            },
-            7: {
-                "name": "store_url",
-                "type": "varchar(255)",
-                "not_null": true
-            },
-            8: {
-                "name": "customer_id",
-                "type": "Number",
-                "not_null": true,
-                "default": "0"
-            },
-            9: {
-                "name": "customer_group_id",
-                "type": "Number",
-                "not_null": true,
-                "default": "0"
-            },
-            10: {
-                "name": "firstname",
-                "type": "varchar(32)",
-                "not_null": true
-            },
-            11: {
-                "name": "lastname",
-                "type": "varchar(32)",
-                "not_null": true
-            },
-            12: {
-                "name": "email",
-                "type": "varchar(96)",
-                "not_null": true
-            },
-            13: {
-                "name": "telephone",
-                "type": "varchar(32)",
-                "not_null": true
-            },
-            14: {
-                "name": "custom_field",
-                "type": "text",
-                "not_null": true
-            },
-            15: {
-                "name": "payment_address_id",
-                "type": "Number",
-                "not_null": true
-            },
-            16: {
-                "name": "payment_firstname",
-                "type": "varchar(32)",
-                "not_null": true
-            },
-            17: {
-                "name": "payment_lastname",
-                "type": "varchar(32)",
-                "not_null": true
-            },
-            18: {
-                "name": "payment_company",
-                "type": "varchar(60)",
-                "not_null": true
-            },
-            19: {
-                "name": "payment_address_1",
-                "type": "varchar(128)",
-                "not_null": true
-            },
-            20: {
-                "name": "payment_address_2",
-                "type": "varchar(128)",
-                "not_null": true
-            },
-            21: {
-                "name": "payment_city",
-                "type": "varchar(128)",
-                "not_null": true
-            },
-            22: {
-                "name": "payment_postcode",
-                "type": "varchar(10)",
-                "not_null": true
-            },
-            23: {
-                "name": "payment_country",
-                "type": "varchar(128)",
-                "not_null": true
-            },
-            24: {
-                "name": "payment_country_id",
-                "type": "Number",
-                "not_null": true
-            },
-            25: {
-                "name": "payment_zone",
-                "type": "varchar(128)",
-                "not_null": true
-            },
-            26: {
-                "name": "payment_zone_id",
-                "type": "Number",
-                "not_null": true
-            },
-            27: {
-                "name": "payment_address_format",
-                "type": "text",
-                "not_null": true
-            },
-            28: {
-                "name": "payment_custom_field",
-                "type": "text",
-                "not_null": true
-            },
-            29: {
-                "name": "payment_method",
-                "type": "text",
-                "not_null": true
-            },
-            30: {
-                "name": "shipping_address_id",
-                "type": "Number",
-                "not_null": true
-            },
-            31: {
-                "name": "shipping_firstname",
-                "type": "varchar(32)",
-                "not_null": true
-            },
-            32: {
-                "name": "shipping_lastname",
-                "type": "varchar(32)",
-                "not_null": true
-            },
-            33: {
-                "name": "shipping_company",
-                "type": "varchar(60)",
-                "not_null": true
-            },
-            34: {
-                "name": "shipping_address_1",
-                "type": "varchar(128)",
-                "not_null": true
-            },
-            35: {
-                "name": "shipping_address_2",
-                "type": "varchar(128)",
-                "not_null": true
-            },
-            36: {
-                "name": "shipping_city",
-                "type": "varchar(128)",
-                "not_null": true
-            },
-            37: {
-                "name": "shipping_postcode",
-                "type": "varchar(10)",
-                "not_null": true
-            },
-            38: {
-                "name": "shipping_country",
-                "type": "varchar(128)",
-                "not_null": true
-            },
-            39: {
-                "name": "shipping_country_id",
-                "type": "Number",
-                "not_null": true
-            },
-            40: {
-                "name": "shipping_zone",
-                "type": "varchar(128)",
-                "not_null": true
-            },
-            41: {
-                "name": "shipping_zone_id",
-                "type": "Number",
-                "not_null": true
-            },
-            42: {
-                "name": "shipping_address_format",
-                "type": "text",
-                "not_null": true
-            },
-            43: {
-                "name": "shipping_custom_field",
-                "type": "text",
-                "not_null": true
-            },
-            44: {
-                "name": "shipping_method",
-                "type": "text",
-                "not_null": true
-            },
-            45: {
-                "name": "comment",
-                "type": "text",
-                "not_null": true
-            },
-            46: {
-                "name": "total",
-                "type": "decimal(15,4)",
-                "not_null": true,
-                "default": "0.0000"
-            },
-            47: {
-                "name": "order_status_id",
-                "type": "Number",
-                "not_null": true,
-                "default": "0"
-            },
-            48: {
-                "name": "affiliate_id",
-                "type": "Number",
-                "not_null": true
-            },
-            49: {
-                "name": "commission",
-                "type": "decimal(15,4)",
-                "not_null": true
-            },
-            50: {
-                "name": "marketing_id",
-                "type": "Number",
-                "not_null": true
-            },
-            51: {
-                "name": "tracking",
-                "type": "varchar(64)",
-                "not_null": true
-            },
-            52: {
-                "name": "language_id",
-                "type": "Number",
-                "not_null": true
-            },
-            53: {
-                "name": "language_code",
-                "type": "varchar(5)",
-                "not_null": true
-            },
-            54: {
-                "name": "currency_id",
-                "type": "Number",
-                "not_null": true
-            },
-            55: {
-                "name": "currency_code",
-                "type": "varchar(3)",
-                "not_null": true
-            },
-            56: {
-                "name": "currency_value",
-                "type": "decimal(15,8)",
-                "not_null": true,
-                "default": "1.00000000"
-            },
-            57: {
-                "name": "ip",
-                "type": "varchar(40)",
-                "not_null": true
-            },
-            58: {
-                "name": "forwarded_ip",
-                "type": "varchar(40)",
-                "not_null": true
-            },
-            59: {
-                "name": "user_agent",
-                "type": "varchar(255)",
-                "not_null": true
-            },
-            60: {
-                "name": "accept_language",
-                "type": "varchar(255)",
-                "not_null": true
-            },
-            61: {
-                "name": "date_added",
-                "type": "datetime",
-                "not_null": true
-            },
-            62: {
-                "name": "date_modified",
-                "type": "datetime",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "order_id"
-        },
-        "foreign": {
-            0: {
-                "key": "store_id",
-                "table": "store",
-                "field": "store_id"
-            },
-            1: {
-                "key": "customer_id",
-                "table": "customer",
-                "field": "customer_id"
-            },
-            2: {
-                "key": "customer_group_id",
-                "table": "customer_group",
-                "field": "customer_group_id"
-            },
-            3: {
-                "key": "payment_country_id",
-                "table": "country",
-                "field": "country_id"
-            },
-            4: {
-                "key": "payment_zone_id",
-                "table": "zone",
-                "field": "zone_id"
-            },
-            5: {
-                "key": "shipping_country_id",
-                "table": "country",
-                "field": "country_id"
-            },
-            6: {
-                "key": "shipping_zone_id",
-                "table": "zone",
-                "field": "zone_id"
-            },
-            7: {
-                "key": "order_status_id",
-                "table": "order_status",
-                "field": "order_status_id"
-            },
-            8: {
-                "key": "affiliate_id",
-                "table": "customer_affiliate",
-                "field": "customer_id"
-            },
-            9: {
-                "key": "marketing_id",
-                "table": "marketing",
-                "field": "marketing_id"
-            },
-            10: {
-                "key": "language_id",
-                "table": "language",
-                "field": "language_id"
-            },
-            11: {
-                "key": "currency_id",
-                "table": "currency",
-                "field": "currency_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "order_history",
-        "field": {
-            0: {
-                "name": "order_history_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "order_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "order_status_id",
-                "type": "Number",
-                "not_null": true
-            },
-            3: {
-                "name": "notify",
-                "type": "tinyint(1)",
-                "not_null": true,
-                "default": "0"
-            },
-            4: {
-                "name": "comment",
-                "type": "text",
-                "not_null": true
-            },
-            5: {
-                "name": "date_added",
-                "type": "datetime",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "order_history_id"
-        },
-        "foreign": {
-            0: {
-                "key": "order_id",
-                "table": "order",
-                "field": "order_id"
-            },
-            1: {
-                "key": "order_status_id",
-                "table": "order_status",
-                "field": "order_status_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "order_option",
-        "field": {
-            0: {
-                "name": "order_option_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "order_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "order_product_id",
-                "type": "Number",
-                "not_null": true
-            },
-            3: {
-                "name": "product_option_id",
-                "type": "Number",
-                "not_null": true
-            },
-            4: {
-                "name": "product_option_value_id",
-                "type": "Number",
-                "not_null": true,
-                "default": "0"
-            },
-            5: {
-                "name": "name",
-                "type": "varchar(255)",
-                "not_null": true
-            },
-            6: {
-                "name": "value",
-                "type": "text",
-                "not_null": true
-            },
-            7: {
-                "name": "type",
-                "type": "varchar(32)",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "order_option_id"
-        },
-        "foreign": {
-            0: {
-                "key": "order_id",
-                "table": "order",
-                "field": "order_id"
-            },
-            1: {
-                "key": "order_product_id",
-                "table": "order_product",
-                "field": "order_product_id"
-            },
-            2: {
-                "key": "product_option_id",
-                "table": "product_option",
-                "field": "product_option_id"
-            },
-            3: {
-                "key": "product_option_value_id",
-                "table": "product_option_value",
-                "field": "product_option_value_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "order_product",
-        "field": {
-            0: {
-                "name": "order_product_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "order_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "product_id",
-                "type": "Number",
-                "not_null": true
-            },
-            3: {
-                "name": "master_id",
-                "type": "Number",
-                "not_null": true
-            },
-            4: {
-                "name": "name",
-                "type": "varchar(255)",
-                "not_null": true
-            },
-            5: {
-                "name": "model",
-                "type": "varchar(64)",
-                "not_null": true
-            },
-            6: {
-                "name": "quantity",
-                "type": "Number",
-                "not_null": true
-            },
-            7: {
-                "name": "price",
-                "type": "decimal(15,4)",
-                "not_null": true,
-                "default": "0.0000"
-            },
-            8: {
-                "name": "total",
-                "type": "decimal(15,4)",
-                "not_null": true,
-                "default": "0.0000"
-            },
-            9: {
-                "name": "tax",
-                "type": "decimal(15,4)",
-                "not_null": true,
-                "default": "0.0000"
-            },
-            10: {
-                "name": "reward",
-                "type": "Number",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "order_product_id"
-        },
-        "foreign": {
-            0: {
-                "key": "order_id",
-                "table": "order",
-                "field": "order_id"
-            },
-            1: {
-                "key": "product_id",
-                "table": "product",
-                "field": "product_id"
-            },
-            2: {
-                "key": "master_id",
-                "table": "product",
-                "field": "product_id"
-            }
-        },
-        "index": {
-            0: {
-                "name": "order_id",
-                "key": {
-                    0: "order_id"
+        {
+            "name": "attribute_group_description",
+            "field": [
+                {
+                    "name": "attribute_group_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "language_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "name",
+                    "type": "varchar(64)",
+                    "not_null": true
                 }
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "order_subscription",
-        "field": {
-            0: {
-                "name": "order_subscription_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "order_product_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "order_id",
-                "type": "Number",
-                "not_null": true
-            },
-            3: {
-                "name": "product_id",
-                "type": "Number",
-                "not_null": true
-            },
-            4: {
-                "name": "subscription_plan_id",
-                "type": "Number",
-                "not_null": true
-            },
-            5: {
-                "name": "trial_price",
-                "type": "decimal(10,4)",
-                "not_null": true
-            },
-            6: {
-                "name": "trial_tax",
-                "type": "decimal(15,4)",
-                "not_null": true
-            },
-            7: {
-                "name": "trial_frequency",
-                "type": "enum('day','week','semi_month','month','year')",
-                "not_null": true
-            },
-            8: {
-                "name": "trial_cycle",
-                "type": "smallint(6)",
-                "not_null": true
-            },
-            9: {
-                "name": "trial_duration",
-                "type": "smallint(6)",
-                "not_null": true
-            },
-            10: {
-                "name": "trial_remaining",
-                "type": "smallint(6)",
-                "not_null": true
-            },
-            11: {
-                "name": "trial_status",
-                "type": "tinyint(1)",
-                "not_null": true
-            },
-            12: {
-                "name": "price",
-                "type": "decimal(10,4)",
-                "not_null": true
-            },
-            13: {
-                "name": "tax",
-                "type": "decimal(15,4)",
-                "not_null": true
-            },
-            14: {
-                "name": "frequency",
-                "type": "enum('day','week','semi_month','month','year')",
-                "not_null": true
-            },
-            15: {
-                "name": "cycle",
-                "type": "smallint(6)",
-                "not_null": true
-            },
-            16: {
-                "name": "duration",
-                "type": "smallint(6)",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "order_subscription_id"
-        },
-        "foreign": {
-            0: {
-                "key": "order_id",
-                "table": "order",
-                "field": "order_id"
-            },
-            1: {
-                "key": "order_product_id",
-                "table": "order_product",
-                "field": "order_product_id"
-            },
-            2: {
-                "key": "subscription_plan_id",
-                "table": "subscription_plan",
-                "field": "subscription_plan_id"
-            },
-            3: {
-                "key": "subscription_status_id",
-                "table": "subscription_status",
-                "field": "subscription_status_id"
-            }
-        },
-        "index": {
-            0: {
-                "name": "order_id",
-                "key": {
-                    0: "order_id"
+            ],
+            "primary": [
+                "attribute_group_id",
+                "language_id"
+            ],
+            "foreign": [
+                {
+                    "key": "attribute_group_id",
+                    "table": "attribute_group",
+                    "field": "attribute_group_id"
+                },
+                {
+                    "key": "language_id",
+                    "table": "language",
+                    "field": "language_id"
                 }
-            }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
         },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "order_status",
-        "field": {
-            0: {
-                "name": "order_status_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "language_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "name",
-                "type": "varchar(32)",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "order_status_id",
-            1: "language_id"
-        },
-        "foreign": {
-            0: {
-                "key": "language_id",
-                "table": "language",
-                "field": "language_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "order_total",
-        "field": {
-            0: {
-                "name": "order_total_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "order_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "extension",
-                "type": "varchar(255)",
-                "not_null": true
-            },
-            3: {
-                "name": "code",
-                "type": "varchar(32)",
-                "not_null": true
-            },
-            4: {
-                "name": "title",
-                "type": "varchar(255)",
-                "not_null": true
-            },
-            5: {
-                "name": "value",
-                "type": "decimal(15,4)",
-                "not_null": true,
-                "default": "0.0000"
-            },
-            6: {
-                "name": "sort_order",
-                "type": "Number",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "order_total_id"
-        },
-        "foreign": {
-            0: {
-                "key": "order_id",
-                "table": "order",
-                "field": "order_id"
-            }
-        },
-        "index": {
-            0: {
-                "name": "order_id",
-                "key": {
-                    0: "order_id"
+        {
+            "name": "banner",
+            "field": [
+                {
+                    "name": "banner_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "name",
+                    "type": "varchar(64)",
+                    "not_null": true
+                },
+                {
+                    "name": "status",
+                    "type": "tinyint(1)",
+                    "not_null": true
                 }
-            }
+            ],
+            "primary": [
+                "banner_id"
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
         },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "order_voucher",
-        "field": {
-            0: {
-                "name": "order_voucher_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "order_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "voucher_id",
-                "type": "Number",
-                "not_null": true
-            },
-            3: {
-                "name": "description",
-                "type": "varchar(255)",
-                "not_null": true
-            },
-            4: {
-                "name": "code",
-                "type": "varchar(10)",
-                "not_null": true
-            },
-            5: {
-                "name": "from_name",
-                "type": "varchar(64)",
-                "not_null": true
-            },
-            6: {
-                "name": "from_email",
-                "type": "varchar(96)",
-                "not_null": true
-            },
-            7: {
-                "name": "to_name",
-                "type": "varchar(64)",
-                "not_null": true
-            },
-            8: {
-                "name": "to_email",
-                "type": "varchar(96)",
-                "not_null": true
-            },
-            9: {
-                "name": "voucher_theme_id",
-                "type": "Number",
-                "not_null": true
-            },
-            10: {
-                "name": "message",
-                "type": "text",
-                "not_null": true
-            },
-            11: {
-                "name": "amount",
-                "type": "decimal(15,4)",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "order_voucher_id"
-        },
-        "foreign": {
-            0: {
-                "key": "order_id",
-                "table": "order",
-                "field": "order_id"
-            },
-            1: {
-                "key": "voucher_id",
-                "table": "voucher",
-                "field": "voucher_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "product",
-        "field": {
-            0: {
-                "name": "product_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "master_id",
-                "type": "Number",
-                "not_null": true,
-                "default": "0"
-            },
-            2: {
-                "name": "model",
-                "type": "varchar(64)",
-                "not_null": true
-            },
-            3: {
-                "name": "sku",
-                "type": "varchar(64)",
-                "not_null": true
-            },
-            4: {
-                "name": "upc",
-                "type": "varchar(12)",
-                "not_null": true
-            },
-            5: {
-                "name": "ean",
-                "type": "varchar(14)",
-                "not_null": true
-            },
-            6: {
-                "name": "jan",
-                "type": "varchar(13)",
-                "not_null": true
-            },
-            7: {
-                "name": "isbn",
-                "type": "varchar(17)",
-                "not_null": true
-            },
-            8: {
-                "name": "mpn",
-                "type": "varchar(64)",
-                "not_null": true
-            },
-            9: {
-                "name": "location",
-                "type": "varchar(128)",
-                "not_null": true
-            },
-            10: {
-                "name": "variant",
-                "type": "text",
-                "not_null": true,
-                "default": ""
-            },
-            11: {
-                "name": "override",
-                "type": "text",
-                "not_null": true,
-                "default": ""
-            },
-            12: {
-                "name": "quantity",
-                "type": "Number",
-                "not_null": true,
-                "default": "0"
-            },
-            13: {
-                "name": "stock_status_id",
-                "type": "Number",
-                "not_null": true
-            },
-            14: {
-                "name": "image",
-                "type": "varchar(255)",
-                "not_null": true
-            },
-            15: {
-                "name": "manufacturer_id",
-                "type": "Number",
-                "not_null": true
-            },
-            16: {
-                "name": "shipping",
-                "type": "tinyint(1)",
-                "not_null": true,
-                "default": "1"
-            },
-            17: {
-                "name": "price",
-                "type": "decimal(15,4)",
-                "not_null": true,
-                "default": "0.0000"
-            },
-            18: {
-                "name": "points",
-                "type": "Number",
-                "not_null": true,
-                "default": "0"
-            },
-            19: {
-                "name": "tax_class_id",
-                "type": "Number",
-                "not_null": true
-            },
-            20: {
-                "name": "date_available",
-                "type": "date",
-                "not_null": true
-            },
-            21: {
-                "name": "weight",
-                "type": "decimal(15,8)",
-                "not_null": true,
-                "default": "0.00000000"
-            },
-            22: {
-                "name": "weight_class_id",
-                "type": "Number",
-                "not_null": true,
-                "default": "0"
-            },
-            23: {
-                "name": "length",
-                "type": "decimal(15,8)",
-                "not_null": true,
-                "default": "0.00000000"
-            },
-            24: {
-                "name": "width",
-                "type": "decimal(15,8)",
-                "not_null": true,
-                "default": "0.00000000"
-            },
-            25: {
-                "name": "height",
-                "type": "decimal(15,8)",
-                "not_null": true,
-                "default": "0.00000000"
-            },
-            26: {
-                "name": "length_class_id",
-                "type": "Number",
-                "not_null": true,
-                "default": "0"
-            },
-            27: {
-                "name": "subtract",
-                "type": "tinyint(1)",
-                "not_null": true,
-                "default": "1"
-            },
-            28: {
-                "name": "minimum",
-                "type": "Number",
-                "not_null": true,
-                "default": "1"
-            },
-            29: {
-                "name": "rating",
-                "type": "Number",
-                "not_null": true
-            },
-            30: {
-                "name": "sort_order",
-                "type": "Number",
-                "not_null": true,
-                "default": "0"
-            },
-            31: {
-                "name": "status",
-                "type": "tinyint(1)",
-                "not_null": true,
-                "default": "0"
-            },
-            32: {
-                "name": "date_added",
-                "type": "datetime",
-                "not_null": true
-            },
-            33: {
-                "name": "date_modified",
-                "type": "datetime",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "product_id"
-        },
-        "foreign": {
-            0: {
-                "key": "master_id",
-                "table": "product",
-                "field": "product_id"
-            },
-            1: {
-                "key": "stock_status_id",
-                "table": "stock_status",
-                "field": "stock_status_id"
-            },
-            2: {
-                "key": "manufacturer_id",
-                "table": "manufacturer",
-                "field": "manufacturer_id"
-            },
-            3: {
-                "key": "tax_class_id",
-                "table": "tax_class",
-                "field": "tax_class_id"
-            },
-            4: {
-                "key": "weight_class_id",
-                "table": "weight_class",
-                "field": "weight_class_id"
-            },
-            5: {
-                "key": "length_class_id",
-                "table": "length_class",
-                "field": "length_class_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "product_attribute",
-        "field": {
-            0: {
-                "name": "product_id",
-                "type": "Number",
-                "not_null": true
-            },
-            1: {
-                "name": "attribute_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "language_id",
-                "type": "Number",
-                "not_null": true
-            },
-            3: {
-                "name": "text",
-                "type": "text",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "product_id",
-            1: "attribute_id",
-            2: "language_id"
-        },
-        "foreign": {
-            0: {
-                "key": "product_id",
-                "table": "product",
-                "field": "product_id"
-            },
-            1: {
-                "key": "attribute_id",
-                "table": "attribute",
-                "field": "attribute_id"
-            },
-            2: {
-                "key": "language_id",
-                "table": "language",
-                "field": "language_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "product_description",
-        "field": {
-            0: {
-                "name": "product_id",
-                "type": "Number",
-                "not_null": true
-            },
-            1: {
-                "name": "language_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "name",
-                "type": "varchar(255)",
-                "not_null": true
-            },
-            3: {
-                "name": "description",
-                "type": "text",
-                "not_null": true
-            },
-            4: {
-                "name": "tag",
-                "type": "text",
-                "not_null": true
-            },
-            5: {
-                "name": "meta_title",
-                "type": "varchar(255)",
-                "not_null": true
-            },
-            6: {
-                "name": "meta_description",
-                "type": "varchar(255)",
-                "not_null": true
-            },
-            7: {
-                "name": "meta_keyword",
-                "type": "varchar(255)",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "product_id",
-            1: "language_id"
-        },
-        "foreign": {
-            0: {
-                "key": "product_id",
-                "table": "product",
-                "field": "product_id"
-            },
-            1: {
-                "key": "language_id",
-                "table": "language",
-                "field": "language_id"
-            }
-        },
-        "index": {
-            0: {
-                "name": "name",
-                "key": {
-                    0: "name"
+        {
+            "name": "banner_image",
+            "field": [
+                {
+                    "name": "banner_image_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "banner_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "language_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "title",
+                    "type": "varchar(64)",
+                    "not_null": true
+                },
+                {
+                    "name": "link",
+                    "type": "varchar(255)",
+                    "not_null": true
+                },
+                {
+                    "name": "image",
+                    "type": "varchar(255)",
+                    "not_null": true
+                },
+                {
+                    "name": "sort_order",
+                    "type": "int(3)",
+                    "not_null": true,
+                    "default": "0"
                 }
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "product_discount",
-        "field": {
-            0: {
-                "name": "product_discount_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "product_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "customer_group_id",
-                "type": "Number",
-                "not_null": true
-            },
-            3: {
-                "name": "quantity",
-                "type": "Number",
-                "not_null": true,
-                "default": "0"
-            },
-            4: {
-                "name": "priority",
-                "type": "Number",
-                "not_null": true,
-                "default": "1"
-            },
-            5: {
-                "name": "price",
-                "type": "decimal(15,4)",
-                "not_null": true,
-                "default": "0.0000"
-            },
-            6: {
-                "name": "date_start",
-                "type": "date",
-                "not_null": true
-            },
-            7: {
-                "name": "date_end",
-                "type": "date",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "product_discount_id"
-        },
-        "foreign": {
-            0: {
-                "key": "product_id",
-                "table": "product",
-                "field": "product_id"
-            },
-            1: {
-                "key": "customer_group_id",
-                "table": "customer_group",
-                "field": "customer_group_id"
-            }
-        },
-        "index": {
-            0: {
-                "name": "product_id",
-                "key": {
-                    0: "product_id"
+            ],
+            "primary": [
+                "banner_image_id"
+            ],
+            "foreign": [
+                {
+                    "key": "banner_id",
+                    "table": "banner",
+                    "field": "banner_id"
+                },
+                {
+                    "key": "language_id",
+                    "table": "language",
+                    "field": "language_id"
                 }
-            }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
         },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "product_filter",
-        "field": {
-            0: {
-                "name": "product_id",
-                "type": "Number",
-                "not_null": true
-            },
-            1: {
-                "name": "filter_id",
-                "type": "Number",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "product_id",
-            1: "filter_id"
-        },
-        "foreign": {
-            0: {
-                "key": "product_id",
-                "table": "product",
-                "field": "product_id"
-            },
-            1: {
-                "key": "filter_id",
-                "table": "filter",
-                "field": "filter_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "product_image",
-        "field": {
-            0: {
-                "name": "product_image_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "product_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "image",
-                "type": "varchar(255)",
-                "not_null": true
-            },
-            3: {
-                "name": "sort_order",
-                "type": "Number",
-                "not_null": true,
-                "default": "0"
-            }
-        },
-        "primary": {
-            0: "product_image_id"
-        },
-        "foreign": {
-            0: {
-                "key": "product_id",
-                "table": "product",
-                "field": "product_id"
-            }
-        },
-        "index": {
-            0: {
-                "name": "product_id",
-                "key": {
-                    0: "product_id"
+        {
+            "name": "antispam",
+            "field": [
+                {
+                    "name": "antispam_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "keyword",
+                    "type": "varchar(64)",
+                    "not_null": true
                 }
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "product_option",
-        "field": {
-            0: {
-                "name": "product_option_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "product_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "option_id",
-                "type": "Number",
-                "not_null": true
-            },
-            3: {
-                "name": "value",
-                "type": "text",
-                "not_null": true
-            },
-            4: {
-                "name": "required",
-                "type": "tinyint(1)",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "product_option_id"
-        },
-        "foreign": {
-            0: {
-                "key": "product_id",
-                "table": "product",
-                "field": "product_id"
-            },
-            1: {
-                "key": "option_id",
-                "table": "option",
-                "field": "option_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "product_option_value",
-        "field": {
-            0: {
-                "name": "product_option_value_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "product_option_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "product_id",
-                "type": "Number",
-                "not_null": true
-            },
-            3: {
-                "name": "option_id",
-                "type": "Number",
-                "not_null": true
-            },
-            4: {
-                "name": "option_value_id",
-                "type": "Number",
-                "not_null": true
-            },
-            5: {
-                "name": "quantity",
-                "type": "Number",
-                "not_null": true
-            },
-            6: {
-                "name": "subtract",
-                "type": "tinyint(1)",
-                "not_null": true
-            },
-            7: {
-                "name": "price",
-                "type": "decimal(15,4)",
-                "not_null": true
-            },
-            8: {
-                "name": "price_prefix",
-                "type": "varchar(1)",
-                "not_null": true
-            },
-            9: {
-                "name": "points",
-                "type": "Number",
-                "not_null": true
-            },
-            10: {
-                "name": "points_prefix",
-                "type": "varchar(1)",
-                "not_null": true
-            },
-            11: {
-                "name": "weight",
-                "type": "decimal(15,8)",
-                "not_null": true
-            },
-            12: {
-                "name": "weight_prefix",
-                "type": "varchar(1)",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "product_option_value_id"
-        },
-        "foreign": {
-            0: {
-                "key": "product_option_id",
-                "table": "product_option",
-                "field": "product_option_id"
-            },
-            1: {
-                "key": "product_id",
-                "table": "product",
-                "field": "product_id"
-            },
-            2: {
-                "key": "option_id",
-                "table": "option",
-                "field": "option_id"
-            },
-            3: {
-                "key": "option_value_id",
-                "table": "option_value",
-                "field": "option_value_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "product_subscription",
-        "field": {
-            0: {
-                "name": "product_id",
-                "type": "Number",
-                "not_null": true
-            },
-            1: {
-                "name": "subscription_plan_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "customer_group_id",
-                "type": "Number",
-                "not_null": true
-            },
-            3: {
-                "name": "trial_price",
-                "type": "decimal(10,4)",
-                "not_null": true
-            },
-            4: {
-                "name": "price",
-                "type": "decimal(10,4)",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "product_id",
-            1: "subscription_plan_id",
-            2: "customer_group_id"
-        },
-        "foreign": {
-            0: {
-                "key": "product_id",
-                "table": "product",
-                "field": "product_id"
-            },
-            1: {
-                "key": "subscription_plan_id",
-                "table": "subscription_plan",
-                "field": "subscription_plan_id"
-            },
-            2: {
-                "key": "customer_group_id",
-                "table": "customer_group",
-                "field": "customer_group_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "product_related",
-        "field": {
-            0: {
-                "name": "product_id",
-                "type": "Number",
-                "not_null": true
-            },
-            1: {
-                "name": "related_id",
-                "type": "Number",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "product_id",
-            1: "related_id"
-        },
-        "foreign": {
-            0: {
-                "key": "product_id",
-                "table": "product",
-                "field": "product_id"
-            },
-            1: {
-                "key": "related_id",
-                "table": "product",
-                "field": "product_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "product_report",
-        "field": {
-            0: {
-                "name": "product_report_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "product_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "store_id",
-                "type": "Number",
-                "not_null": true,
-                "default": 0
-            },
-            3: {
-                "name": "ip",
-                "type": "varchar(40)",
-                "not_null": true
-            },
-            4: {
-                "name": "country",
-                "type": "varchar(2)",
-                "not_null": true
-            },
-            5: {
-                "name": "date_added",
-                "type": "datetime",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "product_report_id"
-        },
-        "foreign": {
-            0: {
-                "key": "product_id",
-                "table": "product",
-                "field": "product_id"
-            },
-            1: {
-                "key": "store_id",
-                "table": "store",
-                "field": "store_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "product_reward",
-        "field": {
-            0: {
-                "name": "product_reward_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "product_id",
-                "type": "Number",
-                "not_null": true,
-                "default": 0
-            },
-            2: {
-                "name": "customer_group_id",
-                "type": "Number",
-                "not_null": true,
-                "default": "0"
-            },
-            3: {
-                "name": "points",
-                "type": "Number",
-                "not_null": true,
-                "default": "0"
-            }
-        },
-        "primary": {
-            0: "product_reward_id"
-        },
-        "foreign": {
-            0: {
-                "key": "product_id",
-                "table": "product",
-                "field": "product_id"
-            },
-            1: {
-                "key": "customer_group_id",
-                "table": "customer_group",
-                "field": "customer_group_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "product_special",
-        "field": {
-            0: {
-                "name": "product_special_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "product_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "customer_group_id",
-                "type": "Number",
-                "not_null": true
-            },
-            3: {
-                "name": "priority",
-                "type": "Number",
-                "not_null": true,
-                "default": "1"
-            },
-            4: {
-                "name": "price",
-                "type": "decimal(15,4)",
-                "not_null": true,
-                "default": "0.0000"
-            },
-            5: {
-                "name": "date_start",
-                "type": "date",
-                "not_null": true
-            },
-            6: {
-                "name": "date_end",
-                "type": "date",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "product_special_id"
-        },
-        "foreign": {
-            0: {
-                "key": "product_id",
-                "table": "product",
-                "field": "product_id"
-            },
-            1: {
-                "key": "customer_group_id",
-                "table": "customer_group",
-                "field": "customer_group_id"
-            }
-        },
-        "index": {
-            0: {
-                "name": "product_id",
-                "key": {
-                    0: "product_id"
+            ],
+            "primary": [
+                "antispam_id"
+            ],
+            "index": [
+                {
+                    "name": "keyword",
+                    "key": [
+                        "keyword"
+                    ]
                 }
-            }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
         },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "product_to_category",
-        "field": {
-            0: {
-                "name": "product_id",
-                "type": "Number",
-                "not_null": true
-            },
-            1: {
-                "name": "category_id",
-                "type": "Number",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "product_id",
-            1: "category_id"
-        },
-        "foreign": {
-            0: {
-                "key": "product_id",
-                "table": "product",
-                "field": "product_id"
-            },
-            1: {
-                "key": "category_id",
-                "table": "category",
-                "field": "category_id"
-            }
-        },
-        "index": {
-            0: {
-                "name": "category_id",
-                "key": {
-                    0: "category_id"
+        {
+            "name": "article",
+            "field": [
+                {
+                    "name": "article_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "topic_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "author",
+                    "type": "varchar(64)",
+                    "not_null": true
+                },
+                {
+                    "name": "status",
+                    "type": "tinyint(1)",
+                    "not_null": true
+                },
+                {
+                    "name": "date_added",
+                    "type": "datetime",
+                    "not_null": true
+                },
+                {
+                    "name": "date_modified",
+                    "type": "datetime",
+                    "not_null": true
                 }
-            }
+            ],
+            "primary": [
+                "article_id"
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
         },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "product_to_download",
-        "field": {
-            0: {
-                "name": "product_id",
-                "type": "Number",
-                "not_null": true
-            },
-            1: {
-                "name": "download_id",
-                "type": "Number",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "product_id",
-            1: "download_id"
-        },
-        "foreign": {
-            0: {
-                "key": "product_id",
-                "table": "product",
-                "field": "product_id"
-            },
-            1: {
-                "key": "download_id",
-                "table": "download",
-                "field": "download_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "product_to_layout",
-        "field": {
-            0: {
-                "name": "product_id",
-                "type": "Number",
-                "not_null": true
-            },
-            1: {
-                "name": "store_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "layout_id",
-                "type": "Number",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "product_id",
-            1: "store_id"
-        },
-        "foreign": {
-            0: {
-                "key": "product_id",
-                "table": "product",
-                "field": "product_id"
-            },
-            1: {
-                "key": "store_id",
-                "table": "store",
-                "field": "store_id"
-            },
-            2: {
-                "key": "layout_id",
-                "table": "layout",
-                "field": "layout_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "product_to_store",
-        "field": {
-            0: {
-                "name": "product_id",
-                "type": "Number",
-                "not_null": true
-            },
-            1: {
-                "name": "store_id",
-                "type": "Number",
-                "not_null": true,
-                "default": "0"
-            }
-        },
-        "primary": {
-            0: "product_id",
-            1: "store_id"
-        },
-        "foreign": {
-            0: {
-                "key": "product_id",
-                "table": "product",
-                "field": "product_id"
-            },
-            1: {
-                "key": "store_id",
-                "table": "store",
-                "field": "store_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "product_viewed",
-        "field": {
-            0: {
-                "name": "product_id",
-                "type": "Number",
-                "not_null": true
-            },
-            1: {
-                "name": "viewed",
-                "type": "Number",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "product_id"
-        },
-        "foreign": {
-            0: {
-                "key": "product_id",
-                "table": "product",
-                "field": "product_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "return",
-        "field": {
-            0: {
-                "name": "return_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "order_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "product_id",
-                "type": "Number",
-                "not_null": true
-            },
-            3: {
-                "name": "customer_id",
-                "type": "Number",
-                "not_null": true
-            },
-            4: {
-                "name": "firstname",
-                "type": "varchar(32)",
-                "not_null": true
-            },
-            5: {
-                "name": "lastname",
-                "type": "varchar(32)",
-                "not_null": true
-            },
-            6: {
-                "name": "email",
-                "type": "varchar(96)",
-                "not_null": true
-            },
-            7: {
-                "name": "telephone",
-                "type": "varchar(32)",
-                "not_null": true
-            },
-            8: {
-                "name": "product",
-                "type": "varchar(255)",
-                "not_null": true
-            },
-            9: {
-                "name": "model",
-                "type": "varchar(64)",
-                "not_null": true
-            },
-            10: {
-                "name": "quantity",
-                "type": "Number",
-                "not_null": true
-            },
-            11: {
-                "name": "opened",
-                "type": "tinyint(1)",
-                "not_null": true
-            },
-            12: {
-                "name": "return_reason_id",
-                "type": "Number",
-                "not_null": true
-            },
-            13: {
-                "name": "return_action_id",
-                "type": "Number",
-                "not_null": true
-            },
-            14: {
-                "name": "return_status_id",
-                "type": "Number",
-                "not_null": true
-            },
-            15: {
-                "name": "comment",
-                "type": "text",
-                "not_null": true
-            },
-            16: {
-                "name": "date_ordered",
-                "type": "date",
-                "not_null": true
-            },
-            17: {
-                "name": "date_added",
-                "type": "datetime",
-                "not_null": true
-            },
-            18: {
-                "name": "date_modified",
-                "type": "datetime",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "return_id"
-        },
-        "foreign": {
-            0: {
-                "key": "order_id",
-                "table": "order",
-                "field": "order_id"
-            },
-            1: {
-                "key": "product_id",
-                "table": "product",
-                "field": "product_id"
-            },
-            2: {
-                "key": "customer_id",
-                "table": "customer",
-                "field": "customer_id"
-            },
-            3: {
-                "key": "return_reason_id",
-                "table": "return_reason",
-                "field": "return_reason_id"
-            },
-            4: {
-                "key": "return_action_id",
-                "table": "return_action",
-                "field": "return_action_id"
-            },
-            5: {
-                "key": "return_status_id",
-                "table": "return_status",
-                "field": "return_status_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "return_action",
-        "field": {
-            0: {
-                "name": "return_action_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "language_id",
-                "type": "Number",
-                "not_null": true,
-                "default": "0"
-            },
-            2: {
-                "name": "name",
-                "type": "varchar(64)",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "return_action_id",
-            1: "language_id"
-        },
-        "foreign": {
-            0: {
-                "key": "language_id",
-                "table": "language",
-                "field": "language_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "return_history",
-        "field": {
-            0: {
-                "name": "return_history_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "return_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "return_status_id",
-                "type": "Number",
-                "not_null": true
-            },
-            3: {
-                "name": "notify",
-                "type": "tinyint(1)",
-                "not_null": true
-            },
-            4: {
-                "name": "comment",
-                "type": "text",
-                "not_null": true
-            },
-            5: {
-                "name": "date_added",
-                "type": "datetime",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "return_history_id"
-        },
-        "foreign": {
-            0: {
-                "key": "return_id",
-                "table": "return",
-                "field": "return_id"
-            },
-            1: {
-                "key": "return_status_id",
-                "table": "return_status",
-                "field": "return_status_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "return_reason",
-        "field": {
-            0: {
-                "name": "return_reason_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "language_id",
-                "type": "Number",
-                "not_null": true,
-                "default": "0"
-            },
-            2: {
-                "name": "name",
-                "type": "varchar(128)",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "return_reason_id",
-            1: "language_id"
-        },
-        "foreign": {
-            0: {
-                "key": "language_id",
-                "table": "language",
-                "field": "language_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "return_status",
-        "field": {
-            0: {
-                "name": "return_status_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "language_id",
-                "type": "Number",
-                "not_null": true,
-                "default": "0"
-            },
-            2: {
-                "name": "name",
-                "type": "varchar(32)",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "return_status_id",
-            1: "language_id"
-        },
-        "foreign": {
-            0: {
-                "key": "language_id",
-                "table": "language",
-                "field": "language_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "review",
-        "field": {
-            0: {
-                "name": "review_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "product_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "customer_id",
-                "type": "Number",
-                "not_null": true
-            },
-            3: {
-                "name": "author",
-                "type": "varchar(64)",
-                "not_null": true
-            },
-            4: {
-                "name": "text",
-                "type": "text",
-                "not_null": true
-            },
-            5: {
-                "name": "rating",
-                "type": "Number",
-                "not_null": true
-            },
-            6: {
-                "name": "status",
-                "type": "tinyint(1)",
-                "not_null": true,
-                "default": "0"
-            },
-            7: {
-                "name": "date_added",
-                "type": "datetime",
-                "not_null": true
-            },
-            8: {
-                "name": "date_modified",
-                "type": "datetime",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "review_id"
-        },
-        "foreign": {
-            0: {
-                "key": "product_id",
-                "table": "product",
-                "field": "product_id"
-            },
-            1: {
-                "key": "customer_id",
-                "table": "customer",
-                "field": "customer_id"
-            }
-        },
-        "index": {
-            0: {
-                "name": "product_id",
-                "key": {
-                    0: "product_id"
+        {
+            "name": "article_comment",
+            "field": [
+                {
+                    "name": "article_comment_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "article_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "customer_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "comment",
+                    "type": "text",
+                    "not_null": true
+                },
+                {
+                    "name": "status",
+                    "type": "varchar(255)",
+                    "not_null": true
+                },
+                {
+                    "name": "date_added",
+                    "type": "datetime",
+                    "not_null": true
                 }
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "startup",
-        "field": {
-            0: {
-                "name": "startup_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "code",
-                "type": "varchar(64)",
-                "not_null": true
-            },
-            2: {
-                "name": "action",
-                "type": "text",
-                "not_null": true
-            },
-            3: {
-                "name": "status",
-                "type": "tinyint(1)",
-                "not_null": true
-            },
-            4: {
-                "name": "sort_order",
-                "type": "Number",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "startup_id"
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "statistics",
-        "field": {
-            0: {
-                "name": "statistics_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "code",
-                "type": "varchar(64)",
-                "not_null": true
-            },
-            2: {
-                "name": "value",
-                "type": "decimal(15,4)",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "statistics_id"
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "session",
-        "field": {
-            0: {
-                "name": "session_id",
-                "type": "varchar(32)",
-                "not_null": true
-            },
-            1: {
-                "name": "data",
-                "type": "text",
-                "not_null": true
-            },
-            2: {
-                "name": "expire",
-                "type": "datetime",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "session_id"
-        },
-        "index": {
-            0: {
-                "name": "expire",
-                "key": {
-                    0: "expire"
+            ],
+            "primary": [
+                "article_comment_id"
+            ],
+            "foreign": [
+                {
+                    "key": "article_id",
+                    "table": "article",
+                    "field": "article_id"
+                },
+                {
+                    "key": "customer_id",
+                    "table": "customer",
+                    "field": "customer_id"
                 }
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "setting",
-        "field": {
-            0: {
-                "name": "setting_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "store_id",
-                "type": "Number",
-                "not_null": true,
-                "default": "0"
-            },
-            2: {
-                "name": "code",
-                "type": "varchar(128)",
-                "not_null": true
-            },
-            3: {
-                "name": "key",
-                "type": "varchar(128)",
-                "not_null": true
-            },
-            4: {
-                "name": "value",
-                "type": "text",
-                "not_null": true
-            },
-            5: {
-                "name": "serialized",
-                "type": "tinyint(1)",
-                "not_null": true,
-                "default": 0
-            }
-        },
-        "primary": {
-            0: "setting_id"
-        },
-        "foreign": {
-            0: {
-                "key": "store_id",
-                "table": "store",
-                "field": "store_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "stock_status",
-        "field": {
-            0: {
-                "name": "stock_status_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "language_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "name",
-                "type": "varchar(32)",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "stock_status_id",
-            1: "language_id"
-        },
-        "foreign": {
-            0: {
-                "key": "language_id",
-                "table": "language",
-                "field": "language_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "store",
-        "field": {
-            0: {
-                "name": "store_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "name",
-                "type": "varchar(64)",
-                "not_null": true
-            },
-            2: {
-                "name": "url",
-                "type": "varchar(255)",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "store_id"
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "subscription",
-        "field": {
-            0: {
-                "name": "subscription_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "order_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "order_product_id",
-                "type": "Number",
-                "not_null": true
-            },
-            3: {
-                "name": "store_id",
-                "type": "Number",
-                "not_null": true
-            },
-            4: {
-                "name": "customer_id",
-                "type": "Number",
-                "not_null": true
-            },
-            5: {
-                "name": "payment_address_id",
-                "type": "Number",
-                "not_null": true
-            },
-            6: {
-                "name": "payment_method",
-                "type": "text",
-                "not_null": true
-            },
-            7: {
-                "name": "shipping_address_id",
-                "type": "Number",
-                "not_null": true
-            },
-            8: {
-                "name": "shipping_method",
-                "type": "text",
-                "not_null": true
-            },
-            9: {
-                "name": "product_id",
-                "type": "Number",
-                "not_null": true
-            },
-            10: {
-                "name": "quantity",
-                "type": "Number",
-                "not_null": true
-            },
-            11: {
-                "name": "subscription_plan_id",
-                "type": "Number",
-                "not_null": true
-            },
-            12: {
-                "name": "trial_price",
-                "type": "decimal(10,4)",
-                "not_null": true
-            },
-            13: {
-                "name": "trial_frequency",
-                "type": "enum('day','week','semi_month','month','year')",
-                "not_null": true
-            },
-            14: {
-                "name": "trial_cycle",
-                "type": "smallint(6)",
-                "not_null": true
-            },
-            15: {
-                "name": "trial_duration",
-                "type": "smallint(6)",
-                "not_null": true
-            },
-            16: {
-                "name": "trial_remaining",
-                "type": "smallint(6)",
-                "not_null": true
-            },
-            17: {
-                "name": "trial_status",
-                "type": "tinyint(1)",
-                "not_null": true
-            },
-            18: {
-                "name": "price",
-                "type": "decimal(10,4)",
-                "not_null": true
-            },
-            19: {
-                "name": "frequency",
-                "type": "enum('day','week','semi_month','month','year')",
-                "not_null": true
-            },
-            20: {
-                "name": "cycle",
-                "type": "smallint(6)",
-                "not_null": true
-            },
-            21: {
-                "name": "duration",
-                "type": "smallint(6)",
-                "not_null": true
-            },
-            22: {
-                "name": "remaining",
-                "type": "smallint(6)",
-                "not_null": true
-            },
-            23: {
-                "name": "date_next",
-                "type": "datetime",
-                "not_null": true
-            },
-            24: {
-                "name": "comment",
-                "type": "text",
-                "not_null": true
-            },
-            25: {
-                "name": "subscription_status_id",
-                "type": "Number",
-                "not_null": true
-            },
-            26: {
-                "name": "affiliate_id",
-                "type": "Number",
-                "not_null": true
-            },
-            27: {
-                "name": "marketing_id",
-                "type": "Number",
-                "not_null": true
-            },
-            28: {
-                "name": "tracking",
-                "type": "varchar(64)",
-                "not_null": true
-            },
-            29: {
-                "name": "language_id",
-                "type": "Number",
-                "not_null": true
-            },
-            30: {
-                "name": "currency_id",
-                "type": "Number",
-                "not_null": true
-            },
-            31: {
-                "name": "ip",
-                "type": "varchar(40)",
-                "not_null": true
-            },
-            32: {
-                "name": "forwarded_ip",
-                "type": "varchar(40)",
-                "not_null": true
-            },
-            33: {
-                "name": "user_agent",
-                "type": "varchar(255)",
-                "not_null": true
-            },
-            34: {
-                "name": "accept_language",
-                "type": "varchar(255)",
-                "not_null": true
-            },
-            35: {
-                "name": "date_added",
-                "type": "datetime",
-                "not_null": true
-            },
-            36: {
-                "name": "date_modified",
-                "type": "datetime",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "subscription_id"
-        },
-        "foreign": {
-            0: {
-                "key": "customer_id",
-                "table": "customer",
-                "field": "customer_id"
-            },
-            1: {
-                "key": "order_id",
-                "table": "order",
-                "field": "order_id"
-            },
-            2: {
-                "key": "order_product_id",
-                "table": "order_product",
-                "field": "order_product_id"
-            },
-            3: {
-                "key": "subscription_plan_id",
-                "table": "subscription_plan",
-                "field": "subscription_plan_id"
-            },
-            4: {
-                "key": "subscription_status_id",
-                "table": "subscription_status",
-                "field": "subscription_status_id"
-            }
-        },
-        "index": {
-            0: {
-                "name": "order_id",
-                "key": {
-                    0: "order_id"
+            ],
+            "index": [
+                {
+                    "name": "article_id",
+                    "key": [
+                        "article_id"
+                    ]
                 }
-            }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
         },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "subscription_history",
-        "field": {
-            0: {
-                "name": "subscription_history_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "subscription_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "subscription_status_id",
-                "type": "Number",
-                "not_null": true
-            },
-            3: {
-                "name": "notify",
-                "type": "tinyint(1)",
-                "not_null": true,
-                "default": "0"
-            },
-            4: {
-                "name": "comment",
-                "type": "text",
-                "not_null": true
-            },
-            5: {
-                "name": "date_added",
-                "type": "datetime",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "subscription_history_id"
-        },
-        "foreign": {
-            0: {
-                "key": "subscription_id",
-                "table": "subscription",
-                "field": "subscription_id"
-            },
-            1: {
-                "key": "subscription_status_id",
-                "table": "subscription_status",
-                "field": "subscription_status_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "subscription_plan",
-        "field": {
-            0: {
-                "name": "subscription_plan_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "trial_frequency",
-                "type": "enum('day','week','semi_month','month','year')",
-                "not_null": true
-            },
-            2: {
-                "name": "trial_duration",
-                "type": "Number",
-                "not_null": true
-            },
-            3: {
-                "name": "trial_cycle",
-                "type": "Number",
-                "not_null": true
-            },
-            4: {
-                "name": "trial_status",
-                "type": "tinyint(4)",
-                "not_null": true
-            },
-            5: {
-                "name": "frequency",
-                "type": "enum('day','week','semi_month','month','year')",
-                "not_null": true
-            },
-            6: {
-                "name": "duration",
-                "type": "Number",
-                "not_null": true
-            },
-            7: {
-                "name": "cycle",
-                "type": "Number",
-                "not_null": true
-            },
-            8: {
-                "name": "status",
-                "type": "tinyint(1)",
-                "not_null": true
-            },
-            9: {
-                "name": "sort_order",
-                "type": "Number",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "subscription_plan_id"
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "subscription_plan_description",
-        "field": {
-            0: {
-                "name": "subscription_plan_id",
-                "type": "Number",
-                "not_null": true
-            },
-            1: {
-                "name": "language_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "name",
-                "type": "varchar(255)",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "subscription_plan_id",
-            1: "language_id"
-        },
-        "foreign": {
-            0: {
-                "key": "language_id",
-                "table": "language",
-                "field": "language_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "subscription_status",
-        "field": {
-            0: {
-                "name": "subscription_status_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "language_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "name",
-                "type": "varchar(32)",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "subscription_status_id",
-            1: "language_id"
-        },
-        "foreign": {
-            0: {
-                "key": "language_id",
-                "table": "language",
-                "field": "language_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "tax_class",
-        "field": {
-            0: {
-                "name": "tax_class_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "title",
-                "type": "varchar(32)",
-                "not_null": true
-            },
-            2: {
-                "name": "description",
-                "type": "varchar(255)",
-                "not_null": true
-            },
-            3: {
-                "name": "date_added",
-                "type": "datetime",
-                "not_null": true
-            },
-            4: {
-                "name": "date_modified",
-                "type": "datetime",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "tax_class_id"
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "tax_rate",
-        "field": {
-            0: {
-                "name": "tax_rate_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "geo_zone_id",
-                "type": "Number",
-                "not_null": true,
-                "default": "0"
-            },
-            2: {
-                "name": "name",
-                "type": "varchar(32)",
-                "not_null": true
-            },
-            3: {
-                "name": "rate",
-                "type": "decimal(15,4)",
-                "not_null": true,
-                "default": "0.0000"
-            },
-            4: {
-                "name": "type",
-                "type": "char(1)",
-                "not_null": true
-            },
-            5: {
-                "name": "date_added",
-                "type": "datetime",
-                "not_null": true
-            },
-            6: {
-                "name": "date_modified",
-                "type": "datetime",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "tax_rate_id"
-        },
-        "foreign": {
-            0: {
-                "key": "geo_zone_id",
-                "table": "geo_zone",
-                "field": "geo_zone_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "tax_rate_to_customer_group",
-        "field": {
-            0: {
-                "name": "tax_rate_id",
-                "type": "Number",
-                "not_null": true
-            },
-            1: {
-                "name": "customer_group_id",
-                "type": "Number",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "tax_rate_id",
-            1: "customer_group_id"
-        },
-        "foreign": {
-            0: {
-                "key": "tax_rate_id",
-                "table": "tax_rate",
-                "field": "tax_rate_id"
-            },
-            1: {
-                "key": "customer_group_id",
-                "table": "customer_group",
-                "field": "customer_group_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "tax_rule",
-        "field": {
-            0: {
-                "name": "tax_rule_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "tax_class_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "tax_rate_id",
-                "type": "Number",
-                "not_null": true
-            },
-            3: {
-                "name": "based",
-                "type": "varchar(10)",
-                "not_null": true
-            },
-            4: {
-                "name": "priority",
-                "type": "Number",
-                "not_null": true,
-                "default": "1"
-            }
-        },
-        "primary": {
-            0: "tax_rule_id"
-        },
-        "foreign": {
-            0: {
-                "key": "tax_class_id",
-                "table": "tax_class",
-                "field": "tax_class_id"
-            },
-            1: {
-                "key": "tax_rate_id",
-                "table": "tax_rate",
-                "field": "tax_rate_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "theme",
-        "field": {
-            0: {
-                "name": "theme_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "store_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "route",
-                "type": "varchar(64)",
-                "not_null": true
-            },
-            3: {
-                "name": "code",
-                "type": "mediumtext",
-                "not_null": true
-            },
-            4: {
-                "name": "date_added",
-                "type": "datetime",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "theme_id"
-        },
-        "foreign": {
-            0: {
-                "key": "store_id",
-                "table": "store",
-                "field": "store_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "translation",
-        "field": {
-            0: {
-                "name": "translation_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "store_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "language_id",
-                "type": "Number",
-                "not_null": true
-            },
-            3: {
-                "name": "route",
-                "type": "varchar(64)",
-                "not_null": true
-            },
-            4: {
-                "name": "key",
-                "type": "varchar(64)",
-                "not_null": true
-            },
-            5: {
-                "name": "value",
-                "type": "text",
-                "not_null": true
-            },
-            6: {
-                "name": "date_added",
-                "type": "datetime",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "translation_id"
-        },
-        "foreign": {
-            0: {
-                "key": "store_id",
-                "table": "store",
-                "field": "store_id"
-            },
-            1: {
-                "key": "language_id",
-                "table": "language",
-                "field": "language_id"
-            }
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "upload",
-        "field": {
-            0: {
-                "name": "upload_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "name",
-                "type": "varchar(255)",
-                "not_null": true
-            },
-            2: {
-                "name": "filename",
-                "type": "varchar(255)",
-                "not_null": true
-            },
-            3: {
-                "name": "code",
-                "type": "varchar(255)",
-                "not_null": true
-            },
-            4: {
-                "name": "date_added",
-                "type": "datetime",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "upload_id"
-        },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "seo_url",
-        "field": {
-            0: {
-                "name": "seo_url_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "store_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "language_id",
-                "type": "Number",
-                "not_null": true
-            },
-            3: {
-                "name": "key",
-                "type": "varchar(64)",
-                "not_null": true
-            },
-            4: {
-                "name": "value",
-                "type": "varchar(255)",
-                "not_null": true
-            },
-            5: {
-                "name": "keyword",
-                "type": "varchar(768)",
-                "not_null": true
-            },
-            6: {
-                "name": "sort_order",
-                "type": "Number",
-                "not_null": true
-            }
-        },
-        "primary": {
-            0: "seo_url_id"
-        },
-        "foreign": {
-            0: {
-                "key": "store_id",
-                "table": "store",
-                "field": "store_id"
-            },
-            1: {
-                "key": "language_id",
-                "table": "language",
-                "field": "language_id"
-            }
-        },
-        "index": {
-            0: {
-                "name": "keyword",
-                "key": {
-                    0: "keyword"
+        {
+            "name": "article_description",
+            "field": [
+                {
+                    "name": "article_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "language_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "image",
+                    "type": "varchar(255)",
+                    "not_null": true
+                },
+                {
+                    "name": "name",
+                    "type": "varchar(255)",
+                    "not_null": true
+                },
+                {
+                    "name": "description",
+                    "type": "text",
+                    "not_null": true
+                },
+                {
+                    "name": "tag",
+                    "type": "text",
+                    "not_null": true
+                },
+                {
+                    "name": "meta_title",
+                    "type": "varchar(255)",
+                    "not_null": true
+                },
+                {
+                    "name": "meta_description",
+                    "type": "varchar(255)",
+                    "not_null": true
+                },
+                {
+                    "name": "meta_keyword",
+                    "type": "varchar(255)",
+                    "not_null": true
                 }
-            },
-            1: {
-                "name": "query",
-                "key": {
-                    0: "key",
-                    1: "value"
+            ],
+            "primary": [
+                "article_id",
+                "language_id"
+            ],
+            "foreign": [
+                {
+                    "key": "language_id",
+                    "table": "language",
+                    "field": "language_id"
                 }
-            }
+            ],
+            "index": [
+                {
+                    "name": "name",
+                    "key": [
+                        "name"
+                    ]
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
         },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "user",
-        "field": {
-            0: {
-                "name": "user_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "user_group_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "username",
-                "type": "varchar(20)",
-                "not_null": true
-            },
-            3: {
-                "name": "password",
-                "type": "varchar(255)",
-                "not_null": true
-            },
-            4: {
-                "name": "firstname",
-                "type": "varchar(32)",
-                "not_null": true
-            },
-            5: {
-                "name": "lastname",
-                "type": "varchar(32)",
-                "not_null": true
-            },
-            6: {
-                "name": "email",
-                "type": "varchar(96)",
-                "not_null": true
-            },
-            7: {
-                "name": "image",
-                "type": "varchar(255)",
-                "not_null": true,
-                "default": ""
-            },
-            8: {
-                "name": "code",
-                "type": "varchar(40)",
-                "not_null": true,
-                "default": ""
-            },
-            9: {
-                "name": "ip",
-                "type": "varchar(40)",
-                "not_null": true,
-                "default": ""
-            },
-            10: {
-                "name": "status",
-                "type": "tinyint(1)",
-                "not_null": true
-            },
-            11: {
-                "name": "date_added",
-                "type": "datetime",
-                "not_null": true
-            }
+        {
+            "name": "article_to_layout",
+            "field": [
+                {
+                    "name": "article_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "store_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "layout_id",
+                    "type": "int(11)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "article_id",
+                "store_id"
+            ],
+            "foreign": [
+                {
+                    "key": "article_id",
+                    "table": "article",
+                    "field": "article_id"
+                },
+                {
+                    "key": "store_id",
+                    "table": "store",
+                    "field": "store_id"
+                },
+                {
+                    "key": "layout_id",
+                    "table": "layout",
+                    "field": "layout_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
         },
-        "primary": {
-            0: "user_id"
+        {
+            "name": "article_to_store",
+            "field": [
+                {
+                    "name": "article_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "store_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "default": "0"
+                }
+            ],
+            "primary": [
+                "article_id",
+                "store_id"
+            ],
+            "foreign": [
+                {
+                    "key": "article_id",
+                    "table": "article",
+                    "field": "article_id"
+                },
+                {
+                    "key": "store_id",
+                    "table": "store",
+                    "field": "store_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
         },
-        "foreign": {
-            0: {
-                "key": "user_group_id",
-                "table": "user_group",
-                "field": "user_group_id"
-            }
+        {
+            "name": "topic",
+            "field": [
+                {
+                    "name": "topic_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "sort_order",
+                    "type": "int(3)",
+                    "not_null": true,
+                    "default": "0"
+                },
+                {
+                    "name": "status",
+                    "type": "tinyint(1)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "topic_id"
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
         },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "user_authorize",
-        "field": {
-            0: {
-                "name": "user_authorize_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "user_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "token",
-                "type": "varchar(96)",
-                "not_null": true
-            },
-            3: {
-                "name": "total",
-                "type": "Number",
-                "not_null": true
-            },
-            4: {
-                "name": "ip",
-                "type": "varchar(40)",
-                "not_null": true
-            },
-            5: {
-                "name": "user_agent",
-                "type": "varchar(255)",
-                "not_null": true
-            },
-            6: {
-                "name": "status",
-                "type": "tinyint(1)",
-                "not_null": true
-            },
-            7: {
-                "name": "date_added",
-                "type": "datetime",
-                "not_null": true
-            }
+        {
+            "name": "topic_description",
+            "field": [
+                {
+                    "name": "topic_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "language_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "image",
+                    "type": "varchar(255)",
+                    "not_null": true
+                },
+                {
+                    "name": "name",
+                    "type": "varchar(255)",
+                    "not_null": true
+                },
+                {
+                    "name": "description",
+                    "type": "text",
+                    "not_null": true
+                },
+                {
+                    "name": "meta_title",
+                    "type": "varchar(255)",
+                    "not_null": true
+                },
+                {
+                    "name": "meta_description",
+                    "type": "varchar(255)",
+                    "not_null": true
+                },
+                {
+                    "name": "meta_keyword",
+                    "type": "varchar(255)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "topic_id",
+                "language_id"
+            ],
+            "foreign": [
+                {
+                    "key": "language_id",
+                    "table": "language",
+                    "field": "language_id"
+                }
+            ],
+            "index": [
+                {
+                    "name": "name",
+                    "key": [
+                        "name"
+                    ]
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
         },
-        "primary": {
-            0: "user_authorize_id"
+        {
+            "name": "topic_to_store",
+            "field": [
+                {
+                    "name": "topic_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "store_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "default": "0"
+                }
+            ],
+            "primary": [
+                "topic_id",
+                "store_id"
+            ],
+            "foreign": [
+                {
+                    "key": "topic_id",
+                    "table": "topic",
+                    "field": "topic_id"
+                },
+                {
+                    "key": "store_id",
+                    "table": "store",
+                    "field": "store_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
         },
-        "foreign": {
-            0: {
-                "key": "user_id",
-                "table": "user",
-                "field": "user_id"
-            }
+        {
+            "name": "cart",
+            "field": [
+                {
+                    "name": "cart_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "api_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "customer_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "session_id",
+                    "type": "varchar(32)",
+                    "not_null": true
+                },
+                {
+                    "name": "product_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "subscription_plan_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "option",
+                    "type": "text",
+                    "not_null": true
+                },
+                {
+                    "name": "quantity",
+                    "type": "int(5)",
+                    "not_null": true
+                },
+                {
+                    "name": "override",
+                    "type": "tinyint(1)",
+                    "not_null": true
+                },
+                {
+                    "name": "price",
+                    "type": "decimal(15,4)",
+                    "not_null": true
+                },
+                {
+                    "name": "date_added",
+                    "type": "datetime",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "cart_id"
+            ],
+            "foreign": [
+                {
+                    "key": "api_id",
+                    "table": "api",
+                    "field": "api_id"
+                },
+                {
+                    "key": "customer_id",
+                    "table": "customer",
+                    "field": "customer_id"
+                },
+                {
+                    "key": "session_id",
+                    "table": "session",
+                    "field": "session_id"
+                },
+                {
+                    "key": "product_id",
+                    "table": "product",
+                    "field": "product_id"
+                },
+                {
+                    "key": "subscription_plan_id",
+                    "table": "subscription_plan",
+                    "field": "subscription_plan_id"
+                }
+            ],
+            "index": [
+                {
+                    "name": "cart_id",
+                    "key": [
+                        "api_id",
+                        "customer_id",
+                        "session_id",
+                        "product_id",
+                        "subscription_plan_id"
+                    ]
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
         },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "user_group",
-        "field": {
-            0: {
-                "name": "user_group_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "name",
-                "type": "varchar(64)",
-                "not_null": true
-            },
-            2: {
-                "name": "permission",
-                "type": "text",
-                "not_null": true
-            }
+        {
+            "name": "category",
+            "field": [
+                {
+                    "name": "category_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "image",
+                    "type": "varchar(255)",
+                    "not_null": true
+                },
+                {
+                    "name": "parent_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "default": "0"
+                },
+                {
+                    "name": "top",
+                    "type": "tinyint(1)",
+                    "not_null": true
+                },
+                {
+                    "name": "column",
+                    "type": "int(3)",
+                    "not_null": true
+                },
+                {
+                    "name": "sort_order",
+                    "type": "int(3)",
+                    "not_null": true,
+                    "default": "0"
+                },
+                {
+                    "name": "status",
+                    "type": "tinyint(1)",
+                    "not_null": true
+                },
+                {
+                    "name": "date_added",
+                    "type": "datetime",
+                    "not_null": true
+                },
+                {
+                    "name": "date_modified",
+                    "type": "datetime",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "category_id"
+            ],
+            "index": [
+                {
+                    "name": "parent_id",
+                    "key": [
+                        "parent_id"
+                    ]
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
         },
-        "primary": {
-            0: "user_group_id"
+        {
+            "name": "category_description",
+            "field": [
+                {
+                    "name": "category_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "language_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "name",
+                    "type": "varchar(255)",
+                    "not_null": true
+                },
+                {
+                    "name": "description",
+                    "type": "text",
+                    "not_null": true
+                },
+                {
+                    "name": "meta_title",
+                    "type": "varchar(255)",
+                    "not_null": true
+                },
+                {
+                    "name": "meta_description",
+                    "type": "varchar(255)",
+                    "not_null": true
+                },
+                {
+                    "name": "meta_keyword",
+                    "type": "varchar(255)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "category_id",
+                "language_id"
+            ],
+            "foreign": [
+                {
+                    "key": "language_id",
+                    "table": "language",
+                    "field": "language_id"
+                }
+            ],
+            "index": [
+                {
+                    "name": "name",
+                    "key": [
+                        "name"
+                    ]
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
         },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "user_login",
-        "field": {
-            0: {
-                "name": "user_login_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "user_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "ip",
-                "type": "varchar(40)",
-                "not_null": true
-            },
-            3: {
-                "name": "user_agent",
-                "type": "varchar(255)",
-                "not_null": true
-            },
-            4: {
-                "name": "date_added",
-                "type": "datetime",
-                "not_null": true
-            }
+        {
+            "name": "category_filter",
+            "field": [
+                {
+                    "name": "category_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "filter_id",
+                    "type": "int(11)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "category_id",
+                "filter_id"
+            ],
+            "foreign": [
+                {
+                    "key": "category_id",
+                    "table": "category",
+                    "field": "category_id"
+                },
+                {
+                    "key": "filter_id",
+                    "table": "filter",
+                    "field": "filter_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
         },
-        "primary": {
-            0: "user_login_id"
+        {
+            "name": "category_path",
+            "field": [
+                {
+                    "name": "category_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "path_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "level",
+                    "type": "int(11)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "category_id",
+                "path_id"
+            ],
+            "foreign": [
+                {
+                    "key": "category_id",
+                    "table": "category",
+                    "field": "category_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
         },
-        "foreign": {
-            0: {
-                "key": "user_id",
-                "table": "user",
-                "field": "user_id"
-            }
+        {
+            "name": "category_to_layout",
+            "field": [
+                {
+                    "name": "category_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "store_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "layout_id",
+                    "type": "int(11)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "category_id",
+                "store_id"
+            ],
+            "foreign": [
+                {
+                    "key": "category_id",
+                    "table": "category",
+                    "field": "category_id"
+                },
+                {
+                    "key": "store_id",
+                    "table": "store",
+                    "field": "store_id"
+                },
+                {
+                    "key": "layout_id",
+                    "table": "layout",
+                    "field": "layout_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
         },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "voucher",
-        "field": {
-            0: {
-                "name": "voucher_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "order_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "code",
-                "type": "varchar(10)",
-                "not_null": true
-            },
-            3: {
-                "name": "from_name",
-                "type": "varchar(64)",
-                "not_null": true
-            },
-            4: {
-                "name": "from_email",
-                "type": "varchar(96)",
-                "not_null": true
-            },
-            5: {
-                "name": "to_name",
-                "type": "varchar(64)",
-                "not_null": true
-            },
-            6: {
-                "name": "to_email",
-                "type": "varchar(96)",
-                "not_null": true
-            },
-            7: {
-                "name": "voucher_theme_id",
-                "type": "Number",
-                "not_null": true
-            },
-            8: {
-                "name": "message",
-                "type": "text",
-                "not_null": true
-            },
-            9: {
-                "name": "amount",
-                "type": "decimal(15,4)",
-                "not_null": true
-            },
-            10: {
-                "name": "status",
-                "type": "tinyint(1)",
-                "not_null": true
-            },
-            11: {
-                "name": "date_added",
-                "type": "datetime",
-                "not_null": true
-            }
+        {
+            "name": "category_to_store",
+            "field": [
+                {
+                    "name": "category_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "store_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "default": "0"
+                }
+            ],
+            "primary": [
+                "category_id",
+                "store_id"
+            ],
+            "foreign": [
+                {
+                    "key": "category_id",
+                    "table": "category",
+                    "field": "category_id"
+                },
+                {
+                    "key": "store_id",
+                    "table": "store",
+                    "field": "store_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
         },
-        "primary": {
-            0: "voucher_id"
+        {
+            "name": "country",
+            "field": [
+                {
+                    "name": "country_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "name",
+                    "type": "varchar(128)",
+                    "not_null": true
+                },
+                {
+                    "name": "iso_code_2",
+                    "type": "varchar(2)",
+                    "not_null": true
+                },
+                {
+                    "name": "iso_code_3",
+                    "type": "varchar(3)",
+                    "not_null": true
+                },
+                {
+                    "name": "address_format_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "postcode_required",
+                    "type": "tinyint(1)",
+                    "not_null": true
+                },
+                {
+                    "name": "status",
+                    "type": "tinyint(1)",
+                    "not_null": true,
+                    "default": "1"
+                }
+            ],
+            "primary": [
+                "country_id"
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
         },
-        "foreign": {
-            0: {
-                "key": "order_id",
-                "table": "order",
-                "field": "order_id"
-            }
+        {
+            "name": "coupon",
+            "field": [
+                {
+                    "name": "coupon_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "name",
+                    "type": "varchar(128)",
+                    "not_null": true
+                },
+                {
+                    "name": "code",
+                    "type": "varchar(20)",
+                    "not_null": true
+                },
+                {
+                    "name": "type",
+                    "type": "char(1)",
+                    "not_null": true
+                },
+                {
+                    "name": "discount",
+                    "type": "decimal(15,4)",
+                    "not_null": true
+                },
+                {
+                    "name": "logged",
+                    "type": "tinyint(1)",
+                    "not_null": true
+                },
+                {
+                    "name": "shipping",
+                    "type": "tinyint(1)",
+                    "not_null": true
+                },
+                {
+                    "name": "total",
+                    "type": "decimal(15,4)",
+                    "not_null": true
+                },
+                {
+                    "name": "date_start",
+                    "type": "date",
+                    "not_null": true
+                },
+                {
+                    "name": "date_end",
+                    "type": "date",
+                    "not_null": true
+                },
+                {
+                    "name": "uses_total",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "uses_customer",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "status",
+                    "type": "tinyint(1)",
+                    "not_null": true
+                },
+                {
+                    "name": "date_added",
+                    "type": "datetime",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "coupon_id"
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
         },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "voucher_history",
-        "field": {
-            0: {
-                "name": "voucher_history_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "voucher_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "order_id",
-                "type": "Number",
-                "not_null": true
-            },
-            3: {
-                "name": "amount",
-                "type": "decimal(15,4)",
-                "not_null": true
-            },
-            4: {
-                "name": "date_added",
-                "type": "datetime",
-                "not_null": true
-            }
+        {
+            "name": "coupon_category",
+            "field": [
+                {
+                    "name": "coupon_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "category_id",
+                    "type": "int(11)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "coupon_id",
+                "category_id"
+            ],
+            "foreign": [
+                {
+                    "key": "coupon_id",
+                    "table": "coupon",
+                    "field": "coupon_id"
+                },
+                {
+                    "key": "category_id",
+                    "table": "category",
+                    "field": "category_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
         },
-        "primary": {
-            0: "voucher_history_id"
+        {
+            "name": "coupon_history",
+            "field": [
+                {
+                    "name": "coupon_history_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "coupon_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "order_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "customer_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "amount",
+                    "type": "decimal(15,4)",
+                    "not_null": true
+                },
+                {
+                    "name": "date_added",
+                    "type": "datetime",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "coupon_history_id"
+            ],
+            "foreign": [
+                {
+                    "key": "coupon_id",
+                    "table": "coupon",
+                    "field": "coupon_id"
+                },
+                {
+                    "key": "order_id",
+                    "table": "order",
+                    "field": "order_id"
+                },
+                {
+                    "key": "customer_id",
+                    "table": "customer",
+                    "field": "customer_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
         },
-        "foreign": {
-            0: {
-                "key": "voucher_id",
-                "table": "voucher",
-                "field": "voucher_id"
-            },
-            1: {
-                "key": "order_id",
-                "table": "order",
-                "field": "order_id"
-            }
+        {
+            "name": "coupon_product",
+            "field": [
+                {
+                    "name": "coupon_product_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "coupon_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "product_id",
+                    "type": "int(11)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "coupon_product_id"
+            ],
+            "foreign": [
+                {
+                    "key": "coupon_id",
+                    "table": "coupon",
+                    "field": "coupon_id"
+                },
+                {
+                    "key": "product_id",
+                    "table": "product",
+                    "field": "product_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
         },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "voucher_theme",
-        "field": {
-            0: {
-                "name": "voucher_theme_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "image",
-                "type": "varchar(255)",
-                "not_null": true
-            }
+        {
+            "name": "cron",
+            "field": [
+                {
+                    "name": "cron_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "code",
+                    "type": "varchar(128)",
+                    "not_null": true
+                },
+                {
+                    "name": "description",
+                    "type": "text",
+                    "not_null": true
+                },
+                {
+                    "name": "cycle",
+                    "type": "varchar(12)",
+                    "not_null": true
+                },
+                {
+                    "name": "action",
+                    "type": "text",
+                    "not_null": true
+                },
+                {
+                    "name": "status",
+                    "type": "tinyint(1)",
+                    "not_null": true
+                },
+                {
+                    "name": "date_added",
+                    "type": "datetime",
+                    "not_null": true
+                },
+                {
+                    "name": "date_modified",
+                    "type": "datetime",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "cron_id"
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
         },
-        "primary": {
-            0: "voucher_theme_id"
+        {
+            "name": "currency",
+            "field": [
+                {
+                    "name": "currency_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "title",
+                    "type": "varchar(32)",
+                    "not_null": true
+                },
+                {
+                    "name": "code",
+                    "type": "varchar(3)",
+                    "not_null": true
+                },
+                {
+                    "name": "symbol_left",
+                    "type": "varchar(12)",
+                    "not_null": true
+                },
+                {
+                    "name": "symbol_right",
+                    "type": "varchar(12)",
+                    "not_null": true
+                },
+                {
+                    "name": "decimal_place",
+                    "type": "int(1)",
+                    "not_null": true
+                },
+                {
+                    "name": "value",
+                    "type": "double(15,8)",
+                    "not_null": true
+                },
+                {
+                    "name": "status",
+                    "type": "tinyint(1)",
+                    "not_null": true
+                },
+                {
+                    "name": "date_modified",
+                    "type": "datetime",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "currency_id"
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
         },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "voucher_theme_description",
-        "field": {
-            0: {
-                "name": "voucher_theme_id",
-                "type": "Number",
-                "not_null": true
-            },
-            1: {
-                "name": "language_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "name",
-                "type": "varchar(32)",
-                "not_null": true
-            }
+        {
+            "name": "customer",
+            "field": [
+                {
+                    "name": "customer_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "customer_group_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "store_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "default": "0"
+                },
+                {
+                    "name": "language_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "firstname",
+                    "type": "varchar(32)",
+                    "not_null": true
+                },
+                {
+                    "name": "lastname",
+                    "type": "varchar(32)",
+                    "not_null": true
+                },
+                {
+                    "name": "email",
+                    "type": "varchar(96)",
+                    "not_null": true
+                },
+                {
+                    "name": "telephone",
+                    "type": "varchar(32)",
+                    "not_null": true
+                },
+                {
+                    "name": "password",
+                    "type": "varchar(255)",
+                    "not_null": true
+                },
+                {
+                    "name": "custom_field",
+                    "type": "text",
+                    "not_null": true
+                },
+                {
+                    "name": "newsletter",
+                    "type": "tinyint(1)",
+                    "not_null": true,
+                    "default": "0"
+                },
+                {
+                    "name": "ip",
+                    "type": "varchar(40)",
+                    "not_null": true
+                },
+                {
+                    "name": "status",
+                    "type": "tinyint(1)",
+                    "not_null": true
+                },
+                {
+                    "name": "safe",
+                    "type": "tinyint(1)",
+                    "not_null": true
+                },
+                {
+                    "name": "token",
+                    "type": "text",
+                    "not_null": true
+                },
+                {
+                    "name": "code",
+                    "type": "varchar(40)",
+                    "not_null": true
+                },
+                {
+                    "name": "date_added",
+                    "type": "datetime",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "customer_id"
+            ],
+            "foreign": [
+                {
+                    "key": "customer_group_id",
+                    "table": "customer_group",
+                    "field": "customer_group_id"
+                },
+                {
+                    "key": "store_id",
+                    "table": "store",
+                    "field": "store_id"
+                },
+                {
+                    "key": "language_id",
+                    "table": "language",
+                    "field": "language_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
         },
-        "primary": {
-            0: "voucher_theme_id",
-            1: "language_id"
+        {
+            "name": "customer_activity",
+            "field": [
+                {
+                    "name": "customer_activity_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "customer_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "key",
+                    "type": "varchar(64)",
+                    "not_null": true
+                },
+                {
+                    "name": "data",
+                    "type": "text",
+                    "not_null": true
+                },
+                {
+                    "name": "ip",
+                    "type": "varchar(40)",
+                    "not_null": true
+                },
+                {
+                    "name": "date_added",
+                    "type": "datetime",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "customer_activity_id"
+            ],
+            "foreign": [
+                {
+                    "key": "customer_id",
+                    "table": "customer",
+                    "field": "customer_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
         },
-        "foreign": {
-            0: {
-                "key": "language_id",
-                "table": "language",
-                "field": "language_id"
-            }
+        {
+            "name": "customer_affiliate",
+            "field": [
+                {
+                    "name": "customer_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "company",
+                    "type": "varchar(60)",
+                    "not_null": true
+                },
+                {
+                    "name": "website",
+                    "type": "varchar(255)",
+                    "not_null": true
+                },
+                {
+                    "name": "tracking",
+                    "type": "varchar(64)",
+                    "not_null": true
+                },
+                {
+                    "name": "balance",
+                    "type": "decimal(15,4)",
+                    "not_null": true
+                },
+                {
+                    "name": "commission",
+                    "type": "decimal(4,2)",
+                    "not_null": true,
+                    "default": "0.00"
+                },
+                {
+                    "name": "tax",
+                    "type": "varchar(64)",
+                    "not_null": true
+                },
+                {
+                    "name": "payment_method",
+                    "type": "varchar(6)",
+                    "not_null": true
+                },
+                {
+                    "name": "cheque",
+                    "type": "varchar(100)",
+                    "not_null": true
+                },
+                {
+                    "name": "paypal",
+                    "type": "varchar(64)",
+                    "not_null": true
+                },
+                {
+                    "name": "bank_name",
+                    "type": "varchar(64)",
+                    "not_null": true
+                },
+                {
+                    "name": "bank_branch_number",
+                    "type": "varchar(64)",
+                    "not_null": true
+                },
+                {
+                    "name": "bank_swift_code",
+                    "type": "varchar(64)",
+                    "not_null": true
+                },
+                {
+                    "name": "bank_account_name",
+                    "type": "varchar(64)",
+                    "not_null": true
+                },
+                {
+                    "name": "bank_account_number",
+                    "type": "varchar(64)",
+                    "not_null": true
+                },
+                {
+                    "name": "custom_field",
+                    "type": "text",
+                    "not_null": true
+                },
+                {
+                    "name": "status",
+                    "type": "tinyint(1)",
+                    "not_null": true
+                },
+                {
+                    "name": "date_added",
+                    "type": "datetime",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "customer_id"
+            ],
+            "foreign": [
+                {
+                    "key": "customer_id",
+                    "table": "customer",
+                    "field": "customer_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
         },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "weight_class",
-        "field": {
-            0: {
-                "name": "weight_class_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "value",
-                "type": "decimal(15,8)",
-                "not_null": true,
-                "default": "0.00000000"
-            }
+        {
+            "name": "customer_affiliate_report",
+            "field": [
+                {
+                    "name": "customer_affiliate_report_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "customer_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "store_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "ip",
+                    "type": "varchar(40)",
+                    "not_null": true
+                },
+                {
+                    "name": "country",
+                    "type": "varchar(2)",
+                    "not_null": true
+                },
+                {
+                    "name": "date_added",
+                    "type": "datetime",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "customer_affiliate_report_id"
+            ],
+            "foreign": [
+                {
+                    "key": "customer_id",
+                    "table": "customer",
+                    "field": "customer_id"
+                },
+                {
+                    "key": "store_id",
+                    "table": "store",
+                    "field": "store_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
         },
-        "primary": {
-            0: "weight_class_id"
+        {
+            "name": "customer_approval",
+            "field": [
+                {
+                    "name": "customer_approval_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "customer_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "type",
+                    "type": "varchar(9)",
+                    "not_null": true
+                },
+                {
+                    "name": "date_added",
+                    "type": "datetime",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "customer_approval_id"
+            ],
+            "foreign": [
+                {
+                    "key": "customer_id",
+                    "table": "customer",
+                    "field": "customer_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
         },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "weight_class_description",
-        "field": {
-            0: {
-                "name": "weight_class_id",
-                "type": "Number",
-                "not_null": true
-            },
-            1: {
-                "name": "language_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "title",
-                "type": "varchar(32)",
-                "not_null": true
-            },
-            3: {
-                "name": "unit",
-                "type": "varchar(4)",
-                "not_null": true
-            }
+        {
+            "name": "customer_group",
+            "field": [
+                {
+                    "name": "customer_group_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "approval",
+                    "type": "int(1)",
+                    "not_null": true
+                },
+                {
+                    "name": "sort_order",
+                    "type": "int(3)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "customer_group_id"
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
         },
-        "primary": {
-            0: "weight_class_id",
-            1: "language_id"
+        {
+            "name": "customer_group_description",
+            "field": [
+                {
+                    "name": "customer_group_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "language_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "name",
+                    "type": "varchar(32)",
+                    "not_null": true
+                },
+                {
+                    "name": "description",
+                    "type": "text",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "customer_group_id",
+                "language_id"
+            ],
+            "foreign": [
+                {
+                    "key": "customer_group_id",
+                    "table": "customer_group",
+                    "field": "customer_group_id"
+                },
+                {
+                    "key": "language_id",
+                    "table": "language",
+                    "field": "language_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
         },
-        "foreign": {
-            0: {
-                "key": "language_id",
-                "table": "language",
-                "field": "language_id"
-            }
+        {
+            "name": "customer_history",
+            "field": [
+                {
+                    "name": "customer_history_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "customer_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "comment",
+                    "type": "text",
+                    "not_null": true
+                },
+                {
+                    "name": "date_added",
+                    "type": "datetime",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "customer_history_id"
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
         },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "zone",
-        "field": {
-            0: {
-                "name": "zone_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "country_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "name",
-                "type": "varchar(128)",
-                "not_null": true
-            },
-            3: {
-                "name": "code",
-                "type": "varchar(32)",
-                "not_null": true
-            },
-            4: {
-                "name": "status",
-                "type": "tinyint(1)",
-                "not_null": true,
-                "default": "1"
-            }
+        {
+            "name": "customer_login",
+            "field": [
+                {
+                    "name": "customer_login_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "email",
+                    "type": "varchar(96)",
+                    "not_null": true
+                },
+                {
+                    "name": "ip",
+                    "type": "varchar(40)",
+                    "not_null": true
+                },
+                {
+                    "name": "total",
+                    "type": "int(4)",
+                    "not_null": true
+                },
+                {
+                    "name": "date_added",
+                    "type": "datetime",
+                    "not_null": true
+                },
+                {
+                    "name": "date_modified",
+                    "type": "datetime",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "customer_login_id"
+            ],
+            "index": [
+                {
+                    "name": "email",
+                    "key": [
+                        "email"
+                    ]
+                },
+                {
+                    "name": "ip",
+                    "key": [
+                        "ip"
+                    ]
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
         },
-        "primary": {
-            0: "zone_id"
+        {
+            "name": "customer_ip",
+            "field": [
+                {
+                    "name": "customer_ip_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "customer_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "store_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "ip",
+                    "type": "varchar(40)",
+                    "not_null": true
+                },
+                {
+                    "name": "country",
+                    "type": "varchar(2)",
+                    "not_null": true
+                },
+                {
+                    "name": "date_added",
+                    "type": "datetime",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "customer_ip_id"
+            ],
+            "foreign": [
+                {
+                    "key": "customer_id",
+                    "table": "customer",
+                    "field": "customer_id"
+                },
+                {
+                    "key": "store_id",
+                    "table": "store",
+                    "field": "store_id"
+                }
+            ],
+            "index": [
+                {
+                    "name": "ip",
+                    "key": [
+                        "ip"
+                    ]
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
         },
-        "foreign": {
-            0: {
-                "key": "country_id",
-                "table": "country",
-                "field": "country_id"
-            }
+        {
+            "name": "customer_online",
+            "field": [
+                {
+                    "name": "ip",
+                    "type": "varchar(40)",
+                    "not_null": true
+                },
+                {
+                    "name": "customer_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "url",
+                    "type": "text",
+                    "not_null": true
+                },
+                {
+                    "name": "referer",
+                    "type": "text",
+                    "not_null": true
+                },
+                {
+                    "name": "date_added",
+                    "type": "datetime",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "ip"
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
         },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    schemas.push( {
-        "name": "zone_to_geo_zone",
-        "field": {
-            0: {
-                "name": "zone_to_geo_zone_id",
-                "type": "Number",
-                "not_null": true,
-                "auto_increment": true
-            },
-            1: {
-                "name": "country_id",
-                "type": "Number",
-                "not_null": true
-            },
-            2: {
-                "name": "zone_id",
-                "type": "Number",
-                "not_null": true,
-                "default": "0"
-            },
-            3: {
-                "name": "geo_zone_id",
-                "type": "Number",
-                "not_null": true
-            },
-            4: {
-                "name": "date_added",
-                "type": "datetime",
-                "not_null": true
-            },
-            5: {
-                "name": "date_modified",
-                "type": "datetime",
-                "not_null": true
-            }
+        {
+            "name": "customer_reward",
+            "field": [
+                {
+                    "name": "customer_reward_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "customer_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "default": "0"
+                },
+                {
+                    "name": "order_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "default": "0"
+                },
+                {
+                    "name": "description",
+                    "type": "text",
+                    "not_null": true
+                },
+                {
+                    "name": "points",
+                    "type": "int(8)",
+                    "not_null": true,
+                    "default": "0"
+                },
+                {
+                    "name": "date_added",
+                    "type": "datetime",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "customer_reward_id"
+            ],
+            "foreign": [
+                {
+                    "key": "customer_id",
+                    "table": "customer",
+                    "field": "customer_id"
+                },
+                {
+                    "key": "order_id",
+                    "table": "order",
+                    "field": "order_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
         },
-        "primary": {
-            0: "zone_to_geo_zone_id"
+        {
+            "name": "customer_transaction",
+            "field": [
+                {
+                    "name": "customer_transaction_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "customer_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "order_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "description",
+                    "type": "text",
+                    "not_null": true
+                },
+                {
+                    "name": "amount",
+                    "type": "decimal(15,4)",
+                    "not_null": true
+                },
+                {
+                    "name": "date_added",
+                    "type": "datetime",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "customer_transaction_id"
+            ],
+            "foreign": [
+                {
+                    "key": "customer_id",
+                    "table": "customer",
+                    "field": "customer_id"
+                },
+                {
+                    "key": "order_id",
+                    "table": "order",
+                    "field": "order_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
         },
-        "foreign": {
-            0: {
-                "key": "country_id",
-                "table": "country",
-                "field": "country_id"
-            },
-            1: {
-                "key": "zone_id",
-                "table": "zone",
-                "field": "zone_id"
-            },
-            2: {
-                "key": "geo_zone_id",
-                "table": "geo_zone",
-                "field": "geo_zone_id"
-            }
+        {
+            "name": "customer_search",
+            "field": [
+                {
+                    "name": "customer_search_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "store_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "language_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "customer_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "keyword",
+                    "type": "varchar(255)",
+                    "not_null": true
+                },
+                {
+                    "name": "category_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "sub_category",
+                    "type": "tinyint(1)",
+                    "not_null": true
+                },
+                {
+                    "name": "description",
+                    "type": "tinyint(1)",
+                    "not_null": true
+                },
+                {
+                    "name": "products",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "ip",
+                    "type": "varchar(40)",
+                    "not_null": true
+                },
+                {
+                    "name": "date_added",
+                    "type": "datetime",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "customer_search_id"
+            ],
+            "foreign": [
+                {
+                    "key": "store_id",
+                    "table": "store",
+                    "field": "store_id"
+                },
+                {
+                    "key": "language_id",
+                    "table": "language",
+                    "field": "language_id"
+                },
+                {
+                    "key": "customer_id",
+                    "table": "customer",
+                    "field": "customer_id"
+                },
+                {
+                    "key": "category_id",
+                    "table": "category",
+                    "field": "category_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
         },
-        "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci"
-    });
-    return tables;
+        {
+            "name": "customer_wishlist",
+            "field": [
+                {
+                    "name": "customer_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "product_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "date_added",
+                    "type": "datetime",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "customer_id",
+                "product_id"
+            ],
+            "foreign": [
+                {
+                    "key": "customer_id",
+                    "table": "customer",
+                    "field": "customer_id"
+                },
+                {
+                    "key": "product_id",
+                    "table": "product",
+                    "field": "product_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "custom_field",
+            "field": [
+                {
+                    "name": "custom_field_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "type",
+                    "type": "varchar(32)",
+                    "not_null": true
+                },
+                {
+                    "name": "value",
+                    "type": "text",
+                    "not_null": true
+                },
+                {
+                    "name": "validation",
+                    "type": "varchar(255)",
+                    "not_null": true
+                },
+                {
+                    "name": "location",
+                    "type": "varchar(10)",
+                    "not_null": true
+                },
+                {
+                    "name": "status",
+                    "type": "tinyint(1)",
+                    "not_null": true
+                },
+                {
+                    "name": "sort_order",
+                    "type": "int(3)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "custom_field_id"
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "custom_field_customer_group",
+            "field": [
+                {
+                    "name": "custom_field_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "customer_group_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "required",
+                    "type": "tinyint(1)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "custom_field_id",
+                "customer_group_id"
+            ],
+            "foreign": [
+                {
+                    "key": "custom_field_id",
+                    "table": "custom_field",
+                    "field": "custom_field_id"
+                },
+                {
+                    "key": "customer_group_id",
+                    "table": "customer_group",
+                    "field": "customer_group_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "custom_field_description",
+            "field": [
+                {
+                    "name": "custom_field_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "language_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "name",
+                    "type": "varchar(128)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "custom_field_id",
+                "language_id"
+            ],
+            "foreign": [
+                {
+                    "key": "custom_field_id",
+                    "table": "custom_field",
+                    "field": "custom_field_id"
+                },
+                {
+                    "key": "language_id",
+                    "table": "language",
+                    "field": "language_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "custom_field_value",
+            "field": [
+                {
+                    "name": "custom_field_value_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "custom_field_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "sort_order",
+                    "type": "int(3)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "custom_field_value_id"
+            ],
+            "foreign": [
+                {
+                    "key": "custom_field_id",
+                    "table": "custom_field",
+                    "field": "custom_field_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "custom_field_value_description",
+            "field": [
+                {
+                    "name": "custom_field_value_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "language_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "custom_field_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "name",
+                    "type": "varchar(128)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "custom_field_value_id",
+                "language_id"
+            ],
+            "foreign": [
+                {
+                    "key": "language_id",
+                    "table": "language",
+                    "field": "language_id"
+                },
+                {
+                    "key": "custom_field_id",
+                    "table": "custom_field",
+                    "field": "custom_field_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "download",
+            "field": [
+                {
+                    "name": "download_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "filename",
+                    "type": "varchar(160)",
+                    "not_null": true
+                },
+                {
+                    "name": "mask",
+                    "type": "varchar(128)",
+                    "not_null": true
+                },
+                {
+                    "name": "date_added",
+                    "type": "datetime",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "download_id"
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "download_description",
+            "field": [
+                {
+                    "name": "download_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "language_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "name",
+                    "type": "varchar(64)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "download_id",
+                "language_id"
+            ],
+            "foreign": [
+                {
+                    "key": "language_id",
+                    "table": "language",
+                    "field": "language_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "download_report",
+            "field": [
+                {
+                    "name": "download_report_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "download_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "store_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "ip",
+                    "type": "varchar(40)",
+                    "not_null": true
+                },
+                {
+                    "name": "country",
+                    "type": "varchar(2)",
+                    "not_null": true
+                },
+                {
+                    "name": "date_added",
+                    "type": "datetime",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "download_report_id"
+            ],
+            "foreign": [
+                {
+                    "key": "download_id",
+                    "table": "download",
+                    "field": "download_id"
+                },
+                {
+                    "key": "store_id",
+                    "table": "store",
+                    "field": "store_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "event",
+            "field": [
+                {
+                    "name": "event_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "code",
+                    "type": "varchar(128)",
+                    "not_null": true
+                },
+                {
+                    "name": "description",
+                    "type": "text",
+                    "not_null": true
+                },
+                {
+                    "name": "trigger",
+                    "type": "text",
+                    "not_null": true
+                },
+                {
+                    "name": "action",
+                    "type": "text",
+                    "not_null": true
+                },
+                {
+                    "name": "status",
+                    "type": "tinyint(1)",
+                    "not_null": true,
+                    "default": "0"
+                },
+                {
+                    "name": "sort_order",
+                    "type": "int(3)",
+                    "not_null": true,
+                    "default": "1"
+                }
+            ],
+            "primary": [
+                "event_id"
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "extension",
+            "field": [
+                {
+                    "name": "extension_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "extension",
+                    "type": "varchar(255)",
+                    "not_null": true
+                },
+                {
+                    "name": "type",
+                    "type": "varchar(32)",
+                    "not_null": true
+                },
+                {
+                    "name": "code",
+                    "type": "varchar(128)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "extension_id"
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "extension_install",
+            "field": [
+                {
+                    "name": "extension_install_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "extension_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "extension_download_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "name",
+                    "type": "varchar(128)",
+                    "not_null": true
+                },
+                {
+                    "name": "code",
+                    "type": "varchar(255)",
+                    "not_null": true
+                },
+                {
+                    "name": "version",
+                    "type": "varchar(255)",
+                    "not_null": true
+                },
+                {
+                    "name": "author",
+                    "type": "varchar(255)",
+                    "not_null": true
+                },
+                {
+                    "name": "link",
+                    "type": "varchar(255)",
+                    "not_null": true
+                },
+                {
+                    "name": "status",
+                    "type": "tinyint(1)",
+                    "not_null": true
+                },
+                {
+                    "name": "date_added",
+                    "type": "datetime",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "extension_install_id"
+            ],
+            "foreign": [
+                {
+                    "key": "extension_id",
+                    "table": "extension",
+                    "field": "extension_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "extension_path",
+            "field": [
+                {
+                    "name": "extension_path_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "extension_install_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "path",
+                    "type": "varchar(255)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "extension_path_id"
+            ],
+            "foreign": [
+                {
+                    "key": "extension_install_id",
+                    "table": "extension_install",
+                    "field": "extension_install_id"
+                }
+            ],
+            "index": [
+                {
+                    "name": "path",
+                    "key": [
+                        "path"
+                    ]
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "filter",
+            "field": [
+                {
+                    "name": "filter_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "filter_group_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "sort_order",
+                    "type": "int(3)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "filter_id"
+            ],
+            "foreign": [
+                {
+                    "key": "filter_group_id",
+                    "table": "filter_group",
+                    "field": "filter_group_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "filter_description",
+            "field": [
+                {
+                    "name": "filter_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "language_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "filter_group_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "name",
+                    "type": "varchar(64)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "filter_id",
+                "language_id"
+            ],
+            "foreign": [
+                {
+                    "key": "language_id",
+                    "table": "language",
+                    "field": "language_id"
+                },
+                {
+                    "key": "filter_group_id",
+                    "table": "filter_group",
+                    "field": "filter_group_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "filter_group",
+            "field": [
+                {
+                    "name": "filter_group_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "sort_order",
+                    "type": "int(3)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "filter_group_id"
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "filter_group_description",
+            "field": [
+                {
+                    "name": "filter_group_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "language_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "name",
+                    "type": "varchar(64)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "filter_group_id",
+                "language_id"
+            ],
+            "foreign": [
+                {
+                    "key": "filter_group_id",
+                    "table": "filter_group",
+                    "field": "filter_group_id"
+                },
+                {
+                    "key": "language_id",
+                    "table": "language",
+                    "field": "language_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "gdpr",
+            "field": [
+                {
+                    "name": "gdpr_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "store_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "language_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "code",
+                    "type": "varchar(40)",
+                    "not_null": true
+                },
+                {
+                    "name": "email",
+                    "type": "varchar(96)",
+                    "not_null": true
+                },
+                {
+                    "name": "action",
+                    "type": "varchar(6)",
+                    "not_null": true
+                },
+                {
+                    "name": "status",
+                    "type": "tinyint(1)",
+                    "not_null": true
+                },
+                {
+                    "name": "date_added",
+                    "type": "datetime",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "gdpr_id"
+            ],
+            "foreign": [
+                {
+                    "key": "store_id",
+                    "table": "store",
+                    "field": "store_id"
+                },
+                {
+                    "key": "language_id",
+                    "table": "language",
+                    "field": "language_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "geo_zone",
+            "field": [
+                {
+                    "name": "geo_zone_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "name",
+                    "type": "varchar(32)",
+                    "not_null": true
+                },
+                {
+                    "name": "description",
+                    "type": "varchar(255)",
+                    "not_null": true
+                },
+                {
+                    "name": "date_added",
+                    "type": "datetime",
+                    "not_null": true
+                },
+                {
+                    "name": "date_modified",
+                    "type": "datetime",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "geo_zone_id"
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "information",
+            "field": [
+                {
+                    "name": "information_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "bottom",
+                    "type": "int(1)",
+                    "not_null": true,
+                    "default": "0"
+                },
+                {
+                    "name": "sort_order",
+                    "type": "int(3)",
+                    "not_null": true,
+                    "default": "0"
+                },
+                {
+                    "name": "status",
+                    "type": "tinyint(1)",
+                    "not_null": true,
+                    "default": "1"
+                }
+            ],
+            "primary": [
+                "information_id"
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "information_description",
+            "field": [
+                {
+                    "name": "information_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "language_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "title",
+                    "type": "varchar(64)",
+                    "not_null": true
+                },
+                {
+                    "name": "description",
+                    "type": "mediumtext",
+                    "not_null": true
+                },
+                {
+                    "name": "meta_title",
+                    "type": "varchar(255)",
+                    "not_null": true
+                },
+                {
+                    "name": "meta_description",
+                    "type": "varchar(255)",
+                    "not_null": true
+                },
+                {
+                    "name": "meta_keyword",
+                    "type": "varchar(255)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "information_id",
+                "language_id"
+            ],
+            "foreign": [
+                {
+                    "key": "language_id",
+                    "table": "language",
+                    "field": "language_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "information_to_layout",
+            "field": [
+                {
+                    "name": "information_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "store_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "layout_id",
+                    "type": "int(11)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "information_id",
+                "store_id"
+            ],
+            "foreign": [
+                {
+                    "key": "information_id",
+                    "table": "information",
+                    "field": "information_id"
+                },
+                {
+                    "key": "store_id",
+                    "table": "store",
+                    "field": "store_id"
+                },
+                {
+                    "key": "layout_id",
+                    "table": "layout",
+                    "field": "layout_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "information_to_store",
+            "field": [
+                {
+                    "name": "information_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "store_id",
+                    "type": "int(11)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "information_id",
+                "store_id"
+            ],
+            "foreign": [
+                {
+                    "key": "information_id",
+                    "table": "information",
+                    "field": "information_id"
+                },
+                {
+                    "key": "store_id",
+                    "table": "store",
+                    "field": "store_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "language",
+            "field": [
+                {
+                    "name": "language_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "name",
+                    "type": "varchar(32)",
+                    "not_null": true
+                },
+                {
+                    "name": "code",
+                    "type": "varchar(5)",
+                    "not_null": true
+                },
+                {
+                    "name": "locale",
+                    "type": "varchar(255)",
+                    "not_null": true
+                },
+                {
+                    "name": "extension",
+                    "type": "varchar(255)",
+                    "not_null": true
+                },
+                {
+                    "name": "sort_order",
+                    "type": "int(3)",
+                    "not_null": true,
+                    "default": "0"
+                },
+                {
+                    "name": "status",
+                    "type": "tinyint(1)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "language_id"
+            ],
+            "index": [
+                {
+                    "name": "name",
+                    "key": [
+                        "name"
+                    ]
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "layout",
+            "field": [
+                {
+                    "name": "layout_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "name",
+                    "type": "varchar(64)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "layout_id"
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "layout_module",
+            "field": [
+                {
+                    "name": "layout_module_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "layout_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "code",
+                    "type": "varchar(64)",
+                    "not_null": true
+                },
+                {
+                    "name": "position",
+                    "type": "varchar(14)",
+                    "not_null": true
+                },
+                {
+                    "name": "sort_order",
+                    "type": "int(3)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "layout_module_id"
+            ],
+            "foreign": [
+                {
+                    "key": "layout_id",
+                    "table": "layout",
+                    "field": "layout_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "layout_route",
+            "field": [
+                {
+                    "name": "layout_route_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "layout_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "store_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "route",
+                    "type": "varchar(64)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "layout_route_id"
+            ],
+            "foreign": [
+                {
+                    "key": "layout_id",
+                    "table": "layout",
+                    "field": "layout_id"
+                },
+                {
+                    "key": "store_id",
+                    "table": "store",
+                    "field": "store_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "length_class",
+            "field": [
+                {
+                    "name": "length_class_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "value",
+                    "type": "decimal(15,8)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "length_class_id"
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "length_class_description",
+            "field": [
+                {
+                    "name": "length_class_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "language_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "title",
+                    "type": "varchar(32)",
+                    "not_null": true
+                },
+                {
+                    "name": "unit",
+                    "type": "varchar(4)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "length_class_id",
+                "language_id"
+            ],
+            "foreign": [
+                {
+                    "key": "length_class_id",
+                    "table": "length_class",
+                    "field": "length_class_id"
+                },
+                {
+                    "key": "language_id",
+                    "table": "language",
+                    "field": "language_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "location",
+            "field": [
+                {
+                    "name": "location_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "name",
+                    "type": "varchar(32)",
+                    "not_null": true
+                },
+                {
+                    "name": "address",
+                    "type": "text",
+                    "not_null": true
+                },
+                {
+                    "name": "telephone",
+                    "type": "varchar(32)",
+                    "not_null": true
+                },
+                {
+                    "name": "geocode",
+                    "type": "varchar(32)",
+                    "not_null": true
+                },
+                {
+                    "name": "image",
+                    "type": "varchar(255)",
+                    "not_null": true
+                },
+                {
+                    "name": "open",
+                    "type": "text",
+                    "not_null": true
+                },
+                {
+                    "name": "comment",
+                    "type": "text",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "location_id"
+            ],
+            "index": [
+                {
+                    "name": "name",
+                    "key": [
+                        "name"
+                    ]
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "manufacturer",
+            "field": [
+                {
+                    "name": "manufacturer_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "name",
+                    "type": "varchar(64)",
+                    "not_null": true
+                },
+                {
+                    "name": "image",
+                    "type": "varchar(255)",
+                    "not_null": true
+                },
+                {
+                    "name": "sort_order",
+                    "type": "int(3)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "manufacturer_id"
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "manufacturer_to_layout",
+            "field": [
+                {
+                    "name": "manufacturer_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "store_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "layout_id",
+                    "type": "int(11)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "manufacturer_id",
+                "store_id"
+            ],
+            "foreign": [
+                {
+                    "key": "manufacturer_id",
+                    "table": "manufacturer",
+                    "field": "manufacturer_id"
+                },
+                {
+                    "key": "store_id",
+                    "table": "store",
+                    "field": "store_id"
+                },
+                {
+                    "key": "layout_id",
+                    "table": "layout",
+                    "field": "layout_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "manufacturer_to_store",
+            "field": [
+                {
+                    "name": "manufacturer_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "store_id",
+                    "type": "int(11)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "manufacturer_id",
+                "store_id"
+            ],
+            "foreign": [
+                {
+                    "key": "manufacturer_id",
+                    "table": "manufacturer",
+                    "field": "manufacturer_id"
+                },
+                {
+                    "key": "store_id",
+                    "table": "store",
+                    "field": "store_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "marketing",
+            "field": [
+                {
+                    "name": "marketing_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "name",
+                    "type": "varchar(32)",
+                    "not_null": true
+                },
+                {
+                    "name": "description",
+                    "type": "text",
+                    "not_null": true
+                },
+                {
+                    "name": "code",
+                    "type": "varchar(64)",
+                    "not_null": true
+                },
+                {
+                    "name": "clicks",
+                    "type": "int(5)",
+                    "not_null": true,
+                    "default": "0"
+                },
+                {
+                    "name": "date_added",
+                    "type": "datetime",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "marketing_id"
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "marketing_report",
+            "field": [
+                {
+                    "name": "marketing_report_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "marketing_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "store_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "ip",
+                    "type": "varchar(40)",
+                    "not_null": true
+                },
+                {
+                    "name": "country",
+                    "type": "varchar(2)",
+                    "not_null": true
+                },
+                {
+                    "name": "date_added",
+                    "type": "datetime",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "marketing_report_id"
+            ],
+            "foreign": [
+                {
+                    "key": "marketing_id",
+                    "table": "marketing",
+                    "field": "marketing_id"
+                },
+                {
+                    "key": "store_id",
+                    "table": "store",
+                    "field": "store_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "module",
+            "field": [
+                {
+                    "name": "module_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "name",
+                    "type": "varchar(64)",
+                    "not_null": true
+                },
+                {
+                    "name": "code",
+                    "type": "varchar(64)",
+                    "not_null": true
+                },
+                {
+                    "name": "setting",
+                    "type": "text",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "module_id"
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "notification",
+            "field": [
+                {
+                    "name": "notification_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "title",
+                    "type": "varchar(64)",
+                    "not_null": true
+                },
+                {
+                    "name": "text",
+                    "type": "text",
+                    "not_null": true
+                },
+                {
+                    "name": "status",
+                    "type": "tinyint(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "date_added",
+                    "type": "datetime",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "notification_id"
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "option",
+            "field": [
+                {
+                    "name": "option_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "type",
+                    "type": "varchar(32)",
+                    "not_null": true
+                },
+                {
+                    "name": "sort_order",
+                    "type": "int(3)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "option_id"
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "option_description",
+            "field": [
+                {
+                    "name": "option_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "language_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "name",
+                    "type": "varchar(128)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "option_id",
+                "language_id"
+            ],
+            "foreign": [
+                {
+                    "key": "language_id",
+                    "table": "language",
+                    "field": "language_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "option_value",
+            "field": [
+                {
+                    "name": "option_value_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "option_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "image",
+                    "type": "varchar(255)",
+                    "not_null": true
+                },
+                {
+                    "name": "sort_order",
+                    "type": "int(3)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "option_value_id"
+            ],
+            "foreign": [
+                {
+                    "key": "option_id",
+                    "table": "option",
+                    "field": "option_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "option_value_description",
+            "field": [
+                {
+                    "name": "option_value_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "language_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "option_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "name",
+                    "type": "varchar(128)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "option_value_id",
+                "language_id"
+            ],
+            "foreign": [
+                {
+                    "key": "language_id",
+                    "table": "language",
+                    "field": "language_id"
+                },
+                {
+                    "key": "option_id",
+                    "table": "option",
+                    "field": "option_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "order",
+            "field": [
+                {
+                    "name": "order_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "subscription_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "invoice_no",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "default": "0"
+                },
+                {
+                    "name": "invoice_prefix",
+                    "type": "varchar(26)",
+                    "not_null": true
+                },
+                {
+                    "name": "transaction_id",
+                    "type": "varchar(100)",
+                    "not_null": true
+                },
+                {
+                    "name": "store_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "default": "0"
+                },
+                {
+                    "name": "store_name",
+                    "type": "varchar(64)",
+                    "not_null": true
+                },
+                {
+                    "name": "store_url",
+                    "type": "varchar(255)",
+                    "not_null": true
+                },
+                {
+                    "name": "customer_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "default": "0"
+                },
+                {
+                    "name": "customer_group_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "default": "0"
+                },
+                {
+                    "name": "firstname",
+                    "type": "varchar(32)",
+                    "not_null": true
+                },
+                {
+                    "name": "lastname",
+                    "type": "varchar(32)",
+                    "not_null": true
+                },
+                {
+                    "name": "email",
+                    "type": "varchar(96)",
+                    "not_null": true
+                },
+                {
+                    "name": "telephone",
+                    "type": "varchar(32)",
+                    "not_null": true
+                },
+                {
+                    "name": "custom_field",
+                    "type": "text",
+                    "not_null": true
+                },
+                {
+                    "name": "payment_address_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "payment_firstname",
+                    "type": "varchar(32)",
+                    "not_null": true
+                },
+                {
+                    "name": "payment_lastname",
+                    "type": "varchar(32)",
+                    "not_null": true
+                },
+                {
+                    "name": "payment_company",
+                    "type": "varchar(60)",
+                    "not_null": true
+                },
+                {
+                    "name": "payment_address_1",
+                    "type": "varchar(128)",
+                    "not_null": true
+                },
+                {
+                    "name": "payment_address_2",
+                    "type": "varchar(128)",
+                    "not_null": true
+                },
+                {
+                    "name": "payment_city",
+                    "type": "varchar(128)",
+                    "not_null": true
+                },
+                {
+                    "name": "payment_postcode",
+                    "type": "varchar(10)",
+                    "not_null": true
+                },
+                {
+                    "name": "payment_country",
+                    "type": "varchar(128)",
+                    "not_null": true
+                },
+                {
+                    "name": "payment_country_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "payment_zone",
+                    "type": "varchar(128)",
+                    "not_null": true
+                },
+                {
+                    "name": "payment_zone_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "payment_address_format",
+                    "type": "text",
+                    "not_null": true
+                },
+                {
+                    "name": "payment_custom_field",
+                    "type": "text",
+                    "not_null": true
+                },
+                {
+                    "name": "payment_method",
+                    "type": "text",
+                    "not_null": true
+                },
+                {
+                    "name": "shipping_address_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "shipping_firstname",
+                    "type": "varchar(32)",
+                    "not_null": true
+                },
+                {
+                    "name": "shipping_lastname",
+                    "type": "varchar(32)",
+                    "not_null": true
+                },
+                {
+                    "name": "shipping_company",
+                    "type": "varchar(60)",
+                    "not_null": true
+                },
+                {
+                    "name": "shipping_address_1",
+                    "type": "varchar(128)",
+                    "not_null": true
+                },
+                {
+                    "name": "shipping_address_2",
+                    "type": "varchar(128)",
+                    "not_null": true
+                },
+                {
+                    "name": "shipping_city",
+                    "type": "varchar(128)",
+                    "not_null": true
+                },
+                {
+                    "name": "shipping_postcode",
+                    "type": "varchar(10)",
+                    "not_null": true
+                },
+                {
+                    "name": "shipping_country",
+                    "type": "varchar(128)",
+                    "not_null": true
+                },
+                {
+                    "name": "shipping_country_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "shipping_zone",
+                    "type": "varchar(128)",
+                    "not_null": true
+                },
+                {
+                    "name": "shipping_zone_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "shipping_address_format",
+                    "type": "text",
+                    "not_null": true
+                },
+                {
+                    "name": "shipping_custom_field",
+                    "type": "text",
+                    "not_null": true
+                },
+                {
+                    "name": "shipping_method",
+                    "type": "text",
+                    "not_null": true
+                },
+                {
+                    "name": "comment",
+                    "type": "text",
+                    "not_null": true
+                },
+                {
+                    "name": "total",
+                    "type": "decimal(15,4)",
+                    "not_null": true,
+                    "default": "0.0000"
+                },
+                {
+                    "name": "order_status_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "default": "0"
+                },
+                {
+                    "name": "affiliate_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "commission",
+                    "type": "decimal(15,4)",
+                    "not_null": true
+                },
+                {
+                    "name": "marketing_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "tracking",
+                    "type": "varchar(64)",
+                    "not_null": true
+                },
+                {
+                    "name": "language_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "language_code",
+                    "type": "varchar(5)",
+                    "not_null": true
+                },
+                {
+                    "name": "currency_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "currency_code",
+                    "type": "varchar(3)",
+                    "not_null": true
+                },
+                {
+                    "name": "currency_value",
+                    "type": "decimal(15,8)",
+                    "not_null": true,
+                    "default": "1.00000000"
+                },
+                {
+                    "name": "ip",
+                    "type": "varchar(40)",
+                    "not_null": true
+                },
+                {
+                    "name": "forwarded_ip",
+                    "type": "varchar(40)",
+                    "not_null": true
+                },
+                {
+                    "name": "user_agent",
+                    "type": "varchar(255)",
+                    "not_null": true
+                },
+                {
+                    "name": "accept_language",
+                    "type": "varchar(255)",
+                    "not_null": true
+                },
+                {
+                    "name": "date_added",
+                    "type": "datetime",
+                    "not_null": true
+                },
+                {
+                    "name": "date_modified",
+                    "type": "datetime",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "order_id"
+            ],
+            "foreign": [
+                {
+                    "key": "store_id",
+                    "table": "store",
+                    "field": "store_id"
+                },
+                {
+                    "key": "customer_id",
+                    "table": "customer",
+                    "field": "customer_id"
+                },
+                {
+                    "key": "customer_group_id",
+                    "table": "customer_group",
+                    "field": "customer_group_id"
+                },
+                {
+                    "key": "payment_country_id",
+                    "table": "country",
+                    "field": "country_id"
+                },
+                {
+                    "key": "payment_zone_id",
+                    "table": "zone",
+                    "field": "zone_id"
+                },
+                {
+                    "key": "shipping_country_id",
+                    "table": "country",
+                    "field": "country_id"
+                },
+                {
+                    "key": "shipping_zone_id",
+                    "table": "zone",
+                    "field": "zone_id"
+                },
+                {
+                    "key": "order_status_id",
+                    "table": "order_status",
+                    "field": "order_status_id"
+                },
+                {
+                    "key": "affiliate_id",
+                    "table": "customer_affiliate",
+                    "field": "customer_id"
+                },
+                {
+                    "key": "marketing_id",
+                    "table": "marketing",
+                    "field": "marketing_id"
+                },
+                {
+                    "key": "language_id",
+                    "table": "language",
+                    "field": "language_id"
+                },
+                {
+                    "key": "currency_id",
+                    "table": "currency",
+                    "field": "currency_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "order_history",
+            "field": [
+                {
+                    "name": "order_history_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "order_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "order_status_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "notify",
+                    "type": "tinyint(1)",
+                    "not_null": true,
+                    "default": "0"
+                },
+                {
+                    "name": "comment",
+                    "type": "text",
+                    "not_null": true
+                },
+                {
+                    "name": "date_added",
+                    "type": "datetime",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "order_history_id"
+            ],
+            "foreign": [
+                {
+                    "key": "order_id",
+                    "table": "order",
+                    "field": "order_id"
+                },
+                {
+                    "key": "order_status_id",
+                    "table": "order_status",
+                    "field": "order_status_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "order_option",
+            "field": [
+                {
+                    "name": "order_option_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "order_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "order_product_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "product_option_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "product_option_value_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "default": "0"
+                },
+                {
+                    "name": "name",
+                    "type": "varchar(255)",
+                    "not_null": true
+                },
+                {
+                    "name": "value",
+                    "type": "text",
+                    "not_null": true
+                },
+                {
+                    "name": "type",
+                    "type": "varchar(32)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "order_option_id"
+            ],
+            "foreign": [
+                {
+                    "key": "order_id",
+                    "table": "order",
+                    "field": "order_id"
+                },
+                {
+                    "key": "order_product_id",
+                    "table": "order_product",
+                    "field": "order_product_id"
+                },
+                {
+                    "key": "product_option_id",
+                    "table": "product_option",
+                    "field": "product_option_id"
+                },
+                {
+                    "key": "product_option_value_id",
+                    "table": "product_option_value",
+                    "field": "product_option_value_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "order_product",
+            "field": [
+                {
+                    "name": "order_product_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "order_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "product_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "master_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "name",
+                    "type": "varchar(255)",
+                    "not_null": true
+                },
+                {
+                    "name": "model",
+                    "type": "varchar(64)",
+                    "not_null": true
+                },
+                {
+                    "name": "quantity",
+                    "type": "int(4)",
+                    "not_null": true
+                },
+                {
+                    "name": "price",
+                    "type": "decimal(15,4)",
+                    "not_null": true,
+                    "default": "0.0000"
+                },
+                {
+                    "name": "total",
+                    "type": "decimal(15,4)",
+                    "not_null": true,
+                    "default": "0.0000"
+                },
+                {
+                    "name": "tax",
+                    "type": "decimal(15,4)",
+                    "not_null": true,
+                    "default": "0.0000"
+                },
+                {
+                    "name": "reward",
+                    "type": "int(8)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "order_product_id"
+            ],
+            "foreign": [
+                {
+                    "key": "order_id",
+                    "table": "order",
+                    "field": "order_id"
+                },
+                {
+                    "key": "product_id",
+                    "table": "product",
+                    "field": "product_id"
+                },
+                {
+                    "key": "master_id",
+                    "table": "product",
+                    "field": "product_id"
+                }
+            ],
+            "index": [
+                {
+                    "name": "order_id",
+                    "key": [
+                        "order_id"
+                    ]
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "order_subscription",
+            "field": [
+                {
+                    "name": "order_subscription_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "order_product_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "order_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "product_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "subscription_plan_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "trial_price",
+                    "type": "decimal(10,4)",
+                    "not_null": true
+                },
+                {
+                    "name": "trial_tax",
+                    "type": "decimal(15,4)",
+                    "not_null": true
+                },
+                {
+                    "name": "trial_frequency",
+                    "type": "enum('day','week','semi_month','month','year')",
+                    "not_null": true
+                },
+                {
+                    "name": "trial_cycle",
+                    "type": "smallint(6)",
+                    "not_null": true
+                },
+                {
+                    "name": "trial_duration",
+                    "type": "smallint(6)",
+                    "not_null": true
+                },
+                {
+                    "name": "trial_remaining",
+                    "type": "smallint(6)",
+                    "not_null": true
+                },
+                {
+                    "name": "trial_status",
+                    "type": "tinyint(1)",
+                    "not_null": true
+                },
+                {
+                    "name": "price",
+                    "type": "decimal(10,4)",
+                    "not_null": true
+                },
+                {
+                    "name": "tax",
+                    "type": "decimal(15,4)",
+                    "not_null": true
+                },
+                {
+                    "name": "frequency",
+                    "type": "enum('day','week','semi_month','month','year')",
+                    "not_null": true
+                },
+                {
+                    "name": "cycle",
+                    "type": "smallint(6)",
+                    "not_null": true
+                },
+                {
+                    "name": "duration",
+                    "type": "smallint(6)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "order_subscription_id"
+            ],
+            "foreign": [
+                {
+                    "key": "order_id",
+                    "table": "order",
+                    "field": "order_id"
+                },
+                {
+                    "key": "order_product_id",
+                    "table": "order_product",
+                    "field": "order_product_id"
+                },
+                {
+                    "key": "subscription_plan_id",
+                    "table": "subscription_plan",
+                    "field": "subscription_plan_id"
+                },
+                {
+                    "key": "subscription_status_id",
+                    "table": "subscription_status",
+                    "field": "subscription_status_id"
+                }
+            ],
+            "index": [
+                {
+                    "name": "order_id",
+                    "key": [
+                        "order_id"
+                    ]
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "order_status",
+            "field": [
+                {
+                    "name": "order_status_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "language_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "name",
+                    "type": "varchar(32)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "order_status_id",
+                "language_id"
+            ],
+            "foreign": [
+                {
+                    "key": "language_id",
+                    "table": "language",
+                    "field": "language_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "order_total",
+            "field": [
+                {
+                    "name": "order_total_id",
+                    "type": "int(10)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "order_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "extension",
+                    "type": "varchar(255)",
+                    "not_null": true
+                },
+                {
+                    "name": "code",
+                    "type": "varchar(32)",
+                    "not_null": true
+                },
+                {
+                    "name": "title",
+                    "type": "varchar(255)",
+                    "not_null": true
+                },
+                {
+                    "name": "value",
+                    "type": "decimal(15,4)",
+                    "not_null": true,
+                    "default": "0.0000"
+                },
+                {
+                    "name": "sort_order",
+                    "type": "int(3)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "order_total_id"
+            ],
+            "foreign": [
+                {
+                    "key": "order_id",
+                    "table": "order",
+                    "field": "order_id"
+                }
+            ],
+            "index": [
+                {
+                    "name": "order_id",
+                    "key": [
+                        "order_id"
+                    ]
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "order_voucher",
+            "field": [
+                {
+                    "name": "order_voucher_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "order_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "voucher_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "description",
+                    "type": "varchar(255)",
+                    "not_null": true
+                },
+                {
+                    "name": "code",
+                    "type": "varchar(10)",
+                    "not_null": true
+                },
+                {
+                    "name": "from_name",
+                    "type": "varchar(64)",
+                    "not_null": true
+                },
+                {
+                    "name": "from_email",
+                    "type": "varchar(96)",
+                    "not_null": true
+                },
+                {
+                    "name": "to_name",
+                    "type": "varchar(64)",
+                    "not_null": true
+                },
+                {
+                    "name": "to_email",
+                    "type": "varchar(96)",
+                    "not_null": true
+                },
+                {
+                    "name": "voucher_theme_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "message",
+                    "type": "text",
+                    "not_null": true
+                },
+                {
+                    "name": "amount",
+                    "type": "decimal(15,4)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "order_voucher_id"
+            ],
+            "foreign": [
+                {
+                    "key": "order_id",
+                    "table": "order",
+                    "field": "order_id"
+                },
+                {
+                    "key": "voucher_id",
+                    "table": "voucher",
+                    "field": "voucher_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "product",
+            "field": [
+                {
+                    "name": "product_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "master_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "default": "0"
+                },
+                {
+                    "name": "model",
+                    "type": "varchar(64)",
+                    "not_null": true
+                },
+                {
+                    "name": "sku",
+                    "type": "varchar(64)",
+                    "not_null": true
+                },
+                {
+                    "name": "upc",
+                    "type": "varchar(12)",
+                    "not_null": true
+                },
+                {
+                    "name": "ean",
+                    "type": "varchar(14)",
+                    "not_null": true
+                },
+                {
+                    "name": "jan",
+                    "type": "varchar(13)",
+                    "not_null": true
+                },
+                {
+                    "name": "isbn",
+                    "type": "varchar(17)",
+                    "not_null": true
+                },
+                {
+                    "name": "mpn",
+                    "type": "varchar(64)",
+                    "not_null": true
+                },
+                {
+                    "name": "location",
+                    "type": "varchar(128)",
+                    "not_null": true
+                },
+                {
+                    "name": "variant",
+                    "type": "text",
+                    "not_null": true,
+                    "default": ""
+                },
+                {
+                    "name": "override",
+                    "type": "text",
+                    "not_null": true,
+                    "default": ""
+                },
+                {
+                    "name": "quantity",
+                    "type": "int(4)",
+                    "not_null": true,
+                    "default": "0"
+                },
+                {
+                    "name": "stock_status_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "image",
+                    "type": "varchar(255)",
+                    "not_null": true
+                },
+                {
+                    "name": "manufacturer_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "shipping",
+                    "type": "tinyint(1)",
+                    "not_null": true,
+                    "default": "1"
+                },
+                {
+                    "name": "price",
+                    "type": "decimal(15,4)",
+                    "not_null": true,
+                    "default": "0.0000"
+                },
+                {
+                    "name": "points",
+                    "type": "int(8)",
+                    "not_null": true,
+                    "default": "0"
+                },
+                {
+                    "name": "tax_class_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "date_available",
+                    "type": "date",
+                    "not_null": true
+                },
+                {
+                    "name": "weight",
+                    "type": "decimal(15,8)",
+                    "not_null": true,
+                    "default": "0.00000000"
+                },
+                {
+                    "name": "weight_class_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "default": "0"
+                },
+                {
+                    "name": "length",
+                    "type": "decimal(15,8)",
+                    "not_null": true,
+                    "default": "0.00000000"
+                },
+                {
+                    "name": "width",
+                    "type": "decimal(15,8)",
+                    "not_null": true,
+                    "default": "0.00000000"
+                },
+                {
+                    "name": "height",
+                    "type": "decimal(15,8)",
+                    "not_null": true,
+                    "default": "0.00000000"
+                },
+                {
+                    "name": "length_class_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "default": "0"
+                },
+                {
+                    "name": "subtract",
+                    "type": "tinyint(1)",
+                    "not_null": true,
+                    "default": "1"
+                },
+                {
+                    "name": "minimum",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "default": "1"
+                },
+                {
+                    "name": "rating",
+                    "type": "int(1)",
+                    "not_null": true
+                },
+                {
+                    "name": "sort_order",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "default": "0"
+                },
+                {
+                    "name": "status",
+                    "type": "tinyint(1)",
+                    "not_null": true,
+                    "default": "0"
+                },
+                {
+                    "name": "date_added",
+                    "type": "datetime",
+                    "not_null": true
+                },
+                {
+                    "name": "date_modified",
+                    "type": "datetime",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "product_id"
+            ],
+            "foreign": [
+                {
+                    "key": "master_id",
+                    "table": "product",
+                    "field": "product_id"
+                },
+                {
+                    "key": "stock_status_id",
+                    "table": "stock_status",
+                    "field": "stock_status_id"
+                },
+                {
+                    "key": "manufacturer_id",
+                    "table": "manufacturer",
+                    "field": "manufacturer_id"
+                },
+                {
+                    "key": "tax_class_id",
+                    "table": "tax_class",
+                    "field": "tax_class_id"
+                },
+                {
+                    "key": "weight_class_id",
+                    "table": "weight_class",
+                    "field": "weight_class_id"
+                },
+                {
+                    "key": "length_class_id",
+                    "table": "length_class",
+                    "field": "length_class_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "product_attribute",
+            "field": [
+                {
+                    "name": "product_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "attribute_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "language_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "text",
+                    "type": "text",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "product_id",
+                "attribute_id",
+                "language_id"
+            ],
+            "foreign": [
+                {
+                    "key": "product_id",
+                    "table": "product",
+                    "field": "product_id"
+                },
+                {
+                    "key": "attribute_id",
+                    "table": "attribute",
+                    "field": "attribute_id"
+                },
+                {
+                    "key": "language_id",
+                    "table": "language",
+                    "field": "language_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "product_description",
+            "field": [
+                {
+                    "name": "product_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "language_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "name",
+                    "type": "varchar(255)",
+                    "not_null": true
+                },
+                {
+                    "name": "description",
+                    "type": "text",
+                    "not_null": true
+                },
+                {
+                    "name": "tag",
+                    "type": "text",
+                    "not_null": true
+                },
+                {
+                    "name": "meta_title",
+                    "type": "varchar(255)",
+                    "not_null": true
+                },
+                {
+                    "name": "meta_description",
+                    "type": "varchar(255)",
+                    "not_null": true
+                },
+                {
+                    "name": "meta_keyword",
+                    "type": "varchar(255)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "product_id",
+                "language_id"
+            ],
+            "foreign": [
+                {
+                    "key": "product_id",
+                    "table": "product",
+                    "field": "product_id"
+                },
+                {
+                    "key": "language_id",
+                    "table": "language",
+                    "field": "language_id"
+                }
+            ],
+            "index": [
+                {
+                    "name": "name",
+                    "key": [
+                        "name"
+                    ]
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "product_discount",
+            "field": [
+                {
+                    "name": "product_discount_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "product_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "customer_group_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "quantity",
+                    "type": "int(4)",
+                    "not_null": true,
+                    "default": "0"
+                },
+                {
+                    "name": "priority",
+                    "type": "int(5)",
+                    "not_null": true,
+                    "default": "1"
+                },
+                {
+                    "name": "price",
+                    "type": "decimal(15,4)",
+                    "not_null": true,
+                    "default": "0.0000"
+                },
+                {
+                    "name": "date_start",
+                    "type": "date",
+                    "not_null": true
+                },
+                {
+                    "name": "date_end",
+                    "type": "date",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "product_discount_id"
+            ],
+            "foreign": [
+                {
+                    "key": "product_id",
+                    "table": "product",
+                    "field": "product_id"
+                },
+                {
+                    "key": "customer_group_id",
+                    "table": "customer_group",
+                    "field": "customer_group_id"
+                }
+            ],
+            "index": [
+                {
+                    "name": "product_id",
+                    "key": [
+                        "product_id"
+                    ]
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "product_filter",
+            "field": [
+                {
+                    "name": "product_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "filter_id",
+                    "type": "int(11)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "product_id",
+                "filter_id"
+            ],
+            "foreign": [
+                {
+                    "key": "product_id",
+                    "table": "product",
+                    "field": "product_id"
+                },
+                {
+                    "key": "filter_id",
+                    "table": "filter",
+                    "field": "filter_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "product_image",
+            "field": [
+                {
+                    "name": "product_image_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "product_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "image",
+                    "type": "varchar(255)",
+                    "not_null": true
+                },
+                {
+                    "name": "sort_order",
+                    "type": "int(3)",
+                    "not_null": true,
+                    "default": "0"
+                }
+            ],
+            "primary": [
+                "product_image_id"
+            ],
+            "foreign": [
+                {
+                    "key": "product_id",
+                    "table": "product",
+                    "field": "product_id"
+                }
+            ],
+            "index": [
+                {
+                    "name": "product_id",
+                    "key": [
+                        "product_id"
+                    ]
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "product_option",
+            "field": [
+                {
+                    "name": "product_option_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "product_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "option_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "value",
+                    "type": "text",
+                    "not_null": true
+                },
+                {
+                    "name": "required",
+                    "type": "tinyint(1)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "product_option_id"
+            ],
+            "foreign": [
+                {
+                    "key": "product_id",
+                    "table": "product",
+                    "field": "product_id"
+                },
+                {
+                    "key": "option_id",
+                    "table": "option",
+                    "field": "option_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "product_option_value",
+            "field": [
+                {
+                    "name": "product_option_value_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "product_option_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "product_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "option_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "option_value_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "quantity",
+                    "type": "int(3)",
+                    "not_null": true
+                },
+                {
+                    "name": "subtract",
+                    "type": "tinyint(1)",
+                    "not_null": true
+                },
+                {
+                    "name": "price",
+                    "type": "decimal(15,4)",
+                    "not_null": true
+                },
+                {
+                    "name": "price_prefix",
+                    "type": "varchar(1)",
+                    "not_null": true
+                },
+                {
+                    "name": "points",
+                    "type": "int(8)",
+                    "not_null": true
+                },
+                {
+                    "name": "points_prefix",
+                    "type": "varchar(1)",
+                    "not_null": true
+                },
+                {
+                    "name": "weight",
+                    "type": "decimal(15,8)",
+                    "not_null": true
+                },
+                {
+                    "name": "weight_prefix",
+                    "type": "varchar(1)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "product_option_value_id"
+            ],
+            "foreign": [
+                {
+                    "key": "product_option_id",
+                    "table": "product_option",
+                    "field": "product_option_id"
+                },
+                {
+                    "key": "product_id",
+                    "table": "product",
+                    "field": "product_id"
+                },
+                {
+                    "key": "option_id",
+                    "table": "option",
+                    "field": "option_id"
+                },
+                {
+                    "key": "option_value_id",
+                    "table": "option_value",
+                    "field": "option_value_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "product_subscription",
+            "field": [
+                {
+                    "name": "product_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "subscription_plan_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "customer_group_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "trial_price",
+                    "type": "decimal(10,4)",
+                    "not_null": true
+                },
+                {
+                    "name": "price",
+                    "type": "decimal(10,4)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "product_id",
+                "subscription_plan_id",
+                "customer_group_id"
+            ],
+            "foreign": [
+                {
+                    "key": "product_id",
+                    "table": "product",
+                    "field": "product_id"
+                },
+                {
+                    "key": "subscription_plan_id",
+                    "table": "subscription_plan",
+                    "field": "subscription_plan_id"
+                },
+                {
+                    "key": "customer_group_id",
+                    "table": "customer_group",
+                    "field": "customer_group_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "product_related",
+            "field": [
+                {
+                    "name": "product_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "related_id",
+                    "type": "int(11)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "product_id",
+                "related_id"
+            ],
+            "foreign": [
+                {
+                    "key": "product_id",
+                    "table": "product",
+                    "field": "product_id"
+                },
+                {
+                    "key": "related_id",
+                    "table": "product",
+                    "field": "product_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "product_report",
+            "field": [
+                {
+                    "name": "product_report_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "product_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "store_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "default": 0
+                },
+                {
+                    "name": "ip",
+                    "type": "varchar(40)",
+                    "not_null": true
+                },
+                {
+                    "name": "country",
+                    "type": "varchar(2)",
+                    "not_null": true
+                },
+                {
+                    "name": "date_added",
+                    "type": "datetime",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "product_report_id"
+            ],
+            "foreign": [
+                {
+                    "key": "product_id",
+                    "table": "product",
+                    "field": "product_id"
+                },
+                {
+                    "key": "store_id",
+                    "table": "store",
+                    "field": "store_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "product_reward",
+            "field": [
+                {
+                    "name": "product_reward_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "product_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "default": 0
+                },
+                {
+                    "name": "customer_group_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "default": "0"
+                },
+                {
+                    "name": "points",
+                    "type": "int(8)",
+                    "not_null": true,
+                    "default": "0"
+                }
+            ],
+            "primary": [
+                "product_reward_id"
+            ],
+            "foreign": [
+                {
+                    "key": "product_id",
+                    "table": "product",
+                    "field": "product_id"
+                },
+                {
+                    "key": "customer_group_id",
+                    "table": "customer_group",
+                    "field": "customer_group_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "product_special",
+            "field": [
+                {
+                    "name": "product_special_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "product_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "customer_group_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "priority",
+                    "type": "int(5)",
+                    "not_null": true,
+                    "default": "1"
+                },
+                {
+                    "name": "price",
+                    "type": "decimal(15,4)",
+                    "not_null": true,
+                    "default": "0.0000"
+                },
+                {
+                    "name": "date_start",
+                    "type": "date",
+                    "not_null": true
+                },
+                {
+                    "name": "date_end",
+                    "type": "date",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "product_special_id"
+            ],
+            "foreign": [
+                {
+                    "key": "product_id",
+                    "table": "product",
+                    "field": "product_id"
+                },
+                {
+                    "key": "customer_group_id",
+                    "table": "customer_group",
+                    "field": "customer_group_id"
+                }
+            ],
+            "index": [
+                {
+                    "name": "product_id",
+                    "key": [
+                        "product_id"
+                    ]
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "product_to_category",
+            "field": [
+                {
+                    "name": "product_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "category_id",
+                    "type": "int(11)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "product_id",
+                "category_id"
+            ],
+            "foreign": [
+                {
+                    "key": "product_id",
+                    "table": "product",
+                    "field": "product_id"
+                },
+                {
+                    "key": "category_id",
+                    "table": "category",
+                    "field": "category_id"
+                }
+            ],
+            "index": [
+                {
+                    "name": "category_id",
+                    "key": [
+                        "category_id"
+                    ]
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "product_to_download",
+            "field": [
+                {
+                    "name": "product_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "download_id",
+                    "type": "int(11)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "product_id",
+                "download_id"
+            ],
+            "foreign": [
+                {
+                    "key": "product_id",
+                    "table": "product",
+                    "field": "product_id"
+                },
+                {
+                    "key": "download_id",
+                    "table": "download",
+                    "field": "download_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "product_to_layout",
+            "field": [
+                {
+                    "name": "product_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "store_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "layout_id",
+                    "type": "int(11)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "product_id",
+                "store_id"
+            ],
+            "foreign": [
+                {
+                    "key": "product_id",
+                    "table": "product",
+                    "field": "product_id"
+                },
+                {
+                    "key": "store_id",
+                    "table": "store",
+                    "field": "store_id"
+                },
+                {
+                    "key": "layout_id",
+                    "table": "layout",
+                    "field": "layout_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "product_to_store",
+            "field": [
+                {
+                    "name": "product_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "store_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "default": "0"
+                }
+            ],
+            "primary": [
+                "product_id",
+                "store_id"
+            ],
+            "foreign": [
+                {
+                    "key": "product_id",
+                    "table": "product",
+                    "field": "product_id"
+                },
+                {
+                    "key": "store_id",
+                    "table": "store",
+                    "field": "store_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "product_viewed",
+            "field": [
+                {
+                    "name": "product_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "viewed",
+                    "type": "int(11)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "product_id"
+            ],
+            "foreign": [
+                {
+                    "key": "product_id",
+                    "table": "product",
+                    "field": "product_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "return",
+            "field": [
+                {
+                    "name": "return_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "order_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "product_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "customer_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "firstname",
+                    "type": "varchar(32)",
+                    "not_null": true
+                },
+                {
+                    "name": "lastname",
+                    "type": "varchar(32)",
+                    "not_null": true
+                },
+                {
+                    "name": "email",
+                    "type": "varchar(96)",
+                    "not_null": true
+                },
+                {
+                    "name": "telephone",
+                    "type": "varchar(32)",
+                    "not_null": true
+                },
+                {
+                    "name": "product",
+                    "type": "varchar(255)",
+                    "not_null": true
+                },
+                {
+                    "name": "model",
+                    "type": "varchar(64)",
+                    "not_null": true
+                },
+                {
+                    "name": "quantity",
+                    "type": "int(4)",
+                    "not_null": true
+                },
+                {
+                    "name": "opened",
+                    "type": "tinyint(1)",
+                    "not_null": true
+                },
+                {
+                    "name": "return_reason_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "return_action_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "return_status_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "comment",
+                    "type": "text",
+                    "not_null": true
+                },
+                {
+                    "name": "date_ordered",
+                    "type": "date",
+                    "not_null": true
+                },
+                {
+                    "name": "date_added",
+                    "type": "datetime",
+                    "not_null": true
+                },
+                {
+                    "name": "date_modified",
+                    "type": "datetime",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "return_id"
+            ],
+            "foreign": [
+                {
+                    "key": "order_id",
+                    "table": "order",
+                    "field": "order_id"
+                },
+                {
+                    "key": "product_id",
+                    "table": "product",
+                    "field": "product_id"
+                },
+                {
+                    "key": "customer_id",
+                    "table": "customer",
+                    "field": "customer_id"
+                },
+                {
+                    "key": "return_reason_id",
+                    "table": "return_reason",
+                    "field": "return_reason_id"
+                },
+                {
+                    "key": "return_action_id",
+                    "table": "return_action",
+                    "field": "return_action_id"
+                },
+                {
+                    "key": "return_status_id",
+                    "table": "return_status",
+                    "field": "return_status_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "return_action",
+            "field": [
+                {
+                    "name": "return_action_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "language_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "default": "0"
+                },
+                {
+                    "name": "name",
+                    "type": "varchar(64)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "return_action_id",
+                "language_id"
+            ],
+            "foreign": [
+                {
+                    "key": "language_id",
+                    "table": "language",
+                    "field": "language_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "return_history",
+            "field": [
+                {
+                    "name": "return_history_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "return_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "return_status_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "notify",
+                    "type": "tinyint(1)",
+                    "not_null": true
+                },
+                {
+                    "name": "comment",
+                    "type": "text",
+                    "not_null": true
+                },
+                {
+                    "name": "date_added",
+                    "type": "datetime",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "return_history_id"
+            ],
+            "foreign": [
+                {
+                    "key": "return_id",
+                    "table": "return",
+                    "field": "return_id"
+                },
+                {
+                    "key": "return_status_id",
+                    "table": "return_status",
+                    "field": "return_status_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "return_reason",
+            "field": [
+                {
+                    "name": "return_reason_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "language_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "default": "0"
+                },
+                {
+                    "name": "name",
+                    "type": "varchar(128)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "return_reason_id",
+                "language_id"
+            ],
+            "foreign": [
+                {
+                    "key": "language_id",
+                    "table": "language",
+                    "field": "language_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "return_status",
+            "field": [
+                {
+                    "name": "return_status_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "language_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "default": "0"
+                },
+                {
+                    "name": "name",
+                    "type": "varchar(32)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "return_status_id",
+                "language_id"
+            ],
+            "foreign": [
+                {
+                    "key": "language_id",
+                    "table": "language",
+                    "field": "language_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "review",
+            "field": [
+                {
+                    "name": "review_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "product_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "customer_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "author",
+                    "type": "varchar(64)",
+                    "not_null": true
+                },
+                {
+                    "name": "text",
+                    "type": "text",
+                    "not_null": true
+                },
+                {
+                    "name": "rating",
+                    "type": "int(1)",
+                    "not_null": true
+                },
+                {
+                    "name": "status",
+                    "type": "tinyint(1)",
+                    "not_null": true,
+                    "default": "0"
+                },
+                {
+                    "name": "date_added",
+                    "type": "datetime",
+                    "not_null": true
+                },
+                {
+                    "name": "date_modified",
+                    "type": "datetime",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "review_id"
+            ],
+            "foreign": [
+                {
+                    "key": "product_id",
+                    "table": "product",
+                    "field": "product_id"
+                },
+                {
+                    "key": "customer_id",
+                    "table": "customer",
+                    "field": "customer_id"
+                }
+            ],
+            "index": [
+                {
+                    "name": "product_id",
+                    "key": [
+                        "product_id"
+                    ]
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "startup",
+            "field": [
+                {
+                    "name": "startup_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "code",
+                    "type": "varchar(64)",
+                    "not_null": true
+                },
+                {
+                    "name": "action",
+                    "type": "text",
+                    "not_null": true
+                },
+                {
+                    "name": "status",
+                    "type": "tinyint(1)",
+                    "not_null": true
+                },
+                {
+                    "name": "sort_order",
+                    "type": "int(3)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "startup_id"
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "statistics",
+            "field": [
+                {
+                    "name": "statistics_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "code",
+                    "type": "varchar(64)",
+                    "not_null": true
+                },
+                {
+                    "name": "value",
+                    "type": "decimal(15,4)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "statistics_id"
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "session",
+            "field": [
+                {
+                    "name": "session_id",
+                    "type": "varchar(32)",
+                    "not_null": true
+                },
+                {
+                    "name": "data",
+                    "type": "text",
+                    "not_null": true
+                },
+                {
+                    "name": "expire",
+                    "type": "datetime",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "session_id"
+            ],
+            "index": [
+                {
+                    "name": "expire",
+                    "key": [
+                        "expire"
+                    ]
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "setting",
+            "field": [
+                {
+                    "name": "setting_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "store_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "default": "0"
+                },
+                {
+                    "name": "code",
+                    "type": "varchar(128)",
+                    "not_null": true
+                },
+                {
+                    "name": "key",
+                    "type": "varchar(128)",
+                    "not_null": true
+                },
+                {
+                    "name": "value",
+                    "type": "text",
+                    "not_null": true
+                },
+                {
+                    "name": "serialized",
+                    "type": "tinyint(1)",
+                    "not_null": true,
+                    "default": 0
+                }
+            ],
+            "primary": [
+                "setting_id"
+            ],
+            "foreign": [
+                {
+                    "key": "store_id",
+                    "table": "store",
+                    "field": "store_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "stock_status",
+            "field": [
+                {
+                    "name": "stock_status_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "language_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "name",
+                    "type": "varchar(32)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "stock_status_id",
+                "language_id"
+            ],
+            "foreign": [
+                {
+                    "key": "language_id",
+                    "table": "language",
+                    "field": "language_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "store",
+            "field": [
+                {
+                    "name": "store_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "name",
+                    "type": "varchar(64)",
+                    "not_null": true
+                },
+                {
+                    "name": "url",
+                    "type": "varchar(255)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "store_id"
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "subscription",
+            "field": [
+                {
+                    "name": "subscription_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "order_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "order_product_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "store_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "customer_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "payment_address_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "payment_method",
+                    "type": "text",
+                    "not_null": true
+                },
+                {
+                    "name": "shipping_address_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "shipping_method",
+                    "type": "text",
+                    "not_null": true
+                },
+                {
+                    "name": "product_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "quantity",
+                    "type": "int(4)",
+                    "not_null": true
+                },
+                {
+                    "name": "subscription_plan_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "trial_price",
+                    "type": "decimal(10,4)",
+                    "not_null": true
+                },
+                {
+                    "name": "trial_frequency",
+                    "type": "enum('day','week','semi_month','month','year')",
+                    "not_null": true
+                },
+                {
+                    "name": "trial_cycle",
+                    "type": "smallint(6)",
+                    "not_null": true
+                },
+                {
+                    "name": "trial_duration",
+                    "type": "smallint(6)",
+                    "not_null": true
+                },
+                {
+                    "name": "trial_remaining",
+                    "type": "smallint(6)",
+                    "not_null": true
+                },
+                {
+                    "name": "trial_status",
+                    "type": "tinyint(1)",
+                    "not_null": true
+                },
+                {
+                    "name": "price",
+                    "type": "decimal(10,4)",
+                    "not_null": true
+                },
+                {
+                    "name": "frequency",
+                    "type": "enum('day','week','semi_month','month','year')",
+                    "not_null": true
+                },
+                {
+                    "name": "cycle",
+                    "type": "smallint(6)",
+                    "not_null": true
+                },
+                {
+                    "name": "duration",
+                    "type": "smallint(6)",
+                    "not_null": true
+                },
+                {
+                    "name": "remaining",
+                    "type": "smallint(6)",
+                    "not_null": true
+                },
+                {
+                    "name": "date_next",
+                    "type": "datetime",
+                    "not_null": true
+                },
+                {
+                    "name": "comment",
+                    "type": "text",
+                    "not_null": true
+                },
+                {
+                    "name": "subscription_status_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "affiliate_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "marketing_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "tracking",
+                    "type": "varchar(64)",
+                    "not_null": true
+                },
+                {
+                    "name": "language_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "currency_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "ip",
+                    "type": "varchar(40)",
+                    "not_null": true
+                },
+                {
+                    "name": "forwarded_ip",
+                    "type": "varchar(40)",
+                    "not_null": true
+                },
+                {
+                    "name": "user_agent",
+                    "type": "varchar(255)",
+                    "not_null": true
+                },
+                {
+                    "name": "accept_language",
+                    "type": "varchar(255)",
+                    "not_null": true
+                },
+                {
+                    "name": "date_added",
+                    "type": "datetime",
+                    "not_null": true
+                },
+                {
+                    "name": "date_modified",
+                    "type": "datetime",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "subscription_id"
+            ],
+            "foreign": [
+                {
+                    "key": "customer_id",
+                    "table": "customer",
+                    "field": "customer_id"
+                },
+                {
+                    "key": "order_id",
+                    "table": "order",
+                    "field": "order_id"
+                },
+                {
+                    "key": "order_product_id",
+                    "table": "order_product",
+                    "field": "order_product_id"
+                },
+                {
+                    "key": "subscription_plan_id",
+                    "table": "subscription_plan",
+                    "field": "subscription_plan_id"
+                },
+                {
+                    "key": "subscription_status_id",
+                    "table": "subscription_status",
+                    "field": "subscription_status_id"
+                }
+            ],
+            "index": [
+                {
+                    "name": "order_id",
+                    "key": [
+                        "order_id"
+                    ]
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "subscription_history",
+            "field": [
+                {
+                    "name": "subscription_history_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "subscription_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "subscription_status_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "notify",
+                    "type": "tinyint(1)",
+                    "not_null": true,
+                    "default": "0"
+                },
+                {
+                    "name": "comment",
+                    "type": "text",
+                    "not_null": true
+                },
+                {
+                    "name": "date_added",
+                    "type": "datetime",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "subscription_history_id"
+            ],
+            "foreign": [
+                {
+                    "key": "subscription_id",
+                    "table": "subscription",
+                    "field": "subscription_id"
+                },
+                {
+                    "key": "subscription_status_id",
+                    "table": "subscription_status",
+                    "field": "subscription_status_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "subscription_plan",
+            "field": [
+                {
+                    "name": "subscription_plan_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "trial_frequency",
+                    "type": "enum('day','week','semi_month','month','year')",
+                    "not_null": true
+                },
+                {
+                    "name": "trial_duration",
+                    "type": "int(10)",
+                    "not_null": true
+                },
+                {
+                    "name": "trial_cycle",
+                    "type": "int(10)",
+                    "not_null": true
+                },
+                {
+                    "name": "trial_status",
+                    "type": "tinyint(4)",
+                    "not_null": true
+                },
+                {
+                    "name": "frequency",
+                    "type": "enum('day','week','semi_month','month','year')",
+                    "not_null": true
+                },
+                {
+                    "name": "duration",
+                    "type": "int(10)",
+                    "not_null": true
+                },
+                {
+                    "name": "cycle",
+                    "type": "int(10)",
+                    "not_null": true
+                },
+                {
+                    "name": "status",
+                    "type": "tinyint(1)",
+                    "not_null": true
+                },
+                {
+                    "name": "sort_order",
+                    "type": "int(3)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "subscription_plan_id"
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "subscription_plan_description",
+            "field": [
+                {
+                    "name": "subscription_plan_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "language_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "name",
+                    "type": "varchar(255)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "subscription_plan_id",
+                "language_id"
+            ],
+            "foreign": [
+                {
+                    "key": "language_id",
+                    "table": "language",
+                    "field": "language_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "subscription_status",
+            "field": [
+                {
+                    "name": "subscription_status_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "language_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "name",
+                    "type": "varchar(32)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "subscription_status_id",
+                "language_id"
+            ],
+            "foreign": [
+                {
+                    "key": "language_id",
+                    "table": "language",
+                    "field": "language_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "tax_class",
+            "field": [
+                {
+                    "name": "tax_class_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "title",
+                    "type": "varchar(32)",
+                    "not_null": true
+                },
+                {
+                    "name": "description",
+                    "type": "varchar(255)",
+                    "not_null": true
+                },
+                {
+                    "name": "date_added",
+                    "type": "datetime",
+                    "not_null": true
+                },
+                {
+                    "name": "date_modified",
+                    "type": "datetime",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "tax_class_id"
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "tax_rate",
+            "field": [
+                {
+                    "name": "tax_rate_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "geo_zone_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "default": "0"
+                },
+                {
+                    "name": "name",
+                    "type": "varchar(32)",
+                    "not_null": true
+                },
+                {
+                    "name": "rate",
+                    "type": "decimal(15,4)",
+                    "not_null": true,
+                    "default": "0.0000"
+                },
+                {
+                    "name": "type",
+                    "type": "char(1)",
+                    "not_null": true
+                },
+                {
+                    "name": "date_added",
+                    "type": "datetime",
+                    "not_null": true
+                },
+                {
+                    "name": "date_modified",
+                    "type": "datetime",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "tax_rate_id"
+            ],
+            "foreign": [
+                {
+                    "key": "geo_zone_id",
+                    "table": "geo_zone",
+                    "field": "geo_zone_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "tax_rate_to_customer_group",
+            "field": [
+                {
+                    "name": "tax_rate_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "customer_group_id",
+                    "type": "int(11)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "tax_rate_id",
+                "customer_group_id"
+            ],
+            "foreign": [
+                {
+                    "key": "tax_rate_id",
+                    "table": "tax_rate",
+                    "field": "tax_rate_id"
+                },
+                {
+                    "key": "customer_group_id",
+                    "table": "customer_group",
+                    "field": "customer_group_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "tax_rule",
+            "field": [
+                {
+                    "name": "tax_rule_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "tax_class_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "tax_rate_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "based",
+                    "type": "varchar(10)",
+                    "not_null": true
+                },
+                {
+                    "name": "priority",
+                    "type": "int(5)",
+                    "not_null": true,
+                    "default": "1"
+                }
+            ],
+            "primary": [
+                "tax_rule_id"
+            ],
+            "foreign": [
+                {
+                    "key": "tax_class_id",
+                    "table": "tax_class",
+                    "field": "tax_class_id"
+                },
+                {
+                    "key": "tax_rate_id",
+                    "table": "tax_rate",
+                    "field": "tax_rate_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "theme",
+            "field": [
+                {
+                    "name": "theme_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "store_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "route",
+                    "type": "varchar(64)",
+                    "not_null": true
+                },
+                {
+                    "name": "code",
+                    "type": "mediumtext",
+                    "not_null": true
+                },
+                {
+                    "name": "date_added",
+                    "type": "datetime",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "theme_id"
+            ],
+            "foreign": [
+                {
+                    "key": "store_id",
+                    "table": "store",
+                    "field": "store_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "translation",
+            "field": [
+                {
+                    "name": "translation_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "store_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "language_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "route",
+                    "type": "varchar(64)",
+                    "not_null": true
+                },
+                {
+                    "name": "key",
+                    "type": "varchar(64)",
+                    "not_null": true
+                },
+                {
+                    "name": "value",
+                    "type": "text",
+                    "not_null": true
+                },
+                {
+                    "name": "date_added",
+                    "type": "datetime",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "translation_id"
+            ],
+            "foreign": [
+                {
+                    "key": "store_id",
+                    "table": "store",
+                    "field": "store_id"
+                },
+                {
+                    "key": "language_id",
+                    "table": "language",
+                    "field": "language_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "upload",
+            "field": [
+                {
+                    "name": "upload_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "name",
+                    "type": "varchar(255)",
+                    "not_null": true
+                },
+                {
+                    "name": "filename",
+                    "type": "varchar(255)",
+                    "not_null": true
+                },
+                {
+                    "name": "code",
+                    "type": "varchar(255)",
+                    "not_null": true
+                },
+                {
+                    "name": "date_added",
+                    "type": "datetime",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "upload_id"
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "seo_url",
+            "field": [
+                {
+                    "name": "seo_url_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "store_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "language_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "key",
+                    "type": "varchar(64)",
+                    "not_null": true
+                },
+                {
+                    "name": "value",
+                    "type": "varchar(255)",
+                    "not_null": true
+                },
+                {
+                    "name": "keyword",
+                    "type": "varchar(768)",
+                    "not_null": true
+                },
+                {
+                    "name": "sort_order",
+                    "type": "int(3)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "seo_url_id"
+            ],
+            "foreign": [
+                {
+                    "key": "store_id",
+                    "table": "store",
+                    "field": "store_id"
+                },
+                {
+                    "key": "language_id",
+                    "table": "language",
+                    "field": "language_id"
+                }
+            ],
+            "index": [
+                {
+                    "name": "keyword",
+                    "key": [
+                        "keyword"
+                    ]
+                },
+                {
+                    "name": "query",
+                    "key": [
+                        "key",
+                        "value"
+                    ]
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "user",
+            "field": [
+                {
+                    "name": "user_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "user_group_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "username",
+                    "type": "varchar(20)",
+                    "not_null": true
+                },
+                {
+                    "name": "password",
+                    "type": "varchar(255)",
+                    "not_null": true
+                },
+                {
+                    "name": "firstname",
+                    "type": "varchar(32)",
+                    "not_null": true
+                },
+                {
+                    "name": "lastname",
+                    "type": "varchar(32)",
+                    "not_null": true
+                },
+                {
+                    "name": "email",
+                    "type": "varchar(96)",
+                    "not_null": true
+                },
+                {
+                    "name": "image",
+                    "type": "varchar(255)",
+                    "not_null": true,
+                    "default": ""
+                },
+                {
+                    "name": "code",
+                    "type": "varchar(40)",
+                    "not_null": true,
+                    "default": ""
+                },
+                {
+                    "name": "ip",
+                    "type": "varchar(40)",
+                    "not_null": true,
+                    "default": ""
+                },
+                {
+                    "name": "status",
+                    "type": "tinyint(1)",
+                    "not_null": true
+                },
+                {
+                    "name": "date_added",
+                    "type": "datetime",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "user_id"
+            ],
+            "foreign": [
+                {
+                    "key": "user_group_id",
+                    "table": "user_group",
+                    "field": "user_group_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "user_authorize",
+            "field": [
+                {
+                    "name": "user_authorize_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "user_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "token",
+                    "type": "varchar(96)",
+                    "not_null": true
+                },
+                {
+                    "name": "total",
+                    "type": "int(1)",
+                    "not_null": true
+                },
+                {
+                    "name": "ip",
+                    "type": "varchar(40)",
+                    "not_null": true
+                },
+                {
+                    "name": "user_agent",
+                    "type": "varchar(255)",
+                    "not_null": true
+                },
+                {
+                    "name": "status",
+                    "type": "tinyint(1)",
+                    "not_null": true
+                },
+                {
+                    "name": "date_added",
+                    "type": "datetime",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "user_authorize_id"
+            ],
+            "foreign": [
+                {
+                    "key": "user_id",
+                    "table": "user",
+                    "field": "user_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "user_group",
+            "field": [
+                {
+                    "name": "user_group_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "name",
+                    "type": "varchar(64)",
+                    "not_null": true
+                },
+                {
+                    "name": "permission",
+                    "type": "text",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "user_group_id"
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "user_login",
+            "field": [
+                {
+                    "name": "user_login_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "user_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "ip",
+                    "type": "varchar(40)",
+                    "not_null": true
+                },
+                {
+                    "name": "user_agent",
+                    "type": "varchar(255)",
+                    "not_null": true
+                },
+                {
+                    "name": "date_added",
+                    "type": "datetime",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "user_login_id"
+            ],
+            "foreign": [
+                {
+                    "key": "user_id",
+                    "table": "user",
+                    "field": "user_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "voucher",
+            "field": [
+                {
+                    "name": "voucher_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "order_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "code",
+                    "type": "varchar(10)",
+                    "not_null": true
+                },
+                {
+                    "name": "from_name",
+                    "type": "varchar(64)",
+                    "not_null": true
+                },
+                {
+                    "name": "from_email",
+                    "type": "varchar(96)",
+                    "not_null": true
+                },
+                {
+                    "name": "to_name",
+                    "type": "varchar(64)",
+                    "not_null": true
+                },
+                {
+                    "name": "to_email",
+                    "type": "varchar(96)",
+                    "not_null": true
+                },
+                {
+                    "name": "voucher_theme_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "message",
+                    "type": "text",
+                    "not_null": true
+                },
+                {
+                    "name": "amount",
+                    "type": "decimal(15,4)",
+                    "not_null": true
+                },
+                {
+                    "name": "status",
+                    "type": "tinyint(1)",
+                    "not_null": true
+                },
+                {
+                    "name": "date_added",
+                    "type": "datetime",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "voucher_id"
+            ],
+            "foreign": [
+                {
+                    "key": "order_id",
+                    "table": "order",
+                    "field": "order_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "voucher_history",
+            "field": [
+                {
+                    "name": "voucher_history_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "voucher_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "order_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "amount",
+                    "type": "decimal(15,4)",
+                    "not_null": true
+                },
+                {
+                    "name": "date_added",
+                    "type": "datetime",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "voucher_history_id"
+            ],
+            "foreign": [
+                {
+                    "key": "voucher_id",
+                    "table": "voucher",
+                    "field": "voucher_id"
+                },
+                {
+                    "key": "order_id",
+                    "table": "order",
+                    "field": "order_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "voucher_theme",
+            "field": [
+                {
+                    "name": "voucher_theme_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "image",
+                    "type": "varchar(255)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "voucher_theme_id"
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "voucher_theme_description",
+            "field": [
+                {
+                    "name": "voucher_theme_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "language_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "name",
+                    "type": "varchar(32)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "voucher_theme_id",
+                "language_id"
+            ],
+            "foreign": [
+                {
+                    "key": "language_id",
+                    "table": "language",
+                    "field": "language_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "weight_class",
+            "field": [
+                {
+                    "name": "weight_class_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "value",
+                    "type": "decimal(15,8)",
+                    "not_null": true,
+                    "default": "0.00000000"
+                }
+            ],
+            "primary": [
+                "weight_class_id"
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "weight_class_description",
+            "field": [
+                {
+                    "name": "weight_class_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "language_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "title",
+                    "type": "varchar(32)",
+                    "not_null": true
+                },
+                {
+                    "name": "unit",
+                    "type": "varchar(4)",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "weight_class_id",
+                "language_id"
+            ],
+            "foreign": [
+                {
+                    "key": "language_id",
+                    "table": "language",
+                    "field": "language_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "zone",
+            "field": [
+                {
+                    "name": "zone_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "country_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "name",
+                    "type": "varchar(128)",
+                    "not_null": true
+                },
+                {
+                    "name": "code",
+                    "type": "varchar(32)",
+                    "not_null": true
+                },
+                {
+                    "name": "status",
+                    "type": "tinyint(1)",
+                    "not_null": true,
+                    "default": "1"
+                }
+            ],
+            "primary": [
+                "zone_id"
+            ],
+            "foreign": [
+                {
+                    "key": "country_id",
+                    "table": "country",
+                    "field": "country_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        },
+        {
+            "name": "zone_to_geo_zone",
+            "field": [
+                {
+                    "name": "zone_to_geo_zone_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "auto_increment": true
+                },
+                {
+                    "name": "country_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "zone_id",
+                    "type": "int(11)",
+                    "not_null": true,
+                    "default": "0"
+                },
+                {
+                    "name": "geo_zone_id",
+                    "type": "int(11)",
+                    "not_null": true
+                },
+                {
+                    "name": "date_added",
+                    "type": "datetime",
+                    "not_null": true
+                },
+                {
+                    "name": "date_modified",
+                    "type": "datetime",
+                    "not_null": true
+                }
+            ],
+            "primary": [
+                "zone_to_geo_zone_id"
+            ],
+            "foreign": [
+                {
+                    "key": "country_id",
+                    "table": "country",
+                    "field": "country_id"
+                },
+                {
+                    "key": "zone_id",
+                    "table": "zone",
+                    "field": "zone_id"
+                },
+                {
+                    "key": "geo_zone_id",
+                    "table": "geo_zone",
+                    "field": "geo_zone_id"
+                }
+            ],
+            "engine": "InnoDB",
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_general_ci"
+        }
+    ];
 }
 
-                        
+

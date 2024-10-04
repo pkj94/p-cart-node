@@ -3,7 +3,7 @@ const client = redis.createClient({
     host: CACHE_HOSTNAME,
     port: CACHE_PORT
 });
-module.exports = class RedisCache {
+module.exports = class CacheRedisLibrary {
     constructor(expire = 3600) {
         this.expire = expire;
     }

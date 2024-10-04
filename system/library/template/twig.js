@@ -1,6 +1,6 @@
 const { join } = require('path');
 const twigNode = require('twig');
-module.exports = class Twig {
+module.exports = class TemplateTwigLibrary {
     constructor() {
         this.root = join(__dirname, '../../..'); // Adjust the path as needed
         // this.loader = new FileSystemLoader('/', { root: this.root });

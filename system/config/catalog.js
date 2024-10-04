@@ -10,7 +10,7 @@ module.exports = {
     'db_database': DB_DATABASE,
     'db_port': DB_PORT,
     // Session
-    'session_autostart': false,
+    'session_autostart': true,
     'session_engine': 'db', // db or file
     // Actions
     'action_pre_action': [

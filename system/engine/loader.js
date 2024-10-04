@@ -1,5 +1,4 @@
 const fs = require('fs');
-const path = require('path');
 const Action = require('./action');
 module.exports = class Loader {
     constructor(registry) {
@@ -23,6 +22,8 @@ module.exports = class Loader {
                     action = result;
                 }
                 result = await action.execute(this.registry, args);
+                // console.log('result',result,args)
+
                 action = null;
                 if (result instanceof Action) {
                     action = result;
@@ -38,55 +39,76 @@ module.exports = class Loader {
             resolve(output);
         })
     }
-    model(route) {
+    model(route,registry) {
+        // Sanitize the call
         route = route.replace(/[^a-zA-Z0-9_\/]/g, '');
-        const className = `Opencart.${this.config.get('application')}.Model.${route.split('/').map(part => part.charAt(0).toUpperCase() + part.slice(1)).join('.')}`;
-        const key = `model_${route.replace(/\//g, '_')}`;
+
+        // Converting a route path to a class name
+        const className = DIR_OPENCART + `${this.registry.data.config.get('application').toLowerCase()}/model/${route}.js`;
+        // Create a key to store the model object
+        const key = `model_${route.replace('/', '_')}`;
+
+        // Check if the requested model is already stored in the registry.
         if (!this.registry.has(key)) {
-            if (global[className]) {
-                const model = new global[className](this.registry);
-                const proxy = new Proxy({}, {
-                    get: (target, prop) => {
-                        if (typeof model[prop] === 'function' && prop.substr(0, 2) !== '__') {
-                            return (...args) => {
-                                const methodRoute = `${route}/${prop}`;
-                                let output = '';
-                                let result = this.registry.data.event.trigger(`model/${methodRoute}/before`, [methodRoute, args]);
-                                if (result) {
-                                    output = result;
+            try {
+                const ModelClass = require(`${className}`);
+                const model = new ModelClass(this.registry);
+
+                const proxy = new Proxy();
+
+                for (const method of Object.getOwnPropertyNames(ModelClass.prototype).filter(method => method !== 'constructor')) {
+                    if (!method.startsWith('__') && typeof model[method] === 'function') {
+                        proxy[method] = (...args) => {
+                            route = `${route}/${method}`;
+
+                            let output = '';
+
+                            // Trigger the pre events
+                            let result = this.registry.data.event.trigger(`model/${route}/before`, [route, args]);
+
+                            if (result) {
+                                output = result;
+                            }
+
+                            if (!output) {
+                                try {
+                                    output = model[method](...args);
+                                } catch (error) {
+                                    console.log(error)
+                                    throw new Error(`Error: Could not call model/${route}!`);
                                 }
-                                if (!output) {
-                                    if (typeof model[prop] === 'function') {
-                                        output = model[prop](...args);
-                                    } else {
-                                        throw new Error(`Error: Could not call model/${methodRoute}!`);
-                                    }
-                                }
-                                result = this.registry.data.event.trigger(`model/${methodRoute}/after`, [methodRoute, args, output]);
-                                if (result) {
-                                    output = result;
-                                }
-                                return output;
-                            };
-                        }
-                        return model[prop];
+                            }
+
+                            // Trigger the post events
+                            result = this.registry.data.event.trigger(`model/${route}/after`, [route, args, output]);
+
+                            if (result) {
+                                output = result;
+                            }
+
+                            return output;
+                        };
                     }
-                });
+                }
+                registry.set(key, proxy);
                 this.registry.set(key, proxy);
-            } else {
+            } catch (error) {
+                console.log(error)
                 throw new Error(`Error: Could not load model ${className}!`);
             }
         }
     }
+
     view(route, data = {}, code = '') {
         return new Promise(async (resolve, reject) => {
             route = route.replace(/[^a-zA-Z0-9_\/]/g, '');
             let output = '';
-            let result = this.registry.data.event.trigger(`view/${route}/before`, [route, data, code]);
+            let result = await this.registry.data.event.trigger(`view/${route}/before`, [route, data, code]);
             if (result) {
                 output = result;
             }
             if (!output) {
+                
                 output = await this.registry.data.template.render(route, data, code);
             }
             result = this.registry.data.event.trigger(`view/${route}/after`, [route, data, output]);
@@ -134,11 +156,11 @@ module.exports = class Loader {
         route = route.replace(/[^a-zA-Z0-9_\/]/g, '');
         let file;
         if (!route.startsWith('extension/')) {
-            file = path.join(DIR_SYSTEM, 'helper', `${route}.js`);
+            file = DIR_SYSTEM + 'helper/' + `${route}.js`;
         } else {
             const parts = route.substring(10).split('/');
             const code = parts.shift();
-            file = path.join(DIR_EXTENSION, code, 'system', 'helper', `${parts.join('/')}.js`);
+            file = DIR_EXTENSION + code + '/system/' + '/helper/' + `${parts.join('/')}.js`;
         }
         if (fs.existsSync(file)) {
             require(file);

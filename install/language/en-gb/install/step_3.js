@@ -5,6 +5,8 @@ module.exports = {
     'text_step_3': 'Enter your database and administration details',
     'text_db_connection': '1. Please enter your database connection details.',
     'text_db_administration': '2. Please enter a username and password for the administration.',
+    'text_mongodb': 'MongoDB',
+    'text_mysql': 'MySQL',
     'text_mysqli': 'MySQLi',
     'text_pdo': 'mPDO',
     'text_pgsql': 'PostgreSQL',

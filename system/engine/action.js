@@ -1,12 +1,14 @@
 module.exports = class Action {
     constructor(route) {
         this.route = route.replace(/[^a-zA-Z0-9_|\/\.]/g, '');
+
         const pos = this.route.lastIndexOf('.');
+
         if (pos === -1) {
             this.class = `controller/${this.route}`;
             this.method = 'index';
         } else {
-            this.class = `controller/${this.route}`;
+            this.class = `controller/${this.route.split('.')[0]}`;
             this.method = this.route.slice(pos + 1);
         }
     }
@@ -20,8 +22,8 @@ module.exports = class Action {
             }
             const app = registry.get('config').get('application');
             const className = DIR_OPENCART + `${app.toLowerCase()}/${this.class}.js`;
-            // console.log('className',className)
             try {
+                // console.log('className---',className)
                 const ControllerClass = require(`${className}`);
                 const controller = new ControllerClass(registry);
                 if (typeof controller[this.method] === 'function') {

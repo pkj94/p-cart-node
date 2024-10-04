@@ -1,4 +1,5 @@
-module.exports = class Step3 extends Controller {
+const fs = require('fs');
+module.exports = class Step3Controller extends Controller {
     constructor(registry) {
         super(registry);
         this.error = {};
@@ -7,89 +8,96 @@ module.exports = class Step3 extends Controller {
     async index() {
         await this.load.language('install/step_3');
 
-        if ((this.request.server['method'] === 'POST') && this.validate()) {
-            this.load.model('install/install');
+        if ((this.request.server['method'] === 'POST') && await this.validate()) {
+            try {
+                this.load.model('install/install', this);
 
-            this.model_install_install.database(this.request.post);
+                await this.model_install_install.database(this.request.post);
 
-            // Catalog config.php
-            let output = '<?php\n';
+                // Catalog config.js
+                let output = '';
 
-            output += '// APPLICATION\n';
-            output += 'define(\'APPLICATION\', \'Catalog\');\n\n';
+                output += '// APPLICATION\n';
+                output += 'global.APPLICATION=\'Catalog\';\n\n';
 
-            output += '// HTTP\n';
-            output += 'define(\'HTTP_SERVER\', \'' + HTTP_OPENCART + '\');\n\n';
+                output += '// HTTP\n';
+                output += 'global.HTTP_SERVER=\'' + HTTP_OPENCART + '\';\n\n';
 
-            output += '// DIR\n';
-            output += 'define(\'DIR_OPENCART\', \'' + DIR_OPENCART + '\');\n';
-            output += 'define(\'DIR_APPLICATION\', DIR_OPENCART + \'catalog/\');\n';
-            output += 'define(\'DIR_EXTENSION\', DIR_OPENCART + \'extension/\');\n';
-            output += 'define(\'DIR_IMAGE\', DIR_OPENCART + \'image/\');\n';
-            output += 'define(\'DIR_SYSTEM\', DIR_OPENCART + \'system/\');\n';
-            output += 'define(\'DIR_STORAGE\', DIR_SYSTEM + \'storage/\');\n';
-            output += 'define(\'DIR_LANGUAGE\', DIR_APPLICATION + \'language/\');\n';
-            output += 'define(\'DIR_TEMPLATE\', DIR_APPLICATION + \'view/template/\');\n';
-            output += 'define(\'DIR_CONFIG\', DIR_SYSTEM + \'config/\');\n';
-            output += 'define(\'DIR_CACHE\', DIR_STORAGE + \'cache/\');\n';
-            output += 'define(\'DIR_DOWNLOAD\', DIR_STORAGE + \'download/\');\n';
-            output += 'define(\'DIR_LOGS\', DIR_STORAGE + \'logs/\');\n';
-            output += 'define(\'DIR_SESSION\', DIR_STORAGE + \'session/\');\n';
-            output += 'define(\'DIR_UPLOAD\', DIR_STORAGE + \'upload/\');\n\n';
+                output += '// DIR\n';
+                output += 'global.DIR_OPENCART=\'' + DIR_OPENCART + '\';\n';
+                output += 'global.DIR_APPLICATION=DIR_OPENCART + \'catalog/\';\n';
+                output += 'global.DIR_EXTENSION=DIR_OPENCART + \'extension/\';\n';
+                output += 'global.DIR_IMAGE=DIR_OPENCART + \'image/\';\n';
+                output += 'global.DIR_SYSTEM=DIR_OPENCART + \'system/\';\n';
+                output += 'global.DIR_STORAGE=DIR_SYSTEM + \'storage/\';\n';
+                output += 'global.DIR_LANGUAGE=DIR_APPLICATION + \'language/\';\n';
+                output += 'global.DIR_TEMPLATE=DIR_APPLICATION + \'view/template/\';\n';
+                output += 'global.DIR_CONFIG=DIR_SYSTEM + \'config/\';\n';
+                output += 'global.DIR_CACHE=DIR_STORAGE + \'cache/\';\n';
+                output += 'global.DIR_DOWNLOAD=DIR_STORAGE + \'download/\';\n';
+                output += 'global.DIR_LOGS=DIR_STORAGE + \'logs/\';\n';
+                output += 'global.DIR_SESSION=DIR_STORAGE + \'session/\';\n';
+                output += 'global.DIR_UPLOAD=DIR_STORAGE + \'upload/\';\n\n';
 
-            output += '// DB\n';
-            output += 'define(\'DB_DRIVER\', \'' + this.addslashes(this.request.post['db_driver']) + '\');\n';
-            output += 'define(\'DB_HOSTNAME\', \'' + this.addslashes(this.request.post['db_hostname']) + '\');\n';
-            output += 'define(\'DB_USERNAME\', \'' + this.addslashes(this.request.post['db_username']) + '\');\n';
-            output += 'define(\'DB_PASSWORD\', \'' + this.addslashes(this.html_entity_decode(this.request.post['db_password'])) + '\');\n';
-            output += 'define(\'DB_DATABASE\', \'' + this.addslashes(this.request.post['db_database']) + '\');\n';
-            output += 'define(\'DB_PORT\', \'' + this.addslashes(this.request.post['db_port']) + '\');\n';
-            output += 'define(\'DB_PREFIX\', \'' + this.addslashes(this.request.post['db_prefix']) + '\');';
+                output += '// DB\n';
+                output += 'global.DB_DRIVER=\'' + this.addslashes(this.request.post['db_driver']) + '\';\n';
+                output += 'global.DB_HOSTNAME=\'' + this.addslashes(this.request.post['db_hostname']) + '\';\n';
+                output += 'global.DB_USERNAME=\'' + this.addslashes(this.request.post['db_username']) + '\';\n';
+                output += 'global.DB_PASSWORD=\'' + this.addslashes(this.html_entity_decode(this.request.post['db_password'])) + '\';\n';
+                output += 'global.DB_DATABASE=\'' + this.addslashes(this.request.post['db_database']) + '\';\n';
+                output += 'global.DB_PORT=\'' + this.addslashes(this.request.post['db_port']) + '\';\n';
+                output += 'global.DB_PREFIX=\'' + this.addslashes(this.request.post['db_prefix']) + '\';';
+                output += 'global.SERVER_PORT=\'8080\';';
 
-            const fs = require('fs');
-            fs.writeFileSync(DIR_OPENCART + 'config.php', output);
 
-            // Admin config.php
-            output = '<?php\n';
-            output += '// APPLICATION\n';
-            output += 'define(\'APPLICATION\', \'Admin\');\n\n';
+                fs.writeFileSync(DIR_OPENCART + 'config.js', output);
 
-            output += '// HTTP\n';
-            output += 'define(\'HTTP_SERVER\', \'' + HTTP_OPENCART + 'admin/\');\n';
-            output += 'define(\'HTTP_CATALOG\', \'' + HTTP_OPENCART + '\');\n\n';
+                // Admin config.js
+                output = '';
+                output += '// APPLICATION\n';
+                output += 'global.APPLICATION=\'Admin\';\n\n';
 
-            output += '// DIR\n';
-            output += 'define(\'DIR_OPENCART\', \'' + DIR_OPENCART + '\');\n';
-            output += 'define(\'DIR_APPLICATION\', DIR_OPENCART + \'admin/\');\n';
-            output += 'define(\'DIR_EXTENSION\', DIR_OPENCART + \'extension/\');\n';
-            output += 'define(\'DIR_IMAGE\', DIR_OPENCART + \'image/\');\n';
-            output += 'define(\'DIR_SYSTEM\', DIR_OPENCART + \'system/\');\n';
-            output += 'define(\'DIR_CATALOG\', DIR_OPENCART + \'catalog/\');\n';
-            output += 'define(\'DIR_STORAGE\', DIR_SYSTEM + \'storage/\');\n';
-            output += 'define(\'DIR_LANGUAGE\', DIR_APPLICATION + \'language/\');\n';
-            output += 'define(\'DIR_TEMPLATE\', DIR_APPLICATION + \'view/template/\');\n';
-            output += 'define(\'DIR_CONFIG\', DIR_SYSTEM + \'config/\');\n';
-            output += 'define(\'DIR_CACHE\', DIR_STORAGE + \'cache/\');\n';
-            output += 'define(\'DIR_DOWNLOAD\', DIR_STORAGE + \'download/\');\n';
-            output += 'define(\'DIR_LOGS\', DIR_STORAGE + \'logs/\');\n';
-            output += 'define(\'DIR_SESSION\', DIR_STORAGE + \'session/\');\n';
-            output += 'define(\'DIR_UPLOAD\', DIR_STORAGE + \'upload/\');\n\n';
+                output += '// HTTP\n';
+                output += 'global.HTTP_SERVER=\'' + HTTP_OPENCART + 'admin/\';\n';
+                output += 'global.HTTP_CATALOG=\'' + HTTP_OPENCART + '\';\n\n';
 
-            output += '// DB\n';
-            output += 'define(\'DB_DRIVER\', \'' + this.addslashes(this.request.post['db_driver']) + '\');\n';
-            output += 'define(\'DB_HOSTNAME\', \'' + this.addslashes(this.request.post['db_hostname']) + '\');\n';
-            output += 'define(\'DB_USERNAME\', \'' + this.addslashes(this.request.post['db_username']) + '\');\n';
-            output += 'define(\'DB_PASSWORD\', \'' + this.addslashes(this.html_entity_decode(this.request.post['db_password'])) + '\');\n';
-            output += 'define(\'DB_DATABASE\', \'' + this.addslashes(this.request.post['db_database']) + '\');\n';
-            output += 'define(\'DB_PORT\', \'' + this.addslashes(this.request.post['db_port']) + '\');\n';
-            output += 'define(\'DB_PREFIX\', \'' + this.addslashes(this.request.post['db_prefix']) + '\');\n\n';
+                output += '// DIR\n';
+                output += 'global.DIR_OPENCART=\'' + DIR_OPENCART + '\';\n';
+                output += 'global.DIR_APPLICATION=DIR_OPENCART + \'admin/\';\n';
+                output += 'global.DIR_EXTENSION=DIR_OPENCART + \'extension/\';\n';
+                output += 'global.DIR_IMAGE=DIR_OPENCART + \'image/\';\n';
+                output += 'global.DIR_SYSTEM=DIR_OPENCART + \'system/\';\n';
+                output += 'global.DIR_CATALOG=DIR_OPENCART + \'catalog/\';\n';
+                output += 'global.DIR_STORAGE=DIR_SYSTEM + \'storage/\';\n';
+                output += 'global.DIR_LANGUAGE=DIR_APPLICATION + \'language/\';\n';
+                output += 'global.DIR_TEMPLATE=DIR_APPLICATION + \'view/template/\';\n';
+                output += 'global.DIR_CONFIG=DIR_SYSTEM + \'config/\';\n';
+                output += 'global.DIR_CACHE=DIR_STORAGE + \'cache/\';\n';
+                output += 'global.DIR_DOWNLOAD=DIR_STORAGE + \'download/\';\n';
+                output += 'global.DIR_LOGS=DIR_STORAGE + \'logs/\';\n';
+                output += 'global.DIR_SESSION=DIR_STORAGE + \'session/\';\n';
+                output += 'global.DIR_UPLOAD=DIR_STORAGE + \'upload/\';\n\n';
 
-            output += '// OpenCart API\n';
-            output += 'define(\'OPENCART_SERVER\', \'https://www.opencart.com/\');\n';
+                output += '// DB\n';
+                output += 'global.DB_DRIVER=\'' + this.addslashes(this.request.post['db_driver']) + '\';\n';
+                output += 'global.DB_HOSTNAME=\'' + this.addslashes(this.request.post['db_hostname']) + '\';\n';
+                output += 'global.DB_USERNAME=\'' + this.addslashes(this.request.post['db_username']) + '\';\n';
+                output += 'global.DB_PASSWORD=\'' + this.addslashes(this.html_entity_decode(this.request.post['db_password'])) + '\';\n';
+                output += 'global.DB_DATABASE=\'' + this.addslashes(this.request.post['db_database']) + '\';\n';
+                output += 'global.DB_PORT=\'' + this.addslashes(this.request.post['db_port']) + '\';\n';
+                output += 'global.DB_PREFIX=\'' + this.addslashes(this.request.post['db_prefix']) + '\';\n\n';
+                output += 'global.SERVER_PORT=\'8080\';';
 
-            fs.writeFileSync(DIR_OPENCART + 'admin/config.php', output);
+                output += '// OpenCart API\n';
+                output += 'global.OPENCART_SERVER=\'https://www.opencart.com/\';\n';
 
-            this.response.redirect(this.url.link('install/step_4', 'language=' + this.config.get('language_code')));
+                fs.writeFileSync(DIR_OPENCART + 'admin/config.js', output);
+
+                this.response.setRedirect(this.url.link('install/step_4', 'language=' + this.config.get('language_code')));
+            } catch (e) {
+                console.log(e);
+                this.error['warning'] = e.message;
+            }
         }
 
         this.document.setTitle(this.language.get('heading_title'));
@@ -134,7 +142,7 @@ module.exports = class Step3 extends Controller {
 
         data['action'] = this.url.link('install/step_3', 'language=' + this.config.get('language_code'));
 
-        const db_drivers = ['mysqli', 'pdo'];
+        const db_drivers = ['mongodb', 'mysqli'];
         data['drivers'] = [];
 
         db_drivers.forEach(db_driver => {
@@ -147,12 +155,12 @@ module.exports = class Step3 extends Controller {
         });
 
         data['db_driver'] = this.request.post['db_driver'] || '';
-        data['db_hostname'] = this.request.post['db_hostname'] || 'localhost';
-        data['db_username'] = this.request.post['db_username'] || 'root';
+        data['db_hostname'] = this.request.post['db_hostname'] || '127.0.0.1';
+        data['db_username'] = this.request.post['db_username'] || '';
         data['db_password'] = this.request.post['db_password'] || '';
         data['db_database'] = this.request.post['db_database'] || '';
-        data['db_port'] = this.request.post['db_port'] || 3306;
-        data['db_prefix'] = this.request.post['db_prefix'] || 'oc_';
+        data['db_port'] = this.request.post['db_port'] || 27017;
+        data['db_prefix'] = this.request.post['db_prefix'] || '';
         data['username'] = this.request.post['username'] || 'admin';
         data['password'] = this.request.post['password'] || '';
         data['email'] = this.request.post['email'] || '';
@@ -166,7 +174,7 @@ module.exports = class Step3 extends Controller {
         this.response.setOutput(this.load.view('install/step_3', data));
     }
 
-    validate() {
+    async validate() {
         if (!this.request.post['db_hostname']) {
             this.error['db_hostname'] = this.language.get('error_db_hostname');
         }
@@ -187,14 +195,15 @@ module.exports = class Step3 extends Controller {
             this.error['db_prefix'] = this.language.get('error_db_prefix');
         }
 
-        const db_drivers = ['mysqli', 'pdo', 'pgsql'];
+        const db_drivers = ['mongodb', 'mysqli'];
 
         if (!db_drivers.includes(this.request.post['db_driver'])) {
             this.error['db_driver'] = this.language.get('error_db_driver');
         } else {
             try {
-                const db = new Opencart.System.Library.DB(this.request.post['db_driver'], this.html_entity_decode(this.request.post['db_hostname']), this.html_entity_decode(this.request.post['db_username']), this.html_entity_decode(this.request.post['db_password']), this.html_entity_decode(this.request.post['db_database']), this.request.post['db_port']);
+                const db = await new DbLibrary(this.request.post['db_driver'], this.html_entity_decode(this.request.post['db_hostname']), this.html_entity_decode(this.request.post['db_username']), this.html_entity_decode(this.request.post['db_password']), this.html_entity_decode(this.request.post['db_database']), this.request.post['db_port']).connect();
             } catch (e) {
+                console.log('e----------', e)
                 this.error['warning'] = e.message;
             }
         }
@@ -211,14 +220,13 @@ module.exports = class Step3 extends Controller {
             this.error['password'] = this.language.get('error_password');
         }
 
-        if (!this.isWritable(DIR_OPENCART + 'config.php')) {
-            this.error['warning'] = this.language.get('error_config') + DIR_OPENCART + 'config.php!';
+        if (!this.isWritable(DIR_OPENCART + 'config.js')) {
+            this.error['warning'] = this.language.get('error_config') + DIR_OPENCART + 'config.js!';
         }
 
-        if (!this.isWritable(DIR_OPENCART + 'admin/config.php')) {
-            this.error['warning'] = this.language.get('error_config') + DIR_OPENCART + 'admin/config.php!';
+        if (!this.isWritable(DIR_OPENCART + 'admin/config.js')) {
+            this.error['warning'] = this.language.get('error_config') + DIR_OPENCART + 'admin/config.js!';
         }
-
         return Object.keys(this.error).length === 0;
     }
 
@@ -242,7 +250,7 @@ module.exports = class Step3 extends Controller {
 
     isWritable(path) {
         // Implement logic to check if a file is writable
-        return true; // Placeholder
+        return fs.existsSync(path); // Placeholder
     }
 }
 

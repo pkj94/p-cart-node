@@ -1,5 +1,5 @@
 
-module.exports = class Response {
+module.exports = class ResponseLibrary {
   constructor(res) {
     this.response = res;
     this.headers = [];

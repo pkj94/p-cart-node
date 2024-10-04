@@ -1,7 +1,13 @@
-global.AbstractController = require('./abstract');
-global.DatabaseController = require('./abstract/database');
+const fs = require('fs');
+global.date = require('php-date-format');
+global.Framework = require('./system/framework');
 
 global.APP = async () => {
+    //Autoload Engine
+    fs.readdirSync('system/engine').forEach((engine) => {
+        let name = engine.charAt(0).toUpperCase() + engine.slice(1);
+        global[name.replace('.js', '')] = require('./system/engine/' + engine)
+    });
     let adminRoutes = require('./admin');
     let catalogRoutes = require('./catalog');
     let installRoutes = require('./install');
@@ -13,8 +19,24 @@ global.APP = async () => {
     global.express = require('express');
     const fileUpload = require('express-fileupload');
     global.app = express();
-    var useragent = require('useragent');
+    global.useragent = require('useragent');
+    const cookieParser = require("cookie-parser");
 
+    app.use(cookieParser());
+    const session = require('express-session')
+    var sess = {
+        secret: require('crypto').randomBytes(26).toString('hex').slice(0, 26),
+        cookie: {},
+        resave: false,
+        saveUninitialized: true
+    }
+
+    if (app.get('env') === 'production') {
+        app.set('trust proxy', 1) // trust first proxy
+        sess.cookie.secure = true // serve secure cookies
+    }
+
+    app.use(session(sess));
     useragent(true);
     app.use(fileUpload());
     //
@@ -27,18 +49,8 @@ global.APP = async () => {
     app.use(compression());
     app.use('/image', express.static('image'))
     app.use(morgan('dev'));
-    
-
-
 
     app.all('*', (req, res, next) => {
-        global._GET = req.query;
-        global._POST = req.body;
-        global._COOKIE = req.headers.cookie;
-        global._FILES = req.files;
-        global._SERVER = req;
-        global._PARAMS = req.params;
-        global.RESPONSE = res;
         next();
     });
 

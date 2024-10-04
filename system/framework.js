@@ -1,20 +1,19 @@
-const Action = require('./engine/action');
-const Event = require('./engine/event');
-const Loader = require('./engine/loader');
-const Cache = require('./library/cache');
-global.Document = require('./library/document');
-const Language = require('./library/language');
-const Log = require('./library/log');
-const Request = require('./library/request');
-const Response = require('./library/response');
-const Session = require('./library/session');
-const Template = require('./library/template');
-global.Url = require('./library/url');
-global.Controller = require('./engine/controller');
+const fs = require('fs');
 // Helper
-require('./helper/general');
 module.exports = class Framework {
     async init(req, res, next) {
+
+        //Autoload Helper
+        fs.readdirSync(DIR_SYSTEM + 'helper').forEach((helper) => {
+            require(DIR_SYSTEM + 'helper/' + helper)
+        });
+        //Autoload Library
+        fs.readdirSync(DIR_SYSTEM + 'library').forEach((library) => {
+            if (fs.lstatSync(DIR_SYSTEM + 'library/' + library).isFile()) {
+                let name = ucfirst(library).replace('.js', '') + 'Library';
+                global[name] = require(DIR_SYSTEM + 'library/' + library);
+            }
+        });
         global.config.addPath(DIR_CONFIG);
         // Load the default config
         await global.config.load('default');
@@ -27,7 +26,7 @@ module.exports = class Framework {
         let dateTimezone = global.config.get('date_timezone');
         Intl.DateTimeFormat().resolvedOptions().timeZone = dateTimezone;
         // Logging
-        global.log = new Log(global.config.get('error_filename'));
+        global.log = new LogLibrary(global.config.get('error_filename'));
         registry.set('log', global.log);
         // Event
         let event = new Event(registry);
@@ -47,7 +46,7 @@ module.exports = class Framework {
         let loader = new Loader(registry);
         registry.set('load', loader);
         // Request
-        let request = new Request(req);
+        let request = new RequestLibrary(req);
         registry.set('request', request);
         // Compatibility
         if (request.get['route']) {
@@ -55,7 +54,7 @@ module.exports = class Framework {
             request.get['route'] = request.get['route'].replace('%7C', '|');
         }
         // Response
-        let response = new Response(res);
+        let response = new ResponseLibrary(res);
         registry.set('response', response);
         for (let header of global.config.get('response_header') || []) {
             response.addHeader(header);
@@ -70,68 +69,39 @@ module.exports = class Framework {
         response.setCompression(global.config.get('response_compression'));
         // Database
         if (global.config.get('db_autostart')) {
-            let dbController = new DatabaseController();
-            let databases = await dbController.getDatabases();
-            // console.log('databases',Object.keys(databases).length)
-            let schemas = requireAll({
-                dirname: DIR_SYSTEM + '/schema',
-                filter: /(.+)\.js/,
-                resolve: function (Model) {
-                    return new AbstractController(Model, databases);
-                },
-                map: (name, path) => {
-                    // console.log(name,path)
-                    return name;
-                }
-            });
-            registry.set('db', schemas);
+            let db = new DbLibrary(config.get('db_engine'), config.get('db_hostname'), config.get('db_username'), config.get('db_password'), config.get('db_database'), config.get('db_port'));
+            await db.connect();
+            registry.set('db', db);
         }
         // Session
         if (global.config.get('session_autostart')) {
-            let session = new Session(global.config.get('session_engine'), registry);
+            let session = new SessionLibrary(registry);
             registry.set('session', session);
-            let session_id = '';
-            if (request.cookie[global.config.get('session_name')]) {
-                session_id = request.cookie[global.config.get('session_name')];
-            }
-            await session.start(session_id);
-            // Require higher security for session cookies
-            app.use((req, res, next) => {
-                let options = {
-                    maxAge: 0,
-                    path: global.config.get('session_path'),
-                    domain: global.config.get('session_domain'),
-                    secure: req.secure,
-                    httpOnly: false,
-                    sameSite: global.config.get('session_samesite')
-                };
-                res.cookie(global.config.get('session_name'), req.session.id, options);
-                next();
-            });
         }
         // Cache
-        registry.set('cache', new Cache(global.config.get('cache_engine'), global.config.get('cache_expire')));
+        registry.set('cache', new CacheLibrary(global.config.get('cache_engine'), global.config.get('cache_expire')));
         // Template
-        let template = new Template(global.config.get('template_engine'));
+        let template = new TemplateLibrary(global.config.get('template_engine'));
         registry.set('template', template);
-        console.log('config template', global.config.get('template_engine'))
+        // console.log('config template', global.config.get('template_engine'))
         template.addPath(DIR_TEMPLATE);
         // Language
-        let language = new Language(global.config.get('language_code'));
+        let language = new LanguageLibrary(global.config.get('language_code'));
         language.addPath(DIR_LANGUAGE);
         await language.load('default');
         registry.set('language', language);
         // Url
         // console.log("global.config.get('site_url')==================",global.config.get('site_url'))
-        registry.set('url', new Url(global.config.get('site_url')));
+        registry.set('url', new UrlLibrary(global.config.get('site_url')));
         // Document
-        registry.set('document', new Document());
+        registry.set('document', new DocumentLibrary());
         // Action error object to execute if any other actions cannot be executed.
         let action = '';
         let args = [];
         let output = '';
         let error = new Action(global.config.get('action_error'));
         // Pre Actions
+        // console.log('framework', global.config.get('action_pre_action'))
         for (let pre_action of global.config.get('action_pre_action')) {
             let preActionInstance = new Action(pre_action);
             let result = await preActionInstance.execute(registry);
@@ -147,6 +117,7 @@ module.exports = class Framework {
             }
         }
         // Route
+        // console.log('framework', action)
         if (!action) {
             if (request.get.route) {
                 action = new Action(request.get.route);
@@ -160,7 +131,7 @@ module.exports = class Framework {
             let route = action.getId();
             // Keep the original trigger.
             let trigger = route;
-            let result = await event.trigger(`controller/${trigger}/before`, [route, args]);
+            let result = await event.trigger(`controller/{trigger}/before`, [route, args]);
             if (result instanceof Action) {
                 action = result;
             }
@@ -180,7 +151,7 @@ module.exports = class Framework {
             if (!action) {
                 output = result;
             }
-            result = await event.trigger(`controller/${trigger}/after`, [route, args, output]);
+            result = await event.trigger(`controller/{trigger}/after`, [route, args, output]);
             if (result instanceof Action) {
                 action = result;
             }

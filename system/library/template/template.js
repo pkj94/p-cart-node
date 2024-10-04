@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-module.exports = class Template {
+module.exports = class TemplateTemplateLibrary {
     constructor() {
         this.directory = '';
         this.path = {};

@@ -7,6 +7,10 @@ module.exports = class Controller {
         this.registry = registry;
     }
     get(key) {
+        Object.keys(registry.data).map(a => {
+            this[a] = registry.data[a];
+            return a;
+        });
         if (this.registry.has(key)) {
             return this.registry.get(key);
         } else {
@@ -15,5 +19,9 @@ module.exports = class Controller {
     }
     set(key, value) {
         this.registry.set(key, value);
+        Object.keys(registry.data).map(a => {
+            this[a] = registry.data[a];
+            return a;
+        })
     }
 }

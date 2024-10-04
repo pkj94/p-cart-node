@@ -1,5 +1,5 @@
 const Memcached = require('memcached');
-module.exports = class Mem {
+module.exports = class CacheMemcachedLibrary {
     constructor(expire = 3600) {
         this.expire = expire;
         this.memcached = new Memcached(`${CACHE_HOSTNAME}:${CACHE_PORT}`);

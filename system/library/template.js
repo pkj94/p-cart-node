@@ -1,4 +1,4 @@
-module.exports = class Template {
+module.exports = class TemplateLibrary {
     constructor(adaptor) {
         if (adaptor) {
             const AdaptorClass = require(`./template/${adaptor}`);

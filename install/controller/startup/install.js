@@ -7,9 +7,9 @@ module.exports = class Install extends Controller {
     }
     async index() {
         // Document
-        this.registry.set('document', new Document(HTTP_SERVER));
+        this.registry.set('document', new DocumentLibrary(HTTP_SERVER));
         // URL
-        this.registry.set('url', new Url(HTTP_SERVER));
+        this.registry.set('url', new UrlLibrary(HTTP_SERVER));
         // Language
         if (this.request && this.request.get.language && this.request.get.language !== this.config.get('language_code')) {
             const languageData = [];

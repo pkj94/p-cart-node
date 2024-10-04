@@ -1,4 +1,4 @@
-module.exports = class Document {
+module.exports = class DocumentLibrary {
     constructor() {
         this.title = '';
         this.description = '';

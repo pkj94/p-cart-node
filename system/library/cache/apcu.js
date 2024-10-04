@@ -1,5 +1,5 @@
 const NodeCache = require('node-cache');
-module.exports = class APCU {
+module.exports = class CacheAPCULibrary {
     constructor(expire = 3600) {
         this.expire = expire;
         this.cache = new NodeCache({ stdTTL: this.expire, checkperiod: 120 });

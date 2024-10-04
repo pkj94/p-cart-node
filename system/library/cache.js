@@ -1,4 +1,4 @@
-module.exports = class Cache {
+module.exports = class CacheLibrary {
     constructor(adaptor, expire = 3600) {
         if (adaptor) {
             const AdaptorClass = require(`./cache/${adaptor}`);

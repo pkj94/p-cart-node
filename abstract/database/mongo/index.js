@@ -22,10 +22,10 @@ var db_defaults = {
         }
     },
 
-    DB_HOSTNAME: 'mongodb://localhost',
-    DB_USERNAME: "",
-    DB_PASSWORD: "",
-    DB_DATABASE: "",
+    hostname: 'mongodb://localhost',
+    username: "",
+    password: "",
+    database: "",
     DB_REPLICA_SET: "",
     elasticSearchHosts: ['localhost:9200'],
     indices: {
@@ -39,12 +39,12 @@ module.exports = class database {
         global.ObjectId = mongoose.Types.ObjectId;
     }
 
-    async createConnection() {
+    async createConnection(hostname, username, password, database, port = '27017') {
         // console.log('this.defaults2----',this.defaults)
-        // console.log(DB_HOSTNAME.replace('user_access@', DB_USERNAME ? (DB_USERNAME + ':' + encodeURIComponent(DB_PASSWORD)) + '@' : '') + '/' + DB_DATABASE + (typeof AUTH_MECHNISM != 'undefined' ? '&authMechanism=' + (AUTH_MECHNISM || 'DEFAULT') : '') + (typeof AUTH_SOURCE != 'undefined' ? '&authSource=' + (AUTH_SOURCE || 'admin') : '') + '' + ((typeof DB_REPLICA_SET != 'undefined' && DB_REPLICA_SET != "" && DB_REPLICA_SET != undefined) ? ('&replicaSet=' + DB_REPLICA_SET) : ''));
+        // console.log(hostname.replace('user_access@', username ? (username + ':' + encodeURIComponent(password)) + '@' : '') + ':' + port + '/' + database + (typeof AUTH_MECHNISM != 'undefined' ? '&authMechanism=' + (AUTH_MECHNISM || 'DEFAULT') : '') + (typeof AUTH_SOURCE != 'undefined' ? '&authSource=' + (AUTH_SOURCE || 'admin') : '') + '' + ((typeof DB_REPLICA_SET != 'undefined' && DB_REPLICA_SET != "" && DB_REPLICA_SET != undefined) ? ('&replicaSet=' + DB_REPLICA_SET) : ''));
 
         this.db_connection = await mongoose.createConnection(
-            DB_HOSTNAME.replace('user_access@', DB_USERNAME ? (DB_USERNAME + ':' + encodeURIComponent(DB_PASSWORD)) + '@' : '') + '/' + DB_DATABASE + (typeof AUTH_MECHNISM != 'undefined' ? '&authMechanism=' + (AUTH_MECHNISM || 'DEFAULT') : '') + (typeof AUTH_SOURCE != 'undefined' ? '&authSource=' + (AUTH_SOURCE || 'admin') : '') + '' + ((typeof DB_REPLICA_SET != 'undefined' && DB_REPLICA_SET != "" && DB_REPLICA_SET != undefined) ? ('&replicaSet=' + DB_REPLICA_SET) : '')
+            hostname.replace('user_access@', username ? (username + ':' + encodeURIComponent(password)) + '@' : '') + ':' + port + '/' + database + (typeof AUTH_MECHNISM != 'undefined' ? '&authMechanism=' + (AUTH_MECHNISM || 'DEFAULT') : '') + (typeof AUTH_SOURCE != 'undefined' ? '&authSource=' + (AUTH_SOURCE || 'admin') : '') + '' + ((typeof DB_REPLICA_SET != 'undefined' && DB_REPLICA_SET != "" && DB_REPLICA_SET != undefined) ? ('&replicaSet=' + DB_REPLICA_SET) : '')
         );
         if (DB_DEBUG)
             mongoose.set('debug', true)
