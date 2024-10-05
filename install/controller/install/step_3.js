@@ -50,7 +50,7 @@ module.exports = class Step3Controller extends Controller {
                 // Admin config.json
                 output = {};
                 output.APPLICATION = 'Admin';
-                output.HTTP_SERVER = HTTP_OPENCART + '/admin/';
+                output.HTTP_SERVER = HTTP_OPENCART + 'admin/';
                 output.HTTP_CATALOG = HTTP_OPENCART;
                 output.DIR_OPENCART = DIR_OPENCART;
                 output.DIR_APPLICATION = DIR_OPENCART + 'admin/';

@@ -102,6 +102,7 @@ module.exports = class Upgrade1Controller extends Controller {
 			output.DB_PREFIX = DB_PREFIX;
 			output.DB_DEBUG = DB_DEBUG || true;
 			output.SERVER_PORT = SERVER_PORT || 8080;
+			// Save file
 			fs.writeFileSync(DIR_OPENCART + 'config.json', JSON.stringify(output, null, "\t"));
 		}
 
@@ -174,9 +175,10 @@ module.exports = class Upgrade1Controller extends Controller {
 					const next = directory.shift();
 
 					if (fs.lstatSync(next).isDirectory()) {
-						glob(trim(next, '/') + '/{*,.[!.]*,..?*}', GLOB_BRACE).forEach((deletePath) => {
+						console.log(next.trim('/'))
+						fs.readdirSync(next.trim('/')).forEach((deletePath) => {
 							// If directory add to path array
-							directory.push(deletePath);
+							directory.push(next.trim('/') + deletePath);
 						});
 					}
 
@@ -189,82 +191,75 @@ module.exports = class Upgrade1Controller extends Controller {
 
 				files.forEach((deletePath) => {
 					// If file just delete
-					if (isFile(deletePath)) {
-						unlink(deletePath);
+					if (fs.lstatSync(deletePath).isFile()) {
+						fs.unlinkSync(deletePath);
 					}
 
 					// If directory use the remove directory function
-					if (isDir(deletePath)) {
-						rmdir(deletePath);
+					if (fs.lstatSync(deletePath).isDirectory()) {
+						fs.rmdirSync(deletePath);
 					}
 				});
 
 				// 4. Rename folder to the old directory
-				rename(DIR_OPENCART + 'admin/', path_new);
+				fs.renameSync(DIR_OPENCART + 'admin/', path_new);
 			}
 
-			// Admin config.php
-			let output = '<?php\n';
-			output += '// APPLICATION\n';
-			output += 'define(\'APPLICATION\', \'Admin\');\n\n';
+			// Admin config.json
+			let output = {};
 
-			output += '// HTTP\n';
-
-			if (config['HTTPS_SERVER']) {
-				output += 'define(\'HTTP_SERVER\', \'' + config['HTTPS_SERVER'] + '\');\n';
+			output.APPLICATION = 'Admin';
+			if (config['HOST_NAME']) {
+				output.HTTP_SERVER = HOST_NAME;
+				output.HTTP_SERVER = HOST_NAME;
 			} else {
-				output += 'define(\'HTTP_SERVER\', \'' + config['HTTP_SERVER'] + '\');\n';
+				if (config['HTTPS_SERVER']) {
+					output.HTTP_SERVER = config['HTTPS_SERVER'];
+				} else {
+					output.HTTP_SERVER = config['HTTP_SERVER'];
+				}
 			}
-
 			if (config['HTTPS_CATALOG']) {
-				output += 'define(\'HTTP_CATALOG\', \'' + config['HTTPS_CATALOG'] + '\');\n\n';
+				output.HTTP_CATALOG = config['HTTPS_CATALOG'];
 			} else {
-				output += 'define(\'HTTP_CATALOG\', \'' + config['HTTP_CATALOG'] + '\');\n\n';
+				output.HTTPS_CATALOG = config['HTTP_CATALOG'];
 			}
-
-			output += '// DIR\n';
-			output += 'define(\'DIR_OPENCART\', \'' + DIR_OPENCART + '\');\n';
-			output += 'define(\'DIR_APPLICATION\', DIR_OPENCART + \'' + admin + '/\');\n';
-			output += 'define(\'DIR_EXTENSION\', DIR_OPENCART + \'extension/\');\n';
-			output += 'define(\'DIR_IMAGE\', DIR_OPENCART + \'image/\');\n';
-			output += 'define(\'DIR_SYSTEM\', DIR_OPENCART + \'system/\');\n';
-			output += 'define(\'DIR_CATALOG\', DIR_OPENCART + \'catalog/\');\n';
-
+			output.DIR_OPENCART = DIR_OPENCART;
+			output.DIR_APPLICATION = DIR_OPENCART + 'catalog/';
+			output.DIR_EXTENSION = DIR_OPENCART + 'extension/';
+			output.DIR_IMAGE = DIR_OPENCART + 'image/';
+			output.DIR_SYSTEM = DIR_OPENCART + 'system/';
 			if (config['DIR_STORAGE']) {
-				output += 'define(\'DIR_STORAGE\', \'' + config['DIR_STORAGE'] + '\');\n';
+				output.DIR_STORAGE = config['DIR_STORAGE'];
 			} else {
-				output += 'define(\'DIR_STORAGE\', DIR_SYSTEM + \'storage/\');\n';
+				output.DIR_STORAGE = output.DIR_SYSTEM + 'storage/';
 			}
-
-			output += 'define(\'DIR_LANGUAGE\', DIR_APPLICATION + \'language/\');\n';
-			output += 'define(\'DIR_TEMPLATE\', DIR_APPLICATION + \'view/template/\');\n';
-			output += 'define(\'DIR_CONFIG\', DIR_SYSTEM + \'config/\');\n';
-			output += 'define(\'DIR_CACHE\', DIR_STORAGE + \'cache/\');\n';
-			output += 'define(\'DIR_DOWNLOAD\', DIR_STORAGE + \'download/\');\n';
-			output += 'define(\'DIR_LOGS\', DIR_STORAGE + \'logs/\');\n';
-			output += 'define(\'DIR_SESSION\', DIR_STORAGE + \'session/\');\n';
-			output += 'define(\'DIR_UPLOAD\', DIR_STORAGE + \'upload/\');\n\n';
-
-			output += '// DB\n';
-			output += 'define(\'DB_DRIVER\', \'' + DB_DRIVER + '\');\n';
-			output += 'define(\'DB_HOSTNAME\', \'' + DB_HOSTNAME + '\');\n';
-			output += 'define(\'DB_USERNAME\', \'' + DB_USERNAME + '\');\n';
-			output += 'define(\'DB_PASSWORD\', \'' + DB_PASSWORD + '\');\n';
-			output += 'define(\'DB_DATABASE\', \'' + DB_DATABASE + '\');\n';
-
+			output.DIR_STORAGE = output.DIR_SYSTEM + 'storage/';
+			output.DIR_LANGUAGE = output.DIR_APPLICATION + 'language/';
+			output.DIR_TEMPLATE = output.DIR_APPLICATION + 'view/template/';
+			output.DIR_CONFIG = output.DIR_SYSTEM + 'config/';
+			output.DIR_CACHE = output.DIR_STORAGE + 'cache/';
+			output.DIR_DOWNLOAD = output.DIR_STORAGE + 'download/';
+			output.DIR_LOGS = output.DIR_STORAGE + 'logs/';
+			output.DIR_SESSION = output.DIR_STORAGE + 'session/';
+			output.DIR_UPLOAD = output.DIR_STORAGE + 'upload/';
+			output.DB_DRIVER = DB_DRIVER;
+			output.DB_HOSTNAME = DB_HOSTNAME;
+			output.DB_USERNAME = DB_USERNAME;
+			output.DB_PASSWORD = DB_PASSWORD;
+			output.DB_DATABASE = DB_DATABASE;
 			if (DB_PORT) {
-				output += 'define(\'DB_PORT\', \'' + DB_PORT + '\');\n';
+				output.DB_PORT = DB_PORT;
 			} else {
-				output += 'define(\'DB_PORT\', \'3306\');\n';
+				output.DB_PORT = 3306;
 			}
 
-			output += 'define(\'DB_PREFIX\', \'' + DB_PREFIX + '\');\n\n';
-
-			output += '// OpenCart API\n';
-			output += 'define(\'OPENCART_SERVER\', \'https://www.opencart.com/\');\n';
-
+			output.DB_PREFIX = DB_PREFIX;
+			output.DB_DEBUG = DB_DEBUG || true;
+			output.SERVER_PORT = SERVER_PORT || 8080;
+			output.OPENCART_SERVER = OPENCART_SERVER || 'https://www.opencart.com/';
 			// Save file
-			file_putContents(adminFile, output);
+			fs.writeFileSync(adminFile, JSON.stringify(output, null, "\t"));
 		}
 
 		// If create any missing storage directories
@@ -281,12 +276,9 @@ module.exports = class Upgrade1Controller extends Controller {
 		const storage = config['DIR_STORAGE'] ? config['DIR_STORAGE'] : DIR_SYSTEM + 'storage/';
 
 		directories.forEach((directory) => {
-			if (!isDir(storage + directory)) {
-				mkdir(storage + directory, '0644');
-
-				const handle = fopen(storage + directory + '/index.html', 'w');
-
-				fclose(handle);
+			if (!fs.existsSync(storage + directory)) {
+				fs.mkdirSync(storage + directory, '0644');
+				fs.writeFileSync(storage + directory + '/index.html', '');
 			}
 		});
 
@@ -304,10 +296,10 @@ module.exports = class Upgrade1Controller extends Controller {
 			while (directory.length) {
 				const next = directory.shift();
 
-				glob(rtrim(next, '/') + '/{*,.[!.]*,..?*}', GLOB_BRACE).forEach((file) => {
+				fs.readdirSync((next)).forEach((file) => {
 					// If directory add to path array
-					if (isDir(file)) {
-						directory.push(file);
+					if (fs.lstatSync(file).isDirectory()) {
+						directory.push(next + file);
 					}
 
 					// Add the file to the files to be deleted array
@@ -318,12 +310,12 @@ module.exports = class Upgrade1Controller extends Controller {
 			files.forEach((file) => {
 				const path = file.substring(source.length);
 
-				if (isDir(source + path) && !isDir(destination + path)) {
-					mkdir(destination + path, 0777);
+				if (fs.existsSync(source + path) && !fs.existsSync(destination + path)) {
+					fs.mkdirSync(destination + path, '0777');
 				}
 
-				if (isFile(source + path) && !isFile(destination + path)) {
-					copy(source + path, destination + path);
+				if (fs.existsSync(source + path) && !fs.existsSync(destination + path)) {
+					fs.copyFileSync(source + path, destination + path);
 				}
 			});
 
@@ -332,13 +324,13 @@ module.exports = class Upgrade1Controller extends Controller {
 
 			files.forEach((file) => {
 				// If file just delete
-				if (isFile(file)) {
-					unlink(file);
+				if (fs.existsSync(file)) {
+					fs.unlinkSync(file);
 				}
 
 				// If directory use the remove directory function
-				if (isDir(file)) {
-					rmdir(file);
+				if (fs.existsSync(file)) {
+					fs.rmdirSync(file);
 				}
 			});
 		}
@@ -352,7 +344,7 @@ module.exports = class Upgrade1Controller extends Controller {
 		let files = [];
 
 		remove.forEach((directory) => {
-			if (isDir(directory)) {
+			if (fs.existsSync(directory)) {
 				// Make path into an array
 				let path = [directory + '*'];
 
@@ -362,7 +354,7 @@ module.exports = class Upgrade1Controller extends Controller {
 
 					glob(next).forEach((file) => {
 						// If directory add to path array
-						if (isDir(file)) {
+						if (fs.existsSync(file)) {
 							path.push(file + '/*');
 						}
 
@@ -377,13 +369,13 @@ module.exports = class Upgrade1Controller extends Controller {
 					files.forEach((file) => {
 						if (file !== directory + 'index.html') {
 							// If file just delete
-							if (isFile(file)) {
-								unlink(file);
+							if (fs.existsSync(file)) {
+								fs.unlinkSync(file);
 							}
 
 							// If directory use the remove directory function
-							if (isDir(file)) {
-								rmdir(file);
+							if (fs.existsSync(file)) {
+								fs.rmdirSync(file);
 							}
 						}
 					});
@@ -408,7 +400,7 @@ module.exports = class Upgrade1Controller extends Controller {
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 }
 

@@ -4,7 +4,6 @@ module.exports = class DashboardController extends Controller {
         super(registry)
     }
     async index() {
-        console.log('hisssssssssssssssssss')
         let data = {};
         await this.load.language('common/dashboard');
         this.document.setTitle(this.language.get('heading_title'));
@@ -21,11 +20,11 @@ module.exports = class DashboardController extends Controller {
         let dashboards = [];
         this.load.model('setting/extension', this);
         // Get a list of installed modules
-        let extensions = this.model_setting_extension.getExtensionsByType('dashboard');
+        let extensions = await this.model_setting_extension.getExtensionsByType('dashboard');
         // Add all the modules which have multiple settings for each module
         for (let extension of extensions) {
             if (this.config.get('dashboard_' + extension['code'] + '_status') && this.user.hasPermission('access', 'extension/' + extension['extension'] + '/dashboard/' + extension['code'])) {
-                output = this.load.controller('extension/' + extension['extension'] + '/dashboard/' + extension['code'] + '+dashboard');
+                let output = this.load.controller(DIR_EXTENSION + extension['extension'] + '/dashboard/' + extension['code'] + '+dashboard');
                 //if (!output instanceof \Exception) {
                 if (output) {
                     dashboards.push({

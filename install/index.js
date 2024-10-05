@@ -10,6 +10,7 @@ module.exports = function () {
         // HTTP
         global.HTTP_SERVER = `${protocol}${req.get('host') + req.route.path.replace(/\/+$/, '')}/`;
         global.HTTP_OPENCART = `${protocol}${req.get('host') + req.route.path.replace(/\/+$/, '').replace(/install\/?$/, '')}`;
+        console.log('HTTP_OPENCART',HTTP_OPENCART)
         // DIR
         global.DIR_OPENCART = path.join(__dirname, '..', '/').replace(/\\/g, '/');
         global.DIR_APPLICATION = DIR_OPENCART + 'install/';

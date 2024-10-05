@@ -1,6 +1,6 @@
 {
 	"APPLICATION": "Admin",
-	"HTTP_SERVER": "http://localhost:8080//admin/",
+	"HTTP_SERVER": "http://localhost:8080/admin/",
 	"HTTP_CATALOG": "http://localhost:8080/",
 	"DIR_OPENCART": "D:/Development/NODE/p-cart-node/",
 	"DIR_APPLICATION": "D:/Development/NODE/p-cart-node/admin/",
@@ -8,8 +8,8 @@
 	"DIR_IMAGE": "D:/Development/NODE/p-cart-node/image/",
 	"DIR_SYSTEM": "D:/Development/NODE/p-cart-node/system/",
 	"DIR_STORAGE": "D:/Development/NODE/p-cart-node/system/storage/",
-	"DIR_LANGUAGE": "D:/Development/NODE/p-cart-node/catalog/language/",
-	"DIR_TEMPLATE": "D:/Development/NODE/p-cart-node/catalog/view/template/",
+	"DIR_LANGUAGE": "D:/Development/NODE/p-cart-node/admin/language/",
+	"DIR_TEMPLATE": "D:/Development/NODE/p-cart-node/admin/view/template/",
 	"DIR_CONFIG": "D:/Development/NODE/p-cart-node/system/config/",
 	"DIR_CACHE": "D:/Development/NODE/p-cart-node/system/storage/cache/",
 	"DIR_DOWNLOAD": "D:/Development/NODE/p-cart-node/system/storage/download/",
@@ -22,8 +22,8 @@
 	"DB_PASSWORD": "",
 	"DB_DATABASE": "p-cart-node",
 	"DB_PORT": "3306",
-	"DB_PREFIX": "pc_",
-	"DB_DEBUG": true,
+	"DB_PREFIX": "oc_",
+	"DB_DEBUG": false,
 	"SERVER_PORT": 8080,
 	"OPENCART_SERVER": "https://www.opencart.com/"
 }

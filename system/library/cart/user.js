@@ -23,7 +23,7 @@ module.exports = class UserLibrary {
                 this.user_group_id = user_query.row.user_group_id;
                 this.email = user_query.row.email;
 
-                await this.db.query(`UPDATE user SET ip = '${this.request.server.headers['x-forwarded-for'] || (
+                await this.db.query(`UPDATE ${DB_PREFIX}user SET ip = '${this.request.server.headers['x-forwarded-for'] || (
                     this.request.server.connection ? (this.request.server.connection.remoteAddress ||
                         this.request.server.socket.remoteAddress ||
                         this.request.server.connection.socket.remoteAddress) : '')}' WHERE user_id = ${this.session.data.user_id}`);
@@ -56,7 +56,7 @@ module.exports = class UserLibrary {
                     resolve(false);
                 }
                 if (rehash) {
-                    await this.db.query(`UPDATE user SET password = '${await bcrypt.hash(password, 10)}' WHERE user_id = ${user_query.row.user_id}`);
+                    await this.db.query(`UPDATE ${DB_PREFIX}user SET password = '${await bcrypt.hash(password, 10)}' WHERE user_id = ${user_query.row.user_id}`);
                 }
 
                 this.session.data.user_id = user_query.row.user_id;

@@ -14,9 +14,13 @@ module.exports = class ExtensionController extends Controller {
 
 			// Register controllers, models and system extension folders
 			if (fs.existsSync(`${DIR_EXTENSION}${result.code}/admin/controller/`))
-				fs.readdirSync(`${DIR_EXTENSION}${result.code}/admin/controller/`).forEach((controller) => {
-					let name = ucfirst(controller).replace('.js', '') + 'Controller';
-					global[name] = require(DIR_EXTENSION + result.code + '/admin/controller/extension/' + extension + '/' + controller);
+				fs.readdirSync(`${DIR_EXTENSION}${result.code}/admin/controller/`).forEach((folder) => {
+					fs.readdirSync(`${DIR_EXTENSION}${result.code}/admin/controller/${folder}`).forEach((controller) => {
+						if (controller.indexOf('.html') == -1) {
+							let name = ucfirst(controller).replace('.js', '') + 'Controller';
+							global[name] = require(DIR_EXTENSION + result.code + '/admin/controller/' + folder + '/' + controller);
+						}
+					})
 				});
 
 			// this.autoloader.register(`Opencart\Admin\Controller\Extension\\${extension}`, `${DIR_EXTENSION}${result.code}/admin/controller/`);

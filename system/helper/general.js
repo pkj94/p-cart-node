@@ -44,3 +44,8 @@ global.password_hash = (string, saltRounds = 10) => {
 global.http_build_query = (params = {}) => {
     return new URLSearchParams(params).toString();
 }
+global.isValidIP = (ip) => {
+    // Simple IP validation regex
+    const ipRegex = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+    return ipRegex.test(ip);
+}

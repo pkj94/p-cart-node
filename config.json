@@ -21,7 +21,7 @@
 	"DB_PASSWORD": "",
 	"DB_DATABASE": "p-cart-node",
 	"DB_PORT": "3306",
-	"DB_PREFIX": "pc_",
+	"DB_PREFIX": "oc_",
 	"DB_DEBUG": true,
 	"SERVER_PORT": 8080
 }

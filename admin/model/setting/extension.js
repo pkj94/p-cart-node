@@ -7,15 +7,15 @@ module.exports = class ExtensionModel extends Model {
         return query.rows;
     }
     async getExtensionsByType(type) {
-        const query = await this.db.query(`SELECT * FROM ${DB_PREFIX}extension WHERE type = '${this.db.escape(type)}' ORDER BY code ASC`);
+        const query = await this.db.query(`SELECT * FROM ${DB_PREFIX}extension WHERE type = ${this.db.escape(type)} ORDER BY code ASC`);
         return query.rows;
     }
     async getExtensionByCode(type, code) {
-        const query = await this.db.query(`SELECT * FROM ${DB_PREFIX}extension WHERE type = '${this.db.escape(type)}' AND code = '${this.db.escape(code)}'`);
+        const query = await this.db.query(`SELECT * FROM ${DB_PREFIX}extension WHERE type = ${this.db.escape(type)} AND code = ${this.db.escape(code)}`);
         return query.row;
     }
     async getTotalExtensionsByExtension(extension) {
-        const query = await this.db.query(`SELECT COUNT(*) AS total FROM ${DB_PREFIX}extension WHERE extension = '${this.db.escape(extension)}'`);
+        const query = await this.db.query(`SELECT COUNT(*) AS total FROM ${DB_PREFIX}extension WHERE extension = ${this.db.escape(extension)}`);
         return parseInt(query.row.total, 10);
     }
     async install(type, extension, code) {
@@ -23,17 +23,17 @@ module.exports = class ExtensionModel extends Model {
         const codes = extensions.map(ext => ext.code);
 
         if (!codes.includes(code)) {
-            await this.db.query(`INSERT INTO extension SET extension = '${this.db.escape(extension)}', type = '${this.db.escape(type)}', code = '${this.db.escape(code)}'`);
+            await this.db.query(`INSERT INTO extension SET extension = ${this.db.escape(extension)}, type = ${this.db.escape(type)}, code = ${this.db.escape(code)}`);
         }
     }
 
     async uninstall(type, code) {
-        await this.db.query(`DELETE FROM ${DB_PREFIX}extension WHERE type = '${this.db.escape(type)}' AND code = '${this.db.escape(code)}'`);
-        await this.db.query(`DELETE FROM ${DB_PREFIX}setting WHERE code = '${this.db.escape(type + '_' + code)}'`);
+        await this.db.query(`DELETE FROM ${DB_PREFIX}extension WHERE type = ${this.db.escape(type)} AND code = ${this.db.escape(code)}`);
+        await this.db.query(`DELETE FROM ${DB_PREFIX}setting WHERE code = ${this.db.escape(type + '_' + code)}`);
     }
 
     async addInstall(data) {
-        await this.db.query(`INSERT INTO extension_install SET extension_id = '${parseInt(data.extension_id)}', extension_download_id = '${parseInt(data.extension_download_id)}', name = '${this.db.escape(data.name)}', code = '${this.db.escape(data.code)}', version = '${this.db.escape(data.version)}', author = '${this.db.escape(data.author)}', link = '${this.db.escape(data.link)}', status = '0', date_added = NOW()`);
+        await this.db.query(`INSERT INTO extension_install SET extension_id = '${parseInt(data.extension_id)}', extension_download_id = '${parseInt(data.extension_download_id)}', name = ${this.db.escape(data.name)}, code = ${this.db.escape(data.code)}, version = ${this.db.escape(data.version)}, author = ${this.db.escape(data.author)}, link = ${this.db.escape(data.link)}, status = '0', date_added = NOW()`);
         return await this.db.getLastId();
     }
 
@@ -55,7 +55,7 @@ module.exports = class ExtensionModel extends Model {
     }
 
     async getInstallByCode(code) {
-        const query = await this.db.query(`SELECT * FROM ${DB_PREFIX}extension_install WHERE code = '${this.db.escape(code)}'`);
+        const query = await this.db.query(`SELECT * FROM ${DB_PREFIX}extension_install WHERE code = ${this.db.escape(code)}`);
         return query.row;
     }
 
@@ -102,7 +102,7 @@ module.exports = class ExtensionModel extends Model {
     }
 
     async addPath(extension_install_id, path) {
-        await this.db.query(`INSERT INTO extension_path SET extension_install_id = ${parseInt(extension_install_id)}, path = '${this.db.escape(path)}'`);
+        await this.db.query(`INSERT INTO extension_path SET extension_install_id = ${parseInt(extension_install_id)}, path = ${this.db.escape(path)}`);
     }
 
     async deletePath(extension_path_id) {
@@ -115,12 +115,12 @@ module.exports = class ExtensionModel extends Model {
     }
 
     async getPaths(path) {
-        const query = await this.db.query(`SELECT * FROM ${DB_PREFIX}extension_path WHERE path LIKE '${this.db.escape(path)}' ORDER BY path ASC`);
+        const query = await this.db.query(`SELECT * FROM ${DB_PREFIX}extension_path WHERE path LIKE ${this.db.escape(path)} ORDER BY path ASC`);
         return query.rows;
     }
 
     async getTotalPaths(path) {
-        const query = await this.db.query(`SELECT COUNT(*) AS total FROM ${DB_PREFIX}extension_path WHERE path LIKE '${this.db.escape(path)}'`);
+        const query = await this.db.query(`SELECT COUNT(*) AS total FROM ${DB_PREFIX}extension_path WHERE path LIKE ${this.db.escape(path)}`);
         return parseInt(query.row.total, 10);
     }
 }
