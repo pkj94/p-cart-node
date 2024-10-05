@@ -35,5 +35,5 @@ module.exports = {
     'error_username': 'Username required!',
     'error_password': 'Password required!',
     'error_email': 'E-Mail Address does not appear to be valid!',
-    'error_config': 'Error: Could not write to config.php please check you have set the correct permissions on: ',
+    'error_config': 'Error: Could not write to config.json please check you have set the correct permissions on: ',
 }

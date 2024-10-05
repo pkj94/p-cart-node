@@ -52,8 +52,8 @@ module.exports = class Step2 extends Controller {
             action: this.url.link('install/step_2', `language=${this.config.get('language_code')}`),
             node_version: process.version,
             db: true,
-            catalog_config: DIR_OPENCART + 'config.js',
-            admin_config: DIR_OPENCART + 'admin/config.js',
+            catalog_config: DIR_OPENCART + 'config.json',
+            admin_config: DIR_OPENCART + 'admin/config.json',
             error_catalog_config: '',
             error_admin_config: '',
             back: this.url.link('install/step_1', `language=${this.config.get('language_code')}`)
@@ -90,8 +90,8 @@ module.exports = class Step2 extends Controller {
         }
 
 
-        const catalogConfig = DIR_OPENCART + 'config.js';
-        const adminConfig = DIR_OPENCART + 'admin/config.js';
+        const catalogConfig = DIR_OPENCART + 'config.json';
+        const adminConfig = DIR_OPENCART + 'admin/config.json';
 
         if (!fs.existsSync(catalogConfig)) {
             this.error['warning'] = this.language.get('error_catalog_exist');

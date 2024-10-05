@@ -10,13 +10,14 @@ module.exports = class Install extends Model {
     database(data) {
         return new Promise(async (resolve, reject) => {
             try {
-                this.db =  new DbLibrary(
+                this.db = new DbLibrary(
                     data.db_driver,
                     decodeHTMLEntities(data.db_hostname),
                     decodeHTMLEntities(data.db_username),
                     decodeHTMLEntities(data.db_password),
                     decodeHTMLEntities(data.db_database),
-                    data.db_port
+                    data.db_port,
+                    false
                 );
                 await this.db.connect();
 
@@ -59,25 +60,27 @@ module.exports = class Install extends Model {
                 }
 
                 // Data
-                const fs = require('fs').promises;
-                const lines = (await fs.readFile(DIR_APPLICATION + 'opencart.sql', 'utf8')).split('\n');
-
+                const fs = require('fs');
+                const lines = fs.readFileSync(DIR_APPLICATION + 'opencart.sql', 'utf8').toString().split('\n');
                 let sql = '';
                 let start = false;
 
-                for (const line of lines) {
-                    if (line.startsWith('INSERT INTO ')) {
-                        sql = '';
-                        start = true;
-                    }
+                for (let line of lines) {
+                    try {
+                        if (line.startsWith('INSERT INTO ')) {
+                            sql = '';
+                            start = true;
+                        }
 
-                    if (start) {
-                        sql += line;
-                    }
-
-                    if (line.endsWith(');')) {
-                        await this.db.query(sql.replace(/INSERT INTO `oc_/g, `INSERT INTO \`${data.db_prefix}`));
-                        start = false;
+                        if (start) {
+                            sql += line;
+                        }
+                        if (line.trim().endsWith(');')) {
+                            await this.db.query(sql.replace(/INSERT INTO `oc_/g, `INSERT INTO \`${data.db_prefix}`));
+                            start = false;
+                        }
+                    } catch (e) {
+                        console.log(e)
                     }
                 }
 

@@ -1,7 +1,7 @@
 const mysql = require('mysql');
 
 module.exports = class MySQLiDBLibrary {
-    constructor(hostname, username, password, database, port = '3306') {
+    constructor(hostname, username, password, database, port = '3306', debug = false) {
         this.error = `Error: Could not make a database link using ${username}@${hostname}! Message: `;
         this.connection = mysql.createConnection({
             host: hostname,
@@ -9,7 +9,8 @@ module.exports = class MySQLiDBLibrary {
             password: password,
             database: database,
             port: port,
-            charset: 'utf8mb4'
+            charset: 'utf8mb4',
+            debug: debug
         });
 
 
@@ -18,7 +19,7 @@ module.exports = class MySQLiDBLibrary {
         return new Promise((resolve, reject) => {
             this.connection.connect((err) => {
                 if (err) {
-                    reject(new Error(this.error+err.message));
+                    reject(new Error(this.error + err.message));
                 } else {
                     this.query("SET SESSION sql_mode = 'NO_ZERO_IN_DATE,NO_ENGINE_SUBSTITUTION'");
                     this.query("SET FOREIGN_KEY_CHECKS = 0");

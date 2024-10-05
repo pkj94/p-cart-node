@@ -69,7 +69,7 @@ module.exports = class Framework {
         response.setCompression(global.config.get('response_compression'));
         // Database
         if (global.config.get('db_autostart')) {
-            let db = new DbLibrary(config.get('db_engine'), config.get('db_hostname'), config.get('db_username'), config.get('db_password'), config.get('db_database'), config.get('db_port'));
+            let db = new DbLibrary(config.get('db_engine'), config.get('db_hostname'), config.get('db_username'), config.get('db_password'), config.get('db_database'), config.get('db_port'), config.get('db_debug'));
             await db.connect();
             registry.set('db', db);
         }
@@ -131,7 +131,7 @@ module.exports = class Framework {
             let route = action.getId();
             // Keep the original trigger.
             let trigger = route;
-            let result = await event.trigger(`controller/{trigger}/before`, [route, args]);
+            let result = await event.trigger(`controller/${trigger}/before`, [route, args]);
             if (result instanceof Action) {
                 action = result;
             }
@@ -151,7 +151,7 @@ module.exports = class Framework {
             if (!action) {
                 output = result;
             }
-            result = await event.trigger(`controller/{trigger}/after`, [route, args, output]);
+            result = await event.trigger(`controller/${trigger}/after`, [route, args, output]);
             if (result instanceof Action) {
                 action = result;
             }

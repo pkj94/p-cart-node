@@ -30,9 +30,7 @@ module.exports = class Step4 extends Controller {
             footer: await this.load.controller('common/footer'),
             header: await this.load.controller('common/header')
         };
-        setTimeout(() => {
-            process.exit();
-        },100)
+       
         this.response.setOutput(await this.load.view('install/step_4', data));
     }
 }

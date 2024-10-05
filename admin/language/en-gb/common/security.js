@@ -32,5 +32,5 @@ module.exports = {
       'error_admin': 'Warning: Admin directory does not exist!',
       'error_admin_exists': 'Warning: Admin folder name already exists!',
       'error_admin_name': 'Warning: Admin name cannot be `admin` as it is available to the public!',
-      'error_writable': 'Warning: config.php and admin/config.php need to be made writable!',
+      'error_writable': 'Warning: config.json and admin/config.json need to be made writable!',
 }

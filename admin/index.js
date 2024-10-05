@@ -1,10 +1,13 @@
-
+const fs = require('fs');
 module.exports = function () {
     const loadAdminControllers = async (req, res, next) => {
         // console.log(req.params)
-        require('./config');
+        if (fs.readFileSync('./config.json').toString())
+            for (let [key, value] of Object.entries(require('./config.json'))) {
+                global[key] = value;
+            }
         // console.log('DIR_APPLICATION', typeof DIR_APPLICATION)
-        if(typeof DIR_APPLICATION == 'undefined')
+        if (typeof DIR_APPLICATION == 'undefined')
             return res.redirect('/install');
         // console.log(typeof DIR_APPLICATION == 'undefined')
         app.use('/admin/view/stylesheet', express.static(DIR_APPLICATION + 'view/stylesheet'));

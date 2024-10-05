@@ -1,9 +1,9 @@
 module.exports = class DBLibrary {
-    constructor(adaptor, hostname, username, password, database, port = '') {
+    constructor(adaptor, hostname, username, password, database, port = '', debug = false) {
         const AdaptorClass = require(`./db/${adaptor}`);
 
         if (AdaptorClass) {
-            this.adaptor = new AdaptorClass(hostname, username, password, database, port);
+            this.adaptor = new AdaptorClass(hostname, username, password, database, port, debug);
         } else {
             throw new Error(`Error: Could not load database adaptor ${adaptor}!`);
         }

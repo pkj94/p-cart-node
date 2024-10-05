@@ -7,7 +7,7 @@ module.exports = class StartupController extends Controller {
 		await this.load.model('setting/startup', this);
 
 		const results = await this.model_setting_startup.getStartups();
-
+		console.log(results)
 		for (const result of results) {
 			if (result.action.startsWith('admin/') && result.status) {
 				await this.load.controller(result.action.slice(6));

@@ -40,8 +40,8 @@ module.exports = {
     'error_zlib': 'Warning: ZLIB extension needs to be loaded for OpenCart to work!',
     'error_zip': 'Warning: ZIP extension needs to be loaded for OpenCart to work!',
     'error_mbstring': 'Warning: mbstring extension needs to be loaded for OpenCart to work!',
-    'error_catalog_exist': 'Warning: config.js does not exist. You need to rename config-dist.js to config.js!',
+    'error_catalog_exist': 'Warning: config.json does not exist. You need to rename config-dist.js to config.json!',
     'error_catalog_writable': 'Warning: config.js needs to be writable for OpenCart to be installed!',
-    'error_admin_exist': 'Warning: admin/config.js does not exist. You need to rename admin/config-dist.js to admin/config.js!',
-    'error_admin_writable': 'Warning: admin/config.js needs to be writable for OpenCart to be installed!',
+    'error_admin_exist': 'Warning: admin/config.json does not exist. You need to rename admin/config-dist.json to admin/config.js!',
+    'error_admin_writable': 'Warning: admin/config.json needs to be writable for OpenCart to be installed!',
 }
