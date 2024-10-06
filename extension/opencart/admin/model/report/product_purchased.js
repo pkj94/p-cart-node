@@ -1,20 +1,13 @@
-<?php
-namespace Opencart\Admin\Model\Extension\Opencart\Report;
-/**
- * Class ProductPurchased
- *
- * @package Opencart\Admin\Model\Extension\Opencart\Report
- */
-class ProductPurchasedModel extends Model {
+module.exports = class ProductPurchasedReportModel extends Model {
 	/**
 	 * @param array data
 	 *
 	 * @return array
 	 */
-	async getPurchased(array data = []) {
-		sql = "SELECT op.`name`, op.`model`, SUM(op.`quantity`) AS quantity, SUM((op.`price` + op.`tax`) * op.`quantity`) AS `total` FROM `" + DB_PREFIX + "order_product` op LEFT JOIN `" + DB_PREFIX + "order` o ON (op.`order_id` = o.`order_id`)";
+	async getPurchased(data = {}) {
+		let sql = "SELECT op.`name`, op.`model`, SUM(op.`quantity`) AS quantity, SUM((op.`price` + op.`tax`) * op.`quantity`) AS `total` FROM `" + DB_PREFIX + "order_product` op LEFT JOIN `" + DB_PREFIX + "order` o ON (op.`order_id` = o.`order_id`)";
 
-		if (!empty(data['filter_order_status_id'])) {
+		if (data['filter_order_status_id']) {
 			sql += " WHERE o.`order_status_id` = '" + data['filter_order_status_id'] + "'";
 		} else {
 			sql += " WHERE o.`order_status_id` > '0'";
@@ -52,10 +45,10 @@ class ProductPurchasedModel extends Model {
 	 *
 	 * @return int
 	 */
-	async getTotalPurchased(array data = []) {
+	async getTotalPurchased(data = {}) {
 		sql = "SELECT COUNT(DISTINCT op.`product_id`) AS `total` FROM `" + DB_PREFIX + "order_product` op LEFT JOIN `" + DB_PREFIX + "order` o ON (op.`order_id` = o.`order_id`)";
 
-		if (!empty(data['filter_order_status_id'])) {
+		if (data['filter_order_status_id']) {
 			sql += " WHERE o.`order_status_id` = '" + data['filter_order_status_id'] + "'";
 		} else {
 			sql += " WHERE o.`order_status_id` > '0'";

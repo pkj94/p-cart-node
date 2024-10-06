@@ -1,21 +1,14 @@
-<?php
-namespace Opencart\Admin\Model\Extension\Opencart\Report;
-/**
- * Class Sale
- *
- * @package Opencart\Admin\Model\Extension\Opencart\Report
- */
-class SaleModel extends Model {
+module.exports = class SaleReportModel extends Model {
 	/**
 	 * @param array data
 	 *
 	 * @return float
 	 */
-	async getTotalSales(array data = []): float {
-		sql = "SELECT SUM(`total`) AS `total` FROM `" + DB_PREFIX + "order` WHERE `order_status_id` > '0'";
+	async getTotalSales(data = {}) {
+		let sql = "SELECT SUM(`total`) AS `total` FROM `" + DB_PREFIX + "order` WHERE `order_status_id` > '0'";
 
-		if (!empty(data['filter_date_added'])) {
-			sql += " AND DATE(`date_added`) = DATE('" + this.db.escape((string)data['filter_date_added']) + "')";
+		if (data['filter_date_added']) {
+			sql += " AND DATE(`date_added`) = DATE(" + this.db.escape(data['filter_date_added']) + ")";
 		}
 
 		let query = await this.db.query(sql);
@@ -38,26 +31,26 @@ class SaleModel extends Model {
 	async getTotalOrdersByDay() {
 		const implode = [];
 
-		for (this.config.get('config_complete_status') of order_status_id) {
-			implode.push({"'" + order_status_id + "'";
+		for (let order_status_id of this.config.get('config_complete_status')) {
+			implode.push("'" + order_status_id + "'");
 		}
 
-		order_data = [];
+		let order_data = {};
 
 		for (i = 0; i < 24; i++) {
-			order_data[i] = [
-				'hour'  : i,
-				'total' : 0
-			];
+			order_data[i] = {
+				'hour': i,
+				'total': 0
+			};
 		}
 
-		let query = await this.db.query("SELECT COUNT(*) AS total, HOUR(`date_added`) AS hour FROM `" + DB_PREFIX + "order` WHERE `order_status_id` IN(" + implode(",", implode) + ") AND DATE(`date_added`) = DATE(NOW()) GROUP BY HOUR(`date_added`) ORDER BY `date_added` ASC");
+		let query = await this.db.query("SELECT COUNT(*) AS total, HOUR(`date_added`) AS hour FROM `" + DB_PREFIX + "order` WHERE `order_status_id` IN(" + implode.join(",") + ") AND DATE(`date_added`) = DATE(NOW()) GROUP BY HOUR(`date_added`) ORDER BY `date_added` ASC");
 
 		for (let result of query.rows) {
-			order_data[result['hour']] = [
-				'hour'  : result['hour'],
-				'total' : result['total']
-			];
+			order_data[result['hour']] = {
+				'hour': result['hour'],
+				'total': result['total']
+			};
 		}
 
 		return order_data;
@@ -69,30 +62,30 @@ class SaleModel extends Model {
 	async getTotalOrdersByWeek() {
 		const implode = [];
 
-		for (this.config.get('config_complete_status') of order_status_id) {
-			implode.push({"'" + order_status_id + "'";
+		for (let order_status_id of this.config.get('config_complete_status')) {
+			implode.push("'" + order_status_id + "'");
 		}
 
-		order_data = [];
+		let order_data = {};
 
-		date_start = strtotime('-' + date('w') + ' days');
+		let date_start = strtotime('-' + date('w') + ' days');
 
 		for (i = 0; i < 7; i++) {
 			date = date('Y-m-d', date_start + (i * 86400));
 
-			order_data[date('w', strtotime(date))] = [
-				'day'   : date('D', strtotime(date)),
-				'total' : 0
-			];
+			order_data[date('w', strtotime(date))] = {
+				'day': date('D', strtotime(date)),
+				'total': 0
+			};
 		}
 
-		let query = await this.db.query("SELECT COUNT(*) AS total, `date_added` FROM `" + DB_PREFIX + "order` WHERE `order_status_id` IN(" + implode(",", implode) + ") AND DATE(`date_added`) >= DATE('" + this.db.escape(date('Y-m-d', date_start)) + "') GROUP BY DAYNAME(`date_added`)");
+		let query = await this.db.query("SELECT COUNT(*) AS total, `date_added` FROM `" + DB_PREFIX + "order` WHERE `order_status_id` IN(" + implode.join(",") + ") AND DATE(`date_added`) >= DATE(" + this.db.escape(date('Y-m-d', date_start)) + ") GROUP BY DAYNAME(`date_added`)");
 
 		for (let result of query.rows) {
-			order_data[date('w', strtotime(result['date_added']))] = [
-				'day'   : date('D', strtotime(result['date_added'])),
-				'total' : result['total']
-			];
+			order_data[date('w', strtotime(result['date_added']))] = {
+				'day': date('D', strtotime(result['date_added'])),
+				'total': result['total']
+			};
 		}
 
 		return order_data;
@@ -105,27 +98,27 @@ class SaleModel extends Model {
 		const implode = [];
 
 		for (this.config.get('config_complete_status') of order_status_id) {
-			implode.push({"'" + order_status_id + "'";
+			implode.push("'" + order_status_id + "'");
 		}
 
-		order_data = [];
+		let order_data = {};
 
 		for (i = 1; i <= date('t'); i++) {
 			date = date('Y') + '-' + date('m') + '-' + i;
 
-			order_data[date('j', strtotime(date))] = [
-				'day'   : date('d', strtotime(date)),
-				'total' : 0
-			];
+			order_data[date('j', strtotime(date))] = {
+				'day': date('d', strtotime(date)),
+				'total': 0
+			};
 		}
 
-		let query = await this.db.query("SELECT COUNT(*) AS total, `date_added` FROM `" + DB_PREFIX + "order` WHERE `order_status_id` IN(" + implode(",", implode) + ") AND DATE(`date_added`) >= DATE('" + this.db.escape(date('Y') + '-' + date('m') + '-1') + "') GROUP BY DATE(`date_added`)");
+		let query = await this.db.query("SELECT COUNT(*) AS total, `date_added` FROM `" + DB_PREFIX + "order` WHERE `order_status_id` IN(" + implode.join(",") + ") AND DATE(`date_added`) >= DATE('" + this.db.escape(date('Y') + '-' + date('m') + '-1') + "') GROUP BY DATE(`date_added`)");
 
 		for (let result of query.rows) {
-			order_data[date('j', strtotime(result['date_added']))] = [
-				'day'   : date('d', strtotime(result['date_added'])),
-				'total' : result['total']
-			];
+			order_data[date('j', strtotime(result['date_added']))] = {
+				'day': date('d', strtotime(result['date_added'])),
+				'total': result['total']
+			};
 		}
 
 		return order_data;
@@ -138,25 +131,25 @@ class SaleModel extends Model {
 		const implode = [];
 
 		for (this.config.get('config_complete_status') of order_status_id) {
-			implode.push({"'" + order_status_id + "'";
+			implode.push("'" + order_status_id + "'");
 		}
 
-		order_data = [];
+		let order_data = {};
 
 		for (i = 1; i <= 12; i++) {
-			order_data[i] = [
-				'month' : date('M', mktime(0, 0, 0, i, 1)),
-				'total' : 0
-			];
+			order_data[i] = {
+				'month': date('M', mktime(0, 0, 0, i, 1)),
+				'total': 0
+			};
 		}
 
-		let query = await this.db.query("SELECT COUNT(*) AS total, `date_added` FROM `" + DB_PREFIX + "order` WHERE `order_status_id` IN(" + implode(",", implode) + ") AND YEAR(`date_added`) = YEAR(NOW()) GROUP BY MONTH(`date_added`)");
+		let query = await this.db.query("SELECT COUNT(*) AS total, `date_added` FROM `" + DB_PREFIX + "order` WHERE `order_status_id` IN(" + implode.join(",") + ") AND YEAR(`date_added`) = YEAR(NOW()) GROUP BY MONTH(`date_added`)");
 
 		for (let result of query.rows) {
-			order_data[date('n', strtotime(result['date_added']))] = [
-				'month' : date('M', strtotime(result['date_added'])),
-				'total' : result['total']
-			];
+			order_data[date('n', strtotime(result['date_added']))] = {
+				'month': date('M', strtotime(result['date_added'])),
+				'total': result['total']
+			};
 		}
 
 		return order_data;
@@ -167,10 +160,10 @@ class SaleModel extends Model {
 	 *
 	 * @return array
 	 */
-	async getOrders(array data = []) {
-		sql = "SELECT MIN(o.`date_added`) AS date_start, MAX(o.`date_added`) AS date_end, COUNT(*) AS orders, SUM((SELECT SUM(op.`quantity`) FROM `" + DB_PREFIX + "order_product` `op` WHERE `op`.`order_id` = `o`.`order_id` GROUP BY `op`.`order_id`)) AS products, SUM((SELECT SUM(`ot`.`value`) FROM `" + DB_PREFIX + "order_total` ot WHERE ot.`order_id` = o.`order_id` AND ot.`code` = 'tax' GROUP BY ot.`order_id`)) AS tax, SUM(o.`total`) AS `total` FROM `" + DB_PREFIX + "order` o";
+	async getOrders(data = {}) {
+		let sql = "SELECT MIN(o.`date_added`) AS date_start, MAX(o.`date_added`) AS date_end, COUNT(*) AS orders, SUM((SELECT SUM(op.`quantity`) FROM `" + DB_PREFIX + "order_product` `op` WHERE `op`.`order_id` = `o`.`order_id` GROUP BY `op`.`order_id`)) AS products, SUM((SELECT SUM(`ot`.`value`) FROM `" + DB_PREFIX + "order_total` ot WHERE ot.`order_id` = o.`order_id` AND ot.`code` = 'tax' GROUP BY ot.`order_id`)) AS tax, SUM(o.`total`) AS `total` FROM `" + DB_PREFIX + "order` o";
 
-		if (!empty(data['filter_order_status_id'])) {
+		if (data['filter_order_status_id']) {
 			sql += " WHERE o.`order_status_id` = '" + data['filter_order_status_id'] + "'";
 		} else {
 			sql += " WHERE o.`order_status_id` > '0'";
@@ -183,15 +176,13 @@ class SaleModel extends Model {
 		if (data['filter_date_end']) {
 			sql += " AND DATE(o.`date_added`) <= DATE(" + this.db.escape(data['filter_date_end']) + ")";
 		}
-
+		let group = 'week';
 		if (data['filter_group']) {
 			group = data['filter_group'];
-		} else {
-			group = 'week';
 		}
 
 		switch (group) {
-			case 'day';
+			case 'day':
 				sql += " GROUP BY YEAR(o.`date_added`), MONTH(o.`date_added`), DAY(o.`date_added`)";
 				break;
 			default:
@@ -230,15 +221,14 @@ class SaleModel extends Model {
 	 *
 	 * @return int
 	 */
-	async getTotalOrders(array data = []) {
+	async getTotalOrders(data = {}) {
+		let group = 'week';
 		if (data['filter_group']) {
 			group = data['filter_group'];
-		} else {
-			group = 'week';
 		}
-
+		let sql = '';
 		switch (group) {
-			case 'day';
+			case 'day':
 				sql = "SELECT COUNT(DISTINCT YEAR(`date_added`), MONTH(`date_added`), DAY(`date_added`)) AS `total` FROM `" + DB_PREFIX + "order`";
 				break;
 			default:
@@ -253,7 +243,7 @@ class SaleModel extends Model {
 				break;
 		}
 
-		if (!empty(data['filter_order_status_id'])) {
+		if (data['filter_order_status_id']) {
 			sql += " WHERE `order_status_id` = '" + data['filter_order_status_id'] + "'";
 		} else {
 			sql += " WHERE `order_status_id` > '0'";
@@ -277,10 +267,10 @@ class SaleModel extends Model {
 	 *
 	 * @return array
 	 */
-	async getTaxes(array data = []) {
-		sql = "SELECT MIN(o.`date_added`) AS date_start, MAX(o.`date_added`) AS date_end, ot.`title`, SUM(ot.`value`) AS total, COUNT(o.`order_id`) AS `orders` FROM `" + DB_PREFIX + "order` o LEFT JOIN `" + DB_PREFIX + "order_total` ot ON (ot.`order_id` = o.`order_id`) WHERE ot.`code` = 'tax'";
+	async getTaxes(data = {}) {
+		let sql = "SELECT MIN(o.`date_added`) AS date_start, MAX(o.`date_added`) AS date_end, ot.`title`, SUM(ot.`value`) AS total, COUNT(o.`order_id`) AS `orders` FROM `" + DB_PREFIX + "order` o LEFT JOIN `" + DB_PREFIX + "order_total` ot ON (ot.`order_id` = o.`order_id`) WHERE ot.`code` = 'tax'";
 
-		if (!empty(data['filter_order_status_id'])) {
+		if (data['filter_order_status_id']) {
 			sql += " AND `o`.`order_status_id` = '" + data['filter_order_status_id'] + "'";
 		} else {
 			sql += " AND `o`.`order_status_id` > '0'";
@@ -293,15 +283,13 @@ class SaleModel extends Model {
 		if (data['filter_date_end']) {
 			sql += " AND DATE(o.`date_added`) <= DATE(" + this.db.escape(data['filter_date_end']) + ")";
 		}
-
+		let group = 'week';
 		if (data['filter_group']) {
 			group = data['filter_group'];
-		} else {
-			group = 'week';
 		}
 
 		switch (group) {
-			case 'day';
+			case 'day':
 				sql += " GROUP BY YEAR(`o`.`date_added`), MONTH(`o`.`date_added`), DAY(`o`.`date_added`), `ot`.`title`";
 				break;
 			default:
@@ -338,15 +326,14 @@ class SaleModel extends Model {
 	 *
 	 * @return int
 	 */
-	async getTotalTaxes(array data = []) {
+	async getTotalTaxes(data = {}) {
+		let group = 'week';
 		if (data['filter_group']) {
 			group = data['filter_group'];
-		} else {
-			group = 'week';
 		}
-
+		let sql = '';
 		switch (group) {
-			case 'day';
+			case 'day':
 				sql = "SELECT COUNT(DISTINCT YEAR(o.`date_added`), MONTH(`o`.`date_added`), DAY(`o`.`date_added`), `ot`.`title`) AS `total` FROM `" + DB_PREFIX + "order` `o`";
 				break;
 			default:
@@ -363,7 +350,7 @@ class SaleModel extends Model {
 
 		sql += " LEFT JOIN `" + DB_PREFIX + "order_total` `ot` ON (`o`.`order_id` = `ot`.`order_id`) WHERE `ot`.`code` = 'tax'";
 
-		if (!empty(data['filter_order_status_id'])) {
+		if (data['filter_order_status_id']) {
 			sql += " AND `o`.`order_status_id` = '" + data['filter_order_status_id'] + "'";
 		} else {
 			sql += " AND `o`.`order_status_id` > '0'";
@@ -387,10 +374,10 @@ class SaleModel extends Model {
 	 *
 	 * @return array
 	 */
-	async getShipping(array data = []) {
-		sql = "SELECT MIN(o.`date_added`) AS date_start, MAX(o.`date_added`) AS date_end, ot.`title`, SUM(ot.`value`) AS total, COUNT(o.`order_id`) AS orders FROM `" + DB_PREFIX + "order` o LEFT JOIN `" + DB_PREFIX + "order_total` ot ON (o.`order_id` = ot.`order_id`) WHERE ot.`code` = 'shipping'";
+	async getShipping(data = {}) {
+		let sql = "SELECT MIN(o.`date_added`) AS date_start, MAX(o.`date_added`) AS date_end, ot.`title`, SUM(ot.`value`) AS total, COUNT(o.`order_id`) AS orders FROM `" + DB_PREFIX + "order` o LEFT JOIN `" + DB_PREFIX + "order_total` ot ON (o.`order_id` = ot.`order_id`) WHERE ot.`code` = 'shipping'";
 
-		if (!empty(data['filter_order_status_id'])) {
+		if (data['filter_order_status_id']) {
 			sql += " AND `o`.`order_status_id` = '" + data['filter_order_status_id'] + "'";
 		} else {
 			sql += " AND `o`.`order_status_id` > '0'";
@@ -411,7 +398,7 @@ class SaleModel extends Model {
 		}
 
 		switch (group) {
-			case 'day';
+			case 'day':
 				sql += " GROUP BY YEAR(`o`.`date_added`), MONTH(`o`.`date_added`), DAY(`o`.`date_added`), `ot`.`title`";
 				break;
 			default:
@@ -448,15 +435,14 @@ class SaleModel extends Model {
 	 *
 	 * @return int
 	 */
-	async getTotalShipping(array data = []) {
+	async getTotalShipping(data = {}) {
+		let group = 'week';
 		if (data['filter_group']) {
 			group = data['filter_group'];
-		} else {
-			group = 'week';
 		}
-
+		let sql = '';
 		switch (group) {
-			case 'day';
+			case 'day':
 				sql = "SELECT COUNT(DISTINCT YEAR(o.`date_added`), MONTH(o.`date_added`), DAY(o.`date_added`), ot.`title`) AS `total` FROM `" + DB_PREFIX + "order` o";
 				break;
 			default:
@@ -473,7 +459,7 @@ class SaleModel extends Model {
 
 		sql += " LEFT JOIN `" + DB_PREFIX + "order_total` ot ON (o.`order_id` = ot.`order_id`) WHERE ot.`code` = 'shipping'";
 
-		if (!empty(data['filter_order_status_id'])) {
+		if (data['filter_order_status_id']) {
 			sql += " AND `order_status_id` = '" + data['filter_order_status_id'] + "'";
 		} else {
 			sql += " AND `order_status_id` > '0'";

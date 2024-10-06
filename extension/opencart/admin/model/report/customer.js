@@ -233,7 +233,7 @@ module.exports = class CustomerModel extends Model {
 			sql += " AND CONCAT(c.`firstname`, ' ', c.`lastname`) LIKE " + this.db.escape(data['filter_customer']) + "";
 		}
 
-		if (!empty(data['filter_order_status_id'])) {
+		if (data['filter_order_status_id']) {
 			sql += " AND o.`order_status_id` = '" + data['filter_order_status_id'] + "'";
 		} else {
 			sql += " AND o.`order_status_id` > '0'";
@@ -280,7 +280,7 @@ module.exports = class CustomerModel extends Model {
 			sql += " AND CONCAT(c.`firstname`, ' ', c.`lastname`) LIKE " + this.db.escape(data['filter_customer']) + "";
 		}
 
-		if (!empty(data['filter_order_status_id'])) {
+		if (data['filter_order_status_id']) {
 			sql += " AND o.`order_status_id` = '" + data['filter_order_status_id'] + "'";
 		} else {
 			sql += " AND o.`order_status_id` > '0'";

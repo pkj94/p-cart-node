@@ -1,20 +1,13 @@
-<?php
-namespace Opencart\Admin\Model\Extension\Opencart\Report;
-/**
- * Class Returns
- *
- * @package Opencart\Admin\Model\Extension\Opencart\Report
- */
-class ReturnsModel extends Model {
+module.exports = class ReturnsReportModel extends Model {
 	/**
 	 * @param array data
 	 *
 	 * @return array
 	 */
-	async getReturns(array data = []) {
-		sql = "SELECT MIN(r.`date_added`) AS date_start, MAX(r.`date_added`) AS date_end, COUNT(r.`return_id`) AS returns FROM `" + DB_PREFIX + "return` r";
+	async getReturns(data = {}) {
+		let sql = "SELECT MIN(r.`date_added`) AS date_start, MAX(r.`date_added`) AS date_end, COUNT(r.`return_id`) AS returns FROM `" + DB_PREFIX + "return` r";
 
-		if (!empty(data['filter_return_status_id'])) {
+		if (data['filter_return_status_id']) {
 			sql += " WHERE r.`return_status_id` = '" + data['filter_return_status_id'] + "'";
 		} else {
 			sql += " WHERE r.`return_status_id` > '0'";
@@ -35,7 +28,7 @@ class ReturnsModel extends Model {
 		}
 
 		switch (group) {
-			case 'day';
+			case 'day':
 				sql += " GROUP BY YEAR(r.`date_added`), MONTH(r.`date_added`), DAY(r.`date_added`)";
 				break;
 			default:
@@ -72,15 +65,13 @@ class ReturnsModel extends Model {
 	 *
 	 * @return int
 	 */
-	async getTotalReturns(array data = []) {
+	async getTotalReturns(data = {}) {
+		let group = 'week';
 		if (data['filter_group']) {
 			group = data['filter_group'];
-		} else {
-			group = 'week';
 		}
-
 		switch (group) {
-			case 'day';
+			case 'day':
 				sql = "SELECT COUNT(DISTINCT YEAR(`date_added`), MONTH(`date_added`), DAY(`date_added`)) AS `total` FROM `" + DB_PREFIX + "return`";
 				break;
 			default:
@@ -95,7 +86,7 @@ class ReturnsModel extends Model {
 				break;
 		}
 
-		if (!empty(data['filter_return_status_id'])) {
+		if (data['filter_return_status_id']) {
 			sql += " WHERE `return_status_id` = '" + data['filter_return_status_id'] + "'";
 		} else {
 			sql += " WHERE `return_status_id` > '0'";

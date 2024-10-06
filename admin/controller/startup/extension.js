@@ -25,9 +25,11 @@ module.exports = class ExtensionController extends Controller {
 
 			// this.autoloader.register(`Opencart\Admin\Controller\Extension\\${extension}`, `${DIR_EXTENSION}${result.code}/admin/controller/`);
 			if (fs.existsSync(`${DIR_EXTENSION}${result.code}/admin/model/`))
-				fs.readdirSync(`${DIR_EXTENSION}${result.code}/admin/model/`).forEach((model) => {
-					let name = ucfirst(model).replace('.js', '') + 'Model';
-					global[name] = require(DIR_EXTENSION + result.code + '/admin/model/extension/' + extension + '/' + model);
+				fs.readdirSync(`${DIR_EXTENSION}${result.code}/admin/model/`).forEach((folder) => {
+					fs.readdirSync(`${DIR_EXTENSION}${result.code}/admin/model/${folder}`).forEach((model) => {
+						let name = ucfirst(model).replace('.js', '') + 'Model';
+						global[name] = require(DIR_EXTENSION + result.code + '/admin/model/' + folder + '/' + model)
+					})
 				});
 			// this.autoloader.register(`Opencart\Admin\Model\Extension\\${extension}`, `${DIR_EXTENSION}${result.code}/admin/model/`);
 			if (fs.existsSync(`${DIR_EXTENSION}${result.code}/system/library/`))

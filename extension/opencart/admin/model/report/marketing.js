@@ -1,20 +1,13 @@
-<?php
-namespace Opencart\Admin\Model\Extension\Opencart\Report;
-/**
- * Class Marketing
- *
- * @package Opencart\Admin\Model\Extension\Opencart\Report
- */
-class MarketingModel extends Model {
+module.exports = class MarketingReportModel extends Model {
 	/**
 	 * @param array data
 	 *
 	 * @return array
 	 */
-	async getMarketing(array data = []) {
-		sql = "SELECT m.`marketing_id`, m.`name` AS campaign, m.`code`, m.`clicks` AS clicks, (SELECT COUNT(DISTINCT `order_id`) FROM `" + DB_PREFIX + "order` o1 WHERE o1.`marketing_id` = m.`marketing_id`";
+	async getMarketing(data = {}) {
+		let sql = "SELECT m.`marketing_id`, m.`name` AS campaign, m.`code`, m.`clicks` AS clicks, (SELECT COUNT(DISTINCT `order_id`) FROM `" + DB_PREFIX + "order` o1 WHERE o1.`marketing_id` = m.`marketing_id`";
 
-		if (!empty(data['filter_order_status_id'])) {
+		if (data['filter_order_status_id']) {
 			sql += " AND o1.`order_status_id` = '" + data['filter_order_status_id'] + "'";
 		} else {
 			sql += " AND o1.`order_status_id` > '0'";
@@ -30,7 +23,7 @@ class MarketingModel extends Model {
 
 		sql += ") AS `orders`, (SELECT SUM(`total`) FROM `" + DB_PREFIX + "order` o2 WHERE o2.`marketing_id` = m.`marketing_id`";
 
-		if (!empty(data['filter_order_status_id'])) {
+		if (data['filter_order_status_id']) {
 			sql += " AND o2.`order_status_id` = '" + data['filter_order_status_id'] + "'";
 		} else {
 			sql += " AND o2.`order_status_id` > '0'";
@@ -68,7 +61,7 @@ class MarketingModel extends Model {
 	 *
 	 * @return int
 	 */
-	async getTotalMarketing(array data = []) {
+	async getTotalMarketing(data = {}) {
 		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "marketing`");
 
 		return query.row['total'];

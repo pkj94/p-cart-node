@@ -24,7 +24,7 @@ module.exports = class DashboardController extends Controller {
         // Add all the modules which have multiple settings for each module
         for (let extension of extensions) {
             if (this.config.get('dashboard_' + extension['code'] + '_status') && this.user.hasPermission('access', 'extension/' + extension['extension'] + '/dashboard/' + extension['code'])) {
-                let output = this.load.controller(DIR_EXTENSION + extension['extension'] + '/dashboard/' + extension['code'] + '+dashboard');
+                let output = await this.load.controller('extension/' + extension['extension'] + '/dashboard/' + extension['code'] + '+dashboard');
                 //if (!output instanceof \Exception) {
                 if (output) {
                     dashboards.push({
@@ -40,7 +40,7 @@ module.exports = class DashboardController extends Controller {
         for (let [key, value] of Object.entries(dashboards)) {
             sort_order[key] = value['sort_order'];
         }
-        array_multisort(sort_order, SORT_ASC, dashboards);
+        array_multisort(sort_order, 'ASC', dashboards);
         // Split the array so the columns width is not more than 12 on each row+
         let width = 0;
         let column = [];
@@ -54,7 +54,7 @@ module.exports = class DashboardController extends Controller {
                 column = [];
             }
         }
-        if (!empty(column)) {
+        if (column) {
             data['rows'].push(column);
         }
         if (this.user.hasPermission('access', 'common/developer')) {
