@@ -21,10 +21,11 @@ module.exports = class DashboardController extends Controller {
         this.load.model('setting/extension', this);
         // Get a list of installed modules
         let extensions = await this.model_setting_extension.getExtensionsByType('dashboard');
+        // console.log('extensions-----',extensions);        
         // Add all the modules which have multiple settings for each module
         for (let extension of extensions) {
             if (this.config.get('dashboard_' + extension['code'] + '_status') && this.user.hasPermission('access', 'extension/' + extension['extension'] + '/dashboard/' + extension['code'])) {
-                let output = await this.load.controller('extension/' + extension['extension'] + '/dashboard/' + extension['code'] + '+dashboard');
+                let output = await this.load.controller('extension/' + extension['extension'] + '/dashboard/' + extension['code'] + '.dashboard');
                 //if (!output instanceof \Exception) {
                 if (output) {
                     dashboards.push({

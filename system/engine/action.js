@@ -1,3 +1,4 @@
+const fs = require('fs');
 module.exports = class Action {
     constructor(route) {
         this.route = route.replace(/[^a-zA-Z0-9_|\/\.]/g, '');
@@ -22,18 +23,28 @@ module.exports = class Action {
             }
             const app = registry.get('config').get('application');
             const className = DIR_OPENCART + `${app.toLowerCase()}/${this.class}.js`;
-            try {
-                // console.log('className---',className)
-                const ControllerClass = require(`${className}`);
-                const controller = new ControllerClass(registry);
-                if (typeof controller[this.method] === 'function') {
+            if (!fs.existsSync(className)) {
+                // console.log('className----===',className)
+                let classT = this.class.split('opencart/')[1].split('/').reverse().map(a => ucfirst(a)).join('');
+                if (global[classT + 'Controller']) {
+                    let controller = new (global[classT + 'Controller'])(registry);
+                    // console.log(controller);
                     resolve(await controller[this.method](...args));
-                } else {
+                }
+            } else {
+                try {
+                    // console.log('className---', className)
+                    const ControllerClass = require(`${className}`);
+                    const controller = new ControllerClass(registry);
+                    if (typeof controller[this.method] === 'function') {
+                        resolve(await controller[this.method](...args));
+                    } else {
+                        reject(new Error(`Error: Could not call route ${this.route}!`));
+                    }
+                } catch (e) {
+                    console.log(e)
                     reject(new Error(`Error: Could not call route ${this.route}!`));
                 }
-            } catch (e) {
-                console.log(e)
-                reject(new Error(`Error: Could not call route ${this.route}!`));
             }
         })
     }

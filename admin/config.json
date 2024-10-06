@@ -22,7 +22,7 @@
 	"DB_PASSWORD": "",
 	"DB_DATABASE": "p-cart-node",
 	"DB_PORT": "3306",
-	"DB_PREFIX": "oc_",
+	"DB_PREFIX": "pc_",
 	"DB_DEBUG": false,
 	"SERVER_PORT": 8080,
 	"OPENCART_SERVER": "https://www.opencart.com/"

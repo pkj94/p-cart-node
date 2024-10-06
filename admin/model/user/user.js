@@ -8,7 +8,7 @@ module.exports = class UserModel extends Model {
      * @return int
      */
     async addUser(data) {
-        await this.db.query("INSERT INTO `" + DB_PREFIX + "user` SET `username` = '" + this.db.escape(data['username']) + "', `user_group_id` = '" + data['user_group_id'] + "', `password` = '" + this.db.escape(password_hash(html_entity_decode(data['password'], ENT_QUOTES, 'UTF-8'), PASSWORD_DEFAULT)) + "', `firstname` = '" + this.db.escape(data['firstname']) + "', `lastname` = '" + this.db.escape(data['lastname']) + "', `email` = '" + this.db.escape(data['email']) + "', `image` = '" + this.db.escape(data['image']) + "', `status` = '" + (data['status'] ? data['status'] : 0) + "', `date_added` = NOW()");
+        await await this.db.query("INSERT INTO `" + DB_PREFIX + "user` SET `username` = '" + this.db.escape(data['username']) + "', `user_group_id` = '" + data['user_group_id'] + "', `password` = '" + this.db.escape(password_hash(html_entity_decode(data['password'], ENT_QUOTES, 'UTF-8'), PASSWORD_DEFAULT)) + "', `firstname` = " + this.db.escape(data['firstname']) + ", `lastname` = " + this.db.escape(data['lastname']) + ", `email` = " + this.db.escape(data['email']) + ", `image` = '" + this.db.escape(data['image']) + "', `status` = '" + (data['status'] ? data['status'] : 0) + "', `date_added` = NOW()");
         return this.db.getLastId();
     }
 
@@ -19,10 +19,10 @@ module.exports = class UserModel extends Model {
      * @return void
      */
     async editUser(user_id, data) {
-        await this.db.query("UPDATE `" + DB_PREFIX + "user` SET `username` = '" + this.db.escape(data['username']) + "', `user_group_id` = '" + data['user_group_id'] + "', `firstname` = '" + this.db.escape(data['firstname']) + "', `lastname` = '" + this.db.escape(data['lastname']) + "', `email` = '" + this.db.escape(data['email']) + "', `image` = '" + this.db.escape(data['image']) + "', `status` = '" + (data['status'] ? data['status'] : 0) + "' WHERE `user_id` = '" + user_id + "'");
+        await await this.db.query("UPDATE `" + DB_PREFIX + "user` SET `username` = '" + this.db.escape(data['username']) + "', `user_group_id` = '" + data['user_group_id'] + "', `firstname` = " + this.db.escape(data['firstname']) + ", `lastname` = " + this.db.escape(data['lastname']) + ", `email` = " + this.db.escape(data['email']) + ", `image` = '" + this.db.escape(data['image']) + "', `status` = '" + (data['status'] ? data['status'] : 0) + "' WHERE `user_id` = '" + user_id + "'");
 
         if (data['password']) {
-            await this.db.query("UPDATE `" + DB_PREFIX + "user` SET `password` = '" + this.db.escape(password_hash(data['password'], PASSWORD_DEFAULT)) + "' WHERE `user_id` = '" + user_id + "'");
+            await await this.db.query("UPDATE `" + DB_PREFIX + "user` SET `password` = '" + this.db.escape(password_hash(data['password'], PASSWORD_DEFAULT)) + "' WHERE `user_id` = '" + user_id + "'");
         }
     }
 
@@ -33,7 +33,7 @@ module.exports = class UserModel extends Model {
      * @return void
      */
     async editPassword(user_id, password) {
-        await this.db.query("UPDATE `" + DB_PREFIX + "user` SET `password` = '" + this.db.escape(password_hash(password)) + "', `code` = '' WHERE `user_id` = '" + user_id + "'");
+        await await this.db.query("UPDATE `" + DB_PREFIX + "user` SET `password` = '" + this.db.escape(password_hash(password)) + "', `code` = '' WHERE `user_id` = '" + user_id + "'");
     }
 
     /**
@@ -43,7 +43,7 @@ module.exports = class UserModel extends Model {
      * @return void
      */
     async editCode(email, code) {
-        await this.db.query("UPDATE `" + DB_PREFIX + "user` SET `code` = '" + this.db.escape(code) + "' WHERE LCASE(`email`) = '" + this.db.escape(oc_strtolower(email)) + "'");
+        await await this.db.query("UPDATE `" + DB_PREFIX + "user` SET `code` = '" + this.db.escape(code) + "' WHERE LCASE(`email`) = '" + this.db.escape(oc_strtolower(email)) + "'");
     }
 
     /**
@@ -52,9 +52,9 @@ module.exports = class UserModel extends Model {
      * @return void
      */
     async deleteUser(user_id) {
-        await this.db.query("DELETE FROM `" + DB_PREFIX + "user` WHERE `user_id` = '" + user_id + "'");
-        await this.db.query("DELETE FROM `" + DB_PREFIX + "user_history` WHERE `user_id` = '" + user_id + "'");
-        await this.db.query("DELETE FROM `" + DB_PREFIX + "user_history` WHERE `user_id` = '" + user_id + "'");
+        await await this.db.query("DELETE FROM `" + DB_PREFIX + "user` WHERE `user_id` = '" + user_id + "'");
+        await await this.db.query("DELETE FROM `" + DB_PREFIX + "user_history` WHERE `user_id` = '" + user_id + "'");
+        await await this.db.query("DELETE FROM `" + DB_PREFIX + "user_history` WHERE `user_id` = '" + user_id + "'");
     }
 
     /**
@@ -63,7 +63,7 @@ module.exports = class UserModel extends Model {
      * @return array
      */
     async getUser(user_id) {
-        let query = await this.db.query("SELECT *, (SELECT ug+`name` FROM `" + DB_PREFIX + "user_group` ug WHERE ug+`user_group_id` = u+`user_group_id`) AS user_group FROM `" + DB_PREFIX + "user` u WHERE u+`user_id` = '" + user_id + "'");
+        let query = await await this.db.query("SELECT *, (SELECT ug+`name` FROM `" + DB_PREFIX + "user_group` ug WHERE ug+`user_group_id` = u+`user_group_id`) AS user_group FROM `" + DB_PREFIX + "user` u WHERE u+`user_id` = '" + user_id + "'");
         return query.row;
     }
 
@@ -73,7 +73,7 @@ module.exports = class UserModel extends Model {
      * @return array
      */
     async getUserByUsername(username) {
-        let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "user` WHERE `username` = '" + this.db.escape(username) + "'");
+        let query = await await this.db.query("SELECT * FROM `" + DB_PREFIX + "user` WHERE `username` = '" + this.db.escape(username) + "'");
 
         return query.row;
     }
@@ -84,7 +84,7 @@ module.exports = class UserModel extends Model {
      * @return array
      */
     async getUserByEmail(email) {
-        query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "user` WHERE LCASE(`email`) = '" + this.db.escape(oc_strtolower(email)) + "'");
+        query = await await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "user` WHERE LCASE(`email`) = '" + this.db.escape(oc_strtolower(email)) + "'");
 
         return query.row;
     }
@@ -95,7 +95,7 @@ module.exports = class UserModel extends Model {
      * @return array
      */
     async getUserByCode(code) {
-        let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "user` WHERE `code` = '" + this.db.escape(code) + "' AND `code` != ''");
+        let query = await await this.db.query("SELECT * FROM `" + DB_PREFIX + "user` WHERE `code` = '" + this.db.escape(code) + "' AND `code` != ''");
 
         return query.row;
     }
@@ -105,7 +105,7 @@ module.exports = class UserModel extends Model {
      *
      * @return array
      */
-    async getUsers(data = []) {
+    async getUsers(data = {}) {
         let sql = "SELECT * FROM `" + DB_PREFIX + "user`";
 
         let sort_data = [
@@ -138,7 +138,7 @@ module.exports = class UserModel extends Model {
             sql += " LIMIT " + data['start'] + "," + data['limit'];
         }
 
-        query = await this.db.query(sql);
+        query = await await this.db.query(sql);
 
         return query.rows;
     }
@@ -147,7 +147,7 @@ module.exports = class UserModel extends Model {
      * @return int
      */
     async getTotalUsers() {
-        let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "user`");
+        let query = await await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "user`");
 
         return query.row['total'];
     }
@@ -158,7 +158,7 @@ module.exports = class UserModel extends Model {
      * @return int
      */
     async getTotalUsersByGroupId(user_group_id) {
-        let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "user` WHERE `user_group_id` = '" + user_group_id + "'");
+        let query = await await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "user` WHERE `user_group_id` = '" + user_group_id + "'");
 
         return query.row['total'];
     }
@@ -169,7 +169,7 @@ module.exports = class UserModel extends Model {
      * @return int
      */
     async getTotalUsersByEmail(email) {
-        let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "user` WHERE LCASE(`email`) = '" + this.db.escape(oc_strtolower(email)) + "'");
+        let query = await await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "user` WHERE LCASE(`email`) = '" + this.db.escape(oc_strtolower(email)) + "'");
 
         return query.row['total'];
     }
@@ -181,7 +181,7 @@ module.exports = class UserModel extends Model {
      * @return void
      */
     async addLogin(user_id, data) {
-        await this.db.query("INSERT INTO `" + DB_PREFIX + "user_login` SET `user_id` = '" + user_id + "', `ip` = " + this.db.escape(data['ip']) + ", `user_agent` = " + this.db.escape(data['user_agent']) + ", `date_added` = NOW()");
+        await await this.db.query("INSERT INTO `" + DB_PREFIX + "user_login` SET `user_id` = '" + user_id + "', `ip` = " + this.db.escape(data['ip']) + ", `user_agent` = " + this.db.escape(data['user_agent']) + ", `date_added` = NOW()");
     }
 
     /**
@@ -200,7 +200,7 @@ module.exports = class UserModel extends Model {
             limit = 10;
         }
 
-        let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "user_login` WHERE `user_id` = '" + user_id + "' LIMIT " + start + "," + limit);
+        let query = await await this.db.query("SELECT * FROM `" + DB_PREFIX + "user_login` WHERE `user_id` = '" + user_id + "' LIMIT " + start + "," + limit);
 
         if (query.num_rows) {
             return query.rows;
@@ -215,7 +215,7 @@ module.exports = class UserModel extends Model {
      * @return int
      */
     async getTotalLogins(user_id) {
-        let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "user_login` WHERE `user_id` = '" + user_id + "'");
+        let query = await await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "user_login` WHERE `user_id` = '" + user_id + "'");
 
         if (query.num_rows) {
             return query.row['total'];
@@ -231,7 +231,7 @@ module.exports = class UserModel extends Model {
      * @return void
      */
     async addAuthorize(user_id, data) {
-        await this.db.query("INSERT INTO `" + DB_PREFIX + "user_authorize` SET `user_id` = '" + user_id + "', `token` = '" + this.db.escape(data['token']) + "', `ip` = '" + this.db.escape(data['ip']) + "', `user_agent` = '" + this.db.escape(data['user_agent']) + "', `date_added` = NOW()");
+        await await this.db.query("INSERT INTO `" + DB_PREFIX + "user_authorize` SET `user_id` = '" + user_id + "', `token` = '" + this.db.escape(data['token']) + "', `ip` = '" + this.db.escape(data['ip']) + "', `user_agent` = '" + this.db.escape(data['user_agent']) + "', `date_added` = NOW()");
     }
 
     /**
@@ -241,7 +241,7 @@ module.exports = class UserModel extends Model {
      * @return void
      */
     async editAuthorizeStatus(user_authorize_id, status) {
-        await this.db.query("UPDATE `" + DB_PREFIX + "user_authorize` SET `status` = '" + status + "' WHERE `user_authorize_id` = '" + user_authorize_id + "'");
+        await await this.db.query("UPDATE `" + DB_PREFIX + "user_authorize` SET `status` = '" + status + "' WHERE `user_authorize_id` = '" + user_authorize_id + "'");
     }
 
     /**
@@ -251,7 +251,7 @@ module.exports = class UserModel extends Model {
      * @return void
      */
     async editAuthorizeTotal(user_authorize_id, total) {
-        await this.db.query("UPDATE `" + DB_PREFIX + "user_authorize` SET `total` = '" + total + "' WHERE `user_authorize_id` = '" + user_authorize_id + "'");
+        await await this.db.query("UPDATE `" + DB_PREFIX + "user_authorize` SET `total` = '" + total + "' WHERE `user_authorize_id` = '" + user_authorize_id + "'");
     }
 
     /**
@@ -260,7 +260,7 @@ module.exports = class UserModel extends Model {
      * @return void
      */
     async deleteAuthorize(user_authorize_id) {
-        await this.db.query("DELETE FROM `" + DB_PREFIX + "user_authorize` WHERE `user_authorize_id` = '" + user_authorize_id + "'");
+        await await this.db.query("DELETE FROM `" + DB_PREFIX + "user_authorize` WHERE `user_authorize_id` = '" + user_authorize_id + "'");
     }
 
     /**
@@ -270,7 +270,7 @@ module.exports = class UserModel extends Model {
      * @return array
      */
     async getAuthorizeByToken(user_id, token) {
-        let query = await this.db.query("SELECT *, (SELECT SUM(total) FROM `" + DB_PREFIX + "user_authorize` WHERE `user_id` = '" + user_id + "') AS `attempts` FROM `" + DB_PREFIX + "user_authorize` WHERE `user_id` = '" + user_id + "' AND `token` = '" + this.db.escape(token) + "'");
+        let query = await await this.db.query("SELECT *, (SELECT SUM(total) FROM `" + DB_PREFIX + "user_authorize` WHERE `user_id` = '" + user_id + "') AS `attempts` FROM `" + DB_PREFIX + "user_authorize` WHERE `user_id` = '" + user_id + "' AND `token` = '" + this.db.escape(token) + "'");
 
         return query.row;
     }
@@ -281,7 +281,7 @@ module.exports = class UserModel extends Model {
      * @return void
      */
     async resetAuthorizes(user_id) {
-        await this.db.query("UPDATE `" + DB_PREFIX + "user_authorize` SET `total` = '0' WHERE `user_id` = '" + user_id + "'");
+        await await this.db.query("UPDATE `" + DB_PREFIX + "user_authorize` SET `total` = '0' WHERE `user_id` = '" + user_id + "'");
     }
 
     /**
@@ -300,7 +300,7 @@ module.exports = class UserModel extends Model {
             limit = 10;
         }
 
-        let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "user_authorize` WHERE `user_id` = '" + user_id + "' LIMIT " + start + "," + limit);
+        let query = await await this.db.query("SELECT * FROM `" + DB_PREFIX + "user_authorize` WHERE `user_id` = '" + user_id + "' LIMIT " + start + "," + limit);
 
         if (query.num_rows) {
             return query.rows;
@@ -315,7 +315,7 @@ module.exports = class UserModel extends Model {
      * @return int
      */
     async getTotalAuthorizes(user_id) {
-        let query = await this.db.query("SELECT COUNT(*) AS total FROM `" + DB_PREFIX + "user_authorize` WHERE `user_id` = '" + user_id + "'");
+        let query = await await this.db.query("SELECT COUNT(*) AS total FROM `" + DB_PREFIX + "user_authorize` WHERE `user_id` = '" + user_id + "'");
 
         if (query.num_rows) {
             return query.row['total'];

@@ -17,18 +17,18 @@ module.exports = class CustomerDashboardController extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('text_home'),
+			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_extension'),
-			'href' : this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=dashboard')
+			'text': this.language.get('text_extension'),
+			'href': this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=dashboard')
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('extension/opencart/dashboard/customer', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('heading_title'),
+			'href': this.url.link('extension/opencart/dashboard/customer', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['save'] = this.url.link('extension/opencart/dashboard/customer+save', 'user_token=' + this.session.data['user_token']);
@@ -65,7 +65,7 @@ module.exports = class CustomerDashboardController extends Controller {
 		}
 
 		if (!json) {
-			this.load.model('setting/setting',this);
+			this.load.model('setting/setting', this);
 
 			await this.model_setting_setting.editSetting('dashboard_customer', this.request.post);
 
@@ -86,11 +86,11 @@ module.exports = class CustomerDashboardController extends Controller {
 		data['user_token'] = this.session.data['user_token'];
 
 		// Total Orders
-		this.load.model('customer/customer',this);
+		this.load.model('customer/customer', this);
 
-		let today = await this.model_customer_customer.getTotalCustomers({'filter_date_added' : date('Y-m-d', strtotime('-1 day'))});
+		let today = await this.model_customer_customer.getTotalCustomers({ 'filter_date_added': date('Y-m-d', strtotime('-1 day')) });
 
-		let yesterday = await this.model_customer_customer.getTotalCustomers({'filter_date_added' : date('Y-m-d', strtotime('-2 day'))});
+		let yesterday = await this.model_customer_customer.getTotalCustomers({ 'filter_date_added': date('Y-m-d', strtotime('-2 day')) });
 
 		let difference = today - yesterday;
 
@@ -104,11 +104,11 @@ module.exports = class CustomerDashboardController extends Controller {
 
 		if (customer_total > 1000000000000) {
 			data['total'] = round(customer_total / 1000000000000, 1) + 'T';
-		} else if(customer_total > 1000000000) {
+		} else if (customer_total > 1000000000) {
 			data['total'] = round(customer_total / 1000000000, 1) + 'B';
-		} else if(customer_total > 1000000) {
+		} else if (customer_total > 1000000) {
 			data['total'] = round(customer_total / 1000000, 1) + 'M';
-		} else if(customer_total > 1000) {
+		} else if (customer_total > 1000) {
 			data['total'] = round(customer_total / 1000, 1) + 'K';
 		} else {
 			data['total'] = customer_total;

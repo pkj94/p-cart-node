@@ -74,11 +74,10 @@ module.exports = class ActivityDashboardController extends Controller {
 		const data = {};
 		data.activities = [];
 
-		this.load.model('extension/opencart/report/activity');
+		this.load.model('extension/opencart/report/activity', this);
 
-		const results = this.model_extension_opencart_report_activity.getActivities();
-
-		results.forEach(result => {
+		const results = await this.model_extension_opencart_report_activity.getActivities();
+		results.forEach((result) => {
 			const comment = vsprintf(this.language.get('text_activity_' + result.key), JSON.parse(result.data));
 
 			const find = [

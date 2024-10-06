@@ -12,7 +12,7 @@ module.exports = class Loader {
     }
     controller(route, ...args) {
         return new Promise(async (resolve, reject) => {
-            route = route.replace(/[^a-zA-Z0-9_|\/\.]/g, '').replace(/\|/g, '.');
+            // route = route.replace(/[^a-zA-Z0-9_|\/\.]/g, '').replace(/\|/g, '.');
             let output = '';
             let action = new Action(route);
             while (action) {
@@ -39,15 +39,21 @@ module.exports = class Loader {
             resolve(output);
         })
     }
-    model(route,registry) {
+    model(route, registry) {
         // Sanitize the call
-        route = route.replace(/[^a-zA-Z0-9_\/]/g, '');
+        // route = route.replace(/[^a-zA-Z0-9_\/]/g, '');
 
         // Converting a route path to a class name
-        const className = DIR_OPENCART + `${this.registry.data.config.get('application').toLowerCase()}/model/${route}.js`;
+        let className = DIR_OPENCART + `${this.registry.data.config.get('application').toLowerCase()}/model/${route}.js`;
         // Create a key to store the model object
-        const key = `model_${route.replace('/', '_')}`;
-
+        const key = `model_${route.replaceAll('/', '_')}`;
+        if (!fs.existsSync(className)) {
+            // console.log('route----===', route)
+            let classT = route.split('opencart/')[1];
+            // console.log(classT);
+            className = DIR_EXTENSION + `opencart/${this.registry.data.config.get('application').toLowerCase()}/model/${classT}.js`
+            // console.log(className);
+        }
         // Check if the requested model is already stored in the registry.
         if (!this.registry.has(key)) {
             try {
@@ -90,12 +96,14 @@ module.exports = class Loader {
                         };
                     }
                 }
+                // console.log(key,proxy,route)
                 registry.set(key, proxy);
                 this.registry.set(key, proxy);
             } catch (error) {
                 console.log(error)
                 throw new Error(`Error: Could not load model ${className}!`);
             }
+
         }
     }
 
@@ -108,7 +116,7 @@ module.exports = class Loader {
                 output = result;
             }
             if (!output) {
-                
+
                 output = await this.registry.data.template.render(route, data, code);
             }
             result = this.registry.data.event.trigger(`view/${route}/after`, [route, data, output]);
