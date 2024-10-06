@@ -3,7 +3,7 @@
  *
  * @package Opencart\Admin\Controller\Extension\Opencart\Dashboard
  */
-module.exports = class OnlineController extends Controller {
+module.exports = class OnlineDashboardController extends Controller {
 	constructor(registry) {
 		super(registry)
 	}
@@ -60,7 +60,7 @@ module.exports = class OnlineController extends Controller {
 	async save() {
 		await this.load.language('extension/opencart/dashboard/online');
 
-		const json = [];
+		const json = {};
 
 		if (!this.user.hasPermission('modify', 'extension/opencart/dashboard/online')) {
 			json['error'] = this.language.get('error_permission');

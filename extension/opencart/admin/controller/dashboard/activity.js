@@ -1,4 +1,4 @@
-module.exports = class ActivityController extends Controller {
+module.exports = class ActivityDashboardController extends Controller {
 	constructor(registry) {
 		super(registry)
 	}
@@ -38,11 +38,11 @@ module.exports = class ActivityController extends Controller {
 		data.dashboard_activity_status = this.config.get('dashboard_activity_status');
 		data.dashboard_activity_sort_order = this.config.get('dashboard_activity_sort_order');
 
-		data.header = this.load.controller('common/header');
-		data.column_left = this.load.controller('common/column_left');
-		data.footer = this.load.controller('common/footer');
+		data.header = await this.load.controller('common/header');
+		data.column_left = await this.load.controller('common/column_left');
+		data.footer = await this.load.controller('common/footer');
 
-		this.response.setOutput(this.load.view('extension/opencart/dashboard/activity_form', data));
+		this.response.setOutput(await this.load.view('extension/opencart/dashboard/activity_form', data));
 	}
 
 	save() {
@@ -55,7 +55,7 @@ module.exports = class ActivityController extends Controller {
 		}
 
 		if (!json.error) {
-			this.load.model('setting/setting');
+			this.load.model('setting/setting',this);
 
 			this.model_setting_setting.editSetting('dashboard_activity', this.request.post);
 
@@ -76,7 +76,7 @@ module.exports = class ActivityController extends Controller {
 
 		const results = this.model_extension_opencart_report_activity.getActivities();
 
-		results.forEach(result => {
+		results.forEach(result : {
 			const comment = vsprintf(this.language.get('text_activity_' + result.key), JSON.parse(result.data));
 
 			const find = [
@@ -92,14 +92,14 @@ module.exports = class ActivityController extends Controller {
 			];
 
 			data.activities.push({
-				comment: comment.replace(new RegExp(find.join('|'), 'g'), (matched) => replace[find.indexOf(matched)]),
+				comment: comment.replace(new RegExp(find.join('|'), 'g'), (matched) : replace[find.indexOf(matched)]),
 				date_added: new Date(result.date_added).toLocaleString(this.language.get('datetime_format'))
 			});
 		});
 
 		data.user_token = this.session.data.user_token;
 
-		return this.load.view('extension/opencart/dashboard/activity_info', data);
+		return await this.load.view('extension/opencart/dashboard/activity_info', data);
 	}
 }
 

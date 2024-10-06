@@ -1,4 +1,4 @@
-module.exports = class BasicController extends Controller {
+module.exports = class BasicCaptchaController extends Controller {
     constructor(registry) {
         super(registry)
     }

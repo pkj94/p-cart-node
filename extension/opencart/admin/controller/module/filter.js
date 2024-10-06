@@ -1,4 +1,4 @@
-module.exports = class FilterController extends Controller {
+module.exports = class FilterModuleController extends Controller {
 	constructor(registry) {
 		super(registry)
 	}

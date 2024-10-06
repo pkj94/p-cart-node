@@ -1,4 +1,4 @@
-module.exports = class HTMLController extends Controller {
+module.exports = class HTMLModuleController extends Controller {
 	constructor(registry) {
 		super(registry)
 	}

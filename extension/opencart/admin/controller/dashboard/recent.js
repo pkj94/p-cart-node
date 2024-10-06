@@ -1,6 +1,6 @@
 const strtotime = require("locutus/php/datetime/strtotime");
 
-module.exports = class RecentController extends Controller {
+module.exports = class RecentDashboardController extends Controller {
 	constructor(registry){
 		super(registry)
 	}
@@ -85,7 +85,7 @@ module.exports = class RecentController extends Controller {
 
         const results = await this.model_sale_order.getOrders(filter_data);
 
-        results.forEach(result => {
+        results.forEach(result : {
             data.orders.push({
                 order_id: result.order_id,
                 customer: result.customer,

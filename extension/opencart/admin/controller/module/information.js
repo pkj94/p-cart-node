@@ -1,4 +1,4 @@
-module.exports = class InformationController extends Controller {
+module.exports = class InformationModuleController extends Controller {
 	constructor(registry) {
 		super(registry)
 	}

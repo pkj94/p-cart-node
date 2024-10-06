@@ -1,7 +1,7 @@
 const strtotime = require("locutus/php/datetime/strtotime");
 const sprintf = require("locutus/php/strings/sprintf");
 
-module.exports = class IpController extends Controller {
+module.exports = class IpFaudController extends Controller {
 	constructor(registry) {
 		super(registry)
 	}

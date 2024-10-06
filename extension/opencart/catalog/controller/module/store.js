@@ -9,41 +9,41 @@ class Store extends \Opencart\System\Engine\Controller {
 	/**
 	 * @return string
 	 */
-	public function index(): string {
+	public function index() {
 		$status = true;
 
-		if ($this->config->get('module_store_admin')) {
-			$this->user = new \Opencart\System\Library\Cart\User($this->registry);
+		if (this.config.get('module_store_admin')) {
+			this.user = new \Opencart\System\Library\Cart\User(this.registry);
 
-			$status = $this->user->isLogged();
+			$status = this.user.isLogged();
 		}
 
 		if ($status) {
-			$this->load->language('extension/opencart/module/store');
+			this.load.language('extension/opencart/module/store');
 
-			$data['store_id'] = $this->config->get('config_store_id');
+			data['store_id'] = this.config.get('config_store_id');
 
-			$data['stores'] = [];
+			data['stores'] = [];
 
-			$data['stores'][] = [
-				'store_id' => 0,
-				'name'     => $this->language->get('text_default'),
-				'url'      => HTTP_SERVER . 'index.php?route=common/home&session_id=' . $this->session->getId()
+			data['stores'].push({
+				'store_id' : 0,
+				'name'     : this.language.get('text_default'),
+				'url'      : HTTP_SERVER . 'index.php?route=common/home&session_id=' . this.session.getId()
 			];
 
-			$this->load->model('setting/store');
+			this.load.model('setting/store');
 
-			$results = $this->model_setting_store->getStores();
+			$results = this.model_setting_store.getStores();
 
-			foreach ($results as $result) {
-				$data['stores'][] = [
-					'store_id' => $result['store_id'],
-					'name'     => $result['name'],
-					'url'      => $result['url'] . 'index.php?route=common/home&session_id=' . $this->session->getId()
+			for(let result of results) {
+				data['stores'].push({
+					'store_id' : $result['store_id'],
+					'name'     : $result['name'],
+					'url'      : $result['url'] . 'index.php?route=common/home&session_id=' . this.session.getId()
 				];
 			}
 
-			return $this->load->view('extension/opencart/module/store', $data);
+			return await this.load.view('extension/opencart/module/store', data);
 		}
 	}
 }

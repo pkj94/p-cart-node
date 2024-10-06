@@ -3,7 +3,7 @@
  *
  * @package Opencart\Admin\Controller\Extension\Opencart\Module
  */
-module.exports = class BannerController extends Controller {
+module.exports = class BannerModuleController extends Controller {
 	constructor(registry) {
 		super(registry)
 	}

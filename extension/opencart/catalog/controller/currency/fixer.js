@@ -12,10 +12,10 @@ class Fixer extends \Opencart\System\Engine\Controller {
 	 * @return void
 	 */
 	public function currency(string $default = ''): void {
-		if ($this->config->get('currency_fixer_status')) {
+		if (this.config.get('currency_fixer_status')) {
 			$curl = curl_init();
 
-			curl_setopt($curl, CURLOPT_URL, 'http://data.fixer.io/api/latest?access_key=' . $this->config->get('currency_fixer_api'));
+			curl_setopt($curl, CURLOPT_URL, 'http://data.fixer.io/api/latest?access_key=' . this.config.get('currency_fixer_api'));
 			curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 			curl_setopt($curl, CURLOPT_HEADER, false);
 			curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
@@ -34,27 +34,27 @@ class Fixer extends \Opencart\System\Engine\Controller {
 
 				$currencies['EUR'] = 1.0000;
 
-				foreach ($response_info['rates'] as $key => $value) {
+				foreach ($response_info['rates'] as $key : $value) {
 					$currencies[$key] = $value;
 				}
 
-				$this->load->model('localisation/currency');
+				this.load.model('localisation/currency');
 
-				$results = $this->model_localisation_currency->getCurrencies();
+				$results = this.model_localisation_currency.getCurrencies();
 
-				foreach ($results as $result) {
+				for(let result of results) {
 					if (isset($currencies[$result['code']])) {
 						$from = $currencies['EUR'];
 
 						$to = $currencies[$result['code']];
 
-						$this->model_localisation_currency->editValueByCode($result['code'], 1 / ($currencies[$default] * ($from / $to)));
+						this.model_localisation_currency.editValueByCode($result['code'], 1 / ($currencies[$default] * ($from / $to)));
 					}
 				}
 
-				$this->model_localisation_currency->editValueByCode($default, 1);
+				this.model_localisation_currency.editValueByCode($default, 1);
 
-				$this->cache->delete('currency');
+				this.cache.delete('currency');
 			}
 		}
 	}

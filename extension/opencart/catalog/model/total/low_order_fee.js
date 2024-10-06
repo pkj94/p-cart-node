@@ -14,19 +14,19 @@ class LowOrderFee extends \Opencart\System\Engine\Model {
 	 * @return void
 	 */
 	public function getTotal(array &$totals, array &$taxes, float &$total): void {
-		if ($this->cart->getSubTotal() && ($this->cart->getSubTotal() < (float)$this->config->get('total_low_order_fee_total'))) {
-			$this->load->language('extension/opencart/total/low_order_fee');
+		if (this.cart.getSubTotal() && (this.cart.getSubTotal() < (float)this.config.get('total_low_order_fee_total'))) {
+			this.load.language('extension/opencart/total/low_order_fee');
 
-			$totals[] = [
-				'extension'  => 'opencart',
-				'code'       => 'low_order_fee',
-				'title'      => $this->language->get('text_low_order_fee'),
-				'value'      => (float)$this->config->get('total_low_order_fee_fee'),
-				'sort_order' => (int)$this->config->get('total_low_order_fee_sort_order')
+			$totals.push({
+				'extension'  : 'opencart',
+				'code'       : 'low_order_fee',
+				'title'      : this.language.get('text_low_order_fee'),
+				'value'      : (float)this.config.get('total_low_order_fee_fee'),
+				'sort_order' : (int)this.config.get('total_low_order_fee_sort_order')
 			];
 
-			if ($this->config->get('total_low_order_fee_tax_class_id')) {
-				$tax_rates = $this->tax->getRates($this->config->get('total_low_order_fee_fee'), $this->config->get('total_low_order_fee_tax_class_id'));
+			if (this.config.get('total_low_order_fee_tax_class_id')) {
+				$tax_rates = this.tax.getRates(this.config.get('total_low_order_fee_fee'), this.config.get('total_low_order_fee_tax_class_id'));
 
 				foreach ($tax_rates as $tax_rate) {
 					if (!isset($taxes[$tax_rate['tax_rate_id']])) {
@@ -37,7 +37,7 @@ class LowOrderFee extends \Opencart\System\Engine\Model {
 				}
 			}
 
-			$total += $this->config->get('total_low_order_fee_fee');
+			$total += this.config.get('total_low_order_fee_fee');
 		}
 	}
 }

@@ -15,29 +15,29 @@ class Ip extends \Opencart\System\Engine\Model {
 		$status = false;
 
 		if ($order_info['customer_id']) {
-			$this->load->model('account/customer');
+			this.load.model('account/customer');
 
-			$results = $this->model_account_customer->getIps($order_info['customer_id']);
+			$results = this.model_account_customer.getIps($order_info['customer_id']);
 
-			foreach ($results as $result) {
-				$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "fraud_ip` WHERE `ip` = '" . $this->db->escape($result['ip']) . "'");
+			for(let result of results) {
+				$query = this.db.query("SELECT * FROM `" . DB_PREFIX . "fraud_ip` WHERE `ip` = '" . this.db.escape($result['ip']) . "'");
 
-				if ($query->num_rows) {
+				if ($query.num_rows) {
 					$status = true;
 
 					break;
 				}
 			}
 		} else {
-			$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "fraud_ip` WHERE `ip` = '" . $this->db->escape($order_info['ip']) . "'");
+			$query = this.db.query("SELECT * FROM `" . DB_PREFIX . "fraud_ip` WHERE `ip` = '" . this.db.escape($order_info['ip']) . "'");
 
-			if ($query->num_rows) {
+			if ($query.num_rows) {
 				$status = true;
 			}
 		}
 
 		if ($status) {
-			return (int)$this->config->get('fraud_ip_order_status_id');
+			return (int)this.config.get('fraud_ip_order_status_id');
 		} else {
 			return 0;
 		}

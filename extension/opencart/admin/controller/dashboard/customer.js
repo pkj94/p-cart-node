@@ -1,11 +1,7 @@
 const strtotime = require("locutus/php/datetime/strtotime");
 
-/**
- * Class Customer
- *
- * @package Opencart\Admin\Controller\Extension\Opencart\Dashboard
- */
-module.exports = class CustomerController extends Controller {
+
+module.exports = class CustomerDashboardController extends Controller {
 	constructor(registry) {
 		super(registry)
 	}

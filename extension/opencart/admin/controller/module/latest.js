@@ -1,4 +1,4 @@
-module.exports = class LatestController extends Controller {
+module.exports = class LatestModuleController extends Controller {
 	constructor(registry) {
 		super(registry)
 	}

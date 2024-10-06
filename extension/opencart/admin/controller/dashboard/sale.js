@@ -1,6 +1,6 @@
 const strtotime = require("locutus/php/datetime/strtotime");
 
-module.exports = class SaleController extends Controller {
+module.exports = class SaleDashboardController extends Controller {
 	constructor(registry) {
 		super(registry);
 	}

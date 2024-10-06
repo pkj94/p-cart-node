@@ -7,29 +7,29 @@ namespace Opencart\Admin\Model\Extension\Opencart\Report;
  */
 class Returns extends \Opencart\System\Engine\Model {
 	/**
-	 * @param array $data
+	 * @param array data
 	 *
 	 * @return array
 	 */
-	public function getReturns(array $data = []): array {
+	public function getReturns(array data = []): array {
 		$sql = "SELECT MIN(r.`date_added`) AS date_start, MAX(r.`date_added`) AS date_end, COUNT(r.`return_id`) AS returns FROM `" . DB_PREFIX . "return` r";
 
-		if (!empty($data['filter_return_status_id'])) {
-			$sql .= " WHERE r.`return_status_id` = '" . (int)$data['filter_return_status_id'] . "'";
+		if (!empty(data['filter_return_status_id'])) {
+			$sql .= " WHERE r.`return_status_id` = '" . (int)data['filter_return_status_id'] . "'";
 		} else {
 			$sql .= " WHERE r.`return_status_id` > '0'";
 		}
 
-		if (!empty($data['filter_date_start'])) {
-			$sql .= " AND DATE(r.`date_added`) >= DATE('" . $this->db->escape((string)$data['filter_date_start']) . "')";
+		if (!empty(data['filter_date_start'])) {
+			$sql .= " AND DATE(r.`date_added`) >= DATE('" . this.db.escape((string)data['filter_date_start']) . "')";
 		}
 
-		if (!empty($data['filter_date_end'])) {
-			$sql .= " AND DATE(r.`date_added`) <= DATE('" . $this->db->escape((string)$data['filter_date_end']) . "')";
+		if (!empty(data['filter_date_end'])) {
+			$sql .= " AND DATE(r.`date_added`) <= DATE('" . this.db.escape((string)data['filter_date_end']) . "')";
 		}
 
-		if (isset($data['filter_group'])) {
-			$group = $data['filter_group'];
+		if (isset(data['filter_group'])) {
+			$group = data['filter_group'];
 		} else {
 			$group = 'week';
 		}
@@ -50,31 +50,31 @@ class Returns extends \Opencart\System\Engine\Model {
 				break;
 		}
 
-		if (isset($data['start']) || isset($data['limit'])) {
-			if ($data['start'] < 0) {
-				$data['start'] = 0;
+		if (isset(data['start']) || isset(data['limit'])) {
+			if (data['start'] < 0) {
+				data['start'] = 0;
 			}
 
-			if ($data['limit'] < 1) {
-				$data['limit'] = 20;
+			if (data['limit'] < 1) {
+				data['limit'] = 20;
 			}
 
-			$sql .= " LIMIT " . (int)$data['start'] . "," . (int)$data['limit'];
+			$sql .= " LIMIT " . (int)data['start'] . "," . (int)data['limit'];
 		}
 
-		$query = $this->db->query($sql);
+		$query = this.db.query($sql);
 
-		return $query->rows;
+		return $query.rows;
 	}
 
 	/**
-	 * @param array $data
+	 * @param array data
 	 *
 	 * @return int
 	 */
-	public function getTotalReturns(array $data = []): int {
-		if (!empty($data['filter_group'])) {
-			$group = $data['filter_group'];
+	public function getTotalReturns(array data = []): int {
+		if (!empty(data['filter_group'])) {
+			$group = data['filter_group'];
 		} else {
 			$group = 'week';
 		}
@@ -95,22 +95,22 @@ class Returns extends \Opencart\System\Engine\Model {
 				break;
 		}
 
-		if (!empty($data['filter_return_status_id'])) {
-			$sql .= " WHERE `return_status_id` = '" . (int)$data['filter_return_status_id'] . "'";
+		if (!empty(data['filter_return_status_id'])) {
+			$sql .= " WHERE `return_status_id` = '" . (int)data['filter_return_status_id'] . "'";
 		} else {
 			$sql .= " WHERE `return_status_id` > '0'";
 		}
 
-		if (!empty($data['filter_date_start'])) {
-			$sql .= " AND DATE(`date_added`) >= DATE('" . $this->db->escape((string)$data['filter_date_start']) . "')";
+		if (!empty(data['filter_date_start'])) {
+			$sql .= " AND DATE(`date_added`) >= DATE('" . this.db.escape((string)data['filter_date_start']) . "')";
 		}
 
-		if (!empty($data['filter_date_end'])) {
-			$sql .= " AND DATE(`date_added`) <= DATE('" . $this->db->escape((string)$data['filter_date_end']) . "')";
+		if (!empty(data['filter_date_end'])) {
+			$sql .= " AND DATE(`date_added`) <= DATE('" . this.db.escape((string)data['filter_date_end']) . "')";
 		}
 
-		$query = $this->db->query($sql);
+		$query = this.db.query($sql);
 
-		return (int)$query->row['total'];
+		return (int)$query.row['total'];
 	}
 }

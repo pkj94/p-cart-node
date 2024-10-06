@@ -1,7 +1,7 @@
 const mktime = require("locutus/php/datetime/mktime");
 const strtotime = require("locutus/php/datetime/strtotime");
 
-module.exports = class ChartController extends Controller {
+module.exports = class ChartDashboardController extends Controller {
 	constructor(registry) {
 		super(registry)
 	}

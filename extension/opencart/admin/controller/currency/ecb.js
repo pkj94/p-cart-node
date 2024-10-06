@@ -1,4 +1,4 @@
-module.exports = class ECBController extends Controller {
+module.exports = class ECBCurrencyController extends Controller {
   constructor(registry) {
     super(registry)
   }

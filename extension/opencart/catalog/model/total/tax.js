@@ -14,14 +14,14 @@ class Tax extends \Opencart\System\Engine\Model {
 	 * @return void
 	 */
 	public function getTotal(array &$totals, array &$taxes, float &$total): void {
-		foreach ($taxes as $key => $value) {
+		foreach ($taxes as $key : $value) {
 			if ($value > 0) {
-				$totals[] = [
-					'extension'  => 'opencart',
-					'code'       => 'tax',
-					'title'      => $this->tax->getRateName($key),
-					'value'      => $value,
-					'sort_order' => (int)$this->config->get('total_tax_sort_order')
+				$totals.push({
+					'extension'  : 'opencart',
+					'code'       : 'tax',
+					'title'      : this.tax.getRateName($key),
+					'value'      : $value,
+					'sort_order' : (int)this.config.get('total_tax_sort_order')
 				];
 
 				$total += $value;

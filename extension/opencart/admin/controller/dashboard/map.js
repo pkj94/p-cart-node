@@ -1,9 +1,5 @@
-/**
- * Class Map
- *
- * @package Opencart\Admin\Controller\Extension\Opencart\Dashboard
- */
-module.exports = class MapController extends Controller {
+
+module.exports = class MapDashboardController extends Controller {
 	constructor(registry) {
 		super(registry)
 	}
@@ -59,7 +55,7 @@ module.exports = class MapController extends Controller {
 	async save() {
 		await this.load.language('extension/opencart/dashboard/map');
 
-		const json = [];
+		const json = {};
 
 		if (!this.user.hasPermission('modify', 'extension/opencart/dashboard/map')) {
 			json['error'] = this.language.get('error_permission');
@@ -93,7 +89,7 @@ module.exports = class MapController extends Controller {
 	 * @return void
 	 */
 	async map() {
-		const json = [];
+		const json = {};
 
 		this.load.model('extension/opencart/dashboard/map', this);
 

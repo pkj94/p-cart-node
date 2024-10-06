@@ -1,4 +1,4 @@
-module.exports = class FixerController extends Controller {
+module.exports = class FixerCurrencyController extends Controller {
 	constructor(registry) {
 		super(registry)
 	}

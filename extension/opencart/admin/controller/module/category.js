@@ -1,4 +1,4 @@
-module.exports = class CategoryController extends Controller {
+module.exports = class CategoryModuleController extends Controller {
 	constructor(registry) {
 		super(registry)
 	}

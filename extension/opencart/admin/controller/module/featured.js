@@ -1,4 +1,4 @@
-module.exports = class FeaturedController extends Controller {
+module.exports = class FeaturedModuleController extends Controller {
 	constructor(registry) {
 		super(registry)
 	}
@@ -65,11 +65,11 @@ module.exports = class FeaturedController extends Controller {
 		data.module_id = this.request.get['module_id'] ? parseInt(this.request.get['module_id']) : 0;
 		data.user_token = this.session.data['user_token'];
 
-		data.header = this.load.controller('common/header');
-		data.column_left = this.load.controller('common/column_left');
-		data.footer = this.load.controller('common/footer');
+		data.header = await this.load.controller('common/header');
+		data.column_left = await this.load.controller('common/column_left');
+		data.footer = await this.load.controller('common/footer');
 
-		this.response.setOutput(this.load.view('extension/opencart/module/featured', data));
+		this.response.setOutput(await this.load.view('extension/opencart/module/featured', data));
 	}
 
 	async save() {

@@ -1,6 +1,6 @@
 const sprintf = require("locutus/php/strings/sprintf");
 
-module.exports = class BestSellerController extends Controller {
+module.exports = class BestSellerModuleController extends Controller {
 	constructor(registry) {
 		super(registry)
 	}
@@ -135,7 +135,7 @@ module.exports = class BestSellerController extends Controller {
 
 		const results = await this.model_extension_opencart_module_bestseller.getReports((page - 1) * limit, limit);
 
-		results.forEach(async result => {
+		results.forEach(async result : {
 			const product_info = await this.model_catalog_product.getProduct(result.product_id);
 			const product = product_info ? product_info.name : '';
 
@@ -188,7 +188,7 @@ module.exports = class BestSellerController extends Controller {
 
 			const results = await this.model_catalog_product.getProducts(product_data);
 
-			results.forEach(async result => {
+			results.forEach(async result : {
 				const product_total = await this.model_sale_order.getTotalProductsByProductId(result.product_id);
 
 				if (product_total) {

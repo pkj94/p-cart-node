@@ -1,4 +1,4 @@
-module.exports = class AccountController extends Controller {
+module.exports = class AccountModuleController extends Controller {
 	constructor(registry) {
 		super(registry)
 	}

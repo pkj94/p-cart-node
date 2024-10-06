@@ -12,12 +12,12 @@ class FreeCheckout extends \Opencart\System\Engine\Model {
 	 * @return array
 	 */
 	public function getMethods(array $address = []): array {
-		$this->load->language('extension/opencart/payment/free_checkout');
+		this.load.language('extension/opencart/payment/free_checkout');
 
-		$total = $this->cart->getTotal();
+		$total = this.cart.getTotal();
 
-		if (!empty($this->session->data['vouchers'])) {
-			$amounts = array_column($this->session->data['vouchers'], 'amount');
+		if (!empty(this.session.data['vouchers'])) {
+			$amounts = array_column(this.session.data['vouchers'], 'amount');
 		} else {
 			$amounts = [];
 		}
@@ -26,7 +26,7 @@ class FreeCheckout extends \Opencart\System\Engine\Model {
 
 		if ((float)$total <= 0.00) {
 			$status = true;
-		} elseif ($this->cart->hasSubscription()) {
+		} elseif (this.cart.hasSubscription()) {
 			$status = false;
 		} else {
 			$status = false;
@@ -36,15 +36,15 @@ class FreeCheckout extends \Opencart\System\Engine\Model {
 
 		if ($status) {
 			$option_data['free_checkout'] = [
-				'code' => 'free_checkout.free_checkout',
-				'name' => $this->language->get('heading_title')
+				'code' : 'free_checkout.free_checkout',
+				'name' : this.language.get('heading_title')
 			];
 
 			$method_data = [
-				'code'       => 'free_checkout',
-				'name'       => $this->language->get('heading_title'),
-				'option'     => $option_data,
-				'sort_order' => $this->config->get('payment_free_checkout_sort_order')
+				'code'       : 'free_checkout',
+				'name'       : this.language.get('heading_title'),
+				'option'     : $option_data,
+				'sort_order' : this.config.get('payment_free_checkout_sort_order')
 			];
 		}
 

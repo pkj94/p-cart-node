@@ -14,20 +14,20 @@ class Coupon extends \Opencart\System\Engine\Model {
 	 * @return void
 	 */
 	public function getTotal(array &$totals, array &$taxes, float &$total): void {
-		if (isset($this->session->data['coupon'])) {
-			$this->load->language('extension/opencart/total/coupon', 'coupon');
+		if (isset(this.session.data['coupon'])) {
+			this.load.language('extension/opencart/total/coupon', 'coupon');
 
-			$this->load->model('marketing/coupon');
+			this.load.model('marketing/coupon');
 
-			$coupon_info = $this->model_marketing_coupon->getCoupon($this->session->data['coupon']);
+			$coupon_info = this.model_marketing_coupon.getCoupon(this.session.data['coupon']);
 
 			if ($coupon_info) {
 				$discount_total = 0;
 
-				$products = $this->cart->getProducts();
+				$products = this.cart.getProducts();
 
 				if (!$coupon_info['product']) {
-					$sub_total = $this->cart->getSubTotal();
+					$sub_total = this.cart.getSubTotal();
 				} else {
 					$sub_total = 0;
 
@@ -59,7 +59,7 @@ class Coupon extends \Opencart\System\Engine\Model {
 						}
 
 						if ($product['tax_class_id']) {
-							$tax_rates = $this->tax->getRates($product['total'] - ($product['total'] - $discount), $product['tax_class_id']);
+							$tax_rates = this.tax.getRates($product['total'] - ($product['total'] - $discount), $product['tax_class_id']);
 
 							foreach ($tax_rates as $tax_rate) {
 								if ($tax_rate['type'] == 'P') {
@@ -72,9 +72,9 @@ class Coupon extends \Opencart\System\Engine\Model {
 					$discount_total += $discount;
 				}
 
-				if ($coupon_info['shipping'] && isset($this->session->data['shipping_method']['cost']) && isset($this->session->data['shipping_method']['tax_class_id'])) {
-					if (!empty($this->session->data['shipping_method']['tax_class_id'])) {
-						$tax_rates = $this->tax->getRates($this->session->data['shipping_method']['cost'], $this->session->data['shipping_method']['tax_class_id']);
+				if ($coupon_info['shipping'] && isset(this.session.data['shipping_method']['cost']) && isset(this.session.data['shipping_method']['tax_class_id'])) {
+					if (!empty(this.session.data['shipping_method']['tax_class_id'])) {
+						$tax_rates = this.tax.getRates(this.session.data['shipping_method']['cost'], this.session.data['shipping_method']['tax_class_id']);
 
 						foreach ($tax_rates as $tax_rate) {
 							if ($tax_rate['type'] == 'P') {
@@ -83,7 +83,7 @@ class Coupon extends \Opencart\System\Engine\Model {
 						}
 					}
 
-					$discount_total += $this->session->data['shipping_method']['cost'];
+					$discount_total += this.session.data['shipping_method']['cost'];
 				}
 
 				// If discount greater than total
@@ -92,12 +92,12 @@ class Coupon extends \Opencart\System\Engine\Model {
 				}
 
 				if ($discount_total > 0) {
-					$totals[] = [
-						'extension'  => 'opencart',
-						'code'       => 'coupon',
-						'title'      => sprintf($this->language->get('coupon_text_coupon'), $this->session->data['coupon']),
-						'value'      => -$discount_total,
-						'sort_order' => (int)$this->config->get('total_coupon_sort_order')
+					$totals.push({
+						'extension'  : 'opencart',
+						'code'       : 'coupon',
+						'title'      : sprintf(this.language.get('coupon_text_coupon'), this.session.data['coupon']),
+						'value'      : -$discount_total,
+						'sort_order' : (int)this.config.get('total_coupon_sort_order')
 					];
 
 					$total -= $discount_total;
@@ -125,21 +125,21 @@ class Coupon extends \Opencart\System\Engine\Model {
 		if ($code) {
 			$status = true;
 
-			$coupon_query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "coupon` WHERE `code` = '" . $this->db->escape($code) . "' AND `status` = '1'");
+			$coupon_query = this.db.query("SELECT * FROM `" . DB_PREFIX . "coupon` WHERE `code` = '" . this.db.escape($code) . "' AND `status` = '1'");
 
-			if ($coupon_query->num_rows) {
-				$this->load->model('marketing/coupon');
+			if ($coupon_query.num_rows) {
+				this.load.model('marketing/coupon');
 
-				$coupon_total = $this->model_marketing_coupon->getTotalHistoriesByCoupon($code);
+				$coupon_total = this.model_marketing_coupon.getTotalHistoriesByCoupon($code);
 
-				if ($coupon_query->row['uses_total'] > 0 && ($coupon_total >= $coupon_query->row['uses_total'])) {
+				if ($coupon_query.row['uses_total'] > 0 && ($coupon_total >= $coupon_query.row['uses_total'])) {
 					$status = false;
 				}
 
 				if ($order_info['customer_id']) {
-					$customer_total = $this->model_marketing_coupon->getTotalHistoriesByCustomerId($code, $order_info['customer_id']);
+					$customer_total = this.model_marketing_coupon.getTotalHistoriesByCustomerId($code, $order_info['customer_id']);
 
-					if ($coupon_query->row['uses_customer'] > 0 && ($customer_total >= $coupon_query->row['uses_customer'])) {
+					if ($coupon_query.row['uses_customer'] > 0 && ($customer_total >= $coupon_query.row['uses_customer'])) {
 						$status = false;
 					}
 				}
@@ -148,9 +148,9 @@ class Coupon extends \Opencart\System\Engine\Model {
 			}
 
 			if ($status) {
-				$this->db->query("INSERT INTO `" . DB_PREFIX . "coupon_history` SET `coupon_id` = '" . (int)$coupon_query->row['coupon_id'] . "', `order_id` = '" . (int)$order_info['order_id'] . "', `customer_id` = '" . (int)$order_info['customer_id'] . "', `amount` = '" . (float)$order_total['value'] . "', `date_added` = NOW()");
+				this.db.query("INSERT INTO `" . DB_PREFIX . "coupon_history` SET `coupon_id` = '" . (int)$coupon_query.row['coupon_id'] . "', `order_id` = '" . (int)$order_info['order_id'] . "', `customer_id` = '" . (int)$order_info['customer_id'] . "', `amount` = '" . (float)$order_total['value'] . "', `date_added` = NOW()");
 			} else {
-				return $this->config->get('config_fraud_status_id');
+				return this.config.get('config_fraud_status_id');
 			}
 		}
 
@@ -163,6 +163,6 @@ class Coupon extends \Opencart\System\Engine\Model {
 	 * @return void
 	 */
 	public function unconfirm(int $order_id): void {
-		$this->db->query("DELETE FROM `" . DB_PREFIX . "coupon_history` WHERE `order_id` = '" . (int)$order_id . "'");
+		this.db.query("DELETE FROM `" . DB_PREFIX . "coupon_history` WHERE `order_id` = '" . (int)$order_id . "'");
 	}
 }

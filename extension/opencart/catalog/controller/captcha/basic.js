@@ -9,24 +9,24 @@ class Basic extends \Opencart\System\Engine\Controller {
 	/**
 	 * @return string
 	 */
-	public function index(): string {
-		$this->load->language('extension/opencart/captcha/basic');
+	public function index() {
+		this.load.language('extension/opencart/captcha/basic');
 
-		$data['route'] = (string)$this->request->get['route'];
+		data['route'] = (string)this.request.get['route'];
 
-		$this->session->data['captcha'] = substr(oc_token(100), rand(0, 94), 6);
+		this.session.data['captcha'] = substr(oc_token(100), rand(0, 94), 6);
 
-		return $this->load->view('extension/opencart/captcha/basic', $data);
+		return await this.load.view('extension/opencart/captcha/basic', data);
 	}
 
 	/**
 	 * @return string
 	 */
-	public function validate(): string {
-		$this->load->language('extension/opencart/captcha/basic');
+	public function validate() {
+		this.load.language('extension/opencart/captcha/basic');
 
-		if (!isset($this->session->data['captcha']) || !isset($this->request->post['captcha']) || ($this->session->data['captcha'] != $this->request->post['captcha'])) {
-			return $this->language->get('error_captcha');
+		if (!isset(this.session.data['captcha']) || !isset(this.request.post['captcha']) || (this.session.data['captcha'] != this.request.post['captcha'])) {
+			return this.language.get('error_captcha');
 		} else {
 			return '';
 		}
@@ -56,7 +56,7 @@ class Basic extends \Opencart\System\Engine\Controller {
 		imagefilledrectangle($image, 0, 0, 0, $height - 1, $black);
 		imagefilledrectangle($image, 0, $height - 1, $width, $height - 1, $black);
 
-		imagestring($image, 10, intval(($width - (strlen($this->session->data['captcha']) * 9)) / 2), intval(($height - 15) / 2), $this->session->data['captcha'], $black);
+		imagestring($image, 10, intval(($width - (strlen(this.session.data['captcha']) * 9)) / 2), intval(($height - 15) / 2), this.session.data['captcha'], $black);
 
 		header('Content-type: image/jpeg');
 		header('Cache-Control: no-cache');
