@@ -35,11 +35,11 @@ class GdprModel  extends Model {
 
 		let implode = [];
 
-		if (!empty(data['filter_email'])) {
+		if ((data['filter_email'])) {
 			implode.push("`email` LIKE '" + this.db.escape(data['filter_email']) + "'";
 		}
 
-		if (!empty(data['filter_action'])) {
+		if ((data['filter_action'])) {
 			implode.push("`action` = '" + this.db.escape(data['filter_action']) + "'";
 		}
 
@@ -47,16 +47,16 @@ class GdprModel  extends Model {
 			implode.push("`status` = '" + data['filter_status'] + "'";
 		}
 
-		if (!empty(data['filter_date_from'])) {
+		if ((data['filter_date_from'])) {
 			implode.push("DATE(`date_added`) >= DATE(" + this.db.escape(data['filter_date_from']) + ")";
 		}
 
-		if (!empty(data['filter_date_to'])) {
+		if ((data['filter_date_to'])) {
 			implode.push("DATE(`date_added`) <= DATE(" + this.db.escape(data['filter_date_to']) + ")";
 		}
 
-		if (implode) {
-			sql += " WHERE " + implode(" AND ", implode);
+		if (implode.length) {
+			sql += " WHERE " + implode.join(" AND ");
 		}
 
 		sql += " ORDER BY `date_added` DESC";
@@ -99,11 +99,11 @@ class GdprModel  extends Model {
 
 		let implode = [];
 
-		if (!empty(data['filter_email'])) {
+		if ((data['filter_email'])) {
 			implode.push("`email` LIKE '" + this.db.escape(data['filter_email']) + "'";
 		}
 
-		if (!empty(data['filter_action'])) {
+		if ((data['filter_action'])) {
 			implode.push("`action` = '" + this.db.escape(data['filter_action']) + "'";
 		}
 
@@ -111,16 +111,16 @@ class GdprModel  extends Model {
 			implode.push("`status` = '" + data['filter_status'] + "'";
 		}
 
-		if (!empty(data['filter_date_from'])) {
+		if ((data['filter_date_from'])) {
 			implode.push("DATE(`date_added`) >= DATE(" + this.db.escape(data['filter_date_from']) + ")";
 		}
 
-		if (!empty(data['filter_date_to'])) {
+		if ((data['filter_date_to'])) {
 			implode.push("DATE(`date_added`) <= DATE(" + this.db.escape(data['filter_date_to']) + ")";
 		}
 
-		if (implode) {
-			sql += " WHERE " + implode(" AND ", implode);
+		if (implode.length) {
+			sql += " WHERE " + implode.join(" AND ");
 		}
 
 		let query = await this.db.query(sql);

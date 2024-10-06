@@ -136,7 +136,7 @@ class CustomFieldModel  extends Model {
 			sql += " AND cf.`location` = '" + this.db.escape(data['filter_location']) + "'";
 		}
 
-		if (!empty(data['filter_customer_group_id'])) {
+		if ((data['filter_customer_group_id'])) {
 			sql += " AND cfcg.`customer_group_id` = '" + data['filter_customer_group_id'] + "'";
 		}
 

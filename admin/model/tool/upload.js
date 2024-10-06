@@ -65,20 +65,20 @@ class UploadModel  extends Model {
 			implode.push("`name` LIKE '" + this.db.escape(data['filter_name'] + '%') + "'";
 		}
 
-		if (!empty(data['filter_code'])) {
+		if ((data['filter_code'])) {
 			implode.push("`code` LIKE '" + this.db.escape(data['filter_code'] + '%') + "'";
 		}
 
-		if (!empty(data['filter_date_from'])) {
+		if ((data['filter_date_from'])) {
 			implode.push("DATE(`date_added`) >= DATE(" + this.db.escape(data['filter_date_from']) + ")";
 		}
 
-		if (!empty(data['filter_date_to'])) {
+		if ((data['filter_date_to'])) {
 			implode.push("DATE(`date_added`) <= DATE(" + this.db.escape(data['filter_date_to']) + ")";
 		}
 
-		if (implode) {
-			sql += " WHERE " + implode(" AND ", implode);
+		if (implode.length) {
+			sql += " WHERE " + implode.join(" AND ");
 		}
 
 		sort_data = [
@@ -130,20 +130,20 @@ class UploadModel  extends Model {
 			implode.push("`name` LIKE '" + this.db.escape(data['filter_name'] + '%') + "'";
 		}
 
-		if (!empty(data['filter_code'])) {
+		if ((data['filter_code'])) {
 			implode.push("`code` LIKE '" + this.db.escape(data['filter_code'] + '%') + "'";
 		}
 
-		if (!empty(data['filter_date_from'])) {
+		if ((data['filter_date_from'])) {
 			implode.push("DATE(`date_added`) >= DATE(" + this.db.escape(data['filter_date_from']) + ")";
 		}
 
-		if (!empty(data['filter_date_to'])) {
+		if ((data['filter_date_to'])) {
 			implode.push("DATE(`date_added`) <= DATE(" + this.db.escape(data['filter_date_to']) + ")";
 		}
 
-		if (implode) {
-			sql += " WHERE " + implode(" AND ", implode);
+		if (implode.length) {
+			sql += " WHERE " + implode.join(" AND ");
 		}
 
 		let query = await this.db.query(sql);

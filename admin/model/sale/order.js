@@ -165,7 +165,7 @@ class OrderModel  extends Model
 	{
 		let sql = "SELECT o.`order_id`, CONCAT(o.`firstname`, ' ', o.`lastname`) AS customer, (SELECT os.`name` FROM `" + DB_PREFIX + "order_status` os WHERE os.`order_status_id` = o.`order_status_id` AND os.`language_id` = '" +  this.config.get('config_language_id') + "') AS order_status, o.`store_name`, o.`shipping_method`, o.`total`, o.`currency_code`, o.`currency_value`, o.`date_added`, o.`date_modified` FROM `" + DB_PREFIX + "order` o";
 
-		if (!empty(data['filter_order_status'])) {
+		if ((data['filter_order_status'])) {
 			let implode = [];
 
 			order_statuses = explode(',', data['filter_order_status']);
@@ -174,7 +174,7 @@ class OrderModel  extends Model
 				implode.push("o.`order_status_id` = '" +  order_status_id + "'";
 			}
 
-			if (implode) {
+			if (implode.length) {
 				sql += " WHERE (" + implode(" OR ", implode) + ")";
 			}
 		} elseif (isset(data['filter_order_status_id']) && data['filter_order_status_id'] !== '') {
@@ -183,7 +183,7 @@ class OrderModel  extends Model
 			sql += " WHERE o.`order_status_id` > '0'";
 		}
 
-		if (!empty(data['filter_order_id'])) {
+		if ((data['filter_order_id'])) {
 			sql += " AND o.`order_id` = '" +  data['filter_order_id'] + "'";
 		}
 
@@ -191,27 +191,27 @@ class OrderModel  extends Model
 			sql += " AND o.`store_id` = '" +  data['filter_store_id'] + "'";
 		}
 
-		if (!empty(data['filter_customer_id'])) {
+		if ((data['filter_customer_id'])) {
 			sql += " AND o.`customer_id` = '" +  data['filter_customer_id'] + "'";
 		}
 
-		if (!empty(data['filter_customer'])) {
+		if ((data['filter_customer'])) {
 			sql += " AND CONCAT(o.`firstname`, ' ', o.`lastname`) LIKE '" + this.db.escape('%' +  data['filter_customer'] + '%') + "'";
 		}
 
-		if (!empty(data['filter_email'])) {
+		if ((data['filter_email'])) {
 			sql += " AND o.`email` LIKE '" + this.db.escape('%' +  data['filter_email'] + '%') + "'";
 		}
 
-		if (!empty(data['filter_date_from'])) {
+		if ((data['filter_date_from'])) {
 			sql += " AND DATE(o.`date_added`) >= DATE('" + this.db.escape( data['filter_date_from']) + "')";
 		}
 
-		if (!empty(data['filter_date_to'])) {
+		if ((data['filter_date_to'])) {
 			sql += " AND DATE(o.`date_added`) <= DATE('" + this.db.escape( data['filter_date_to']) + "')";
 		}
 
-		if (!empty(data['filter_total'])) {
+		if ((data['filter_total'])) {
 			sql += " AND o.`total` = '" +  data['filter_total'] + "'";
 		}
 
@@ -305,7 +305,7 @@ class OrderModel  extends Model
 	{
 		let sql = "SELECT SUM(op.quantity) AS `total` FROM `" + DB_PREFIX + "order_product` `op` LEFT JOIN `" + DB_PREFIX + "order` `o` ON (`op`.`order_id` = `o`.`order_id`) WHERE `op`.`product_id` = '" +  product_id + "'";
 
-		if (!empty(data['filter_order_status'])) {
+		if ((data['filter_order_status'])) {
 			let implode = [];
 
 			order_statuses = explode(',', data['filter_order_status']);
@@ -314,7 +314,7 @@ class OrderModel  extends Model
 				implode.push("`order_status_id` = '" +  order_status_id + "'";
 			}
 
-			if (implode) {
+			if (implode.length) {
 				sql += " AND (" + implode(" OR ", implode) + ")";
 			}
 		} elseif (isset(data['filter_order_status_id']) && data['filter_order_status_id'] !== '') {
@@ -399,7 +399,7 @@ class OrderModel  extends Model
 	{
 		let sql = "SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "order`";
 
-		if (!empty(data['filter_order_status'])) {
+		if ((data['filter_order_status'])) {
 			let implode = [];
 
 			order_statuses = explode(',', data['filter_order_status']);
@@ -408,7 +408,7 @@ class OrderModel  extends Model
 				implode.push("`order_status_id` = '" +  order_status_id + "'";
 			}
 
-			if (implode) {
+			if (implode.length) {
 				sql += " WHERE (" + implode(" OR ", implode) + ")";
 			}
 		} elseif (isset(data['filter_order_status_id']) && data['filter_order_status_id'] !== '') {
@@ -417,7 +417,7 @@ class OrderModel  extends Model
 			sql += " WHERE `order_status_id` > '0'";
 		}
 
-		if (!empty(data['filter_order_id'])) {
+		if ((data['filter_order_id'])) {
 			sql += " AND `order_id` = '" +  data['filter_order_id'] + "'";
 		}
 
@@ -425,27 +425,27 @@ class OrderModel  extends Model
 			sql += " AND `store_id` = '" +  data['filter_store_id'] + "'";
 		}
 
-		if (!empty(data['filter_customer_id'])) {
+		if ((data['filter_customer_id'])) {
 			sql += " AND `customer_id` = '" +  data['filter_customer_id'] + "'";
 		}
 
-		if (!empty(data['filter_customer'])) {
+		if ((data['filter_customer'])) {
 			sql += " AND CONCAT(`firstname`, ' ', `lastname`) LIKE '" + this.db.escape('%' +  data['filter_customer'] + '%') + "'";
 		}
 
-		if (!empty(data['filter_email'])) {
+		if ((data['filter_email'])) {
 			sql += " AND `email` LIKE '" + this.db.escape('%' +  data['filter_email'] + '%') + "'";
 		}
 
-		if (!empty(data['filter_date_from'])) {
+		if ((data['filter_date_from'])) {
 			sql += " AND DATE(`date_added`) >= DATE('" + this.db.escape( data['filter_date_from']) + "')";
 		}
 
-		if (!empty(data['filter_date_to'])) {
+		if ((data['filter_date_to'])) {
 			sql += " AND DATE(`date_added`) <= DATE('" + this.db.escape( data['filter_date_to']) + "')";
 		}
 
-		if (!empty(data['filter_total'])) {
+		if ((data['filter_total'])) {
 			sql += " AND `total` = '" +  data['filter_total'] + "'";
 		}
 
@@ -491,7 +491,7 @@ class OrderModel  extends Model
 			implode.push("`order_status_id` = '" +  order_status_id + "'";
 		}
 
-		if (implode) {
+		if (implode.length) {
 			let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "order` WHERE " + implode(" OR ", implode));
 
 			return  query.row['total'];
@@ -513,7 +513,7 @@ class OrderModel  extends Model
 			implode.push("`order_status_id` = '" +  order_status_id + "'";
 		}
 
-		if (implode) {
+		if (implode.length) {
 			let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "order` WHERE " + implode(" OR ", implode) + "");
 
 			return  query.row['total'];
@@ -555,7 +555,7 @@ class OrderModel  extends Model
 	{
 		let sql = "SELECT SUM(`total`) AS `total` FROM `" + DB_PREFIX + "order`";
 
-		if (!empty(data['filter_order_status'])) {
+		if ((data['filter_order_status'])) {
 			let implode = [];
 
 			order_statuses = explode(',', data['filter_order_status']);
@@ -564,7 +564,7 @@ class OrderModel  extends Model
 				implode.push("`order_status_id` = '" +  order_status_id + "'";
 			}
 
-			if (implode) {
+			if (implode.length) {
 				sql += " WHERE (" + implode(" OR ", implode) + ")";
 			}
 		} elseif (isset(data['filter_order_status_id']) && data['filter_order_status_id'] !== '') {
@@ -573,7 +573,7 @@ class OrderModel  extends Model
 			sql += " WHERE `order_status_id` > '0'";
 		}
 
-		if (!empty(data['filter_order_id'])) {
+		if ((data['filter_order_id'])) {
 			sql += " AND `order_id` = '" +  data['filter_order_id'] + "'";
 		}
 
@@ -581,27 +581,27 @@ class OrderModel  extends Model
 			sql += " AND `store_id` = '" +  data['filter_store_id'] + "'";
 		}
 
-		if (!empty(data['filter_customer_id'])) {
+		if ((data['filter_customer_id'])) {
 			sql += " AND `customer_id` = '" +  data['filter_customer_id'] + "'";
 		}
 
-		if (!empty(data['filter_customer'])) {
+		if ((data['filter_customer'])) {
 			sql += " AND CONCAT(`firstname`, ' ', `lastname`) LIKE '" + this.db.escape('%' +  data['filter_customer'] + '%') + "'";
 		}
 
-		if (!empty(data['filter_email'])) {
+		if ((data['filter_email'])) {
 			sql += " AND `email` LIKE '" + this.db.escape('%' +  data['filter_email'] + '%') + "'";
 		}
 
-		if (!empty(data['filter_date_added'])) {
+		if ((data['filter_date_added'])) {
 			sql += " AND DATE(`date_added`) = DATE('" + this.db.escape( data['filter_date_added']) + "')";
 		}
 
-		if (!empty(data['filter_date_modified'])) {
+		if ((data['filter_date_modified'])) {
 			sql += " AND DATE(`date_modified`) = DATE('" + this.db.escape( data['filter_date_modified']) + "')";
 		}
 
-		if (!empty(data['filter_total'])) {
+		if ((data['filter_total'])) {
 			sql += " AND `total` = '" +  data['filter_total'] + "'";
 		}
 

@@ -105,7 +105,7 @@ module.exports = class CustomerCustomerModel extends Model {
 			sql += " AND CONCAT(c.`firstname`, ' ', c.`lastname`) LIKE " + this.db.escape('%' + data['filter_name'] + '%');
 		}
 
-		if (!empty(data['filter_email'])) {
+		if ((data['filter_email'])) {
 			sql += " AND c.`email` LIKE " + this.db.escape(data['filter_email'] + '%');
 		}
 
@@ -113,11 +113,11 @@ module.exports = class CustomerCustomerModel extends Model {
 			sql += " AND c.`newsletter` = '" + data['filter_newsletter'] + "'";
 		}
 
-		if (!empty(data['filter_customer_group_id'])) {
+		if ((data['filter_customer_group_id'])) {
 			sql += " AND c.`customer_group_id` = '" + data['filter_customer_group_id'] + "'";
 		}
 
-		if (!empty(data['filter_ip'])) {
+		if ((data['filter_ip'])) {
 			sql += " AND c.`customer_id` IN (SELECT `customer_id` FROM `" + DB_PREFIX + "customer_ip` WHERE `ip` = " + this.db.escape(data['filter_ip']) + ")";
 		}
 
@@ -125,11 +125,11 @@ module.exports = class CustomerCustomerModel extends Model {
 			sql += " AND c.`status` = '" + data['filter_status'] + "'";
 		}
 
-		if (!empty(data['filter_date_from'])) {
+		if ((data['filter_date_from'])) {
 			sql += " AND DATE(c.`date_added`) >= DATE(" + this.db.escape(data['filter_date_from']) + ")";
 		}
 
-		if (!empty(data['filter_date_to'])) {
+		if ((data['filter_date_to'])) {
 			sql += " AND DATE(c.`date_added`) <= DATE(" + this.db.escape(data['filter_date_to']) + ")";
 		}
 
@@ -185,7 +185,7 @@ module.exports = class CustomerCustomerModel extends Model {
 			implode.push("CONCAT(c.`firstname`, ' ', c.`lastname`) LIKE " + this.db.escape('%' + data['filter_name'] + '%'));
 		}
 
-		if (!empty(data['filter_email'])) {
+		if ((data['filter_email'])) {
 			implode.push("c.`email` LIKE " + this.db.escape(data['filter_email'] + '%'));
 		}
 
@@ -193,11 +193,11 @@ module.exports = class CustomerCustomerModel extends Model {
 			implode.push("c.`newsletter` = '" + data['filter_newsletter'] + "'");
 		}
 
-		if (!empty(data['filter_customer_group_id'])) {
+		if ((data['filter_customer_group_id'])) {
 			implode.push("c.`customer_group_id` = '" + data['filter_customer_group_id'] + "'");
 		}
 
-		if (!empty(data['filter_ip'])) {
+		if ((data['filter_ip'])) {
 			implode.push("c.`customer_id` IN (SELECT `customer_id` FROM " + DB_PREFIX + "customer_ip WHERE `ip` = " + this.db.escape(data['filter_ip']) + ")");
 		}
 
@@ -205,16 +205,16 @@ module.exports = class CustomerCustomerModel extends Model {
 			implode.push("c.`status` = '" + data['filter_status'] + "'");
 		}
 
-		if (!empty(data['filter_date_from'])) {
+		if ((data['filter_date_from'])) {
 			implode.push("DATE(c.`date_added`) >= DATE(" + this.db.escape(data['filter_date_from']) + ")");
 		}
 
-		if (!empty(data['filter_date_to'])) {
+		if ((data['filter_date_to'])) {
 			implode.push("DATE(c.`date_added`) <= DATE(" + this.db.escape(data['filter_date_to']) + ")");
 		}
 
-		if (implode) {
-			sql += " WHERE " + implode(" AND ", implode);
+		if (implode.length) {
+			sql += " WHERE " + implode.join(" AND ");
 		}
 
 		let query = await this.db.query(sql);

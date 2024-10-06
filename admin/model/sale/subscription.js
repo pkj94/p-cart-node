@@ -108,40 +108,40 @@ class SubscriptionModel  extends Model {
 
 		let implode = [];
 
-		if (!empty(data['filter_subscription_id'])) {
+		if ((data['filter_subscription_id'])) {
 			implode.push("`s`.`subscription_id` = '" + data['filter_subscription_id'] + "'";
 		}
 
-		if (!empty(data['filter_order_id'])) {
+		if ((data['filter_order_id'])) {
 			implode.push("`s`.`order_id` = '" + data['filter_order_id'] + "'";
 		}
 		
-		if (!empty(data['filter_order_product_id'])) {
+		if ((data['filter_order_product_id'])) {
 			implode.push("`s`.`order_product_id` = '" + data['filter_order_product_id'] + "'";
 		}
 
-		if (!empty(data['filter_customer'])) {
+		if ((data['filter_customer'])) {
 			implode.push("CONCAT(o.`firstname`, ' ', o.`lastname`) LIKE '" + this.db.escape(data['filter_customer'] + '%') + "'";
 		}
 
-		if (!empty(data['filter_date_next'])) {
+		if ((data['filter_date_next'])) {
 			implode.push("DATE(`s`.`date_next`) = DATE('" + this.db.escape(data['filter_date_next']) + "')";
 		}
 
-		if (!empty(data['filter_subscription_status_id'])) {
+		if ((data['filter_subscription_status_id'])) {
 			implode.push("`s`.`subscription_status_id` = '" + data['filter_subscription_status_id'] + "'";
 		}
 
-		if (!empty(data['filter_date_from'])) {
+		if ((data['filter_date_from'])) {
 			implode.push("DATE(s.`date_added`) >= DATE(" + this.db.escape(data['filter_date_from']) + ")";
 		}
 
-		if (!empty(data['filter_date_to'])) {
+		if ((data['filter_date_to'])) {
 			implode.push("DATE(s.`date_added`) <= DATE(" + this.db.escape(data['filter_date_to']) + ")";
 		}
 
-		if (implode) {
-			sql += " WHERE " + implode(" AND ", implode);
+		if (implode.length) {
+			sql += " WHERE " + implode.join(" AND ");
 		}
 
 		sort_data = [
@@ -192,32 +192,32 @@ class SubscriptionModel  extends Model {
 
 		let implode = [];
 
-		if (!empty(data['filter_subscription_id'])) {
+		if ((data['filter_subscription_id'])) {
 			implode[] += "`s`.`subscription_id` = '" + data['filter_subscription_id'] + "'";
 		}
 
-		if (!empty(data['filter_order_id'])) {
+		if ((data['filter_order_id'])) {
 			implode[] += "`s`.`order_id` = '" + data['filter_order_id'] + "'";
 		}
 
-		if (!empty(data['filter_customer'])) {
+		if ((data['filter_customer'])) {
 			implode[] += "CONCAT(o.`firstname`, ' ', o.`lastname`) LIKE '" + this.db.escape(data['filter_customer'] + '%') + "'";
 		}
 
-		if (!empty(data['filter_subscription_status_id'])) {
+		if ((data['filter_subscription_status_id'])) {
 			implode[] += "`s`.`subscription_status_id` = '" + data['filter_subscription_status_id'] + "'";
 		}
 
-		if (!empty(data['filter_date_from'])) {
+		if ((data['filter_date_from'])) {
 			implode.push("DATE(s.`date_added`) >= DATE(" + this.db.escape(data['filter_date_from']) + ")";
 		}
 
-		if (!empty(data['filter_date_to'])) {
+		if ((data['filter_date_to'])) {
 			implode.push("DATE(s.`date_added`) <= DATE(" + this.db.escape(data['filter_date_to']) + ")";
 		}
 
-		if (implode) {
-			sql += " WHERE " + implode(" AND ", implode);
+		if (implode.length) {
+			sql += " WHERE " + implode.join(" AND ");
 		}
 
 		let query = await this.db.query(sql);

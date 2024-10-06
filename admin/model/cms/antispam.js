@@ -56,12 +56,12 @@ class AntispamModel  extends Model {
 
 		let implode = [];
 
-		if (!empty(data['filter_keyword'])) {
+		if ((data['filter_keyword'])) {
 			implode.push("`keyword` LIKE '" + this.db.escape(data['filter_keyword']) + "'";
 		}
 
-		if (implode) {
-			sql += " WHERE " + implode(" AND ", implode);
+		if (implode.length) {
+			sql += " WHERE " + implode.join(" AND ");
 		}
 
 		sort_data = ['keyword'];
@@ -105,12 +105,12 @@ class AntispamModel  extends Model {
 
 		let implode = [];
 
-		if (!empty(data['filter_keyword'])) {
+		if ((data['filter_keyword'])) {
 			implode.push("`keyword` LIKE '" + this.db.escape(data['filter_keyword']) + "'";
 		}
 
-		if (implode) {
-			sql += " WHERE " + implode(" AND ", implode);
+		if (implode.length) {
+			sql += " WHERE " + implode.join(" AND ");
 		}
 
 		let query = await this.db.query(sql);

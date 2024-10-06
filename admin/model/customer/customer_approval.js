@@ -14,27 +14,27 @@ class CustomerApprovalModel  extends Model {
 	async getCustomerApprovals(data = {}) {
 		let sql = "SELECT *, CONCAT(c.`firstname`, ' ', c.`lastname`) AS customer, cgd.`name` AS customer_group, ca.`type` FROM `" + DB_PREFIX + "customer_approval` ca LEFT JOIN `" + DB_PREFIX + "customer` c ON (ca.`customer_id` = c.`customer_id`) LEFT JOIN `" + DB_PREFIX + "customer_group_description` cgd ON (c.`customer_group_id` = cgd.`customer_group_id`) WHERE cgd.`language_id` = '" + this.config.get('config_language_id') + "'";
 
-		if (!empty(data['filter_customer'])) {
+		if ((data['filter_customer'])) {
 			sql += " AND CONCAT(c.`firstname`, ' ', c.`lastname`) LIKE '" + this.db.escape('%' + data['filter_customer'] + '%') + "'";
 		}
 
-		if (!empty(data['filter_email'])) {
+		if ((data['filter_email'])) {
 			sql += " AND c.`email` LIKE '" + this.db.escape(data['filter_email'] + '%') + "'";
 		}
 
-		if (!empty(data['filter_customer_group_id'])) {
+		if ((data['filter_customer_group_id'])) {
 			sql += " AND c.`customer_group_id` = '" + data['filter_customer_group_id'] + "'";
 		}
 
-		if (!empty(data['filter_type'])) {
+		if ((data['filter_type'])) {
 			sql += " AND ca.`type` = '" + this.db.escape(data['filter_type']) + "'";
 		}
 
-		if (!empty(data['filter_date_from'])) {
+		if ((data['filter_date_from'])) {
 			sql += " AND DATE(c.`date_added`) >= DATE(" + this.db.escape(data['filter_date_from']) + ")";
 		}
 
-		if (!empty(data['filter_date_to'])) {
+		if ((data['filter_date_to'])) {
 			sql += " AND DATE(c.`date_added`) <= DATE(" + this.db.escape(data['filter_date_to']) + ")";
 		}
 
@@ -78,32 +78,32 @@ class CustomerApprovalModel  extends Model {
 
 		let implode = [];
 
-		if (!empty(data['filter_customer'])) {
+		if ((data['filter_customer'])) {
 			implode.push("CONCAT(c.`firstname`, ' ', c.`lastname`) LIKE '" + this.db.escape('%' + data['filter_customer'] + '%') + "'";
 		}
 
-		if (!empty(data['filter_email'])) {
+		if ((data['filter_email'])) {
 			implode.push("c.`email` LIKE '" + this.db.escape(data['filter_email'] + '%') + "'";
 		}
 
-		if (!empty(data['filter_customer_group_id'])) {
+		if ((data['filter_customer_group_id'])) {
 			implode.push("c.`customer_group_id` = '" + data['filter_customer_group_id'] + "'";
 		}
 
-		if (!empty(data['filter_type'])) {
+		if ((data['filter_type'])) {
 			implode.push("ca.`type` = '" + this.db.escape(data['filter_type']) + "'";
 		}
 
-		if (!empty(data['filter_date_from'])) {
+		if ((data['filter_date_from'])) {
 			implode.push("DATE(c.`date_added`) >= DATE(" + this.db.escape(data['filter_date_from']) + ")";
 		}
 
-		if (!empty(data['filter_date_to'])) {
+		if ((data['filter_date_to'])) {
 			implode.push("DATE(c.`date_added`) <= DATE(" + this.db.escape(data['filter_date_to']) + ")";
 		}
 
-		if (implode) {
-			sql += " WHERE " + implode(" AND ", implode);
+		if (implode.length) {
+			sql += " WHERE " + implode.join(" AND ");
 		}
 
 		let query = await this.db.query(sql);

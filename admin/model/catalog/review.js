@@ -97,11 +97,11 @@ class ReviewModel  extends Model {
 	async getReviews(data = {}) {
 		let sql = "SELECT r.`review_id`, pd.`name`, r.`author`, r.`rating`, r.`status`, r.`date_added` FROM `" + DB_PREFIX + "review` r LEFT JOIN `" + DB_PREFIX + "product_description` pd ON (r.`product_id` = pd.`product_id`) WHERE pd.`language_id` = '" + this.config.get('config_language_id') + "'";
 
-		if (!empty(data['filter_product'])) {
+		if ((data['filter_product'])) {
 			sql += " AND pd.`name` LIKE '" + this.db.escape(data['filter_product'] + '%') + "'";
 		}
 
-		if (!empty(data['filter_author'])) {
+		if ((data['filter_author'])) {
 			sql += " AND r.`author` LIKE '" + this.db.escape(data['filter_author'] + '%') + "'";
 		}
 
@@ -109,11 +109,11 @@ class ReviewModel  extends Model {
 			sql += " AND r.`status` = '" + data['filter_status'] + "'";
 		}
 
-		if (!empty(data['filter_date_from'])) {
+		if ((data['filter_date_from'])) {
 			sql += " AND DATE(r.`date_added`) >= DATE(" + this.db.escape(data['filter_date_from']) + ")";
 		}
 
-		if (!empty(data['filter_date_to'])) {
+		if ((data['filter_date_to'])) {
 			sql += " AND DATE(r.`date_added`) <= DATE(" + this.db.escape(data['filter_date_to']) + ")";
 		}
 
@@ -162,11 +162,11 @@ class ReviewModel  extends Model {
 	async getTotalReviews(data = {}) {
 		let sql = "SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "review` r LEFT JOIN `" + DB_PREFIX + "product_description` pd ON (r.`product_id` = pd.`product_id`) WHERE pd.`language_id` = '" + this.config.get('config_language_id') + "'";
 
-		if (!empty(data['filter_product'])) {
+		if ((data['filter_product'])) {
 			sql += " AND pd.`name` LIKE '" + this.db.escape(data['filter_product'] + '%') + "'";
 		}
 
-		if (!empty(data['filter_author'])) {
+		if ((data['filter_author'])) {
 			sql += " AND r.`author` LIKE '" + this.db.escape(data['filter_author'] + '%') + "'";
 		}
 
@@ -174,11 +174,11 @@ class ReviewModel  extends Model {
 			sql += " AND r.`status` = '" + data['filter_status'] + "'";
 		}
 
-		if (!empty(data['filter_date_from'])) {
+		if ((data['filter_date_from'])) {
 			sql += " AND DATE(r.`date_added`) >= DATE(" + this.db.escape(data['filter_date_from']) + ")";
 		}
 
-		if (!empty(data['filter_date_to'])) {
+		if ((data['filter_date_to'])) {
 			sql += " AND DATE(r.`date_added`) <= DATE(" + this.db.escape(data['filter_date_to']) + ")";
 		}
 

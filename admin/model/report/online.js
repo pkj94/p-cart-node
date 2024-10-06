@@ -16,16 +16,16 @@ class OnlineModel  extends Model {
 
 		let implode = [];
 
-		if (!empty(data['filter_ip'])) {
+		if ((data['filter_ip'])) {
 			implode.push("`co`.`ip` LIKE " + this.db.escape(data['filter_ip']) + "";
 		}
 
-		if (!empty(data['filter_customer'])) {
+		if ((data['filter_customer'])) {
 			implode.push("`co`.`customer_id` > '0' AND CONCAT(`c`.`firstname`, ' ', `c`.`lastname`) LIKE '" + this.db.escape(data['filter_customer']) + "'";
 		}
 
-		if (implode) {
-			sql += " WHERE " + implode(" AND ", implode);
+		if (implode.length) {
+			sql += " WHERE " + implode.join(" AND ");
 		}
 
 		sql += " ORDER BY `co`.`date_added` DESC";
@@ -57,16 +57,16 @@ class OnlineModel  extends Model {
 
 		let implode = [];
 
-		if (!empty(data['filter_ip'])) {
+		if ((data['filter_ip'])) {
 			implode.push("`co`.`ip` LIKE " + this.db.escape(data['filter_ip']) + "";
 		}
 
-		if (!empty(data['filter_customer'])) {
+		if ((data['filter_customer'])) {
 			implode.push("`co`.`customer_id` > '0' AND CONCAT(`c`.`firstname`, ' ', `c`.`lastname`) LIKE '" + this.db.escape(data['filter_customer']) + "'";
 		}
 
-		if (implode) {
-			sql += " WHERE " + implode(" AND ", implode);
+		if (implode.length) {
+			sql += " WHERE " + implode.join(" AND ");
 		}
 
 		let query = await this.db.query(sql);

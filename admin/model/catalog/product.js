@@ -12,7 +12,7 @@ class ProductModel  extends Model {
 	 * @return int
 	 */
 	async addProduct(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "product` SET `master_id` = '" + data['master_id'] + "', `model` = '" + this.db.escape(data['model']) + "', `sku` = '" + this.db.escape(data['sku']) + "', `upc` = '" + this.db.escape(data['upc']) + "', `ean` = '" + this.db.escape(data['ean']) + "', `jan` = '" + this.db.escape(data['jan']) + "', `isbn` = '" + this.db.escape(data['isbn']) + "', `mpn` = '" + this.db.escape(data['mpn']) + "', `location` = '" + this.db.escape(data['location']) + "', `variant` = '" + this.db.escape(!empty(data['variant']) ? JSON.stringify(data['variant']) : '') + "', `override` = '" + this.db.escape(!empty(data['override']) ? JSON.stringify(data['override']) : '') + "', `quantity` = '" + data['quantity'] + "', `minimum` = '" + data['minimum'] + "', `subtract` = '" + (isset(data['subtract']) ? data['subtract'] : 0) + "', `stock_status_id` = '" + data['stock_status_id'] + "', `date_available` = '" + this.db.escape(data['date_available']) + "', `manufacturer_id` = '" + data['manufacturer_id'] + "', `shipping` = '" + (isset(data['shipping']) ? data['shipping'] : 0) + "', `price` = '" + data['price'] + "', `points` = '" + data['points'] + "', `weight` = '" + data['weight'] + "', `weight_class_id` = '" + data['weight_class_id'] + "', `length` = '" + data['length'] + "', `width` = '" + data['width'] + "', `height` = '" + data['height'] + "', `length_class_id` = '" + data['length_class_id'] + "', `status` = '" + (data['status'] ? data['status'] : 0) + "', `tax_class_id` = '" + data['tax_class_id'] + "', `sort_order` = '" + data['sort_order'] + "', `date_added` = NOW(), `date_modified` = NOW()");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "product` SET `master_id` = '" + data['master_id'] + "', `model` = '" + this.db.escape(data['model']) + "', `sku` = '" + this.db.escape(data['sku']) + "', `upc` = '" + this.db.escape(data['upc']) + "', `ean` = '" + this.db.escape(data['ean']) + "', `jan` = '" + this.db.escape(data['jan']) + "', `isbn` = '" + this.db.escape(data['isbn']) + "', `mpn` = '" + this.db.escape(data['mpn']) + "', `location` = '" + this.db.escape(data['location']) + "', `variant` = '" + this.db.escape((data['variant']) ? JSON.stringify(data['variant']) : '') + "', `override` = '" + this.db.escape((data['override']) ? JSON.stringify(data['override']) : '') + "', `quantity` = '" + data['quantity'] + "', `minimum` = '" + data['minimum'] + "', `subtract` = '" + (isset(data['subtract']) ? data['subtract'] : 0) + "', `stock_status_id` = '" + data['stock_status_id'] + "', `date_available` = '" + this.db.escape(data['date_available']) + "', `manufacturer_id` = '" + data['manufacturer_id'] + "', `shipping` = '" + (isset(data['shipping']) ? data['shipping'] : 0) + "', `price` = '" + data['price'] + "', `points` = '" + data['points'] + "', `weight` = '" + data['weight'] + "', `weight_class_id` = '" + data['weight_class_id'] + "', `length` = '" + data['length'] + "', `width` = '" + data['width'] + "', `height` = '" + data['height'] + "', `length_class_id` = '" + data['length_class_id'] + "', `status` = '" + (data['status'] ? data['status'] : 0) + "', `tax_class_id` = '" + data['tax_class_id'] + "', `sort_order` = '" + data['sort_order'] + "', `date_added` = NOW(), `date_modified` = NOW()");
 
 		product_id = this.db.getLastId();
 
@@ -165,7 +165,7 @@ class ProductModel  extends Model {
 	 * @return void
 	 */
 	async editProduct(product_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "product` SET `model` = '" + this.db.escape(data['model']) + "', `sku` = '" + this.db.escape(data['sku']) + "', `upc` = '" + this.db.escape(data['upc']) + "', `ean` = '" + this.db.escape(data['ean']) + "', `jan` = '" + this.db.escape(data['jan']) + "', `isbn` = '" + this.db.escape(data['isbn']) + "', `mpn` = '" + this.db.escape(data['mpn']) + "', `location` = '" + this.db.escape(data['location']) + "', `variant` = '" + this.db.escape(!empty(data['variant']) ? JSON.stringify(data['variant']) : '') + "', `override` = '" + this.db.escape(!empty(data['override']) ? JSON.stringify(data['override']) : '') + "', `quantity` = '" + data['quantity'] + "', `minimum` = '" + data['minimum'] + "', `subtract` = '" + (isset(data['subtract']) ? data['subtract'] : 0) + "', `stock_status_id` = '" + data['stock_status_id'] + "', `date_available` = '" + this.db.escape(data['date_available']) + "', `manufacturer_id` = '" + data['manufacturer_id'] + "', `shipping` = '" + (isset(data['shipping']) ? data['shipping'] : 0) + "', `price` = '" + data['price'] + "', `points` = '" + data['points'] + "', `weight` = '" + data['weight'] + "', `weight_class_id` = '" + data['weight_class_id'] + "', `length` = '" + data['length'] + "', `width` = '" + data['width'] + "', `height` = '" + data['height'] + "', `length_class_id` = '" + data['length_class_id'] + "', `status` = '" + (data['status'] ? data['status'] : 0) + "', `tax_class_id` = '" + data['tax_class_id'] + "', `sort_order` = '" + data['sort_order'] + "', `date_modified` = NOW() WHERE `product_id` = '" + product_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "product` SET `model` = '" + this.db.escape(data['model']) + "', `sku` = '" + this.db.escape(data['sku']) + "', `upc` = '" + this.db.escape(data['upc']) + "', `ean` = '" + this.db.escape(data['ean']) + "', `jan` = '" + this.db.escape(data['jan']) + "', `isbn` = '" + this.db.escape(data['isbn']) + "', `mpn` = '" + this.db.escape(data['mpn']) + "', `location` = '" + this.db.escape(data['location']) + "', `variant` = '" + this.db.escape((data['variant']) ? JSON.stringify(data['variant']) : '') + "', `override` = '" + this.db.escape((data['override']) ? JSON.stringify(data['override']) : '') + "', `quantity` = '" + data['quantity'] + "', `minimum` = '" + data['minimum'] + "', `subtract` = '" + (isset(data['subtract']) ? data['subtract'] : 0) + "', `stock_status_id` = '" + data['stock_status_id'] + "', `date_available` = '" + this.db.escape(data['date_available']) + "', `manufacturer_id` = '" + data['manufacturer_id'] + "', `shipping` = '" + (isset(data['shipping']) ? data['shipping'] : 0) + "', `price` = '" + data['price'] + "', `points` = '" + data['points'] + "', `weight` = '" + data['weight'] + "', `weight_class_id` = '" + data['weight_class_id'] + "', `length` = '" + data['length'] + "', `width` = '" + data['width'] + "', `height` = '" + data['height'] + "', `length_class_id` = '" + data['length_class_id'] + "', `status` = '" + (data['status'] ? data['status'] : 0) + "', `tax_class_id` = '" + data['tax_class_id'] + "', `sort_order` = '" + data['sort_order'] + "', `date_modified` = NOW() WHERE `product_id` = '" + product_id + "'");
 
 		if (data['image']) {
 			await this.db.query("UPDATE `" + DB_PREFIX + "product` SET `image` = '" + this.db.escape(data['image']) + "' WHERE `product_id` = '" + product_id + "'");
@@ -230,7 +230,7 @@ class ProductModel  extends Model {
 		// Attributes
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_attribute` WHERE `product_id` = '" + product_id + "'");
 
-		if (!empty(data['product_attribute'])) {
+		if ((data['product_attribute'])) {
 			for (data['product_attribute'] of product_attribute) {
 				if (product_attribute['attribute_id']) {
 					// Removes duplicates
@@ -852,7 +852,7 @@ class ProductModel  extends Model {
 	async getProducts(data = {}) {
 		let sql = "SELECT * FROM `" + DB_PREFIX + "product` p LEFT JOIN `" + DB_PREFIX + "product_description` pd ON (p.`product_id` = pd.`product_id`) WHERE pd.`language_id` = '" + this.config.get('config_language_id') + "'";
 
-		if (!empty(data['filter_master_id'])) {
+		if ((data['filter_master_id'])) {
 			sql += " AND p.`master_id` = '" + data['filter_master_id'] + "'";
 		}
 
@@ -860,11 +860,11 @@ class ProductModel  extends Model {
 			sql += " AND pd.`name` LIKE '" + this.db.escape(data['filter_name'] + '%') + "'";
 		}
 
-		if (!empty(data['filter_model'])) {
+		if ((data['filter_model'])) {
 			sql += " AND p.`model` LIKE '" + this.db.escape(data['filter_model'] + '%') + "'";
 		}
 
-		if (!empty(data['filter_price'])) {
+		if ((data['filter_price'])) {
 			sql += " AND p.`price` LIKE '" + this.db.escape(data['filter_price'] + '%') + "'";
 		}
 
@@ -1223,7 +1223,7 @@ class ProductModel  extends Model {
 	async getTotalProducts(data = {}) {
 		let sql = "SELECT COUNT(DISTINCT p.`product_id`) AS `total` FROM `" + DB_PREFIX + "product` p LEFT JOIN `" + DB_PREFIX + "product_description` pd ON (p.`product_id` = pd.`product_id`) WHERE pd.`language_id` = '" + this.config.get('config_language_id') + "'";
 
-		if (!empty(data['filter_master_id'])) {
+		if ((data['filter_master_id'])) {
 			sql += " AND p.`master_id` = '" + data['filter_master_id'] + "'";
 		}
 
@@ -1231,7 +1231,7 @@ class ProductModel  extends Model {
 			sql += " AND pd.`name` LIKE '" + this.db.escape(data['filter_name'] + '%') + "'";
 		}
 
-		if (!empty(data['filter_model'])) {
+		if ((data['filter_model'])) {
 			sql += " AND p.`model` LIKE '" + this.db.escape(data['filter_model'] + '%') + "'";
 		}
 

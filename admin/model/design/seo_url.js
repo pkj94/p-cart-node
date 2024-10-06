@@ -57,15 +57,15 @@ class SeoUrlModel  extends Model {
 
 		let implode = [];
 
-		if (!empty(data['filter_keyword'])) {
+		if ((data['filter_keyword'])) {
 			implode.push("`keyword` LIKE '" + this.db.escape(data['filter_keyword']) + "'";
 		}
 
-		if (!empty(data['filter_key'])) {
+		if ((data['filter_key'])) {
 			implode.push("`key` = '" + this.db.escape(data['filter_key']) + "'";
 		}
 
-		if (!empty(data['filter_value'])) {
+		if ((data['filter_value'])) {
 			implode.push("`value` LIKE '" + this.db.escape(data['filter_value']) + "'";
 		}
 
@@ -73,12 +73,12 @@ class SeoUrlModel  extends Model {
 			implode.push("`store_id` = '" + data['filter_store_id'] + "'";
 		}
 
-		if (!empty(data['filter_language_id']) && data['filter_language_id'] !== '') {
+		if ((data['filter_language_id']) && data['filter_language_id'] !== '') {
 			implode.push("`language_id` = '" + data['filter_language_id'] + "'";
 		}
 
-		if (implode) {
-			sql += " WHERE " + implode(" AND ", implode);
+		if (implode.length) {
+			sql += " WHERE " + implode.join(" AND ");
 		}
 
 		sort_data = [
@@ -129,28 +129,28 @@ class SeoUrlModel  extends Model {
 
 		let implode = [];
 
-		if (!empty(data['filter_keyword'])) {
+		if ((data['filter_keyword'])) {
 			implode.push("`keyword` LIKE '" + this.db.escape(data['filter_keyword']) + "'";
 		}
 
-		if (!empty(data['filter_key'])) {
+		if ((data['filter_key'])) {
 			implode.push("`key` = '" + this.db.escape(data['filter_key']) + "'";
 		}
 
-		if (!empty(data['filter_value'])) {
+		if ((data['filter_value'])) {
 			implode.push("`value` LIKE '" + this.db.escape(data['filter_value']) + "'";
 		}
 
-		if (!empty(data['filter_store_id']) && data['filter_store_id'] !== '') {
+		if ((data['filter_store_id']) && data['filter_store_id'] !== '') {
 			implode.push("`store_id` = '" + data['filter_store_id'] + "'";
 		}
 
-		if (!empty(data['filter_language_id']) && data['filter_language_id'] !== '') {
+		if ((data['filter_language_id']) && data['filter_language_id'] !== '') {
 			implode.push("`language_id` = '" + data['filter_language_id'] + "'";
 		}
 
-		if (implode) {
-			sql += " WHERE " + implode(" AND ", implode);
+		if (implode.length) {
+			sql += " WHERE " + implode.join(" AND ");
 		}
 
 		let query = await this.db.query(sql);

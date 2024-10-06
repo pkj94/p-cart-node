@@ -58,40 +58,40 @@ class ReturnsModel  extends Model {
 
 		let implode = [];
 
-		if (!empty(data['filter_return_id'])) {
+		if ((data['filter_return_id'])) {
 			implode.push("r.`return_id` = '" + data['filter_return_id'] + "'";
 		}
 
-		if (!empty(data['filter_order_id'])) {
+		if ((data['filter_order_id'])) {
 			implode.push("r.`order_id` = '" + data['filter_order_id'] + "'";
 		}
 
-		if (!empty(data['filter_customer'])) {
+		if ((data['filter_customer'])) {
 			implode.push("CONCAT(r.`firstname`, ' ', r.`lastname`) LIKE '" + this.db.escape(data['filter_customer'] + '%') + "'";
 		}
 
-		if (!empty(data['filter_product'])) {
+		if ((data['filter_product'])) {
 			implode.push("r.`product` = '" + this.db.escape(data['filter_product']) + "'";
 		}
 
-		if (!empty(data['filter_model'])) {
+		if ((data['filter_model'])) {
 			implode.push("r.`model` = '" + this.db.escape(data['filter_model']) + "'";
 		}
 
-		if (!empty(data['filter_return_status_id'])) {
+		if ((data['filter_return_status_id'])) {
 			implode.push("r.`return_status_id` = '" + data['filter_return_status_id'] + "'";
 		}
 
-		if (!empty(data['filter_date_from'])) {
+		if ((data['filter_date_from'])) {
 			implode.push("DATE(r.`date_added`) >= DATE(" + this.db.escape(data['filter_date_from']) + ")";
 		}
 
-		if (!empty(data['filter_date_to'])) {
+		if ((data['filter_date_to'])) {
 			implode.push("DATE(r.`date_added`) <= DATE(" + this.db.escape(data['filter_date_to']) + ")";
 		}
 
-		if (implode) {
-			sql += " WHERE " + implode(" AND ", implode);
+		if (implode.length) {
+			sql += " WHERE " + implode.join(" AND ");
 		}
 
 		sort_data = [
@@ -144,40 +144,40 @@ class ReturnsModel  extends Model {
 
 		let implode = [];
 
-		if (!empty(data['filter_return_id'])) {
+		if ((data['filter_return_id'])) {
 			implode.push("r.`return_id` = '" + data['filter_return_id'] + "'";
 		}
 
-		if (!empty(data['filter_customer'])) {
+		if ((data['filter_customer'])) {
 			implode.push("CONCAT(r.`firstname`, ' ', r.`lastname`) LIKE '" + this.db.escape(data['filter_customer'] + '%') + "'";
 		}
 
-		if (!empty(data['filter_order_id'])) {
+		if ((data['filter_order_id'])) {
 			implode.push("r.`order_id` = '" + this.db.escape(data['filter_order_id']) + "'";
 		}
 
-		if (!empty(data['filter_product'])) {
+		if ((data['filter_product'])) {
 			implode.push("r.`product` = '" + this.db.escape(data['filter_product']) + "'";
 		}
 
-		if (!empty(data['filter_model'])) {
+		if ((data['filter_model'])) {
 			implode.push("r.`model` = '" + this.db.escape(data['filter_model']) + "'";
 		}
 
-		if (!empty(data['filter_return_status_id'])) {
+		if ((data['filter_return_status_id'])) {
 			implode.push("r.`return_status_id` = '" + data['filter_return_status_id'] + "'";
 		}
 
-		if (!empty(data['filter_date_from'])) {
+		if ((data['filter_date_from'])) {
 			implode.push("DATE(r.`date_added`) >= DATE(" + this.db.escape(data['filter_date_from']) + ")";
 		}
 
-		if (!empty(data['filter_date_to'])) {
+		if ((data['filter_date_to'])) {
 			implode.push("DATE(r.`date_added`) <= DATE(" + this.db.escape(data['filter_date_to']) + ")";
 		}
 
-		if (implode) {
-			sql += " WHERE " + implode(" AND ", implode);
+		if (implode.length) {
+			sql += " WHERE " + implode.join(" AND ");
 		}
 
 		let query = await this.db.query(sql);

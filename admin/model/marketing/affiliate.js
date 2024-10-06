@@ -81,23 +81,23 @@ class AffiliateModel  extends Model {
 			implode.push("CONCAT(c.`firstname`, ' ', c.`lastname`) LIKE '" + this.db.escape(data['filter_name'] + '%') + "'";
 		}
 
-		if (!empty(data['filter_tracking'])) {
+		if ((data['filter_tracking'])) {
 			implode.push("`ca`.`tracking` = '" + this.db.escape(data['filter_tracking']) + "'";
 		}
 
-		if (!empty(data['filter_payment_method'])) {
+		if ((data['filter_payment_method'])) {
 			implode.push("`ca`.`payment_method` = '" + this.db.escape(data['filter_payment_method']) + "'";
 		}
 
-		if (!empty(data['filter_commission'])) {
+		if ((data['filter_commission'])) {
 			implode.push("`ca`.`commission` = '" + data['filter_commission'] + "'";
 		}
 
-		if (!empty(data['filter_date_from'])) {
+		if ((data['filter_date_from'])) {
 			implode.push("DATE(`ca`.`date_added`) >= DATE(" + this.db.escape(data['filter_date_from']) + ")";
 		}
 
-		if (!empty(data['filter_date_to'])) {
+		if ((data['filter_date_to'])) {
 			implode.push("DATE(`ca.``date_added`) <= DATE(" + this.db.escape(data['filter_date_to']) + ")";
 		}
 
@@ -105,8 +105,8 @@ class AffiliateModel  extends Model {
 			implode.push("`ca`.`status` = '" + data['filter_status'] + "'";
 		}
 
-		if (implode) {
-			sql += " WHERE " + implode(" AND ", implode);
+		if (implode.length) {
+			sql += " WHERE " + implode.join(" AND ");
 		}
 
 		sort_data = [
@@ -160,23 +160,23 @@ class AffiliateModel  extends Model {
 			implode.push("CONCAT(`c`.`firstname`, ' ', `c`.`lastname`) LIKE '" + this.db.escape(data['filter_name'] + '%') + "'";
 		}
 
-		if (!empty(data['filter_tracking'])) {
+		if ((data['filter_tracking'])) {
 			implode.push("`ca`.`tracking` = '" + this.db.escape(data['filter_tracking']) + "'";
 		}
 
-		if (!empty(data['filter_payment_method'])) {
+		if ((data['filter_payment_method'])) {
 			implode.push("`ca`.`payment_method` = '" + this.db.escape(data['filter_payment_method']) + "'";
 		}
 
-		if (!empty(data['filter_commission'])) {
+		if ((data['filter_commission'])) {
 			implode.push("`ca`.`commission` = '" + data['filter_commission'] + "'";
 		}
 
-		if (!empty(data['filter_date_from'])) {
+		if ((data['filter_date_from'])) {
 			implode.push("DATE(`ca`.`date_added`) >= DATE(" + this.db.escape(data['filter_date_from']) + ")";
 		}
 
-		if (!empty(data['filter_date_to'])) {
+		if ((data['filter_date_to'])) {
 			implode.push("DATE(`ca`.`date_added`) <= DATE(" + this.db.escape(data['filter_date_to']) + ")";
 		}
 
@@ -184,8 +184,8 @@ class AffiliateModel  extends Model {
 			implode.push("`ca`.`status` = '" + data['filter_status'] + "'";
 		}
 
-		if (implode) {
-			sql += " WHERE " + implode(" AND ", implode);
+		if (implode.length) {
+			sql += " WHERE " + implode.join(" AND ");
 		}
 
 		let query = await this.db.query(sql);

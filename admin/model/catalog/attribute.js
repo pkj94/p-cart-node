@@ -125,7 +125,7 @@ class AttributeModel  extends Model {
 			sql += " AND ad.`name` LIKE '" + this.db.escape(data['filter_name'] + '%') + "'";
 		}
 
-		if (!empty(data['filter_attribute_group_id'])) {
+		if ((data['filter_attribute_group_id'])) {
 			sql += " AND a.`attribute_group_id` = '" + data['filter_attribute_group_id'] + "'";
 		}
 

@@ -313,12 +313,12 @@ class ArticleModel  extends Model {
 
 		let implode = [];
 
-		if (!empty(data['filter_keyword'])) {
+		if ((data['filter_keyword'])) {
 			implode.push("LCASE(`comment`) LIKE '" + this.db.escape('%' + data['filter_keyword'] + '%') + "'";
 		}
 
-		if (implode) {
-			sql += " WHERE " + implode(" AND ", implode);
+		if (implode.length) {
+			sql += " WHERE " + implode.join(" AND ");
 		}
 
 		sql += " ORDER BY `date_added` DESC";
@@ -350,12 +350,12 @@ class ArticleModel  extends Model {
 
 		let implode = [];
 
-		if (!empty(data['filter_keyword'])) {
+		if ((data['filter_keyword'])) {
 			implode.push("LCASE(`comment`) LIKE '" + this.db.escape('%' + data['filter_keyword'] + '%') + "'";
 		}
 
-		if (implode) {
-			sql += " WHERE " + implode(" AND ", implode);
+		if (implode.length) {
+			sql += " WHERE " + implode.join(" AND ");
 		}
 
 		let query = await this.db.query(sql);
