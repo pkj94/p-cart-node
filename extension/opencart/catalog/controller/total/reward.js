@@ -5,11 +5,14 @@ namespace Opencart\Catalog\Controller\Extension\Opencart\Total;
  *
  * @package
  */
-class Reward extends \Opencart\System\Engine\Controller {
+class RewardController extends Controller {
+	constructor(registry) {
+		super(registry)
+	}
 	/**
 	 * @return string
 	 */
-	public function index() {
+	async index() {
 		if (this.config.get('total_reward_status')) {
 			$available = this.customer.getRewardPoints();
 
@@ -47,13 +50,13 @@ class Reward extends \Opencart\System\Engine\Controller {
 	/**
 	 * @return void
 	 */
-	public function save(): void {
+	async save() {
 		this.load.language('extension/opencart/total/reward');
 
-		$const json = {};
+		const json = {};
 
 		if (isset(this.request.post['reward'])) {
-			$reward = abs((int)this.request.post['reward']);
+			$reward = abs(this.request.post['reward']);
 		} else {
 			$reward = 0;
 		}
@@ -80,13 +83,13 @@ class Reward extends \Opencart\System\Engine\Controller {
 			$json['error'] = sprintf(this.language.get('error_maximum'), $points_total);
 		}
 
-		if (!$json) {
+		if (!json.error) {
 			if ($reward) {
-				$json['success'] = this.language.get('text_success');
+				json['success'] = this.language.get('text_success');
 
 				this.session.data['reward'] = $reward;
 			} else {
-				$json['success'] = this.language.get('text_remove');
+				json['success'] = this.language.get('text_remove');
 
 				unset(this.session.data['reward']);
 			}

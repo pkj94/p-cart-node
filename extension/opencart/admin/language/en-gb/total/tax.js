@@ -1,15 +1,16 @@
-<?php
-// Heading
-$_['heading_title']    = 'Taxes';
+module.exports = {
+    // Heading
+    heading_title: 'Taxes',
 
-// Text
-$_['text_extension']   = 'Extensions';
-$_['text_success']     = 'Success: You have modified taxes total!';
-$_['text_edit']        = 'Edit Tax Total';
+    // Text
+    text_extension: 'Extensions',
+    text_success: 'Success: You have modified taxes total!',
+    text_edit: 'Edit Tax Total',
 
-// Entry
-$_['entry_status']     = 'Status';
-$_['entry_sort_order'] = 'Sort Order';
+    // Entry
+    entry_status: 'Status',
+    entry_sort_order: 'Sort Order',
 
-// Error
-$_['error_permission'] = 'Warning: You do not have permission to modify taxes total!';
+    // Error
+    error_permission: 'Warning: You do not have permission to modify taxes total!',
+}

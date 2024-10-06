@@ -13,7 +13,7 @@ class Total extends \Opencart\System\Engine\Model {
 	 *
 	 * @return void
 	 */
-	public function getTotal(array &$totals, array &$taxes, float &$total): void {
+	async getTotal(array &$totals, array &$taxes, float &$total) {
 		this.load.language('extension/opencart/total/total');
 
 		$totals.push({
@@ -21,7 +21,7 @@ class Total extends \Opencart\System\Engine\Model {
 			'code'       : 'total',
 			'title'      : this.language.get('text_total'),
 			'value'      : $total,
-			'sort_order' : (int)this.config.get('total_total_sort_order')
+			'sort_order' : this.config.get('total_total_sort_order')
 		];
 	}
 }

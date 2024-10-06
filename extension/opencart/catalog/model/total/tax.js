@@ -13,7 +13,7 @@ class Tax extends \Opencart\System\Engine\Model {
 	 *
 	 * @return void
 	 */
-	public function getTotal(array &$totals, array &$taxes, float &$total): void {
+	async getTotal(array &$totals, array &$taxes, float &$total) {
 		foreach ($taxes as $key : $value) {
 			if ($value > 0) {
 				$totals.push({
@@ -21,7 +21,7 @@ class Tax extends \Opencart\System\Engine\Model {
 					'code'       : 'tax',
 					'title'      : this.tax.getRateName($key),
 					'value'      : $value,
-					'sort_order' : (int)this.config.get('total_tax_sort_order')
+					'sort_order' : this.config.get('total_tax_sort_order')
 				];
 
 				$total += $value;

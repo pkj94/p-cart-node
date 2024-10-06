@@ -11,16 +11,16 @@ class Ip extends \Opencart\System\Engine\Model {
 	 *
 	 * @return int
 	 */
-	public function check(array $order_info): int {
+	async check(array $order_info): int {
 		$status = false;
 
 		if ($order_info['customer_id']) {
 			this.load.model('account/customer');
 
-			$results = this.model_account_customer.getIps($order_info['customer_id']);
+			const results = await this.model_account_customer.getIps($order_info['customer_id']);
 
 			for(let result of results) {
-				$query = this.db.query("SELECT * FROM `" . DB_PREFIX . "fraud_ip` WHERE `ip` = '" . this.db.escape($result['ip']) . "'");
+				$query = this.db.query("SELECT * FROM `" . DB_PREFIX . "fraud_ip` WHERE `ip` = '" . this.db.escape(result['ip']) . "'");
 
 				if ($query.num_rows) {
 					$status = true;
@@ -37,7 +37,7 @@ class Ip extends \Opencart\System\Engine\Model {
 		}
 
 		if ($status) {
-			return (int)this.config.get('fraud_ip_order_status_id');
+			return this.config.get('fraud_ip_order_status_id');
 		} else {
 			return 0;
 		}

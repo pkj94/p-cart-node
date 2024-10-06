@@ -1,38 +1,38 @@
-<?php
-namespace Opencart\Admin\Controller\Extension\Opencart\Report;
-/**
- * Class Sale Return
- *
- * @package  Opencart\Admin\Controller\Extension\Opencart\Report
- */
-class SaleReturn extends \Opencart\System\Engine\Controller {
+const strtotime = require("locutus/php/datetime/strtotime");
+const sprintf = require("locutus/php/strings/sprintf");
+
+module.exports = class SaleReturnReportController extends Controller {
+	constructor(registry) {
+		super(registry)
+	}
 	/**
 	 * @return void
 	 */
-	public function index(): void {
-		this.load.language('extension/opencart/report/sale_return');
+	async index() {
+		const data = {};
+		await this.load.language('extension/opencart/report/sale_return');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard', 'user_token=' . this.session.data['user_token'])
-		];
+			'text': this.language.get('text_home'),
+			'href': this + url + link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+		})
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_extension'),
-			'href' : this.url.link('marketplace/extension', 'user_token=' . this.session.data['user_token'] . '&type=report')
-		];
+			'text': this.language.get('text_extension'),
+			'href': this + url + link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=report')
+		})
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('extension/opencart/report/sale_return', 'user_token=' . this.session.data['user_token'])
-		];
+			'text': this.language.get('heading_title'),
+			'href': this + url + link('extension/opencart/report/sale_return', 'user_token=' + this.session.data['user_token'])
+		})
 
-		data['save'] = this.url.link('extension/opencart/report/sale_return.save', 'user_token=' . this.session.data['user_token']);
-		data['back'] = this.url.link('marketplace/extension', 'user_token=' . this.session.data['user_token'] . '&type=report');
+		data['save'] = this + url + link('extension/opencart/report/sale_return.save', 'user_token=' + this.session.data['user_token']);
+		data['back'] = this + url + link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=report');
 
 		data['report_sale_return_status'] = this.config.get('report_sale_return_status');
 		data['report_sale_return_sort_order'] = this.config.get('report_sale_return_sort_order');
@@ -47,21 +47,21 @@ class SaleReturn extends \Opencart\System\Engine\Controller {
 	/**
 	 * @return void
 	 */
-	public function save(): void {
-		this.load.language('extension/opencart/report/sale_coupon');
+	async save() {
+		await this.load.language('extension/opencart/report/sale_coupon');
 
-		$const json = {};
+		const json = {};
 
 		if (!this.user.hasPermission('modify', 'extension/opencart/report/sale_return')) {
-			$json['error'] = this.language.get('error_permission');
+			json['error'] = this.language.get('error_permission');
 		}
 
-		if (!$json) {
-			this.load.model('setting/setting',this);
+		if (!json.error) {
+			this.load.model('setting/setting', this);
 
-			this.model_setting_setting.editSetting('report_sale_return', this.request.post);
+			await this.model_setting_setting.editSetting('report_sale_return', this.request.post);
 
-			$json['success'] = this.language.get('text_success');
+			json['success'] = this.language.get('text_success');
 		}
 
 		this.response.addHeader('Content-Type: application/json');
@@ -71,38 +71,38 @@ class SaleReturn extends \Opencart\System\Engine\Controller {
 	/**
 	 * @return void
 	 */
-	public function report(): void {
-		this.load.language('extension/opencart/report/sale_return');
+	async report() {
+		await this.load.language('extension/opencart/report/sale_return');
 
-		$const data = {
-   list: await this.getReport()
-}
+		const data = {
+			list: await this.getReport()
+		}
 
 		this.load.model('localisation/return_status');
 
-		data['return_statuses'] = this.model_localisation_return_status.getReturnStatuses();
+		data['return_statuses'] = await this.model_localisation_return_status.getReturnStatuses();
 
 		data['groups'] = [];
 
 		data['groups'].push({
-			'text'  : this.language.get('text_year'),
-			'value' : 'year',
-		];
+			'text': this.language.get('text_year'),
+			'value': 'year',
+		})
 
 		data['groups'].push({
-			'text'  : this.language.get('text_month'),
-			'value' : 'month',
-		];
+			'text': this.language.get('text_month'),
+			'value': 'month',
+		})
 
 		data['groups'].push({
-			'text'  : this.language.get('text_week'),
-			'value' : 'week',
-		];
+			'text': this.language.get('text_week'),
+			'value': 'week',
+		})
 
 		data['groups'].push({
-			'text'  : this.language.get('text_day'),
-			'value' : 'day',
-		];
+			'text': this.language.get('text_day'),
+			'value': 'day',
+		})
 
 		data['user_token'] = this.session.data['user_token'];
 
@@ -112,8 +112,8 @@ class SaleReturn extends \Opencart\System\Engine\Controller {
 	/**
 	 * @return void
 	 */
-	public function list(): void {
-		this.load.language('extension/opencart/report/sale_return');
+	async list() {
+		await this.load.language('extension/opencart/report/sale_return');
 
 		this.response.setOutput(await this.getReport());
 	}
@@ -121,61 +121,57 @@ class SaleReturn extends \Opencart\System\Engine\Controller {
 	/**
 	 * @return string
 	 */
-	public function getReport() {
+	async getReport() {
 		let filter_date_start = '';
 		if (this.request.get['filter_date_start']) {
 			filter_date_start = this.request.get['filter_date_start'];
 		}
 
-		let filter_date_end= '';
+		let filter_date_end = '';
 		if (this.request.get['filter_date_end']) {
-			filter_date_end= this.request.get['filter_date_end'];
+			filter_date_end = this.request.get['filter_date_end'];
 		}
 
-		if (isset(this.request.get['filter_group'])) {
-			$filter_group = this.request.get['filter_group'];
-		} else {
-			$filter_group = 'week';
+		let filter_group = 'week';
+		if (this.request.get['filter_group']) {
+			filter_group = this.request.get['filter_group'];
+		}
+		let filter_return_status_id = 0;
+		if (this.request.get['filter_return_status_id']) {
+			filter_return_status_id = this.request.get['filter_return_status_id'];
 		}
 
-		if (isset(this.request.get['filter_return_status_id'])) {
-			$filter_return_status_id = (int)this.request.get['filter_return_status_id'];
-		} else {
-			$filter_return_status_id = 0;
-		}
-
-		if (isset(this.request.get['page'])) {
-			$page = (int)this.request.get['page'];
-		} else {
-			$page = 1;
+		let page = 1;
+		if (this.request.get['page']) {
+			page = this.request.get['page'];
 		}
 
 		data['returns'] = [];
 
 		const filter_data = {
-			'filter_date_start'	      : $filter_date_start,
-			'filter_date_end'	      : $filter_date_end,
-			'filter_group'            : $filter_group,
-			'filter_return_status_id' : $filter_return_status_id,
-			'start'                   : ($page - 1) * this.config.get('config_pagination'),
-			'limit'                   : this.config.get('config_pagination')
-		];
+			'filter_date_start': filter_date_start,
+			'filter_date_end': filter_date_end,
+			'filter_group': filter_group,
+			'filter_return_status_id': filter_return_status_id,
+			'start': (page - 1) * this.config.get('config_pagination'),
+			'limit': this.config.get('config_pagination')
+		};
 
-		this.load.model('extension/opencart/report/returns');
+		this.load.model('extension/opencart/report/returns', this);
 
-		$return_total = this.model_extension_opencart_report_returns.getTotalReturns($filter_data);
+		const return_total = await this.model_extension_opencart_report_returns.getTotalReturns(filter_data);
 
-		$results = this.model_extension_opencart_report_returns.getReturns($filter_data);
+		const results = await this.model_extension_opencart_report_returns.getReturns(filter_data);
 
-		for(let result of results) {
+		for (let result of results) {
 			data['returns'].push({
-				'date_start' : date(this.language.get('date_format_short'), strtotime($result['date_start'])),
-				'date_end'   : date(this.language.get('date_format_short'), strtotime($result['date_end'])),
-				'returns'    : $result['returns']
-			];
+				'date_start': date(this.language.get('date_format_short'), strtotime(result['date_start'])),
+				'date_end': date(this.language.get('date_format_short'), strtotime(result['date_end'])),
+				'returns': result['returns']
+			})
 		}
 
-		$url = '';
+		let url = '';
 
 		if (this.request.get['filter_date_start']) {
 			url += '&filter_date_start=' + this.request.get['filter_date_start'];
@@ -185,27 +181,27 @@ class SaleReturn extends \Opencart\System\Engine\Controller {
 			url += '&filter_date_end=' + this.request.get['filter_date_end'];
 		}
 
-		if (isset(this.request.get['filter_group'])) {
-			$url .= '&filter_group=' . this.request.get['filter_group'];
+		if (this.request.get['filter_group']) {
+			url += '&filter_group=' + this.request.get['filter_group'];
 		}
 
-		if (isset(this.request.get['filter_return_status_id'])) {
-			$url .= '&filter_return_status_id=' . this.request.get['filter_return_status_id'];
+		if (this.request.get['filter_return_status_id']) {
+			url += '&filter_return_status_id=' + this.request.get['filter_return_status_id'];
 		}
 
-		data['pagination'] = await this.load.controller('common/pagination', [
-			'total' : $return_total,
-			'page'  : $page,
-			'limit' : this.config.get('config_pagination'),
-			'url'   : this.url.link('extension/opencart/report/sale_return.report', 'user_token=' . this.session.data['user_token'] . '&code=sale_return' . $url . '&page={page}')
-		]);
+		data['pagination'] = await this.load.controller('common/pagination', {
+			'total': return_total,
+			'page': page,
+			'limit': this.config.get('config_pagination'),
+			'url': this + url + link('extension/opencart/report/sale_return.report', 'user_token=' + this.session.data['user_token'] + '&code=sale_return' + url + '&page={page}')
+		});
 
-		data['results'] = sprintf(this.language.get('text_pagination'), ($return_total) ? (($page - 1) * this.config.get('config_pagination')) + 1 : 0, ((($page - 1) * this.config.get('config_pagination')) > ($return_total - this.config.get('config_pagination'))) ? $return_total : ((($page - 1) * this.config.get('config_pagination')) + this.config.get('config_pagination')), $return_total, ceil($return_total / this.config.get('config_pagination')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (return_total) ? ((page - 1) * this.config.get('config_pagination')) + 1 : 0, (((page - 1) * this.config.get('config_pagination')) > (return_total - this.config.get('config_pagination'))) ? return_total : (((page - 1) * this.config.get('config_pagination')) + this.config.get('config_pagination')), return_total, Math.ceil(return_total / this.config.get('config_pagination')));
 
-		data['filter_date_start'] = $filter_date_start;
-		data['filter_date_end'] = $filter_date_end;
-		data['filter_group'] = $filter_group;
-		data['filter_return_status_id'] = $filter_return_status_id;
+		data['filter_date_start'] = filter_date_start;
+		data['filter_date_end'] = filter_date_end;
+		data['filter_group'] = filter_group;
+		data['filter_return_status_id'] = filter_return_status_id;
 
 		data['user_token'] = this.session.data['user_token'];
 

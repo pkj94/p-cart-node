@@ -1,22 +1,23 @@
-<?php
-// Heading
-$_['heading_title']    = 'Sales Analytics';
+module.exports = {
+    // Heading
+    heading_title: 'Sales Analytics',
 
-// Text
-$_['text_extension']   = 'Extensions';
-$_['text_success']     = 'Success: You have modified dashboard chart!';
-$_['text_edit']        = 'Edit Dashboard Chart';
-$_['text_order']       = 'Orders';
-$_['text_customer']    = 'Customers';
-$_['text_day']         = 'Today';
-$_['text_week']        = 'Week';
-$_['text_month']       = 'Month';
-$_['text_year']        = 'Year';
+    // Text
+    text_extension: 'Extensions',
+    text_success: 'Success: You have modified dashboard chart!',
+    text_edit: 'Edit Dashboard Chart',
+    text_order: 'Orders',
+    text_customer: 'Customers',
+    text_day: 'Today',
+    text_week: 'Week',
+    text_month: 'Month',
+    text_year: 'Year',
 
-// Entry
-$_['entry_status']     = 'Status';
-$_['entry_sort_order'] = 'Sort Order';
-$_['entry_width']      = 'Width';
+    // Entry
+    entry_status: 'Status',
+    entry_sort_order: 'Sort Order',
+    entry_width: 'Width',
 
-// Error
-$_['error_permission'] = 'Warning: You do not have permission to modify dashboard chart!';
+    // Error
+    error_permission: 'Warning: You do not have permission to modify dashboard chart!',
+}

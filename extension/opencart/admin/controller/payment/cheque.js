@@ -31,7 +31,7 @@ module.exports = class ChequePaymentController extends Controller {
 		data.payment_cheque_payable = this.config.get('payment_cheque_payable');
 		data.payment_cheque_order_status_id = this.config.get('payment_cheque_order_status_id');
 
-		this.load.model('localisation/order_status');
+		this.load.model('localisation/order_status',this);
 
 		data.order_statuses = this.model_localisation_order_status.getOrderStatuses();
 

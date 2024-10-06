@@ -11,7 +11,7 @@ class COD extends \Opencart\System\Engine\Model {
 	 *
 	 * @return array
 	 */
-	public function getMethods(array $address = []): array {
+	async getMethods(array $address = []): array {
 		this.load.language('extension/opencart/payment/cod');
 
 		if (this.cart.hasSubscription()) {
@@ -23,7 +23,7 @@ class COD extends \Opencart\System\Engine\Model {
 		} elseif (!this.config.get('payment_cod_geo_zone_id')) {
 			$status = true;
 		} else {
-			$query = this.db.query("SELECT * FROM `" . DB_PREFIX . "zone_to_geo_zone` WHERE `geo_zone_id` = '" . (int)this.config.get('payment_cod_geo_zone_id') . "' AND `country_id` = '" . (int)$address['country_id'] . "' AND (`zone_id` = '" . (int)$address['zone_id'] . "' OR `zone_id` = '0')");
+			$query = this.db.query("SELECT * FROM `" . DB_PREFIX . "zone_to_geo_zone` WHERE `geo_zone_id` = '" . this.config.get('payment_cod_geo_zone_id') . "' AND `country_id` = '" . $address['country_id'] . "' AND (`zone_id` = '" . $address['zone_id'] . "' OR `zone_id` = '0')");
 
 			if ($query.num_rows) {
 				$status = true;

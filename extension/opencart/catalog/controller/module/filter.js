@@ -5,11 +5,14 @@ namespace Opencart\Catalog\Controller\Extension\Opencart\Module;
  *
  * @package
  */
-class Filter extends \Opencart\System\Engine\Controller {
+class FilterController extends Controller {
+	constructor(registry) {
+		super(registry)
+	}
 	/**
 	 * @return string
 	 */
-	public function index() {
+	async index() {
 		if (isset(this.request.get['path'])) {
 			$parts = explode('_', (string)this.request.get['path']);
 		} else {
@@ -25,18 +28,18 @@ class Filter extends \Opencart\System\Engine\Controller {
 		if ($category_info) {
 			this.load.language('extension/opencart/module/filter');
 
-			$url = '';
+			let url = '';
 
 			if (isset(this.request.get['sort'])) {
-				$url .= '&sort=' . this.request.get['sort'];
+				$url += '&sort=' . this.request.get['sort'];
 			}
 
 			if (isset(this.request.get['order'])) {
-				$url .= '&order=' . this.request.get['order'];
+				$url += '&order=' . this.request.get['order'];
 			}
 
 			if (isset(this.request.get['limit'])) {
-				$url .= '&limit=' . this.request.get['limit'];
+				$url += '&limit=' . this.request.get['limit'];
 			}
 
 			data['action'] = str_replace('&amp;', '&', this.url.link('product/category', 'language=' . this.config.get('config_language') . '&path=' . this.request.get['path'] . $url));
@@ -47,17 +50,17 @@ class Filter extends \Opencart\System\Engine\Controller {
 				data['filter_category'] = [];
 			}
 
-			this.load.model('catalog/product');
+			this.load.model('catalog/product',this);
 
 			data['filter_groups'] = [];
 
-			$filter_groups = this.model_catalog_category.getFilters($category_id);
+			filter_groups = this.model_catalog_category.getFilters($category_id);
 
-			if ($filter_groups) {
-				foreach ($filter_groups as $filter_group) {
+			if (filter_groups) {
+				foreach (filter_groups as filter_group) {
 					$children_data = [];
 
-					foreach ($filter_group['filter'] as $filter) {
+					foreach (filter_group['filter'] as $filter) {
 						const filter_data = {
 							'filter_category_id' : $category_id,
 							'filter_filter'      : $filter['filter_id']
@@ -70,8 +73,8 @@ class Filter extends \Opencart\System\Engine\Controller {
 					}
 
 					data['filter_groups'].push({
-						'filter_group_id' : $filter_group['filter_group_id'],
-						'name'            : $filter_group['name'],
+						'filter_group_id' : filter_group['filter_group_id'],
+						'name'            : filter_group['name'],
 						'filter'          : $children_data
 					];
 				}

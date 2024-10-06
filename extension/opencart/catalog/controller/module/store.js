@@ -5,11 +5,14 @@ namespace Opencart\Catalog\Controller\Extension\Opencart\Module;
  *
  * @package
  */
-class Store extends \Opencart\System\Engine\Controller {
+class StoreController extends Controller {
+	constructor(registry) {
+		super(registry)
+	}
 	/**
 	 * @return string
 	 */
-	public function index() {
+	async index() {
 		$status = true;
 
 		if (this.config.get('module_store_admin')) {
@@ -33,13 +36,13 @@ class Store extends \Opencart\System\Engine\Controller {
 
 			this.load.model('setting/store');
 
-			$results = this.model_setting_store.getStores();
+			const results = await this.model_setting_store.getStores();
 
 			for(let result of results) {
 				data['stores'].push({
-					'store_id' : $result['store_id'],
-					'name'     : $result['name'],
-					'url'      : $result['url'] . 'index.php?route=common/home&session_id=' . this.session.getId()
+					'store_id' : result['store_id'],
+					'name'     : result['name'],
+					'url'      : result['url'] + 'index.php?route=common/home&session_id=' . this.session.getId()
 				];
 			}
 

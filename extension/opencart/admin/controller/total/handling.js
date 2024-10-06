@@ -1,38 +1,36 @@
-<?php
-namespace Opencart\Admin\Controller\Extension\Opencart\Total;
-/**
- * Class Handling
- *
- * @package Opencart\Admin\Controller\Extension\Opencart\Total
- */
-class Handling extends \Opencart\System\Engine\Controller {
+module.exports = class HandlingTotalController extends Controller {
+	constructor(registry) {
+		super(registry)
+	}
 	/**
 	 * @return void
 	 */
-	public function index(): void {
-		this.load.language('extension/opencart/total/handling');
+	async index() {
+		await this.load.language('extension/opencart/total/handling');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		data['breadcrumbs'] = [];
+		const data = {
+			breadcrumbs: []
+		};
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard', 'user_token=' . this.session.data['user_token'])
-		];
+			'href' : this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_extension'),
-			'href' : this.url.link('marketplace/extension', 'user_token=' . this.session.data['user_token'] . '&type=total')
-		];
+			'href' : this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=total')
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('extension/opencart/total/handling', 'user_token=' . this.session.data['user_token'])
-		];
+			'href' : this.url.link('extension/opencart/total/handling', 'user_token=' + this.session.data['user_token'])
+		});
 
-		data['save'] = this.url.link('extension/opencart/total/handling.save', 'user_token=' . this.session.data['user_token']);
-		data['back'] = this.url.link('marketplace/extension', 'user_token=' . this.session.data['user_token'] . '&type=total');
+		data['save'] = this.url.link('extension/opencart/total/handling.save', 'user_token=' + this.session.data['user_token']);
+		data['back'] = this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=total');
 
 		data['total_handling_total'] = this.config.get('total_handling_total');
 		data['total_handling_fee'] = this.config.get('total_handling_fee');
@@ -55,21 +53,21 @@ class Handling extends \Opencart\System\Engine\Controller {
 	/**
 	 * @return void
 	 */
-	public function save(): void {
-		this.load.language('extension/opencart/total/handling');
+	async save() {
+		await this.load.language('extension/opencart/total/handling');
 
-		$const json = {};
+		const json = {};
 
 		if (!this.user.hasPermission('modify', 'extension/opencart/total/handling')) {
-			$json['error'] = this.language.get('error_permission');
+			json['error'] = this.language.get('error_permission');
 		}
 
-		if (!$json) {
+		if (!json.error) {
 			this.load.model('setting/setting',this);
 
-			this.model_setting_setting.editSetting('total_handling', this.request.post);
+			await this.model_setting_setting.editSetting('total_handling', this.request.post);
 
-			$json['success'] = this.language.get('text_success');
+			json['success'] = this.language.get('text_success');
 		}
 
 		this.response.addHeader('Content-Type: application/json');

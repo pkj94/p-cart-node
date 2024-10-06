@@ -5,21 +5,24 @@ namespace Opencart\Catalog\Controller\Extension\Opencart\Module;
  *
  * @package
  */
-class Information extends \Opencart\System\Engine\Controller {
+class InformationController extends Controller {
+	constructor(registry) {
+		super(registry)
+	}
 	/**
 	 * @return string
 	 */
-	public function index() {
+	async index() {
 		this.load.language('extension/opencart/module/information');
 
 		this.load.model('catalog/information');
 
 		data['informations'] = [];
 
-		foreach (this.model_catalog_information.getInformations() as $result) {
+		foreach (this.model_catalog_information.getInformations() as result) {
 			data['informations'].push({
-				'title' : $result['title'],
-				'href'  : this.url.link('information/information', 'language=' . this.config.get('config_language') . '&information_id=' . $result['information_id'])
+				'title' : result['title'],
+				'href'  : this.url.link('information/information', 'language=' . this.config.get('config_language') . '&information_id=' . result['information_id'])
 			];
 		}
 

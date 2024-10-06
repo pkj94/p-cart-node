@@ -11,7 +11,7 @@ class FreeCheckout extends \Opencart\System\Engine\Model {
 	 *
 	 * @return array
 	 */
-	public function getMethods(array $address = []): array {
+	async getMethods(array $address = []): array {
 		this.load.language('extension/opencart/payment/free_checkout');
 
 		$total = this.cart.getTotal();
@@ -24,7 +24,7 @@ class FreeCheckout extends \Opencart\System\Engine\Model {
 
 		$total = $total + array_sum($amounts);
 
-		if ((float)$total <= 0.00) {
+		if ($total <= 0.00) {
 			$status = true;
 		} elseif (this.cart.hasSubscription()) {
 			$status = false;

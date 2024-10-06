@@ -5,11 +5,14 @@ namespace Opencart\Catalog\Controller\Extension\Opencart\Total;
  *
  * @package
  */
-class Voucher extends \Opencart\System\Engine\Controller {
+class VoucherController extends Controller {
+	constructor(registry) {
+		super(registry)
+	}
 	/**
 	 * @return string
 	 */
-	public function index() {
+	async index() {
 		if (this.config.get('total_voucher_status')) {
 			this.load.language('extension/opencart/total/voucher');
 
@@ -31,10 +34,10 @@ class Voucher extends \Opencart\System\Engine\Controller {
 	/**
 	 * @return void
 	 */
-	public function save(): void {
+	async save() {
 		this.load.language('extension/opencart/total/voucher');
 
-		$const json = {};
+		const json = {};
 
 		if (isset(this.request.post['voucher'])) {
 			$voucher = (string)this.request.post['voucher'];
@@ -56,13 +59,13 @@ class Voucher extends \Opencart\System\Engine\Controller {
 			}
 		}
 
-		if (!$json) {
+		if (!json.error) {
 			if ($voucher) {
-				$json['success'] = this.language.get('text_success');
+				json['success'] = this.language.get('text_success');
 
 				this.session.data['voucher'] = $voucher;
 			} else {
-				$json['success'] = this.language.get('text_remove');
+				json['success'] = this.language.get('text_remove');
 
 				unset(this.session.data['voucher']);
 			}

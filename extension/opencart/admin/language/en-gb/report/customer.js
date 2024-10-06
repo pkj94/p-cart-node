@@ -1,29 +1,30 @@
-<?php
-// Heading
-$_['heading_title']     = 'Customer Report';
+module.exports = {
+    // Heading
+    heading_title: 'Customer Report',
 
-// Text
-$_['text_extension']    = 'Extensions';
-$_['text_edit']         = 'Edit Customer Report';
-$_['text_success']      = 'Success: You have modified customers report!';
-$_['text_filter']       = 'Filter';
-$_['text_year']         = 'Years';
-$_['text_month']        = 'Months';
-$_['text_week']         = 'Weeks';
-$_['text_day']          = 'Days';
-$_['text_all_status']   = 'All Statuses';
+    // Text
+    text_extension: 'Extensions',
+    text_edit: 'Edit Customer Report',
+    text_success: 'Success: You have modified customers report!',
+    text_filter: 'Filter',
+    text_year: 'Years',
+    text_month: 'Months',
+    text_week: 'Weeks',
+    text_day: 'Days',
+    text_all_status: 'All Statuses',
 
-// Column
-$_['column_date_start'] = 'Date Start';
-$_['column_date_end']   = 'Date End';
-$_['column_total']      = 'No. Customers';
+    // Column
+    column_date_start: 'Date Start',
+    column_date_end: 'Date End',
+    column_total: 'No. Customers',
 
-// Entry
-$_['entry_date_start']  = 'Date Start';
-$_['entry_date_end']    = 'Date End';
-$_['entry_group']       = 'Group By';
-$_['entry_status']      = 'Status';
-$_['entry_sort_order']  = 'Sort Order';
+    // Entry
+    entry_date_start: 'Date Start',
+    entry_date_end: 'Date End',
+    entry_group: 'Group By',
+    entry_status: 'Status',
+    entry_sort_order: 'Sort Order',
 
-// Error
-$_['error_permission']  = 'Warning: You do not have permission to modify customers report!';
+    // Error
+    error_permission: 'Warning: You do not have permission to modify customers report!',
+}

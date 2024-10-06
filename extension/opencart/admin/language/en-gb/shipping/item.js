@@ -1,18 +1,19 @@
-<?php
-// Heading
-$_['heading_title']    = 'Per Item';
+module.exports = {
+    // Heading
+    heading_title: 'Per Item',
 
-// Text
-$_['text_extension']   = 'Extensions';
-$_['text_success']     = 'Success: You have modified shipping per item rates!';
-$_['text_edit']        = 'Edit Per Item Shipping';
+    // Text
+    text_extension: 'Extensions',
+    text_success: 'Success: You have modified shipping per item rates!',
+    text_edit: 'Edit Per Item Shipping',
 
-// Entry
-$_['entry_cost']       = 'Cost';
-$_['entry_tax_class']  = 'Tax Class';
-$_['entry_geo_zone']   = 'Geo Zone';
-$_['entry_status']     = 'Status';
-$_['entry_sort_order'] = 'Sort Order';
+    // Entry
+    entry_cost: 'Cost',
+    entry_tax_class: 'Tax Class',
+    entry_geo_zone: 'Geo Zone',
+    entry_status: 'Status',
+    entry_sort_order: 'Sort Order',
 
-// Error
-$_['error_permission'] = 'Warning: You do not have permission to modify shipping per item rates!';
+    // Error
+    error_permission: 'Warning: You do not have permission to modify shipping per item rates!',
+}

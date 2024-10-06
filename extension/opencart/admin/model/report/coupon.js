@@ -1,34 +1,27 @@
-<?php
-namespace Opencart\Admin\Model\Extension\Opencart\Report;
-/**
- * Class Coupon
- *
- * @package Opencart\Admin\Model\Extension\Opencart\Report
- */
-class Coupon extends \Opencart\System\Engine\Model {
+module.exports = class CouponReportModel extends Model {
 	/**
 	 * @param array data
 	 *
 	 * @return array
 	 */
-	public function getCoupons(array data = []): array {
-		$sql = "SELECT ch.`coupon_id`, c.`name`, c.`code`, COUNT(DISTINCT ch.`order_id`) AS orders, SUM(ch.`amount`) AS `total` FROM `" . DB_PREFIX . "coupon_history` ch LEFT JOIN `" . DB_PREFIX . "coupon` c ON (ch.`coupon_id` = c.`coupon_id`)";
+	async getCoupons(data = []) {
+		let sql = "SELECT ch.`coupon_id`, c.`name`, c.`code`, COUNT(DISTINCT ch.`order_id`) AS orders, SUM(ch.`amount`) AS `total` FROM `" + DB_PREFIX + "coupon_history` ch LEFT JOIN `" + DB_PREFIX + "coupon` c ON (ch.`coupon_id` = c.`coupon_id`)";
 
-		$implode = [];
+		const implode = [];
 
-		if (!empty(data['filter_date_start'])) {
-			$implode[] = "DATE(ch.`date_added`) >= DATE('" . this.db.escape((string)data['filter_date_start']) . "')";
+		if (data['filter_date_start']) {
+			implode.push("DATE(ch.`date_added`) >= DATE(" + this.db.escape(data['filter_date_start']) + ")");
 		}
 
-		if (!empty(data['filter_date_end'])) {
-			$implode[] = "DATE(ch.`date_added`) <= DATE('" . this.db.escape((string)data['filter_date_end']) . "')";
+		if (data['filter_date_end']) {
+			implode.push("DATE(ch.`date_added`) <= DATE(" + this.db.escape(data['filter_date_end']) + ")");
 		}
 
-		if ($implode) {
-			$sql .= " WHERE " . implode(" AND ", $implode);
+		if (implode.length) {
+			sql += " WHERE " + implode.join(" AND ");
 		}
 
-		$sql .= " GROUP BY ch.`coupon_id` ORDER BY `total` DESC";
+		sql += " GROUP BY ch.`coupon_id` ORDER BY `total` DESC";
 
 		if (isset(data['start']) || isset(data['limit'])) {
 			if (data['start'] < 0) {
@@ -39,12 +32,12 @@ class Coupon extends \Opencart\System\Engine\Model {
 				data['limit'] = 20;
 			}
 
-			$sql .= " LIMIT " . (int)data['start'] . "," . (int)data['limit'];
+			sql+= " LIMIT " + data['start'] + "," + data['limit'];
 		}
 
-		$query = this.db.query($sql);
+		let query = await this.db.query(sql);
 
-		return $query.rows;
+		return query.rows;
 	}
 
 	/**
@@ -52,25 +45,25 @@ class Coupon extends \Opencart\System\Engine\Model {
 	 *
 	 * @return int
 	 */
-	public function getTotalCoupons(array data = []): int {
-		$sql = "SELECT COUNT(DISTINCT `coupon_id`) AS `total` FROM `" . DB_PREFIX . "coupon_history`";
+	async getTotalCoupons(data = []) {
+		let sql = "SELECT COUNT(DISTINCT `coupon_id`) AS `total` FROM `" + DB_PREFIX + "coupon_history`";
 
-		$implode = [];
+		const implode = [];
 
-		if (!empty(data['filter_date_start'])) {
-			$implode[] = "DATE(`date_added`) >= DATE('" . this.db.escape((string)data['filter_date_start']) . "')";
+		if (!data['filter_date_start']) {
+			implode.push("DATE(`date_added`) >= DATE(" + this.db.escape(data['filter_date_start']) + ")");
 		}
 
-		if (!empty(data['filter_date_end'])) {
-			$implode[] = "DATE(`date_added`) <= DATE('" . this.db.escape((string)data['filter_date_end']) . "')";
+		if (!data['filter_date_end']) {
+			implode.push("DATE(`date_added`) <= DATE(" + this.db.escape(data['filter_date_end']) + ")");
+			}
+
+		if (implode.length) {
+				sql+= " WHERE " + implode.join(" AND ");
+			}
+
+			let query = await this.db.query(sql);
+
+			return query.row['total'];
 		}
-
-		if ($implode) {
-			$sql .= " WHERE " . implode(" AND ", $implode);
-		}
-
-		$query = this.db.query($sql);
-
-		return (int)$query.row['total'];
 	}
-}

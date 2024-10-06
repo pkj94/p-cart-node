@@ -5,13 +5,16 @@ namespace Opencart\Catalog\Controller\Extension\Opencart\Module;
  *
  * @package
  */
-class HTML extends \Opencart\System\Engine\Controller {
+class HTMLController extends Controller {
+	constructor(registry) {
+		super(registry)
+	}
 	/**
 	 * @param array $setting
 	 *
 	 * @return string
 	 */
-	public function index(array $setting) {
+	async index(array $setting) {
 		if (isset($setting['module_description'][this.config.get('config_language_id')])) {
 			data['heading_title'] = html_entity_decode($setting['module_description'][this.config.get('config_language_id')]['title'], ENT_QUOTES, 'UTF-8');
 

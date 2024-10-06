@@ -13,14 +13,14 @@ class Shipping extends \Opencart\System\Engine\Model {
 	 *
 	 * @return void
 	 */
-	public function getTotal(array &$totals, array &$taxes, float &$total): void {
+	async getTotal(array &$totals, array &$taxes, float &$total) {
 		if (this.cart.hasShipping() && isset(this.session.data['shipping_method'])) {
 			$totals.push({
 				'extension'  : 'opencart',
 				'code'       : 'shipping',
 				'title'      : this.session.data['shipping_method']['name'],
 				'value'      : this.session.data['shipping_method']['cost'],
-				'sort_order' : (int)this.config.get('total_shipping_sort_order')
+				'sort_order' : this.config.get('total_shipping_sort_order')
 			];
 
 			if (isset(this.session.data['shipping_method']['tax_class_id'])) {

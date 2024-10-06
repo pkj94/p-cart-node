@@ -1,53 +1,49 @@
-<?php
-namespace Opencart\Admin\Controller\Extension\Opencart\Theme;
-/**
- * Class Basic
- *
- * @package Opencart\Admin\Controller\Extension\Opencart\Theme
- */
-class Basic extends \Opencart\System\Engine\Controller {
+module.exports = class BasicThemeController extends Controller {
+	constructor(registry) {
+		super(registry)
+	}
 	/**
 	 * @return void
 	 */
-	public function index(): void {
-		this.load.language('extension/opencart/theme/basic');
+	async index() {
+		await this.load.language('extension/opencart/theme/basic');
 
 		this.document.setTitle(this.language.get('heading_title'));
-
+		let store_id = 0;
 		if (isset(this.request.get['store_id'])) {
-			$store_id = (int)this.request.get['store_id'];
-		} else {
-			$store_id = 0;
+			store_id = this.request.get['store_id'];
 		}
 
-		data['breadcrumbs'] = [];
+		const data = {
+			breadcrumbs: []
+		};
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard', 'user_token=' . this.session.data['user_token'])
-		];
+			'text': this.language.get('text_home'),
+			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_extension'),
-			'href' : this.url.link('marketplace/extension', 'user_token=' . this.session.data['user_token'] . '&type=theme')
-		];
+			'text': this.language.get('text_extension'),
+			'href': this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=theme')
+		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('extension/opencart/theme/basic', 'user_token=' . this.session.data['user_token'] . '&store_id=' . $store_id)
-		];
+			'text': this.language.get('heading_title'),
+			'href': this.url.link('extension/opencart/theme/basic', 'user_token=' + this.session.data['user_token'] + '&store_id='.store_id)
+		});
 
-		data['save'] = this.url.link('extension/opencart/theme/basic.save', 'user_token=' . this.session.data['user_token'] . '&store_id=' . $store_id);
-		data['back'] = this.url.link('marketplace/extension', 'user_token=' . this.session.data['user_token'] . '&type=theme');
+		data['save'] = this.url.link('extension/opencart/theme/basic.save', 'user_token=' + this.session.data['user_token'] + '&store_id='.store_id);
+		data['back'] = this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=theme');
+		let setting_info = {};
+		if (this.request.get['store_id']) {
+			this.load.model('setting/setting', this);
 
-		if (isset(this.request.get['store_id'])) {
-			this.load.model('setting/setting',this);
-
-			$setting_info = this.model_setting_setting.getSetting('theme_basic', this.request.get['store_id']);
+			setting_info = this.model_setting_setting.getSetting('theme_basic', this.request.get['store_id']);
 		}
 
-		if (isset($setting_info['theme_basic_status'])) {
-			data['theme_basic_status'] = $setting_info['theme_basic_status'];
+		if (isset(setting_info['theme_basic_status'])) {
+			data['theme_basic_status'] = setting_info['theme_basic_status'];
 		} else {
 			data['theme_basic_status'] = '';
 		}
@@ -62,27 +58,24 @@ class Basic extends \Opencart\System\Engine\Controller {
 	/**
 	 * @return void
 	 */
-	public function save(): void {
-		this.load.language('extension/opencart/theme/basic');
-
+	async save() {
+		await this.load.language('extension/opencart/theme/basic');
+		let store_id = 0;
 		if (isset(this.request.get['store_id'])) {
-			$store_id = (int)this.request.get['store_id'];
-		} else {
-			$store_id = 0;
+			store_id = this.request.get['store_id'];
 		}
-
-		$const json = {};
+		const json = {};
 
 		if (!this.user.hasPermission('modify', 'extension/opencart/theme/basic')) {
-			$json['error'] = this.language.get('error_permission');
+			json['error'] = this.language.get('error_permission');
 		}
 
-		if (!$json) {
-			this.load.model('setting/setting',this);
+		if (!json.error) {
+			this.load.model('setting/setting', this);
 
-			this.model_setting_setting.editSetting('theme_basic', this.request.post, $store_id);
+			await this.model_setting_setting.editSetting('theme_basic', this.request.post, store_id);
 
-			$json['success'] = this.language.get('text_success');
+			json['success'] = this.language.get('text_success');
 		}
 
 		this.response.addHeader('Content-Type: application/json');

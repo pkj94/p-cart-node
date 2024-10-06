@@ -1,17 +1,18 @@
-<?php
-// Heading
-$_['heading_title']    = 'Total Orders';
+module.exports = {
+    // Heading
+    heading_title: 'Total Orders',
 
-// Text
-$_['text_extension']   = 'Extensions';
-$_['text_success']     = 'Success: You have modified dashboard orders!';
-$_['text_edit']        = 'Edit Dashboard Orders';
-$_['text_view']        = 'View more...';
+    // Text
+    text_extension: 'Extensions',
+    text_success: 'Success: You have modified dashboard orders!',
+    text_edit: 'Edit Dashboard Orders',
+    text_view: 'View more...',
 
-// Entry
-$_['entry_status']     = 'Status';
-$_['entry_sort_order'] = 'Sort Order';
-$_['entry_width']      = 'Width';
+    // Entry
+    entry_status: 'Status',
+    entry_sort_order: 'Sort Order',
+    entry_width: 'Width',
 
-// Error
-$_['error_permission'] = 'Warning: You do not have permission to modify dashboard orders!';
+    // Error
+    error_permission: 'Warning: You do not have permission to modify dashboard orders!',
+}

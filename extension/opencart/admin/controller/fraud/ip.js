@@ -135,7 +135,7 @@ module.exports = class IpFaudController extends Controller {
 			'url': this.url.link('extension/opencart/fraud/ip+ip', 'user_token=' + this.session.data['user_token'] + '&page={page}')
 		});
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (ip_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (ip_total - limit)) ? ip_total : (((page - 1) * limit) + limit), ip_total, ceil(ip_total / limit));
+		data['results'] = sprintf(this.language.get('text_pagination'), (ip_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (ip_total - limit)) ? ip_total : (((page - 1) * limit) + limit), ip_total, Math.ceil(ip_total / limit));
 
 		this.response.setOutput(await this.load.view('extension/opencart/fraud/ip_ip', data));
 	}

@@ -5,11 +5,14 @@ namespace Opencart\Catalog\Controller\Extension\Opencart\Total;
  *
  * @package
  */
-class Shipping extends \Opencart\System\Engine\Controller {
+class ShippingController extends Controller {
+	constructor(registry) {
+		super(registry)
+	}
 	/**
 	 * @return string
 	 */
-	public function index() {
+	async index() {
 		if (this.config.get('total_shipping_status') && this.config.get('total_shipping_estimator') && this.cart.hasShipping()) {
 			this.load.language('extension/opencart/total/shipping');
 
@@ -19,7 +22,7 @@ class Shipping extends \Opencart\System\Engine\Controller {
 				data['zone_id'] = this.session.data['shipping_address']['zone_id'];
 			} else {
 				data['postcode'] = '';
-				data['country_id'] = (int)this.config.get('config_country_id');
+				data['country_id'] = this.config.get('config_country_id');
 				data['zone_id'] = '';
 			}
 
@@ -44,10 +47,10 @@ class Shipping extends \Opencart\System\Engine\Controller {
 	/**
 	 * @return void
 	 */
-	public function quote(): void {
+	async quote() {
 		this.load.language('extension/opencart/total/shipping');
 
-		$const json = {};
+		const json = {};
 
 		$keys = [
 			'postcode',
@@ -71,7 +74,7 @@ class Shipping extends \Opencart\System\Engine\Controller {
 
 		this.load.model('localisation/country');
 
-		$country_info = this.model_localisation_country.getCountry((int)this.request.post['country_id']);
+		$country_info = this.model_localisation_country.getCountry(this.request.post['country_id']);
 
 		if ($country_info && $country_info['postcode_required'] && (oc_strlen(this.request.post['postcode']) < 2 || oc_strlen(this.request.post['postcode']) > 10)) {
 			$json['error']['postcode'] = this.language.get('error_postcode');
@@ -85,7 +88,7 @@ class Shipping extends \Opencart\System\Engine\Controller {
 			$json['error']['zone'] = this.language.get('error_zone');
 		}
 
-		if (!$json) {
+		if (!json.error) {
 			if ($country_info) {
 				$country = $country_info['name'];
 				$iso_code_2 = $country_info['iso_code_2'];
@@ -142,10 +145,10 @@ class Shipping extends \Opencart\System\Engine\Controller {
 	/**
 	 * @return void
 	 */
-	public function save(): void {
+	async save() {
 		this.load.language('extension/opencart/total/shipping');
 
-		$const json = {};
+		const json = {};
 
 		if (!empty(this.request.post['shipping_method'])) {
 			$shipping = explode('.', this.request.post['shipping_method']);
@@ -157,10 +160,10 @@ class Shipping extends \Opencart\System\Engine\Controller {
 			$json['error'] = this.language.get('error_shipping');
 		}
 
-		if (!$json) {
+		if (!json.error) {
 			this.session.data['shipping_method'] = this.session.data['shipping_methods'][$shipping[0]]['quote'][$shipping[1]];
 
-			$json['success'] = this.language.get('text_success');
+			json['success'] = this.language.get('text_success');
 
 			unset(this.session.data['payment_method']);
 			unset(this.session.data['payment_methods']);

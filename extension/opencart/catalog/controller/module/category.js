@@ -5,11 +5,14 @@ namespace Opencart\Catalog\Controller\Extension\Opencart\Module;
  *
  * @package
  */
-class Category extends \Opencart\System\Engine\Controller {
+class CategoryController extends Controller {
+	constructor(registry) {
+		super(registry)
+	}
 	/**
 	 * @return string
 	 */
-	public function index() {
+	async index() {
 		this.load.language('extension/opencart/module/category');
 
 		if (isset(this.request.get['path'])) {
@@ -32,7 +35,7 @@ class Category extends \Opencart\System\Engine\Controller {
 
 		this.load.model('catalog/category');
 		
-		this.load.model('catalog/product');
+		this.load.model('catalog/product',this);
 
 		data['categories'] = [];
 
@@ -53,7 +56,7 @@ class Category extends \Opencart\System\Engine\Controller {
 					$children_data.push({
 						'category_id' : $child['category_id'],
 						'name'        : $child['name'] . (this.config.get('config_product_count') ? ' (' . this.model_catalog_product.getTotalProducts($filter_data) . ')' : ''),
-						'href'        : this.url.link('product/category', 'language=' . this.config.get('config_language') . '&path=' . $category['category_id'] . '_' . $child['category_id'])
+						'href'        : this.url.link('product/category', 'language=' . this.config.get('config_language') . '&path=' . $category['category_id'] + '_' . $child['category_id'])
 					];
 				}
 			}

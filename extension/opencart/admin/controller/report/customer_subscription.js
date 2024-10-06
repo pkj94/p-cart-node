@@ -160,7 +160,7 @@ module.exports = class CustomerSubscriptionReportController extends Controller {
 			'url': this.url.link('extension/opencart/report/customer_subscription+report', 'user_token=' + this.session.data['user_token'] + '&code=customer_subscription' + url + '&page={page}')
 		});
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (subscription_total) ? ((page - 1) * this.config.get('config_pagination')) + 1 : 0, (((page - 1) * this.config.get('config_pagination')) > (subscription_total - this.config.get('config_pagination'))) ? subscription_total : (((page - 1) * this.config.get('config_pagination')) + this.config.get('config_pagination')), subscription_total, ceil(subscription_total / this.config.get('config_pagination')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (subscription_total) ? ((page - 1) * this.config.get('config_pagination')) + 1 : 0, (((page - 1) * this.config.get('config_pagination')) > (subscription_total - this.config.get('config_pagination'))) ? subscription_total : (((page - 1) * this.config.get('config_pagination')) + this.config.get('config_pagination')), subscription_total, Math.ceil(subscription_total / this.config.get('config_pagination')));
 
 		data['filter_date_start'] = filter_date_start;
 		data['filter_date_end'] = filter_date_end;

@@ -5,11 +5,14 @@ namespace Opencart\Catalog\Controller\Extension\Opencart\Payment;
  *
  * @package
  */
-class BankTransfer extends \Opencart\System\Engine\Controller {
+class BankTransferController extends Controller {
+	constructor(registry) {
+		super(registry)
+	}
 	/**
 	 * @return string
 	 */
-	public function index() {
+	async index() {
 		this.load.language('extension/opencart/payment/bank_transfer');
 
 		data['bank'] = nl2br(this.config.get('payment_bank_transfer_bank_' . this.config.get('config_language_id')));
@@ -22,10 +25,10 @@ class BankTransfer extends \Opencart\System\Engine\Controller {
 	/**
 	 * @return void
 	 */
-	public function confirm(): void {
+	async confirm() {
 		this.load.language('extension/opencart/payment/bank_transfer');
 
-		$const json = {};
+		const json = {};
 
 		if (!isset(this.session.data['order_id'])) {
 			$json['error'] = this.language.get('error_order');
@@ -35,14 +38,14 @@ class BankTransfer extends \Opencart\System\Engine\Controller {
 			$json['error'] = this.language.get('error_payment_method');
 		}
 
-		if (!$json) {
+		if (!json.error) {
 			$comment  = this.language.get('text_instruction') . "\n\n";
 			$comment .= this.config.get('payment_bank_transfer_bank_' . this.config.get('config_language_id')) . "\n\n";
 			$comment .= this.language.get('text_payment');
 
 			this.load.model('checkout/order');
 
-			this.model_checkout_order.addHistory(this.session.data['order_id'], this.config.get('payment_bank_transfer_order_status_id'), $comment, true);
+			await this.model_checkout_order.addHistory(this.session.data['order_id'], this.config.get('payment_bank_transfer_order_status_id'), $comment, true);
 
 			$json['redirect'] = this.url.link('checkout/success', 'language=' . this.config.get('config_language'), true);
 		}

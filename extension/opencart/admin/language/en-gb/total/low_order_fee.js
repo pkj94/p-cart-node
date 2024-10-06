@@ -1,21 +1,22 @@
-<?php
-// Heading
-$_['heading_title']    = 'Low Order Fee';
+module.exports = {
+    // Heading
+    heading_title: 'Low Order Fee',
 
-// Text
-$_['text_extension']   = 'Extensions';
-$_['text_success']     = 'Success: You have modified low order fee total!';
-$_['text_edit']        = 'Edit Low Order Fee Total';
+    // Text
+    text_extension: 'Extensions',
+    text_success: 'Success: You have modified low order fee total!',
+    text_edit: 'Edit Low Order Fee Total',
 
-// Entry
-$_['entry_total']      = 'Order Total';
-$_['entry_fee']        = 'Fee';
-$_['entry_tax_class']  = 'Tax Class';
-$_['entry_status']     = 'Status';
-$_['entry_sort_order'] = 'Sort Order';
+    // Entry
+    entry_total: 'Order Total',
+    entry_fee: 'Fee',
+    entry_tax_class: 'Tax Class',
+    entry_status: 'Status',
+    entry_sort_order: 'Sort Order',
 
-// Help
-$_['help_total']       = 'The checkout total the order must reach before this order total is deactivated.';
+    // Help
+    help_total: 'The checkout total the order must reach before this order total is deactivated.',
 
-// Error
-$_['error_permission'] = 'Warning: You do not have permission to modify low order fee total!';
+    // Error
+    error_permission: 'Warning: You do not have permission to modify low order fee total!',
+}

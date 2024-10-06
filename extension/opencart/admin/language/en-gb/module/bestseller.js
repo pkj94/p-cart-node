@@ -1,33 +1,34 @@
-<?php
-// Heading
-$_['heading_title']    = 'Best Sellers';
+module.exports = {
+    // Heading
+    heading_title: 'Best Sellers',
 
-// Text
-$_['text_extension']   = 'Extensions';
-$_['text_success']     = 'Success: You have modified best sellers module!';
-$_['text_next']        = 'Success: You have modified %s best sellers out of %s!';
-$_['text_edit']        = 'Edit Best Sellers Module';
-$_['text_horizontal']  = 'Horizontal';
-$_['text_vertical']    = 'Vertical';
-$_['text_report']      = 'Reports';
+    // Text
+    text_extension: 'Extensions',
+    text_success: 'Success: You have modified best sellers module!',
+    text_next: 'Success: You have modified %s best sellers out of %s!',
+    text_edit: 'Edit Best Sellers Module',
+    text_horizontal: 'Horizontal',
+    text_vertical: 'Vertical',
+    text_report: 'Reports',
 
-// Column
-$_['column_product']   = 'Product';
-$_['column_total']     = 'Total';
+    // Column
+    column_product: 'Product',
+    column_total: 'Total',
 
-// Entry
-$_['entry_name']       = 'Module Name';
-$_['entry_axis']       = 'Axis';
-$_['entry_limit']      = 'Limit';
-$_['entry_width']      = 'Image Width';
-$_['entry_height']     = 'Image Height';
-$_['entry_status']     = 'Status';
+    // Entry
+    entry_name: 'Module Name',
+    entry_axis: 'Axis',
+    entry_limit: 'Limit',
+    entry_width: 'Image Width',
+    entry_height: 'Image Height',
+    entry_status: 'Status',
 
-// Button
-$_['button_sync']      = 'Generate Best Sellers List';
+    // Button
+    button_sync: 'Generate Best Sellers List',
 
-// Error
-$_['error_permission'] = 'Warning: You do not have permission to modify best sellers module!';
-$_['error_name']       = 'Module Name must be between 3 and 64 characters!';
-$_['error_width']      = 'Width required!';
-$_['error_height']     = 'Height required!';
+    // Error
+    error_permission: 'Warning: You do not have permission to modify best sellers module!',
+    error_name: 'Module Name must be between 3 and 64 characters!',
+    error_width: 'Width required!',
+    error_height: 'Height required!',
+}

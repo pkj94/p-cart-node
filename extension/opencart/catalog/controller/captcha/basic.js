@@ -5,11 +5,14 @@ namespace Opencart\Catalog\Controller\Extension\Opencart\Captcha;
  *
  * @package
  */
-class Basic extends \Opencart\System\Engine\Controller {
+class BasicController extends Controller {
+	constructor(registry) {
+		super(registry)
+	}
 	/**
 	 * @return string
 	 */
-	public function index() {
+	async index() {
 		this.load.language('extension/opencart/captcha/basic');
 
 		data['route'] = (string)this.request.get['route'];
@@ -22,7 +25,7 @@ class Basic extends \Opencart\System\Engine\Controller {
 	/**
 	 * @return string
 	 */
-	public function validate() {
+	async validate() {
 		this.load.language('extension/opencart/captcha/basic');
 
 		if (!isset(this.session.data['captcha']) || !isset(this.request.post['captcha']) || (this.session.data['captcha'] != this.request.post['captcha'])) {
@@ -35,7 +38,7 @@ class Basic extends \Opencart\System\Engine\Controller {
 	/**
 	 * @return void
 	 */
-	public function captcha(): void {
+	async captcha() {
 		$image  = imagecreatetruecolor(150, 35);
 
 		$width  = imagesx($image);
@@ -48,9 +51,9 @@ class Basic extends \Opencart\System\Engine\Controller {
 		$blue   = imagecolorallocatealpha($image, 0, 0, 255, 75);
 
 		imagefilledrectangle($image, 0, 0, $width, $height, $white);
-		imagefilledellipse($image, ceil(rand(5, 145)), ceil(rand(0, 35)), 30, 30, $red);
-		imagefilledellipse($image, ceil(rand(5, 145)), ceil(rand(0, 35)), 30, 30, $green);
-		imagefilledellipse($image, ceil(rand(5, 145)), ceil(rand(0, 35)), 30, 30, $blue);
+		imagefilledellipse($image, Math.ceil(rand(5, 145)), Math.ceil(rand(0, 35)), 30, 30, $red);
+		imagefilledellipse($image, Math.ceil(rand(5, 145)), Math.ceil(rand(0, 35)), 30, 30, $green);
+		imagefilledellipse($image, Math.ceil(rand(5, 145)), Math.ceil(rand(0, 35)), 30, 30, $blue);
 		imagefilledrectangle($image, 0, 0, $width, 0, $black);
 		imagefilledrectangle($image, $width - 1, 0, $width - 1, $height - 1, $black);
 		imagefilledrectangle($image, 0, 0, 0, $height - 1, $black);

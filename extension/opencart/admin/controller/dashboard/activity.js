@@ -1,3 +1,5 @@
+const strtotime = require("locutus/php/datetime/strtotime");
+
 module.exports = class ActivityDashboardController extends Controller {
 	constructor(registry) {
 		super(registry)
@@ -45,8 +47,8 @@ module.exports = class ActivityDashboardController extends Controller {
 		this.response.setOutput(await this.load.view('extension/opencart/dashboard/activity_form', data));
 	}
 
-	save() {
-		this.load.language('extension/opencart/dashboard/activity');
+	async save() {
+		await this.load.language('extension/opencart/dashboard/activity');
 
 		const json = {};
 
@@ -55,9 +57,9 @@ module.exports = class ActivityDashboardController extends Controller {
 		}
 
 		if (!json.error) {
-			this.load.model('setting/setting',this);
+			this.load.model('setting/setting', this);
 
-			this.model_setting_setting.editSetting('dashboard_activity', this.request.post);
+			await this.model_setting_setting.editSetting('dashboard_activity', this.request.post);
 
 			json.success = this.language.get('text_success');
 		}
@@ -66,8 +68,8 @@ module.exports = class ActivityDashboardController extends Controller {
 		this.response.setOutput(JSON.stringify(json));
 	}
 
-	dashboard() {
-		this.load.language('extension/opencart/dashboard/activity');
+	async dashboard() {
+		await this.load.language('extension/opencart/dashboard/activity');
 
 		const data = {};
 		data.activities = [];
@@ -76,7 +78,7 @@ module.exports = class ActivityDashboardController extends Controller {
 
 		const results = this.model_extension_opencart_report_activity.getActivities();
 
-		results.forEach(result : {
+		results.forEach(result => {
 			const comment = vsprintf(this.language.get('text_activity_' + result.key), JSON.parse(result.data));
 
 			const find = [
@@ -92,8 +94,8 @@ module.exports = class ActivityDashboardController extends Controller {
 			];
 
 			data.activities.push({
-				comment: comment.replace(new RegExp(find.join('|'), 'g'), (matched) : replace[find.indexOf(matched)]),
-				date_added: new Date(result.date_added).toLocaleString(this.language.get('datetime_format'))
+				comment: comment.replace(find, replace),
+				date_added: date(this.language.get('datetime_format'), strtotime(result['date_added']))
 			});
 		});
 

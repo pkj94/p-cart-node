@@ -13,7 +13,7 @@ class Voucher extends \Opencart\System\Engine\Model {
 	 *
 	 * @return void
 	 */
-	public function getTotal(array &$totals, array &$taxes, float &$total): void {
+	async getTotal(array &$totals, array &$taxes, float &$total) {
 		if (isset($this->session->data['voucher'])) {
 			$this->load->language('extension/opencart/total/voucher', 'voucher');
 
@@ -30,7 +30,7 @@ class Voucher extends \Opencart\System\Engine\Model {
 						'code'       => 'voucher',
 						'title'      => sprintf($this->language->get('voucher_text_voucher'), $this->session->data['voucher']),
 						'value'      => -$amount,
-						'sort_order' => (int)$this->config->get('total_voucher_sort_order')
+						'sort_order' => $this->config->get('total_voucher_sort_order')
 					];
 
 					$total -= $amount;
@@ -49,7 +49,7 @@ class Voucher extends \Opencart\System\Engine\Model {
 	 *
 	 * @return int
 	 */
-	public function confirm(array $order_info, array $order_total): int {
+	async confirm(array $order_info, array $order_total): int {
 		$code = '';
 
 		$start = strpos($order_total['title'], '(') + 1;
@@ -65,7 +65,7 @@ class Voucher extends \Opencart\System\Engine\Model {
 			$voucher_info = $this->model_checkout_voucher->getVoucher($code);
 
 			if ($voucher_info) {
-				$this->db->query("INSERT INTO `" . DB_PREFIX . "voucher_history` SET `voucher_id` = '" . (int)$voucher_info['voucher_id'] . "', `order_id` = '" . (int)$order_info['order_id'] . "', `amount` = '" . (float)$order_total['value'] . "', `date_added` = NOW()");
+				$this->db->query("INSERT INTO `" . DB_PREFIX . "voucher_history` SET `voucher_id` = '" . $voucher_info['voucher_id'] . "', `order_id` = '" . $order_info['order_id'] . "', `amount` = '" . $order_total['value'] . "', `date_added` = NOW()");
 			} else {
 				return $this->config->get('config_fraud_status_id');
 			}
@@ -79,7 +79,7 @@ class Voucher extends \Opencart\System\Engine\Model {
 	 *
 	 * @return void
 	 */
-	public function unconfirm(int $order_id): void {
-		$this->db->query("DELETE FROM `" . DB_PREFIX . "voucher_history` WHERE `order_id` = '" . (int)$order_id . "'");
+	async unconfirm(int $order_id) {
+		$this->db->query("DELETE FROM `" . DB_PREFIX . "voucher_history` WHERE `order_id` = '" . $order_id . "'");
 	}
 }

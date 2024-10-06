@@ -5,20 +5,23 @@ namespace Opencart\Catalog\Controller\Extension\Opencart\Module;
  *
  * @package
  */
-class Featured extends \Opencart\System\Engine\Controller {
+class FeaturedController extends Controller {
+	constructor(registry) {
+		super(registry)
+	}
 	/**
 	 * @param array $setting
 	 *
 	 * @return string
 	 */
-	public function index(array $setting) {
+	async index(array $setting) {
 		this.load.language('extension/opencart/module/featured');
 
 		data['axis'] = $setting['axis'];
 
 		data['products'] = [];
 
-		this.load.model('catalog/product');
+		this.load.model('catalog/product',this);
 		this.load.model('tool/image');
 
 		if (!empty($setting['product'])) {
@@ -32,7 +35,7 @@ class Featured extends \Opencart\System\Engine\Controller {
 				}
 			}
 
-			foreach ($products as $product) {
+			for(let product of products) {
 				if ($product['image']) {
 					$image = this.model_tool_image.resize(html_entity_decode($product['image'], ENT_QUOTES, 'UTF-8'), $setting['width'], $setting['height']);
 				} else {
@@ -45,14 +48,14 @@ class Featured extends \Opencart\System\Engine\Controller {
 					$price = false;
 				}
 
-				if ((float)$product['special']) {
+				if ($product['special']) {
 					$special = this.currency.format(this.tax.calculate($product['special'], $product['tax_class_id'], this.config.get('config_tax')), this.session.data['currency']);
 				} else {
 					$special = false;
 				}
 
 				if (this.config.get('config_tax')) {
-					$tax = this.currency.format((float)$product['special'] ? $product['special'] : $product['price'], this.session.data['currency']);
+					$tax = this.currency.format($product['special'] ? $product['special'] : $product['price'], this.session.data['currency']);
 				} else {
 					$tax = false;
 				}
@@ -66,7 +69,7 @@ class Featured extends \Opencart\System\Engine\Controller {
 					'special'     : $special,
 					'tax'         : $tax,
 					'minimum'     : $product['minimum'] > 0 ? $product['minimum'] : 1,
-					'rating'      : (int)$product['rating'],
+					'rating'      : $product['rating'],
 					'href'        : this.url.link('product/product', 'language=' . this.config.get('config_language') . '&product_id=' . $product['product_id'])
 				];
 

@@ -34,7 +34,7 @@ module.exports = class BankTransferPaymentController extends Controller {
 
 		const languages = await this.model_localisation_language.getLanguages();
 
-		languages.forEach(language : {
+		languages.forEach(language => {
 			data.payment_bank_transfer_bank[language.language_id] = this.config.get('payment_bank_transfer_bank_' + language.language_id);
 		});
 
@@ -75,7 +75,7 @@ module.exports = class BankTransferPaymentController extends Controller {
 
 		const languages = await this.model_localisation_language.getLanguages();
 
-		languages.forEach(language : {
+		languages.forEach(language => {
 			if (!this.request.post['payment_bank_transfer_bank_' + language.language_id]) {
 				json.error['bank_' + language.language_id] = this.language.get('error_bank');
 			}

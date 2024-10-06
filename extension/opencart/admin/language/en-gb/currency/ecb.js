@@ -1,15 +1,16 @@
-<?php
-// Heading
-$_['heading_title']    = 'European Central Bank Currency Converter';
+module.exports = {
+    // Heading
+    heading_title: 'European Central Bank Currency Converter',
 
-// Text
-$_['text_extension']   = 'Extensions';
-$_['text_success']     = 'Success: You have modified European Central Bank Currency Converter!';
-$_['text_edit']        = 'Edit European Central Bank';
-$_['text_support']     = 'This extension requires at EUR currency to be available currency option.';
+    // Text
+    text_extension: 'Extensions',
+    text_success: 'Success: You have modified European Central Bank Currency Converter!',
+    text_edit: 'Edit European Central Bank',
+    text_support: 'This extension requires at EUR currency to be available currency option.',
 
-// Entry
-$_['entry_status']     = 'Status';
+    // Entry
+    entry_status: 'Status',
 
-// Error
-$_['error_permission'] = 'Warning: You do not have permission to modify European Central Bank Currency Converter!';
+    // Error
+    error_permission: 'Warning: You do not have permission to modify European Central Bank Currency Converter!',
+}

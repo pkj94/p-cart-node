@@ -1,74 +1,63 @@
-<?php
-namespace Opencart\Admin\Model\Extension\Opencart\Module;
-/**
- * Class Bestseller
- *
- * @package Opencart\Admin\Controller\Extension\Opencart\Module
- */
-class Bestseller extends \Opencart\System\Engine\Model {
+module.exports = class BestsellerModuleModel extends Model {
 	/**
 	 * @return void
 	 */
-	public function install(): void {
-		this.db.query("CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "product_bestseller` (
-		  `product_id` int(11) NOT NULL,
-		  `total` int(11) NOT NULL,
-		  PRIMARY KEY (`product_id`)
-		) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci");
+	async install() {
+		await this.db.query("CREATE TABLE IF NOT EXISTS `" + DB_PREFIX + "product_bestseller` ( `product_id` int(11) NOT NULL, `total` int(11) NOT NULL, PRIMARY KEY (`product_id`) ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci");
 	}
 
 	/**
 	 * @return void
 	 */
-	public function uninstall(): void {
-		this.db.query("DROP TABLE IF EXISTS `" . DB_PREFIX . "product_bestseller`");
+	async uninstall() {
+		await this.db.query("DROP TABLE IF EXISTS `" + DB_PREFIX + "product_bestseller`");
 	}
 
 	/**
-	 * @param int $product_id
-	 * @param int $total
+	 * @param int product_id
+	 * @param int total
 	 *
 	 * @return void
 	 */
-	public function editTotal(int $product_id, int $total): void {
-		this.db.query("REPLACE INTO `" . DB_PREFIX . "product_bestseller` SET `product_id` = '" . (int)$product_id . "', `total` = '" . (int)$total . "'");
+	async editTotal(product_id, total) {
+		await this.db.query("REPLACE INTO `" + DB_PREFIX + "product_bestseller` SET `product_id` = '" + product_id + "', `total` = '" + total + "'");
 	}
 
 	/**
-	 * @param int $product_id
+	 * @param int product_id
 	 *
 	 * @return void
 	 */
-	public function delete(int $product_id): void {
-		this.db.query("DELETE FROM `" . DB_PREFIX . "product_bestseller` WHERE `product_id` = '" . (int)$product_id . "'");
+	async delete(product_id) {
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_bestseller` WHERE `product_id` = '" + product_id + "'");
 	}
 
 	/**
-	 * @param int $start
-	 * @param int $limit
+	 * @param int start
+	 * @param int limit
 	 *
 	 * @return array
 	 */
-	public function getReports(int $start = 0, int $limit = 10): array {
-		if ($start < 0) {
-			$start = 0;
+	async getReports(start = 0, limit = 10) {
+		if (start < 0) {
+			start = 0;
 		}
 
-		if ($limit < 1) {
-			$limit = 10;
+		if (limit < 1) {
+			limit = 10;
 		}
 
-		$query = this.db.query("SELECT * FROM `" . DB_PREFIX . "product_bestseller` ORDER BY `total` DESC LIMIT " . (int)$start . "," . (int)$limit);
+		let query = await await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_bestseller` ORDER BY `total` DESC LIMIT " + start + "," + limit);
 
-		return $query.rows;
+		return query.rows;
 	}
 
 	/**
 	 * @return int
 	 */
-	public function getTotalReports(): int {
-		$query = this.db.query("SELECT COUNT(*) AS `total` FROM `" . DB_PREFIX . "product_bestseller`");
+	async getTotalReports() {
+		let query = await await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "product_bestseller`");
 
-		return (int)$query.row['total'];
+		return query.row['total'];
 	}
 }

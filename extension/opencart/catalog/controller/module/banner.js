@@ -5,13 +5,16 @@ namespace Opencart\Catalog\Controller\Extension\Opencart\Module;
  *
  * @package
  */
-class Banner extends \Opencart\System\Engine\Controller {
+class BannerController extends Controller {
+	constructor(registry) {
+		super(registry)
+	}
 	/**
 	 * @param array $setting
 	 *
 	 * @return string
 	 */
-	public function index(array $setting) {
+	async index(array $setting) {
 		static $module = 0;
 
 		this.load.model('design/banner');
@@ -19,14 +22,14 @@ class Banner extends \Opencart\System\Engine\Controller {
 
 		data['banners'] = [];
 
-		$results = this.model_design_banner.getBanner($setting['banner_id']);
+		const results = await this.model_design_banner.getBanner($setting['banner_id']);
 
 		for(let result of results) {
-			if (is_file(DIR_IMAGE . html_entity_decode($result['image'], ENT_QUOTES, 'UTF-8'))) {
+			if (is_file(DIR_IMAGE . html_entity_decode(result['image'], ENT_QUOTES, 'UTF-8'))) {
 				data['banners'].push({
-					'title' : $result['title'],
-					'link'  : $result['link'],
-					'image' : this.model_tool_image.resize(html_entity_decode($result['image'], ENT_QUOTES, 'UTF-8'), $setting['width'], $setting['height'])
+					'title' : result['title'],
+					'link'  : result['link'],
+					'image' : this.model_tool_image.resize(html_entity_decode(result['image'], ENT_QUOTES, 'UTF-8'), $setting['width'], $setting['height'])
 				];
 			}
 		}

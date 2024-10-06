@@ -53,7 +53,7 @@ module.exports = class SaleDashboardController extends Controller {
 
 		if (!json.error) {
 			this.load.model('setting/setting', this);
-			this.model_setting_setting.editSetting('dashboard_sale', this.request.post);
+			await this.model_setting_setting.editSetting('dashboard_sale', this.request.post);
 			json.success = this.language.get('text_success');
 		}
 

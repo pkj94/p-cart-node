@@ -5,11 +5,14 @@ namespace Opencart\Catalog\Controller\Extension\Opencart\Total;
  *
  * @package
  */
-class Coupon extends \Opencart\System\Engine\Controller {
+class CouponController extends Controller {
+	constructor(registry) {
+		super(registry)
+	}
 	/**
 	 * @return string
 	 */
-	public function index() {
+	async index() {
 		if (this.config.get('total_coupon_status')) {
 			this.load.language('extension/opencart/total/coupon');
 
@@ -31,10 +34,10 @@ class Coupon extends \Opencart\System\Engine\Controller {
 	/**
 	 * @return void
 	 */
-	public function save(): void {
+	async save() {
 		this.load.language('extension/opencart/total/coupon');
 
-		$const json = {};
+		const json = {};
 
 		if (isset(this.request.post['coupon'])) {
 			$coupon = this.request.post['coupon'];
@@ -56,13 +59,13 @@ class Coupon extends \Opencart\System\Engine\Controller {
 			}
 		}
 
-		if (!$json) {
+		if (!json.error) {
 			if ($coupon) {
-				$json['success'] = this.language.get('text_success');
+				json['success'] = this.language.get('text_success');
 
 				this.session.data['coupon'] = $coupon;
 			} else {
-				$json['success'] = this.language.get('text_remove');
+				json['success'] = this.language.get('text_remove');
 
 				unset(this.session.data['coupon']);
 			}

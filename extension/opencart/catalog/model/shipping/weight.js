@@ -11,7 +11,7 @@ class Weight extends \Opencart\System\Engine\Model {
 	 *
 	 * @return array
 	 */
-	public function getQuote(array $address): array {
+	async getQuote(array $address): array {
 		this.load.language('extension/opencart/shipping/weight');
 
 		$quote_data = [];
@@ -20,9 +20,9 @@ class Weight extends \Opencart\System\Engine\Model {
 
 		$weight = this.cart.getWeight();
 
-		foreach ($query.rows as $result) {
-			if (this.config.get('shipping_weight_' . $result['geo_zone_id'] . '_status')) {
-				$query = this.db.query("SELECT * FROM `" . DB_PREFIX . "zone_to_geo_zone` WHERE `geo_zone_id` = '" . (int)$result['geo_zone_id'] . "' AND `country_id` = '" . (int)$address['country_id'] . "' AND (`zone_id` = '" . (int)$address['zone_id'] . "' OR `zone_id` = '0')");
+		foreach ($query.rows as result) {
+			if (this.config.get('shipping_weight_' . result['geo_zone_id'] + '_status')) {
+				$query = this.db.query("SELECT * FROM `" . DB_PREFIX . "zone_to_geo_zone` WHERE `geo_zone_id` = '" . result['geo_zone_id'] . "' AND `country_id` = '" . $address['country_id'] . "' AND (`zone_id` = '" . $address['zone_id'] . "' OR `zone_id` = '0')");
 
 				if ($query.num_rows) {
 					$status = true;
@@ -36,7 +36,7 @@ class Weight extends \Opencart\System\Engine\Model {
 			if ($status) {
 				$cost = '';
 
-				$rates = explode(',', this.config.get('shipping_weight_' . $result['geo_zone_id'] . '_rate'));
+				$rates = explode(',', this.config.get('shipping_weight_' . result['geo_zone_id'] + '_rate'));
 
 				foreach ($rates as $rate) {
 					data = explode(':', $rate);
@@ -51,9 +51,9 @@ class Weight extends \Opencart\System\Engine\Model {
 				}
 
 				if ((string)$cost != '') {
-					$quote_data['weight_' . $result['geo_zone_id']] = [
-						'code'         : 'weight.weight_' . $result['geo_zone_id'],
-						'name'         : $result['name'] . '  (' . this.language.get('text_weight') . ' ' . this.weight.format($weight, this.config.get('config_weight_class_id')) . ')',
+					$quote_data['weight_' . result['geo_zone_id']] = [
+						'code'         : 'weight.weight_' . result['geo_zone_id'],
+						'name'         : result['name'] + '  (' . this.language.get('text_weight') . ' ' . this.weight.format($weight, this.config.get('config_weight_class_id')) . ')',
 						'cost'         : $cost,
 						'tax_class_id' : this.config.get('shipping_weight_tax_class_id'),
 						'text'         : this.currency.format(this.tax.calculate($cost, this.config.get('shipping_weight_tax_class_id'), this.config.get('config_tax')), this.session.data['currency'])

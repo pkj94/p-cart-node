@@ -5,13 +5,16 @@ namespace Opencart\Catalog\Controller\Extension\Opencart\Currency;
  *
  * @package
  */
-class Fixer extends \Opencart\System\Engine\Controller {
+class FixerController extends Controller {
+	constructor(registry) {
+		super(registry)
+	}
 	/**
 	 * @param string $default
 	 *
 	 * @return void
 	 */
-	public function currency(string $default = ''): void {
+	async currency(string $default = '') {
 		if (this.config.get('currency_fixer_status')) {
 			$curl = curl_init();
 
@@ -40,19 +43,19 @@ class Fixer extends \Opencart\System\Engine\Controller {
 
 				this.load.model('localisation/currency');
 
-				$results = this.model_localisation_currency.getCurrencies();
+				const results = await this.model_localisation_currency.getCurrencies();
 
 				for(let result of results) {
-					if (isset($currencies[$result['code']])) {
+					if (isset($currencies[result['code']])) {
 						$from = $currencies['EUR'];
 
-						$to = $currencies[$result['code']];
+						$to = $currencies[result['code']];
 
-						this.model_localisation_currency.editValueByCode($result['code'], 1 / ($currencies[$default] * ($from / $to)));
+						await this.model_localisation_currency.editValueByCode(result['code'], 1 / ($currencies[$default] * ($from / $to)));
 					}
 				}
 
-				this.model_localisation_currency.editValueByCode($default, 1);
+				await this.model_localisation_currency.editValueByCode($default, 1);
 
 				this.cache.delete('currency');
 			}

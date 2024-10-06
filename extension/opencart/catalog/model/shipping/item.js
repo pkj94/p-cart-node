@@ -14,7 +14,7 @@ class Item extends \Opencart\System\Engine\Model {
 	function getQuote(array $address): array {
 		this.load.language('extension/opencart/shipping/item');
 
-		$query = this.db.query("SELECT * FROM `" . DB_PREFIX . "zone_to_geo_zone` WHERE `geo_zone_id` = '" . (int)this.config.get('shipping_item_geo_zone_id') . "' AND `country_id` = '" . (int)$address['country_id'] . "' AND (`zone_id` = '" . (int)$address['zone_id'] . "' OR `zone_id` = '0')");
+		$query = this.db.query("SELECT * FROM `" . DB_PREFIX . "zone_to_geo_zone` WHERE `geo_zone_id` = '" . this.config.get('shipping_item_geo_zone_id') . "' AND `country_id` = '" . $address['country_id'] . "' AND (`zone_id` = '" . $address['zone_id'] . "' OR `zone_id` = '0')");
 
 		if (!this.config.get('shipping_item_geo_zone_id')) {
 			$status = true;
@@ -35,8 +35,8 @@ class Item extends \Opencart\System\Engine\Model {
 				}
 			}
 
-			$cost = (float)this.config.get('shipping_item_cost');
-			$tax_class_id = (int)this.config.get('shipping_item_tax_class_id');
+			$cost = this.config.get('shipping_item_cost');
+			$tax_class_id = this.config.get('shipping_item_tax_class_id');
 
 			$quote_data = [];
 
