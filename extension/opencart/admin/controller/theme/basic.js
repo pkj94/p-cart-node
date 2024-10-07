@@ -10,7 +10,7 @@ module.exports = class BasicThemeController extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 		let store_id = 0;
-		if (isset(this.request.get['store_id'])) {
+		if ((this.request.get['store_id'])) {
 			store_id = this.request.get['store_id'];
 		}
 
@@ -42,7 +42,7 @@ module.exports = class BasicThemeController extends Controller {
 			setting_info = this.model_setting_setting.getSetting('theme_basic', this.request.get['store_id']);
 		}
 
-		if (isset(setting_info['theme_basic_status'])) {
+		if ((setting_info['theme_basic_status'])) {
 			data['theme_basic_status'] = setting_info['theme_basic_status'];
 		} else {
 			data['theme_basic_status'] = '';
@@ -61,12 +61,12 @@ module.exports = class BasicThemeController extends Controller {
 	async save() {
 		await this.load.language('extension/opencart/theme/basic');
 		let store_id = 0;
-		if (isset(this.request.get['store_id'])) {
+		if ((this.request.get['store_id'])) {
 			store_id = this.request.get['store_id'];
 		}
 		const json = {};
 
-		if (!this.user.hasPermission('modify', 'extension/opencart/theme/basic')) {
+		if (!await this.user.hasPermission('modify', 'extension/opencart/theme/basic')) {
 			json['error'] = this.language.get('error_permission');
 		}
 

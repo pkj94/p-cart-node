@@ -51,7 +51,7 @@ class ECBController extends Controller {
 					const results = await this.model_localisation_currency.getCurrencies();
 
 					for(let result of results) {
-						if (isset($currencies[result['code']])) {
+						if (($currencies[result['code']])) {
 							$from = $currencies['EUR'];
 
 							$to = $currencies[result['code']];

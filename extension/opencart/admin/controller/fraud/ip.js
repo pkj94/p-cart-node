@@ -59,7 +59,7 @@ module.exports = class IpFaudController extends Controller {
 
 		const json = {};
 
-		if (!this.user.hasPermission('modify', 'extension/opencart/fraud/ip')) {
+		if (!await this.user.hasPermission('modify', 'extension/opencart/fraud/ip')) {
 			json['error'] = this.language.get('error_permission');
 		}
 
@@ -79,7 +79,7 @@ module.exports = class IpFaudController extends Controller {
 	 * @return void
 	 */
 	async install() {
-		if (this.user.hasPermission('modify', 'extension/fraud')) {
+		if (await this.user.hasPermission('modify', 'extension/fraud')) {
 			this.load.model('extension/opencart/fraud/ip', this);
 
 			await this.model_extension_opencart_fraud_ip.install();
@@ -90,7 +90,7 @@ module.exports = class IpFaudController extends Controller {
 	 * @return void
 	 */
 	async uninstall() {
-		if (this.user.hasPermission('modify', 'extension/fraud')) {
+		if (await this.user.hasPermission('modify', 'extension/fraud')) {
 			this.load.model('extension/opencart/fraud/ip', this);
 
 			await this.model_extension_opencart_fraud_ip.uninstall();
@@ -104,7 +104,7 @@ module.exports = class IpFaudController extends Controller {
 		const data = {};
 		await this.load.language('extension/opencart/fraud/ip');
 		let page = 1;
-		if (isset(this.request.get['page'])) {
+		if ((this.request.get['page'])) {
 			page = this.request.get['page'];
 		}
 
@@ -148,7 +148,7 @@ module.exports = class IpFaudController extends Controller {
 
 		const json = {};
 
-		if (!this.user.hasPermission('modify', 'extension/opencart/fraud/ip')) {
+		if (!await this.user.hasPermission('modify', 'extension/opencart/fraud/ip')) {
 			json['error'] = this.language.get('error_permission');
 		}
 
@@ -180,7 +180,7 @@ module.exports = class IpFaudController extends Controller {
 
 		const json = {};
 
-		if (!this.user.hasPermission('modify', 'extension/opencart/fraud/ip')) {
+		if (!await this.user.hasPermission('modify', 'extension/opencart/fraud/ip')) {
 			json['error'] = this.language.get('error_permission');
 		}
 

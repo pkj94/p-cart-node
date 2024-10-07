@@ -51,7 +51,7 @@ module.exports = class CustomerReportController extends Controller {
 
 		const json = {};
 
-		if (!this.user.hasPermission('modify', 'extension/opencart/report/customer')) {
+		if (!await this.user.hasPermission('modify', 'extension/opencart/report/customer')) {
 			json['error'] = this.language.get('error_permission');
 		}
 
@@ -173,7 +173,7 @@ module.exports = class CustomerReportController extends Controller {
 			url += '&filter_date_end=' + this.request.get['filter_date_end'];
 		}
 
-		if (isset(this.request.get['filter_group'])) {
+		if ((this.request.get['filter_group'])) {
 			url += '&filter_group=' + this.request.get['filter_group'];
 		}
 

@@ -38,7 +38,7 @@ module.exports = class ECBCurrencyController extends Controller {
 
     const json = {};
 
-    if (!this.user.hasPermission('modify', 'extension/opencart/currency/ecb')) {
+    if (!await this.user.hasPermission('modify', 'extension/opencart/currency/ecb')) {
       json.error = this.language.get('error_permission');
     }
 

@@ -1462,7 +1462,7 @@ $('textarea[data-oc-toggle=\'ckeditor\']').ckeditor({
 $('#input-manufacturer').autocomplete({
     'source': function (request, response) {
         $.ajax({
-            url: 'index.php?route=catalog/manufacturer.autocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request),
+            url: '?route=catalog/manufacturer.autocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request),
             dataType: 'json',
             success: function (json) {
                 json.unshift({
@@ -1489,7 +1489,7 @@ $('#input-manufacturer').autocomplete({
 $('#input-category').autocomplete({
     'source': function (request, response) {
         $.ajax({
-            url: 'index.php?route=catalog/category.autocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request),
+            url: '?route=catalog/category.autocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request),
             dataType: 'json',
             success: function (json) {
                 response($.map(json, function (item) {
@@ -1523,7 +1523,7 @@ $('#product-category').on('click', '.btn', function () {
 $('#input-filter').autocomplete({
     'source': function (request, response) {
         $.ajax({
-            url: 'index.php?route=catalog/filter.autocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request),
+            url: '?route=catalog/filter.autocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request),
             dataType: 'json',
             success: function (json) {
                 response($.map(json, function (item) {
@@ -1557,7 +1557,7 @@ $('#product-filter').on('click', '.btn', function () {
 $('#input-download').autocomplete({
     'source': function (request, response) {
         $.ajax({
-            url: 'index.php?route=catalog/download.autocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request),
+            url: '?route=catalog/download.autocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request),
             dataType: 'json',
             success: function (json) {
                 response($.map(json, function (item) {
@@ -1591,7 +1591,7 @@ $('#product-download').on('click', '.btn', function () {
 $('#input-related').autocomplete({
     'source': function (request, response) {
         $.ajax({
-            url: 'index.php?route=catalog/product.autocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request),
+            url: '?route=catalog/product.autocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request),
             dataType: 'json',
             success: function (json) {
                 response($.map(json, function (item) {
@@ -1625,7 +1625,7 @@ var attributeautocomplete = function (attribute_row) {
     $('#input-attribute-' + attribute_row).autocomplete({
         'source': function (request, response) {
             $.ajax({
-                url: 'index.php?route=catalog/attribute.autocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request),
+                url: '?route=catalog/attribute.autocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request),
                 dataType: 'json',
                 success: function (json) {
                     response($.map(json, function (item) {
@@ -1682,7 +1682,7 @@ var option_row = {{ option_row }};
 $('#input-option').autocomplete({
     'source': function (request, response) {
         $.ajax({
-            url: 'index.php?route=catalog/option.autocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request),
+            url: '?route=catalog/option.autocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request),
             dataType: 'json',
             success: function (json) {
                 response($.map(json, function (item) {

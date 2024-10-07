@@ -51,7 +51,7 @@ module.exports = class SaleCouponReportController extends Controller {
 
 		const json = {};
 
-		if (!this.user.hasPermission('modify', 'extension/opencart/report/sale_coupon')) {
+		if (!await this.user.hasPermission('modify', 'extension/opencart/report/sale_coupon')) {
 			json['error'] = this.language.get('error_permission');
 		}
 

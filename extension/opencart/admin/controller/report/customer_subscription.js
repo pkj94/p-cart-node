@@ -49,7 +49,7 @@ module.exports = class CustomerSubscriptionReportController extends Controller {
 
 		const json = {};
 
-		if (!this.user.hasPermission('modify', 'extension/opencart/report/customer_subscription')) {
+		if (!await this.user.hasPermission('modify', 'extension/opencart/report/customer_subscription')) {
 			json['error'] = this.language.get('error_permission');
 		}
 

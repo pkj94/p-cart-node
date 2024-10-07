@@ -14,7 +14,7 @@ class Voucher extends \Opencart\System\Engine\Model {
 	 * @return void
 	 */
 	async getTotal(array &$totals, array &$taxes, float &$total) {
-		if (isset($this->session->data['voucher'])) {
+		if (($this->session->data['voucher'])) {
 			$this->load->language('extension/opencart/total/voucher', 'voucher');
 
 			$this->load->model('checkout/voucher');

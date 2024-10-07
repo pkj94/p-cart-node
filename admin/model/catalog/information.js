@@ -6,13 +6,16 @@ namespace Opencart\Admin\Model\Catalog;
  * @package Opencart\Admin\Model\Catalog
  */
 class InformationModel  extends Model {
+	constructor(registry){
+		super(registry)
+	}
 	/**
 	 * @param data
 	 *
 	 * @return int
 	 */
 	async addInformation(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "information` SET `sort_order` = '" + data['sort_order'] + "', `bottom` = '" + (isset(data['bottom']) ? data['bottom'] : 0) + "', `status` = '" + (data['status'] ? data['status'] : 0) + "'");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "information` SET `sort_order` = '" + data['sort_order'] + "', `bottom` = '" + ((data['bottom']) ? data['bottom'] : 0) + "', `status` = '" + (data['status'] ? data['status'] : 0) + "'");
 
 		information_id = this.db.getLastId();
 
@@ -20,14 +23,14 @@ class InformationModel  extends Model {
 			await this.db.query("INSERT INTO `" + DB_PREFIX + "information_description` SET `information_id` = '" + information_id + "', `language_id` = '" + language_id + "', `title` = '" + this.db.escape(value['title']) + "', `description` = '" + this.db.escape(value['description']) + "', `meta_title` = '" + this.db.escape(value['meta_title']) + "', `meta_description` = '" + this.db.escape(value['meta_description']) + "', `meta_keyword` = '" + this.db.escape(value['meta_keyword']) + "'");
 		}
 
-		if (isset(data['information_store'])) {
+		if ((data['information_store'])) {
 			for (data['information_store'] of store_id) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "information_to_store` SET `information_id` = '" + information_id + "', `store_id` = '" + store_id + "'");
 			}
 		}
 
 		// SEO URL
-		if (isset(data['information_seo_url'])) {
+		if ((data['information_seo_url'])) {
 			for (data['information_seo_url'] of store_id : language) {
 				for (language of language_id : keyword) {
 					await this.db.query("INSERT INTO `" + DB_PREFIX + "seo_url` SET `store_id` = '" + store_id + "', `language_id` = '" + language_id + "', `key` = 'information_id', `value` = '" + information_id + "', `keyword` = '" + this.db.escape(keyword) + "'");
@@ -35,7 +38,7 @@ class InformationModel  extends Model {
 			}
 		}
 
-		if (isset(data['information_layout'])) {
+		if ((data['information_layout'])) {
 			for (data['information_layout'] of store_id : layout_id) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "information_to_layout` SET `information_id` = '" + information_id + "', `store_id` = '" + store_id + "', `layout_id` = '" + layout_id + "'");
 			}
@@ -53,7 +56,7 @@ class InformationModel  extends Model {
 	 * @return void
 	 */
 	async editInformation(information_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "information` SET `sort_order` = '" + data['sort_order'] + "', `bottom` = '" + (isset(data['bottom']) ? data['bottom'] : 0) + "', `status` = '" + (data['status'] ? data['status'] : 0) + "' WHERE `information_id` = '" + information_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "information` SET `sort_order` = '" + data['sort_order'] + "', `bottom` = '" + ((data['bottom']) ? data['bottom'] : 0) + "', `status` = '" + (data['status'] ? data['status'] : 0) + "' WHERE `information_id` = '" + information_id + "'");
 
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "information_description` WHERE `information_id` = '" + information_id + "'");
 
@@ -63,7 +66,7 @@ class InformationModel  extends Model {
 
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "information_to_store` WHERE `information_id` = '" + information_id + "'");
 
-		if (isset(data['information_store'])) {
+		if ((data['information_store'])) {
 			for (data['information_store'] of store_id) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "information_to_store` SET `information_id` = '" + information_id + "', `store_id` = '" + store_id + "'");
 			}
@@ -71,7 +74,7 @@ class InformationModel  extends Model {
 
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "seo_url` WHERE `key` = 'information_id' AND `value` = '" + information_id + "'");
 
-		if (isset(data['information_seo_url'])) {
+		if ((data['information_seo_url'])) {
 			for (data['information_seo_url'] of store_id : language) {
 				for (language of language_id : keyword) {
 					await this.db.query("INSERT INTO `" + DB_PREFIX + "seo_url` SET `store_id` = '" + store_id + "', `language_id` = '" + language_id + "', `key` = 'information_id', `value` = '" + information_id + "', `keyword` = '" + this.db.escape(keyword) + "'");
@@ -81,7 +84,7 @@ class InformationModel  extends Model {
 
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "information_to_layout` WHERE `information_id` = '" + information_id + "'");
 
-		if (isset(data['information_layout'])) {
+		if ((data['information_layout'])) {
 			for (data['information_layout'] of store_id : layout_id) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "information_to_layout` SET `information_id` = '" + information_id + "', `store_id` = '" + store_id + "', `layout_id` = '" + layout_id + "'");
 			}
@@ -124,12 +127,12 @@ class InformationModel  extends Model {
 	async getInformations(data = {}) {
 		let sql = "SELECT * FROM `" + DB_PREFIX + "information` i LEFT JOIN `" + DB_PREFIX + "information_description` id ON (i.`information_id` = id.`information_id`) WHERE id.`language_id` = '" + this.config.get('config_language_id') + "'";
 
-		sort_data = [
+		let sort_data = [
 			'id.title',
 			'i.sort_order'
 		];
 
-		if (data['sort'] && in_array(data['sort'], sort_data)) {
+		if (data['sort'] && sort_data.includes(data['sort'],)) {
 			sql += " ORDER BY " + data['sort'];
 		} else {
 			sql += " ORDER BY id.`title`";
@@ -153,14 +156,14 @@ class InformationModel  extends Model {
 			sql += " LIMIT " + data['start'] + "," + data['limit'];
 		}
 
-		information_data = this.cache.get('information.' + md5(sql));
+		information_data = await this.cache.get('information.' + crypto.createHash('md5').update(sql).digest('hex'));
 
 		if (!information_data) {
 			let query = await this.db.query(sql);
 
 			information_data = query.rows;
 
-			this.cache.set('information.' + md5(sql), information_data);
+			this.cache.set('information.' + crypto.createHash('md5').update(sql).digest('hex'), information_data);
 		}
 
 		return information_data;

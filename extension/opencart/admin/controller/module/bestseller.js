@@ -72,7 +72,7 @@ module.exports = class BestSellerModuleController extends Controller {
 
 		const json = {};
 
-		if (!this.user.hasPermission('modify', 'extension/opencart/module/bestseller')) {
+		if (!await this.user.hasPermission('modify', 'extension/opencart/module/bestseller')) {
 			json.error = { warning: this.language.get('error_permission') };
 		}
 
@@ -107,14 +107,14 @@ module.exports = class BestSellerModuleController extends Controller {
 	}
 
 	async install() {
-		if (this.user.hasPermission('modify', 'extension/opencart/module/bestseller')) {
+		if (await this.user.hasPermission('modify', 'extension/opencart/module/bestseller')) {
 			this.load.model('extension/opencart/module/bestseller', this);
 			await this.model_extension_opencart_module_bestseller.install();
 		}
 	}
 
 	async uninstall() {
-		if (this.user.hasPermission('modify', 'extension/opencart/module/bestseller')) {
+		if (await this.user.hasPermission('modify', 'extension/opencart/module/bestseller')) {
 			this.load.model('extension/opencart/module/bestseller', this);
 			await this.model_extension_opencart_module_bestseller.uninstall();
 		}
@@ -166,7 +166,7 @@ module.exports = class BestSellerModuleController extends Controller {
 		const json = {};
 		let page = this.request.get['page'] ? parseInt(this.request.get['page']) : 1;
 
-		if (!this.user.hasPermission('modify', 'extension/opencart/module/bestseller')) {
+		if (!await this.user.hasPermission('modify', 'extension/opencart/module/bestseller')) {
 			json.error = this.language.get('error_permission');
 		}
 

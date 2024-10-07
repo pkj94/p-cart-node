@@ -42,7 +42,7 @@ class Weight extends \Opencart\System\Engine\Model {
 					data = explode(':', $rate);
 
 					if (data[0] >= $weight) {
-						if (isset(data[1])) {
+						if ((data[1])) {
 							$cost = data[1];
 						}
 

@@ -62,12 +62,12 @@ module.exports = class OnlineDashboardController extends Controller {
 
 		const json = {};
 
-		if (!this.user.hasPermission('modify', 'extension/opencart/dashboard/online')) {
+		if (!await this.user.hasPermission('modify', 'extension/opencart/dashboard/online')) {
 			json['error'] = this.language.get('error_permission');
 		}
 
 		if (!json) {
-			this.load.model('setting/setting',this);
+			this.load.model('setting/setting', this);
 
 			await this.model_setting_setting.editSetting('dashboard_online', this.request.post);
 
@@ -82,20 +82,21 @@ module.exports = class OnlineDashboardController extends Controller {
 	 * @return string
 	 */
 	async dashboard() {
+		const data = {};
 		await this.load.language('extension/opencart/dashboard/online');
 
-		this.load.model('report/online',this);
+		this.load.model('report/online', this);
 
 		// Customers Online
 		let online_total = await this.model_report_online.getTotalOnline();
 
 		if (online_total > 1000000000000) {
 			data['total'] = round(online_total / 1000000000000, 1) + 'T';
-		} else if(online_total > 1000000000) {
+		} else if (online_total > 1000000000) {
 			data['total'] = round(online_total / 1000000000, 1) + 'B';
-		} else if(online_total > 1000000) {
+		} else if (online_total > 1000000) {
 			data['total'] = round(online_total / 1000000, 1) + 'M';
-		} else if(online_total > 1000) {
+		} else if (online_total > 1000) {
 			data['total'] = round(online_total / 1000, 1) + 'K';
 		} else {
 			data['total'] = online_total;

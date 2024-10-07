@@ -34,7 +34,7 @@ class RewardController extends Controller {
 				data['save'] = this.url.link('extension/opencart/total/reward.save', 'language=' . this.config.get('config_language'), true);
 				data['list'] = this.url.link('checkout/cart.list', 'language=' . this.config.get('config_language'), true);
 
-				if (isset(this.session.data['reward'])) {
+				if ((this.session.data['reward'])) {
 					data['reward'] = this.session.data['reward'];
 				} else {
 					data['reward'] = '';
@@ -55,7 +55,7 @@ class RewardController extends Controller {
 
 		const json = {};
 
-		if (isset(this.request.post['reward'])) {
+		if ((this.request.post['reward'])) {
 			$reward = abs(this.request.post['reward']);
 		} else {
 			$reward = 0;

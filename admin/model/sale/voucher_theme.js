@@ -1,11 +1,7 @@
-<?php
-namespace Opencart\Admin\Model\Sale;
-/**
- * Class Voucher Theme
- *
- * @package Opencart\Admin\Model\Sale
- */
-class VoucherThemeModel  extends Model {
+module.exports = class VoucherThemeSaleModel  extends Model {
+	constructor(registry){
+		super(registry)
+	}
 	/**
 	 * @param data
 	 *
@@ -14,10 +10,10 @@ class VoucherThemeModel  extends Model {
 	async addVoucherTheme(data) {
 		await this.db.query("INSERT INTO `" + DB_PREFIX + "voucher_theme` SET `image` = '" + this.db.escape(data['image']) + "'");
 
-		voucher_theme_id = this.db.getLastId();
+		let voucher_theme_id = this.db.getLastId();
 
-		for (data['voucher_theme_description'] of language_id : value) {
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "voucher_theme_description` SET `voucher_theme_id` = '" + voucher_theme_id + "', `language_id` = '" + language_id + "', `name` = '" + this.db.escape(value['name']) + "'");
+		for (let [language_id, value] of Object.entries(data['voucher_theme_description'])) {
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "voucher_theme_description` SET `voucher_theme_id` = '" + voucher_theme_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + "");
 		}
 
 		this.cache.delete('voucher_theme');
@@ -36,8 +32,8 @@ class VoucherThemeModel  extends Model {
 
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "voucher_theme_description` WHERE `voucher_theme_id` = '" + voucher_theme_id + "'");
 
-		for (data['voucher_theme_description'] of language_id : value) {
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "voucher_theme_description` SET `voucher_theme_id` = '" + voucher_theme_id + "', `language_id` = '" + language_id + "', `name` = '" + this.db.escape(value['name']) + "'");
+		for (let [language_id, value] of Object.entries(data['voucher_theme_description'])) {
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "voucher_theme_description` SET `voucher_theme_id` = '" + voucher_theme_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + "");
 		}
 
 		this.cache.delete('voucher_theme');
@@ -92,14 +88,14 @@ class VoucherThemeModel  extends Model {
 			sql += " LIMIT " + data['start'] + "," + data['limit'];
 		}
 
-		voucher_theme_data = this.cache.get('voucher_theme.' + md5(sql));
+		voucher_theme_data = await this.cache.get('voucher_theme.' + crypto.createHash('md5').update(sql).digest('hex'));
 
 		if (!voucher_theme_data) {
 			let query = await this.db.query(sql);
 
 			voucher_theme_data = query.rows;
 
-			this.cache.set('voucher_theme.' + md5(sql), voucher_theme_data);
+			this.cache.set('voucher_theme.' + crypto.createHash('md5').update(sql).digest('hex'), voucher_theme_data);
 		}
 
 		return voucher_theme_data;
@@ -111,12 +107,12 @@ class VoucherThemeModel  extends Model {
 	 * @return array
 	 */
 	async getDescriptions(voucher_theme_id) {
-		voucher_theme_data = [];
+		let voucher_theme_data = {};
 
 		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "voucher_theme_description` WHERE `voucher_theme_id` = '" + voucher_theme_id + "'");
 
 		for (query.rows of result) {
-			voucher_theme_data[result['language_id']] = ['name' : result['name']];
+			voucher_theme_data[result['language_id']] = {'name' : result['name']};
 		}
 
 		return voucher_theme_data;

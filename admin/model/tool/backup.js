@@ -6,6 +6,9 @@ namespace Opencart\Admin\Model\Tool;
  * @package Opencart\Admin\Model\Tool
  */
 class BackupModel  extends Model {
+	constructor(registry){
+		super(registry)
+	}
 	/**
 	 * @return array
 	 */
@@ -15,7 +18,7 @@ class BackupModel  extends Model {
 		let query = await this.db.query("SHOW TABLES FROM `" + DB_DATABASE + "`");
 
 		for (query.rows of result) {
-			if (isset(result['Tables_in_' + DB_DATABASE]) && substr(result['Tables_in_' + DB_DATABASE], 0, strlen(DB_PREFIX)) == DB_PREFIX) {
+			if ((result['Tables_in_' + DB_DATABASE]) && substr(result['Tables_in_' + DB_DATABASE], 0, strlen(DB_PREFIX)) == DB_PREFIX) {
 				table_data[] = result['Tables_in_' + DB_DATABASE];
 			}
 		}

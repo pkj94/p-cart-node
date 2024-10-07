@@ -23,7 +23,7 @@ module.exports = class ProductPurchasedReportModel extends Model {
 
 		sql += " GROUP BY op.`product_id` ORDER BY total DESC";
 
-		if (isset(data['start']) || isset(data['limit'])) {
+		if ((data['start']) || (data['limit'])) {
 			if (data['start'] < 0) {
 				data['start'] = 0;
 			}

@@ -6,6 +6,9 @@ namespace Opencart\Admin\Model\Cms;
  * @package Opencart\Admin\Model\Cms
  */
 class TopicModel  extends Model {
+	constructor(registry){
+		super(registry)
+	}
 	/**
 	 * @param data
 	 *
@@ -17,10 +20,10 @@ class TopicModel  extends Model {
 		topic_id = this.db.getLastId();
 
 		for (data['topic_description'] of language_id : value) {
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "topic_description` SET `topic_id` = '" + topic_id + "', `language_id` = '" + language_id + "', `image` = '" + this.db.escape(value['image']) + "', `name` = '" + this.db.escape(value['name']) + "', `description` = '" + this.db.escape(value['description']) + "', `meta_title` = '" + this.db.escape(value['meta_title']) + "', `meta_description` = '" + this.db.escape(value['meta_description']) + "', `meta_keyword` = '" + this.db.escape(value['meta_keyword']) + "'");
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "topic_description` SET `topic_id` = '" + topic_id + "', `language_id` = '" + language_id + "', `image` = '" + this.db.escape(value['image']) + "', `name` = " + this.db.escape(value['name']) + ", `description` = '" + this.db.escape(value['description']) + "', `meta_title` = '" + this.db.escape(value['meta_title']) + "', `meta_description` = '" + this.db.escape(value['meta_description']) + "', `meta_keyword` = '" + this.db.escape(value['meta_keyword']) + "'");
 		}
 
-		if (isset(data['topic_store'])) {
+		if ((data['topic_store'])) {
 			for (data['topic_store'] of store_id) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "topic_to_store` SET `topic_id` = '" + topic_id + "', `store_id` = '" + store_id + "'");
 			}
@@ -49,12 +52,12 @@ class TopicModel  extends Model {
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "topic_description` WHERE `topic_id` = '" + topic_id + "'");
 
 		for (data['topic_description'] of language_id : value) {
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "topic_description` SET `topic_id` = '" + topic_id + "', `language_id` = '" + language_id + "', `image` = '" + this.db.escape(value['image']) + "', `name` = '" + this.db.escape(value['name']) + "', `description` = '" + this.db.escape(value['description']) + "', `meta_title` = '" + this.db.escape(value['meta_title']) + "', `meta_description` = '" + this.db.escape(value['meta_description']) + "', `meta_keyword` = '" + this.db.escape(value['meta_keyword']) + "'");
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "topic_description` SET `topic_id` = '" + topic_id + "', `language_id` = '" + language_id + "', `image` = '" + this.db.escape(value['image']) + "', `name` = " + this.db.escape(value['name']) + ", `description` = '" + this.db.escape(value['description']) + "', `meta_title` = '" + this.db.escape(value['meta_title']) + "', `meta_description` = '" + this.db.escape(value['meta_description']) + "', `meta_keyword` = '" + this.db.escape(value['meta_keyword']) + "'");
 		}
 
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "topic_to_store` WHERE `topic_id` = '" + topic_id + "'");
 
-		if (isset(data['topic_store'])) {
+		if ((data['topic_store'])) {
 			for (data['topic_store'] of store_id) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "topic_to_store` SET `topic_id` = '" + topic_id + "', `store_id` = '" + store_id + "'");
 			}
@@ -93,14 +96,14 @@ class TopicModel  extends Model {
 	async getTopic(topic_id) {
 		let sql = "SELECT DISTINCT * FROM `" + DB_PREFIX + "topic` `t` LEFT JOIN `" + DB_PREFIX + "topic_description` `td` ON (`t`.`topic_id` = `td`.`topic_id`) WHERE `t`.`topic_id` = '" + topic_id + "' AND `td`.`language_id` = '" + this.config.get('config_language_id') + "'";
 
-		topic_data = this.cache.get('topic.'. md5(sql));
+		topic_data = await this.cache.get('topic.'. crypto.createHash('md5').update(sql).digest('hex'));
 
 		if (!topic_data) {
 			let query = await this.db.query(sql);
 
 			topic_data = query.row;
 
-			this.cache.set('topic.'. md5(sql), topic_data);
+			this.cache.set('topic.'. crypto.createHash('md5').update(sql).digest('hex'), topic_data);
 		}
 
 		return topic_data;
@@ -114,12 +117,12 @@ class TopicModel  extends Model {
 	async getTopics(data = {}) {
 		let sql = "SELECT * FROM `" + DB_PREFIX + "topic` `t` LEFT JOIN `" + DB_PREFIX + "topic_description` `td` ON (`t`.`topic_id` = `td`.`topic_id`) WHERE `td`.`language_id` = '" + this.config.get('config_language_id') + "'";
 
-		sort_data = [
+		let sort_data = [
 			'td.name',
 			't.sort_order'
 		];
 
-		if (data['sort'] && in_array(data['sort'], sort_data)) {
+		if (data['sort'] && sort_data.includes(data['sort'],)) {
 			sql += " ORDER BY " + data['sort'];
 		} else {
 			sql += " ORDER BY `t`.`sort_order`";
@@ -143,14 +146,14 @@ class TopicModel  extends Model {
 			sql += " LIMIT " + data['start'] + "," + data['limit'];
 		}
 
-		topic_data = this.cache.get('topic.'. md5(sql));
+		topic_data = await this.cache.get('topic.'. crypto.createHash('md5').update(sql).digest('hex'));
 
 		if (!topic_data) {
 			let query = await this.db.query(sql);
 
 			topic_data = query.rows;
 
-			this.cache.set('topic.'. md5(sql), topic_data);
+			this.cache.set('topic.'. crypto.createHash('md5').update(sql).digest('hex'), topic_data);
 		}
 
 		return topic_data;

@@ -52,7 +52,7 @@ module.exports = class SaleTaxReportController extends Controller {
 
 		const json = {};
 
-		if (!this.user.hasPermission('modify', 'extension/opencart/report/sale_tax')) {
+		if (!await this.user.hasPermission('modify', 'extension/opencart/report/sale_tax')) {
 			json['error'] = this.language.get('error_permission');
 		}
 

@@ -16,7 +16,7 @@ class ShippingController extends Controller {
 		if (this.config.get('total_shipping_status') && this.config.get('total_shipping_estimator') && this.cart.hasShipping()) {
 			this.load.language('extension/opencart/total/shipping');
 
-			if (isset(this.session.data['shipping_address'])) {
+			if ((this.session.data['shipping_address'])) {
 				data['postcode'] = this.session.data['shipping_address']['postcode'];
 				data['country_id'] = this.session.data['shipping_address']['country_id'];
 				data['zone_id'] = this.session.data['shipping_address']['zone_id'];
@@ -26,7 +26,7 @@ class ShippingController extends Controller {
 				data['zone_id'] = '';
 			}
 
-			if (isset(this.session.data['shipping_method'])) {
+			if ((this.session.data['shipping_method'])) {
 				data['code'] = this.session.data['shipping_method']['code'];
 			} else {
 				data['code'] = '';
@@ -59,7 +59,7 @@ class ShippingController extends Controller {
 		];
 
 		foreach ($keys as $key) {
-			if (!isset(this.request.post[$key])) {
+			if (!(this.request.post[$key])) {
 				this.request.post[$key] = '';
 			}
 		}
@@ -153,7 +153,7 @@ class ShippingController extends Controller {
 		if (!empty(this.request.post['shipping_method'])) {
 			$shipping = explode('.', this.request.post['shipping_method']);
 
-			if (!isset($shipping[0]) || !isset($shipping[1]) || !isset(this.session.data['shipping_methods'][$shipping[0]]['quote'][$shipping[1]])) {
+			if (!($shipping[0]) || !($shipping[1]) || !(this.session.data['shipping_methods'][$shipping[0]]['quote'][$shipping[1]])) {
 				$json['error'] = this.language.get('error_shipping');
 			}
 		} else {

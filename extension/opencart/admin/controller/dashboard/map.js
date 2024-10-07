@@ -7,6 +7,7 @@ module.exports = class MapDashboardController extends Controller {
 	 * @return void
 	 */
 	async index() {
+		const data = {};
 		await this.load.language('extension/opencart/dashboard/map');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -57,7 +58,7 @@ module.exports = class MapDashboardController extends Controller {
 
 		const json = {};
 
-		if (!this.user.hasPermission('modify', 'extension/opencart/dashboard/map')) {
+		if (!await this.user.hasPermission('modify', 'extension/opencart/dashboard/map')) {
 			json['error'] = this.language.get('error_permission');
 		}
 

@@ -50,7 +50,7 @@ module.exports = class CustomerSearchReportController extends Controller {
 
 		const json = {};
 
-		if (!this.user.hasPermission('modify', 'extension/opencart/report/customer_search')) {
+		if (!await this.user.hasPermission('modify', 'extension/opencart/report/customer_search')) {
 			json['error'] = this.language.get('error_permission');
 		}
 

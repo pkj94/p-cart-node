@@ -19,7 +19,7 @@ class VoucherController extends Controller {
 			data['save'] = this.url.link('extension/opencart/total/voucher.save', 'language=' . this.config.get('config_language'), true);
 			data['list'] = this.url.link('checkout/cart.list', 'language=' . this.config.get('config_language'), true);
 
-			if (isset(this.session.data['voucher'])) {
+			if ((this.session.data['voucher'])) {
 				data['voucher'] = this.session.data['voucher'];
 			} else {
 				data['voucher'] = '';
@@ -39,7 +39,7 @@ class VoucherController extends Controller {
 
 		const json = {};
 
-		if (isset(this.request.post['voucher'])) {
+		if ((this.request.post['voucher'])) {
 			$voucher = (string)this.request.post['voucher'];
 		} else {
 			$voucher = '';

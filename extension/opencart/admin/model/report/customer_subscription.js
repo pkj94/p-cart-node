@@ -4,7 +4,7 @@ module.exports = class CustomerSubscriptionReportModel extends Model {
 	 *
 	 * @return array
 	 */
-	async getTransactions(data = []) {
+	async getTransactions(data = {}) {
 		let sql = "SELECT `s`.`subscription_id`, `s`.`customer_id`, CONCAT(c.`firstname`, ' ', c.`lastname`) AS customer, c.`email`, cgd.`name` AS customer_group, c.`status`, SUM(st.`amount`) AS `total` FROM `" + DB_PREFIX + "subscription_transaction` st LEFT JOIN `" + DB_PREFIX + "subscription` `s` ON (st.`subscription_id` = `s`.`subscription_id`) LEFT JOIN `" + DB_PREFIX + "customer` c ON (`s`.`customer_id` = c.`customer_id`) LEFT JOIN `" + DB_PREFIX + "customer_group_description` cgd ON (c.`customer_group_id` = cgd.`customer_group_id`) WHERE cgd.`language_id` = '" + this.config.get('config_language_id') + "'";
 
 		if (data['filter_date_start']) {
@@ -21,7 +21,7 @@ module.exports = class CustomerSubscriptionReportModel extends Model {
 
 		sql += " GROUP BY `s`.`customer_id` ORDER BY total DESC";
 
-		if (isset(data['start']) || isset(data['limit'])) {
+		if ((data['start']) || (data['limit'])) {
 			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
@@ -43,7 +43,7 @@ module.exports = class CustomerSubscriptionReportModel extends Model {
 	 *
 	 * @return int
 	 */
-	async getTotalTransactions(data = []) {
+	async getTotalTransactions(data = {}) {
 		sql = "SELECT COUNT(DISTINCT `s`.`customer_id`) AS `total` FROM `" + DB_PREFIX + "subscription_transaction` st LEFT JOIN `" + DB_PREFIX + "subscription` s ON (st.`subscription_id` = `s`.`subscription_id`) LEFT JOIN `" + DB_PREFIX + "customer` c ON (`s`.`customer_id` = c.`customer_id`)";
 
 		const implode = [];

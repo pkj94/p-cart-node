@@ -25,7 +25,7 @@ module.exports = class PermissionController extends Controller {
 				'error/permission'
 			];
 
-			if (!ignore.includes(route) && !this.user.hasPermission('access', route)) {
+			if (!ignore.includes(route) && !await this.user.hasPermission('access', route)) {
 				return await new Action('error/permission');
 			}
 		}

@@ -1,11 +1,7 @@
-<?php
-namespace Opencart\Admin\Model\Sale;
-/**
- * Class Subscription
- *
- * @package Opencart\Admin\Model\Sale
- */
-class SubscriptionModel  extends Model {
+module.exports = class SubscriptionSaleModel  extends Model {
+	constructor(registry){
+		super(registry)
+	}
 	/**
 	 * @param   subscription_id
 	 * @param data
@@ -72,7 +68,7 @@ class SubscriptionModel  extends Model {
 	 * @return array
 	 */
 	async getSubscription(subscription_id) {
-		subscription_data = [];
+		let subscription_data = {};
 
 		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "subscription` WHERE `subscription_id` = '" + subscription_id + "'");
 
@@ -109,42 +105,42 @@ class SubscriptionModel  extends Model {
 		let implode = [];
 
 		if ((data['filter_subscription_id'])) {
-			implode.push("`s`.`subscription_id` = '" + data['filter_subscription_id'] + "'";
+			implode.push("`s`.`subscription_id` = '" + data['filter_subscription_id'] + "'");
 		}
 
 		if ((data['filter_order_id'])) {
-			implode.push("`s`.`order_id` = '" + data['filter_order_id'] + "'";
+			implode.push("`s`.`order_id` = '" + data['filter_order_id'] + "'");
 		}
 		
 		if ((data['filter_order_product_id'])) {
-			implode.push("`s`.`order_product_id` = '" + data['filter_order_product_id'] + "'";
+			implode.push("`s`.`order_product_id` = '" + data['filter_order_product_id'] + "'");
 		}
 
 		if ((data['filter_customer'])) {
-			implode.push("CONCAT(o.`firstname`, ' ', o.`lastname`) LIKE '" + this.db.escape(data['filter_customer'] + '%') + "'";
+			implode.push("CONCAT(o.`firstname`, ' ', o.`lastname`) LIKE " + this.db.escape(data['filter_customer'] + '%') );
 		}
 
 		if ((data['filter_date_next'])) {
-			implode.push("DATE(`s`.`date_next`) = DATE('" + this.db.escape(data['filter_date_next']) + "')";
+			implode.push("DATE(`s`.`date_next`) = DATE(" + this.db.escape(data['filter_date_next']) + ")");
 		}
 
 		if ((data['filter_subscription_status_id'])) {
-			implode.push("`s`.`subscription_status_id` = '" + data['filter_subscription_status_id'] + "'";
+			implode.push("`s`.`subscription_status_id` = '" + data['filter_subscription_status_id'] + "'");
 		}
 
 		if ((data['filter_date_from'])) {
-			implode.push("DATE(s.`date_added`) >= DATE(" + this.db.escape(data['filter_date_from']) + ")";
+			implode.push("DATE(s.`date_added`) >= DATE(" + this.db.escape(data['filter_date_from']) + ")");
 		}
 
 		if ((data['filter_date_to'])) {
-			implode.push("DATE(s.`date_added`) <= DATE(" + this.db.escape(data['filter_date_to']) + ")";
+			implode.push("DATE(s.`date_added`) <= DATE(" + this.db.escape(data['filter_date_to']) + ")");
 		}
 
 		if (implode.length) {
 			sql += " WHERE " + implode.join(" AND ");
 		}
 
-		sort_data = [
+		let sort_data = [
 			's.subscription_id',
 			's.order_id',
 			's.reference',
@@ -153,7 +149,7 @@ class SubscriptionModel  extends Model {
 			's.date_added'
 		];
 
-		if (data['sort'] && in_array(data['sort'], sort_data)) {
+		if (data['sort'] && sort_data.includes(data['sort'],)) {
 			sql += " ORDER BY " + data['sort'];
 		} else {
 			sql += " ORDER BY `s`.`subscription_id`";
@@ -193,27 +189,27 @@ class SubscriptionModel  extends Model {
 		let implode = [];
 
 		if ((data['filter_subscription_id'])) {
-			implode[] += "`s`.`subscription_id` = '" + data['filter_subscription_id'] + "'";
+			implode.push("`s`.`subscription_id` = '" + data['filter_subscription_id'] + "'");
 		}
 
 		if ((data['filter_order_id'])) {
-			implode[] += "`s`.`order_id` = '" + data['filter_order_id'] + "'";
+			implode.push("`s`.`order_id` = '" + data['filter_order_id'] + "'");
 		}
 
 		if ((data['filter_customer'])) {
-			implode[] += "CONCAT(o.`firstname`, ' ', o.`lastname`) LIKE '" + this.db.escape(data['filter_customer'] + '%') + "'";
+			implode.push("CONCAT(o.`firstname`, ' ', o.`lastname`) LIKE " + this.db.escape(data['filter_customer'] + '%') );
 		}
 
 		if ((data['filter_subscription_status_id'])) {
-			implode[] += "`s`.`subscription_status_id` = '" + data['filter_subscription_status_id'] + "'";
+			implode.push("`s`.`subscription_status_id` = '" + data['filter_subscription_status_id'] + "'");
 		}
 
 		if ((data['filter_date_from'])) {
-			implode.push("DATE(s.`date_added`) >= DATE(" + this.db.escape(data['filter_date_from']) + ")";
+			implode.push("DATE(s.`date_added`) >= DATE(" + this.db.escape(data['filter_date_from']) + ")");
 		}
 
 		if ((data['filter_date_to'])) {
-			implode.push("DATE(s.`date_added`) <= DATE(" + this.db.escape(data['filter_date_to']) + ")";
+			implode.push("DATE(s.`date_added`) <= DATE(" + this.db.escape(data['filter_date_to']) + ")");
 		}
 
 		if (implode.length) {
@@ -251,11 +247,11 @@ class SubscriptionModel  extends Model {
 	 * @param    subscription_id
 	 * @param    subscription_status_id
 	 * @param comment
-	 * @param bool   notify
+	 * @param   notify
 	 *
 	 * @return void
 	 */
-	async addHistory(subscription_id, subscription_status_id, comment = '', bool notify = false) {
+	async addHistory(subscription_id, subscription_status_id, comment = '', notify = false) {
 		await this.db.query("INSERT INTO `" + DB_PREFIX + "subscription_history` SET `subscription_id` = '" + subscription_id + "', `subscription_status_id` = '" + subscription_status_id + "', `comment` = '" + this.db.escape(comment) + "', `notify` = '" + notify + "', `date_added` = NOW()");
 
 		await this.db.query("UPDATE `" + DB_PREFIX + "subscription` SET `subscription_status_id` = '" + subscription_status_id + "' WHERE `subscription_id` = '" + subscription_id + "'");

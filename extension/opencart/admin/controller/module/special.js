@@ -47,43 +47,43 @@ module.exports = class SpecialModuleController extends Controller {
 			module_info = await this.model_setting_module.getModule(this.request.get['module_id']);
 		}
 
-		if (isset(module_info['name'])) {
+		if ((module_info['name'])) {
 			data['name'] = module_info['name'];
 		} else {
 			data['name'] = '';
 		}
 
-		if (isset(module_info['axis'])) {
+		if ((module_info['axis'])) {
 			data['axis'] = module_info['axis'];
 		} else {
 			data['axis'] = '';
 		}
 
-		if (isset(module_info['limit'])) {
+		if ((module_info['limit'])) {
 			data['limit'] = module_info['limit'];
 		} else {
 			data['limit'] = 5;
 		}
 
-		if (isset(module_info['width'])) {
+		if ((module_info['width'])) {
 			data['width'] = module_info['width'];
 		} else {
 			data['width'] = 200;
 		}
 
-		if (isset(module_info['height'])) {
+		if ((module_info['height'])) {
 			data['height'] = module_info['height'];
 		} else {
 			data['height'] = 200;
 		}
 
-		if (isset(module_info['status'])) {
+		if ((module_info['status'])) {
 			data['status'] = module_info['status'];
 		} else {
 			data['status'] = '';
 		}
 
-		if (isset(this.request.get['module_id'])) {
+		if ((this.request.get['module_id'])) {
 			data['module_id'] = this.request.get['module_id'];
 		} else {
 			data['module_id'] = 0;
@@ -104,7 +104,7 @@ module.exports = class SpecialModuleController extends Controller {
 
 		const json = {error:{}};
 
-		if (!this.user.hasPermission('modify', 'extension/opencart/module/special')) {
+		if (!await this.user.hasPermission('modify', 'extension/opencart/module/special')) {
 			json['error']['warning'] = this.language.get('error_permission');
 		}
 

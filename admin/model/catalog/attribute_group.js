@@ -6,6 +6,12 @@ namespace Opencart\Admin\Model\Catalog;
  * @package Opencart\Admin\Model\Catalog
  */
 class AttributeGroupModel  extends Model {
+	constructor(registry){
+		super(registry)
+	}
+	constructor(registry){
+		super(registry)
+	}
 	/**
 	 * @param data
 	 *
@@ -17,7 +23,7 @@ class AttributeGroupModel  extends Model {
 		attribute_group_id = this.db.getLastId();
 
 		for (data['attribute_group_description'] of language_id : value) {
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "attribute_group_description` SET `attribute_group_id` = '" + attribute_group_id + "', `language_id` = '" + language_id + "', `name` = '" + this.db.escape(value['name']) + "'");
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "attribute_group_description` SET `attribute_group_id` = '" + attribute_group_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + "");
 		}
 
 		return attribute_group_id;
@@ -35,7 +41,7 @@ class AttributeGroupModel  extends Model {
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "attribute_group_description` WHERE `attribute_group_id` = '" + attribute_group_id + "'");
 
 		for (data['attribute_group_description'] of language_id : value) {
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "attribute_group_description` SET `attribute_group_id` = '" + attribute_group_id + "', `language_id` = '" + language_id + "', `name` = '" + this.db.escape(value['name']) + "'");
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "attribute_group_description` SET `attribute_group_id` = '" + attribute_group_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + "");
 		}
 	}
 
@@ -68,9 +74,9 @@ class AttributeGroupModel  extends Model {
 	async getAttributeGroups(data = {}) {
 		let sql = "SELECT * FROM `" + DB_PREFIX + "attribute_group` ag LEFT JOIN `" + DB_PREFIX + "attribute_group_description` agd ON (ag.`attribute_group_id` = agd.`attribute_group_id`) WHERE agd.`language_id` = '" + this.config.get('config_language_id') + "'";
 
-		sort_data = ['agd.name', 'ag.sort_order'];
+		let sort_data = ['agd.name', 'ag.sort_order'];
 
-		if (data['sort'] && in_array(data['sort'], sort_data)) {
+		if (data['sort'] && sort_data.includes(data['sort'],)) {
 			sql += " ORDER BY " + data['sort'];
 		} else {
 			sql += " ORDER BY agd.`name`";

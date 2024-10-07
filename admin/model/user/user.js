@@ -63,7 +63,7 @@ module.exports = class UserModel extends Model {
      * @return array
      */
     async getUser(user_id) {
-        let query = await this.db.query("SELECT *, (SELECT ug+`name` FROM `" + DB_PREFIX + "user_group` ug WHERE ug+`user_group_id` = u+`user_group_id`) AS user_group FROM `" + DB_PREFIX + "user` u WHERE u+`user_id` = '" + user_id + "'");
+        let query = await this.db.query("SELECT *, (SELECT ug.`name` FROM `" + DB_PREFIX + "user_group` ug WHERE ug.`user_group_id` = u.`user_group_id`) AS user_group FROM `" + DB_PREFIX + "user` u WHERE u.`user_id` = '" + user_id + "'");
         return query.row;
     }
 
@@ -236,7 +236,7 @@ module.exports = class UserModel extends Model {
 
     /**
      * @param  user_authorize_id
-     * @param bool status
+     * @param status
      *
      * @return void
      */

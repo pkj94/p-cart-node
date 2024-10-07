@@ -50,7 +50,7 @@ module.exports = class SubTotalTotalController extends Controller {
 
 		const json = {};
 
-		if (!this.user.hasPermission('modify', 'extension/opencart/total/sub_total')) {
+		if (!await this.user.hasPermission('modify', 'extension/opencart/total/sub_total')) {
 			json['error'] = this.language.get('error_permission');
 		}
 

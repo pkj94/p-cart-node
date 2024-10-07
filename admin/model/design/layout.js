@@ -6,6 +6,9 @@ namespace Opencart\Admin\Model\Design;
  * @package Opencart\Admin\Model\Design
  */
 class LayoutModel  extends Model {
+	constructor(registry){
+		super(registry)
+	}
 	/**
 	 * @param data
 	 *
@@ -16,13 +19,13 @@ class LayoutModel  extends Model {
 
 		layout_id = this.db.getLastId();
 
-		if (isset(data['layout_route'])) {
+		if ((data['layout_route'])) {
 			for (data['layout_route'] of layout_route) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "layout_route` SET `layout_id` = '" + layout_id + "', `store_id` = '" + layout_route['store_id'] + "', `route` = '" + this.db.escape(layout_route['route']) + "'");
 			}
 		}
 
-		if (isset(data['layout_module'])) {
+		if ((data['layout_module'])) {
 			for (data['layout_module'] of layout_module) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "layout_module` SET `layout_id` = '" + layout_id + "', `code` = '" + this.db.escape(layout_module['code']) + "', `position` = '" + this.db.escape(layout_module['position']) + "', `sort_order` = '" + layout_module['sort_order'] + "'");
 			}
@@ -42,7 +45,7 @@ class LayoutModel  extends Model {
 
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "layout_route` WHERE `layout_id` = '" + layout_id + "'");
 
-		if (isset(data['layout_route'])) {
+		if ((data['layout_route'])) {
 			for (data['layout_route'] of layout_route) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "layout_route` SET `layout_id` = '" + layout_id + "', `store_id` = '" + layout_route['store_id'] + "', `route` = '" + this.db.escape(layout_route['route']) + "'");
 			}
@@ -50,7 +53,7 @@ class LayoutModel  extends Model {
 
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "layout_module` WHERE `layout_id` = '" + layout_id + "'");
 
-		if (isset(data['layout_module'])) {
+		if ((data['layout_module'])) {
 			for (data['layout_module'] of layout_module) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "layout_module` SET `layout_id` = '" + layout_id + "', `code` = '" + this.db.escape(layout_module['code']) + "', `position` = '" + this.db.escape(layout_module['position']) + "', `sort_order` = '" + layout_module['sort_order'] + "'");
 			}
@@ -92,9 +95,9 @@ class LayoutModel  extends Model {
 	async getLayouts(data = {}) {
 		let sql = "SELECT * FROM `" + DB_PREFIX + "layout`";
 
-		sort_data = ['name'];
+		let sort_data = ['name'];
 
-		if (data['sort'] && in_array(data['sort'], sort_data)) {
+		if (data['sort'] && sort_data.includes(data['sort'],)) {
 			sql += " ORDER BY " + data['sort'];
 		} else {
 			sql += " ORDER BY `name`";

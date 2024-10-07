@@ -65,7 +65,7 @@ module.exports = class OrderDashboardController extends Controller {
 
 		const json = {};
 
-		if (!this.user.hasPermission('modify', 'extension/opencart/dashboard/order')) {
+		if (!await this.user.hasPermission('modify', 'extension/opencart/dashboard/order')) {
 			json['error'] = this.language.get('error_permission');
 		}
 
@@ -85,6 +85,7 @@ module.exports = class OrderDashboardController extends Controller {
 	 * @return string
 	 */
 	async dashboard() {
+		const data = {};
 		await this.load.language('extension/opencart/dashboard/order');
 
 		// Total Orders

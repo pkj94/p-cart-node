@@ -6,6 +6,9 @@ namespace Opencart\Admin\Model\Customer;
  * @package Opencart\Admin\Model\Customer
  */
 class GdprModel  extends Model {
+	constructor(registry){
+		super(registry)
+	}
 	/**
 	 * @param gdpr_id
 	 * @param status
@@ -132,7 +135,7 @@ class GdprModel  extends Model {
 	 * @return array
 	 */
 	async getExpires() {
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "gdpr` WHERE `status` = '2' AND DATE(`date_added`) <= DATE('" + this.db.escape(date('Y-m-d', strtotime('+' + this.config.get('config_gdpr_limit') + ' days'))) + "') ORDER BY `date_added` DESC");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "gdpr` WHERE `status` = '2' AND DATE(`date_added`) <= DATE('" + this.db.escape(date('Y-m-d', strtotime('.' + this.config.get('config_gdpr_limit') + ' days'))) + "') ORDER BY `date_added` DESC");
 
 		return query.rows;
 	}

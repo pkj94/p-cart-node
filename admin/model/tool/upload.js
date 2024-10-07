@@ -6,6 +6,9 @@ namespace Opencart\Admin\Model\Tool;
  * @package Opencart\Admin\Model\Tool
  */
 class UploadModel  extends Model {
+	constructor(registry){
+		super(registry)
+	}
 	/**
 	 * @param name
 	 * @param filename
@@ -81,13 +84,13 @@ class UploadModel  extends Model {
 			sql += " WHERE " + implode.join(" AND ");
 		}
 
-		sort_data = [
+		let sort_data = [
 			'name',
 			'code',
 			'date_added'
 		];
 
-		if (data['sort'] && in_array(data['sort'], sort_data)) {
+		if (data['sort'] && sort_data.includes(data['sort'],)) {
 			sql += " ORDER BY " + data['sort'];
 		} else {
 			sql += " ORDER BY `date_added`";

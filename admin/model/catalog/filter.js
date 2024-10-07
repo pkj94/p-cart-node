@@ -6,6 +6,9 @@ namespace Opencart\Admin\Model\Catalog;
  * @package Opencart\Admin\Model\Catalog
  */
 class FilterModel  extends Model {
+	constructor(registry){
+		super(registry)
+	}
 	/**
 	 * @param data
 	 *
@@ -17,10 +20,10 @@ class FilterModel  extends Model {
 		filter_group_id = this.db.getLastId();
 
 		for (data['filter_group_description'] of language_id : value) {
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "filter_group_description` SET `filter_group_id` = '" + filter_group_id + "', `language_id` = '" + language_id + "', `name` = '" + this.db.escape(value['name']) + "'");
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "filter_group_description` SET `filter_group_id` = '" + filter_group_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + "");
 		}
 
-		if (isset(data['filter'])) {
+		if ((data['filter'])) {
 			for (data['filter'] of filter) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "filter` SET `filter_group_id` = '" + filter_group_id + "', `sort_order` = '" + filter['sort_order'] + "'");
 
@@ -47,13 +50,13 @@ class FilterModel  extends Model {
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "filter_group_description` WHERE `filter_group_id` = '" + filter_group_id + "'");
 
 		for (data['filter_group_description'] of language_id : value) {
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "filter_group_description` SET `filter_group_id` = '" + filter_group_id + "', `language_id` = '" + language_id + "', `name` = '" + this.db.escape(value['name']) + "'");
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "filter_group_description` SET `filter_group_id` = '" + filter_group_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + "");
 		}
 
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "filter` WHERE `filter_group_id` = '" + filter_group_id + "'");
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "filter_description` WHERE `filter_group_id` = '" + filter_group_id + "'");
 
-		if (isset(data['filter'])) {
+		if ((data['filter'])) {
 			for (data['filter'] of filter) {
 				if (filter['filter_id']) {
 					await this.db.query("INSERT INTO `" + DB_PREFIX + "filter` SET `filter_id` = '" + filter['filter_id'] + "', `filter_group_id` = '" + filter_group_id + "', `sort_order` = '" + filter['sort_order'] + "'");
@@ -101,12 +104,12 @@ class FilterModel  extends Model {
 	async getGroups(data = {}) {
 		let sql = "SELECT * FROM `" + DB_PREFIX + "filter_group` fg LEFT JOIN `" + DB_PREFIX + "filter_group_description` fgd ON (fg.`filter_group_id` = fgd.`filter_group_id`) WHERE fgd.`language_id` = '" + this.config.get('config_language_id') + "'";
 
-		sort_data = [
+		let sort_data = [
 			'fgd.name',
 			'fg.sort_order'
 		];
 
-		if (data['sort'] && in_array(data['sort'], sort_data)) {
+		if (data['sort'] && sort_data.includes(data['sort'],)) {
 			sql += " ORDER BY " + data['sort'];
 		} else {
 			sql += " ORDER BY fgd.`name`";

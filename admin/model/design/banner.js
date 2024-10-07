@@ -6,6 +6,9 @@ namespace Opencart\Admin\Model\Design;
  * @package Opencart\Admin\Model\Design
  */
 class BannerModel  extends Model {
+	constructor(registry){
+		super(registry)
+	}
 	/**
 	 * @param data
 	 *
@@ -16,7 +19,7 @@ class BannerModel  extends Model {
 
 		banner_id = this.db.getLastId();
 
-		if (isset(data['banner_image'])) {
+		if ((data['banner_image'])) {
 			for (data['banner_image'] of language_id : value) {
 				for (value of banner_image) {
 					await this.db.query("INSERT INTO `" + DB_PREFIX + "banner_image` SET `banner_id` = '" + banner_id + "', `language_id` = '" + language_id + "', `title` = '" +  this.db.escape(banner_image['title']) + "', `link` = '" +  this.db.escape(banner_image['link']) + "', `image` = '" +  this.db.escape(banner_image['image']) + "', `sort_order` = '" +  banner_image['sort_order'] + "'");
@@ -38,7 +41,7 @@ class BannerModel  extends Model {
 
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "banner_image` WHERE `banner_id` = '" + banner_id + "'");
 
-		if (isset(data['banner_image'])) {
+		if ((data['banner_image'])) {
 			for (data['banner_image'] of language_id : value) {
 				for (value of banner_image) {
 					await this.db.query("INSERT INTO `" + DB_PREFIX + "banner_image` SET `banner_id` = '" + banner_id + "', `language_id` = '" + language_id + "', `title` = '" +  this.db.escape(banner_image['title']) + "', `link` = '" +  this.db.escape(banner_image['link']) + "', `image` = '" +  this.db.escape(banner_image['image']) + "', `sort_order` = '" + banner_image['sort_order'] + "'");
@@ -76,12 +79,12 @@ class BannerModel  extends Model {
 	async getBanners(data = {}) {
 		let sql = "SELECT * FROM `" + DB_PREFIX + "banner`";
 
-		sort_data = [
+		let sort_data = [
 			'name',
 			'status'
 		];
 
-		if (data['sort'] && in_array(data['sort'], sort_data)) {
+		if (data['sort'] && sort_data.includes(data['sort'],)) {
 			sql += " ORDER BY " + data['sort'];
 		} else {
 			sql += " ORDER BY `name`";

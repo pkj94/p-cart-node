@@ -55,7 +55,7 @@ $('#button-continue').on('click', function () {
     $(element).prop('disabled', true);
     $('#progress-bar').addClass('progress-bar-success').css('width', '0%').removeClass('progress-bar-danger');
     $('#progress-text').html('');
-    var next = 'index.php?route=upgrade/upgrade_1&admin=' + $('#input-admin').val();
+    var next = '?route=upgrade/upgrade_1&admin=' + $('#input-admin').val();
     var upgrade = function () {
         return $.ajax({
             url: next,

@@ -14,7 +14,7 @@ class Coupon extends \Opencart\System\Engine\Model {
 	 * @return void
 	 */
 	async getTotal(array &$totals, array &$taxes, float &$total) {
-		if (isset(this.session.data['coupon'])) {
+		if ((this.session.data['coupon'])) {
 			this.load.language('extension/opencart/total/coupon', 'coupon');
 
 			this.load.model('marketing/coupon');
@@ -72,7 +72,7 @@ class Coupon extends \Opencart\System\Engine\Model {
 					$discount_total += $discount;
 				}
 
-				if ($coupon_info['shipping'] && isset(this.session.data['shipping_method']['cost']) && isset(this.session.data['shipping_method']['tax_class_id'])) {
+				if ($coupon_info['shipping'] && (this.session.data['shipping_method']['cost']) && (this.session.data['shipping_method']['tax_class_id'])) {
 					if (!empty(this.session.data['shipping_method']['tax_class_id'])) {
 						$tax_rates = this.tax.getRates(this.session.data['shipping_method']['cost'], this.session.data['shipping_method']['tax_class_id']);
 

@@ -1,3 +1,4 @@
+const fs = require('fs');
 module.exports = class HeaderController extends Controller {
     constructor(registry) {
         super(registry)
@@ -20,7 +21,7 @@ module.exports = class HeaderController extends Controller {
             scripts: this.document.getScripts()
         };
 
-        this.language.load('common/header');
+        await this.language.load('common/header');
 
         if (!this.request.get.user_token || !this.session.data.user_token || this.request.get.user_token !== this.session.data.user_token) {
             data.logged = false;
@@ -40,8 +41,8 @@ module.exports = class HeaderController extends Controller {
             data.notifications = [];
             this.load.model('tool/notification',this);
 
-            let results = this.model_tool_notification.getNotifications(filter_data);
-
+            let results = await this.model_tool_notification.getNotifications(filter_data);
+            
             for (const result of results) {
                 data.notifications.push({
                     title: result.title,
@@ -66,8 +67,8 @@ module.exports = class HeaderController extends Controller {
                 data.username = user_info.username;
                 data.user_group = user_info.user_group;
 
-                if (fs.existsSync(path.join(DIR_IMAGE, html_entity_decode(user_info.image, 'utf-8')))) {
-                    data.image = await modelToolImage.resize(html_entity_decode(user_info.image, 'utf-8'), 45, 45);
+                if (fs.existsSync(DIR_IMAGE+ user_info.image)) {
+                    data.image = await this.model_tool_image.resize(user_info.image, 45, 45);
                 }
             } else {
                 data.firstname = '';
@@ -82,7 +83,6 @@ module.exports = class HeaderController extends Controller {
 
             this.load.model('setting/store',this);
             const storeResults = await this.model_setting_store.getStores();
-
             for (const result of storeResults) {
                 data.stores.push({
                     name: result.name,
@@ -92,7 +92,7 @@ module.exports = class HeaderController extends Controller {
 
             data.logout = this.url.link('common/logout', { user_token: this.session.data.user_token });
         }
-        return this.load.view('common/header', data);
+        return await this.load.view('common/header', data);
     }
 }
 

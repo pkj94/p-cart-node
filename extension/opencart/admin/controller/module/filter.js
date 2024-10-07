@@ -44,7 +44,7 @@ module.exports = class FilterModuleController extends Controller {
 
 		const json = {};
 
-		if (!this.user.hasPermission('modify', 'extension/opencart/module/filter')) {
+		if (!await this.user.hasPermission('modify', 'extension/opencart/module/filter')) {
 			json.error = this.language.get('error_permission');
 		}
 

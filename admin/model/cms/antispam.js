@@ -6,6 +6,9 @@ namespace Opencart\Admin\Model\Cms;
  * @package Opencart\Admin\Model\Cms
  */
 class AntispamModel  extends Model {
+	constructor(registry){
+		super(registry)
+	}
 	/**
 	 * @param data
 	 *
@@ -64,9 +67,9 @@ class AntispamModel  extends Model {
 			sql += " WHERE " + implode.join(" AND ");
 		}
 
-		sort_data = ['keyword'];
+		let sort_data = ['keyword'];
 
-		if (data['sort'] && in_array(data['sort'], sort_data)) {
+		if (data['sort'] && sort_data.includes(data['sort'],)) {
 			sql += " ORDER BY " + data['sort'];
 		} else {
 			sql += " ORDER BY `keyword`";

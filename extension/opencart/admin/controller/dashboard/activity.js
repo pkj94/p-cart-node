@@ -52,7 +52,7 @@ module.exports = class ActivityDashboardController extends Controller {
 
 		const json = {};
 
-		if (!this.user.hasPermission('modify', 'extension/opencart/dashboard/activity')) {
+		if (!await this.user.hasPermission('modify', 'extension/opencart/dashboard/activity')) {
 			json.error = this.language.get('error_permission');
 		}
 

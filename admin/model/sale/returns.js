@@ -1,18 +1,11 @@
-<?php
-namespace Opencart\Admin\Model\Sale;
-/**
- * Class Returns
- *
- * @package Opencart\Admin\Model\Sale
- */
-class ReturnsModel  extends Model {
+module.exports = class ReturnsSaleModel extends Model {
 	/**
 	 * @param data
 	 *
 	 * @return int
 	 */
 	async addReturn(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "return` SET `order_id` = '" + data['order_id'] + "', `product_id` = '" + data['product_id'] + "', `customer_id` = '" + data['customer_id'] + "', `firstname` = " + this.db.escape(data['firstname']) + ", `lastname` = " + this.db.escape(data['lastname']) + ", `email` = " + this.db.escape(data['email']) + ", `telephone` = " + this.db.escape(data['telephone']) + ", `product` = '" + this.db.escape(data['product']) + "', `model` = '" + this.db.escape(data['model']) + "', `quantity` = '" + data['quantity'] + "', `opened` = '" + data['opened'] + "', `return_reason_id` = '" + data['return_reason_id'] + "', `return_action_id` = '" + data['return_action_id'] + "', `return_status_id` = '" + data['return_status_id'] + "', `comment` = '" + this.db.escape(data['comment']) + "', `date_ordered` = '" + this.db.escape(data['date_ordered']) + "', `date_added` = NOW(), `date_modified` = NOW()");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "return` SET `order_id` = '" + data['order_id'] + "', `product_id` = '" + data['product_id'] + "', `customer_id` = '" + data['customer_id'] + "', `firstname` = " + this.db.escape(data['firstname']) + ", `lastname` = " + this.db.escape(data['lastname']) + ", `email` = " + this.db.escape(data['email']) + ", `telephone` = " + this.db.escape(data['telephone']) + ", `product` = " + this.db.escape(data['product']) + ", `model` = " + this.db.escape(data['model']) + ", `quantity` = '" + data['quantity'] + "', `opened` = '" + data['opened'] + "', `return_reason_id` = '" + data['return_reason_id'] + "', `return_action_id` = '" + data['return_action_id'] + "', `return_status_id` = '" + data['return_status_id'] + "', `comment` = " + this.db.escape(data['comment']) + ", `date_ordered` = " + this.db.escape(data['date_ordered']) + ", `date_added` = NOW(), `date_modified` = NOW()");
 
 		return this.db.getLastId();
 	}
@@ -24,7 +17,7 @@ class ReturnsModel  extends Model {
 	 * @return void
 	 */
 	async editReturn(return_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "return` SET `order_id` = '" + data['order_id'] + "', `product_id` = '" + data['product_id'] + "', `customer_id` = '" + data['customer_id'] + "', `firstname` = " + this.db.escape(data['firstname']) + ", `lastname` = " + this.db.escape(data['lastname']) + ", `email` = " + this.db.escape(data['email']) + ", `telephone` = " + this.db.escape(data['telephone']) + ", `product` = '" + this.db.escape(data['product']) + "', `model` = '" + this.db.escape(data['model']) + "', `quantity` = '" + data['quantity'] + "', `opened` = '" + data['opened'] + "', `return_reason_id` = '" + data['return_reason_id'] + "', `return_action_id` = '" + data['return_action_id'] + "', `comment` = '" + this.db.escape(data['comment']) + "', `date_ordered` = '" + this.db.escape(data['date_ordered']) + "', `date_modified` = NOW() WHERE `return_id` = '" + return_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "return` SET `order_id` = '" + data['order_id'] + "', `product_id` = '" + data['product_id'] + "', `customer_id` = '" + data['customer_id'] + "', `firstname` = " + this.db.escape(data['firstname']) + ", `lastname` = " + this.db.escape(data['lastname']) + ", `email` = " + this.db.escape(data['email']) + ", `telephone` = " + this.db.escape(data['telephone']) + ", `product` = " + this.db.escape(data['product']) + ", `model` = " + this.db.escape(data['model']) + ", `quantity` = '" + data['quantity'] + "', `opened` = '" + data['opened'] + "', `return_reason_id` = '" + data['return_reason_id'] + "', `return_action_id` = '" + data['return_action_id'] + "', `comment` = " + this.db.escape(data['comment']) + ", `date_ordered` = " + this.db.escape(data['date_ordered']) + ", `date_modified` = NOW() WHERE `return_id` = '" + return_id + "'");
 	}
 
 	/**
@@ -59,42 +52,42 @@ class ReturnsModel  extends Model {
 		let implode = [];
 
 		if ((data['filter_return_id'])) {
-			implode.push("r.`return_id` = '" + data['filter_return_id'] + "'";
+			implode.push("r.`return_id` = '" + data['filter_return_id'] + "'");
 		}
 
 		if ((data['filter_order_id'])) {
-			implode.push("r.`order_id` = '" + data['filter_order_id'] + "'";
+			implode.push("r.`order_id` = '" + data['filter_order_id'] + "'");
 		}
 
 		if ((data['filter_customer'])) {
-			implode.push("CONCAT(r.`firstname`, ' ', r.`lastname`) LIKE '" + this.db.escape(data['filter_customer'] + '%') + "'";
+			implode.push("CONCAT(r.`firstname`, ' ', r.`lastname`) LIKE " + this.db.escape(data['filter_customer'] + '%'));
 		}
 
 		if ((data['filter_product'])) {
-			implode.push("r.`product` = '" + this.db.escape(data['filter_product']) + "'";
+			implode.push("r.`product` = " + this.db.escape(data['filter_product']));
 		}
 
 		if ((data['filter_model'])) {
-			implode.push("r.`model` = '" + this.db.escape(data['filter_model']) + "'";
+			implode.push("r.`model` = " + this.db.escape(data['filter_model']));
 		}
 
 		if ((data['filter_return_status_id'])) {
-			implode.push("r.`return_status_id` = '" + data['filter_return_status_id'] + "'";
+			implode.push("r.`return_status_id` = '" + data['filter_return_status_id'] + "'");
 		}
 
 		if ((data['filter_date_from'])) {
-			implode.push("DATE(r.`date_added`) >= DATE(" + this.db.escape(data['filter_date_from']) + ")";
+			implode.push("DATE(r.`date_added`) >= DATE(" + this.db.escape(data['filter_date_from']) + ")");
 		}
 
 		if ((data['filter_date_to'])) {
-			implode.push("DATE(r.`date_added`) <= DATE(" + this.db.escape(data['filter_date_to']) + ")";
+			implode.push("DATE(r.`date_added`) <= DATE(" + this.db.escape(data['filter_date_to']) + ")");
 		}
 
 		if (implode.length) {
 			sql += " WHERE " + implode.join(" AND ");
 		}
 
-		sort_data = [
+		let sort_data = [
 			'r.return_id',
 			'r.order_id',
 			'customer',
@@ -105,7 +98,7 @@ class ReturnsModel  extends Model {
 			'r.date_modified'
 		];
 
-		if (data['sort'] && in_array(data['sort'], sort_data)) {
+		if (data['sort'] && sort_data.includes(data['sort'],)) {
 			sql += " ORDER BY " + data['sort'];
 		} else {
 			sql += " ORDER BY r.`return_id`";
@@ -145,35 +138,35 @@ class ReturnsModel  extends Model {
 		let implode = [];
 
 		if ((data['filter_return_id'])) {
-			implode.push("r.`return_id` = '" + data['filter_return_id'] + "'";
+			implode.push("r.`return_id` = '" + data['filter_return_id'] + "'");
 		}
 
 		if ((data['filter_customer'])) {
-			implode.push("CONCAT(r.`firstname`, ' ', r.`lastname`) LIKE '" + this.db.escape(data['filter_customer'] + '%') + "'";
+			implode.push("CONCAT(r.`firstname`, ' ', r.`lastname`) LIKE " + this.db.escape(data['filter_customer'] + '%') );
 		}
 
 		if ((data['filter_order_id'])) {
-			implode.push("r.`order_id` = '" + this.db.escape(data['filter_order_id']) + "'";
+			implode.push("r.`order_id` = " + this.db.escape(data['filter_order_id']) );
 		}
 
 		if ((data['filter_product'])) {
-			implode.push("r.`product` = '" + this.db.escape(data['filter_product']) + "'";
+			implode.push("r.`product` = " + this.db.escape(data['filter_product']) );
 		}
 
 		if ((data['filter_model'])) {
-			implode.push("r.`model` = '" + this.db.escape(data['filter_model']) + "'";
+			implode.push("r.`model` = " + this.db.escape(data['filter_model']) );
 		}
 
 		if ((data['filter_return_status_id'])) {
-			implode.push("r.`return_status_id` = '" + data['filter_return_status_id'] + "'";
+			implode.push("r.`return_status_id` = '" + data['filter_return_status_id'] );
 		}
 
 		if ((data['filter_date_from'])) {
-			implode.push("DATE(r.`date_added`) >= DATE(" + this.db.escape(data['filter_date_from']) + ")";
+			implode.push("DATE(r.`date_added`) >= DATE(" + this.db.escape(data['filter_date_from']) + ")");
 		}
 
 		if ((data['filter_date_to'])) {
-			implode.push("DATE(r.`date_added`) <= DATE(" + this.db.escape(data['filter_date_to']) + ")";
+			implode.push("DATE(r.`date_added`) <= DATE(" + this.db.escape(data['filter_date_to']) + ")");
 		}
 
 		if (implode.length) {
@@ -222,11 +215,11 @@ class ReturnsModel  extends Model {
 	 * @param    return_id
 	 * @param    return_status_id
 	 * @param comment
-	 * @param bool   notify
+	 * @param   notify
 	 *
 	 * @return void
 	 */
-	async addHistory(return_id, return_status_id, comment, bool notify) {
+	async addHistory(return_id, return_status_id, comment, notify) {
 		await this.db.query("UPDATE `" + DB_PREFIX + "return` SET `return_status_id` = '" + return_status_id + "', `date_modified` = NOW() WHERE `return_id` = '" + return_id + "'");
 		await this.db.query("INSERT INTO `" + DB_PREFIX + "return_history` SET `return_id` = '" + return_id + "', `return_status_id` = '" + return_status_id + "', `notify` = '" + notify + "', `comment` = '" + this.db.escape(strip_tags(comment)) + "', `date_added` = NOW()");
 	}

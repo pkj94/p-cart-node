@@ -6,18 +6,21 @@ namespace Opencart\Admin\Model\Catalog;
  * @package Opencart\Admin\Model\Catalog
  */
 class CategoryModel  extends Model {
+	constructor(registry){
+		super(registry)
+	}
 	/**
 	 * @param data
 	 *
 	 * @return int
 	 */
 	async addCategory(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "category` SET `image` = '" + this.db.escape(data['image']) + "', `parent_id` = '" + data['parent_id'] + "', `top` = '" + (isset(data['top']) ? data['top'] : 0) + "', `column` = '" + data['column'] + "', `sort_order` = '" + data['sort_order'] + "', `status` = '" + (data['status'] ? data['status'] : 0) + "', `date_modified` = NOW(), `date_added` = NOW()");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "category` SET `image` = '" + this.db.escape(data['image']) + "', `parent_id` = '" + data['parent_id'] + "', `top` = '" + ((data['top']) ? data['top'] : 0) + "', `column` = '" + data['column'] + "', `sort_order` = '" + data['sort_order'] + "', `status` = '" + (data['status'] ? data['status'] : 0) + "', `date_modified` = NOW(), `date_added` = NOW()");
 
 		category_id = this.db.getLastId();
 
 		for (data['category_description'] of language_id : value) {
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "category_description` SET `category_id` = '" + category_id + "', `language_id` = '" + language_id + "', `name` = '" + this.db.escape(value['name']) + "', `description` = '" + this.db.escape(value['description']) + "', `meta_title` = '" + this.db.escape(value['meta_title']) + "', `meta_description` = '" + this.db.escape(value['meta_description']) + "', `meta_keyword` = '" + this.db.escape(value['meta_keyword']) + "'");
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "category_description` SET `category_id` = '" + category_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + ", `description` = '" + this.db.escape(value['description']) + "', `meta_title` = '" + this.db.escape(value['meta_title']) + "', `meta_description` = '" + this.db.escape(value['meta_description']) + "', `meta_keyword` = '" + this.db.escape(value['meta_keyword']) + "'");
 		}
 
 		// MySQL Hierarchical Data Closure Table Pattern
@@ -33,13 +36,13 @@ class CategoryModel  extends Model {
 
 		await this.db.query("INSERT INTO `" + DB_PREFIX + "category_path` SET `category_id` = '" + category_id + "', `path_id` = '" + category_id + "', `level` = '" + level. "'");
 
-		if (isset(data['category_filter'])) {
+		if ((data['category_filter'])) {
 			for (data['category_filter'] of filter_id) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "category_filter` SET `category_id` = '" + category_id + "', `filter_id` = '" + filter_id + "'");
 			}
 		}
 
-		if (isset(data['category_store'])) {
+		if ((data['category_store'])) {
 			for (data['category_store'] of store_id) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "category_to_store` SET `category_id` = '" + category_id + "', `store_id` = '" + store_id + "'");
 			}
@@ -69,7 +72,7 @@ class CategoryModel  extends Model {
 		}
 
 		// Set which layout to use with this category
-		if (isset(data['category_layout'])) {
+		if ((data['category_layout'])) {
 			for (data['category_layout'] of store_id : layout_id) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "category_to_layout` SET `category_id` = '" + category_id + "', `store_id` = '" + store_id + "', `layout_id` = '" + layout_id + "'");
 			}
@@ -85,12 +88,12 @@ class CategoryModel  extends Model {
 	 * @return void
 	 */
 	async editCategory(category_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "category` SET `image` = '" + this.db.escape(data['image']) + "', `parent_id` = '" + data['parent_id'] + "', `top` = '" + (isset(data['top']) ? data['top'] : 0) + "', `column` = '" + data['column'] + "', `sort_order` = '" + data['sort_order'] + "', `status` = '" + (data['status'] ? data['status'] : 0) + "', `date_modified` = NOW() WHERE `category_id` = '" + category_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "category` SET `image` = '" + this.db.escape(data['image']) + "', `parent_id` = '" + data['parent_id'] + "', `top` = '" + ((data['top']) ? data['top'] : 0) + "', `column` = '" + data['column'] + "', `sort_order` = '" + data['sort_order'] + "', `status` = '" + (data['status'] ? data['status'] : 0) + "', `date_modified` = NOW() WHERE `category_id` = '" + category_id + "'");
 
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "category_description` WHERE `category_id` = '" + category_id + "'");
 
 		for (data['category_description'] of language_id : value) {
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "category_description` SET `category_id` = '" + category_id + "', `language_id` = '" + language_id + "', `name` = '" + this.db.escape(value['name']) + "', `description` = '" + this.db.escape(value['description']) + "', `meta_title` = '" + this.db.escape(value['meta_title']) + "', `meta_description` = '" + this.db.escape(value['meta_description']) + "', `meta_keyword` = '" + this.db.escape(value['meta_keyword']) + "'");
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "category_description` SET `category_id` = '" + category_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + ", `description` = '" + this.db.escape(value['description']) + "', `meta_title` = '" + this.db.escape(value['meta_title']) + "', `meta_description` = '" + this.db.escape(value['meta_description']) + "', `meta_keyword` = '" + this.db.escape(value['meta_keyword']) + "'");
 		}
 
 		// Old path
@@ -149,7 +152,7 @@ class CategoryModel  extends Model {
 
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "category_filter` WHERE `category_id` = '" + category_id + "'");
 
-		if (isset(data['category_filter'])) {
+		if ((data['category_filter'])) {
 			for (data['category_filter'] of filter_id) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "category_filter` SET `category_id` = '" + category_id + "', `filter_id` = '" + filter_id + "'");
 			}
@@ -157,7 +160,7 @@ class CategoryModel  extends Model {
 
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "category_to_store` WHERE `category_id` = '" + category_id + "'");
 
-		if (isset(data['category_store'])) {
+		if ((data['category_store'])) {
 			for (data['category_store'] of store_id) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "category_to_store` SET `category_id` = '" + category_id + "', `store_id` = '" + store_id + "'");
 			}
@@ -191,7 +194,7 @@ class CategoryModel  extends Model {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "seo_url` SET `store_id` = '" + store_id + "', `language_id` = '" + language_id + "', `key` = 'path', `value` = '" + this.db.escape(path_new) + "', `keyword` = '" + this.db.escape(keyword) + "'");
 
 				// Update sub category seo urls
-				if (isset(seo_url_data[store_id][language_id])) {
+				if ((seo_url_data[store_id][language_id])) {
 					await this.db.query("UPDATE `" + DB_PREFIX + "seo_url` SET `value` = CONCAT('" + this.db.escape(path_new + '_') + "', SUBSTRING(`value`, " + (strlen(path_old + '_') + 1) + ")), `keyword` = CONCAT('" + this.db.escape(keyword) + "', SUBSTRING(`keyword`, " + (oc_strlen(seo_url_data[store_id][language_id]) + 1) + ")) WHERE `store_id` = '" + store_id + "' AND `language_id` = '" + language_id + "' AND `key` = 'path' AND `value` LIKE '" + this.db.escape(path_old + '\_%') + "'");
 				}
 			}
@@ -200,7 +203,7 @@ class CategoryModel  extends Model {
 		// Layouts
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "category_to_layout` WHERE `category_id` = '" + category_id + "'");
 
-		if (isset(data['category_layout'])) {
+		if ((data['category_layout'])) {
 			for (data['category_layout'] of store_id : layout_id) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "category_to_layout` SET `category_id` = '" + category_id + "', `store_id` = '" + store_id + "', `layout_id` = '" + layout_id + "'");
 			}
@@ -304,12 +307,12 @@ class CategoryModel  extends Model {
 
 		sql += " GROUP BY cp.`category_id`";
 
-		sort_data = [
+		let sort_data = [
 			'name',
 			'sort_order'
 		];
 
-		if (data['sort'] && in_array(data['sort'], sort_data)) {
+		if (data['sort'] && sort_data.includes(data['sort'],)) {
 			sql += " ORDER BY " + data['sort'];
 		} else {
 			sql += " ORDER BY `sort_order`";

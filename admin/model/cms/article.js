@@ -6,6 +6,9 @@ namespace Opencart\Admin\Model\Cms;
  * @package Opencart\Admin\Model\Cms
  */
 class ArticleModel  extends Model {
+	constructor(registry){
+		super(registry)
+	}
 	/**
 	 * @param data
 	 *
@@ -17,10 +20,10 @@ class ArticleModel  extends Model {
 		article_id = this.db.getLastId();
 
 		for (data['article_description'] of language_id : value) {
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "article_description` SET `article_id` = '" + article_id + "', `language_id` = '" + language_id + "', `image` = '" + this.db.escape(value['image']) + "', `name` = '" + this.db.escape(value['name']) + "', `description` = '" + this.db.escape(value['description']) + "', `tag` = '" + this.db.escape(value['tag']) + "', `meta_title` = '" + this.db.escape(value['meta_title']) + "', `meta_description` = '" + this.db.escape(value['meta_description']) + "', `meta_keyword` = '" + this.db.escape(value['meta_keyword']) + "'");
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "article_description` SET `article_id` = '" + article_id + "', `language_id` = '" + language_id + "', `image` = '" + this.db.escape(value['image']) + "', `name` = " + this.db.escape(value['name']) + ", `description` = '" + this.db.escape(value['description']) + "', `tag` = '" + this.db.escape(value['tag']) + "', `meta_title` = '" + this.db.escape(value['meta_title']) + "', `meta_description` = '" + this.db.escape(value['meta_description']) + "', `meta_keyword` = '" + this.db.escape(value['meta_keyword']) + "'");
 		}
 
-		if (isset(data['article_store'])) {
+		if ((data['article_store'])) {
 			for (data['article_store'] of store_id) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "article_to_store` SET `article_id` = '" + article_id + "', `store_id` = '" + store_id + "'");
 			}
@@ -33,7 +36,7 @@ class ArticleModel  extends Model {
 		}
 
 		// Set which layout to use with this article
-		if (isset(data['article_layout'])) {
+		if ((data['article_layout'])) {
 			for (data['article_layout'] of store_id : layout_id) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "article_to_layout` SET `article_id` = '" + article_id + "', `store_id` = '" + store_id + "', `layout_id` = '" + layout_id + "'");
 			}
@@ -56,12 +59,12 @@ class ArticleModel  extends Model {
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "article_description` WHERE `article_id` = '" + article_id + "'");
 
 		for (data['article_description'] of language_id : value) {
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "article_description` SET `article_id` = '" + article_id + "', `language_id` = '" + language_id + "', `image` = '" + this.db.escape(value['image']) + "', `name` = '" + this.db.escape(value['name']) + "', `description` = '" + this.db.escape(value['description']) + "', `tag` = '" + this.db.escape(value['tag']) + "', `meta_title` = '" + this.db.escape(value['meta_title']) + "', `meta_description` = '" + this.db.escape(value['meta_description']) + "', `meta_keyword` = '" + this.db.escape(value['meta_keyword']) + "'");
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "article_description` SET `article_id` = '" + article_id + "', `language_id` = '" + language_id + "', `image` = '" + this.db.escape(value['image']) + "', `name` = " + this.db.escape(value['name']) + ", `description` = '" + this.db.escape(value['description']) + "', `tag` = '" + this.db.escape(value['tag']) + "', `meta_title` = '" + this.db.escape(value['meta_title']) + "', `meta_description` = '" + this.db.escape(value['meta_description']) + "', `meta_keyword` = '" + this.db.escape(value['meta_keyword']) + "'");
 		}
 
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "article_to_store` WHERE `article_id` = '" + article_id + "'");
 
-		if (isset(data['article_store'])) {
+		if ((data['article_store'])) {
 			for (data['article_store'] of store_id) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "article_to_store` SET `article_id` = '" + article_id + "', `store_id` = '" + store_id + "'");
 			}
@@ -78,7 +81,7 @@ class ArticleModel  extends Model {
 		// Layouts
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "article_to_layout` WHERE `article_id` = '" + article_id + "'");
 
-		if (isset(data['article_layout'])) {
+		if ((data['article_layout'])) {
 			for (data['article_layout'] of store_id : layout_id) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "article_to_layout` SET `article_id` = '" + article_id + "', `store_id` = '" + store_id + "', `layout_id` = '" + layout_id + "'");
 			}
@@ -111,14 +114,14 @@ class ArticleModel  extends Model {
 	async getArticle(article_id) {
 		let sql = "SELECT DISTINCT * FROM `" + DB_PREFIX + "article` `a` LEFT JOIN `" + DB_PREFIX + "article_description` `ad` ON (`a`.`article_id` = `ad`.`article_id`) WHERE `a`.`article_id` = '" + article_id + "' AND `ad`.`language_id` = '" + this.config.get('config_language_id') + "'";
 
-		article_data = this.cache.get('article.'. md5(sql));
+		article_data = await this.cache.get('article.'. crypto.createHash('md5').update(sql).digest('hex'));
 
 		if (!article_data) {
 			let query = await this.db.query(sql);
 
 			article_data = query.row;
 
-			this.cache.set('article.'. md5(sql), article_data);
+			this.cache.set('article.'. crypto.createHash('md5').update(sql).digest('hex'), article_data);
 		}
 
 		return article_data;
@@ -136,12 +139,12 @@ class ArticleModel  extends Model {
 			sql += " AND `ad`.`name` LIKE '" + this.db.escape(data['filter_name']) + "'";
 		}
 
-		sort_data = [
+		let sort_data = [
 			'ad.name',
 			'a.date_added'
 		];
 
-		if (data['sort'] && in_array(data['sort'], sort_data)) {
+		if (data['sort'] && sort_data.includes(data['sort'],)) {
 			sql += " ORDER BY " + data['sort'];
 		} else {
 			sql += " ORDER BY `a`.`date_added`";
@@ -165,14 +168,14 @@ class ArticleModel  extends Model {
 			sql += " LIMIT " + data['start'] + "," + data['limit'];
 		}
 
-		article_data = this.cache.get('article.'. md5(sql));
+		article_data = await this.cache.get('article.'. crypto.createHash('md5').update(sql).digest('hex'));
 
 		if (!article_data) {
 			let query = await this.db.query(sql);
 
 			article_data = query.rows;
 
-			this.cache.set('article.'. md5(sql), article_data);
+			this.cache.set('article.'. crypto.createHash('md5').update(sql).digest('hex'), article_data);
 		}
 
 		return article_data;

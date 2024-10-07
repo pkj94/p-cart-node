@@ -6,13 +6,16 @@ namespace Opencart\Admin\Model\Catalog;
  * @package Opencart\Admin\Model\Catalog
  */
 class ProductModel  extends Model {
+	constructor(registry){
+		super(registry)
+	}
 	/**
 	 * @param data
 	 *
 	 * @return int
 	 */
 	async addProduct(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "product` SET `master_id` = '" + data['master_id'] + "', `model` = '" + this.db.escape(data['model']) + "', `sku` = '" + this.db.escape(data['sku']) + "', `upc` = '" + this.db.escape(data['upc']) + "', `ean` = '" + this.db.escape(data['ean']) + "', `jan` = '" + this.db.escape(data['jan']) + "', `isbn` = '" + this.db.escape(data['isbn']) + "', `mpn` = '" + this.db.escape(data['mpn']) + "', `location` = '" + this.db.escape(data['location']) + "', `variant` = '" + this.db.escape((data['variant']) ? JSON.stringify(data['variant']) : '') + "', `override` = '" + this.db.escape((data['override']) ? JSON.stringify(data['override']) : '') + "', `quantity` = '" + data['quantity'] + "', `minimum` = '" + data['minimum'] + "', `subtract` = '" + (isset(data['subtract']) ? data['subtract'] : 0) + "', `stock_status_id` = '" + data['stock_status_id'] + "', `date_available` = '" + this.db.escape(data['date_available']) + "', `manufacturer_id` = '" + data['manufacturer_id'] + "', `shipping` = '" + (isset(data['shipping']) ? data['shipping'] : 0) + "', `price` = '" + data['price'] + "', `points` = '" + data['points'] + "', `weight` = '" + data['weight'] + "', `weight_class_id` = '" + data['weight_class_id'] + "', `length` = '" + data['length'] + "', `width` = '" + data['width'] + "', `height` = '" + data['height'] + "', `length_class_id` = '" + data['length_class_id'] + "', `status` = '" + (data['status'] ? data['status'] : 0) + "', `tax_class_id` = '" + data['tax_class_id'] + "', `sort_order` = '" + data['sort_order'] + "', `date_added` = NOW(), `date_modified` = NOW()");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "product` SET `master_id` = '" + data['master_id'] + "', `model` = " + this.db.escape(data['model']) + ", `sku` = '" + this.db.escape(data['sku']) + "', `upc` = '" + this.db.escape(data['upc']) + "', `ean` = '" + this.db.escape(data['ean']) + "', `jan` = '" + this.db.escape(data['jan']) + "', `isbn` = '" + this.db.escape(data['isbn']) + "', `mpn` = '" + this.db.escape(data['mpn']) + "', `location` = '" + this.db.escape(data['location']) + "', `variant` = '" + this.db.escape((data['variant']) ? JSON.stringify(data['variant']) : '') + "', `override` = '" + this.db.escape((data['override']) ? JSON.stringify(data['override']) : '') + "', `quantity` = '" + data['quantity'] + "', `minimum` = '" + data['minimum'] + "', `subtract` = '" + ((data['subtract']) ? data['subtract'] : 0) + "', `stock_status_id` = '" + data['stock_status_id'] + "', `date_available` = '" + this.db.escape(data['date_available']) + "', `manufacturer_id` = '" + data['manufacturer_id'] + "', `shipping` = '" + ((data['shipping']) ? data['shipping'] : 0) + "', `price` = '" + data['price'] + "', `points` = '" + data['points'] + "', `weight` = '" + data['weight'] + "', `weight_class_id` = '" + data['weight_class_id'] + "', `length` = '" + data['length'] + "', `width` = '" + data['width'] + "', `height` = '" + data['height'] + "', `length_class_id` = '" + data['length_class_id'] + "', `status` = '" + (data['status'] ? data['status'] : 0) + "', `tax_class_id` = '" + data['tax_class_id'] + "', `sort_order` = '" + data['sort_order'] + "', `date_added` = NOW(), `date_modified` = NOW()");
 
 		product_id = this.db.getLastId();
 
@@ -22,39 +25,39 @@ class ProductModel  extends Model {
 
 		// Description
 		for (data['product_description'] of language_id : value) {
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "product_description` SET `product_id` = '" + product_id + "', `language_id` = '" + language_id + "', `name` = '" + this.db.escape(value['name']) + "', `description` = '" + this.db.escape(value['description']) + "', `tag` = '" + this.db.escape(value['tag']) + "', `meta_title` = '" + this.db.escape(value['meta_title']) + "', `meta_description` = '" + this.db.escape(value['meta_description']) + "', `meta_keyword` = '" + this.db.escape(value['meta_keyword']) + "'");
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "product_description` SET `product_id` = '" + product_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + ", `description` = '" + this.db.escape(value['description']) + "', `tag` = '" + this.db.escape(value['tag']) + "', `meta_title` = '" + this.db.escape(value['meta_title']) + "', `meta_description` = '" + this.db.escape(value['meta_description']) + "', `meta_keyword` = '" + this.db.escape(value['meta_keyword']) + "'");
 		}
 
 		// Categories
-		if (isset(data['product_category'])) {
+		if ((data['product_category'])) {
 			for (data['product_category'] of category_id) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_to_category` SET `product_id` = '" + product_id + "', `category_id` = '" + category_id + "'");
 			}
 		}
 
 		// Filters
-		if (isset(data['product_filter'])) {
+		if ((data['product_filter'])) {
 			for (data['product_filter'] of filter_id) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_filter` SET `product_id` = '" + product_id + "', `filter_id` = '" + filter_id + "'");
 			}
 		}
 
 		// Stores
-		if (isset(data['product_store'])) {
+		if ((data['product_store'])) {
 			for (data['product_store'] of store_id) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_to_store` SET `product_id` = '" + product_id + "', `store_id` = '" + store_id + "'");
 			}
 		}
 
 		// Downloads
-		if (isset(data['product_download'])) {
+		if ((data['product_download'])) {
 			for (data['product_download'] of download_id) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_to_download` SET `product_id` = '" + product_id + "', `download_id` = '" + download_id + "'");
 			}
 		}
 
 		// Related
-		if (isset(data['product_related'])) {
+		if ((data['product_related'])) {
 			for (data['product_related'] of related_id) {
 				await this.db.query("DELETE FROM `" + DB_PREFIX + "product_related` WHERE `product_id` = '" + product_id + "' AND `related_id` = '" + related_id + "'");
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_related` SET `product_id` = '" + product_id + "', `related_id` = '" + related_id + "'");
@@ -64,7 +67,7 @@ class ProductModel  extends Model {
 		}
 
 		// Attributes
-		if (isset(data['product_attribute'])) {
+		if ((data['product_attribute'])) {
 			for (data['product_attribute'] of product_attribute) {
 				if (product_attribute['attribute_id']) {
 					// Removes duplicates
@@ -78,10 +81,10 @@ class ProductModel  extends Model {
 		}
 
 		// Options
-		if (isset(data['product_option'])) {
+		if ((data['product_option'])) {
 			for (data['product_option'] of product_option) {
 				if (product_option['type'] == 'select' || product_option['type'] == 'radio' || product_option['type'] == 'checkbox' || product_option['type'] == 'image') {
-					if (isset(product_option['product_option_value'])) {
+					if ((product_option['product_option_value'])) {
 						await this.db.query("INSERT INTO `" + DB_PREFIX + "product_option` SET `product_id` = '" + product_id + "', `option_id` = '" + product_option['option_id'] + "', `required` = '" + product_option['required'] + "'");
 
 						product_option_id = this.db.getLastId();
@@ -97,7 +100,7 @@ class ProductModel  extends Model {
 		}
 
 		// Subscription
-		if (isset(data['product_subscription'])) {
+		if ((data['product_subscription'])) {
 			for (data['product_subscription'] of product_subscription) {
 				let query = await this.db.query("SELECT `product_id` FROM `" + DB_PREFIX + "product_subscription` WHERE `product_id` = '" + product_id + "' AND `customer_group_id` = '" + product_subscription['customer_group_id'] + "' AND `subscription_plan_id` = '" + product_subscription['subscription_plan_id'] + "'");
 
@@ -108,28 +111,28 @@ class ProductModel  extends Model {
 		}
 
 		// Discounts
-		if (isset(data['product_discount'])) {
+		if ((data['product_discount'])) {
 			for (data['product_discount'] of product_discount) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_discount` SET `product_id` = '" + product_id + "', `customer_group_id` = '" + product_discount['customer_group_id'] + "', `quantity` = '" + product_discount['quantity'] + "', `priority` = '" + product_discount['priority'] + "', `price` = '" + product_discount['price'] + "', `date_start` = '" + this.db.escape(product_discount['date_start']) + "', `date_end` = '" + this.db.escape(product_discount['date_end']) + "'");
 			}
 		}
 
 		// Specials
-		if (isset(data['product_special'])) {
+		if ((data['product_special'])) {
 			for (data['product_special'] of product_special) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_special` SET `product_id` = '" + product_id + "', `customer_group_id` = '" + product_special['customer_group_id'] + "', `priority` = '" + product_special['priority'] + "', `price` = '" + product_special['price'] + "', `date_start` = '" + this.db.escape(product_special['date_start']) + "', `date_end` = '" + this.db.escape(product_special['date_end']) + "'");
 			}
 		}
 
 		// Images
-		if (isset(data['product_image'])) {
+		if ((data['product_image'])) {
 			for (data['product_image'] of product_image) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_image` SET `product_id` = '" + product_id + "', `image` = '" + this.db.escape(product_image['image']) + "', `sort_order` = '" + product_image['sort_order'] + "'");
 			}
 		}
 
 		// Reward
-		if (isset(data['product_reward'])) {
+		if ((data['product_reward'])) {
 			for (data['product_reward'] of customer_group_id : product_reward) {
 				if (product_reward['points'] > 0) {
 					await this.db.query("INSERT INTO `" + DB_PREFIX + "product_reward` SET `product_id` = '" + product_id + "', `customer_group_id` = '" + customer_group_id + "', `points` = '" + product_reward['points'] + "'");
@@ -138,7 +141,7 @@ class ProductModel  extends Model {
 		}
 
 		// SEO URL
-		if (isset(data['product_seo_url'])) {
+		if ((data['product_seo_url'])) {
 			for (data['product_seo_url'] of store_id : language) {
 				for (language of language_id : keyword) {
 					await this.db.query("INSERT INTO `" + DB_PREFIX + "seo_url` SET `store_id` = '" + store_id + "', `language_id` = '" + language_id + "', `key` = 'product_id', `value` = '" + product_id + "', `keyword` = '" + this.db.escape(keyword) + "'");
@@ -147,7 +150,7 @@ class ProductModel  extends Model {
 		}
 
 		// Layout
-		if (isset(data['product_layout'])) {
+		if ((data['product_layout'])) {
 			for (data['product_layout'] of store_id : layout_id) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_to_layout` SET `product_id` = '" + product_id + "', `store_id` = '" + store_id + "', `layout_id` = '" + layout_id + "'");
 			}
@@ -165,7 +168,7 @@ class ProductModel  extends Model {
 	 * @return void
 	 */
 	async editProduct(product_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "product` SET `model` = '" + this.db.escape(data['model']) + "', `sku` = '" + this.db.escape(data['sku']) + "', `upc` = '" + this.db.escape(data['upc']) + "', `ean` = '" + this.db.escape(data['ean']) + "', `jan` = '" + this.db.escape(data['jan']) + "', `isbn` = '" + this.db.escape(data['isbn']) + "', `mpn` = '" + this.db.escape(data['mpn']) + "', `location` = '" + this.db.escape(data['location']) + "', `variant` = '" + this.db.escape((data['variant']) ? JSON.stringify(data['variant']) : '') + "', `override` = '" + this.db.escape((data['override']) ? JSON.stringify(data['override']) : '') + "', `quantity` = '" + data['quantity'] + "', `minimum` = '" + data['minimum'] + "', `subtract` = '" + (isset(data['subtract']) ? data['subtract'] : 0) + "', `stock_status_id` = '" + data['stock_status_id'] + "', `date_available` = '" + this.db.escape(data['date_available']) + "', `manufacturer_id` = '" + data['manufacturer_id'] + "', `shipping` = '" + (isset(data['shipping']) ? data['shipping'] : 0) + "', `price` = '" + data['price'] + "', `points` = '" + data['points'] + "', `weight` = '" + data['weight'] + "', `weight_class_id` = '" + data['weight_class_id'] + "', `length` = '" + data['length'] + "', `width` = '" + data['width'] + "', `height` = '" + data['height'] + "', `length_class_id` = '" + data['length_class_id'] + "', `status` = '" + (data['status'] ? data['status'] : 0) + "', `tax_class_id` = '" + data['tax_class_id'] + "', `sort_order` = '" + data['sort_order'] + "', `date_modified` = NOW() WHERE `product_id` = '" + product_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "product` SET `model` = " + this.db.escape(data['model']) + ", `sku` = '" + this.db.escape(data['sku']) + "', `upc` = '" + this.db.escape(data['upc']) + "', `ean` = '" + this.db.escape(data['ean']) + "', `jan` = '" + this.db.escape(data['jan']) + "', `isbn` = '" + this.db.escape(data['isbn']) + "', `mpn` = '" + this.db.escape(data['mpn']) + "', `location` = '" + this.db.escape(data['location']) + "', `variant` = '" + this.db.escape((data['variant']) ? JSON.stringify(data['variant']) : '') + "', `override` = '" + this.db.escape((data['override']) ? JSON.stringify(data['override']) : '') + "', `quantity` = '" + data['quantity'] + "', `minimum` = '" + data['minimum'] + "', `subtract` = '" + ((data['subtract']) ? data['subtract'] : 0) + "', `stock_status_id` = '" + data['stock_status_id'] + "', `date_available` = '" + this.db.escape(data['date_available']) + "', `manufacturer_id` = '" + data['manufacturer_id'] + "', `shipping` = '" + ((data['shipping']) ? data['shipping'] : 0) + "', `price` = '" + data['price'] + "', `points` = '" + data['points'] + "', `weight` = '" + data['weight'] + "', `weight_class_id` = '" + data['weight_class_id'] + "', `length` = '" + data['length'] + "', `width` = '" + data['width'] + "', `height` = '" + data['height'] + "', `length_class_id` = '" + data['length_class_id'] + "', `status` = '" + (data['status'] ? data['status'] : 0) + "', `tax_class_id` = '" + data['tax_class_id'] + "', `sort_order` = '" + data['sort_order'] + "', `date_modified` = NOW() WHERE `product_id` = '" + product_id + "'");
 
 		if (data['image']) {
 			await this.db.query("UPDATE `" + DB_PREFIX + "product` SET `image` = '" + this.db.escape(data['image']) + "' WHERE `product_id` = '" + product_id + "'");
@@ -175,13 +178,13 @@ class ProductModel  extends Model {
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_description` WHERE `product_id` = '" + product_id + "'");
 
 		for (data['product_description'] of language_id : value) {
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "product_description` SET `product_id` = '" + product_id + "', `language_id` = '" + language_id + "', `name` = '" + this.db.escape(value['name']) + "', `description` = '" + this.db.escape(value['description']) + "', `tag` = '" + this.db.escape(value['tag']) + "', `meta_title` = '" + this.db.escape(value['meta_title']) + "', `meta_description` = '" + this.db.escape(value['meta_description']) + "', `meta_keyword` = '" + this.db.escape(value['meta_keyword']) + "'");
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "product_description` SET `product_id` = '" + product_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + ", `description` = '" + this.db.escape(value['description']) + "', `tag` = '" + this.db.escape(value['tag']) + "', `meta_title` = '" + this.db.escape(value['meta_title']) + "', `meta_description` = '" + this.db.escape(value['meta_description']) + "', `meta_keyword` = '" + this.db.escape(value['meta_keyword']) + "'");
 		}
 
 		// Categories
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_to_category` WHERE `product_id` = '" + product_id + "'");
 
-		if (isset(data['product_category'])) {
+		if ((data['product_category'])) {
 			for (data['product_category'] of category_id) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_to_category` SET `product_id` = '" + product_id + "', `category_id` = '" + category_id + "'");
 			}
@@ -190,7 +193,7 @@ class ProductModel  extends Model {
 		// Filters
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_filter` WHERE `product_id` = '" + product_id + "'");
 
-		if (isset(data['product_filter'])) {
+		if ((data['product_filter'])) {
 			for (data['product_filter'] of filter_id) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_filter` SET `product_id` = '" + product_id + "', `filter_id` = '" + filter_id + "'");
 			}
@@ -199,7 +202,7 @@ class ProductModel  extends Model {
 		// Stores
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_to_store` WHERE `product_id` = '" + product_id + "'");
 
-		if (isset(data['product_store'])) {
+		if ((data['product_store'])) {
 			for (data['product_store'] of store_id) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_to_store` SET `product_id` = '" + product_id + "', `store_id` = '" + store_id + "'");
 			}
@@ -208,7 +211,7 @@ class ProductModel  extends Model {
 		// Downloads
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_to_download` WHERE `product_id` = '" + product_id + "'");
 
-		if (isset(data['product_download'])) {
+		if ((data['product_download'])) {
 			for (data['product_download'] of download_id) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_to_download` SET `product_id` = '" + product_id + "', `download_id` = '" + download_id + "'");
 			}
@@ -218,7 +221,7 @@ class ProductModel  extends Model {
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_related` WHERE `product_id` = '" + product_id + "'");
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_related` WHERE `related_id` = '" + product_id + "'");
 
-		if (isset(data['product_related'])) {
+		if ((data['product_related'])) {
 			for (data['product_related'] of related_id) {
 				await this.db.query("DELETE FROM `" + DB_PREFIX + "product_related` WHERE `product_id` = '" + product_id + "' AND `related_id` = '" + related_id + "'");
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_related` SET `product_id` = '" + product_id + "', `related_id` = '" + related_id + "'");
@@ -247,10 +250,10 @@ class ProductModel  extends Model {
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_option` WHERE `product_id` = '" + product_id + "'");
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_option_value` WHERE `product_id` = '" + product_id + "'");
 
-		if (isset(data['product_option'])) {
+		if ((data['product_option'])) {
 			for (data['product_option'] of product_option) {
 				if (product_option['type'] == 'select' || product_option['type'] == 'radio' || product_option['type'] == 'checkbox' || product_option['type'] == 'image') {
-					if (isset(product_option['product_option_value'])) {
+					if ((product_option['product_option_value'])) {
 						await this.db.query("INSERT INTO `" + DB_PREFIX + "product_option` SET `product_option_id` = '" + product_option['product_option_id'] + "', `product_id` = '" + product_id + "', `option_id` = '" + product_option['option_id'] + "', `required` = '" + product_option['required'] + "'");
 
 						product_option_id = this.db.getLastId();
@@ -268,7 +271,7 @@ class ProductModel  extends Model {
 		// Subscription
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_subscription` WHERE `product_id` = '" + product_id + "'");
 
-		if (isset(data['product_subscription'])) {
+		if ((data['product_subscription'])) {
 			for (data['product_subscription'] of product_subscription) {
 				let query = await this.db.query("SELECT `product_id` FROM `" + DB_PREFIX + "product_subscription` WHERE `product_id` = '" + product_id + "' AND `customer_group_id` = '" + product_subscription['customer_group_id'] + "' AND `subscription_plan_id` = '" + product_subscription['subscription_plan_id'] + "'");
 
@@ -281,7 +284,7 @@ class ProductModel  extends Model {
 		// Discounts
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_discount` WHERE `product_id` = '" + product_id + "'");
 
-		if (isset(data['product_discount'])) {
+		if ((data['product_discount'])) {
 			for (data['product_discount'] of product_discount) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_discount` SET `product_id` = '" + product_id + "', `customer_group_id` = '" + product_discount['customer_group_id'] + "', `quantity` = '" + product_discount['quantity'] + "', `priority` = '" + product_discount['priority'] + "', `price` = '" + product_discount['price'] + "', `date_start` = '" + this.db.escape(product_discount['date_start']) + "', `date_end` = '" + this.db.escape(product_discount['date_end']) + "'");
 			}
@@ -290,7 +293,7 @@ class ProductModel  extends Model {
 		// Specials
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_special` WHERE `product_id` = '" + product_id + "'");
 
-		if (isset(data['product_special'])) {
+		if ((data['product_special'])) {
 			for (data['product_special'] of product_special) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_special` SET `product_id` = '" + product_id + "', `customer_group_id` = '" + product_special['customer_group_id'] + "', `priority` = '" + product_special['priority'] + "', `price` = '" + product_special['price'] + "', `date_start` = '" + this.db.escape(product_special['date_start']) + "', `date_end` = '" + this.db.escape(product_special['date_end']) + "'");
 			}
@@ -299,7 +302,7 @@ class ProductModel  extends Model {
 		// Images
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_image` WHERE `product_id` = '" + product_id + "'");
 
-		if (isset(data['product_image'])) {
+		if ((data['product_image'])) {
 			for (data['product_image'] of product_image) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_image` SET `product_id` = '" + product_id + "', `image` = '" + this.db.escape(product_image['image']) + "', `sort_order` = '" + product_image['sort_order'] + "'");
 			}
@@ -308,7 +311,7 @@ class ProductModel  extends Model {
 		// Rewards
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_reward` WHERE `product_id` = '" + product_id + "'");
 
-		if (isset(data['product_reward'])) {
+		if ((data['product_reward'])) {
 			for (data['product_reward'] of customer_group_id : value) {
 				if (value['points'] > 0) {
 					await this.db.query("INSERT INTO `" + DB_PREFIX + "product_reward` SET `product_id` = '" + product_id + "', `customer_group_id` = '" + customer_group_id + "', `points` = '" + value['points'] + "'");
@@ -319,7 +322,7 @@ class ProductModel  extends Model {
 		// SEO URL
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "seo_url` WHERE `key` = 'product_id' AND `value` = '" + product_id + "'");
 
-		if (isset(data['product_seo_url'])) {
+		if ((data['product_seo_url'])) {
 			for (data['product_seo_url'] of store_id : language) {
 				for (language of language_id : keyword) {
 					await this.db.query("INSERT INTO `" + DB_PREFIX + "seo_url` SET `store_id` = '" + store_id + "', `language_id` = '" + language_id + "', `key` = 'product_id', `value` = '" + product_id + "', `keyword` = '" + this.db.escape(keyword) + "'");
@@ -330,7 +333,7 @@ class ProductModel  extends Model {
 		// Layout
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_to_layout` WHERE `product_id` = '" + product_id + "'");
 
-		if (isset(data['product_layout'])) {
+		if ((data['product_layout'])) {
 			for (data['product_layout'] of store_id : layout_id) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_to_layout` SET `product_id` = '" + product_id + "', `store_id` = '" + store_id + "', `layout_id` = '" + layout_id + "'");
 			}
@@ -424,7 +427,7 @@ class ProductModel  extends Model {
 
 		if (master_info) {
 			// We use the override to override the master product values
-			if (isset(data['override'])) {
+			if ((data['override'])) {
 				override = data['override'];
 			} else {
 				override = [];
@@ -451,44 +454,44 @@ class ProductModel  extends Model {
 			for (product_descriptions of language_id : product_description) {
 				for (product_description of key : value) {
 					// If an override has been found, we use the POST data values
-					if (!isset(override['product_description'][language_id][key])) {
+					if (!(override['product_description'][language_id][key])) {
 						product_data['product_description'][language_id][key] = value;
 					}
 				}
 			}
 
 			// Attributes
-			if (!isset(override['product_attribute'])) {
+			if (!(override['product_attribute'])) {
 				product_data['product_attribute'] = this.model_catalog_product.getAttributes(master_id);
 			}
 
 			// Category
-			if (!isset(override['product_category'])) {
+			if (!(override['product_category'])) {
 				product_data['product_category'] = this.model_catalog_product.getCategories(master_id);
 			}
 
 			// Discounts
-			if (!isset(override['product_discount'])) {
+			if (!(override['product_discount'])) {
 				product_data['product_discount'] = this.model_catalog_product.getDiscounts(master_id);
 			}
 
 			// Downloads
-			if (!isset(override['product_download'])) {
+			if (!(override['product_download'])) {
 				product_data['product_download'] = this.model_catalog_product.getDownloads(master_id);
 			}
 
 			// Filters
-			if (!isset(override['product_filter'])) {
+			if (!(override['product_filter'])) {
 				product_data['product_filter'] = this.model_catalog_product.getFilters(master_id);
 			}
 
 			// Images
-			if (!isset(override['product_image'])) {
+			if (!(override['product_image'])) {
 				product_data['product_image'] = this.model_catalog_product.getImages(master_id);
 			}
 
 			// Layouts
-			if (!isset(override['product_layout'])) {
+			if (!(override['product_layout'])) {
 				product_data['product_layout'] = this.model_catalog_product.getLayouts(master_id);
 			}
 
@@ -496,17 +499,17 @@ class ProductModel  extends Model {
 			// product_option should not be used if variant product
 
 			// Subscriptions
-			if (!isset(override['product_subscription'])) {
+			if (!(override['product_subscription'])) {
 				product_data['product_subscription'] = this.model_catalog_product.getSubscriptions(master_id);
 			}
 
 			// Related
-			if (!isset(override['product_related'])) {
+			if (!(override['product_related'])) {
 				product_data['product_related'] = this.model_catalog_product.getRelated(master_id);
 			}
 
 			// Rewards
-			if (!isset(override['product_reward'])) {
+			if (!(override['product_reward'])) {
 				product_data['product_reward'] = this.model_catalog_product.getRewards(master_id);
 			}
 
@@ -514,28 +517,28 @@ class ProductModel  extends Model {
 			// product_seo table is not overwritten because that needs to have unique seo keywords for every product
 
 			// Specials
-			if (!isset(override['product_special'])) {
+			if (!(override['product_special'])) {
 				product_data['product_special'] = this.model_catalog_product.getSpecials(master_id);
 			}
 
 			// Stores
-			if (!isset(override['product_store'])) {
+			if (!(override['product_store'])) {
 				product_data['product_store'] = this.model_catalog_product.getStores(master_id);
 			}
 		}
 
 		// If override set the POST data values
 		for (data of key : value) {
-			if (!isset(product_data[key])) {
+			if (!(product_data[key])) {
 				product_data[key] = value;
 			}
 		}
 
 		// Product Description
-		if (isset(data['product_description'])) {
+		if ((data['product_description'])) {
 			for (data['product_description'] of language_id : product_description) {
 				for (product_description of key : value) {
-					if (!isset(product_data['product_description'][language_id][key])) {
+					if (!(product_data['product_description'][language_id][key])) {
 						product_data['product_description'][language_id][key] = value;
 					}
 				}
@@ -561,7 +564,7 @@ class ProductModel  extends Model {
 
 		if (master_info) {
 			// We use the override to override the master product values
-			if (isset(data['override'])) {
+			if ((data['override'])) {
 				override = data['override'];
 			} else {
 				override = [];
@@ -587,44 +590,44 @@ class ProductModel  extends Model {
 
 			for (product_descriptions of language_id : product_description) {
 				for (product_description of key : value) {
-					if (!isset(override['product_description'][language_id][key])) {
+					if (!(override['product_description'][language_id][key])) {
 						product_data['product_description'][language_id][key] = value;
 					}
 				}
 			}
 
 			// Attributes
-			if (!isset(override['product_attribute'])) {
+			if (!(override['product_attribute'])) {
 				product_data['product_attribute'] = this.model_catalog_product.getAttributes(master_id);
 			}
 
 			// Category
-			if (!isset(override['product_category'])) {
+			if (!(override['product_category'])) {
 				product_data['product_category'] = this.model_catalog_product.getCategories(master_id);
 			}
 
 			// Discounts
-			if (!isset(override['product_discount'])) {
+			if (!(override['product_discount'])) {
 				product_data['product_discount'] = this.model_catalog_product.getDiscounts(master_id);
 			}
 
 			// Downloads
-			if (!isset(override['product_download'])) {
+			if (!(override['product_download'])) {
 				product_data['product_download'] = this.model_catalog_product.getDownloads(master_id);
 			}
 
 			// Filters
-			if (!isset(override['product_filter'])) {
+			if (!(override['product_filter'])) {
 				product_data['product_filter'] = this.model_catalog_product.getFilters(master_id);
 			}
 
 			// Images
-			if (!isset(override['product_image'])) {
+			if (!(override['product_image'])) {
 				product_data['product_image'] = this.model_catalog_product.getImages(master_id);
 			}
 
 			// Layouts
-			if (!isset(override['product_layout'])) {
+			if (!(override['product_layout'])) {
 				product_data['product_layout'] = this.model_catalog_product.getLayouts(master_id);
 			}
 
@@ -632,17 +635,17 @@ class ProductModel  extends Model {
 			// product_option should not be used if variant product
 
 			// Subscription
-			if (!isset(override['product_subscription'])) {
+			if (!(override['product_subscription'])) {
 				product_data['product_subscription'] = this.model_catalog_product.getSubscriptions(master_id);
 			}
 
 			// Related
-			if (!isset(override['product_related'])) {
+			if (!(override['product_related'])) {
 				product_data['product_related'] = this.model_catalog_product.getRelated(master_id);
 			}
 
 			// Rewards
-			if (!isset(override['product_reward'])) {
+			if (!(override['product_reward'])) {
 				product_data['product_reward'] = this.model_catalog_product.getRewards(master_id);
 			}
 
@@ -650,28 +653,28 @@ class ProductModel  extends Model {
 			// product_seo table is not overwritten because that needs to have unique seo keywords for every product
 
 			// Specials
-			if (!isset(override['product_special'])) {
+			if (!(override['product_special'])) {
 				product_data['product_special'] = this.model_catalog_product.getSpecials(master_id);
 			}
 
 			// Stores
-			if (!isset(override['product_store'])) {
+			if (!(override['product_store'])) {
 				product_data['product_store'] = this.model_catalog_product.getStores(master_id);
 			}
 		}
 
 		// If override set the POST data values
 		for (data of key : value) {
-			if (!isset(product_data[key])) {
+			if (!(product_data[key])) {
 				product_data[key] = value;
 			}
 		}
 
 		// Product Description
-		if (isset(data['product_description'])) {
+		if ((data['product_description'])) {
 			for (data['product_description'] of language_id : product_description) {
 				for (product_description of key : value) {
-					if (!isset(product_data['product_description'][language_id][key])) {
+					if (!(product_data['product_description'][language_id][key])) {
 						product_data['product_description'][language_id][key] = value;
 					}
 				}
@@ -731,59 +734,59 @@ class ProductModel  extends Model {
 			for (product_descriptions of language_id : product_description) {
 				for (product_description of key : value) {
 					// If override set use the POST data values
-					if (isset(override['product_description'][language_id][key])) {
+					if ((override['product_description'][language_id][key])) {
 						product_data['product_description'][language_id][key] = value;
 					}
 				}
 			}
 
 			// Attributes
-			if (isset(override['product_attribute'])) {
+			if ((override['product_attribute'])) {
 				product_data['product_attribute'] = this.model_catalog_product.getAttributes(product['product_id']);
 			}
 
 			// Category
-			if (isset(override['product_category'])) {
+			if ((override['product_category'])) {
 				product_data['product_category'] = this.model_catalog_product.getCategories(product['product_id']);
 			}
 
 			// Discounts
-			if (isset(override['product_discount'])) {
+			if ((override['product_discount'])) {
 				product_data['product_discount'] = this.model_catalog_product.getDiscounts(product['product_id']);
 			}
 
 			// Downloads
-			if (isset(override['product_download'])) {
+			if ((override['product_download'])) {
 				product_data['product_download'] = this.model_catalog_product.getDownloads(product['product_id']);
 			}
 
 			// Filters
-			if (isset(override['product_filter'])) {
+			if ((override['product_filter'])) {
 				product_data['product_filter'] = this.model_catalog_product.getFilters(product['product_id']);
 			}
 
 			// Images
-			if (isset(override['product_image'])) {
+			if ((override['product_image'])) {
 				product_data['product_image'] = this.model_catalog_product.getImages(product['product_id']);
 			}
 
 			// Layouts
-			if (isset(override['product_layout'])) {
+			if ((override['product_layout'])) {
 				product_data['product_layout'] = this.model_catalog_product.getLayouts(product['product_id']);
 			}
 
 			// Subscription
-			if (isset(override['product_subscription'])) {
+			if ((override['product_subscription'])) {
 				product_data['product_subscription'] = this.model_catalog_product.getSubscriptions(product['product_id']);
 			}
 
 			// Related
-			if (isset(override['product_related'])) {
+			if ((override['product_related'])) {
 				product_data['product_related'] = this.model_catalog_product.getRelated(product['product_id']);
 			}
 
 			// Rewards
-			if (isset(override['product_reward'])) {
+			if ((override['product_reward'])) {
 				product_data['product_reward'] = this.model_catalog_product.getRewards(product['product_id']);
 			}
 
@@ -791,28 +794,28 @@ class ProductModel  extends Model {
 			product_data['product_seo_url'] = this.model_catalog_product.getSeoUrls(product['product_id']);
 
 			// Specials
-			if (isset(override['product_special'])) {
+			if ((override['product_special'])) {
 				product_data['product_special'] = this.model_catalog_product.getSpecials(product['product_id']);
 			}
 
 			// Stores
-			if (isset(override['product_store'])) {
+			if ((override['product_store'])) {
 				product_data['product_store'] = this.model_catalog_product.getStores(product['product_id']);
 			}
 
 			// If override set the POST data values
 			for (data of key : value) {
-				if (!isset(product_data[key])) {
+				if (!(product_data[key])) {
 					product_data[key] = value;
 				}
 			}
 
 			// Descriptions
-			if (isset(data['product_description'])) {
+			if ((data['product_description'])) {
 				for (data['product_description'] of language_id : product_description) {
 					for (product_description of key : value) {
 						// If override set use the POST data values
-						if (!isset(product_data['product_description'][language_id][key])) {
+						if (!(product_data['product_description'][language_id][key])) {
 							product_data['product_description'][language_id][key] = value;
 						}
 					}
@@ -868,7 +871,7 @@ class ProductModel  extends Model {
 			sql += " AND p.`price` LIKE '" + this.db.escape(data['filter_price'] + '%') + "'";
 		}
 
-		if (isset(data['filter_quantity']) && data['filter_quantity'] !== '') {
+		if ((data['filter_quantity']) && data['filter_quantity'] !== '') {
 			sql += " AND p.`quantity` = '" + data['filter_quantity'] + "'";
 		}
 
@@ -878,7 +881,7 @@ class ProductModel  extends Model {
 
 		sql += " GROUP BY p.`product_id`";
 
-		sort_data = [
+		let sort_data = [
 			'pd.name',
 			'p.model',
 			'p.price',
@@ -887,7 +890,7 @@ class ProductModel  extends Model {
 			'p.sort_order'
 		];
 
-		if (data['sort'] && in_array(data['sort'], sort_data)) {
+		if (data['sort'] && sort_data.includes(data['sort'],)) {
 			sql += " ORDER BY " + data['sort'];
 		} else {
 			sql += " ORDER BY pd.`name`";
@@ -1235,11 +1238,11 @@ class ProductModel  extends Model {
 			sql += " AND p.`model` LIKE '" + this.db.escape(data['filter_model'] + '%') + "'";
 		}
 
-		if (isset(data['filter_price']) && data['filter_price'] !== '') {
+		if ((data['filter_price']) && data['filter_price'] !== '') {
 			sql += " AND p.`price` LIKE '" + this.db.escape(data['filter_price'] + '%') + "'";
 		}
 
-		if (isset(data['filter_quantity']) && data['filter_quantity'] !== '') {
+		if ((data['filter_quantity']) && data['filter_quantity'] !== '') {
 			sql += " AND p.`quantity` = '" + data['filter_quantity'] + "'";
 		}
 

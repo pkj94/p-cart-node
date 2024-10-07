@@ -1,11 +1,7 @@
-<?php
-namespace Opencart\Admin\Model\Report;
-/**
- * Class Online
- *
- * @package Opencart\Admin\Model\Report
- */
-class OnlineModel  extends Model {
+module.exports = class OnlineReportModel  extends Model {
+	constructor(registry){
+		super(registry)
+	}
 	/**
 	 * @param data
 	 *
@@ -17,11 +13,11 @@ class OnlineModel  extends Model {
 		let implode = [];
 
 		if ((data['filter_ip'])) {
-			implode.push("`co`.`ip` LIKE " + this.db.escape(data['filter_ip']) + "";
+			implode.push("`co`.`ip` LIKE " + this.db.escape(data['filter_ip']) + "");
 		}
 
 		if ((data['filter_customer'])) {
-			implode.push("`co`.`customer_id` > '0' AND CONCAT(`c`.`firstname`, ' ', `c`.`lastname`) LIKE '" + this.db.escape(data['filter_customer']) + "'";
+			implode.push("`co`.`customer_id` > '0' AND CONCAT(`c`.`firstname`, ' ', `c`.`lastname`) LIKE '" + this.db.escape(data['filter_customer']) + "'");
 		}
 
 		if (implode.length) {
@@ -58,11 +54,11 @@ class OnlineModel  extends Model {
 		let implode = [];
 
 		if ((data['filter_ip'])) {
-			implode.push("`co`.`ip` LIKE " + this.db.escape(data['filter_ip']) + "";
+			implode.push("`co`.`ip` LIKE " + this.db.escape(data['filter_ip']) + "");
 		}
 
 		if ((data['filter_customer'])) {
-			implode.push("`co`.`customer_id` > '0' AND CONCAT(`c`.`firstname`, ' ', `c`.`lastname`) LIKE '" + this.db.escape(data['filter_customer']) + "'";
+			implode.push("`co`.`customer_id` > '0' AND CONCAT(`c`.`firstname`, ' ', `c`.`lastname`) LIKE '" + this.db.escape(data['filter_customer']) + "'");
 		}
 
 		if (implode.length) {

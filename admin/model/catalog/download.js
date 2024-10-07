@@ -6,6 +6,9 @@ namespace Opencart\Admin\Model\Catalog;
  * @package Opencart\Admin\Model\Catalog
  */
 class DownloadModel  extends Model {
+	constructor(registry){
+		super(registry)
+	}
 	/**
 	 * @param data
 	 *
@@ -17,7 +20,7 @@ class DownloadModel  extends Model {
 		download_id = this.db.getLastId();
 
 		for (data['download_description'] of language_id : value) {
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "download_description` SET `download_id` = '" + download_id + "', `language_id` = '" + language_id + "', `name` = '" + this.db.escape(value['name']) + "'");
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "download_description` SET `download_id` = '" + download_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + "");
 		}
 
 		return download_id;
@@ -35,7 +38,7 @@ class DownloadModel  extends Model {
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "download_description` WHERE `download_id` = '" + download_id + "'");
 
 		for (data['download_description'] of language_id : value) {
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "download_description` SET `download_id` = '" + download_id + "', `language_id` = '" + language_id + "', `name` = '" + this.db.escape(value['name']) + "'");
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "download_description` SET `download_id` = '" + download_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + "");
 		}
 	}
 
@@ -72,12 +75,12 @@ class DownloadModel  extends Model {
 			sql += " AND dd.`name` LIKE '" + this.db.escape(data['filter_name'] + '%') + "'";
 		}
 
-		sort_data = [
+		let sort_data = [
 			'dd.name',
 			'd.date_added'
 		];
 
-		if (data['sort'] && in_array(data['sort'], sort_data)) {
+		if (data['sort'] && sort_data.includes(data['sort'],)) {
 			sql += " ORDER BY " + data['sort'];
 		} else {
 			sql += " ORDER BY dd.`name`";

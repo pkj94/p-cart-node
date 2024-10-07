@@ -51,7 +51,7 @@ module.exports = class ProductPurchasedReportController extends Controller {
 
 		const json = {};
 
-		if (!this.user.hasPermission('modify', 'extension/opencart/report/product_purchased')) {
+		if (!await this.user.hasPermission('modify', 'extension/opencart/report/product_purchased')) {
 			json['error'] = this.language.get('error_permission');
 		}
 

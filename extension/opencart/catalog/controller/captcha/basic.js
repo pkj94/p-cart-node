@@ -28,7 +28,7 @@ class BasicController extends Controller {
 	async validate() {
 		this.load.language('extension/opencart/captcha/basic');
 
-		if (!isset(this.session.data['captcha']) || !isset(this.request.post['captcha']) || (this.session.data['captcha'] != this.request.post['captcha'])) {
+		if (!(this.session.data['captcha']) || !(this.request.post['captcha']) || (this.session.data['captcha'] != this.request.post['captcha'])) {
 			return this.language.get('error_captcha');
 		} else {
 			return '';

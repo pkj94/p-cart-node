@@ -21,7 +21,7 @@ module.exports = class ReturnsReportModel extends Model {
 			sql += " AND DATE(r.`date_added`) <= DATE(" + this.db.escape(data['filter_date_end']) + ")";
 		}
 
-		if (isset(data['filter_group'])) {
+		if ((data['filter_group'])) {
 			group = data['filter_group'];
 		} else {
 			group = 'week';
@@ -43,7 +43,7 @@ module.exports = class ReturnsReportModel extends Model {
 				break;
 		}
 
-		if (isset(data['start']) || isset(data['limit'])) {
+		if ((data['start']) || (data['limit'])) {
 			if (data['start'] < 0) {
 				data['start'] = 0;
 			}

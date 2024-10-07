@@ -84,7 +84,7 @@ module.exports = class BannerModuleController extends Controller {
 
 		const json = {};
 
-		if (!this.user.hasPermission('modify', 'extension/opencart/module/banner')) {
+		if (!await this.user.hasPermission('modify', 'extension/opencart/module/banner')) {
 			json.error = { warning: this.language.get('error_permission') };
 		}
 

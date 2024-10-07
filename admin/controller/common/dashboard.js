@@ -24,7 +24,7 @@ module.exports = class DashboardController extends Controller {
         // console.log('extensions-----',extensions);        
         // Add all the modules which have multiple settings for each module
         for (let extension of extensions) {
-            if (this.config.get('dashboard_' + extension['code'] + '_status') && this.user.hasPermission('access', 'extension/' + extension['extension'] + '/dashboard/' + extension['code'])) {
+            if (this.config.get('dashboard_' + extension['code'] + '_status') && await this.user.hasPermission('access', 'extension/' + extension['extension'] + '/dashboard/' + extension['code'])) {
                 let output = await this.load.controller('extension/' + extension['extension'] + '/dashboard/' + extension['code'] + '.dashboard');
                 //if (!output instanceof \Exception) {
                 if (output) {
@@ -58,7 +58,7 @@ module.exports = class DashboardController extends Controller {
         if (column) {
             data['rows'].push(column);
         }
-        if (this.user.hasPermission('access', 'common/developer')) {
+        if (await this.user.hasPermission('access', 'common/developer')) {
             data['developer_status'] = true;
         } else {
             data['developer_status'] = false;
@@ -66,7 +66,9 @@ module.exports = class DashboardController extends Controller {
         data['security'] = await this.load.controller('common/security');
         data['user_token'] = this.session.data['user_token'];
         data['header'] = await this.load.controller('common/header');
+
         data['column_left'] = await this.load.controller('common/column_left');
+
         data['footer'] = await this.load.controller('common/footer');
         this.response.setOutput(await this.load.view('common/dashboard', data));
     }

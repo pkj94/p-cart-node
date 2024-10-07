@@ -39,7 +39,7 @@ module.exports = class MarketingReportModel extends Model {
 
 		sql += " GROUP BY o2.`marketing_id`) AS `total` FROM `" + DB_PREFIX + "marketing` m ORDER BY m.`date_added` ASC";
 
-		if (isset(data['start']) || isset(data['limit'])) {
+		if ((data['start']) || (data['limit'])) {
 			if (data['start'] < 0) {
 				data['start'] = 0;
 			}

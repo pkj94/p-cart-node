@@ -1,4 +1,5 @@
 const fs = require('fs');
+global.VERSION = '4.0.2.3';
 global.date = require('php-date-format');
 global.Framework = require('./system/framework');
 
@@ -20,6 +21,7 @@ global.APP = async () => {
     const fileUpload = require('express-fileupload');
     global.app = express();
     global.useragent = require('useragent');
+
     const cookieParser = require("cookie-parser");
 
     app.use(cookieParser());
@@ -47,10 +49,15 @@ global.APP = async () => {
     app.use(bodyParser.json({ limit: '50mb' }));
     app.use(bodyParser.urlencoded({ limit: '50mb', extended: false }));
     app.use(compression());
-    app.use('/image', express.static('image'))
+    app.use('/image', express.static('image'));
+    app.use('/catalog/view/stylesheet', express.static('catalog/view/stylesheet'));
+    app.use('/catalog/view/javascript', express.static('catalog/view/javascript'));
+    app.use('/catalog/view/image', express.static('catalog/view/image'));
+    app.use('/catalog/language', express.static('catalog/language'));
     app.use(morgan('dev'));
 
     app.all('*', (req, res, next) => {
+        console.log(req.url)
         next();
     });
 

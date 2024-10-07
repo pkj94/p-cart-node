@@ -58,7 +58,7 @@ module.exports = class LowOrderFeeTotalController extends Controller {
 
 		const json = {};
 
-		if (!this.user.hasPermission('modify', 'extension/opencart/total/low_order_fee')) {
+		if (!await this.user.hasPermission('modify', 'extension/opencart/total/low_order_fee')) {
 			json['error'] = this.language.get('error_permission');
 		}
 

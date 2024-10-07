@@ -1,9 +1,4 @@
-
-/**
- * Class Footer
- *
- * @package Opencart\Admin\Controller\Common
- */
+const sprintf = require('locutus/php/strings/sprintf')
 module.exports = class FooterController extends Controller {
     /**
      * @return string

@@ -6,18 +6,21 @@ namespace Opencart\Admin\Model\Customer;
  * @package Opencart\Admin\Model\Customer
  */
 class CustomerGroupModel  extends Model {
+	constructor(registry){
+		super(registry)
+	}
 	/**
 	 * @param data
 	 *
 	 * @return int
 	 */
 	async addCustomerGroup(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "customer_group` SET `approval` = '" + (isset(data['approval']) ? data['approval'] : 0) + "', `sort_order` = '" + data['sort_order'] + "'");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "customer_group` SET `approval` = '" + ((data['approval']) ? data['approval'] : 0) + "', `sort_order` = '" + data['sort_order'] + "'");
 
 		customer_group_id = this.db.getLastId();
 
 		for (data['customer_group_description'] of language_id : value) {
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "customer_group_description` SET `customer_group_id` = '" + customer_group_id + "', `language_id` = '" + language_id + "', `name` = '" + this.db.escape(value['name']) + "', `description` = '" + this.db.escape(value['description']) + "'");
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "customer_group_description` SET `customer_group_id` = '" + customer_group_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + ", `description` = '" + this.db.escape(value['description']) + "'");
 		}
 
 		return customer_group_id;
@@ -30,12 +33,12 @@ class CustomerGroupModel  extends Model {
 	 * @return void
 	 */
 	async editCustomerGroup(customer_group_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "customer_group` SET `approval` = '" + (isset(data['approval']) ? data['approval'] : 0) + "', `sort_order` = '" + data['sort_order'] + "' WHERE `customer_group_id` = '" + customer_group_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "customer_group` SET `approval` = '" + ((data['approval']) ? data['approval'] : 0) + "', `sort_order` = '" + data['sort_order'] + "' WHERE `customer_group_id` = '" + customer_group_id + "'");
 
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_group_description` WHERE `customer_group_id` = '" + customer_group_id + "'");
 
 		for (data['customer_group_description'] of language_id : value) {
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "customer_group_description` SET `customer_group_id` = '" + customer_group_id + "', `language_id` = '" + language_id + "', `name` = '" + this.db.escape(value['name']) + "', `description` = '" + this.db.escape(value['description']) + "'");
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "customer_group_description` SET `customer_group_id` = '" + customer_group_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + ", `description` = '" + this.db.escape(value['description']) + "'");
 		}
 	}
 
@@ -72,12 +75,12 @@ class CustomerGroupModel  extends Model {
 	async getCustomerGroups(data = {}) {
 		let sql = "SELECT * FROM `" + DB_PREFIX + "customer_group` cg LEFT JOIN `" + DB_PREFIX + "customer_group_description` cgd ON (cg.`customer_group_id` = cgd.`customer_group_id`) WHERE cgd.`language_id` = '" + this.config.get('config_language_id') + "'";
 
-		sort_data = [
+		let sort_data = [
 			'cgd.name',
 			'cg.sort_order'
 		];
 
-		if (data['sort'] && in_array(data['sort'], sort_data)) {
+		if (data['sort'] && sort_data.includes(data['sort'],)) {
 			sql += " ORDER BY " + data['sort'];
 		} else {
 			sql += " ORDER BY cgd.`name`";

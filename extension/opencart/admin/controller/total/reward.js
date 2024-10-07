@@ -50,7 +50,7 @@ module.exports = class RewardTotalController extends Controller {
 
 		const json = {};
 
-		if (!this.user.hasPermission('modify', 'extension/opencart/total/reward')) {
+		if (!await this.user.hasPermission('modify', 'extension/opencart/total/reward')) {
 			json['error'] = this.language.get('error_permission');
 		}
 

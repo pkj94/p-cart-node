@@ -1,11 +1,7 @@
-<?php
-namespace Opencart\Admin\Model\Tool;
-/**
- * Class Notification
- *
- * @package Opencart\Admin\Model\Tool
- */
-class NotificationModel  extends Model {
+module.exports = class NotificationToolModel  extends Model {
+	constructor(registry){
+		super(registry)
+	}
 	/**
 	 * @param data
 	 *
@@ -19,11 +15,11 @@ class NotificationModel  extends Model {
 
 	/**
 	 * @param  notification_id
-	 * @param bool status
+	 * @param status
 	 *
 	 * @return void
 	 */
-	async editStatus(notification_id, bool status) {
+	async editStatus(notification_id, status) {
 		await this.db.query("UPDATE `" + DB_PREFIX + "notification` SET `status` = '" + status + "' WHERE `notification_id` = '" + notification_id + "'");
 	}
 

@@ -6,6 +6,9 @@ namespace Opencart\Admin\Model\Design;
  * @package Opencart\Admin\Model\Design
  */
 class TranslationModel  extends Model {
+	constructor(registry){
+		super(registry)
+	}
 	/**
 	 * @param data
 	 *
@@ -53,7 +56,7 @@ class TranslationModel  extends Model {
 	async getTranslations(data = {}) {
 		let sql = "SELECT *, (SELECT s.`name` FROM `" + DB_PREFIX + "store` s WHERE s.`store_id` = t.`store_id`) AS store, (SELECT l.`name` FROM `" + DB_PREFIX + "language` l WHERE l.`language_id` = t.`language_id`) AS language FROM `" + DB_PREFIX + "translation` t";
 
-		sort_data = [
+		let sort_data = [
 			'store',
 			'language',
 			'route',
@@ -61,7 +64,7 @@ class TranslationModel  extends Model {
 			'value'
 		];
 
-		if (data['sort'] && in_array(data['sort'], sort_data)) {
+		if (data['sort'] && sort_data.includes(data['sort'],)) {
 			sql += " ORDER BY " + data['sort'];
 		} else {
 			sql += " ORDER BY store";

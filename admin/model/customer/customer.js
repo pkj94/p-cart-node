@@ -142,7 +142,7 @@ module.exports = class CustomerCustomerModel extends Model {
 			'c.date_added'
 		];
 
-		if (data['sort'] && in_array(data['sort'], sort_data)) {
+		if (data['sort'] && sort_data.includes(data['sort'],)) {
 			sql += " ORDER BY " + data['sort'];
 		} else {
 			sql += " ORDER BY name";

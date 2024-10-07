@@ -31,7 +31,7 @@ class FixerController extends Controller {
 
 			$response_info = json_decode($response, true);
 
-			if (is_array($response_info) && isset($response_info['rates'])) {
+			if (is_array($response_info) && ($response_info['rates'])) {
 				// Compile all the rates into an array
 				$currencies = [];
 
@@ -46,7 +46,7 @@ class FixerController extends Controller {
 				const results = await this.model_localisation_currency.getCurrencies();
 
 				for(let result of results) {
-					if (isset($currencies[result['code']])) {
+					if (($currencies[result['code']])) {
 						$from = $currencies['EUR'];
 
 						$to = $currencies[result['code']];

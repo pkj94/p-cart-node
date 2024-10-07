@@ -1,11 +1,7 @@
-<?php
-namespace Opencart\Admin\Model\Report;
-/**
- * Class Statistics
- *
- * @package Opencart\Admin\Model\Report
- */
-class StatisticsModel  extends Model {
+module.exports = class StatisticsReportModel  extends Model {
+	constructor(registry){
+		super(registry)
+	}
 	/**
 	 * @return array
 	 */
@@ -20,8 +16,8 @@ class StatisticsModel  extends Model {
 	 *
 	 * @return float
 	 */
-	async getValue(code): {
-		let query = await this.db.query("SELECT `value` FROM `" + DB_PREFIX + "statistics` WHERE `code` = '" + this.db.escape(code) + "'");
+	async getValue(code) {
+		let query = await this.db.query("SELECT `value` FROM `" + DB_PREFIX + "statistics` WHERE `code` = " + this.db.escape(code) + "");
 
 		if (query.num_rows) {
 			return query.row['value'];

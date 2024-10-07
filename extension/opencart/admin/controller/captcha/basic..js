@@ -42,7 +42,7 @@ module.exports = class BasicCaptchaController extends Controller {
 
         const json = {};
 
-        if (!this.user.hasPermission('modify', 'extension/opencart/captcha/basic')) {
+        if (!await this.user.hasPermission('modify', 'extension/opencart/captcha/basic')) {
             json.error = this.language.get('error_permission');
         }
 

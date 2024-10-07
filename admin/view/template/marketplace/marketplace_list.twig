@@ -142,7 +142,7 @@ $('#button-api').on('click', function (e) {
     $('#modal-api').remove();
 
     $.ajax({
-        url: 'index.php?route=marketplace/api&user_token={{ user_token }}',
+        url: '?route=marketplace/api&user_token={{ user_token }}',
         dataType: 'html',
         beforeSend: function () {
             $('#button-api').button('loading');
@@ -163,7 +163,7 @@ $('#button-api').on('click', function (e) {
 //--></script>
 <script type="text/javascript"><!--
 $('#button-filter').on('click', function (e) {
-    var url = 'index.php?route=marketplace/marketplace&user_token={{ user_token }}';
+    var url = '?route=marketplace/marketplace&user_token={{ user_token }}';
 
     var input = $('#extension-filter :input');
 

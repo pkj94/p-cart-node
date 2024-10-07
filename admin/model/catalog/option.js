@@ -6,6 +6,9 @@ namespace Opencart\Admin\Model\Catalog;
  * @package Opencart\Admin\Model\Catalog
  */
 class OptionModel  extends Model {
+	constructor(registry){
+		super(registry)
+	}
 	/**
 	 * @param data
 	 *
@@ -17,10 +20,10 @@ class OptionModel  extends Model {
 		option_id = this.db.getLastId();
 
 		for (data['option_description'] of language_id : value) {
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "option_description` SET `option_id` = '" + option_id + "', `language_id` = '" + language_id + "', `name` = '" + this.db.escape(value['name']) + "'");
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "option_description` SET `option_id` = '" + option_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + "");
 		}
 
-		if (isset(data['option_value'])) {
+		if ((data['option_value'])) {
 			for (data['option_value'] of option_value) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "option_value` SET `option_id` = '" + option_id + "', `image` = '" + this.db.escape(html_entity_decode(option_value['image'], ENT_QUOTES, 'UTF-8')) + "', `sort_order` = '" + option_value['sort_order'] + "'");
 
@@ -47,13 +50,13 @@ class OptionModel  extends Model {
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "option_description` WHERE `option_id` = '" + option_id + "'");
 
 		for (data['option_description'] of language_id : value) {
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "option_description` SET `option_id` = '" + option_id + "', `language_id` = '" + language_id + "', `name` = '" + this.db.escape(value['name']) + "'");
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "option_description` SET `option_id` = '" + option_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + "");
 		}
 
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "option_value` WHERE `option_id` = '" + option_id + "'");
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "option_value_description` WHERE `option_id` = '" + option_id + "'");
 
-		if (isset(data['option_value'])) {
+		if ((data['option_value'])) {
 			for (data['option_value'] of option_value) {
 				if (option_value['option_value_id']) {
 					await this.db.query("INSERT INTO `" + DB_PREFIX + "option_value` SET `option_value_id` = '" + option_value['option_value_id'] + "', `option_id` = '" + option_id + "', `image` = '" + this.db.escape(html_entity_decode(option_value['image'], ENT_QUOTES, 'UTF-8')) + "', `sort_order` = '" + option_value['sort_order'] + "'");
@@ -105,13 +108,13 @@ class OptionModel  extends Model {
 			sql += " AND od.`name` LIKE '" + this.db.escape(data['filter_name'] + '%') + "'";
 		}
 
-		sort_data = [
+		let sort_data = [
 			'od.name',
 			'o.type',
 			'o.sort_order'
 		];
 
-		if (data['sort'] && in_array(data['sort'], sort_data)) {
+		if (data['sort'] && sort_data.includes(data['sort'],)) {
 			sql += " ORDER BY " + data['sort'];
 		} else {
 			sql += " ORDER BY `od`.`name`";

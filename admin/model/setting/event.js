@@ -1,4 +1,4 @@
-module.exports = class EventModel extends Model {
+module.exports = class EventSettingModel extends Model {
     constructor(registry) {
         super(registry);
     }

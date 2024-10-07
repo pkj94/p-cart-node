@@ -31,11 +31,11 @@ class ChequeController extends Controller {
 
 		const json = {};
 
-		if (!isset(this.session.data['order_id'])) {
+		if (!(this.session.data['order_id'])) {
 			$json['error'] = this.language.get('error_order');
 		}
 
-		if (!isset(this.session.data['payment_method']) || this.session.data['payment_method']['code'] != 'cheque.cheque') {
+		if (!(this.session.data['payment_method']) || this.session.data['payment_method']['code'] != 'cheque.cheque') {
 			$json['error'] = this.language.get('error_payment_method');
 		}
 

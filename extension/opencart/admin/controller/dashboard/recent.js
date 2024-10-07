@@ -52,7 +52,7 @@ module.exports = class RecentDashboardController extends Controller {
 
         const json = {};
 
-        if (!this.user.hasPermission('modify', 'extension/opencart/dashboard/recent')) {
+        if (!await this.user.hasPermission('modify', 'extension/opencart/dashboard/recent')) {
             json.error = this.language.get('error_permission');
         }
 

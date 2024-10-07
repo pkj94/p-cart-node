@@ -77,7 +77,7 @@ module.exports = class FeaturedModuleController extends Controller {
 
 		const json = {};
 
-		if (!this.user.hasPermission('modify', 'extension/opencart/module/featured')) {
+		if (!await this.user.hasPermission('modify', 'extension/opencart/module/featured')) {
 			json.error = { warning: this.language.get('error_permission') };
 		}
 

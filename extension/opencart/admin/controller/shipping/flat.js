@@ -65,7 +65,7 @@ module.exports = class FlatShippingController extends Controller {
 
 		const json = {};
 
-		if (!this.user.hasPermission('modify', 'extension/opencart/shipping/flat')) {
+		if (!await this.user.hasPermission('modify', 'extension/opencart/shipping/flat')) {
 			json['error'] = this.language.get('error_permission');
 		}
 

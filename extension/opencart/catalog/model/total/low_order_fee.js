@@ -29,7 +29,7 @@ class LowOrderFee extends \Opencart\System\Engine\Model {
 				$tax_rates = this.tax.getRates(this.config.get('total_low_order_fee_fee'), this.config.get('total_low_order_fee_tax_class_id'));
 
 				foreach ($tax_rates as $tax_rate) {
-					if (!isset($taxes[$tax_rate['tax_rate_id']])) {
+					if (!($taxes[$tax_rate['tax_rate_id']])) {
 						$taxes[$tax_rate['tax_rate_id']] = $tax_rate['amount'];
 					} else {
 						$taxes[$tax_rate['tax_rate_id']] += $tax_rate['amount'];

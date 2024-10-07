@@ -51,7 +51,7 @@ module.exports = class SaleShippingReportController extends Controller {
 
 		const json = {};
 
-		if (!this.user.hasPermission('modify', 'extension/opencart/report/sale_shipping')) {
+		if (!await this.user.hasPermission('modify', 'extension/opencart/report/sale_shipping')) {
 			json['error'] = this.language.get('error_permission');
 		}
 

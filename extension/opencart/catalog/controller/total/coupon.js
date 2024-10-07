@@ -19,7 +19,7 @@ class CouponController extends Controller {
 			data['save'] = this.url.link('extension/opencart/total/coupon.save', 'language=' . this.config.get('config_language'), true);
 			data['list'] = this.url.link('checkout/cart.list', 'language=' . this.config.get('config_language'), true);
 
-			if (isset(this.session.data['coupon'])) {
+			if ((this.session.data['coupon'])) {
 				data['coupon'] = this.session.data['coupon'];
 			} else {
 				data['coupon'] = '';
@@ -39,7 +39,7 @@ class CouponController extends Controller {
 
 		const json = {};
 
-		if (isset(this.request.post['coupon'])) {
+		if ((this.request.post['coupon'])) {
 			$coupon = this.request.post['coupon'];
 		} else {
 			$coupon = '';

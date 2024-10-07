@@ -51,7 +51,7 @@ module.exports = class MarketingReportController extends Controller {
 
 		const json = {};
 
-		if (!this.user.hasPermission('modify', 'extension/opencart/report/marketing')) {
+		if (!await this.user.hasPermission('modify', 'extension/opencart/report/marketing')) {
 			json['error'] = this.language.get('error_permission');
 		}
 

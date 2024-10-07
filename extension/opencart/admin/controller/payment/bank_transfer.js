@@ -67,7 +67,7 @@ module.exports = class BankTransferPaymentController extends Controller {
 
 		const json = {};
 
-		if (!this.user.hasPermission('modify', 'extension/opencart/payment/bank_transfer')) {
+		if (!await this.user.hasPermission('modify', 'extension/opencart/payment/bank_transfer')) {
 			json.error = { warning: this.language.get('error_permission') };
 		}
 

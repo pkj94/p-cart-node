@@ -47,7 +47,7 @@ module.exports = class SaleDashboardController extends Controller {
 
 		const json = {};
 
-		if (!this.user.hasPermission('modify', 'extension/opencart/dashboard/sale')) {
+		if (!await this.user.hasPermission('modify', 'extension/opencart/dashboard/sale')) {
 			json.error = this.language.get('error_permission');
 		}
 

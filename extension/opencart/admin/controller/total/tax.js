@@ -48,7 +48,7 @@ module.exports = class TaxTotalController extends Controller {
 
 		const json = {};
 
-		if (!this.user.hasPermission('modify', 'extension/opencart/total/tax')) {
+		if (!await this.user.hasPermission('modify', 'extension/opencart/total/tax')) {
 			json['error'] = this.language.get('error_permission');
 		}
 

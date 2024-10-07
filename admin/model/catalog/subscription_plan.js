@@ -6,6 +6,9 @@ namespace Opencart\Admin\Model\Catalog;
  * @package Opencart\Admin\Model\Catalog
  */
 class SubscriptionPlanModel  extends Model {
+	constructor(registry){
+		super(registry)
+	}
 	/**
 	 * @param data
 	 *
@@ -104,12 +107,12 @@ class SubscriptionPlanModel  extends Model {
 			sql += " AND spd.`name` LIKE '" + this.db.escape(data['filter_name'] + '%') + "'";
 		}
 
-		sort_data = [
+		let sort_data = [
 			'spd.name',
 			'sp.sort_order'
 		];
 
-		if (data['sort'] && in_array(data['sort'], sort_data)) {
+		if (data['sort'] && sort_data.includes(data['sort'],)) {
 			sql += " ORDER BY " + data['sort'];
 		} else {
 			sql += " ORDER BY `spd`.`name`";

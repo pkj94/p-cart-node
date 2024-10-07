@@ -15,19 +15,19 @@ class CategoryController extends Controller {
 	async index() {
 		this.load.language('extension/opencart/module/category');
 
-		if (isset(this.request.get['path'])) {
+		if ((this.request.get['path'])) {
 			$parts = explode('_', (string)this.request.get['path']);
 		} else {
 			$parts = [];
 		}
 
-		if (isset($parts[0])) {
+		if (($parts[0])) {
 			data['category_id'] = $parts[0];
 		} else {
 			data['category_id'] = 0;
 		}
 
-		if (isset($parts[1])) {
+		if (($parts[1])) {
 			data['child_id'] = $parts[1];
 		} else {
 			data['child_id'] = 0;

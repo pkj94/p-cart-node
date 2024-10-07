@@ -6,6 +6,9 @@ namespace Opencart\Admin\Model\Design;
  * @package Opencart\Admin\Model\Design
  */
 class SeoUrlModel  extends Model {
+	constructor(registry){
+		super(registry)
+	}
 	/**
 	 * @param data
 	 *
@@ -69,7 +72,7 @@ class SeoUrlModel  extends Model {
 			implode.push("`value` LIKE '" + this.db.escape(data['filter_value']) + "'";
 		}
 
-		if (isset(data['filter_store_id']) && data['filter_store_id'] !== '') {
+		if ((data['filter_store_id']) && data['filter_store_id'] !== '') {
 			implode.push("`store_id` = '" + data['filter_store_id'] + "'";
 		}
 
@@ -81,7 +84,7 @@ class SeoUrlModel  extends Model {
 			sql += " WHERE " + implode.join(" AND ");
 		}
 
-		sort_data = [
+		let sort_data = [
 			'keyword',
 			'key',
 			'value',
@@ -90,7 +93,7 @@ class SeoUrlModel  extends Model {
 			'language_id'
 		];
 
-		if (data['sort'] && in_array(data['sort'], sort_data)) {
+		if (data['sort'] && sort_data.includes(data['sort'],)) {
 			sql += " ORDER BY `" + data['sort'] + "`";
 		} else {
 			sql += " ORDER BY `key`";

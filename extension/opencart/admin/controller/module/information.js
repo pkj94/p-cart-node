@@ -43,7 +43,7 @@ module.exports = class InformationModuleController extends Controller {
 
         const json = {};
 
-        if (!this.user.hasPermission('modify', 'extension/opencart/module/information')) {
+        if (!await this.user.hasPermission('modify', 'extension/opencart/module/information')) {
             json.error = this.language.get('error_permission');
         }
 

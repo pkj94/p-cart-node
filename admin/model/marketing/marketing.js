@@ -6,13 +6,16 @@ namespace Opencart\Admin\Model\Marketing;
  * @package Opencart\Admin\Model\Marketing
  */
 class MarketingModel  extends Model {
+	constructor(registry){
+		super(registry)
+	}
 	/**
 	 * @param data
 	 *
 	 * @return int
 	 */
 	async addMarketing(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "marketing` SET `name` = '" + this.db.escape(data['name']) + "', `description` = '" + this.db.escape(data['description']) + "', `code` = '" + this.db.escape(data['code']) + "', `date_added` = NOW()");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "marketing` SET `name` = '" + this.db.escape(data['name']) + "', `description` = '" + this.db.escape(data['description']) + "', `code` = " + this.db.escape(data['code']) + ", `date_added` = NOW()");
 
 		return this.db.getLastId();
 	}
@@ -24,7 +27,7 @@ class MarketingModel  extends Model {
 	 * @return void
 	 */
 	async editMarketing(marketing_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "marketing` SET `name` = '" + this.db.escape(data['name']) + "', `description` = '" + this.db.escape(data['description']) + "', `code` = '" + this.db.escape(data['code']) + "' WHERE `marketing_id` = '" + marketing_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "marketing` SET `name` = '" + this.db.escape(data['name']) + "', `description` = '" + this.db.escape(data['description']) + "', `code` = " + this.db.escape(data['code']) + " WHERE `marketing_id` = '" + marketing_id + "'");
 	}
 
 	/**
@@ -72,7 +75,7 @@ class MarketingModel  extends Model {
 			implode.push("o.`order_status_id` = '" + order_status_id + "'";
 		}
 
-		let sql = "SELECT *, (SELECT COUNT(*) FROM `" + DB_PREFIX + "order` o WHERE (" + implode(" OR ", implode) + ") AND o.`marketing_id` = m.`marketing_id`) AS `orders` FROM `" + DB_PREFIX + "marketing` m";
+		let sql = "SELECT *, (SELECT COUNT(*) FROM `" + DB_PREFIX + "order` o WHERE (" + implode.join(" OR ") + ") AND o.`marketing_id` = m.`marketing_id`) AS `orders` FROM `" + DB_PREFIX + "marketing` m";
 
 		let implode = [];
 
@@ -96,13 +99,13 @@ class MarketingModel  extends Model {
 			sql += " WHERE " + implode.join(" AND ");
 		}
 
-		sort_data = [
+		let sort_data = [
 			'm.name',
 			'm.code',
 			'm.date_added'
 		];
 
-		if (data['sort'] && in_array(data['sort'], sort_data)) {
+		if (data['sort'] && sort_data.includes(data['sort'],)) {
 			sql += " ORDER BY " + data['sort'];
 		} else {
 			sql += " ORDER BY m.`name`";

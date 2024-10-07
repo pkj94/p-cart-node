@@ -6,6 +6,9 @@ namespace Opencart\Admin\Model\Catalog;
  * @package Opencart\Admin\Model\Catalog
  */
 class ReviewModel  extends Model {
+	constructor(registry){
+		super(registry)
+	}
 	/**
 	 * @param data
 	 *
@@ -117,7 +120,7 @@ class ReviewModel  extends Model {
 			sql += " AND DATE(r.`date_added`) <= DATE(" + this.db.escape(data['filter_date_to']) + ")";
 		}
 
-		sort_data = [
+		let sort_data = [
 			'pd.name',
 			'r.author',
 			'r.rating',
@@ -125,7 +128,7 @@ class ReviewModel  extends Model {
 			'r.date_added'
 		];
 
-		if (data['sort'] && in_array(data['sort'], sort_data)) {
+		if (data['sort'] && sort_data.includes(data['sort'],)) {
 			sql += " ORDER BY " + data['sort'];
 		} else {
 			sql += " ORDER BY r.`date_added`";

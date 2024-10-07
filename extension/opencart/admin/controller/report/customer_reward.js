@@ -48,7 +48,7 @@ module.exports = class CustomerRewardReportController extends Controller {
 
 		const json = {};
 
-		if (!this.user.hasPermission('modify', 'extension/opencart/report/customer_reward')) {
+		if (!await this.user.hasPermission('modify', 'extension/opencart/report/customer_reward')) {
 			json['error'] = this.language.get('error_permission');
 		}
 

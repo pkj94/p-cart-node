@@ -6,6 +6,9 @@ namespace Opencart\Admin\Model\Customer;
  * @package Opencart\Admin\Model\Customer
  */
 class CustomFieldModel  extends Model {
+	constructor(registry){
+		super(registry)
+	}
 	/**
 	 * @param data
 	 *
@@ -17,18 +20,18 @@ class CustomFieldModel  extends Model {
 		custom_field_id = this.db.getLastId();
 
 		for (data['custom_field_description'] of language_id : value) {
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "custom_field_description` SET `custom_field_id` = '" + custom_field_id + "', `language_id` = '" + language_id + "', `name` = '" + this.db.escape(value['name']) + "'");
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "custom_field_description` SET `custom_field_id` = '" + custom_field_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + "");
 		}
 
-		if (isset(data['custom_field_customer_group'])) {
+		if ((data['custom_field_customer_group'])) {
 			for (data['custom_field_customer_group'] of custom_field_customer_group) {
-				if (isset(custom_field_customer_group['customer_group_id'])) {
-					await this.db.query("INSERT INTO `" + DB_PREFIX + "custom_field_customer_group` SET `custom_field_id` = '" + custom_field_id + "', `customer_group_id` = '" + custom_field_customer_group['customer_group_id'] + "', `required` = '" + (isset(custom_field_customer_group['required']) ? 1 : 0) + "'");
+				if ((custom_field_customer_group['customer_group_id'])) {
+					await this.db.query("INSERT INTO `" + DB_PREFIX + "custom_field_customer_group` SET `custom_field_id` = '" + custom_field_id + "', `customer_group_id` = '" + custom_field_customer_group['customer_group_id'] + "', `required` = '" + ((custom_field_customer_group['required']) ? 1 : 0) + "'");
 				}
 			}
 		}
 
-		if (isset(data['custom_field_value'])) {
+		if ((data['custom_field_value'])) {
 			for (data['custom_field_value'] of custom_field_value) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "custom_field_value` SET `custom_field_id` = '" + custom_field_id + "', `sort_order` = '" + custom_field_value['sort_order'] + "'");
 
@@ -55,15 +58,15 @@ class CustomFieldModel  extends Model {
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "custom_field_description` WHERE `custom_field_id` = '" + custom_field_id + "'");
 
 		for (data['custom_field_description'] of language_id : value) {
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "custom_field_description` SET `custom_field_id` = '" + custom_field_id + "', `language_id` = '" + language_id + "', `name` = '" + this.db.escape(value['name']) + "'");
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "custom_field_description` SET `custom_field_id` = '" + custom_field_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + "");
 		}
 
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "custom_field_customer_group` WHERE `custom_field_id` = '" + custom_field_id + "'");
 
-		if (isset(data['custom_field_customer_group'])) {
+		if ((data['custom_field_customer_group'])) {
 			for (data['custom_field_customer_group'] of custom_field_customer_group) {
-				if (isset(custom_field_customer_group['customer_group_id'])) {
-					await this.db.query("INSERT INTO `" + DB_PREFIX + "custom_field_customer_group` SET `custom_field_id` = '" + custom_field_id + "', `customer_group_id` = '" + custom_field_customer_group['customer_group_id'] + "', `required` = '" + (isset(custom_field_customer_group['required']) ? 1 : 0) + "'");
+				if ((custom_field_customer_group['customer_group_id'])) {
+					await this.db.query("INSERT INTO `" + DB_PREFIX + "custom_field_customer_group` SET `custom_field_id` = '" + custom_field_id + "', `customer_group_id` = '" + custom_field_customer_group['customer_group_id'] + "', `required` = '" + ((custom_field_customer_group['required']) ? 1 : 0) + "'");
 				}
 			}
 		}
@@ -71,7 +74,7 @@ class CustomFieldModel  extends Model {
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "custom_field_value` WHERE `custom_field_id` = '" + custom_field_id + "'");
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "custom_field_value_description` WHERE `custom_field_id` = '" + custom_field_id + "'");
 
-		if (isset(data['custom_field_value'])) {
+		if ((data['custom_field_value'])) {
 			for (data['custom_field_value'] of custom_field_value) {
 				if (custom_field_value['custom_field_value_id']) {
 					await this.db.query("INSERT INTO `" + DB_PREFIX + "custom_field_value` SET `custom_field_value_id` = '" + custom_field_value['custom_field_value_id'] + "', `custom_field_id` = '" + custom_field_id + "', `sort_order` = '" + custom_field_value['sort_order'] + "'");
@@ -132,7 +135,7 @@ class CustomFieldModel  extends Model {
 			sql += " AND cf.`status` = '" + data['filter_status'] + "'";
 		}
 
-		if (isset(data['filter_location'])) {
+		if ((data['filter_location'])) {
 			sql += " AND cf.`location` = '" + this.db.escape(data['filter_location']) + "'";
 		}
 
@@ -140,7 +143,7 @@ class CustomFieldModel  extends Model {
 			sql += " AND cfcg.`customer_group_id` = '" + data['filter_customer_group_id'] + "'";
 		}
 
-		sort_data = [
+		let sort_data = [
 			'cfd.name',
 			'cf.type',
 			'cf.location',
@@ -148,7 +151,7 @@ class CustomFieldModel  extends Model {
 			'cf.sort_order'
 		];
 
-		if (data['sort'] && in_array(data['sort'], sort_data)) {
+		if (data['sort'] && sort_data.includes(data['sort'],)) {
 			sql += " ORDER BY " + data['sort'];
 		} else {
 			sql += " ORDER BY cfd.`name`";

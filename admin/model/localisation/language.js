@@ -1,5 +1,5 @@
 const crypto = require('crypto');
-module.exports = class LanguageModel extends Model {
+module.exports = class LanguageLocalisationModel extends Model {
     constructor(registry) {
         super(registry);
     }
@@ -9,7 +9,7 @@ module.exports = class LanguageModel extends Model {
          * @return int
          */
     async addLanguage(data) {
-        await this.db.query("INSERT INTO `" + DB_PREFIX + "language` SET `name` = '" + this.db.escape(data['name']) + "', `code` = '" + this.db.escape(data['code']) + "', `locale` = '" + this.db.escape(data['locale']) + "', `extension` = '" + this.db.escape(data['extension']) + "', `sort_order` = '" + data['sort_order'] + "', `status` = '" + (data['status'] ? data['status'] : 0) + "'");
+        await this.db.query("INSERT INTO `" + DB_PREFIX + "language` SET `name` = '" + this.db.escape(data['name']) + "', `code` = " + this.db.escape(data['code']) + ", `locale` = '" + this.db.escape(data['locale']) + "', `extension` = '" + this.db.escape(data['extension']) + "', `sort_order` = '" + data['sort_order'] + "', `status` = '" + (data['status'] ? data['status'] : 0) + "'");
 
         await this.cache.delete('language');
 
@@ -218,7 +218,7 @@ module.exports = class LanguageModel extends Model {
      * @return void
      */
     async editLanguage(language_id, data = {}) {
-        await this.db.query("UPDATE `" + DB_PREFIX + "language` SET `name` = '" + this.db.escape(data['name']) + "', `code` = '" + this.db.escape(data['code']) + "', `locale` = '" + this.db.escape(data['locale']) + "', `extension` = '" + this.db.escape(data['extension']) + "', `sort_order` = '" + data['sort_order'] + "', `status` = '" + (data['status'] ? data['status'] : 0) + "' WHERE `language_id` = '" + language_id + "'");
+        await this.db.query("UPDATE `" + DB_PREFIX + "language` SET `name` = '" + this.db.escape(data['name']) + "', `code` = " + this.db.escape(data['code']) + ", `locale` = '" + this.db.escape(data['locale']) + "', `extension` = '" + this.db.escape(data['extension']) + "', `sort_order` = '" + data['sort_order'] + "', `status` = '" + (data['status'] ? data['status'] : 0) + "' WHERE `language_id` = '" + language_id + "'");
 
         await this.cache.delete('language');
     }
@@ -309,7 +309,7 @@ module.exports = class LanguageModel extends Model {
                 language['image'] += 'extension/' + language['extension'] + '/catalog/';
             }
 
-            language['image'] += 'language/' + language['code'] + '/' + language['code'] + '+png';
+            language['image'] += 'language/' + language['code'] + '/' + language['code'] + '.png';
         }
 
         return language;
@@ -334,7 +334,7 @@ module.exports = class LanguageModel extends Model {
                 language['image'] += 'extension/' + language['extension'] + '/catalog/';
             }
 
-            language['image'] += 'language/' + language['code'] + '/' + language['code'] + '+png';
+            language['image'] += 'language/' + language['code'] + '/' + language['code'] + '.png';
         }
 
         return language;
@@ -375,8 +375,7 @@ module.exports = class LanguageModel extends Model {
         }
 
         let results = await this.cache.get('language+' + crypto.createHash('md5').update(sql).digest('hex'));
-
-        if (!results) {
+        if ((results && !results.length) || !results) {
             let query = await this.db.query(sql);
 
             results = query.rows;
@@ -399,7 +398,7 @@ module.exports = class LanguageModel extends Model {
                 'language_id': result['language_id'],
                 'name': result['name'],
                 'code': result['code'],
-                'image': image + 'language/' + result['code'] + '/' + result['code'] + '+png',
+                'image': image + 'language/' + result['code'] + '/' + result['code'] + '.png',
                 'locale': result['locale'],
                 'extension': result['extension'],
                 'sort_order': result['sort_order'],

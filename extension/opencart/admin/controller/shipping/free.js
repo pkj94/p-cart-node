@@ -57,7 +57,7 @@ module.exports = class FreeShippingController extends Controller {
 
 		const json = {};
 
-		if (!this.user.hasPermission('modify', 'extension/opencart/shipping/free')) {
+		if (!await this.user.hasPermission('modify', 'extension/opencart/shipping/free')) {
 			json['error'] = this.language.get('error_permission');
 		}
 

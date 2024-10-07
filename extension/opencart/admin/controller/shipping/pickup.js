@@ -56,7 +56,7 @@ module.exports = class PickupShippingController extends Controller {
 
 		const json = {};
 
-		if (!this.user.hasPermission('modify', 'extension/opencart/shipping/pickup')) {
+		if (!await this.user.hasPermission('modify', 'extension/opencart/shipping/pickup')) {
 			json['error'] = this.language.get('error_permission');
 		}
 

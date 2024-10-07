@@ -565,7 +565,7 @@
 <script type="text/javascript"><!--
 $('#input-customer-group').on('change', function () {
     $.ajax({
-        url: 'index.php?route=customer/customer.customfield&user_token={{ user_token }}&customer_group_id=' + this.value,
+        url: '?route=customer/customer.customfield&user_token={{ user_token }}&customer_group_id=' + this.value,
         dataType: 'json',
         success: function (json) {
             $('.custom-field').hide();
@@ -831,7 +831,7 @@ $('#tab-address').on('change', 'select[name$=\'[country_id]\']', function () {
 
     if (!zone[$(element).val()]) {
         $.ajax({
-            url: 'index.php?route=localisation/country.country&user_token={{ user_token }}&country_id=' + $(element).val(),
+            url: '?route=localisation/country.country&user_token={{ user_token }}&country_id=' + $(element).val(),
             dataType: 'json',
             beforeSend: function () {
                 $(element).prop('disabled', true);
@@ -936,7 +936,7 @@ $('#payment-method').on('click', 'button', function (e) {
             if (json['success']) {
                 $('#alert').prepend('<div class="alert alert-success alert-dismissible"><i class="fa-solid fa-check-circle"></i> ' + json['success'] + ' <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
 
-                $('#payment-method').load('index.php?route=customer/customer.getPayment&user_token={{ user_token }}&customer_id=' + $('#input-customer-id').val());
+                $('#payment-method').load('?route=customer/customer.getPayment&user_token={{ user_token }}&customer_id=' + $('#input-customer-id').val());
             }
         },
         error: function (xhr, ajaxOptions, thrownError) {
@@ -951,7 +951,7 @@ $('#payment-method').on('change', 'input[name=\'status\']', function (e) {
     var element = this;
 
     $.ajax({
-        url: 'index.php?route=customer/customer.disablePayment&user_token={{ user_token }}&customer_id=' + $('#input-customer-id').val(),
+        url: '?route=customer/customer.disablePayment&user_token={{ user_token }}&customer_id=' + $('#input-customer-id').val(),
         dataType: 'json',
         contentType: 'application/x-www-form-urlencoded',
         beforeSend: function () {
@@ -970,7 +970,7 @@ $('#payment-method').on('change', 'input[name=\'status\']', function (e) {
             if (json['success']) {
                 $('#alert').prepend('<div class="alert alert-success alert-dismissible"><i class="fa-solid fa-check-circle"></i> ' + json['success'] + ' <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
 
-                $('#payment-method').load('index.php?route=customer/customer.getPayment&user_token={{ user_token }}&customer_id=' + $('#input-customer-id').val());
+                $('#payment-method').load('?route=customer/customer.getPayment&user_token={{ user_token }}&customer_id=' + $('#input-customer-id').val());
             }
         },
         error: function (xhr, ajaxOptions, thrownError) {
@@ -989,7 +989,7 @@ $('#button-history').on('click', function (e) {
     e.preventDefault();
 
     $.ajax({
-        url: 'index.php?route=customer/customer.addHistory&user_token={{ user_token }}&customer_id=' + $('#input-customer-id').val(),
+        url: '?route=customer/customer.addHistory&user_token={{ user_token }}&customer_id=' + $('#input-customer-id').val(),
         type: 'post',
         data: 'comment=' + encodeURIComponent($('#input-history').val()),
         dataType: 'json',
@@ -1010,7 +1010,7 @@ $('#button-history').on('click', function (e) {
             if (json['success']) {
                 $('#alert').prepend('<div class="alert alert-success alert-dismissible"><i class="fa-solid fa-check-circle"></i> ' + json['success'] + ' <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
 
-                $('#history').load('index.php?route=customer/customer.history&user_token={{ user_token }}&customer_id=' + $('#input-customer-id').val());
+                $('#history').load('?route=customer/customer.history&user_token={{ user_token }}&customer_id=' + $('#input-customer-id').val());
 
                 $('#input-history').val('');
             }
@@ -1031,7 +1031,7 @@ $('#button-transaction').on('click', function (e) {
     e.preventDefault();
 
     $.ajax({
-        url: 'index.php?route=customer/customer.addTransaction&user_token={{ user_token }}&customer_id=' + $('#input-customer-id').val(),
+        url: '?route=customer/customer.addTransaction&user_token={{ user_token }}&customer_id=' + $('#input-customer-id').val(),
         type: 'post',
         data: 'description=' + encodeURIComponent($('#input-transaction').val()) + '&amount=' + $('#input-amount').val(),
         dataType: 'json',
@@ -1052,7 +1052,7 @@ $('#button-transaction').on('click', function (e) {
             if (json['success']) {
                 $('#alert').prepend('<div class="alert alert-success alert-dismissible"><i class="fa-solid fa-check-circle"></i> ' + json['success'] + ' <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
 
-                $('#transaction').load('index.php?route=customer/customer.transaction&user_token={{ user_token }}&customer_id=' + $('#input-customer-id').val());
+                $('#transaction').load('?route=customer/customer.transaction&user_token={{ user_token }}&customer_id=' + $('#input-customer-id').val());
 
                 $('#input-transaction').val('');
                 $('#input-amount').val('');
@@ -1074,7 +1074,7 @@ $('#button-reward').on('click', function (e) {
     e.preventDefault();
 
     $.ajax({
-        url: 'index.php?route=customer/customer.addReward&user_token={{ user_token }}&customer_id=' + $('#input-customer-id').val(),
+        url: '?route=customer/customer.addReward&user_token={{ user_token }}&customer_id=' + $('#input-customer-id').val(),
         type: 'post',
         data: 'description=' + encodeURIComponent($('#input-reward').val()) + '&points=' + $('#input-points').val(),
         dataType: 'json',
@@ -1095,7 +1095,7 @@ $('#button-reward').on('click', function (e) {
             if (json['success']) {
                 $('#alert').prepend('<div class="alert alert-success alert-dismissible"><i class="fa-solid fa-check-circle"></i> ' + json['success'] + ' <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
 
-                $('#reward').load('index.php?route=customer/customer.reward&user_token={{ user_token }}&customer_id=' + $('#input-customer-id').val());
+                $('#reward').load('?route=customer/customer.reward&user_token={{ user_token }}&customer_id=' + $('#input-customer-id').val());
 
                 $('#input-reward').val('');
                 $('#input-points').val('');

@@ -6,6 +6,9 @@ namespace Opencart\Admin\Model\Design;
  * @package Opencart\Admin\Model\Design
  */
 class ThemeModel  extends Model {
+	constructor(registry){
+		super(registry)
+	}
 	/**
 	 * @param    store_id
 	 * @param route

@@ -51,7 +51,7 @@ module.exports = class ShippingTotalController extends Controller {
 
 		const json = {};
 
-		if (!this.user.hasPermission('modify', 'extension/opencart/total/shipping')) {
+		if (!await this.user.hasPermission('modify', 'extension/opencart/total/shipping')) {
 			json['error'] = this.language.get('error_permission');
 		}
 

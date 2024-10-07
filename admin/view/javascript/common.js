@@ -380,7 +380,7 @@ $(document).on('click', '[data-oc-toggle=\'download\']', function (e) {
     var value = $($(element).attr('data-oc-target')).val();
 
     if (value != '') {
-        location = 'index.php?route=tool/upload.download&user_token=' + getURLVar('user_token') + '&code=' + value;
+        location = '?route=tool/upload.download&user_token=' + getURLVar('user_token') + '&code=' + value;
     }
 });
 
@@ -411,7 +411,7 @@ $(document).on('click', '[data-oc-toggle=\'image\']', function (e) {
     $('#modal-image').remove();
 
     $.ajax({
-        url: 'index.php?route=common/filemanager&user_token=' + getURLVar('user_token') + '&target=' + encodeURIComponent($(element).attr('data-oc-target')) + '&thumb=' + encodeURIComponent($(element).attr('data-oc-thumb')),
+        url: '?route=common/filemanager&user_token=' + getURLVar('user_token') + '&target=' + encodeURIComponent($(element).attr('data-oc-target')) + '&thumb=' + encodeURIComponent($(element).attr('data-oc-thumb')),
         dataType: 'html',
         beforeSend: function () {
             $(element).button('loading');

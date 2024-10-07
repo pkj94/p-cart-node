@@ -60,7 +60,7 @@ module.exports = class ErrorController extends Controller {
 		} else {
 			// Redirect to error page
 			console.error('Redirecting to error page');
-			this.response.setRedicect(this.config.get('error_page'));
+			this.response.setRedirect(this.config.get('error_page'));
 		}
 	}
 }

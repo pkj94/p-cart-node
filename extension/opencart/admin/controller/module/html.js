@@ -22,7 +22,7 @@ module.exports = class HTMLModuleController extends Controller {
 			'href': this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=module')
 		});
 
-		if (!isset(this.request.get['module_id'])) {
+		if (!(this.request.get['module_id'])) {
 			data['breadcrumbs'].push({
 				'text': this.language.get('heading_title'),
 				'href': this.url.link('extension/opencart/module/html', 'user_token=' + this.session.data['user_token'])
@@ -34,7 +34,7 @@ module.exports = class HTMLModuleController extends Controller {
 			});
 		}
 
-		if (!isset(this.request.get['module_id'])) {
+		if (!(this.request.get['module_id'])) {
 			data['save'] = this.url.link('extension/opencart/module/html+save', 'user_token=' + this.session.data['user_token']);
 		} else {
 			data['save'] = this.url.link('extension/opencart/module/html+save', 'user_token=' + this.session.data['user_token'] + '&module_id=' + this.request.get['module_id']);
@@ -42,19 +42,19 @@ module.exports = class HTMLModuleController extends Controller {
 
 		data['back'] = this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=module');
 		let module_info = {};
-		if (isset(this.request.get['module_id']) && (this.request.server['REQUEST_METHOD'] != 'POST')) {
+		if ((this.request.get['module_id']) && (this.request.server['REQUEST_METHOD'] != 'POST')) {
 			this.load.model('setting/module', this);
 
 			module_info = await this.model_setting_module.getModule(this.request.get['module_id']);
 		}
 
-		if (isset(module_info['name'])) {
+		if ((module_info['name'])) {
 			data['name'] = module_info['name'];
 		} else {
 			data['name'] = '';
 		}
 
-		if (isset(module_info['module_description'])) {
+		if ((module_info['module_description'])) {
 			data['module_description'] = module_info['module_description'];
 		} else {
 			data['module_description'] = [];
@@ -64,13 +64,13 @@ module.exports = class HTMLModuleController extends Controller {
 
 		data['languages'] = await this.model_localisation_language.getLanguages();
 
-		if (isset(module_info['status'])) {
+		if ((module_info['status'])) {
 			data['status'] = module_info['status'];
 		} else {
 			data['status'] = '';
 		}
 
-		if (isset(this.request.get['module_id'])) {
+		if ((this.request.get['module_id'])) {
 			data['module_id'] = this.request.get['module_id'];
 		} else {
 			data['module_id'] = 0;
@@ -91,7 +91,7 @@ module.exports = class HTMLModuleController extends Controller {
 
 		const json = {};
 
-		if (!this.user.hasPermission('modify', 'extension/opencart/module/html')) {
+		if (!await this.user.hasPermission('modify', 'extension/opencart/module/html')) {
 			json['error']['warning'] = this.language.get('error_permission');
 		}
 

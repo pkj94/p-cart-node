@@ -8,6 +8,9 @@ namespace Opencart\Admin\Model\Catalog;
  * @package Opencart\Admin\Model\Catalog
  * */
 class AttributeModel  extends Model {
+	constructor(registry){
+		super(registry)
+	}
 	/*
 	 *	Add Attribute
 	 *
@@ -28,7 +31,7 @@ class AttributeModel  extends Model {
 		attribute_id = this.db.getLastId();
 
 		for (data['attribute_description'] of language_id : value) {
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "attribute_description` SET `attribute_id` = '" + attribute_id + "', `language_id` = '" + language_id + "', `name` = '" + this.db.escape(value['name']) + "'");
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "attribute_description` SET `attribute_id` = '" + attribute_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + "");
 		}
 
 		return attribute_id;
@@ -58,7 +61,7 @@ class AttributeModel  extends Model {
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "attribute_description` WHERE `attribute_id` = '" + attribute_id + "'");
 
 		for (data['attribute_description'] of language_id : value) {
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "attribute_description` SET `attribute_id` = '" + attribute_id + "', `language_id` = '" + language_id + "', `name` = '" + this.db.escape(value['name']) + "'");
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "attribute_description` SET `attribute_id` = '" + attribute_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + "");
 		}
 	}
 
@@ -129,9 +132,9 @@ class AttributeModel  extends Model {
 			sql += " AND a.`attribute_group_id` = '" + data['filter_attribute_group_id'] + "'";
 		}
 
-		sort_data = ['ad.name', 'attribute_group', 'a.sort_order'];
+		let sort_data = ['ad.name', 'attribute_group', 'a.sort_order'];
 
-		if (data['sort'] && in_array(data['sort'], sort_data)) {
+		if (data['sort'] && sort_data.includes(data['sort'],)) {
 			sql += " ORDER BY " + data['sort'];
 		} else {
 			sql += " ORDER BY `attribute_group`, ad.`name`";

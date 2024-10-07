@@ -11,6 +11,7 @@ module.exports = class RequestLibrary {
         this.cookie = this.clean(req.cookies||{});
         this.files = this.clean(req.files||{});
         this.server = req;
+        this.server.DOCUMENT_ROOT = DIR_APPLICATION.replaceAll('\\', '/', )
         this.params = this.clean(req.params);
     }
     clean(data) {

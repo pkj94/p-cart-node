@@ -6,6 +6,9 @@ namespace Opencart\Admin\Model\Marketing;
  * @package Opencart\Admin\Model\Marketing
  */
 class AffiliateModel  extends Model {
+	constructor(registry){
+		super(registry)
+	}
 	/**
 	 * @param data
 	 *
@@ -109,7 +112,7 @@ class AffiliateModel  extends Model {
 			sql += " WHERE " + implode.join(" AND ");
 		}
 
-		sort_data = [
+		let sort_data = [
 			'name',
 			'ca.tracking',
 			'ca.commission',
@@ -117,7 +120,7 @@ class AffiliateModel  extends Model {
 			'ca.date_added'
 		];
 
-		if (data['sort'] && in_array(data['sort'], sort_data)) {
+		if (data['sort'] && sort_data.includes(data['sort'],)) {
 			sql += " ORDER BY " + data['sort'];
 		} else {
 			sql += " ORDER BY `name`";

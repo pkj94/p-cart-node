@@ -29,7 +29,7 @@ $('#form-api').on('submit', function(e) {
     e.preventDefault();
 
     $.ajax({
-        url: 'index.php?route=marketplace/api.save&user_token={{ user_token }}',
+        url: '?route=marketplace/api.save&user_token={{ user_token }}',
         type: 'post',
         dataType: 'json',
         data: $('#form-api').serialize(),

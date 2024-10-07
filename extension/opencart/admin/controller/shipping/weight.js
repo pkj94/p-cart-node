@@ -67,7 +67,7 @@ module.exports = class WeightShippingController extends Controller {
 
 		const json = {};
 
-		if (!this.user.hasPermission('modify', 'extension/opencart/shipping/weight')) {
+		if (!await this.user.hasPermission('modify', 'extension/opencart/shipping/weight')) {
 			json['error'] = this.language.get('error_permission');
 		}
 

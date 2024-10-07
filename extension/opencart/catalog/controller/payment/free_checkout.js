@@ -28,11 +28,11 @@ class FreeCheckoutController extends Controller {
 
 		const json = {};
 
-		if (!isset(this.session.data['order_id'])) {
+		if (!(this.session.data['order_id'])) {
 			$json['error'] = this.language.get('error_order');
 		}
 
-		if (!isset(this.session.data['payment_method']) || this.session.data['payment_method']['code'] != 'free_checkout.free_checkout') {
+		if (!(this.session.data['payment_method']) || this.session.data['payment_method']['code'] != 'free_checkout.free_checkout') {
 			$json['error'] = this.language.get('error_payment_method');
 		}
 

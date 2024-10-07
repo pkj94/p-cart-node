@@ -6,23 +6,26 @@ namespace Opencart\Admin\Model\Marketing;
  * @package Opencart\Admin\Model\Marketing
  */
 class CouponModel  extends Model {
+	constructor(registry){
+		super(registry)
+	}
 	/**
 	 * @param data
 	 *
 	 * @return int
 	 */
 	async addCoupon(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "coupon` SET `name` = '" + this.db.escape(data['name']) + "', `code` = '" + this.db.escape(data['code']) + "', `discount` = '" + data['discount'] + "', `type` = '" + this.db.escape(data['type']) + "', `total` = '" + data['total'] + "', `logged` = '" + (isset(data['logged']) ? data['logged'] : 0) + "', `shipping` = '" + (isset(data['shipping']) ? data['shipping'] : 0) + "', `date_start` = '" + this.db.escape(data['date_start']) + "', `date_end` = '" + this.db.escape(data['date_end']) + "', `uses_total` = '" + data['uses_total'] + "', `uses_customer` = '" + data['uses_customer'] + "', `status` = '" + (data['status'] ? data['status'] : 0) + "', `date_added` = NOW()");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "coupon` SET `name` = '" + this.db.escape(data['name']) + "', `code` = " + this.db.escape(data['code']) + ", `discount` = '" + data['discount'] + "', `type` = '" + this.db.escape(data['type']) + "', `total` = '" + data['total'] + "', `logged` = '" + ((data['logged']) ? data['logged'] : 0) + "', `shipping` = '" + ((data['shipping']) ? data['shipping'] : 0) + "', `date_start` = '" + this.db.escape(data['date_start']) + "', `date_end` = '" + this.db.escape(data['date_end']) + "', `uses_total` = '" + data['uses_total'] + "', `uses_customer` = '" + data['uses_customer'] + "', `status` = '" + (data['status'] ? data['status'] : 0) + "', `date_added` = NOW()");
 
 		coupon_id = this.db.getLastId();
 
-		if (isset(data['coupon_product'])) {
+		if ((data['coupon_product'])) {
 			for (data['coupon_product'] of product_id) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "coupon_product` SET `coupon_id` = '" + coupon_id + "', `product_id` = '" + product_id + "'");
 			}
 		}
 
-		if (isset(data['coupon_category'])) {
+		if ((data['coupon_category'])) {
 			for (data['coupon_category'] of category_id) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "coupon_category` SET `coupon_id` = '" + coupon_id + "', `category_id` = '" + category_id + "'");
 			}
@@ -38,11 +41,11 @@ class CouponModel  extends Model {
 	 * @return void
 	 */
 	async editCoupon(coupon_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "coupon` SET `name` = '" + this.db.escape(data['name']) + "', `code` = '" + this.db.escape(data['code']) + "', `discount` = '" + data['discount'] + "', `type` = '" + this.db.escape(data['type']) + "', `total` = '" + data['total'] + "', `logged` = '" + (isset(data['logged']) ? data['logged'] : 0) + "', `shipping` = '" + (isset(data['shipping']) ? data['shipping'] : 0) + "', `date_start` = '" + this.db.escape(data['date_start']) + "', `date_end` = '" + this.db.escape(data['date_end']) + "', `uses_total` = '" + data['uses_total'] + "', `uses_customer` = '" + data['uses_customer'] + "', `status` = '" + (data['status'] ? data['status'] : 0) + "' WHERE `coupon_id` = '" + coupon_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "coupon` SET `name` = '" + this.db.escape(data['name']) + "', `code` = " + this.db.escape(data['code']) + ", `discount` = '" + data['discount'] + "', `type` = '" + this.db.escape(data['type']) + "', `total` = '" + data['total'] + "', `logged` = '" + ((data['logged']) ? data['logged'] : 0) + "', `shipping` = '" + ((data['shipping']) ? data['shipping'] : 0) + "', `date_start` = '" + this.db.escape(data['date_start']) + "', `date_end` = '" + this.db.escape(data['date_end']) + "', `uses_total` = '" + data['uses_total'] + "', `uses_customer` = '" + data['uses_customer'] + "', `status` = '" + (data['status'] ? data['status'] : 0) + "' WHERE `coupon_id` = '" + coupon_id + "'");
 
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "coupon_product` WHERE `coupon_id` = '" + coupon_id + "'");
 
-		if (isset(data['coupon_product'])) {
+		if ((data['coupon_product'])) {
 			for (data['coupon_product'] of product_id) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "coupon_product` SET `coupon_id` = '" + coupon_id + "', `product_id` = '" + product_id + "'");
 			}
@@ -50,7 +53,7 @@ class CouponModel  extends Model {
 
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "coupon_category` WHERE `coupon_id` = '" + coupon_id + "'");
 
-		if (isset(data['coupon_category'])) {
+		if ((data['coupon_category'])) {
 			for (data['coupon_category'] of category_id) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "coupon_category` SET `coupon_id` = '" + coupon_id + "', `category_id` = '" + category_id + "'");
 			}
@@ -99,7 +102,7 @@ class CouponModel  extends Model {
 	async getCoupons(data = {}) {
 		let sql = "SELECT `coupon_id`, `name`, `code`, `discount`, `date_start`, `date_end`, `status` FROM `" + DB_PREFIX + "coupon`";
 
-		sort_data = [
+		let sort_data = [
 			'name',
 			'code',
 			'discount',
@@ -108,7 +111,7 @@ class CouponModel  extends Model {
 			'status'
 		];
 
-		if (data['sort'] && in_array(data['sort'], sort_data)) {
+		if (data['sort'] && sort_data.includes(data['sort'],)) {
 			sql += " ORDER BY " + data['sort'];
 		} else {
 			sql += " ORDER BY `name`";

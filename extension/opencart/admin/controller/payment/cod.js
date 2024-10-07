@@ -56,7 +56,7 @@ module.exports = class CodPaymentController extends Controller {
 
 		const json = {};
 
-		if (!this.user.hasPermission('modify', 'extension/opencart/payment/cod')) {
+		if (!await this.user.hasPermission('modify', 'extension/opencart/payment/cod')) {
 			json.error = this.language.get('error_permission');
 		}
 

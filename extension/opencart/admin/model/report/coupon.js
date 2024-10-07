@@ -4,7 +4,7 @@ module.exports = class CouponReportModel extends Model {
 	 *
 	 * @return array
 	 */
-	async getCoupons(data = []) {
+	async getCoupons(data = {}) {
 		let sql = "SELECT ch.`coupon_id`, c.`name`, c.`code`, COUNT(DISTINCT ch.`order_id`) AS orders, SUM(ch.`amount`) AS `total` FROM `" + DB_PREFIX + "coupon_history` ch LEFT JOIN `" + DB_PREFIX + "coupon` c ON (ch.`coupon_id` = c.`coupon_id`)";
 
 		const implode = [];
@@ -23,7 +23,7 @@ module.exports = class CouponReportModel extends Model {
 
 		sql += " GROUP BY ch.`coupon_id` ORDER BY `total` DESC";
 
-		if (isset(data['start']) || isset(data['limit'])) {
+		if ((data['start']) || (data['limit'])) {
 			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
@@ -45,7 +45,7 @@ module.exports = class CouponReportModel extends Model {
 	 *
 	 * @return int
 	 */
-	async getTotalCoupons(data = []) {
+	async getTotalCoupons(data = {}) {
 		let sql = "SELECT COUNT(DISTINCT `coupon_id`) AS `total` FROM `" + DB_PREFIX + "coupon_history`";
 
 		const implode = [];

@@ -6,6 +6,9 @@ namespace Opencart\Admin\Model\Customer;
  * @package Opencart\Admin\Model\Customer
  */
 class CustomerApprovalModel  extends Model {
+	constructor(registry){
+		super(registry)
+	}
 	/**
 	 * @param data
 	 *

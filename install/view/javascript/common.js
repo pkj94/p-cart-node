@@ -34,7 +34,7 @@ $(document).ready(function() {
 			url += '/' + part[1];
 		}		
 		
-		$('#menu a[href*=\'index.php?route=' + url + '\']').parents('li[id]').addClass('active');
+		$('#menu a[href*=\'?route=' + url + '\']').parents('li[id]').addClass('active');
 	}	
 });
 // Chain ajax calls.

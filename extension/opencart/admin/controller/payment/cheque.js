@@ -56,7 +56,7 @@ module.exports = class ChequePaymentController extends Controller {
 
 		const json = {};
 
-		if (!this.user.hasPermission('modify', 'extension/opencart/payment/cheque')) {
+		if (!await this.user.hasPermission('modify', 'extension/opencart/payment/cheque')) {
 			json.error = { warning: this.language.get('error_permission') };
 		}
 

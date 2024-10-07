@@ -14,7 +14,7 @@ class Reward extends \Opencart\System\Engine\Model {
 	 * @return void
 	 */
 	async getTotal(array &$totals, array &$taxes, float &$total) {
-		if (isset(this.session.data['reward'])) {
+		if ((this.session.data['reward'])) {
 			this.load.language('extension/opencart/total/reward', 'reward');
 
 			$points = this.customer.getRewardPoints();

@@ -50,7 +50,7 @@ module.exports = class VoucherController extends Controller {
 
 		const json = {};
 
-		if (!this.user.hasPermission('modify', 'extension/opencart/total/voucher')) {
+		if (!await this.user.hasPermission('modify', 'extension/opencart/total/voucher')) {
 			json['error'] = this.language.get('error_permission');
 		}
 

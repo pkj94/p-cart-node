@@ -13,7 +13,7 @@ class FilterController extends Controller {
 	 * @return string
 	 */
 	async index() {
-		if (isset(this.request.get['path'])) {
+		if ((this.request.get['path'])) {
 			$parts = explode('_', (string)this.request.get['path']);
 		} else {
 			$parts = [];
@@ -30,21 +30,21 @@ class FilterController extends Controller {
 
 			let url = '';
 
-			if (isset(this.request.get['sort'])) {
+			if ((this.request.get['sort'])) {
 				$url += '&sort=' . this.request.get['sort'];
 			}
 
-			if (isset(this.request.get['order'])) {
+			if ((this.request.get['order'])) {
 				$url += '&order=' . this.request.get['order'];
 			}
 
-			if (isset(this.request.get['limit'])) {
+			if ((this.request.get['limit'])) {
 				$url += '&limit=' . this.request.get['limit'];
 			}
 
 			data['action'] = str_replace('&amp;', '&', this.url.link('product/category', 'language=' . this.config.get('config_language') . '&path=' . this.request.get['path'] . $url));
 
-			if (isset(this.request.get['filter'])) {
+			if ((this.request.get['filter'])) {
 				data['filter_category'] = explode(',', this.request.get['filter']);
 			} else {
 				data['filter_category'] = [];

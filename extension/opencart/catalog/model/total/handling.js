@@ -29,7 +29,7 @@ class Handling extends \Opencart\System\Engine\Model {
 				$tax_rates = this.tax.getRates(this.config.get('total_handling_fee'), this.config.get('total_handling_tax_class_id'));
 
 				foreach ($tax_rates as $tax_rate) {
-					if (!isset($taxes[$tax_rate['tax_rate_id']])) {
+					if (!($taxes[$tax_rate['tax_rate_id']])) {
 						$taxes[$tax_rate['tax_rate_id']] = $tax_rate['amount'];
 					} else {
 						$taxes[$tax_rate['tax_rate_id']] += $tax_rate['amount'];

@@ -51,7 +51,7 @@ module.exports = class ProductViewedReportController extends Controller {
 
 		const json = {};
 
-		if (!this.user.hasPermission('modify', 'extension/opencart/report/product_viewed')) {
+		if (!await this.user.hasPermission('modify', 'extension/opencart/report/product_viewed')) {
 			json['error'] = this.language.get('error_permission');
 		}
 
@@ -71,7 +71,7 @@ module.exports = class ProductViewedReportController extends Controller {
 	 * @return void
 	 */
 	async install() {
-		if (this.user.hasPermission('modify', 'extension/report')) {
+		if (await this.user.hasPermission('modify', 'extension/report')) {
 			this.load.model('extension/opencart/report/product_viewed', this);
 
 			await this.model_extension_opencart_report_product_viewed.install();
@@ -82,7 +82,7 @@ module.exports = class ProductViewedReportController extends Controller {
 	 * @return void
 	 */
 	async uninstall() {
-		if (this.user.hasPermission('modify', 'extension/report')) {
+		if (await this.user.hasPermission('modify', 'extension/report')) {
 			this.load.model('extension/opencart/report/product_viewed', this);
 
 			await this.model_extension_opencart_report_product_viewed.uninstall();
@@ -154,7 +154,7 @@ module.exports = class ProductViewedReportController extends Controller {
 
 		let url = '';
 
-		if (isset(this.request.get['page'])) {
+		if ((this.request.get['page'])) {
 			url += '&page='.this.request.get['page'];
 		}
 
@@ -185,7 +185,7 @@ module.exports = class ProductViewedReportController extends Controller {
 
 		let limit = 10;
 
-		if (!this.user.hasPermission('modify', 'extension/opencart/report/product_viewed')) {
+		if (!await this.user.hasPermission('modify', 'extension/opencart/report/product_viewed')) {
 			json['error'] = this.language.get('error_permission');
 		}
 

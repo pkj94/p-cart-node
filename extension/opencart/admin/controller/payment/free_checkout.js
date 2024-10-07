@@ -50,7 +50,7 @@ module.exports = class FreeCheckoutPaymentController extends Controller {
 
 		const json = {};
 
-		if (!this.user.hasPermission('modify', 'extension/opencart/payment/free_checkout')) {
+		if (!await this.user.hasPermission('modify', 'extension/opencart/payment/free_checkout')) {
 			json.error = this.language.get('error_permission');
 		}
 

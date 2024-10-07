@@ -48,7 +48,7 @@ module.exports = class ChartDashboardController extends Controller {
 
 		const json = {};
 
-		if (!this.user.hasPermission('modify', 'extension/opencart/dashboard/chart')) {
+		if (!await this.user.hasPermission('modify', 'extension/opencart/dashboard/chart')) {
 			json.error = this.language.get('error_permission');
 		}
 
@@ -89,7 +89,7 @@ module.exports = class ChartDashboardController extends Controller {
 		json['order']['data'] = [];
 		json['customer']['data'] = [];
 		let range = 'day';
-		if (isset(this.request.get['range'])) {
+		if ((this.request.get['range'])) {
 			range = this.request.get['range'];
 		}
 		let results = [];
