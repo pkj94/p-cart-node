@@ -116,7 +116,7 @@ module.exports = class CustomerSearchReportController extends Controller {
 		}
 		let page = 1;
 		if (this.request.get['page']) {
-			page = this.request.get['page'];
+			page = Number(this.request.get['page']);
 		}
 
 		const data = {
@@ -172,7 +172,7 @@ module.exports = class CustomerSearchReportController extends Controller {
 		}
 
 		if (this.request.get['filter_keyword']) {
-			url += '&filter_keyword=' + urlencode(this.request.get['filter_keyword']);
+			url += '&filter_keyword=' + encodeURIComponent(this.request.get['filter_keyword']);
 		}
 
 		if (this.request.get['filter_customer']) {

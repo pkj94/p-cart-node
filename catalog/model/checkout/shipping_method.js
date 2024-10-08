@@ -36,7 +36,7 @@ class ShippingMethod extends \Opencart\System\Engine\Controller {
 			$sort_order[$key] = $value['sort_order'];
 		}
 
-		array_multisort($sort_order, SORT_ASC, $method_data);
+		$method_data= multiSort($method_data,$sort_order,'ASC');
 
 		return $method_data;
 	}

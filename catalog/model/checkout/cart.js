@@ -20,7 +20,7 @@ class Cart extends \Opencart\System\Engine\Model {
 
 		foreach ($products as $product) {
 			if ($product['image']) {
-				$image = $this->model_tool_image->resize(html_entity_decode($product['image'], ENT_QUOTES, 'UTF-8'), $this->config->get('config_image_cart_width'), $this->config->get('config_image_cart_height'));
+				$image = $this->model_tool_image->resize(html_entity_decode($product['image']), $this->config->get('config_image_cart_width'), $this->config->get('config_image_cart_height'));
 			} else {
 				$image = $this->model_tool_image->resize('placeholder.png', $this->config->get('config_image_cart_width'), $this->config->get('config_image_cart_height'));
 			}
@@ -133,7 +133,7 @@ class Cart extends \Opencart\System\Engine\Model {
 			$sort_order[$key] = $this->config->get('total_' . $value['code'] . '_sort_order');
 		}
 
-		array_multisort($sort_order, SORT_ASC, $results);
+		$results= multiSort($results,$sort_order,'ASC');
 
 		foreach ($results as $result) {
 			if ($this->config->get('total_' . $result['code'] . '_status')) {
@@ -150,6 +150,6 @@ class Cart extends \Opencart\System\Engine\Model {
 			$sort_order[$key] = $value['sort_order'];
 		}
 
-		array_multisort($sort_order, SORT_ASC, $totals);
+		$totals= multiSort($totals,$sort_order,'ASC');
 	}
 }

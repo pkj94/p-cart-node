@@ -2,15 +2,15 @@ const fs = require('fs');
 module.exports = function () {
     const loadControllers = async (req, res, next) => {
         console.log('params=======',req.params)
-        if (fs.readFileSync('../config.json').toString())
-            for (let [key, value] of Object.entries(require('./config.json'))) {
+        if (fs.readFileSync(APPROOT+'/config.json').toString())
+            for (let [key, value] of Object.entries(require(APPROOT+'/config.json'))) {
                 global[key] = value;
             }
         console.log('DIR_APPLICATION', typeof DIR_APPLICATION)
         if (typeof DIR_APPLICATION == 'undefined')
             return res.redirect('/install');
         // console.log(typeof DIR_APPLICATION == 'undefined')
-        
+
 
         // Registry
         global.registry = new Registry();

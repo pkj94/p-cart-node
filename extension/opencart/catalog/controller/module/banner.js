@@ -25,11 +25,11 @@ class BannerController extends Controller {
 		const results = await this.model_design_banner.getBanner($setting['banner_id']);
 
 		for(let result of results) {
-			if (is_file(DIR_IMAGE . html_entity_decode(result['image'], ENT_QUOTES, 'UTF-8'))) {
+			if (is_file(DIR_IMAGE . html_entity_decode(result['image']))) {
 				data['banners'].push({
 					'title' : result['title'],
 					'link'  : result['link'],
-					'image' : this.model_tool_image.resize(html_entity_decode(result['image'], ENT_QUOTES, 'UTF-8'), $setting['width'], $setting['height'])
+					'image' : this.model_tool_image.resize(html_entity_decode(result['image']), $setting['width'], $setting['height'])
 				];
 			}
 		}

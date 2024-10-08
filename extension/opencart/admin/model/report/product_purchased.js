@@ -28,7 +28,8 @@ module.exports = class ProductPurchasedReportModel extends Model {
 				data['start'] = 0;
 			}
 
-			if (data['limit'] < 1) {
+			data['limit'] = data['limit']||20;
+if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
