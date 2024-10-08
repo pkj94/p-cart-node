@@ -17,7 +17,7 @@ class Affiliate extends \Opencart\System\Engine\Controller {
 	public function index(string &$route, array &$args, mixed &$output): void {
 		$this->load->language('mail/affiliate');
 
-		$store_name = html_entity_decode($this->config->get('config_name'), ENT_QUOTES, 'UTF-8');
+		$store_name = html_entity_decode($this->config->get('config_name'));
 
 		$subject = sprintf($this->language->get('text_subject'), $store_name);
 
@@ -49,7 +49,7 @@ class Affiliate extends \Opencart\System\Engine\Controller {
 				'parameter'     => $this->config->get('config_mail_parameter'),
 				'smtp_hostname' => $this->config->get('config_mail_smtp_hostname'),
 				'smtp_username' => $this->config->get('config_mail_smtp_username'),
-				'smtp_password' => html_entity_decode($this->config->get('config_mail_smtp_password'), ENT_QUOTES, 'UTF-8'),
+				'smtp_password' => html_entity_decode($this->config->get('config_mail_smtp_password')),
 				'smtp_port'     => $this->config->get('config_mail_smtp_port'),
 				'smtp_timeout'  => $this->config->get('config_mail_smtp_timeout')
 			];
@@ -83,7 +83,7 @@ class Affiliate extends \Opencart\System\Engine\Controller {
 		if (in_array('affiliate', (array)$this->config->get('config_mail_alert'))) {
 			$this->load->language('mail/affiliate');
 
-			$store_name = html_entity_decode($this->config->get('config_name'), ENT_QUOTES, 'UTF-8');
+			$store_name = html_entity_decode($this->config->get('config_name'));
 
 			$subject = $this->language->get('text_new_affiliate');
 
@@ -103,7 +103,7 @@ class Affiliate extends \Opencart\System\Engine\Controller {
 				$data['telephone'] = $args[1]['telephone'];
 			}
 
-			$data['website'] = html_entity_decode($args[1]['website'], ENT_QUOTES, 'UTF-8');
+			$data['website'] = html_entity_decode($args[1]['website']);
 			$data['company'] = $args[1]['company'];
 
 			$this->load->model('account/customer_group');
@@ -124,7 +124,7 @@ class Affiliate extends \Opencart\System\Engine\Controller {
 					'parameter'     => $this->config->get('config_mail_parameter'),
 					'smtp_hostname' => $this->config->get('config_mail_smtp_hostname'),
 					'smtp_username' => $this->config->get('config_mail_smtp_username'),
-					'smtp_password' => html_entity_decode($this->config->get('config_mail_smtp_password'), ENT_QUOTES, 'UTF-8'),
+					'smtp_password' => html_entity_decode($this->config->get('config_mail_smtp_password')),
 					'smtp_port'     => $this->config->get('config_mail_smtp_port'),
 					'smtp_timeout'  => $this->config->get('config_mail_smtp_timeout')
 				];

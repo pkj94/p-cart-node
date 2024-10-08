@@ -31,7 +31,7 @@ class Contact extends \Opencart\System\Engine\Controller {
 		$this->load->model('tool/image');
 
 		if ($this->config->get('config_image')) {
-			$data['image'] = $this->model_tool_image->resize(html_entity_decode($this->config->get('config_image'), ENT_QUOTES, 'UTF-8'), $this->config->get('config_image_location_width'), $this->config->get('config_image_location_height'));
+			$data['image'] = $this->model_tool_image->resize(html_entity_decode($this->config->get('config_image')), $this->config->get('config_image_location_width'), $this->config->get('config_image_location_height'));
 		} else {
 			$data['image'] = false;
 		}
@@ -52,8 +52,8 @@ class Contact extends \Opencart\System\Engine\Controller {
 			$location_info = $this->model_localisation_location->getLocation((int)$location_id);
 
 			if ($location_info) {
-				if (is_file(DIR_IMAGE . html_entity_decode($location_info['image'], ENT_QUOTES, 'UTF-8'))) {
-					$image = $this->model_tool_image->resize(html_entity_decode($location_info['image'], ENT_QUOTES, 'UTF-8'), $this->config->get('config_image_location_width'), $this->config->get('config_image_location_height'));
+				if (is_file(DIR_IMAGE . html_entity_decode($location_info['image']))) {
+					$image = $this->model_tool_image->resize(html_entity_decode($location_info['image']), $this->config->get('config_image_location_width'), $this->config->get('config_image_location_height'));
 				} else {
 					$image = '';
 				}
@@ -147,7 +147,7 @@ class Contact extends \Opencart\System\Engine\Controller {
 					'parameter'     => $this->config->get('config_mail_parameter'),
 					'smtp_hostname' => $this->config->get('config_mail_smtp_hostname'),
 					'smtp_username' => $this->config->get('config_mail_smtp_username'),
-					'smtp_password' => html_entity_decode($this->config->get('config_mail_smtp_password'), ENT_QUOTES, 'UTF-8'),
+					'smtp_password' => html_entity_decode($this->config->get('config_mail_smtp_password')),
 					'smtp_port'     => $this->config->get('config_mail_smtp_port'),
 					'smtp_timeout'  => $this->config->get('config_mail_smtp_timeout')
 				];
@@ -157,8 +157,8 @@ class Contact extends \Opencart\System\Engine\Controller {
 				// Less spam and fix bug when using SMTP like sendgrid.
 				$mail->setFrom($this->config->get('config_email'));
 				$mail->setReplyTo($this->request->post['email']);
-				$mail->setSender(html_entity_decode($this->request->post['name'], ENT_QUOTES, 'UTF-8'));
-				$mail->setSubject(html_entity_decode(sprintf($this->language->get('email_subject'), $this->request->post['name']), ENT_QUOTES, 'UTF-8'));
+				$mail->setSender(html_entity_decode($this->request->post['name']));
+				$mail->setSubject(html_entity_decode(sprintf($this->language->get('email_subject'), $this->request->post['name'])));
 				$mail->setText($this->request->post['enquiry']);
 				$mail->send();
 			}

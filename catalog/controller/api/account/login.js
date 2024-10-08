@@ -11,7 +11,7 @@ class Login extends \Opencart\System\Engine\Controller {
 	 *
 	 * @Example
 	 *
-	 * $url = 'https://www.yourdomain.com/index.php?route=api/account/login&language=en-gb&store_id=0';
+	 * $url = 'https://www.yourdomain.com/api/account/login&language=en-gb&store_id=0';
 	 *
 	 * $request_data = [
 	 * 		'username' => 'Default',
@@ -45,7 +45,7 @@ class Login extends \Opencart\System\Engine\Controller {
 	 * 		}
 	 * }
 	 *
-	 * $url = 'http://www.yourdomain.com/opencart-master/upload/index.php?route=api/sale/order.load&language=en-gb&store_id=0&order_id=1';
+	 * $url = 'http://www.yourdomain.com/opencart-master/upload/api/sale/order.load&language=en-gb&store_id=0&order_id=1';
 	 *
 	 * $curl = curl_init();
 	 *

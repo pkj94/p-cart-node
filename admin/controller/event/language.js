@@ -12,8 +12,8 @@ module.exports = class LanguageController extends Controller {
         }
     }
 
-    before(route, args) {
-        const data = this.language.all();
+    async before(route, args) {
+        const data = await this.language.all();
 
         if (data) {
             this.language.set('backup', JSON.stringify(data));

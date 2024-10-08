@@ -13,7 +13,7 @@ module.exports = class MySQLiDBLibrary {
             debug: debug
         });
 
-
+        this.insertId=0;
     }
     connect() {
         return new Promise((resolve, reject) => {
@@ -43,7 +43,9 @@ module.exports = class MySQLiDBLibrary {
                         };
                         resolve(result);
                     } else {
-                        resolve(true);
+                        if(results.insertId)
+                            this.insertId = results.insertId;
+                        resolve(results.insertId||true);
                     }
                 }
             });
@@ -59,7 +61,7 @@ module.exports = class MySQLiDBLibrary {
     }
 
     getLastId() {
-        return this.connection.insertId;
+        return this.insertId;
     }
 
     isConnected() {

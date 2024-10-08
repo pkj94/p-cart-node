@@ -9,7 +9,7 @@ module.exports = class SecurityController extends Controller {
      */
     async index() {
         const data = {};
-        await this.load.language('common/security');
+        await  this.load.language('common/security');
 
         // Check install directory exists
         if (fs.existsSync(DIR_OPENCART + 'install/')) {
@@ -29,7 +29,7 @@ module.exports = class SecurityController extends Controller {
 
             data['paths'] = [];
 
-            let parts = data['document_root'].replace(new RegExp('/' + "*$"), '').split('/');
+            let parts = data['document_root'].replace(new RegExp('/' + "*"), '').split('/');
             for (let part of parts) {
                 path += part + '/';
 
@@ -61,11 +61,11 @@ module.exports = class SecurityController extends Controller {
      * @return void
      */
     async install() {
-        await this.load.language('common/security');
+        await  this.load.language('common/security');
 
         const json = {};
 
-        if (await this.user.hasPermission('modify', 'common/security')) {
+        if (await  this.user.hasPermission('modify', 'common/security')) {
             if (!fs.existsSync(DIR_OPENCART + 'install/')) {
                 json['error'] = this.language.get('error_install');
             }
@@ -73,7 +73,7 @@ module.exports = class SecurityController extends Controller {
             json['error'] = this.language.get('error_permission');
         }
 
-        if (!json) {
+        if (!Object.keys(json).length) {
             let files = [];
 
             path = DIR_OPENCART + 'install/';
@@ -86,7 +86,7 @@ module.exports = class SecurityController extends Controller {
                 let next = directory.shift();
 
                 if (fs.existsSync(next)) {
-                    for (let file of fs.readdirSync(next.replace(new RegExp('/' + "*$"), ''))) {
+                    for (let file of fs.readdirSync(next.replace(new RegExp('/' + "*"), ''))) {
                         // If directory add to path array
                         if (fs.lstatSync(next + file).isDirectory()) {
                             directory.push(next + file);
@@ -102,13 +102,13 @@ module.exports = class SecurityController extends Controller {
 
             for (let file of files) {
                 if (fs.lstatSync(file).isFile()) {
-                    fs.unlinkSync(file);
-                } else if (fs.lstatSync(file).isDirectory()) {
-                    fs.rmdirSync(file);
+                    fs.fs.unlinkSyncSync(file);
+                } else if (fs.lstatSync(file).isFile()) {
+                    fs.fs.rmdirSyncSync(file);
                 }
             }
 
-            fs.rmdirSync(path);
+            fs.fs.rmdirSyncSync(path);
 
             json['success'] = this.language.get('text_install_success');
         }
@@ -121,10 +121,10 @@ module.exports = class SecurityController extends Controller {
      * @return void
      */
     async storage() {
-        await this.load.language('common/security');
+        await  this.load.language('common/security');
         let page = 1;
         if ((this.request.get['page'])) {
-            page = this.request.get['page'];
+            page = Number(this.request.get['page']);
         }
         let name = '';
         if ((this.request.get['name'])) {
@@ -137,7 +137,7 @@ module.exports = class SecurityController extends Controller {
 
         const json = {};
 
-        if (await this.user.hasPermission('modify', 'common/security')) {
+        if (await  this.user.hasPermission('modify', 'common/security')) {
             let base_old = DIR_STORAGE;
             let base_new = path + name + '/';
 
@@ -172,9 +172,9 @@ module.exports = class SecurityController extends Controller {
             while (directory.length != 0) {
                 let next = directory.shift();
 
-                for (let file of fs.readdirSync(next.replace(new RegExp('/' + "*$"), ''))) {
+                for (let file of fs.readdirSync(next.replace(new RegExp('/' + "*"), ''))) {
                     // If directory add to path array
-                    if (fs.lstatSync(file).isDirectory()) {
+                    if (fs.lstatSync(file).isFile()) {
                         directory.push(file);
                     }
 
@@ -216,16 +216,16 @@ module.exports = class SecurityController extends Controller {
                 for (let file of files) {
                     // If file just delete
                     if (fs.lstatSync(file).isFile()) {
-                        fs.unlinkSync(file);
+                        fs.fs.unlinkSyncSync(file);
                     }
 
                     // If directory use the remove directory function
-                    if (fs.lstatSync(file).isDirectory()) {
-                        fs.rmdirSync(file);
+                    if (fs.lstatSync(file).isFile()) {
+                        fs.fs.rmdirSyncSync(file);
                     }
                 }
 
-                fs.rmdirSync(base_old);
+                fs.fs.rmdirSyncSync(base_old);
 
                 // Modify the config files
                 files = [
@@ -256,10 +256,10 @@ module.exports = class SecurityController extends Controller {
      * @return void
      */
     async admin() {
-        await this.load.language('common/security');
+        await  this.load.language('common/security');
         let page = 1;
         if ((this.request.get['page'])) {
-            page = this.request.get['page'];
+            page = Number(this.request.get['page']);
         }
         let name = 'admin';
         if ((this.request.get['name'])) {
@@ -268,7 +268,7 @@ module.exports = class SecurityController extends Controller {
 
         const json = {};
 
-        if (await this.user.hasPermission('modify', 'common/security')) {
+        if (await  this.user.hasPermission('modify', 'common/security')) {
             let base_old = DIR_OPENCART + 'admin/';
             let base_new = DIR_OPENCART + name + '/';
 
@@ -302,9 +302,9 @@ module.exports = class SecurityController extends Controller {
             while (directory.length != 0) {
                 let next = directory.shift();
 
-                for (let file of fs.readdirSync(next.replace(new RegExp('/' + "*$"), ''))) {
+                for (let file of fs.readdirSync(next.replace(new RegExp('/' + "*"), ''))) {
                     // If directory add to path array
-                    if (fs.lstatSync(file).isDirectory()) {
+                    if (fs.lstatSync(file).isFile()) {
                         directory.push(file);
                     }
 
@@ -375,7 +375,7 @@ module.exports = class SecurityController extends Controller {
             while (directory.length != 0) {
                 let next = directory.shift();
 
-                for (let file of fs.readdirSync(next.replace(new RegExp('/' + "*$"), ''))) {
+                for (let file of fs.readdirSync(next.replace(new RegExp('/' + "*"), ''))) {
                     // If directory add to path array
                     if (fs.existsSync(file)) {
                         directory.push(file);
@@ -393,16 +393,16 @@ module.exports = class SecurityController extends Controller {
             for (let file of files) {
                 // If file just delete
                 if (fs.lstatSync(file).isFile()) {
-                    fs.unlinkSync(file);
+                    fs.fs.unlinkSyncSync(file);
                 }
 
                 // If directory use the remove directory function
-                if (fs.lstatSync(file).isDirectory()) {
-                    fs.rmdirSync(file);
+                if (fs.lstatSync(file).isFile()) {
+                    fs.fs.rmdirSyncSync(file);
                 }
             }
 
-            rmdir(path);
+            fs.rmdirSync(path);
         }
     }
 }

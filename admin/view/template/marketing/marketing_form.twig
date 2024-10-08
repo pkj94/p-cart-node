@@ -72,7 +72,7 @@
 $('#input-code').on('keyup', function (e) {
     $('#input-example1').attr('value', '{{ store }}?tracking=' + $('#input-code').val());
 
-    $('#input-example2').attr('value', '{{ store }}index.php?route=common/home&tracking=' + $('#input-code').val());
+    $('#input-example2').attr('value', '{{ store }}?route=common/home&tracking=' + $('#input-code').val());
 });
 
 $('#input-code').trigger('keyup');

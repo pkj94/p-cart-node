@@ -1,7 +1,7 @@
 const fs = require('fs');
 module.exports = function () {
     const loadAdminControllers = async (req, res, next) => {
-        console.log('-=-=-=-=-=-',req.params)
+        // console.log('-=-=-=-=-=-',req.params)
         if (fs.readFileSync('./config.json').toString())
             for (let [key, value] of Object.entries(require('./config.json'))) {
                 global[key] = value;

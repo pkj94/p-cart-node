@@ -40,10 +40,10 @@ class Gdpr extends \Opencart\System\Engine\Controller {
 
 		$this->load->language('mail/gdpr');
 
-		$store_name = html_entity_decode($this->config->get('config_name'), ENT_QUOTES, 'UTF-8');
+		$store_name = html_entity_decode($this->config->get('config_name'));
 
 		if ($this->config->get('config_logo')) {
-			$data['logo'] = $this->config->get('config_url') . 'image/' . html_entity_decode($this->config->get('config_logo'), ENT_QUOTES, 'UTF-8');
+			$data['logo'] = $this->config->get('config_url') . 'image/' . html_entity_decode($this->config->get('config_logo'));
 		} else {
 			$data['logo'] = '';
 		}
@@ -64,7 +64,7 @@ class Gdpr extends \Opencart\System\Engine\Controller {
 				'parameter'     => $this->config->get('config_mail_parameter'),
 				'smtp_hostname' => $this->config->get('config_mail_smtp_hostname'),
 				'smtp_username' => $this->config->get('config_mail_smtp_username'),
-				'smtp_password' => html_entity_decode($this->config->get('config_mail_smtp_password'), ENT_QUOTES, 'UTF-8'),
+				'smtp_password' => html_entity_decode($this->config->get('config_mail_smtp_password')),
 				'smtp_port'     => $this->config->get('config_mail_smtp_port'),
 				'smtp_timeout'  => $this->config->get('config_mail_smtp_timeout')
 			];
@@ -114,12 +114,12 @@ class Gdpr extends \Opencart\System\Engine\Controller {
 			if ($store_info) {
 				$this->load->model('setting/setting');
 
-				$store_logo = html_entity_decode($this->model_setting_setting->getValue('config_logo', $store_info['store_id']), ENT_QUOTES, 'UTF-8');
-				$store_name = html_entity_decode($store_info['name'], ENT_QUOTES, 'UTF-8');
+				$store_logo = html_entity_decode($this->model_setting_setting->getValue('config_logo', $store_info['store_id']));
+				$store_name = html_entity_decode($store_info['name']);
 				$store_url = $store_info['url'];
 			} else {
-				$store_logo = html_entity_decode($this->config->get('config_logo'), ENT_QUOTES, 'UTF-8');
-				$store_name = html_entity_decode($this->config->get('config_name'), ENT_QUOTES, 'UTF-8');
+				$store_logo = html_entity_decode($this->config->get('config_logo'));
+				$store_name = html_entity_decode($this->config->get('config_name'));
 				$store_url = HTTP_SERVER;
 			}
 
@@ -160,21 +160,21 @@ class Gdpr extends \Opencart\System\Engine\Controller {
 			$customer_info = $this->model_account_customer->getCustomerByEmail($gdpr_info['email']);
 
 			if ($customer_info) {
-				$data['text_hello'] = sprintf($this->language->get('mail_text_hello'), html_entity_decode($customer_info['firstname'], ENT_QUOTES, 'UTF-8'));
+				$data['text_hello'] = sprintf($this->language->get('mail_text_hello'), html_entity_decode($customer_info['firstname']));
 			} else {
 				$data['text_hello'] = sprintf($this->language->get('mail_text_hello'), $this->language->get('mail_text_user'));
 			}
 
 			$data['store_name'] = $store_name;
 			$data['store_url'] = $store_url;
-			$data['contact'] = $store_url . 'index.php?route=information/contact';
+			$data['contact'] = $store_url . 'information/contact';
 
 			if ($this->config->get('config_mail_engine')) {
 				$mail_option = [
 					'parameter'     => $this->config->get('config_mail_parameter'),
 					'smtp_hostname' => $this->config->get('config_mail_smtp_hostname'),
 					'smtp_username' => $this->config->get('config_mail_smtp_username'),
-					'smtp_password' => html_entity_decode($this->config->get('config_mail_smtp_password'), ENT_QUOTES, 'UTF-8'),
+					'smtp_password' => html_entity_decode($this->config->get('config_mail_smtp_password')),
 					'smtp_port'     => $this->config->get('config_mail_smtp_port'),
 					'smtp_timeout'  => $this->config->get('config_mail_smtp_timeout')
 				];

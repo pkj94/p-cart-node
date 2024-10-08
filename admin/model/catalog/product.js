@@ -20,12 +20,12 @@ class ProductModel  extends Model {
 		product_id = this.db.getLastId();
 
 		if (data['image']) {
-			await this.db.query("UPDATE `" + DB_PREFIX + "product` SET `image` = '" + this.db.escape(data['image']) + "' WHERE `product_id` = '" + product_id + "'");
+			await this.db.query("UPDATE `" + DB_PREFIX + "product` SET `image` = " + this.db.escape(data['image']) + " WHERE `product_id` = '" + product_id + "'");
 		}
 
 		// Description
 		for (data['product_description'] of language_id : value) {
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "product_description` SET `product_id` = '" + product_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + ", `description` = '" + this.db.escape(value['description']) + "', `tag` = '" + this.db.escape(value['tag']) + "', `meta_title` = '" + this.db.escape(value['meta_title']) + "', `meta_description` = '" + this.db.escape(value['meta_description']) + "', `meta_keyword` = '" + this.db.escape(value['meta_keyword']) + "'");
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "product_description` SET `product_id` = '" + product_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + ", `description` = " + this.db.escape(value['description']) + ", `tag` = '" + this.db.escape(value['tag']) + "', `meta_title` = " + this.db.escape(value['meta_title']) + ", `meta_description` = " + this.db.escape(value['meta_description']) + ", `meta_keyword` = " + this.db.escape(value['meta_keyword']) + "");
 		}
 
 		// Categories
@@ -37,14 +37,14 @@ class ProductModel  extends Model {
 
 		// Filters
 		if ((data['product_filter'])) {
-			for (data['product_filter'] of filter_id) {
+			for (let filter_id of data['product_filter']) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_filter` SET `product_id` = '" + product_id + "', `filter_id` = '" + filter_id + "'");
 			}
 		}
 
 		// Stores
 		if ((data['product_store'])) {
-			for (data['product_store'] of store_id) {
+			for (let store_id  of data['product_store']) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_to_store` SET `product_id` = '" + product_id + "', `store_id` = '" + store_id + "'");
 			}
 		}
@@ -143,15 +143,15 @@ class ProductModel  extends Model {
 		// SEO URL
 		if ((data['product_seo_url'])) {
 			for (data['product_seo_url'] of store_id : language) {
-				for (language of language_id : keyword) {
-					await this.db.query("INSERT INTO `" + DB_PREFIX + "seo_url` SET `store_id` = '" + store_id + "', `language_id` = '" + language_id + "', `key` = 'product_id', `value` = '" + product_id + "', `keyword` = '" + this.db.escape(keyword) + "'");
+				for (let [language_id , keyword] of language ) {
+					await this.db.query("INSERT INTO `" + DB_PREFIX + "seo_url` SET `store_id` = '" + store_id + "', `language_id` = '" + language_id + "', `key` = 'product_id', `value` = '" + product_id + "', `keyword` = " + this.db.escape(keyword) + "");
 				}
 			}
 		}
 
 		// Layout
 		if ((data['product_layout'])) {
-			for (data['product_layout'] of store_id : layout_id) {
+			for (let [store_id , layout_id] of data['product_layout']) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_to_layout` SET `product_id` = '" + product_id + "', `store_id` = '" + store_id + "', `layout_id` = '" + layout_id + "'");
 			}
 		}
@@ -171,14 +171,14 @@ class ProductModel  extends Model {
 		await this.db.query("UPDATE `" + DB_PREFIX + "product` SET `model` = " + this.db.escape(data['model']) + ", `sku` = '" + this.db.escape(data['sku']) + "', `upc` = '" + this.db.escape(data['upc']) + "', `ean` = '" + this.db.escape(data['ean']) + "', `jan` = '" + this.db.escape(data['jan']) + "', `isbn` = '" + this.db.escape(data['isbn']) + "', `mpn` = '" + this.db.escape(data['mpn']) + "', `location` = '" + this.db.escape(data['location']) + "', `variant` = '" + this.db.escape((data['variant']) ? JSON.stringify(data['variant']) : '') + "', `override` = '" + this.db.escape((data['override']) ? JSON.stringify(data['override']) : '') + "', `quantity` = '" + data['quantity'] + "', `minimum` = '" + data['minimum'] + "', `subtract` = '" + ((data['subtract']) ? data['subtract'] : 0) + "', `stock_status_id` = '" + data['stock_status_id'] + "', `date_available` = '" + this.db.escape(data['date_available']) + "', `manufacturer_id` = '" + data['manufacturer_id'] + "', `shipping` = '" + ((data['shipping']) ? data['shipping'] : 0) + "', `price` = '" + data['price'] + "', `points` = '" + data['points'] + "', `weight` = '" + data['weight'] + "', `weight_class_id` = '" + data['weight_class_id'] + "', `length` = '" + data['length'] + "', `width` = '" + data['width'] + "', `height` = '" + data['height'] + "', `length_class_id` = '" + data['length_class_id'] + "', `status` = '" + (data['status'] ? data['status'] : 0) + "', `tax_class_id` = '" + data['tax_class_id'] + "', `sort_order` = '" + data['sort_order'] + "', `date_modified` = NOW() WHERE `product_id` = '" + product_id + "'");
 
 		if (data['image']) {
-			await this.db.query("UPDATE `" + DB_PREFIX + "product` SET `image` = '" + this.db.escape(data['image']) + "' WHERE `product_id` = '" + product_id + "'");
+			await this.db.query("UPDATE `" + DB_PREFIX + "product` SET `image` = " + this.db.escape(data['image']) + " WHERE `product_id` = '" + product_id + "'");
 		}
 
 		// Description
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_description` WHERE `product_id` = '" + product_id + "'");
 
 		for (data['product_description'] of language_id : value) {
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "product_description` SET `product_id` = '" + product_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + ", `description` = '" + this.db.escape(value['description']) + "', `tag` = '" + this.db.escape(value['tag']) + "', `meta_title` = '" + this.db.escape(value['meta_title']) + "', `meta_description` = '" + this.db.escape(value['meta_description']) + "', `meta_keyword` = '" + this.db.escape(value['meta_keyword']) + "'");
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "product_description` SET `product_id` = '" + product_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + ", `description` = " + this.db.escape(value['description']) + ", `tag` = '" + this.db.escape(value['tag']) + "', `meta_title` = " + this.db.escape(value['meta_title']) + ", `meta_description` = " + this.db.escape(value['meta_description']) + ", `meta_keyword` = " + this.db.escape(value['meta_keyword']) + "");
 		}
 
 		// Categories
@@ -194,7 +194,7 @@ class ProductModel  extends Model {
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_filter` WHERE `product_id` = '" + product_id + "'");
 
 		if ((data['product_filter'])) {
-			for (data['product_filter'] of filter_id) {
+			for (let filter_id of data['product_filter']) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_filter` SET `product_id` = '" + product_id + "', `filter_id` = '" + filter_id + "'");
 			}
 		}
@@ -203,7 +203,7 @@ class ProductModel  extends Model {
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_to_store` WHERE `product_id` = '" + product_id + "'");
 
 		if ((data['product_store'])) {
-			for (data['product_store'] of store_id) {
+			for (let store_id  of data['product_store']) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_to_store` SET `product_id` = '" + product_id + "', `store_id` = '" + store_id + "'");
 			}
 		}
@@ -324,8 +324,8 @@ class ProductModel  extends Model {
 
 		if ((data['product_seo_url'])) {
 			for (data['product_seo_url'] of store_id : language) {
-				for (language of language_id : keyword) {
-					await this.db.query("INSERT INTO `" + DB_PREFIX + "seo_url` SET `store_id` = '" + store_id + "', `language_id` = '" + language_id + "', `key` = 'product_id', `value` = '" + product_id + "', `keyword` = '" + this.db.escape(keyword) + "'");
+				for (let [language_id , keyword] of language ) {
+					await this.db.query("INSERT INTO `" + DB_PREFIX + "seo_url` SET `store_id` = '" + store_id + "', `language_id` = '" + language_id + "', `key` = 'product_id', `value` = '" + product_id + "', `keyword` = " + this.db.escape(keyword) + "");
 				}
 			}
 		}
@@ -334,7 +334,7 @@ class ProductModel  extends Model {
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_to_layout` WHERE `product_id` = '" + product_id + "'");
 
 		if ((data['product_layout'])) {
-			for (data['product_layout'] of store_id : layout_id) {
+			for (let [store_id , layout_id] of data['product_layout']) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_to_layout` SET `product_id` = '" + product_id + "', `store_id` = '" + store_id + "', `layout_id` = '" + layout_id + "'");
 			}
 		}
@@ -903,11 +903,13 @@ class ProductModel  extends Model {
 		}
 
 		if (data['start'] || data['limit']) {
+                        data['start'] = data['start']||0;
 			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			if (data['limit'] < 1) {
+			data['limit'] = data['limit']||20;
+if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
@@ -929,7 +931,7 @@ class ProductModel  extends Model {
 
 		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_description` WHERE `product_id` = '" + product_id + "'");
 
-		for (query.rows of result) {
+		for (let result of query.rows) {
 			product_description_data[result['language_id']] = [
 				'name'             : result['name'],
 				'description'      : result['description'],
@@ -953,7 +955,7 @@ class ProductModel  extends Model {
 
 		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_to_category` WHERE `product_id` = '" + product_id + "'");
 
-		for (query.rows of result) {
+		for (let result of query.rows) {
 			product_category_data[] = result['category_id'];
 		}
 
@@ -970,7 +972,7 @@ class ProductModel  extends Model {
 
 		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_filter` WHERE `product_id` = '" + product_id + "'");
 
-		for (query.rows of result) {
+		for (let result of query.rows) {
 			product_filter_data[] = result['filter_id'];
 		}
 
@@ -1115,7 +1117,7 @@ class ProductModel  extends Model {
 
 		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_reward` WHERE `product_id` = '" + product_id + "'");
 
-		for (query.rows of result) {
+		for (let result of query.rows) {
 			product_reward_data[result['customer_group_id']] = ['points' : result['points']];
 		}
 
@@ -1132,7 +1134,7 @@ class ProductModel  extends Model {
 
 		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_to_download` WHERE `product_id` = '" + product_id + "'");
 
-		for (query.rows of result) {
+		for (let result of query.rows) {
 			product_download_data[] = result['download_id'];
 		}
 
@@ -1149,7 +1151,7 @@ class ProductModel  extends Model {
 
 		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_to_store` WHERE `product_id` = '" + product_id + "'");
 
-		for (query.rows of result) {
+		for (let result of query.rows) {
 			product_store_data[] = result['store_id'];
 		}
 
@@ -1166,7 +1168,7 @@ class ProductModel  extends Model {
 
 		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "seo_url` WHERE `key` = 'product_id' AND `value` = '" + product_id + "'");
 
-		for (query.rows of result) {
+		for (let result of query.rows) {
 			product_seo_url_data[result['store_id']][result['language_id']] = result['keyword'];
 		}
 
@@ -1183,7 +1185,7 @@ class ProductModel  extends Model {
 
 		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_to_layout` WHERE `product_id` = '" + product_id + "'");
 
-		for (query.rows of result) {
+		for (let result of query.rows) {
 			product_layout_data[result['store_id']] = result['layout_id'];
 		}
 
@@ -1200,7 +1202,7 @@ class ProductModel  extends Model {
 
 		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_related` WHERE `product_id` = '" + product_id + "'");
 
-		for (query.rows of result) {
+		for (let result of query.rows) {
 			product_related_data[] = result['related_id'];
 		}
 

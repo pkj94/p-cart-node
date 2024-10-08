@@ -124,11 +124,13 @@ class CouponModel  extends Model {
 		}
 
 		if (data['start'] || data['limit']) {
+                        data['start'] = data['start']||0;
 			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			if (data['limit'] < 1) {
+			data['limit'] = data['limit']||20;
+if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
@@ -150,7 +152,7 @@ class CouponModel  extends Model {
 
 		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "coupon_product` WHERE `coupon_id` = '" + coupon_id + "'");
 
-		for (query.rows of result) {
+		for (let result of query.rows) {
 			coupon_product_data[] = result['product_id'];
 		}
 
@@ -167,7 +169,7 @@ class CouponModel  extends Model {
 
 		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "coupon_category` WHERE `coupon_id` = '" + coupon_id + "'");
 
-		for (query.rows of result) {
+		for (let result of query.rows) {
 			coupon_category_data[] = result['category_id'];
 		}
 

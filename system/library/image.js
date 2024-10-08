@@ -1,6 +1,6 @@
-const Jimp = require('jimp');
+const {Jimp} = require('jimp');
 
-module.exports =class ImageLibrary {
+module.exports = class ImageLibrary {
     /**
      * Constructor
      * @param {string} file - The image file path
@@ -15,11 +15,12 @@ module.exports =class ImageLibrary {
      */
     async load() {
         try {
-            this.image = await Jimp.read(this.file);
+            this.image =  await Jimp.read(this.file);
             this.width = this.image.bitmap.width;
             this.height = this.image.bitmap.height;
-            this.mime = this.image.getMIME();
+            this.mime = this.image.mime;
         } catch (err) {
+            console.log(err)
             throw new Error(`Error: Could not load image ${this.file}!`);
         }
     }
@@ -30,10 +31,13 @@ module.exports =class ImageLibrary {
      * @param {number} quality - JPEG quality (1-100)
      */
     async save(file, quality = 90) {
+        console.log(this)
         if (this.mime === Jimp.MIME_JPEG) {
-            await this.image.quality(quality).writeAsync(file);
+            await this.image.getBuffer(this.mime, {
+                quality: quality,
+            }).write(file);
         } else {
-            await this.image.writeAsync(file);
+            await this.image.write(file);
         }
     }
 

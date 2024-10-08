@@ -47,7 +47,7 @@ global.APP = async () => {
     });
 
     app.use(bodyParser.json({ limit: '50mb' }));
-    app.use(bodyParser.urlencoded({ limit: '50mb', extended: false }));
+    app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
     app.use(compression());
     app.use('/image', express.static('image'));
     app.use('/catalog/view/stylesheet', express.static('catalog/view/stylesheet'));

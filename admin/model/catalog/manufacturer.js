@@ -15,7 +15,7 @@ class ManufacturerModel  extends Model {
 	 * @return int
 	 */
 	async addManufacturer(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "manufacturer` SET `name` = '" + this.db.escape(data['name']) + "', `image` = '" + this.db.escape(data['image']) + "', `sort_order` = '" + data['sort_order'] + "'");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "manufacturer` SET `name` = '" + this.db.escape(data['name']) + "', `image` = " + this.db.escape(data['image']) + ", `sort_order` = '" + data['sort_order'] + "'");
 
 		manufacturer_id = this.db.getLastId();
 
@@ -28,8 +28,8 @@ class ManufacturerModel  extends Model {
 		// SEO URL
 		if ((data['manufacturer_seo_url'])) {
 			for (data['manufacturer_seo_url'] of store_id : language) {
-				for (language of language_id : keyword) {
-					await this.db.query("INSERT INTO `" + DB_PREFIX + "seo_url` SET `store_id` = '" + store_id + "', `language_id` = '" + language_id + "', `key` = 'manufacturer_id', `value` = '" + manufacturer_id + "', `keyword` = '" + this.db.escape(keyword) + "'");
+				for (let [language_id , keyword] of language ) {
+					await this.db.query("INSERT INTO `" + DB_PREFIX + "seo_url` SET `store_id` = '" + store_id + "', `language_id` = '" + language_id + "', `key` = 'manufacturer_id', `value` = '" + manufacturer_id + "', `keyword` = " + this.db.escape(keyword) + "");
 				}
 			}
 		}
@@ -52,7 +52,7 @@ class ManufacturerModel  extends Model {
 	 * @return void
 	 */
 	async editManufacturer(manufacturer_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "manufacturer` SET `name` = '" + this.db.escape(data['name']) + "', `image` = '" + this.db.escape(data['image']) + "', `sort_order` = '" + data['sort_order'] + "' WHERE `manufacturer_id` = '" + manufacturer_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "manufacturer` SET `name` = '" + this.db.escape(data['name']) + "', `image` = " + this.db.escape(data['image']) + ", `sort_order` = '" + data['sort_order'] + "' WHERE `manufacturer_id` = '" + manufacturer_id + "'");
 
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "manufacturer_to_store` WHERE `manufacturer_id` = '" + manufacturer_id + "'");
 
@@ -66,8 +66,8 @@ class ManufacturerModel  extends Model {
 
 		if ((data['manufacturer_seo_url'])) {
 			for (data['manufacturer_seo_url'] of store_id : language) {
-				for (language of language_id : keyword) {
-					await this.db.query("INSERT INTO `" + DB_PREFIX + "seo_url` SET `store_id` = '" + store_id + "', `language_id` = '" + language_id + "', `key` = 'manufacturer_id', `value` = '" + manufacturer_id + "', `keyword` = '" + this.db.escape(keyword) + "'");
+				for (let [language_id , keyword] of language ) {
+					await this.db.query("INSERT INTO `" + DB_PREFIX + "seo_url` SET `store_id` = '" + store_id + "', `language_id` = '" + language_id + "', `key` = 'manufacturer_id', `value` = '" + manufacturer_id + "', `keyword` = " + this.db.escape(keyword) + "");
 				}
 			}
 		}
@@ -138,11 +138,13 @@ class ManufacturerModel  extends Model {
 		}
 
 		if (data['start'] || data['limit']) {
+                        data['start'] = data['start']||0;
 			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			if (data['limit'] < 1) {
+			data['limit'] = data['limit']||20;
+if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
@@ -164,7 +166,7 @@ class ManufacturerModel  extends Model {
 
 		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "manufacturer_to_store` WHERE `manufacturer_id` = '" + manufacturer_id + "'");
 
-		for (query.rows of result) {
+		for (let result of query.rows) {
 			manufacturer_store_data[] = result['store_id'];
 		}
 
@@ -181,7 +183,7 @@ class ManufacturerModel  extends Model {
 
 		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "seo_url` WHERE `key` = 'manufacturer_id' AND `value` = '" + manufacturer_id + "'");
 
-		for (query.rows of result) {
+		for (let result of query.rows) {
 			manufacturer_seo_url_data[result['store_id']][result['language_id']] = result['keyword'];
 		}
 
@@ -198,7 +200,7 @@ class ManufacturerModel  extends Model {
 
 		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "manufacturer_to_layout` WHERE `manufacturer_id` = '" + manufacturer_id + "'");
 
-		for (query.rows of result) {
+		for (let result of query.rows) {
 			manufacturer_layout_data[result['store_id']] = result['layout_id'];
 		}
 

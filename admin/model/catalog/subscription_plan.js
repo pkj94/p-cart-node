@@ -88,7 +88,7 @@ class SubscriptionPlanModel  extends Model {
 
 		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "subscription_plan_description` WHERE `subscription_plan_id` = '" + subscription_plan_id + "'");
 
-		for (query.rows of result) {
+		for (let result of query.rows) {
 			subscription_plan_description_data[result['language_id']] = ['name' : result['name']];
 		}
 
@@ -125,11 +125,13 @@ class SubscriptionPlanModel  extends Model {
 		}
 
 		if (data['start'] || data['limit']) {
+                        data['start'] = data['start']||0;
 			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			if (data['limit'] < 1) {
+			data['limit'] = data['limit']||20;
+if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 

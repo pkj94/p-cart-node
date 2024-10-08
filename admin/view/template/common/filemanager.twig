@@ -52,8 +52,8 @@
       url += '&target={{ target|escape('js') }}';
     {% endif %}
 
-    {% if ckeditor %}
-      url += '&ckeditor={{ ckeditor|escape('js') }}';
+    {% if summernote %}
+      url += '&summernote={{ summernote|escape('js') }}';
     {% endif %}
 
       $('#modal-image .modal-body').load(url);
@@ -212,8 +212,8 @@
       $('{{ target|escape('js') }}').val('catalog/' + $(this).parent().parent().find('input').val());
     {% endif %}
 
-    {% if ckeditor %}
-      CKEDITOR.instances['{{ ckeditor|escape('js') }}'].insertHtml('<img src="' + $(this).attr('href') + '" alt="" title=""/>');
+    {% if summernote %}
+      CKEDITOR.instances['{{ summernote|escape('js') }}'].insertHtml('<img src="' + $(this).attr('href') + '" alt="" title=""/>');
     {% endif %}
 
       $('#modal-image').modal('hide');

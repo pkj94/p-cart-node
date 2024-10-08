@@ -7,11 +7,11 @@ module.exports = class LoginController extends Controller {
      */
     async index() {
         let data = {};
-        await this.load.language('common/login');
+        await  this.load.language('common/login');
         this.document.setTitle(this.language.get('heading_title'));
         // Check to see if user is already logged
         if (this.user.isLogged() && this.request.get['user_token'] && this.session.data['user_token'] && (this.request.get['user_token'] == this.session.data['user_token'])) {
-            this.response.redirect(this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true));
+            this.response.setRedirect(this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true));
         }
         // Check to see if user is using incorrect token
         if (this.request.get['user_token'] && (!this.session.data['user_token'] || (this.request.get['user_token'] != this.session.data['user_token']))) {
@@ -58,7 +58,7 @@ module.exports = class LoginController extends Controller {
      * @return void
      */
     async login() {
-        await this.load.language('common/login');
+        await  this.load.language('common/login');
         let json = {};
         // Stop any undefined index messages.
         let keys = [
@@ -71,13 +71,15 @@ module.exports = class LoginController extends Controller {
                 this.request.post[key] = '';
             }
         }
-
+        // console.log(this.request.post)
         if (this.user.isLogged() && this.request.get['user_token'] && this.session.data['user_token'] && (this.request.get['user_token'] == this.session.data['user_token'])) {
             json['redirect'] = this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true);
+            // console.log(1)
         }
         if (!this.request.get['login_token'] || !this.session.data['login_token'] || this.request.get['login_token'] != this.session.data['login_token']) {
             this.session.data['error'] = this.language.get('error_login');
             json['redirect'] = this.url.link('common/login', '', true);
+            // console.log(2)
         }
         if (!Object.keys(json).length && !await this.user.login(this.request.post['username'], this.request.post['password'])) {
             json['error'] = this.language.get('error_login');
@@ -98,12 +100,15 @@ module.exports = class LoginController extends Controller {
             await this.model_user_user.addLogin(this.user.getId(), login_data);
             if (this.request.post['redirect'] && (this.request.post['redirect'].indexOf(HTTP_SERVER) === 0)) {
                 json['redirect'] = this.request.post['redirect'] + '&user_token=' + this.session.data['user_token'].replace('&amp;', '&');
+                // console.log(3)
             } else {
                 json['redirect'] = this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true);
+                // console.log(4,HTTP_SERVER,this.request.post['redirect'].indexOf(HTTP_SERVER))
             }
         }
         // console.log('common/login',this.session.data)
         await this.session.save(this.session.data);
+        // console.log(json)
         this.response.addHeader('Content-Type: application/json');
         this.response.setOutput(json);
     }

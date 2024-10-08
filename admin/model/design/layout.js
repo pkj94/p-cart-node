@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Admin\Model\Design;
-/**
- * Class Layout
- *
- * @package Opencart\Admin\Model\Design
- */
-class LayoutModel  extends Model {
+module.exports = class LayoutDesignModel  extends Model {
 	constructor(registry){
 		super(registry)
 	}
@@ -15,19 +8,19 @@ class LayoutModel  extends Model {
 	 * @return int
 	 */
 	async addLayout(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "layout` SET `name` = '" + this.db.escape(data['name']) + "'");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "layout` SET `name` = " + this.db.escape(data['name']) );
 
-		layout_id = this.db.getLastId();
+		let layout_id = this.db.getLastId();
 
 		if ((data['layout_route'])) {
-			for (data['layout_route'] of layout_route) {
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "layout_route` SET `layout_id` = '" + layout_id + "', `store_id` = '" + layout_route['store_id'] + "', `route` = '" + this.db.escape(layout_route['route']) + "'");
+			for (let layout_route of data['layout_route']) {
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "layout_route` SET `layout_id` = '" + layout_id + "', `store_id` = '" + layout_route['store_id'] + "', `route` = " + this.db.escape(layout_route['route']));
 			}
 		}
 
 		if ((data['layout_module'])) {
-			for (data['layout_module'] of layout_module) {
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "layout_module` SET `layout_id` = '" + layout_id + "', `code` = '" + this.db.escape(layout_module['code']) + "', `position` = '" + this.db.escape(layout_module['position']) + "', `sort_order` = '" + layout_module['sort_order'] + "'");
+			for (let layout_module of data['layout_module']) {
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "layout_module` SET `layout_id` = '" + layout_id + "', `code` = " + this.db.escape(layout_module['code']) + ", `position` = " + this.db.escape(layout_module['position']) + ", `sort_order` = '" + layout_module['sort_order'] + "'");
 			}
 		}
 
@@ -41,21 +34,21 @@ class LayoutModel  extends Model {
 	 * @return void
 	 */
 	async editLayout(layout_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "layout` SET `name` = '" + this.db.escape(data['name']) + "' WHERE `layout_id` = '" + layout_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "layout` SET `name` = " + this.db.escape(data['name']) + " WHERE `layout_id` = '" + layout_id + "'");
 
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "layout_route` WHERE `layout_id` = '" + layout_id + "'");
 
 		if ((data['layout_route'])) {
-			for (data['layout_route'] of layout_route) {
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "layout_route` SET `layout_id` = '" + layout_id + "', `store_id` = '" + layout_route['store_id'] + "', `route` = '" + this.db.escape(layout_route['route']) + "'");
+			for (let layout_route of data['layout_route']) {
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "layout_route` SET `layout_id` = '" + layout_id + "', `store_id` = '" + layout_route['store_id'] + "', `route` = " + this.db.escape(layout_route['route']));
 			}
 		}
 
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "layout_module` WHERE `layout_id` = '" + layout_id + "'");
 
 		if ((data['layout_module'])) {
-			for (data['layout_module'] of layout_module) {
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "layout_module` SET `layout_id` = '" + layout_id + "', `code` = '" + this.db.escape(layout_module['code']) + "', `position` = '" + this.db.escape(layout_module['position']) + "', `sort_order` = '" + layout_module['sort_order'] + "'");
+			for (let layout_module of data['layout_module']) {
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "layout_module` SET `layout_id` = '" + layout_id + "', `code` = " + this.db.escape(layout_module['code']) + ", `position` = " + this.db.escape(layout_module['position']) + ", `sort_order` = '" + layout_module['sort_order'] + "'");
 			}
 		}
 	}
@@ -110,11 +103,13 @@ class LayoutModel  extends Model {
 		}
 
 		if (data['start'] || data['limit']) {
+			data['start'] = data['start']||0;
 			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			if (data['limit'] < 1) {
+			data['limit'] = data['limit']||20;
+if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 

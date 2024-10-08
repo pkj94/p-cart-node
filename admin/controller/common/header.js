@@ -57,7 +57,6 @@ module.exports = class HeaderController extends Controller {
 
             this.load.model('tool/image',this);
             data.image = await this.model_tool_image.resize('profile.png', 45, 45);
-
             this.load.model('user/user',this);
             const user_info = await this.model_user_user.getUser(this.user.getId());
 

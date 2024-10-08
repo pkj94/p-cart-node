@@ -5,7 +5,7 @@ module.exports = class DashboardController extends Controller {
     }
     async index() {
         let data = {};
-        await this.load.language('common/dashboard');
+        await  this.load.language('common/dashboard');
         this.document.setTitle(this.language.get('heading_title'));
         data['breadcrumbs'] = [];
         data['breadcrumbs'].push({
@@ -21,11 +21,12 @@ module.exports = class DashboardController extends Controller {
         this.load.model('setting/extension', this);
         // Get a list of installed modules
         let extensions = await this.model_setting_extension.getExtensionsByType('dashboard');
-        // console.log('extensions-----',extensions);        
+        // console.log('extensions-----',extensions.map(a=>a.code));        
         // Add all the modules which have multiple settings for each module
         for (let extension of extensions) {
-            if (this.config.get('dashboard_' + extension['code'] + '_status') && await this.user.hasPermission('access', 'extension/' + extension['extension'] + '/dashboard/' + extension['code'])) {
+            if (this.config.get('dashboard_' + extension['code'] + '_status') && await  this.user.hasPermission('access', 'extension/' + extension['extension'] + '/dashboard/' + extension['code'])) {
                 let output = await this.load.controller('extension/' + extension['extension'] + '/dashboard/' + extension['code'] + '.dashboard');
+                console.log('output---',extension['code'],output.length)
                 //if (!output instanceof \Exception) {
                 if (output) {
                     dashboards.push({
@@ -41,11 +42,12 @@ module.exports = class DashboardController extends Controller {
         for (let [key, value] of Object.entries(dashboards)) {
             sort_order[key] = value['sort_order'];
         }
-        array_multisort(sort_order, 'ASC', dashboards);
+        dashboards= multiSort(dashboards,sort_order,'ASC');
         // Split the array so the columns width is not more than 12 on each row+
         let width = 0;
         let column = [];
         data['rows'] = [];
+        // console.log('dashboards----',dashboards)
         for (let dashboard of dashboards) {
             column.push(dashboard);
             width = (width + dashboard['width']);
@@ -58,7 +60,7 @@ module.exports = class DashboardController extends Controller {
         if (column) {
             data['rows'].push(column);
         }
-        if (await this.user.hasPermission('access', 'common/developer')) {
+        if (await  this.user.hasPermission('access', 'common/developer')) {
             data['developer_status'] = true;
         } else {
             data['developer_status'] = false;
@@ -66,10 +68,9 @@ module.exports = class DashboardController extends Controller {
         data['security'] = await this.load.controller('common/security');
         data['user_token'] = this.session.data['user_token'];
         data['header'] = await this.load.controller('common/header');
-
         data['column_left'] = await this.load.controller('common/column_left');
-
         data['footer'] = await this.load.controller('common/footer');
+        // console.log(data.rows)
         this.response.setOutput(await this.load.view('common/dashboard', data));
     }
 }

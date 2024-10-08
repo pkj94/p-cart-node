@@ -25,7 +25,7 @@ class OptionModel  extends Model {
 
 		if ((data['option_value'])) {
 			for (data['option_value'] of option_value) {
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "option_value` SET `option_id` = '" + option_id + "', `image` = '" + this.db.escape(html_entity_decode(option_value['image'], ENT_QUOTES, 'UTF-8')) + "', `sort_order` = '" + option_value['sort_order'] + "'");
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "option_value` SET `option_id` = '" + option_id + "', `image` = '" + this.db.escape(html_entity_decode(option_value['image'])) + "', `sort_order` = '" + option_value['sort_order'] + "'");
 
 				option_value_id = this.db.getLastId();
 
@@ -59,9 +59,9 @@ class OptionModel  extends Model {
 		if ((data['option_value'])) {
 			for (data['option_value'] of option_value) {
 				if (option_value['option_value_id']) {
-					await this.db.query("INSERT INTO `" + DB_PREFIX + "option_value` SET `option_value_id` = '" + option_value['option_value_id'] + "', `option_id` = '" + option_id + "', `image` = '" + this.db.escape(html_entity_decode(option_value['image'], ENT_QUOTES, 'UTF-8')) + "', `sort_order` = '" + option_value['sort_order'] + "'");
+					await this.db.query("INSERT INTO `" + DB_PREFIX + "option_value` SET `option_value_id` = '" + option_value['option_value_id'] + "', `option_id` = '" + option_id + "', `image` = '" + this.db.escape(html_entity_decode(option_value['image'])) + "', `sort_order` = '" + option_value['sort_order'] + "'");
 				} else {
-					await this.db.query("INSERT INTO `" + DB_PREFIX + "option_value` SET `option_id` = '" + option_id + "', `image` = '" + this.db.escape(html_entity_decode(option_value['image'], ENT_QUOTES, 'UTF-8')) + "', `sort_order` = '" + option_value['sort_order'] + "'");
+					await this.db.query("INSERT INTO `" + DB_PREFIX + "option_value` SET `option_id` = '" + option_id + "', `image` = '" + this.db.escape(html_entity_decode(option_value['image'])) + "', `sort_order` = '" + option_value['sort_order'] + "'");
 				}
 
 				option_value_id = this.db.getLastId();
@@ -127,11 +127,13 @@ class OptionModel  extends Model {
 		}
 
 		if (data['start'] || data['limit']) {
+                        data['start'] = data['start']||0;
 			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			if (data['limit'] < 1) {
+			data['limit'] = data['limit']||20;
+if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
@@ -153,7 +155,7 @@ class OptionModel  extends Model {
 
 		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "option_description` WHERE `option_id` = '" + option_id + "'");
 
-		for (query.rows of result) {
+		for (let result of query.rows) {
 			option_data[result['language_id']] = ['name' : result['name']];
 		}
 

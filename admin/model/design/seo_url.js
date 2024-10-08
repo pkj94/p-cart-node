@@ -1,12 +1,5 @@
-<?php
-namespace Opencart\Admin\Model\Design;
-/**
- * Class Seo Url
- *
- * @package Opencart\Admin\Model\Design
- */
-class SeoUrlModel  extends Model {
-	constructor(registry){
+module.exports = class SeoUrlDesignModel extends Model {
+	constructor(registry) {
 		super(registry)
 	}
 	/**
@@ -15,7 +8,7 @@ class SeoUrlModel  extends Model {
 	 * @return int
 	 */
 	async addSeoUrl(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "seo_url` SET `store_id` = '" + data['store_id'] + "', `language_id` = '" + data['language_id'] + "', `key` = '" + this.db.escape(data['key']) + "', `value` = '" + this.db.escape(data['value']) + "', `keyword` = '" + this.db.escape(data['keyword']) + "', `sort_order` = '" + data['sort_order'] + "'");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "seo_url` SET `store_id` = '" + data['store_id'] + "', `language_id` = '" + data['language_id'] + "', `key` = " + this.db.escape(data['key']) + ", `value` = " + this.db.escape(data['value']) + ", `keyword` = " + this.db.escape(data['keyword']) + ", `sort_order` = '" + data['sort_order'] + "'");
 
 		return this.db.getLastId();
 	}
@@ -27,7 +20,7 @@ class SeoUrlModel  extends Model {
 	 * @return void
 	 */
 	async editSeoUrl(seo_url_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "seo_url` SET `store_id` = '" + data['store_id'] + "', `language_id` = '" + data['language_id'] + "', `key` = '" + this.db.escape(data['key']) + "', `value` = '" + this.db.escape(data['value']) + "', `keyword` = '" + this.db.escape(data['keyword']) + "', `sort_order` = '" + data['sort_order'] + "' WHERE `seo_url_id` = '" + seo_url_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "seo_url` SET `store_id` = '" + data['store_id'] + "', `language_id` = '" + data['language_id'] + "', `key` = " + this.db.escape(data['key']) + ", `value` = " + this.db.escape(data['value']) + ", `keyword` = " + this.db.escape(data['keyword']) + ", `sort_order` = '" + data['sort_order'] + "' WHERE `seo_url_id` = '" + seo_url_id + "'");
 	}
 
 	/**
@@ -61,23 +54,23 @@ class SeoUrlModel  extends Model {
 		let implode = [];
 
 		if ((data['filter_keyword'])) {
-			implode.push("`keyword` LIKE '" + this.db.escape(data['filter_keyword']) + "'";
+			implode.push("`keyword` LIKE '" + this.db.escape(data['filter_keyword']) + "'");
 		}
 
 		if ((data['filter_key'])) {
-			implode.push("`key` = '" + this.db.escape(data['filter_key']) + "'";
+			implode.push("`key` = '" + this.db.escape(data['filter_key']) + "'");
 		}
 
 		if ((data['filter_value'])) {
-			implode.push("`value` LIKE '" + this.db.escape(data['filter_value']) + "'";
+			implode.push("`value` LIKE '" + this.db.escape(data['filter_value']) + "'");
 		}
 
 		if ((data['filter_store_id']) && data['filter_store_id'] !== '') {
-			implode.push("`store_id` = '" + data['filter_store_id'] + "'";
+			implode.push("`store_id` = '" + data['filter_store_id'] + "'");
 		}
 
 		if ((data['filter_language_id']) && data['filter_language_id'] !== '') {
-			implode.push("`language_id` = '" + data['filter_language_id'] + "'";
+			implode.push("`language_id` = '" + data['filter_language_id'] + "'");
 		}
 
 		if (implode.length) {
@@ -106,10 +99,12 @@ class SeoUrlModel  extends Model {
 		}
 
 		if (data['start'] || data['limit']) {
+			data['start'] = data['start'] || 0;
 			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
+			data['limit'] = data['limit'] || 20;
 			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
@@ -133,23 +128,23 @@ class SeoUrlModel  extends Model {
 		let implode = [];
 
 		if ((data['filter_keyword'])) {
-			implode.push("`keyword` LIKE '" + this.db.escape(data['filter_keyword']) + "'";
+			implode.push("`keyword` LIKE '" + this.db.escape(data['filter_keyword']) + "'");
 		}
 
 		if ((data['filter_key'])) {
-			implode.push("`key` = '" + this.db.escape(data['filter_key']) + "'";
+			implode.push("`key` = '" + this.db.escape(data['filter_key']) + "'");
 		}
 
 		if ((data['filter_value'])) {
-			implode.push("`value` LIKE '" + this.db.escape(data['filter_value']) + "'";
+			implode.push("`value` LIKE '" + this.db.escape(data['filter_value']) + "'");
 		}
 
 		if ((data['filter_store_id']) && data['filter_store_id'] !== '') {
-			implode.push("`store_id` = '" + data['filter_store_id'] + "'";
+			implode.push("`store_id` = '" + data['filter_store_id'] + "'");
 		}
 
 		if ((data['filter_language_id']) && data['filter_language_id'] !== '') {
-			implode.push("`language_id` = '" + data['filter_language_id'] + "'";
+			implode.push("`language_id` = '" + data['filter_language_id'] + "'");
 		}
 
 		if (implode.length) {
@@ -170,7 +165,7 @@ class SeoUrlModel  extends Model {
 	 * @return array
 	 */
 	async getSeoUrlByKeyValue(key, value, store_id, language_id) {
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "seo_url` WHERE `key` = '" + this.db.escape(key) + "' AND `value` = '" + this.db.escape(value) + "' AND `store_id` = '" + store_id + "' AND `language_id` = '" + language_id + "'");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "seo_url` WHERE `key` = " + this.db.escape(key) + " AND `value` = " + this.db.escape(value) + " AND `store_id` = '" + store_id + "' AND `language_id` = '" + language_id + "'");
 
 		return query.row;
 	}
@@ -183,7 +178,7 @@ class SeoUrlModel  extends Model {
 	 * @return array
 	 */
 	async getSeoUrlByKeyword(keyword, store_id, language_id = 0) {
-		let sql = "SELECT * FROM `" + DB_PREFIX + "seo_url` WHERE (`keyword` = '" + this.db.escape(keyword) + "' OR `keyword` LIKE '" + this.db.escape('%/' + keyword) + "') AND `store_id` = '" + store_id + "'";
+		let sql = "SELECT * FROM `" + DB_PREFIX + "seo_url` WHERE (`keyword` = " + this.db.escape(keyword) + " OR `keyword` LIKE " + this.db.escape('%/' + keyword) + ") AND `store_id` = '" + store_id + "'";
 
 		if (language_id) {
 			sql += " AND `language_id` = '" + language_id + "'";

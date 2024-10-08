@@ -24,12 +24,12 @@ class Review extends \Opencart\System\Engine\Controller {
 			$product_info = $this->model_catalog_product->getProduct((int)$args[0]);
 
 			if ($product_info) {
-				$store_name = html_entity_decode($this->config->get('config_name'), ENT_QUOTES, 'UTF-8');
+				$store_name = html_entity_decode($this->config->get('config_name'));
 
 				$subject = sprintf($this->language->get('text_subject'), $store_name);
 
-				$data['product'] = html_entity_decode($product_info['name'], ENT_QUOTES, 'UTF-8');
-				$data['reviewer'] = html_entity_decode($args[1]['name'], ENT_QUOTES, 'UTF-8');
+				$data['product'] = html_entity_decode($product_info['name']);
+				$data['reviewer'] = html_entity_decode($args[1]['name']);
 				$data['rating'] = (int)$args[1]['rating'];
 				$data['text'] = nl2br($args[1]['text']);
 
@@ -41,7 +41,7 @@ class Review extends \Opencart\System\Engine\Controller {
 						'parameter'     => $this->config->get('config_mail_parameter'),
 						'smtp_hostname' => $this->config->get('config_mail_smtp_hostname'),
 						'smtp_username' => $this->config->get('config_mail_smtp_username'),
-						'smtp_password' => html_entity_decode($this->config->get('config_mail_smtp_password'), ENT_QUOTES, 'UTF-8'),
+						'smtp_password' => html_entity_decode($this->config->get('config_mail_smtp_password')),
 						'smtp_port'     => $this->config->get('config_mail_smtp_port'),
 						'smtp_timeout'  => $this->config->get('config_mail_smtp_timeout')
 					];

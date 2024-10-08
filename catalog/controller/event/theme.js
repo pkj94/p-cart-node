@@ -20,7 +20,7 @@ class Theme extends \Opencart\System\Engine\Controller {
 		$theme_info = $this->model_design_theme->getTheme($route, $this->config->get('config_theme'));
 
 		if ($theme_info) {
-			$code = html_entity_decode($theme_info['code'], ENT_QUOTES, 'UTF-8');
+			$code = html_entity_decode($theme_info['code']);
 		}
 	}
 }

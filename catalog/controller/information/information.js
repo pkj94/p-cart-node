@@ -41,7 +41,7 @@ class Information extends \Opencart\System\Engine\Controller {
 
 			$data['heading_title'] = $information_info['title'];
 
-			$data['description'] = html_entity_decode($information_info['description'], ENT_QUOTES, 'UTF-8');
+			$data['description'] = html_entity_decode($information_info['description']);
 
 			$data['continue'] = $this->url->link('common/home', 'language=' . $this->config->get('config_language'));
 
@@ -76,7 +76,7 @@ class Information extends \Opencart\System\Engine\Controller {
 
 		if ($information_info) {
 			$data['title'] = $information_info['title'];
-			$data['description'] = html_entity_decode($information_info['description'], ENT_QUOTES, 'UTF-8');
+			$data['description'] = html_entity_decode($information_info['description']);
 
 			$this->response->addHeader('X-Robots-Tag: noindex');
 			$this->response->setOutput($this->load->view('information/information_info', $data));

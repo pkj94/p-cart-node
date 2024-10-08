@@ -52,7 +52,7 @@ class Voucher extends \Opencart\System\Engine\Controller {
 						'parameter'     => $this->config->get('config_mail_parameter'),
 						'smtp_hostname' => $this->config->get('config_mail_smtp_hostname'),
 						'smtp_username' => $this->config->get('config_mail_smtp_username'),
-						'smtp_password' => html_entity_decode($this->config->get('config_mail_smtp_password'), ENT_QUOTES, 'UTF-8'),
+						'smtp_password' => html_entity_decode($this->config->get('config_mail_smtp_password')),
 						'smtp_port'     => $this->config->get('config_mail_smtp_port'),
 						'smtp_timeout'  => $this->config->get('config_mail_smtp_timeout')
 					];
@@ -60,7 +60,7 @@ class Voucher extends \Opencart\System\Engine\Controller {
 					$mail = new \Opencart\System\Library\Mail($this->config->get('config_mail_engine'), $mail_option);
 
 					foreach ($voucher_query->rows as $voucher) {
-						$from_name = html_entity_decode($voucher['from_name'], ENT_QUOTES, 'UTF-8');
+						$from_name = html_entity_decode($voucher['from_name']);
 
 						// HTML Mail
 						$subject = sprintf($this->language->get('mail_text_subject'), $from_name);
@@ -84,7 +84,7 @@ class Voucher extends \Opencart\System\Engine\Controller {
 
 						$mail->setTo($voucher['to_email']);
 						$mail->setFrom($this->config->get('config_email'));
-						$mail->setSender(html_entity_decode($order_info['store_name'], ENT_QUOTES, 'UTF-8'));
+						$mail->setSender(html_entity_decode($order_info['store_name']));
 						$mail->setSubject($subject);
 						$mail->setHtml($this->load->view('mail/voucher', $data));
 						$mail->send();

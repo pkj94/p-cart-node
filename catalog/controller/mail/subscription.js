@@ -152,13 +152,13 @@ class Subscription extends \Opencart\System\Engine\Controller {
 									$store_info = $this->model_setting_store->getStore($order_info['store_id']);
 
 									if ($store_info) {
-										$store_logo = html_entity_decode($this->model_setting_setting->getValue('config_logo', $store_info['store_id']), ENT_QUOTES, 'UTF-8');
-										$store_name = html_entity_decode($store_info['name'], ENT_QUOTES, 'UTF-8');
+										$store_logo = html_entity_decode($this->model_setting_setting->getValue('config_logo', $store_info['store_id']));
+										$store_name = html_entity_decode($store_info['name']);
 
 										$store_url = $store_info['url'];
 									} else {
-										$store_logo = html_entity_decode($this->config->get('config_logo'), ENT_QUOTES, 'UTF-8');
-										$store_name = html_entity_decode($this->config->get('config_name'), ENT_QUOTES, 'UTF-8');
+										$store_logo = html_entity_decode($this->config->get('config_logo'));
+										$store_name = html_entity_decode($this->config->get('config_name'));
 
 										$store_url = HTTP_SERVER;
 									}
@@ -214,7 +214,7 @@ class Subscription extends \Opencart\System\Engine\Controller {
 									$data['store_url'] = $order_info['store_url'];
 
 									$data['customer_id'] = $order_info['customer_id'];
-									$data['link'] = $order_info['store_url'] . 'index.php?route=account/subscription.info&subscription_id=' . $subscription_id;
+									$data['link'] = $order_info['store_url'] . 'account/subscription.info&subscription_id=' . $subscription_id;
 
 									$data['order_id'] = $order_info['order_id'];
 									$data['date_added'] = date($this->language->get('date_format_short'), strtotime($value['date_added']));
@@ -351,7 +351,7 @@ class Subscription extends \Opencart\System\Engine\Controller {
 											'parameter' => $this->config->get('config_mail_parameter'),
 											'smtp_hostname' => $this->config->get('config_mail_smtp_hostname'),
 											'smtp_username' => $this->config->get('config_mail_smtp_username'),
-											'smtp_password' => html_entity_decode($this->config->get('config_mail_smtp_password'), ENT_QUOTES, 'UTF-8'),
+											'smtp_password' => html_entity_decode($this->config->get('config_mail_smtp_password')),
 											'smtp_port' => $this->config->get('config_mail_smtp_port'),
 											'smtp_timeout' => $this->config->get('config_mail_smtp_timeout')
 										];

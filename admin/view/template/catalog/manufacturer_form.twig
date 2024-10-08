@@ -80,7 +80,7 @@
                         <td class="text-start">{% for language in languages %}
                             <div class="input-group">
                               <div class="input-group-text"><img src="{{ language.image }}" title="{{ language.name }}"/></div>
-                              <input type="text" name="manufacturer_seo_url[{{ store.store_id }}][{{ language.language_id }}]" value="{% if manufacturer_seo_url[store.store_id][language.language_id] %}{{ manufacturer_seo_url[store.store_id][language.language_id] }}{% endif %}" placeholder="{{ entry_keyword }}" id="input-keyword-{{ store.store_id }}-{{ language.language_id }}" class="form-control"/>
+                              <input type="text" name="manufacturer_seo_url[store-{{ store.store_id }}][language-{{ language.language_id }}]" value="{% if manufacturer_seo_url[store.store_id][language.language_id] %}{{ manufacturer_seo_url[store.store_id][language.language_id] }}{% endif %}" placeholder="{{ entry_keyword }}" id="input-keyword-{{ store.store_id }}-{{ language.language_id }}" class="form-control"/>
                             </div>
                             <div id="error-keyword-{{ store.store_id }}-{{ language.language_id }}" class="invalid-feedback"></div>
                           {% endfor %}</td>
@@ -103,7 +103,7 @@
                     {% for store in stores %}
                       <tr>
                         <td class="text-start">{{ store.name }}</td>
-                        <td class="text-start"><select name="manufacturer_layout[{{ store.store_id }}]" class="form-select">
+                        <td class="text-start"><select name="manufacturer_layout[store-{{ store.store_id }}]" class="form-select">
                             <option value=""></option>
                             {% for layout in layouts %}
                               <option value="{{ layout.layout_id }}"{% if manufacturer_layout[store.store_id] and manufacturer_layout[store.store_id] == layout.layout_id %} selected{% endif %}>{{ layout.name }}</option>

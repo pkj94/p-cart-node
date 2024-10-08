@@ -7,7 +7,7 @@ module.exports = class UrlLibrary {
         this.rewrite.push(rewrite);
     }
     link(route, args = '', js = false) {
-        let url = `${this.url.substring(0,this.url.length-1)}?route=${route}`;
+        let url = `${this.url.substring(0,this.url.length-1)}/?route=${route}`;
         if (args) {
             if (typeof args == 'object') {
                 Object.keys(args).map(key=>{

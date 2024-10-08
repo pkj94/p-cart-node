@@ -15,7 +15,7 @@ class MarketingModel  extends Model {
 	 * @return int
 	 */
 	async addMarketing(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "marketing` SET `name` = '" + this.db.escape(data['name']) + "', `description` = '" + this.db.escape(data['description']) + "', `code` = " + this.db.escape(data['code']) + ", `date_added` = NOW()");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "marketing` SET `name` = '" + this.db.escape(data['name']) + "', `description` = " + this.db.escape(data['description']) + ", `code` = " + this.db.escape(data['code']) + ", `date_added` = NOW()");
 
 		return this.db.getLastId();
 	}
@@ -27,7 +27,7 @@ class MarketingModel  extends Model {
 	 * @return void
 	 */
 	async editMarketing(marketing_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "marketing` SET `name` = '" + this.db.escape(data['name']) + "', `description` = '" + this.db.escape(data['description']) + "', `code` = " + this.db.escape(data['code']) + " WHERE `marketing_id` = '" + marketing_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "marketing` SET `name` = '" + this.db.escape(data['name']) + "', `description` = " + this.db.escape(data['description']) + ", `code` = " + this.db.escape(data['code']) + " WHERE `marketing_id` = '" + marketing_id + "'");
 	}
 
 	/**
@@ -118,11 +118,13 @@ class MarketingModel  extends Model {
 		}
 
 		if (data['start'] || data['limit']) {
+                        data['start'] = data['start']||0;
 			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			if (data['limit'] < 1) {
+			data['limit'] = data['limit']||20;
+if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
@@ -145,7 +147,7 @@ class MarketingModel  extends Model {
 		let implode = [];
 
 		if (data['filter_name']) {
-			implode.push("`name` LIKE '" + this.db.escape(data['filter_name']) + "'";
+			implode.push("`name` LIKE " + this.db.escape(data['filter_name']) + "";
 		}
 
 		if ((data['filter_code'])) {

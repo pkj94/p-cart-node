@@ -16,7 +16,7 @@ class Upload extends \Opencart\System\Engine\Controller {
 
 		if (!empty($this->request->files['file']['name']) && is_file($this->request->files['file']['tmp_name'])) {
 			// Sanitize the filename
-			$filename = basename(preg_replace('/[^a-zA-Z0-9\.\-\s+]/', '', html_entity_decode($this->request->files['file']['name'], ENT_QUOTES, 'UTF-8')));
+			$filename = basename(preg_replace('/[^a-zA-Z0-9\.\-\s+]/', '', html_entity_decode($this->request->files['file']['name'])));
 
 			// Validate the filename length
 			if ((oc_strlen($filename) < 3) || (oc_strlen($filename) > 64)) {

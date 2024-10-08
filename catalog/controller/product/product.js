@@ -262,7 +262,7 @@ class Product extends \Opencart\System\Engine\Controller {
 			$data['model'] = $product_info['model'];
 			$data['reward'] = $product_info['reward'];
 			$data['points'] = $product_info['points'];
-			$data['description'] = html_entity_decode($product_info['description'], ENT_QUOTES, 'UTF-8');
+			$data['description'] = html_entity_decode($product_info['description']);
 
 			if ($product_info['quantity'] <= 0) {
 				$this->load->model('localisation/stock_status');
@@ -290,14 +290,14 @@ class Product extends \Opencart\System\Engine\Controller {
 
 			$this->load->model('tool/image');
 
-			if (is_file(DIR_IMAGE . html_entity_decode($product_info['image'], ENT_QUOTES, 'UTF-8'))) {
-				$data['popup'] = $this->model_tool_image->resize(html_entity_decode($product_info['image'], ENT_QUOTES, 'UTF-8'), $this->config->get('config_image_popup_width'), $this->config->get('config_image_popup_height'));
+			if (is_file(DIR_IMAGE . html_entity_decode($product_info['image']))) {
+				$data['popup'] = $this->model_tool_image->resize(html_entity_decode($product_info['image']), $this->config->get('config_image_popup_width'), $this->config->get('config_image_popup_height'));
 			} else {
 				$data['popup'] = '';
 			}
 
-			if (is_file(DIR_IMAGE . html_entity_decode($product_info['image'], ENT_QUOTES, 'UTF-8'))) {
-				$data['thumb'] = $this->model_tool_image->resize(html_entity_decode($product_info['image'], ENT_QUOTES, 'UTF-8'), $this->config->get('config_image_thumb_width'), $this->config->get('config_image_thumb_height'));
+			if (is_file(DIR_IMAGE . html_entity_decode($product_info['image']))) {
+				$data['thumb'] = $this->model_tool_image->resize(html_entity_decode($product_info['image']), $this->config->get('config_image_thumb_width'), $this->config->get('config_image_thumb_height'));
 			} else {
 				$data['thumb'] = '';
 			}
@@ -307,10 +307,10 @@ class Product extends \Opencart\System\Engine\Controller {
 			$results = $this->model_catalog_product->getImages($product_id);
 
 			foreach ($results as $result) {
-				if (is_file(DIR_IMAGE . html_entity_decode($result['image'], ENT_QUOTES, 'UTF-8'))) {
+				if (is_file(DIR_IMAGE . html_entity_decode($result['image']))) {
 					$data['images'][] = [
-						'popup' => $this->model_tool_image->resize(html_entity_decode($result['image'], ENT_QUOTES, 'UTF-8'), $this->config->get('config_image_popup_width'), $this->config->get('config_image_popup_height')),
-						'thumb' => $this->model_tool_image->resize(html_entity_decode($result['image'], ENT_QUOTES, 'UTF-8'), $this->config->get('config_image_additional_width'), $this->config->get('config_image_additional_height'))
+						'popup' => $this->model_tool_image->resize(html_entity_decode($result['image']), $this->config->get('config_image_popup_width'), $this->config->get('config_image_popup_height')),
+						'thumb' => $this->model_tool_image->resize(html_entity_decode($result['image']), $this->config->get('config_image_additional_width'), $this->config->get('config_image_additional_height'))
 					];
 				}
 			}
@@ -369,8 +369,8 @@ class Product extends \Opencart\System\Engine\Controller {
 								$price = false;
 							}
 
-							if (is_file(DIR_IMAGE . html_entity_decode($option_value['image'], ENT_QUOTES, 'UTF-8'))) {
-								$image = $this->model_tool_image->resize(html_entity_decode($option_value['image'], ENT_QUOTES, 'UTF-8'), 50, 50);
+							if (is_file(DIR_IMAGE . html_entity_decode($option_value['image']))) {
+								$image = $this->model_tool_image->resize(html_entity_decode($option_value['image']), 50, 50);
 							} else {
 								$image = '';
 							}
@@ -448,8 +448,8 @@ class Product extends \Opencart\System\Engine\Controller {
 			$results = $this->model_catalog_product->getRelated($product_id);
 
 			foreach ($results as $result) {
-				if (is_file(DIR_IMAGE . html_entity_decode($result['image'], ENT_QUOTES, 'UTF-8'))) {
-					$image = $this->model_tool_image->resize(html_entity_decode($result['image'], ENT_QUOTES, 'UTF-8'), $this->config->get('config_image_related_width'), $this->config->get('config_image_related_height'));
+				if (is_file(DIR_IMAGE . html_entity_decode($result['image']))) {
+					$image = $this->model_tool_image->resize(html_entity_decode($result['image']), $this->config->get('config_image_related_width'), $this->config->get('config_image_related_height'));
 				} else {
 					$image = $this->model_tool_image->resize('placeholder.png', $this->config->get('config_image_related_width'), $this->config->get('config_image_related_height'));
 				}
@@ -476,7 +476,7 @@ class Product extends \Opencart\System\Engine\Controller {
 					'product_id'  => $result['product_id'],
 					'thumb'       => $image,
 					'name'        => $result['name'],
-					'description' => oc_substr(trim(strip_tags(html_entity_decode($result['description'], ENT_QUOTES, 'UTF-8'))), 0, $this->config->get('config_product_description_length')) . '..',
+					'description' => oc_substr(trim(strip_tags(html_entity_decode($result['description']))), 0, $this->config->get('config_product_description_length')) . '..',
 					'price'       => $price,
 					'special'     => $special,
 					'tax'         => $tax,

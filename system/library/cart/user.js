@@ -14,6 +14,7 @@ module.exports = class UserLibrary {
         this.init();
     }
     async init() {
+        // console.log('library user-----', this.user_id, JSON.stringify(this.permission));
         if (this.session.data.user_id && !this.user_id) {
             const user_query = await this.db.query(`SELECT * FROM ${DB_PREFIX}user WHERE user_id = ${this.session.data.user_id} AND status = '1'`);
 
@@ -29,13 +30,7 @@ module.exports = class UserLibrary {
                         this.request.server.connection.socket.remoteAddress) : '')}' WHERE user_id = ${this.session.data.user_id}`);
 
                 const user_group_query = await this.db.query(`SELECT permission FROM ${DB_PREFIX}user_group WHERE user_group_id = ${user_query.row.user_group_id}`);
-                const permissions = JSON.parse(user_group_query.row.permission);
-
-                if (Array.isArray(permissions)) {
-                    for (const key in permissions) {
-                        this.permission[key] = permissions[key];
-                    }
-                }
+                this.permission = JSON.parse(user_group_query.row.permission);
             } else {
                 this.logout();
             }
@@ -67,13 +62,7 @@ module.exports = class UserLibrary {
                 this.email = user_query.row.email;
 
                 const user_group_query = await this.db.query(`SELECT permission FROM ${DB_PREFIX}user_group WHERE user_group_id = ${user_query.row.user_group_id}`);
-                const permissions = JSON.parse(user_group_query.row.permission);
-
-                if (Array.isArray(permissions)) {
-                    for (const key in permissions) {
-                        this.permission[key] = permissions[key];
-                    }
-                }
+                this.permission = JSON.parse(user_group_query.row.permission);
                 await this.session.save(this.session.data);
                 resolve(true);
             } else {

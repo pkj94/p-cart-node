@@ -50,7 +50,7 @@ module.exports = class LanguageController extends Controller {
 	 * @return void
 	 */
 	async save() {
-		await this.load.language('common/language');
+		await  this.load.language('common/language');
 
 		const json = {};
         let code = '';
@@ -70,7 +70,7 @@ module.exports = class LanguageController extends Controller {
 			json['error'] = this.language.get('error_language');
 		}
 
-		if (!json) {
+		if (!Object.keys(json).length) {
             // , time() + 60 * 60 * 24 * 365 * 10
 			this.response.response.cookie('language', code);
 

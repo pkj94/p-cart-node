@@ -57,3 +57,54 @@ global.htmlspecialchars_decode = (text) => {
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
 }
+global.trim = (string) => {
+    return string.trim();
+}
+global.preg_match = (patern, keyword) => {
+    return new RegExp(patern).test(keyword);
+}
+global.str_replace = (find, replace, string) => {
+    if (Array.isArray(find)) {
+        for (let f of find)
+            string = string.replace(f, replace || '');
+    }
+    return string.replace(new RegExp(find), replace || '');
+}
+global.multiSort = (array, sortObject = [], sort = 'ASC') => {
+    const sortKeys = sortObject;
+
+    // Return array if no sort object is supplied.
+    if (!sortKeys.length) {
+        return array;
+    }
+
+    const keySort = (a, b, direction) => {
+        direction = direction !== null ? direction : 1;
+
+        if (a === b) { // If the values are the same, do not switch positions.
+            return 0;
+        }
+
+        // If b > a, multiply by -1 to get the reverse direction.
+        return a > b ? direction : -1 * direction;
+    };
+
+    return array.sort((a, b) => {
+        let sorted = 0;
+        let index = 0;
+
+        // Loop until sorted (-1 or 1) or until the sort keys have been processed.
+        while (sorted === 0 && index < sortKeys.length) {
+            const key = sortKeys[index];
+
+            if (key) {
+                const direction = sort ? sort == 'ASC' ? 1 : -1 : 0;
+
+                sorted = keySort(a[key], b[key], direction);
+                index++;
+            }
+        }
+
+        return sorted;
+    });
+}

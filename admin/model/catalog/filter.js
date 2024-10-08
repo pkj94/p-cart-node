@@ -1,12 +1,5 @@
-<?php
-namespace Opencart\Admin\Model\Catalog;
-/**
- * Class Filter
- *
- * @package Opencart\Admin\Model\Catalog
- */
-class FilterModel  extends Model {
-	constructor(registry){
+module.exports = class FilterCatalogModel extends Model {
+	constructor(registry) {
 		super(registry)
 	}
 	/**
@@ -17,19 +10,19 @@ class FilterModel  extends Model {
 	async addFilter(data) {
 		await this.db.query("INSERT INTO `" + DB_PREFIX + "filter_group` SET `sort_order` = '" + data['sort_order'] + "'");
 
-		filter_group_id = this.db.getLastId();
+		const filter_group_id = this.db.getLastId();
 
-		for (data['filter_group_description'] of language_id : value) {
+		for (let [language_id, value] of data['filter_group_description']) {
 			await this.db.query("INSERT INTO `" + DB_PREFIX + "filter_group_description` SET `filter_group_id` = '" + filter_group_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + "");
 		}
 
 		if ((data['filter'])) {
-			for (data['filter'] of filter) {
+			for (let filter of data['filter']) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "filter` SET `filter_group_id` = '" + filter_group_id + "', `sort_order` = '" + filter['sort_order'] + "'");
 
-				filter_id = this.db.getLastId();
+				let filter_id = this.db.getLastId();
 
-				for (filter['filter_description'] of language_id : filter_description) {
+				for (let [language_id, filter_description] of filter['filter_description']) {
 					await this.db.query("INSERT INTO `" + DB_PREFIX + "filter_description` SET `filter_id` = '" + filter_id + "', `language_id` = '" + language_id + "', `filter_group_id` = '" + filter_group_id + "', `name` = '" + this.db.escape(filter_description['name']) + "'");
 				}
 			}
@@ -49,7 +42,7 @@ class FilterModel  extends Model {
 
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "filter_group_description` WHERE `filter_group_id` = '" + filter_group_id + "'");
 
-		for (data['filter_group_description'] of language_id : value) {
+		for (let [language_id, value] of data['filter_group_description']) {
 			await this.db.query("INSERT INTO `" + DB_PREFIX + "filter_group_description` SET `filter_group_id` = '" + filter_group_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + "");
 		}
 
@@ -57,7 +50,7 @@ class FilterModel  extends Model {
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "filter_description` WHERE `filter_group_id` = '" + filter_group_id + "'");
 
 		if ((data['filter'])) {
-			for (data['filter'] of filter) {
+			for (let filter of data['filter']) {
 				if (filter['filter_id']) {
 					await this.db.query("INSERT INTO `" + DB_PREFIX + "filter` SET `filter_id` = '" + filter['filter_id'] + "', `filter_group_id` = '" + filter_group_id + "', `sort_order` = '" + filter['sort_order'] + "'");
 				} else {
@@ -66,7 +59,7 @@ class FilterModel  extends Model {
 
 				filter_id = this.db.getLastId();
 
-				for (filter['filter_description'] of language_id : filter_description) {
+				for (let [language_id, filter_description] of filter['filter_description']) {
 					await this.db.query("INSERT INTO `" + DB_PREFIX + "filter_description` SET `filter_id` = '" + filter_id + "', `language_id` = '" + language_id + "', `filter_group_id` = '" + filter_group_id + "', `name` = '" + this.db.escape(filter_description['name']) + "'");
 				}
 			}
@@ -122,11 +115,13 @@ class FilterModel  extends Model {
 		}
 
 		if (data['start'] || data['limit']) {
+			data['start'] = data['start'] || 0;
 			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			if (data['limit'] < 1) {
+			data['limit'] = data['limit']||20;
+if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
@@ -144,12 +139,12 @@ class FilterModel  extends Model {
 	 * @return array
 	 */
 	async getGroupDescriptions(filter_group_id) {
-		filter_group_data = [];
+		let filter_group_data = [];
 
 		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "filter_group_description` WHERE `filter_group_id` = '" + filter_group_id + "'");
 
-		for (query.rows of result) {
-			filter_group_data[result['language_id']] = ['name' : result['name']];
+		for (let result of query.rows) {
+			filter_group_data[result['language_id']] = {'name' : result['name']};
 		}
 
 		return filter_group_data;
@@ -175,17 +170,19 @@ class FilterModel  extends Model {
 		let sql = "SELECT *, (SELECT name FROM `" + DB_PREFIX + "filter_group_description` fgd WHERE f.`filter_group_id` = fgd.`filter_group_id` AND fgd.`language_id` = '" + this.config.get('config_language_id') + "') AS `group` FROM `" + DB_PREFIX + "filter` f LEFT JOIN `" + DB_PREFIX + "filter_description` fd ON (f.`filter_id` = fd.`filter_id`) WHERE fd.`language_id` = '" + this.config.get('config_language_id') + "'";
 
 		if (data['filter_name']) {
-			sql += " AND fd.`name` LIKE '" + this.db.escape(data['filter_name'] + '%') + "'";
+			sql += " AND fd.`name` LIKE " + this.db.escape(data['filter_name'] + '%') + "";
 		}
 
 		sql += " ORDER BY f.`sort_order` ASC";
 
 		if (data['start'] || data['limit']) {
+			data['start'] = data['start']||0;
 			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			if (data['limit'] < 1) {
+			data['limit'] = data['limit']||20;
+if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
@@ -203,24 +200,24 @@ class FilterModel  extends Model {
 	 * @return array
 	 */
 	async getDescriptions(filter_group_id) {
-		filter_data = [];
+		let filter_data = [];
 
-		filter_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "filter` WHERE `filter_group_id` = '" + filter_group_id + "'");
+		let filter_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "filter` WHERE `filter_group_id` = '" + filter_group_id + "'");
 
-		for (filter_query.rows of filter) {
-			filter_description_data = [];
+		for (let filter of filter_query.rows) {
+			let filter_description_data = [];
 
-			filter_description_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "filter_description` WHERE `filter_id` = '" + filter['filter_id'] + "'");
+			let filter_description_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "filter_description` WHERE `filter_id` = '" + filter['filter_id'] + "'");
 
-			for (filter_description_query.rows of filter_description) {
-				filter_description_data[filter_description['language_id']] = ['name' : filter_description['name']];
+			for (let filter_description of filter_description_query.rows) {
+				filter_description_data[filter_description['language_id']] = {'name' : filter_description['name']};
 			}
 
-			filter_data[] = [
+			filter_data.push({
 				'filter_id'          : filter['filter_id'],
 				'filter_description' : filter_description_data,
 				'sort_order'         : filter['sort_order']
-			];
+			});
 		}
 
 		return filter_data;

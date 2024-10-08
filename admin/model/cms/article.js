@@ -20,7 +20,7 @@ class ArticleModel  extends Model {
 		article_id = this.db.getLastId();
 
 		for (data['article_description'] of language_id : value) {
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "article_description` SET `article_id` = '" + article_id + "', `language_id` = '" + language_id + "', `image` = '" + this.db.escape(value['image']) + "', `name` = " + this.db.escape(value['name']) + ", `description` = '" + this.db.escape(value['description']) + "', `tag` = '" + this.db.escape(value['tag']) + "', `meta_title` = '" + this.db.escape(value['meta_title']) + "', `meta_description` = '" + this.db.escape(value['meta_description']) + "', `meta_keyword` = '" + this.db.escape(value['meta_keyword']) + "'");
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "article_description` SET `article_id` = '" + article_id + "', `language_id` = '" + language_id + "', `image` = '" + this.db.escape(value['image']) + "', `name` = " + this.db.escape(value['name']) + ", `description` = " + this.db.escape(value['description']) + ", `tag` = '" + this.db.escape(value['tag']) + "', `meta_title` = " + this.db.escape(value['meta_title']) + ", `meta_description` = " + this.db.escape(value['meta_description']) + ", `meta_keyword` = " + this.db.escape(value['meta_keyword']) + "");
 		}
 
 		if ((data['article_store'])) {
@@ -30,8 +30,8 @@ class ArticleModel  extends Model {
 		}
 
 		for (data['article_seo_url'] of store_id : language) {
-			for (language of language_id : keyword) {
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "seo_url` SET `store_id` = '" + store_id + "', `language_id` = '" + language_id + "', `key` = 'article_id', `value`= '" + article_id + "', `keyword` = '" + this.db.escape(keyword) + "'");
+			for (let [language_id , keyword] of language ) {
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "seo_url` SET `store_id` = '" + store_id + "', `language_id` = '" + language_id + "', `key` = 'article_id', `value`= '" + article_id + "', `keyword` = " + this.db.escape(keyword) + "");
 			}
 		}
 
@@ -59,7 +59,7 @@ class ArticleModel  extends Model {
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "article_description` WHERE `article_id` = '" + article_id + "'");
 
 		for (data['article_description'] of language_id : value) {
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "article_description` SET `article_id` = '" + article_id + "', `language_id` = '" + language_id + "', `image` = '" + this.db.escape(value['image']) + "', `name` = " + this.db.escape(value['name']) + ", `description` = '" + this.db.escape(value['description']) + "', `tag` = '" + this.db.escape(value['tag']) + "', `meta_title` = '" + this.db.escape(value['meta_title']) + "', `meta_description` = '" + this.db.escape(value['meta_description']) + "', `meta_keyword` = '" + this.db.escape(value['meta_keyword']) + "'");
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "article_description` SET `article_id` = '" + article_id + "', `language_id` = '" + language_id + "', `image` = '" + this.db.escape(value['image']) + "', `name` = " + this.db.escape(value['name']) + ", `description` = " + this.db.escape(value['description']) + ", `tag` = '" + this.db.escape(value['tag']) + "', `meta_title` = " + this.db.escape(value['meta_title']) + ", `meta_description` = " + this.db.escape(value['meta_description']) + ", `meta_keyword` = " + this.db.escape(value['meta_keyword']) + "");
 		}
 
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "article_to_store` WHERE `article_id` = '" + article_id + "'");
@@ -73,8 +73,8 @@ class ArticleModel  extends Model {
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "seo_url` WHERE `key` = 'article_id' AND `value` = '" + article_id + "'");
 
 		for (data['article_seo_url'] of store_id : language) {
-			for (language of language_id : keyword) {
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "seo_url` SET `store_id` = '" + store_id + "', `language_id` = '" + language_id + "', `key` = 'article_id', `value` = '" + article_id + "', `keyword` = '" + this.db.escape(keyword) + "'");
+			for (let [language_id , keyword] of language ) {
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "seo_url` SET `store_id` = '" + store_id + "', `language_id` = '" + language_id + "', `key` = 'article_id', `value` = '" + article_id + "', `keyword` = " + this.db.escape(keyword) + "");
 			}
 		}
 
@@ -136,7 +136,7 @@ class ArticleModel  extends Model {
 		let sql = "SELECT * FROM `" + DB_PREFIX + "article` `a` LEFT JOIN `" + DB_PREFIX + "article_description` `ad` ON (`a`.`article_id` = `ad`.`article_id`) WHERE `ad`.`language_id` = '" + this.config.get('config_language_id') + "'";
 
 		if (data['filter_name']) {
-			sql += " AND `ad`.`name` LIKE '" + this.db.escape(data['filter_name']) + "'";
+			sql += " AND `ad`.`name` LIKE " + this.db.escape(data['filter_name']) + "";
 		}
 
 		let sort_data = [
@@ -157,11 +157,13 @@ class ArticleModel  extends Model {
 		}
 
 		if (data['start'] || data['limit']) {
+                        data['start'] = data['start']||0;
 			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			if (data['limit'] < 1) {
+			data['limit'] = data['limit']||20;
+if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
@@ -191,7 +193,7 @@ class ArticleModel  extends Model {
 
 		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "article_description` WHERE `article_id` = '" + article_id + "'");
 
-		for (query.rows of result) {
+		for (let result of query.rows) {
 			article_description_data[result['language_id']] = [
 				'image'            : result['image'],
 				'name'             : result['name'],
@@ -216,7 +218,7 @@ class ArticleModel  extends Model {
 
 		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "seo_url` WHERE `key` = 'article_id' AND `value` = '" + article_id + "'");
 
-		for (query.rows of result) {
+		for (let result of query.rows) {
 			article_seo_url_data[result['store_id']][result['language_id']] = result['keyword'];
 		}
 
@@ -233,7 +235,7 @@ class ArticleModel  extends Model {
 
 		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "article_to_store` WHERE `article_id` = '" + article_id + "'");
 
-		for (query.rows of result) {
+		for (let result of query.rows) {
 			article_store_data[] = result['store_id'];
 		}
 
@@ -250,7 +252,7 @@ class ArticleModel  extends Model {
 
 		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "article_to_layout` WHERE `article_id` = '" + article_id + "'");
 
-		for (query.rows of result) {
+		for (let result of query.rows) {
 			article_layout_data[result['store_id']] = result['layout_id'];
 		}
 
@@ -327,11 +329,13 @@ class ArticleModel  extends Model {
 		sql += " ORDER BY `date_added` DESC";
 
 		if (data['start'] || data['limit']) {
+                        data['start'] = data['start']||0;
 			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			if (data['limit'] < 1) {
+			data['limit'] = data['limit']||20;
+if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 

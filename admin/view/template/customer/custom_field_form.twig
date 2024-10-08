@@ -26,7 +26,7 @@
                 {% for language in languages %}
                   <div class="input-group">
                     <div class="input-group-text"><img src="{{ language.image }}" title="{{ language.name }}"/></div>
-                    <input type="text" name="custom_field_description[{{ language.language_id }}][name]" value="{{ custom_field_description[language.language_id] ? custom_field_description[language.language_id].name }}" placeholder="{{ entry_name }}" id="input-name-{{ language.language_id }}" class="form-control"/>
+                    <input type="text" name="custom_field_description[language-{{ language.language_id }}][name]" value="{{ custom_field_description[language.language_id] ? custom_field_description[language.language_id].name }}" placeholder="{{ entry_name }}" id="input-name-{{ language.language_id }}" class="form-control"/>
                   </div>
                   <div id="error-name-{{ language.language_id }}" class="invalid-feedback"></div>
                 {% endfor %}
@@ -143,7 +143,7 @@
                         {% for language in languages %}
                           <div class="input-group">
                             <div class="input-group-text"><img src="{{ language.image }}" title="{{ language.name }}"/></div>
-                            <input type="text" name="custom_field_value[{{ custom_field_value_row }}][custom_field_value_description][{{ language.language_id }}][name]" value="{{ custom_field_value.custom_field_value_description[language.language_id] ? custom_field_value.custom_field_value_description[language.language_id].name }}" id="input-custom-field-{{ custom_field_value_row }}-{{ language.language_id }}" placeholder="{{ entry_custom_value }}" class="form-control"/>
+                            <input type="text" name="custom_field_value[{{ custom_field_value_row }}][custom_field_value_description][language-{{ language.language_id }}][name]" value="{{ custom_field_value.custom_field_value_description[language.language_id] ? custom_field_value.custom_field_value_description[language.language_id].name }}" id="input-custom-field-{{ custom_field_value_row }}-{{ language.language_id }}" placeholder="{{ entry_custom_value }}" class="form-control"/>
                           </div>
                           <div id="error-custom-field-{{ custom_field_value_row }}-{{ language.language_id }}" class="invalid-feedback"></div>
                         {% endfor %}</td>
@@ -201,7 +201,7 @@ function addCustomFieldValue() {
   {% for language in languages %}
     html += '    <div class="input-group">';
     html += '      <div class="input-group-text"><img src="{{ language.image|escape('js') }}" title="{{ language.name|escape('js') }}" /></div>';
-    html += '      <input type="text" name="custom_field_value[' + custom_field_value_row + '][custom_field_value_description][{{ language.language_id }}][name]" value="" placeholder="{{ entry_custom_value|escape('js') }}" id="input-custom-field-{{ custom_field_value_row }}-{{ language.language_id }}" class="form-control"/>';
+    html += '      <input type="text" name="custom_field_value[' + custom_field_value_row + '][custom_field_value_description][language-{{ language.language_id }}][name]" value="" placeholder="{{ entry_custom_value|escape('js') }}" id="input-custom-field-{{ custom_field_value_row }}-{{ language.language_id }}" class="form-control"/>';
     html += '    </div>';
     html += '    <div id="error-custom-field-value-{{ custom_field_value_row }}-{{ language.language_id }}" class="invalid-feedback"></div>';
   {% endfor %}

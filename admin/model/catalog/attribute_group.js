@@ -89,11 +89,13 @@ class AttributeGroupModel  extends Model {
 		}
 
 		if (data['start'] || data['limit']) {
+                        data['start'] = data['start']||0;
 			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			if (data['limit'] < 1) {
+			data['limit'] = data['limit']||20;
+if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
@@ -115,7 +117,7 @@ class AttributeGroupModel  extends Model {
 
 		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "attribute_group_description` WHERE `attribute_group_id` = '" + attribute_group_id + "'");
 
-		for (query.rows of result) {
+		for (let result of query.rows) {
 			attribute_group_data[result['language_id']] = ['name' : result['name']];
 		}
 

@@ -20,7 +20,7 @@ class TopicModel  extends Model {
 		topic_id = this.db.getLastId();
 
 		for (data['topic_description'] of language_id : value) {
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "topic_description` SET `topic_id` = '" + topic_id + "', `language_id` = '" + language_id + "', `image` = '" + this.db.escape(value['image']) + "', `name` = " + this.db.escape(value['name']) + ", `description` = '" + this.db.escape(value['description']) + "', `meta_title` = '" + this.db.escape(value['meta_title']) + "', `meta_description` = '" + this.db.escape(value['meta_description']) + "', `meta_keyword` = '" + this.db.escape(value['meta_keyword']) + "'");
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "topic_description` SET `topic_id` = '" + topic_id + "', `language_id` = '" + language_id + "', `image` = '" + this.db.escape(value['image']) + "', `name` = " + this.db.escape(value['name']) + ", `description` = " + this.db.escape(value['description']) + ", `meta_title` = " + this.db.escape(value['meta_title']) + ", `meta_description` = " + this.db.escape(value['meta_description']) + ", `meta_keyword` = " + this.db.escape(value['meta_keyword']) + "");
 		}
 
 		if ((data['topic_store'])) {
@@ -30,8 +30,8 @@ class TopicModel  extends Model {
 		}
 
 		for (data['topic_seo_url'] of store_id : language) {
-			for (language of language_id : keyword) {
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "seo_url` SET `store_id` = '" + store_id + "', `language_id` = '" + language_id + "', `key` = 'topic_id', `value`= '" + topic_id + "', `keyword` = '" + this.db.escape(keyword) + "'");
+			for (let [language_id , keyword] of language ) {
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "seo_url` SET `store_id` = '" + store_id + "', `language_id` = '" + language_id + "', `key` = 'topic_id', `value`= '" + topic_id + "', `keyword` = " + this.db.escape(keyword) + "");
 			}
 		}
 
@@ -52,7 +52,7 @@ class TopicModel  extends Model {
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "topic_description` WHERE `topic_id` = '" + topic_id + "'");
 
 		for (data['topic_description'] of language_id : value) {
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "topic_description` SET `topic_id` = '" + topic_id + "', `language_id` = '" + language_id + "', `image` = '" + this.db.escape(value['image']) + "', `name` = " + this.db.escape(value['name']) + ", `description` = '" + this.db.escape(value['description']) + "', `meta_title` = '" + this.db.escape(value['meta_title']) + "', `meta_description` = '" + this.db.escape(value['meta_description']) + "', `meta_keyword` = '" + this.db.escape(value['meta_keyword']) + "'");
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "topic_description` SET `topic_id` = '" + topic_id + "', `language_id` = '" + language_id + "', `image` = '" + this.db.escape(value['image']) + "', `name` = " + this.db.escape(value['name']) + ", `description` = " + this.db.escape(value['description']) + ", `meta_title` = " + this.db.escape(value['meta_title']) + ", `meta_description` = " + this.db.escape(value['meta_description']) + ", `meta_keyword` = " + this.db.escape(value['meta_keyword']) + "");
 		}
 
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "topic_to_store` WHERE `topic_id` = '" + topic_id + "'");
@@ -66,8 +66,8 @@ class TopicModel  extends Model {
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "seo_url` WHERE `key` = 'topic_id' AND `value` = '" + topic_id + "'");
 
 		for (data['topic_seo_url'] of store_id : language) {
-			for (language of language_id : keyword) {
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "seo_url` SET `store_id` = '" + store_id + "', `language_id` = '" + language_id + "', `key` = 'topic_id', `value` = '" + topic_id + "', `keyword` = '" + this.db.escape(keyword) + "'");
+			for (let [language_id , keyword] of language ) {
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "seo_url` SET `store_id` = '" + store_id + "', `language_id` = '" + language_id + "', `key` = 'topic_id', `value` = '" + topic_id + "', `keyword` = " + this.db.escape(keyword) + "");
 			}
 		}
 
@@ -135,11 +135,13 @@ class TopicModel  extends Model {
 		}
 
 		if (data['start'] || data['limit']) {
+                        data['start'] = data['start']||0;
 			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			if (data['limit'] < 1) {
+			data['limit'] = data['limit']||20;
+if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
@@ -169,7 +171,7 @@ class TopicModel  extends Model {
 
 		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "topic_description` WHERE `topic_id` = '" + topic_id + "'");
 
-		for (query.rows of result) {
+		for (let result of query.rows) {
 			topic_description_data[result['language_id']] = [
 				'image'            : result['image'],
 				'name'             : result['name'],
@@ -193,7 +195,7 @@ class TopicModel  extends Model {
 
 		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "seo_url` WHERE `key` = 'topic_id' AND `value` = '" + topic_id + "'");
 
-		for (query.rows of result) {
+		for (let result of query.rows) {
 			topic_seo_url_data[result['store_id']][result['language_id']] = result['keyword'];
 		}
 
@@ -210,7 +212,7 @@ class TopicModel  extends Model {
 
 		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "topic_to_store` WHERE `topic_id` = '" + topic_id + "'");
 
-		for (query.rows of result) {
+		for (let result of query.rows) {
 			topic_store_data[] = result['store_id'];
 		}
 

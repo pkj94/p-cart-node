@@ -15,7 +15,7 @@ class TranslationModel  extends Model {
 	 * @return void
 	 */
 	async addTranslation(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "translation` SET `store_id` = '" + data['store_id'] + "', `language_id` = '" + data['language_id'] + "', `route` = '" + this.db.escape(data['route']) + "', `key` = '" + this.db.escape(data['key']) + "', `value` = '" + this.db.escape(data['value']) + "', `date_added` = NOW()");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "translation` SET `store_id` = '" + data['store_id'] + "', `language_id` = '" + data['language_id'] + "', `route` = '" + this.db.escape(data['route']) + "', `key` = " + this.db.escape(data['key']) + ", `value` = " + this.db.escape(data['value']) + ", `date_added` = NOW()");
 	}
 
 	/**
@@ -25,7 +25,7 @@ class TranslationModel  extends Model {
 	 * @return void
 	 */
 	async editTranslation(translation_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "translation` SET `store_id` = '" + data['store_id'] + "', `language_id` = '" + data['language_id'] + "', `route` = '" + this.db.escape(data['route']) + "', `key` = '" + this.db.escape(data['key']) + "', `value` = '" + this.db.escape(data['value']) + "' WHERE `translation_id` = '" + translation_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "translation` SET `store_id` = '" + data['store_id'] + "', `language_id` = '" + data['language_id'] + "', `route` = '" + this.db.escape(data['route']) + "', `key` = " + this.db.escape(data['key']) + ", `value` = " + this.db.escape(data['value']) + " WHERE `translation_id` = '" + translation_id + "'");
 	}
 
 	/**
@@ -77,11 +77,13 @@ class TranslationModel  extends Model {
 		}
 
 		if (data['start'] || data['limit']) {
+                        data['start'] = data['start']||0;
 			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			if (data['limit'] < 1) {
+			data['limit'] = data['limit']||20;
+if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 

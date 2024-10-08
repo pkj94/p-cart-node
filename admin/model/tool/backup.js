@@ -17,7 +17,7 @@ class BackupModel  extends Model {
 
 		let query = await this.db.query("SHOW TABLES FROM `" + DB_DATABASE + "`");
 
-		for (query.rows of result) {
+		for (let result of query.rows) {
 			if ((result['Tables_in_' + DB_DATABASE]) && substr(result['Tables_in_' + DB_DATABASE], 0, strlen(DB_PREFIX)) == DB_PREFIX) {
 				table_data[] = result['Tables_in_' + DB_DATABASE];
 			}

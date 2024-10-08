@@ -26,7 +26,7 @@
                 {% for language in languages %}
                   <div class="input-group">
                     <div class="input-group-text"><img src="{{ language.image }}" title="{{ language.name }}"/></div>
-                    <input type="text" name="option_description[{{ language.language_id }}][name]" value="{{ option_description[language.language_id] ? option_description[language.language_id].name }}" placeholder="{{ entry_name }}" id="input-name-{{ language.language_id }}" class="form-control"/>
+                    <input type="text" name="option_description[language-{{ language.language_id }}][name]" value="{{ option_description[language.language_id] ? option_description[language.language_id].name }}" placeholder="{{ entry_name }}" id="input-name-{{ language.language_id }}" class="form-control"/>
                   </div>
                   <div id="error-name-{{ language.language_id }}" class="invalid-feedback"></div>
                 {% endfor %}
@@ -82,7 +82,7 @@
                       {% for language in languages %}
                         <div class="input-group">
                           <div class="input-group-text"><img src="{{ language.image }}" title="{{ language.name }}"/></div>
-                          <input type="text" name="option_value[{{ option_value_row }}][option_value_description][{{ language.language_id }}][name]" value="{{ option_value.option_value_description[language.language_id] ? option_value.option_value_description[language.language_id].name }}" placeholder="{{ entry_option_value }}" id="input-option-value-{{ option_value_row }}-{{ language.language_id }}" class="form-control"/>
+                          <input type="text" name="option_value[{{ option_value_row }}][option_value_description][language-{{ language.language_id }}][name]" value="{{ option_value.option_value_description[language.language_id] ? option_value.option_value_description[language.language_id].name }}" placeholder="{{ entry_option_value }}" id="input-option-value-{{ option_value_row }}-{{ language.language_id }}" class="form-control"/>
                         </div>
                         <div id="error-option-value-{{ option_value_row }}-{{ language.language_id }}" class="invalid-feedback"></div>
                       {% endfor %}</td>
@@ -134,7 +134,7 @@ function addOptionValue() {
   {% for language in languages %}
     html += '    <div class="input-group">';
     html += '      <div class="input-group-text"><img src="{{ language.image|escape('js') }}" title="{{ language.name|escape('js') }}" /></div>';
-    html += '      <input type="text" name="option_value[' + option_value_row + '][option_value_description][{{ language.language_id }}][name]" value="" placeholder="{{ entry_option_value|escape('js') }}" id="input-option-value-' + option_value_row + '-{{ language.language_id }}" class="form-control"/>';
+    html += '      <input type="text" name="option_value[' + option_value_row + '][option_value_description][language-{{ language.language_id }}][name]" value="" placeholder="{{ entry_option_value|escape('js') }}" id="input-option-value-' + option_value_row + '-{{ language.language_id }}" class="form-control"/>';
     html += '    </div>';
     html += '    <div id="error-option-value-' + option_value_row + '-{{ language.language_id }}" class="invalid-feedback"></div>';
   {% endfor %}

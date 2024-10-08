@@ -15,7 +15,7 @@ class CustomFieldModel  extends Model {
 	 * @return int
 	 */
 	async addCustomField(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "custom_field` SET `type` = '" + this.db.escape(data['type']) + "', `value` = '" + this.db.escape(data['value']) + "', `validation` = '" + this.db.escape(data['validation']) + "', `location` = '" + this.db.escape(data['location']) + "', `status` = '" + (data['status'] ? data['status'] : 0) + "', `sort_order` = '" + data['sort_order'] + "'");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "custom_field` SET `type` = '" + this.db.escape(data['type']) + "', `value` = " + this.db.escape(data['value']) + ", `validation` = '" + this.db.escape(data['validation']) + "', `location` = '" + this.db.escape(data['location']) + "', `status` = '" + (data['status'] ? data['status'] : 0) + "', `sort_order` = '" + data['sort_order'] + "'");
 
 		custom_field_id = this.db.getLastId();
 
@@ -53,7 +53,7 @@ class CustomFieldModel  extends Model {
 	 * @return void
 	 */
 	async editCustomField(custom_field_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "custom_field` SET `type` = '" + this.db.escape(data['type']) + "', `value` = '" + this.db.escape(data['value']) + "', `validation` = '" + this.db.escape(data['validation']) + "', `location` = '" + this.db.escape(data['location']) + "', `status` = '" + (data['status'] ? data['status'] : 0) + "', `sort_order` = '" + data['sort_order'] + "' WHERE `custom_field_id` = '" + custom_field_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "custom_field` SET `type` = '" + this.db.escape(data['type']) + "', `value` = " + this.db.escape(data['value']) + ", `validation` = '" + this.db.escape(data['validation']) + "', `location` = '" + this.db.escape(data['location']) + "', `status` = '" + (data['status'] ? data['status'] : 0) + "', `sort_order` = '" + data['sort_order'] + "' WHERE `custom_field_id` = '" + custom_field_id + "'");
 
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "custom_field_description` WHERE `custom_field_id` = '" + custom_field_id + "'");
 
@@ -164,11 +164,13 @@ class CustomFieldModel  extends Model {
 		}
 
 		if (data['start'] || data['limit']) {
+                        data['start'] = data['start']||0;
 			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			if (data['limit'] < 1) {
+			data['limit'] = data['limit']||20;
+if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
@@ -190,7 +192,7 @@ class CustomFieldModel  extends Model {
 
 		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "custom_field_description` WHERE `custom_field_id` = '" + custom_field_id + "'");
 
-		for (query.rows of result) {
+		for (let result of query.rows) {
 			custom_field_data[result['language_id']] = ['name' : result['name']];
 		}
 

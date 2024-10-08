@@ -102,7 +102,7 @@
             <label for="input-message" class="col-sm-2 col-form-label">{{ entry_message }}</label>
             <div class="col-sm-10">
               <div id="input-message">
-                <textarea name="message" placeholder="{{ entry_message }}" data-oc-toggle="ckeditor" data-lang="{{ ckeditor }}" class="form-control"></textarea>
+                <textarea name="message" placeholder="{{ entry_message }}" data-oc-toggle="summernote" data-lang="{{ summernote }}" class="form-control"></textarea>
                 <div id="error-message" class="invalid-feedback"></div>
               </div>
             </div>
@@ -112,6 +112,10 @@
     </div>
   </div>
 </div>
+<script type="text/javascript" src="view/javascript/summernote/summernote.min.js"></script>
+<link href="view/javascript/summernote/summernote.min.css" rel="stylesheet" />
+<script type="text/javascript" src="view/javascript/summernote/summernote-image-attributes.js"></script> 
+<script type="text/javascript" src="view/javascript/summernote/opencart.js"></script> 
 <script type="text/javascript"><!--
 $('#input-to').on('change', function () {
     $('.to').hide();
@@ -232,9 +236,6 @@ $('#mail-product').on('click', '.btn', function () {
     $(this).parent().parent().remove();
 });
 
-$('textarea[data-oc-toggle=\'ckeditor\']').ckeditor({
-    language: '{{ ckeditor }}'
-});
 
 $('#button-send').on('click', function () {
     var element = this;

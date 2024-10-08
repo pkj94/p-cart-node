@@ -90,11 +90,11 @@ class Search extends \Opencart\System\Engine\Controller {
 		$url = '';
 
 		if (isset($this->request->get['search'])) {
-			$url .= '&search=' . urlencode(html_entity_decode($this->request->get['search'], ENT_QUOTES, 'UTF-8'));
+			$url .= '&search=' . encodeURIComponent(html_entity_decode($this->request->get['search']));
 		}
 
 		if (isset($this->request->get['tag'])) {
-			$url .= '&tag=' . urlencode(html_entity_decode($this->request->get['tag'], ENT_QUOTES, 'UTF-8'));
+			$url .= '&tag=' . encodeURIComponent(html_entity_decode($this->request->get['tag']));
 		}
 
 		if (isset($this->request->get['description'])) {
@@ -198,8 +198,8 @@ class Search extends \Opencart\System\Engine\Controller {
 			$results = $this->model_catalog_product->getProducts($filter_data);
 
 			foreach ($results as $result) {
-				if (is_file(DIR_IMAGE . html_entity_decode($result['image'], ENT_QUOTES, 'UTF-8'))) {
-					$image = $this->model_tool_image->resize(html_entity_decode($result['image'], ENT_QUOTES, 'UTF-8'), $this->config->get('config_image_product_width'), $this->config->get('config_image_product_height'));
+				if (is_file(DIR_IMAGE . html_entity_decode($result['image']))) {
+					$image = $this->model_tool_image->resize(html_entity_decode($result['image']), $this->config->get('config_image_product_width'), $this->config->get('config_image_product_height'));
 				} else {
 					$image = $this->model_tool_image->resize('placeholder.png', $this->config->get('config_image_product_width'), $this->config->get('config_image_product_height'));
 				}
@@ -226,7 +226,7 @@ class Search extends \Opencart\System\Engine\Controller {
 					'product_id'  => $result['product_id'],
 					'thumb'       => $image,
 					'name'        => $result['name'],
-					'description' => oc_substr(trim(strip_tags(html_entity_decode($result['description'], ENT_QUOTES, 'UTF-8'))), 0, $this->config->get('config_product_description_length')) . '..',
+					'description' => oc_substr(trim(strip_tags(html_entity_decode($result['description']))), 0, $this->config->get('config_product_description_length')) . '..',
 					'price'       => $price,
 					'special'     => $special,
 					'tax'         => $tax,
@@ -241,11 +241,11 @@ class Search extends \Opencart\System\Engine\Controller {
 			$url = '';
 
 			if (isset($this->request->get['search'])) {
-				$url .= '&search=' . urlencode(html_entity_decode($this->request->get['search'], ENT_QUOTES, 'UTF-8'));
+				$url .= '&search=' . encodeURIComponent(html_entity_decode($this->request->get['search']));
 			}
 
 			if (isset($this->request->get['tag'])) {
-				$url .= '&tag=' . urlencode(html_entity_decode($this->request->get['tag'], ENT_QUOTES, 'UTF-8'));
+				$url .= '&tag=' . encodeURIComponent(html_entity_decode($this->request->get['tag']));
 			}
 
 			if (isset($this->request->get['description'])) {
@@ -325,11 +325,11 @@ class Search extends \Opencart\System\Engine\Controller {
 			$url = '';
 
 			if (isset($this->request->get['search'])) {
-				$url .= '&search=' . urlencode(html_entity_decode($this->request->get['search'], ENT_QUOTES, 'UTF-8'));
+				$url .= '&search=' . encodeURIComponent(html_entity_decode($this->request->get['search']));
 			}
 
 			if (isset($this->request->get['tag'])) {
-				$url .= '&tag=' . urlencode(html_entity_decode($this->request->get['tag'], ENT_QUOTES, 'UTF-8'));
+				$url .= '&tag=' . encodeURIComponent(html_entity_decode($this->request->get['tag']));
 			}
 
 			if (isset($this->request->get['description'])) {
@@ -369,11 +369,11 @@ class Search extends \Opencart\System\Engine\Controller {
 			$url = '';
 
 			if (isset($this->request->get['search'])) {
-				$url .= '&search=' . urlencode(html_entity_decode($this->request->get['search'], ENT_QUOTES, 'UTF-8'));
+				$url .= '&search=' . encodeURIComponent(html_entity_decode($this->request->get['search']));
 			}
 
 			if (isset($this->request->get['tag'])) {
-				$url .= '&tag=' . urlencode(html_entity_decode($this->request->get['tag'], ENT_QUOTES, 'UTF-8'));
+				$url .= '&tag=' . encodeURIComponent(html_entity_decode($this->request->get['tag']));
 			}
 
 			if (isset($this->request->get['description'])) {

@@ -8,7 +8,7 @@ module.exports = class VoucherThemeSaleModel  extends Model {
 	 * @return int
 	 */
 	async addVoucherTheme(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "voucher_theme` SET `image` = '" + this.db.escape(data['image']) + "'");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "voucher_theme` SET `image` = " + this.db.escape(data['image']) + "");
 
 		let voucher_theme_id = this.db.getLastId();
 
@@ -28,7 +28,7 @@ module.exports = class VoucherThemeSaleModel  extends Model {
 	 * @return void
 	 */
 	async editVoucherTheme(voucher_theme_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "voucher_theme` SET `image` = '" + this.db.escape(data['image']) + "' WHERE `voucher_theme_id` = '" + voucher_theme_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "voucher_theme` SET `image` = " + this.db.escape(data['image']) + " WHERE `voucher_theme_id` = '" + voucher_theme_id + "'");
 
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "voucher_theme_description` WHERE `voucher_theme_id` = '" + voucher_theme_id + "'");
 
@@ -77,11 +77,13 @@ module.exports = class VoucherThemeSaleModel  extends Model {
 		}
 
 		if (data['start'] || data['limit']) {
+                        data['start'] = data['start']||0;
 			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			if (data['limit'] < 1) {
+			data['limit'] = data['limit']||20;
+if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
@@ -111,7 +113,7 @@ module.exports = class VoucherThemeSaleModel  extends Model {
 
 		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "voucher_theme_description` WHERE `voucher_theme_id` = '" + voucher_theme_id + "'");
 
-		for (query.rows of result) {
+		for (let result of query.rows) {
 			voucher_theme_data[result['language_id']] = {'name' : result['name']};
 		}
 

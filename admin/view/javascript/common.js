@@ -236,20 +236,20 @@ $(document).on('submit', 'form', function (e) {
         console.log('method ' + method);
         console.log('enctype ' + enctype);
         console.log($(element).serialize());
+        var formData = {};
+        var inputs = $(element).serializeArray();
+        $.each(inputs, function (i, input) {
+            formData[input.name] = input.value;
+        });
+        console.log('formData ', formData);
 
-        // https://github.com/opencart/opencart/issues/9690
-        if (typeof CKEDITOR != 'undefined') {
-            for (instance in CKEDITOR.instances) {
-                CKEDITOR.instances[instance].updateElement();
-            }
-        }
 
         $.ajax({
             url: action.replaceAll('&amp;', '&'),
             type: method,
-            data: $(form).serialize(),
+            data: formData,
             dataType: 'json',
-            contentType: enctype,
+            // contentType: enctype,
             beforeSend: function () {
                 $(button).button('loading');
             },

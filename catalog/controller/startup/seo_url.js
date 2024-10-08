@@ -29,7 +29,7 @@ class SeoUrl extends \Opencart\System\Engine\Controller {
 					$seo_url_info = $this->model_design_seo_url->getSeoUrlByKeyword($part);
 
 					if ($seo_url_info) {
-						$this->request->get[$seo_url_info['key']] = html_entity_decode($seo_url_info['value'], ENT_QUOTES, 'UTF-8');
+						$this->request->get[$seo_url_info['key']] = html_entity_decode($seo_url_info['value']);
 					}
 				}
 			}
@@ -87,7 +87,7 @@ class SeoUrl extends \Opencart\System\Engine\Controller {
 			$sort_order[$key] = $value['sort_order'];
 		}
 
-		array_multisort($sort_order, SORT_ASC, $paths);
+		$paths= multiSort($paths,$sort_order,'ASC');
 
 		// Build the path
 		$url .= str_replace('/index.php', '', $url_info['path']);
