@@ -1,8 +1,11 @@
+const sprintf = require("locutus/php/strings/sprintf");
+
 module.exports = class SubscriptionPlanController extends Controller {
 	/**
 	 * @return void
 	 */
 	async index() {
+		const data = {};
 		await this.load.language('catalog/subscription_plan');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -24,13 +27,13 @@ module.exports = class SubscriptionPlanController extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('text_home'),
+			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('catalog/subscription_plan', 'user_token=' + this.session.data['user_token'] + url)
+			'text': this.language.get('heading_title'),
+			'href': this.url.link('catalog/subscription_plan', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
 		data['add'] = this.url.link('catalog/subscription_plan.form', 'user_token=' + this.session.data['user_token'] + url);
@@ -61,15 +64,15 @@ module.exports = class SubscriptionPlanController extends Controller {
 	 * @return string
 	 */
 	async getList() {
+		const data = {};
+		let sort = 'rd.name';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
-		} else {
-			sort = 'rd.name';
 		}
 
-		let order= 'ASC';
+		let order = 'ASC';
 		if ((this.request.get['order'])) {
-			order= this.request.get['order'];
+			order = this.request.get['order'];
 		}
 
 		let page = 1;
@@ -96,29 +99,29 @@ module.exports = class SubscriptionPlanController extends Controller {
 		data['subscription_plans'] = [];
 
 		let filter_data = {
-			'sort'  : sort,
-			'order' : order,
-			'start' : (page - 1) * this.config.get('config_pagination_admin'),
-			'limit' : this.config.get('config_pagination_admin')
-		});
+			'sort': sort,
+			'order': order,
+			'start': (page - 1) * this.config.get('config_pagination_admin'),
+			'limit': this.config.get('config_pagination_admin')
+		};
 
-		this.load.model('catalog/subscription_plan',this);
+		this.load.model('catalog/subscription_plan', this);
 
-		subscription_plan_total await this.model_catalog_subscription_plan.getTotalSubscriptionPlans();
+		const subscription_plan_total = await this.model_catalog_subscription_plan.getTotalSubscriptionPlans();
 
 		const results = await this.model_catalog_subscription_plan.getSubscriptionPlans(filter_data);
 
 		for (let result of results) {
 			data['subscription_plans'].push({
-				'subscription_plan_id' : result['subscription_plan_id'],
-				'name'                 : result['name'],
-				'status'               : result['status'],
-				'sort_order'           : result['sort_order'],
-				'edit'                 : this.url.link('catalog/subscription_plan.form', 'user_token=' + this.session.data['user_token'] + '&subscription_plan_id=' + result['subscription_plan_id'] + url)
-			];
+				'subscription_plan_id': result['subscription_plan_id'],
+				'name': result['name'],
+				'status': result['status'],
+				'sort_order': result['sort_order'],
+				'edit': this.url.link('catalog/subscription_plan.form', 'user_token=' + this.session.data['user_token'] + '&subscription_plan_id=' + result['subscription_plan_id'] + url)
+			});
 		}
 
-		let url = '';
+		url = '';
 
 		if (order == 'ASC') {
 			url += '&order=DESC';
@@ -129,7 +132,7 @@ module.exports = class SubscriptionPlanController extends Controller {
 		data['sort_name'] = this.url.link('catalog/subscription_plan.list', 'user_token=' + this.session.data['user_token'] + '&sort=spd.name' + url);
 		data['sort_sort_order'] = this.url.link('catalog/subscription_plan.list', 'user_token=' + this.session.data['user_token'] + '&sort=sp.sort_order' + url);
 
-		let url = '';
+		url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -140,11 +143,11 @@ module.exports = class SubscriptionPlanController extends Controller {
 		}
 
 		data['pagination'] = await this.load.controller('common/pagination', {
-			'total' : subscription_plan_total,
-			'page'  : page,
-			'limit' : this.config.get('config_pagination_admin'),
-			'url'   : this.url.link('catalog/subscription_plan.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
-		]);
+			'total': subscription_plan_total,
+			'page': page,
+			'limit': this.config.get('config_pagination_admin'),
+			'url': this.url.link('catalog/subscription_plan.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
+		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (subscription_plan_total) ? ((page - 1) * this.config.get('config_pagination_admin')) + 1 : 0, (((page - 1) * this.config.get('config_pagination_admin')) > (subscription_plan_total - this.config.get('config_pagination_admin'))) ? subscription_plan_total : (((page - 1) * this.config.get('config_pagination_admin')) + this.config.get('config_pagination_admin')), subscription_plan_total, Math.ceil(subscription_plan_total / this.config.get('config_pagination_admin')));
 
@@ -158,6 +161,7 @@ module.exports = class SubscriptionPlanController extends Controller {
 	 * @return void
 	 */
 	async form() {
+		const data = {};
 		await this.load.language('catalog/subscription_plan');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -181,22 +185,22 @@ module.exports = class SubscriptionPlanController extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('text_home'),
+			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('catalog/subscription_plan', 'user_token=' + this.session.data['user_token'] + url)
+			'text': this.language.get('heading_title'),
+			'href': this.url.link('catalog/subscription_plan', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
 		data['save'] = this.url.link('catalog/subscription_plan.save', 'user_token=' + this.session.data['user_token']);
 		data['back'] = this.url.link('catalog/subscription_plan', 'user_token=' + this.session.data['user_token'] + url);
-
+		let subscription_info;
 		if ((this.request.get['subscription_plan_id'])) {
-			this.load.model('catalog/subscription_plan',this);
+			this.load.model('catalog/subscription_plan', this);
 
-			subscription_info await this.model_catalog_subscription_plan.getSubscriptionPlan(this.request.get['subscription_plan_id']);
+			subscription_info = await this.model_catalog_subscription_plan.getSubscriptionPlan(this.request.get['subscription_plan_id']);
 		}
 
 		if ((this.request.get['subscription_plan_id'])) {
@@ -205,7 +209,7 @@ module.exports = class SubscriptionPlanController extends Controller {
 			data['subscription_plan_id'] = 0;
 		}
 
-		this.load.model('localisation/language',this);
+		this.load.model('localisation/language', this);
 
 		data['languages'] = await this.model_localisation_language.getLanguages();
 
@@ -218,28 +222,28 @@ module.exports = class SubscriptionPlanController extends Controller {
 		data['frequencies'] = [];
 
 		data['frequencies'].push({
-			'text'  : this.language.get('text_day'),
-			'value' : 'day'
+			'text': this.language.get('text_day'),
+			'value': 'day'
 		});
 
 		data['frequencies'].push({
-			'text'  : this.language.get('text_week'),
-			'value' : 'week'
+			'text': this.language.get('text_week'),
+			'value': 'week'
 		});
 
 		data['frequencies'].push({
-			'text'  : this.language.get('text_semi_month'),
-			'value' : 'semi_month'
+			'text': this.language.get('text_semi_month'),
+			'value': 'semi_month'
 		});
 
 		data['frequencies'].push({
-			'text'  : this.language.get('text_month'),
-			'value' : 'month'
+			'text': this.language.get('text_month'),
+			'value': 'month'
 		});
 
 		data['frequencies'].push({
-			'text'  : this.language.get('text_year'),
-			'value' : 'year'
+			'text': this.language.get('text_year'),
+			'value': 'year'
 		});
 
 		if ((subscription_info)) {
@@ -311,13 +315,14 @@ module.exports = class SubscriptionPlanController extends Controller {
 	async save() {
 		await this.load.language('catalog/subscription_plan');
 
-		const json = {};
+		const json = { error: {} };
 
 		if (!await this.user.hasPermission('modify', 'catalog/subscription_plan')) {
 			json['error']['warning'] = this.language.get('error_permission');
 		}
 
-		for (this.request.post['subscription_plan_description'] of language_id : value) {
+		for (let [language_id, value] of Object.entries(this.request.post['subscription_plan_description'])) {
+			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 			if ((oc_strlen(trim(value['name'])) < 3) || (oc_strlen(value['name']) > 255)) {
 				json['error']['name_' + language_id] = this.language.get('error_name');
 			}
@@ -330,9 +335,9 @@ module.exports = class SubscriptionPlanController extends Controller {
 		if (Object.keys(json['error']).length && !(json['error']['warning'])) {
 			json['error']['warning'] = this.language.get('error_warning');
 		}
-
-		if (!Object.keys(json).length) {
-			this.load.model('catalog/subscription_plan',this);
+		this.request.post['subscription_plan_id'] = Number(this.request.post['subscription_plan_id']);
+		if (!Object.keys(json.error).length) {
+			this.load.model('catalog/subscription_plan', this);
 
 			if (!this.request.post['subscription_plan_id']) {
 				json['subscription_plan_id'] = await this.model_catalog_subscription_plan.addSubscriptionPlan(this.request.post);
@@ -356,7 +361,7 @@ module.exports = class SubscriptionPlanController extends Controller {
 		const json = {};
 
 		let selected = [];
-                 if ((this.request.post['selected'])) {
+		if ((this.request.post['selected'])) {
 			selected = this.request.post['selected'];
 		}
 
@@ -365,7 +370,7 @@ module.exports = class SubscriptionPlanController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('catalog/subscription_plan',this);
+			this.load.model('catalog/subscription_plan', this);
 
 			for (let subscription_plan_id of selected) {
 				await this.model_catalog_subscription_plan.copySubscriptionPlan(subscription_plan_id);
@@ -387,7 +392,7 @@ module.exports = class SubscriptionPlanController extends Controller {
 		const json = {};
 
 		let selected = [];
-                 if ((this.request.post['selected'])) {
+		if ((this.request.post['selected'])) {
 			selected = this.request.post['selected'];
 		}
 
@@ -395,7 +400,7 @@ module.exports = class SubscriptionPlanController extends Controller {
 			json['error'] = this.language.get('error_permission');
 		}
 
-		this.load.model('catalog/product',this);
+		this.load.model('catalog/product', this);
 
 		for (let subscription_id of selected) {
 			const product_total = await this.model_catalog_product.getTotalProductsBySubscriptionPlanId(subscription_id);
@@ -406,7 +411,7 @@ module.exports = class SubscriptionPlanController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('catalog/subscription_plan',this);
+			this.load.model('catalog/subscription_plan', this);
 
 			for (let subscription_plan_id of selected) {
 				await this.model_catalog_subscription_plan.deleteSubscriptionPlan(subscription_plan_id);

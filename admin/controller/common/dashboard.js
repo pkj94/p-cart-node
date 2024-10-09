@@ -5,7 +5,7 @@ module.exports = class DashboardController extends Controller {
     }
     async index() {
         let data = {};
-        await  this.load.language('common/dashboard');
+        await this.load.language('common/dashboard');
         this.document.setTitle(this.language.get('heading_title'));
         data['breadcrumbs'] = [];
         data['breadcrumbs'].push({
@@ -24,9 +24,9 @@ module.exports = class DashboardController extends Controller {
         // console.log('extensions-----',extensions.map(a=>a.code));        
         // Add all the modules which have multiple settings for each module
         for (let extension of extensions) {
-            if (this.config.get('dashboard_' + extension['code'] + '_status') && await  this.user.hasPermission('access', 'extension/' + extension['extension'] + '/dashboard/' + extension['code'])) {
+            if (this.config.get('dashboard_' + extension['code'] + '_status') && await this.user.hasPermission('access', 'extension/' + extension['extension'] + '/dashboard/' + extension['code'])) {
                 let output = await this.load.controller('extension/' + extension['extension'] + '/dashboard/' + extension['code'] + '.dashboard');
-                console.log('output---',extension['code'],output.length)
+                // console.log('output---', extension['code'], output.length)
                 //if (!output instanceof \Exception) {
                 if (output) {
                     dashboards.push({
@@ -38,29 +38,35 @@ module.exports = class DashboardController extends Controller {
                 }
             }
         }
-        let sort_order = [];
-        for (let [key, value] of Object.entries(dashboards)) {
-            sort_order[key] = value['sort_order'];
-        }
-        dashboards= multiSort(dashboards,sort_order,'ASC');
+        // let sort_order = {};
+        // let newDashboards = [];
+        // console.log('dashboards----', dashboards.map(a=>a.code))
+        // for (let [key, value] of Object.entries(dashboards)) {
+        //     sort_order[Number(key)] = Number(value['sort_order']);
+        //     newDashboards.push(dashboards[Number(value['sort_order'])-1]);
+        // }
+        dashboards = dashboards.sort((a,b)=>Number(a.sort_order)-Number(b.sort_order));
+        // dashboards= multiSort(dashboards,sort_order,'ASC');
+
+        // console.log('dashboards----', dashboards.map(a=>a.code))
         // Split the array so the columns width is not more than 12 on each row+
         let width = 0;
         let column = [];
         data['rows'] = [];
-        // console.log('dashboards----',dashboards)
+        // console.log('dashboards----',dashboards.map(a=>({...a,output:''})))
         for (let dashboard of dashboards) {
             column.push(dashboard);
-            width = (width + dashboard['width']);
+            width = (width + Number(dashboard['width']));
             if (width >= 12) {
                 data['rows'].push(column);
                 width = 0;
                 column = [];
             }
         }
-        if (column) {
+        if (column.length) {
             data['rows'].push(column);
         }
-        if (await  this.user.hasPermission('access', 'common/developer')) {
+        if (await this.user.hasPermission('access', 'common/developer')) {
             data['developer_status'] = true;
         } else {
             data['developer_status'] = false;

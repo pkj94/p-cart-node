@@ -108,7 +108,7 @@ global.multiSort = (array, sortObject = [], sort = 'ASC') => {
         return sorted;
     });
 }
-global.html_entity_decode = (encodedString='') => {
+global.html_entity_decode = (encodedString = '') => {
     var translate_re = /&(nbsp|amp|quot|lt|gt);/g;
     var translate = {
         "nbsp": " ",
@@ -124,14 +124,14 @@ global.html_entity_decode = (encodedString='') => {
         return String.fromCharCode(num);
     });
 }
-global.rtrim =(string)=>{
+global.rtrim = (string) => {
     return string.replace(/\/*$/, '')
 }
-global.ltrim =(string)=>{
+global.ltrim = (string) => {
     return string.replace(/^\/*/, '')
 }
-global.uploadFile = (file,save)=>{
-    return new Promise((resolve,reject)=>{
+global.uploadFile = (file, save) => {
+    return new Promise((resolve, reject) => {
         file.mv(save, function (err) {
             if (err)
                 reject(true);
@@ -140,6 +140,14 @@ global.uploadFile = (file,save)=>{
         })
     })
 }
-global.md5 = (string)=>{
+global.md5 = (string) => {
     return crypto.createHash('md5').update(string).digest('hex')
+}
+global.strip_tags = (input, allowed) => {
+    allowed = (((allowed || '') + '').toLowerCase().match(/<[a-z][a-z0-9]*>/g) || []).join('')
+    var tags = /<\/?([a-z][a-z0-9]*)\b[^>]*>/gi
+    var commentsAndPhpTags = /<!--[\s\S]*?-->|<\?(?:php)?[\s\S]*?\?>/gi
+    return input.replace(commentsAndPhpTags, '').replace(tags, function ($0, $1) {
+        return allowed.indexOf('<' + $1.toLowerCase() + '>') > -1 ? $0 : ''
+    })
 }

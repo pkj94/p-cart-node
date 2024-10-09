@@ -209,7 +209,7 @@ class CommentController extends Controller {
 
 		if (!Object.keys(json).length) {
 			// Approve Commentor
-			this.load.model('customer/customer');
+			this.load.model('customer/customer',this);
 
 			await this.model_customer_customer.editCommentor(comment_info['customer_id'], 1);
 
@@ -284,7 +284,7 @@ class CommentController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('customer/customer');
+			this.load.model('customer/customer',this);
 
 			await this.model_customer_customer.editCommentor(comment_info['customer_id'], 0);
 			await this.model_customer_customer.editStatus(comment_info['customer_id'], 0);

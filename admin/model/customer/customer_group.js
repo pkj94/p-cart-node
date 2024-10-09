@@ -13,7 +13,7 @@ module.exports = class CustomerGroupCustomerModel extends Model {
 		const customer_group_id = this.db.getLastId();
 
 		for (let [language_id, value] of Object.entries(data['customer_group_description'])) {
-			language_id = language_id.split('-')[1];
+			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 			await this.db.query("INSERT INTO `" + DB_PREFIX + "customer_group_description` SET `customer_group_id` = '" + customer_group_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + ", `description` = " + this.db.escape(value['description']) + "");
 		}
 
@@ -32,7 +32,7 @@ module.exports = class CustomerGroupCustomerModel extends Model {
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_group_description` WHERE `customer_group_id` = '" + customer_group_id + "'");
 
 		for (let [language_id, value] of Object.entries(data['customer_group_description'])) {
-			language_id = language_id.split('-')[1];
+			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 			await this.db.query("INSERT INTO `" + DB_PREFIX + "customer_group_description` SET `customer_group_id` = '" + customer_group_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + ", `description` = " + this.db.escape(value['description']) + "");
 		}
 	}

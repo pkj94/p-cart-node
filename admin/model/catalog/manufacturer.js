@@ -13,7 +13,7 @@ module.exports = class ManufacturerCatalogModel extends Model {
 		const manufacturer_id = this.db.getLastId();
 
 		if ((data['manufacturer_store'])) {
-			for (data['manufacturer_store'] of store_id) {
+			for (let store_id of data['manufacturer_store']) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "manufacturer_to_store` SET `manufacturer_id` = '" + manufacturer_id + "', `store_id` = '" + store_id + "'");
 			}
 		}
@@ -21,9 +21,9 @@ module.exports = class ManufacturerCatalogModel extends Model {
 		// SEO URL
 		if ((data['manufacturer_seo_url'])) {
 			for (let [store_id, language] of Object.entries(data['manufacturer_seo_url'])) {
-				store_id = store_id.split('-')[1];
+				store_id = store_id.indexOf('store') >= 0 ? store_id.split('-')[1] : store_id;
 				for (let [language_id, keyword] of Object.entries(language)) {
-					language_id = language_id.split('-')[1];
+					language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 					await this.db.query("INSERT INTO `" + DB_PREFIX + "seo_url` SET `store_id` = '" + store_id + "', `language_id` = '" + language_id + "', `key` = 'manufacturer_id', `value` = '" + manufacturer_id + "', `keyword` = " + this.db.escape(keyword) + "");
 				}
 			}
@@ -31,7 +31,7 @@ module.exports = class ManufacturerCatalogModel extends Model {
 
 		if ((data['manufacturer_layout'])) {
 			for (let [store_id, layout_id] of Object.entries(data['manufacturer_layout'])) {
-				store_id = store_id.split('-')[1];
+				store_id = store_id.indexOf('store') >= 0 ? store_id.split('-')[1] : store_id;
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "manufacturer_to_layout` SET `manufacturer_id` = '" + manufacturer_id + "', `store_id` = '" + store_id + "', `layout_id` = '" + layout_id + "'");
 			}
 		}
@@ -53,7 +53,7 @@ module.exports = class ManufacturerCatalogModel extends Model {
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "manufacturer_to_store` WHERE `manufacturer_id` = '" + manufacturer_id + "'");
 
 		if ((data['manufacturer_store'])) {
-			for (data['manufacturer_store'] of store_id) {
+			for (let store_id of data['manufacturer_store']) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "manufacturer_to_store` SET `manufacturer_id` = '" + manufacturer_id + "', `store_id` = '" + store_id + "'");
 			}
 		}
@@ -62,9 +62,9 @@ module.exports = class ManufacturerCatalogModel extends Model {
 
 		if ((data['manufacturer_seo_url'])) {
 			for (let [store_id, language] of Object.entries(data['manufacturer_seo_url'])) {
-				store_id = store_id.split('-')[1];
+				store_id = store_id.indexOf('store') >= 0 ? store_id.split('-')[1] : store_id;
 				for (let [language_id, keyword] of Object.entries(language)) {
-					language_id = language_id.split('-')[1];
+					language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 					await this.db.query("INSERT INTO `" + DB_PREFIX + "seo_url` SET `store_id` = '" + store_id + "', `language_id` = '" + language_id + "', `key` = 'manufacturer_id', `value` = '" + manufacturer_id + "', `keyword` = " + this.db.escape(keyword) + "");
 				}
 			}
@@ -74,7 +74,7 @@ module.exports = class ManufacturerCatalogModel extends Model {
 
 		if ((data['manufacturer_layout'])) {
 			for (let [store_id, layout_id] of Object.entries(data['manufacturer_layout'])) {
-				store_id = store_id.split('-')[1];
+				store_id = store_id.indexOf('store') >= 0 ? store_id.split('-')[1] : store_id;
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "manufacturer_to_layout` SET `manufacturer_id` = '" + manufacturer_id + "', `store_id` = '" + store_id + "', `layout_id` = '" + layout_id + "'");
 			}
 		}

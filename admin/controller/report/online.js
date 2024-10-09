@@ -91,7 +91,7 @@ class OnlineController extends Controller {
 		});
 
 		this.load.model('report/online');
-		this.load.model('customer/customer');
+		this.load.model('customer/customer',this);
 
 		customer_total await this.model_report_online.getTotalOnline(filter_data);
 

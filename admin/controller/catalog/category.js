@@ -365,7 +365,7 @@ module.exports = class CategoryCatalogController extends Controller {
 			json['error']['warning'] = this.language.get('error_permission');
 		}
 		for (let [language_id, value] of Object.entries(this.request.post['category_description'])) {
-			language_id = language_id.split('-')[1];
+			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 			if ((oc_strlen(trim(value['name'])) < 1) || (oc_strlen(value['name']) > 255)) {
 				json['error']['name_' + language_id] = this.language.get('error_name');
 			}
@@ -393,9 +393,9 @@ module.exports = class CategoryCatalogController extends Controller {
 			this.load.model('design/seo_url', this);
 
 			for (let [store_id, language] of Object.entries(this.request.post['category_seo_url'])) {
-				store_id = store_id.split('-')[1];
+				store_id = store_id.indexOf('store') >= 0 ? store_id.split('-')[1] : store_id;
 				for (let [language_id, keyword] of Object.entries(language)) {
-					language_id = language_id.split('-')[1];
+					language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 					if ((oc_strlen(trim(keyword)) < 1) || (oc_strlen(keyword) > 64)) {
 						json['error']['keyword_' + store_id + '_' + language_id] = this.language.get('error_keyword');
 					}
@@ -414,9 +414,9 @@ module.exports = class CategoryCatalogController extends Controller {
 		if (Object.keys(json['error']).length && !(json['error']['warning'])) {
 			json['error']['warning'] = this.language.get('error_warning');
 		}
-
+		this.request.post['category_id'] = Number(this.request.post['category_id']);
 		if (!Object.keys(json.error).length) {
-			if (!this.request.post['category_id'] || this.request.post['category_id'] == '0') {
+			if (!this.request.post['category_id']) {
 				json['category_id'] = await this.model_catalog_category.addCategory(this.request.post);
 			} else {
 				await this.model_catalog_category.editCategory(this.request.post['category_id'], this.request.post);
@@ -517,7 +517,9 @@ module.exports = class CategoryCatalogController extends Controller {
 			sort_order[key] = value['name'];
 		}
 
-		json = multiSort(json, sort_order, 'ASC');
+		// json = multiSort(json, sort_order, 'ASC');
+		json = json.sort((a, b) => a.name - b.name);
+
 
 		this.response.addHeader('Content-Type: application/json');
 		this.response.setOutput(json);

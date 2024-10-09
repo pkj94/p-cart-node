@@ -20,8 +20,8 @@ module.exports = class ReviewController extends Controller {
 		}
 
 		let filter_status = '';
-if ((this.request.get['filter_status '])) {
-			filter_status = this.request.get['filter_status '];
+		if (typeof this.request.get['filter_status'] != 'undefined' && this.request.get['filter_status'] !== '') {
+			filter_status = this.request.get['filter_status'];
 		}
 
 		if ((this.request.get['filter_date_from'])) {
@@ -73,13 +73,13 @@ if ((this.request.get['filter_status '])) {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('text_home'),
+			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('catalog/review', 'user_token=' + this.session.data['user_token'] + url)
+			'text': this.language.get('heading_title'),
+			'href': this.url.link('catalog/review', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
 		data['add'] = this.url.link('catalog/review.form', 'user_token=' + this.session.data['user_token'] + url);
@@ -122,8 +122,8 @@ if ((this.request.get['filter_status '])) {
 		}
 
 		let filter_status = '';
-if ((this.request.get['filter_status '])) {
-			filter_status = this.request.get['filter_status '];
+		if (typeof this.request.get['filter_status'] != 'undefined' && this.request.get['filter_status'] !== '') {
+			filter_status = this.request.get['filter_status'];
 		}
 
 		if ((this.request.get['filter_date_from'])) {
@@ -194,15 +194,15 @@ if ((this.request.get['filter_status '])) {
 		data['reviews'] = [];
 
 		let filter_data = {
-			'filter_product'   : filter_product,
-			'filter_author'    : filter_author,
-			'filter_status'    : filter_status,
-			'filter_date_from' : filter_date_from,
-			'filter_date_to'   : filter_date_to,
-			'sort'             : sort,
-			'order'            : order,
-			'start'            : (page - 1) * this.config.get('config_pagination_admin'),
-			'limit'            : this.config.get('config_pagination_admin')
+			'filter_product': filter_product,
+			'filter_author': filter_author,
+			'filter_status': filter_status,
+			'filter_date_from': filter_date_from,
+			'filter_date_to': filter_date_to,
+			'sort': sort,
+			'order': order,
+			'start': (page - 1) * this.config.get('config_pagination_admin'),
+			'limit': this.config.get('config_pagination_admin')
 		});
 
 		this.load.model('catalog/review');
@@ -213,13 +213,13 @@ if ((this.request.get['filter_status '])) {
 
 		for (let result of results) {
 			data['reviews'].push({
-				'review_id'  : result['review_id'],
-				'name'       : result['name'],
-				'author'     : result['author'],
-				'rating'     : result['rating'],
-				'status'     : result['status'],
-				'date_added' : date(this.language.get('date_format_short'), strtotime(result['date_added'])),
-				'edit'       : this.url.link('catalog/review.form', 'user_token=' + this.session.data['user_token'] + '&review_id=' + result['review_id'] + url)
+				'review_id': result['review_id'],
+				'name': result['name'],
+				'author': result['author'],
+				'rating': result['rating'],
+				'status': result['status'],
+				'date_added': date(this.language.get('date_format_short'), strtotime(result['date_added'])),
+				'edit': this.url.link('catalog/review.form', 'user_token=' + this.session.data['user_token'] + '&review_id=' + result['review_id'] + url)
 			];
 		}
 
@@ -287,10 +287,10 @@ if ((this.request.get['filter_status '])) {
 		}
 
 		data['pagination'] = await this.load.controller('common/pagination', {
-			'total' : review_total,
-			'page'  : page,
-			'limit' : this.config.get('config_pagination_admin'),
-			'url'   : this.url.link('catalog/review.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
+			'total': review_total,
+			'page': page,
+			'limit': this.config.get('config_pagination_admin'),
+			'url': this.url.link('catalog/review.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		]);
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (review_total) ? ((page - 1) * this.config.get('config_pagination_admin')) + 1 : 0, (((page - 1) * this.config.get('config_pagination_admin')) > (review_total - this.config.get('config_pagination_admin'))) ? review_total : (((page - 1) * this.config.get('config_pagination_admin')) + this.config.get('config_pagination_admin')), review_total, Math.ceil(review_total / this.config.get('config_pagination_admin')));
@@ -354,13 +354,13 @@ if ((this.request.get['filter_status '])) {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('text_home'),
+			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('catalog/review', 'user_token=' + this.session.data['user_token'] + url)
+			'text': this.language.get('heading_title'),
+			'href': this.url.link('catalog/review', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
 		data['save'] = this.url.link('catalog/review.save', 'user_token=' + this.session.data['user_token']);
@@ -460,7 +460,7 @@ if ((this.request.get['filter_status '])) {
 		if (Object.keys(json['error']).length && !(json['error']['warning'])) {
 			json['error']['warning'] = this.language.get('error_warning');
 		}
-
+		this.request.post['review_id'] = Number(this.request.post['review_id']);
 		if (!Object.keys(json).length) {
 			this.load.model('catalog/review');
 
@@ -486,7 +486,7 @@ if ((this.request.get['filter_status '])) {
 		const json = {};
 
 		let selected = [];
-                 if ((this.request.post['selected'])) {
+		if ((this.request.post['selected'])) {
 			selected = this.request.post['selected'];
 		}
 
@@ -526,7 +526,7 @@ if ((this.request.get['filter_status '])) {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('catalog/product',this);
+			this.load.model('catalog/product', this);
 			this.load.model('catalog/review');
 
 			total await this.model_catalog_product.getTotalProducts();

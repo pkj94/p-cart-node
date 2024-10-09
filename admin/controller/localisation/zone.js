@@ -387,7 +387,7 @@ if ((this.request.get['filter_name'])) {
 		}
 
 		this.load.model('setting/store',this);
-		this.load.model('customer/customer');
+		this.load.model('customer/customer',this);
 		this.load.model('localisation/geo_zone');
 
 		for (selected of zone_id) {

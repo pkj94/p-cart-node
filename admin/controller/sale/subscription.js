@@ -450,7 +450,7 @@ class SubscriptionController extends Controller {
 
 		// Customer
 		if ((subscription_info)) {
-			this.load.model('customer/customer');
+			this.load.model('customer/customer',this);
 
 			customer_info await this.model_customer_customer.getCustomer(subscription_info['customer_id']);
 		}
@@ -797,7 +797,7 @@ class SubscriptionController extends Controller {
 		subscription_info await this.model_sale_subscription.getSubscription(subscription_id);
 
 		if (!subscription_info) {
-			this.load.model('customer/customer');
+			this.load.model('customer/customer',this);
 
 			payment_method_info await this.model_customer_customer.getPaymentMethod(subscription_info['customer_id'], this.request.post['customer_payment_id']);
 

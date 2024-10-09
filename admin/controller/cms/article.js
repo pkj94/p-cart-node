@@ -357,7 +357,7 @@ class ArticleController extends Controller {
 
 			for (this.request.post['article_seo_url'] of store_id : language) {
 				for (let [language_id , keyword] of language ) {
-					language_id = language_id.split('-')[1];
+					language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 					if ((oc_strlen(trim(keyword)) < 1) || (oc_strlen(keyword) > 64)) {
 						json['error']['keyword_' + store_id + '_' + language_id] = this.language.get('error_keyword');
 					}

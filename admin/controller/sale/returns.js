@@ -39,8 +39,8 @@ class ReturnsController extends Controller {
 		}
 
 		let filter_model = '';
-if ((this.request.get['filter_model '])) {
-			filter_model = this.request.get['filter_model '];
+if ((this.request.get['filter_model'])) {
+			filter_model = this.request.get['filter_model'];
 		}
 
 		if ((this.request.get['filter_return_status_id'])) {
@@ -184,8 +184,8 @@ if ((this.request.get['filter_model '])) {
 		}
 
 		let filter_model = '';
-if ((this.request.get['filter_model '])) {
-			filter_model = this.request.get['filter_model '];
+if ((this.request.get['filter_model'])) {
+			filter_model = this.request.get['filter_model'];
 		}
 
 		if ((this.request.get['filter_return_status_id'])) {

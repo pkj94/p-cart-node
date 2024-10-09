@@ -18,8 +18,8 @@ module.exports = class ProductCatalogModel extends Model {
 
 		// Description
 		for (let [language_id, value] of Object.entries(data['product_description'])) {
-			language_id = language_id.split('-')[1];
-			console.log('language_id-----------',language_id);
+			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
+			// console.log('language_id-----------',language_id);
 			await this.db.query("INSERT INTO `" + DB_PREFIX + "product_description` SET `product_id` = '" + product_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + ", `description` = " + this.db.escape(value['description']) + ", `tag` = " + this.db.escape(value['tag']) + ", `meta_title` = " + this.db.escape(value['meta_title']) + ", `meta_description` = " + this.db.escape(value['meta_description']) + ", `meta_keyword` = " + this.db.escape(value['meta_keyword']) + "");
 		}
 
@@ -69,7 +69,7 @@ module.exports = class ProductCatalogModel extends Model {
 					await this.db.query("DELETE FROM `" + DB_PREFIX + "product_attribute` WHERE `product_id` = '" + product_id + "' AND `attribute_id` = '" + product_attribute['attribute_id'] + "'");
 
 					for (let [language_id, product_attribute_description] of Object.entries(product_attribute['product_attribute_description'])) {
-						language_id = language_id.split('-')[1];
+						language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 						await this.db.query("INSERT INTO `" + DB_PREFIX + "product_attribute` SET `product_id` = '" + product_id + "', `attribute_id` = '" + product_attribute['attribute_id'] + "', `language_id` = '" + language_id + "', `text` = " + this.db.escape(product_attribute_description['text']) + "");
 					}
 				}
@@ -139,9 +139,9 @@ module.exports = class ProductCatalogModel extends Model {
 		// SEO URL
 		if ((data['product_seo_url'])) {
 			for (let [store_id, language] of Object.entries(data['product_seo_url'])) {
-				store_id = store_id.split('-')[1];
+				store_id = store_id.indexOf('store') >= 0 ? store_id.split('-')[1] : store_id;
 				for (let [language_id, keyword] of Object.entries(language)) {
-					language_id = language_id.split('-')[1];
+					language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 					await this.db.query("INSERT INTO `" + DB_PREFIX + "seo_url` SET `store_id` = '" + store_id + "', `language_id` = '" + language_id + "', `key` = 'product_id', `value` = '" + product_id + "', `keyword` = " + this.db.escape(keyword) + "");
 				}
 			}
@@ -150,7 +150,7 @@ module.exports = class ProductCatalogModel extends Model {
 		// Layout
 		if ((data['product_layout'])) {
 			for (let [store_id, layout_id] of Object.entries(data['product_layout'])) {
-				store_id = store_id.split('-')[1];
+				store_id = store_id.indexOf('store') >= 0 ? store_id.split('-')[1] : store_id;
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_to_layout` SET `product_id` = '" + product_id + "', `store_id` = '" + store_id + "', `layout_id` = '" + layout_id + "'");
 			}
 		}
@@ -177,7 +177,7 @@ module.exports = class ProductCatalogModel extends Model {
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_description` WHERE `product_id` = '" + product_id + "'");
 
 		for (let [language_id, value] of Object.entries(data['product_description'])) {
-			language_id = language_id.split('-')[1];
+			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 			await this.db.query("INSERT INTO `" + DB_PREFIX + "product_description` SET `product_id` = '" + product_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + ", `description` = " + this.db.escape(value['description']) + ", `tag` = " + this.db.escape(value['tag']) + ", `meta_title` = " + this.db.escape(value['meta_title']) + ", `meta_description` = " + this.db.escape(value['meta_description']) + ", `meta_keyword` = " + this.db.escape(value['meta_keyword']) + "");
 		}
 
@@ -241,7 +241,7 @@ module.exports = class ProductCatalogModel extends Model {
 					await this.db.query("DELETE FROM `" + DB_PREFIX + "product_attribute` WHERE `product_id` = '" + product_id + "' AND `attribute_id` = '" + product_attribute['attribute_id'] + "'");
 
 					for (let [language_id, product_attribute_description] of Object.entries(product_attribute['product_attribute_description'])) {
-						language_id = language_id.split('-')[1];
+						language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 						await this.db.query("INSERT INTO `" + DB_PREFIX + "product_attribute` SET `product_id` = '" + product_id + "', `attribute_id` = '" + product_attribute['attribute_id'] + "', `language_id` = '" + language_id + "', `text` = " + this.db.escape(product_attribute_description['text']) + "");
 					}
 				}
@@ -258,7 +258,7 @@ module.exports = class ProductCatalogModel extends Model {
 					if (product_option['product_option_value'] && product_option['product_option_value'].length) {
 						await this.db.query("INSERT INTO `" + DB_PREFIX + "product_option` SET `product_option_id` = '" + product_option['product_option_id'] + "', `product_id` = '" + product_id + "', `option_id` = '" + product_option['option_id'] + "', `required` = '" + product_option['required'] + "'");
 
-						product_option_id = this.db.getLastId();
+						let product_option_id = this.db.getLastId();
 
 						for (let product_option_value of product_option['product_option_value']) {
 							await this.db.query("INSERT INTO `" + DB_PREFIX + "product_option_value` SET `product_option_value_id` = '" + product_option_value['product_option_value_id'] + "', `product_option_id` = '" + product_option_id + "', `product_id` = '" + product_id + "', `option_id` = '" + product_option['option_id'] + "', `option_value_id` = '" + product_option_value['option_value_id'] + "', `quantity` = '" + product_option_value['quantity'] + "', `subtract` = '" + product_option_value['subtract'] + "', `price` = '" + product_option_value['price'] + "', `price_prefix` = " + this.db.escape(product_option_value['price_prefix']) + ", `points` = '" + product_option_value['points'] + "', `points_prefix` = " + this.db.escape(product_option_value['points_prefix']) + ", `weight` = '" + product_option_value['weight'] + "', `weight_prefix` = " + this.db.escape(product_option_value['weight_prefix']) + "");
@@ -326,9 +326,9 @@ module.exports = class ProductCatalogModel extends Model {
 
 		if ((data['product_seo_url'])) {
 			for (let [store_id, language] of Object.entries(data['product_seo_url'])) {
-				store_id = store_id.split('-')[1];
+				store_id = store_id.indexOf('store') >= 0 ? store_id.split('-')[1] : store_id;
 				for (let [language_id, keyword] of Object.entries(language)) {
-					language_id = language_id.split('-')[1];
+					language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 					await this.db.query("INSERT INTO `" + DB_PREFIX + "seo_url` SET `store_id` = '" + store_id + "', `language_id` = '" + language_id + "', `key` = 'product_id', `value` = '" + product_id + "', `keyword` = " + this.db.escape(keyword) + "");
 				}
 			}
@@ -339,7 +339,7 @@ module.exports = class ProductCatalogModel extends Model {
 
 		if ((data['product_layout'])) {
 			for (let [store_id, layout_id] of Object.entries(data['product_layout'])) {
-				store_id = store_id.split('-')[1];
+				store_id = store_id.indexOf('store') >= 0 ? store_id.split('-')[1] : store_id;
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_to_layout` SET `product_id` = '" + product_id + "', `store_id` = '" + store_id + "', `layout_id` = '" + layout_id + "'");
 			}
 		}
@@ -543,7 +543,7 @@ module.exports = class ProductCatalogModel extends Model {
 		// Product Description
 		if ((data['product_description'])) {
 			for (let [language_id, product_description] of Object.entries(data['product_description'])) {
-				language_id = language_id.split('-')[1];
+				language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 				for (let [key, value] of Object.entries(product_description)) {
 					if ((product_data['product_description'] && product_data['product_description'][language_id] && !product_data['product_description'][language_id][key]) || (product_data['product_description'] && !product_data['product_description'][language_id]) || !product_data['product_description']) {
 						product_data['product_description'][language_id] = product_data['product_description'][language_id] || {};
@@ -681,7 +681,7 @@ module.exports = class ProductCatalogModel extends Model {
 		// Product Description
 		if ((data['product_description'])) {
 			for (let [language_id, product_description] of Object.entries(data['product_description'])) {
-				language_id = language_id.split('-')[1];
+				language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 				for (let [key, value] of Object.entries(product_description)) {
 					if ((product_data['product_description'] && product_data['product_description'][language_id] && !product_data['product_description'][language_id][key]) || (product_data['product_description'] && !product_data['product_description'][language_id]) || !product_data['product_description']) {
 						product_data['product_description'][language_id] = product_data['product_description'][language_id] || {};
@@ -712,8 +712,8 @@ module.exports = class ProductCatalogModel extends Model {
 			const product_data = {};
 
 			// We need to convert JSON strings back into an array so they can be re-encoded to a to go back into the database.
-			product['override'] =product['override']? JSON.parse(product['override']):{};
-			product['variant'] = product['variant']?JSON.parse(product['variant']):{};
+			product['override'] = product['override'] ? JSON.parse(product['override']) : {};
+			product['variant'] = product['variant'] ? JSON.parse(product['variant']) : {};
 
 			// We use the override to override the master product values
 			let override = {};
@@ -822,11 +822,11 @@ module.exports = class ProductCatalogModel extends Model {
 			// Descriptions
 			if ((data['product_description'])) {
 				for (let [language_id, product_description] of Object.entries(data['product_description'])) {
-					language_id = language_id.split('-')[1];
+					language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 					for (let [key, value] of Object.entries(product_description)) {
 						// If override set use the POST data values
 						if ((product_data['product_description'] && product_data['product_description'][language_id] && !product_data['product_description'][language_id][key]) || (product_data['product_description'] && !product_data['product_description'][language_id]) || !product_data['product_description']) {
-							product_data['product_description'][language_id] = product_data['product_description'][language_id]||{};
+							product_data['product_description'][language_id] = product_data['product_description'][language_id] || {};
 							product_data['product_description'][language_id][key] = value;
 						}
 					}
@@ -879,14 +879,14 @@ module.exports = class ProductCatalogModel extends Model {
 		}
 
 		if ((data['filter_price'])) {
-			sql += " AND p.`price` LIKE " + this.db.escape(data['filter_price'] + '%');
+			sql += " AND p.`price` = " + data['filter_price'];
 		}
 
 		if ((data['filter_quantity']) && data['filter_quantity'] !== '') {
 			sql += " AND p.`quantity` = '" + data['filter_quantity'] + "'";
 		}
 
-		if (data['filter_status'] && data['filter_status'] !== '') {
+		if (typeof data['filter_status'] != 'undefined' && data['filter_status'] !== '') {
 			sql += " AND p.`status` = '" + data['filter_status'] + "'";
 		}
 
@@ -926,7 +926,7 @@ module.exports = class ProductCatalogModel extends Model {
 
 			sql += " LIMIT " + data['start'] + "," + data['limit'];
 		}
-
+		// console.log(sql)
 		let query = await this.db.query(sql);
 
 		return query.rows;
@@ -1210,7 +1210,7 @@ module.exports = class ProductCatalogModel extends Model {
 	 * @return array
 	 */
 	async getRelated(product_id) {
-		product_related_data = [];
+		let product_related_data = [];
 
 		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_related` WHERE `product_id` = '" + product_id + "'");
 
@@ -1253,14 +1253,14 @@ module.exports = class ProductCatalogModel extends Model {
 		}
 
 		if ((data['filter_price']) && data['filter_price'] !== '') {
-			sql += " AND p.`price` LIKE " + this.db.escape(data['filter_price'] + '%');
+			sql += " AND p.`price` = " + data['filter_price'];
 		}
 
 		if ((data['filter_quantity']) && data['filter_quantity'] !== '') {
 			sql += " AND p.`quantity` = '" + data['filter_quantity'] + "'";
 		}
 
-		if (data['filter_status'] && data['filter_status'] !== '') {
+		if (typeof data['filter_status'] != 'undefined' && data['filter_status'] !== '') {
 			sql += " AND p.`status` = '" + data['filter_status'] + "'";
 		}
 

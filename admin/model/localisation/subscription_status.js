@@ -10,7 +10,7 @@ module.exports = class SubscriptionStatusLocalisationModel extends Model {
 	async addSubscriptionStatus(data) {
 		let subscription_status_id = 0;
 		for (let [language_id, value] of Object.entries(data['subscription_status'])) {
-			language_id = language_id.split('-')[1];
+			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 			if ((subscription_status_id)) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "subscription_status` SET `subscription_status_id` = '" + subscription_status_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + "");
 			} else {
@@ -35,7 +35,7 @@ module.exports = class SubscriptionStatusLocalisationModel extends Model {
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "subscription_status` WHERE `subscription_status_id` = '" + subscription_status_id + "'");
 
 		for (let [language_id, value] of Object.entries(data['subscription_status'])) {
-			language_id = language_id.split('-')[1];
+			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 			await this.db.query("INSERT INTO `" + DB_PREFIX + "subscription_status` SET `subscription_status_id` = '" + subscription_status_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + "");
 		}
 

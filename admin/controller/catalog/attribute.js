@@ -1,8 +1,11 @@
+const sprintf = require("locutus/php/strings/sprintf");
+
 module.exports = class AttributeController extends Controller {
 	/**
 	 * @return void
 	 */
 	async index() {
+		const data = {};
 		await this.load.language('catalog/attribute');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -24,13 +27,13 @@ module.exports = class AttributeController extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('text_home'),
+			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('catalog/attribute', 'user_token=' + this.session.data['user_token'] + url)
+			'text': this.language.get('heading_title'),
+			'href': this.url.link('catalog/attribute', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
 		data['add'] = this.url.link('catalog/attribute.form', 'user_token=' + this.session.data['user_token'] + url);
@@ -60,15 +63,15 @@ module.exports = class AttributeController extends Controller {
 	 * @return string
 	 */
 	async getList() {
-		if ((this.request.get['sort'])) {
+		const data = {};
+		let sort = 'ad.name';
+		if (this.request.get['sort']) {
 			sort = this.request.get['sort'];
-		} else {
-			sort = 'ad.name';
 		}
 
-		let order= 'ASC';
+		let order = 'ASC';
 		if ((this.request.get['order'])) {
-			order= this.request.get['order'];
+			order = this.request.get['order'];
 		}
 
 		let page = 1;
@@ -95,29 +98,29 @@ module.exports = class AttributeController extends Controller {
 		data['attributes'] = [];
 
 		let filter_data = {
-			'sort'  : sort,
-			'order' : order,
-			'start' : (page - 1) * this.config.get('config_pagination_admin'),
-			'limit' : this.config.get('config_pagination_admin')
-		});
+			'sort': sort,
+			'order': order,
+			'start': (page - 1) * this.config.get('config_pagination_admin'),
+			'limit': this.config.get('config_pagination_admin')
+		};
 
-		this.load.model('catalog/attribute',this);
+		this.load.model('catalog/attribute', this);
 
-		attribute_total await this.model_catalog_attribute.getTotalAttributes();
+		const attribute_total = await this.model_catalog_attribute.getTotalAttributes();
 
 		const results = await this.model_catalog_attribute.getAttributes(filter_data);
 
 		for (let result of results) {
 			data['attributes'].push({
-				'attribute_id'    : result['attribute_id'],
-				'name'            : result['name'],
-				'attribute_group' : result['attribute_group'],
-				'sort_order'      : result['sort_order'],
-				'edit'            : this.url.link('catalog/attribute.form', 'user_token=' + this.session.data['user_token'] + '&attribute_id=' + result['attribute_id'] + url)
-			];
+				'attribute_id': result['attribute_id'],
+				'name': result['name'],
+				'attribute_group': result['attribute_group'],
+				'sort_order': result['sort_order'],
+				'edit': this.url.link('catalog/attribute.form', 'user_token=' + this.session.data['user_token'] + '&attribute_id=' + result['attribute_id'] + url)
+			});
 		}
 
-		let url = '';
+		url = '';
 
 		if (order == 'ASC') {
 			url += '&order=DESC';
@@ -129,7 +132,7 @@ module.exports = class AttributeController extends Controller {
 		data['sort_attribute_group'] = this.url.link('catalog/attribute.list', 'user_token=' + this.session.data['user_token'] + '&sort=attribute_group' + url);
 		data['sort_sort_order'] = this.url.link('catalog/attribute.list', 'user_token=' + this.session.data['user_token'] + '&sort=a.sort_order' + url);
 
-		let url = '';
+		url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -140,11 +143,11 @@ module.exports = class AttributeController extends Controller {
 		}
 
 		data['pagination'] = await this.load.controller('common/pagination', {
-			'total' : attribute_total,
-			'page'  : page,
-			'limit' : this.config.get('config_pagination_admin'),
-			'url'   : this.url.link('catalog/attribute.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
-		]);
+			'total': attribute_total,
+			'page': page,
+			'limit': this.config.get('config_pagination_admin'),
+			'url': this.url.link('catalog/attribute.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
+		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (attribute_total) ? ((page - 1) * this.config.get('config_pagination_admin')) + 1 : 0, (((page - 1) * this.config.get('config_pagination_admin')) > (attribute_total - this.config.get('config_pagination_admin'))) ? attribute_total : (((page - 1) * this.config.get('config_pagination_admin')) + this.config.get('config_pagination_admin')), attribute_total, Math.ceil(attribute_total / this.config.get('config_pagination_admin')));
 
@@ -158,6 +161,7 @@ module.exports = class AttributeController extends Controller {
 	 * @return void
 	 */
 	async form() {
+		const data = {};
 		await this.load.language('catalog/attribute');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -181,22 +185,22 @@ module.exports = class AttributeController extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('text_home'),
+			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('catalog/attribute', 'user_token=' + this.session.data['user_token'] + url)
+			'text': this.language.get('heading_title'),
+			'href': this.url.link('catalog/attribute', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
 		data['save'] = this.url.link('catalog/attribute.save', 'user_token=' + this.session.data['user_token']);
 		data['back'] = this.url.link('catalog/attribute', 'user_token=' + this.session.data['user_token'] + url);
-
+		let attribute_info;
 		if ((this.request.get['attribute_id'])) {
-			this.load.model('catalog/attribute',this);
+			this.load.model('catalog/attribute', this);
 
-			attribute_info await this.model_catalog_attribute.getAttribute(this.request.get['attribute_id']);
+			attribute_info = await this.model_catalog_attribute.getAttribute(this.request.get['attribute_id']);
 		}
 
 		if ((this.request.get['attribute_id'])) {
@@ -205,7 +209,7 @@ module.exports = class AttributeController extends Controller {
 			data['attribute_id'] = 0;
 		}
 
-		this.load.model('localisation/language',this);
+		this.load.model('localisation/language', this);
 
 		data['languages'] = await this.model_localisation_language.getLanguages();
 
@@ -215,7 +219,7 @@ module.exports = class AttributeController extends Controller {
 			data['attribute_description'] = [];
 		}
 
-		this.load.model('catalog/attribute_group');
+		this.load.model('catalog/attribute_group', this);
 
 		data['attribute_groups'] = await this.model_catalog_attribute_group.getAttributeGroups();
 
@@ -246,7 +250,7 @@ module.exports = class AttributeController extends Controller {
 	async save() {
 		await this.load.language('catalog/attribute');
 
-		const json = {};
+		const json = { error: {} };
 
 		if (!await this.user.hasPermission('modify', 'catalog/attribute')) {
 			json['error']['warning'] = this.language.get('error_permission');
@@ -256,7 +260,7 @@ module.exports = class AttributeController extends Controller {
 			json['error']['attribute_group'] = this.language.get('error_attribute_group');
 		}
 
-		for (this.request.post['attribute_description'] of language_id : value) {
+		for (let [language_id, value] of Object.entries(this.request.post['attribute_description'])) {
 			if ((oc_strlen(trim(value['name'])) < 1) || (oc_strlen(value['name']) > 64)) {
 				json['error']['name_' + language_id] = this.language.get('error_name');
 			}
@@ -265,9 +269,9 @@ module.exports = class AttributeController extends Controller {
 		if (Object.keys(json['error']).length && !(json['error']['warning'])) {
 			json['error']['warning'] = this.language.get('error_warning');
 		}
-
-		if (!Object.keys(json).length) {
-			this.load.model('catalog/attribute',this);
+		this.request.post['attribute_id'] = Number(this.request.post['attribute_id']);
+		if (!Object.keys(json.error).length) {
+			this.load.model('catalog/attribute', this);
 
 			if (!this.request.post['attribute_id']) {
 				json['attribute_id'] = await this.model_catalog_attribute.addAttribute(this.request.post);
@@ -291,7 +295,7 @@ module.exports = class AttributeController extends Controller {
 		const json = {};
 
 		let selected = [];
-                 if ((this.request.post['selected'])) {
+		if ((this.request.post['selected'])) {
 			selected = this.request.post['selected'];
 		}
 
@@ -299,7 +303,7 @@ module.exports = class AttributeController extends Controller {
 			json['error'] = this.language.get('error_permission');
 		}
 
-		this.load.model('catalog/product',this);
+		this.load.model('catalog/product', this);
 
 		for (let attribute_id of selected) {
 			const product_total = await this.model_catalog_product.getTotalProductsByAttributeId(attribute_id);
@@ -310,7 +314,7 @@ module.exports = class AttributeController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('catalog/attribute',this);
+			this.load.model('catalog/attribute', this);
 
 			for (let attribute_id of selected) {
 				await this.model_catalog_attribute.deleteAttribute(attribute_id);
@@ -330,32 +334,34 @@ module.exports = class AttributeController extends Controller {
 		const json = {};
 
 		if ((this.request.get['filter_name'])) {
-			this.load.model('catalog/attribute',this);
+			this.load.model('catalog/attribute', this);
 
 			let filter_data = {
-				'filter_name' : this.request.get['filter_name'],
-				'start'       : 0,
-				'limit'       : 5
-			];
+				'filter_name': this.request.get['filter_name'],
+				'start': 0,
+				'limit': 5
+			};
 
 			const results = await this.model_catalog_attribute.getAttributes(filter_data);
 
 			for (let result of results) {
 				json.push({
-					'attribute_id'    : result['attribute_id'],
-					'name'            : strip_tags(html_entity_decode(result['name'])),
-					'attribute_group' : result['attribute_group']
-				];
+					'attribute_id': result['attribute_id'],
+					'name': strip_tags(html_entity_decode(result['name'])),
+					'attribute_group': result['attribute_group']
+				});
 			}
 		}
 
-		sort_order = [];
+		let sort_order = [];
 
-		for (let [key , value] of json) {
+		for (let [key, value] of Object(json)) {
 			sort_order[key] = value['name'];
 		}
 
-		json= multiSort(json,sort_order,'ASC');
+		// json = multiSort(json, sort_order, 'ASC');
+		json = json.sort((a,b)=>a.name-b.name);
+
 
 		this.response.addHeader('Content-Type: application/json');
 		this.response.setOutput(json);

@@ -46,7 +46,7 @@ class GdprModel  extends Model {
 			implode.push("`action` = '" + this.db.escape(data['filter_action']) + "'";
 		}
 
-		if (data['filter_status'] && data['filter_status'] !== '') {
+		if (typeof data['filter_status'] != 'undefined' && data['filter_status'] !== '') {
 			implode.push("`status` = '" + data['filter_status'] + "'";
 		}
 
@@ -112,7 +112,7 @@ if (data['limit'] < 1) {
 			implode.push("`action` = '" + this.db.escape(data['filter_action']) + "'";
 		}
 
-		if (data['filter_status'] && data['filter_status'] !== '') {
+		if (typeof data['filter_status'] != 'undefined' && data['filter_status'] !== '') {
 			implode.push("`status` = '" + data['filter_status'] + "'";
 		}
 

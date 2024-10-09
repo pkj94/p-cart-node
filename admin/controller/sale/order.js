@@ -927,7 +927,7 @@ class OrderController extends Controller {
 
 		// Addresses
 		if ((order_info)) {
-			this.load.model('customer/customer');
+			this.load.model('customer/customer',this);
 
 			data['addresses'] = await this.model_customer_customer.getAddresses(order_info['customer_id']);
 		} else {
@@ -1852,7 +1852,7 @@ class OrderController extends Controller {
 			json['error'] = this.language.get('error_order');
 		}
 
-		this.load.model('customer/customer');
+		this.load.model('customer/customer',this);
 
 		reward_total await this.model_customer_customer.getTotalRewardsByOrderId(order_id);
 
@@ -1897,7 +1897,7 @@ class OrderController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('customer/customer');
+			this.load.model('customer/customer',this);
 
 			await this.model_customer_customer.deleteReward(order_id);
 
@@ -1931,7 +1931,7 @@ class OrderController extends Controller {
 		order_info await this.model_sale_order.getOrder(order_id);
 
 		if (order_info) {
-			this.load.model('customer/customer');
+			this.load.model('customer/customer',this);
 
 			customer_info await this.model_customer_customer.getCustomer(order_info['affiliate_id']);
 
@@ -1985,7 +1985,7 @@ class OrderController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('customer/customer');
+			this.load.model('customer/customer',this);
 
 			await this.model_customer_customer.deleteTransactionByOrderId(order_id);
 

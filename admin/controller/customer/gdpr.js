@@ -71,8 +71,8 @@ class GdprController extends Controller {
 		}
 
 		let filter_status = '';
-if ((this.request.get['filter_status '])) {
-			filter_status = this.request.get['filter_status '];
+if (typeof this.request.get['filter_status'] != 'undefined' && this.request.get['filter_status'] !== '') {
+			filter_status = this.request.get['filter_status'];
 		}
 
 		if ((this.request.get['filter_date_from'])) {
@@ -129,7 +129,7 @@ if ((this.request.get['filter_status '])) {
 		});
 
 		this.load.model('customer/gdpr');
-		this.load.model('customer/customer');
+		this.load.model('customer/customer',this);
 
 		gdpr_total await this.model_customer_gdpr.getTotalGdprs(filter_data);
 

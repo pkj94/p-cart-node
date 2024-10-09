@@ -459,7 +459,7 @@ if ((this.request.get['filter_name'])) {
 	async report() {
 		await this.load.language('marketing/marketing');
 
-		this.response.setOutput(this.getReport());
+		this.response.setOutput(await this.getReport());
 	}
 
 	/**
@@ -483,7 +483,7 @@ if ((this.request.get['filter_name'])) {
 		data['reports'] = [];
 
 		this.load.model('marketing/marketing');
-		this.load.model('customer/customer');
+		this.load.model('customer/customer',this);
 		this.load.model('setting/store',this);
 
 		const results = await this.model_marketing_marketing.getReports(marketing_id, (page - 1) * limit, limit);

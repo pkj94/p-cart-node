@@ -31,7 +31,7 @@ class ArticleModel  extends Model {
 
 		for (data['article_seo_url'] of store_id : language) {
 			for (let [language_id , keyword] of language ) {
-				language_id = language_id.split('-')[1];
+				language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "seo_url` SET `store_id` = '" + store_id + "', `language_id` = '" + language_id + "', `key` = 'article_id', `value`= '" + article_id + "', `keyword` = " + this.db.escape(keyword) + "");
 			}
 		}
@@ -75,7 +75,7 @@ class ArticleModel  extends Model {
 
 		for (data['article_seo_url'] of store_id : language) {
 			for (let [language_id , keyword] of language ) {
-				language_id = language_id.split('-')[1];
+				language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "seo_url` SET `store_id` = '" + store_id + "', `language_id` = '" + language_id + "', `key` = 'article_id', `value` = '" + article_id + "', `keyword` = " + this.db.escape(keyword) + "");
 			}
 		}

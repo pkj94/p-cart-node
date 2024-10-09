@@ -22,7 +22,7 @@ module.exports = class AttributeCatalogModel extends Model {
 		const attribute_id = this.db.getLastId();
 
 		for (let [language_id,  value] of Object.entries(data['attribute_description'])) {
-			language_id = language_id.split('-')[1];
+			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 			await this.db.query("INSERT INTO `" + DB_PREFIX + "attribute_description` SET `attribute_id` = '" + attribute_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + "");
 		}
 
@@ -53,7 +53,7 @@ module.exports = class AttributeCatalogModel extends Model {
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "attribute_description` WHERE `attribute_id` = '" + attribute_id + "'");
 
 		for (let [language_id,  value] of Object.entries(data['attribute_description'])) {
-			language_id = language_id.split('-')[1];
+			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 			await this.db.query("INSERT INTO `" + DB_PREFIX + "attribute_description` SET `attribute_id` = '" + attribute_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + "");
 		}
 	}

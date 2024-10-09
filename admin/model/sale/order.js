@@ -52,7 +52,7 @@ module.exports = class OrderSaleModel extends Model {
 				reward += product['reward'];
 			}
 
-			this.load.model('customer/customer');
+			this.load.model('customer/customer',this);
 
 			let affiliate_info = await this.model_customer_customer.getCustomer(order_query.row['affiliate_id']);
 

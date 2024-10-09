@@ -51,7 +51,7 @@ module.exports = class NotificationToolModel  extends Model {
 	async getNotifications(data = {}) {
 		let sql = "SELECT * FROM `" + DB_PREFIX + "notification`";
 
-		if (data['filter_status'] && data['filter_status'] !== '') {
+		if (typeof data['filter_status'] != 'undefined' && data['filter_status'] !== '') {
 			sql += " WHERE `status` = '" + data['filter_status'] + "'";
 		}
 
@@ -84,7 +84,7 @@ if (data['limit'] < 1) {
 	async getTotalNotifications(data = {}) {
 		let sql = "SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "notification`";
 
-		if (data['filter_status'] && data['filter_status'] !== '') {
+		if (typeof data['filter_status'] != 'undefined' && data['filter_status'] !== '') {
 			sql += " WHERE `status` = '" + data['filter_status'] + "'";
 		}
 

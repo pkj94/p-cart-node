@@ -97,7 +97,7 @@ class GdprController extends Controller {
 			data['logo'] = '';
 		}
 
-		this.load.model('customer/customer');
+		this.load.model('customer/customer',this);
 
 		customer_info await this.model_customer_customer.getCustomerByEmail(gdpr_info['email']);
 
@@ -275,7 +275,7 @@ class GdprController extends Controller {
 			data['logo'] = '';
 		}
 
-		this.load.model('customer/customer');
+		this.load.model('customer/customer',this);
 
 		customer_info await this.model_customer_customer.getCustomerByEmail(gdpr_info['email']);
 
@@ -368,7 +368,7 @@ class GdprController extends Controller {
 
 		data['text_request'] = this.language.get('mail_text_' + gdpr_info['action']);
 
-		this.load.model('customer/customer');
+		this.load.model('customer/customer',this);
 
 		customer_info await this.model_customer_customer.getCustomerByEmail(gdpr_info['email']);
 
@@ -457,7 +457,7 @@ class GdprController extends Controller {
 			data['logo'] = '';
 		}
 
-		this.load.model('customer/customer');
+		this.load.model('customer/customer',this);
 
 		customer_info await this.model_customer_customer.getCustomerByEmail(gdpr_info['email']);
 

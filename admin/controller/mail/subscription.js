@@ -66,7 +66,7 @@ class SubscriptionController extends Controller {
 
                     if (subscription_status_info) {
                         // Customers
-                        this.load.model('customer/customer');
+                        this.load.model('customer/customer',this);
 
                         // Customer payment
                         customer_payment_info await this.model_customer_customer.getPaymentMehod(subscription['customer_id'], subscription['customer_payment_id']);

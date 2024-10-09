@@ -101,7 +101,7 @@ module.exports = class ReviewCatalogModel extends Model {
 			sql += " AND r.`author` LIKE " + this.db.escape(data['filter_author'] + '%');
 		}
 
-		if (data['filter_status'] && data['filter_status'] !== '') {
+		if (typeof data['filter_status'] != 'undefined' && data['filter_status'] !== '') {
 			sql += " AND r.`status` = '" + data['filter_status'] + "'";
 		}
 
@@ -168,7 +168,7 @@ module.exports = class ReviewCatalogModel extends Model {
 			sql += " AND r.`author` LIKE " + this.db.escape(data['filter_author'] + '%');
 		}
 
-		if (data['filter_status'] && data['filter_status'] !== '') {
+		if (typeof data['filter_status'] != 'undefined' && data['filter_status'] !== '') {
 			sql += " AND r.`status` = '" + data['filter_status'] + "'";
 		}
 

@@ -296,7 +296,7 @@ module.exports = class InformationController extends Controller {
 		}
 
 		for (let [language_id, value] of this.request.post['information_description']) {
-			language_id = language_id.split('-')[1];
+			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 			if ((oc_strlen(trim(value['title'])) < 1) || (oc_strlen(value['title']) > 64)) {
 				json['error']['title_' + language_id] = this.language.get('error_title');
 			}
@@ -310,9 +310,9 @@ module.exports = class InformationController extends Controller {
 			this.load.model('design/seo_url', this);
 
 			for (let [store_id, language] of this.request.post['information_seo_url']) {
-				store_id = store_id.split('-')[1];
-				for (let [language_id, keyword] of language) {
-					language_id = language_id.split('-')[1];
+				store_id = store_id.indexOf('store') >= 0 ? store_id.split('-')[1] : store_id;
+				for (let [language_id, keyword] of Object.entries(language)) {
+					language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 					if ((oc_strlen(trim(keyword)) < 1) || (oc_strlen(keyword) > 64)) {
 						json['error']['keyword_' + store_id + '_' + language_id] = this.language.get('error_keyword');
 					}
@@ -333,7 +333,7 @@ module.exports = class InformationController extends Controller {
 		if (Object.keys(json['error']).length && !(json['error']['warning'])) {
 			json['error']['warning'] = this.language.get('error_warning');
 		}
-
+		this.request.post['information_id'] = Number(this.request.post['information_id']);
 		if (!Object.keys(json).length) {
 			this.load.model('catalog/information');
 

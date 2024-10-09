@@ -121,7 +121,7 @@ module.exports = class CustomerCustomerModel extends Model {
 			sql += " AND c.`customer_id` IN (SELECT `customer_id` FROM `" + DB_PREFIX + "customer_ip` WHERE `ip` = " + this.db.escape(data['filter_ip']) + ")";
 		}
 
-		if (data['filter_status'] && data['filter_status'] !== '') {
+		if (typeof data['filter_status'] != 'undefined' && data['filter_status'] !== '') {
 			sql += " AND c.`status` = '" + data['filter_status'] + "'";
 		}
 
@@ -203,7 +203,7 @@ if (data['limit'] < 1) {
 			implode.push("c.`customer_id` IN (SELECT `customer_id` FROM " + DB_PREFIX + "customer_ip WHERE `ip` = " + this.db.escape(data['filter_ip']) + ")");
 		}
 
-		if (data['filter_status'] && data['filter_status'] !== '') {
+		if (typeof data['filter_status'] != 'undefined' && data['filter_status'] !== '') {
 			implode.push("c.`status` = '" + data['filter_status'] + "'");
 		}
 

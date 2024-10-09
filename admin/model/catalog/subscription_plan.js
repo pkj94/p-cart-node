@@ -11,9 +11,8 @@ module.exports = class SubscriptionPlanCatalogModel extends Model {
 		await this.db.query("INSERT INTO `" + DB_PREFIX + "subscription_plan` SET `trial_frequency` = " + this.db.escape(data['trial_frequency']) + ", `trial_duration` = '" + data['trial_duration'] + "', `trial_cycle` = '" + data['trial_cycle'] + "', `trial_status` = '" + data['trial_status'] + "', `frequency` = " + this.db.escape(data['frequency']) + ", `duration` = '" + data['duration'] + "', `cycle` = '" + data['cycle'] + "', `status` = '" + (data['status'] ? data['status'] : 0) + "', `sort_order` = '" + data['sort_order'] + "'");
 
 		const subscription_plan_id = this.db.getLastId();
-
 		for (let [language_id, subscription_plan_description] of Object.entries(data['subscription_plan_description'])) {
-			language_id = language_id.split('-')[1];
+			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 			await this.db.query("INSERT INTO `" + DB_PREFIX + "subscription_plan_description` SET `subscription_plan_id` = '" + subscription_plan_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(subscription_plan_description['name']));
 		}
 
@@ -32,7 +31,7 @@ module.exports = class SubscriptionPlanCatalogModel extends Model {
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "subscription_plan_description` WHERE `subscription_plan_id` = '" + subscription_plan_id + "'");
 
 		for (let [language_id, subscription_plan_description] of Object.entries(data['subscription_plan_description'])) {
-			language_id = language_id.split('-')[1];
+			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 			await this.db.query("INSERT INTO `" + DB_PREFIX + "subscription_plan_description` SET `subscription_plan_id` = '" + subscription_plan_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(subscription_plan_description['name']));
 		}
 	}

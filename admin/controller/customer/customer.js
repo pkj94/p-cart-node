@@ -32,8 +32,8 @@ if ((this.request.get['filter_name'])) {
 		}
 
 		let filter_status = '';
-if ((this.request.get['filter_status '])) {
-			filter_status = this.request.get['filter_status '];
+if (typeof this.request.get['filter_status'] != 'undefined' && this.request.get['filter_status'] !== '') {
+			filter_status = this.request.get['filter_status'];
 		}
 
 		if ((this.request.get['filter_ip'])) {
@@ -268,7 +268,7 @@ if ((this.request.get['filter_name'])) {
 			'limit'                    : this.config.get('config_pagination_admin')
 		});
 
-		this.load.model('customer/customer');
+		this.load.model('customer/customer',this);
 
 		customer_total await this.model_customer_customer.getTotalCustomers(filter_data);
 
@@ -488,7 +488,7 @@ if ((this.request.get['filter_name'])) {
 		}
 
 		if ((this.request.get['customer_id'])) {
-			this.load.model('customer/customer');
+			this.load.model('customer/customer',this);
 
 			customer_info await this.model_customer_customer.getCustomer(this.request.get['customer_id']);
 		}
@@ -658,7 +658,7 @@ if ((this.request.get['filter_name'])) {
 			json['error']['email'] = this.language.get('error_email');
 		}
 
-		this.load.model('customer/customer');
+		this.load.model('customer/customer',this);
 
 		customer_info await this.model_customer_customer.getCustomerByEmail(this.request.post['email']);
 
@@ -783,7 +783,7 @@ if ((this.request.get['filter_name'])) {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('customer/customer');
+			this.load.model('customer/customer',this);
 
 			await this.model_customer_customer.deleteAuthorizeAttempts(this.request.get['email']);
 
@@ -812,7 +812,7 @@ if ((this.request.get['filter_name'])) {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('customer/customer');
+			this.load.model('customer/customer',this);
 
 			for (let customer_id of selected) {
 				await this.model_customer_customer.deleteCustomer(customer_id);
@@ -835,7 +835,7 @@ if ((this.request.get['filter_name'])) {
 			customer_id = 0;
 		}
 
-		this.load.model('customer/customer');
+		this.load.model('customer/customer',this);
 
 		customer_info await this.model_customer_customer.getCustomer(customer_id);
 
@@ -879,7 +879,7 @@ if ((this.request.get['filter_name'])) {
 	/**
 	 * @return string
 	 */
-	private function getPayment() {
+	async getPayment() {
 		if ((this.request.get['customer_id'])) {
 			customer_id = this.request.get['customer_id'];
 		} else {
@@ -896,7 +896,7 @@ if ((this.request.get['filter_name'])) {
 
 		data['payment_methods'] = [];
 
-		this.load.model('customer/customer');
+		this.load.model('customer/customer',this);
 
 		const results = await this.model_customer_customer.getPaymentMethods(customer_id, (page - 1) * limit, limit);
 
@@ -951,7 +951,7 @@ if ((this.request.get['filter_name'])) {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('customer/customer');
+			this.load.model('customer/customer',this);
 
 			await this.model_customer_customer.deletePaymentMethod(customer_payment_id);
 
@@ -991,7 +991,7 @@ if ((this.request.get['filter_name'])) {
 
 		data['histories'] = [];
 
-		this.load.model('customer/customer');
+		this.load.model('customer/customer',this);
 
 		const results = await this.model_customer_customer.getHistories(customer_id, (page - 1) * limit, limit);
 
@@ -1035,7 +1035,7 @@ if ((this.request.get['filter_name'])) {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('customer/customer');
+			this.load.model('customer/customer',this);
 
 			await this.model_customer_customer.addHistory(customer_id, this.request.post['comment']);
 
@@ -1075,7 +1075,7 @@ if ((this.request.get['filter_name'])) {
 
 		data['transactions'] = [];
 
-		this.load.model('customer/customer');
+		this.load.model('customer/customer',this);
 
 		const results = await this.model_customer_customer.getTransactions(customer_id, (page - 1) * limit, limit);
 
@@ -1121,7 +1121,7 @@ if ((this.request.get['filter_name'])) {
 			json['error'] = this.language.get('error_permission');
 		}
 
-		this.load.model('customer/customer');
+		this.load.model('customer/customer',this);
 
 		customer_info await this.model_customer_customer.getCustomer(customer_id);
 
@@ -1130,7 +1130,7 @@ if ((this.request.get['filter_name'])) {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('customer/customer');
+			this.load.model('customer/customer',this);
 
 			await this.model_customer_customer.addTransaction(customer_id, this.request.post['description'], (float)this.request.post['amount']);
 
@@ -1170,7 +1170,7 @@ if ((this.request.get['filter_name'])) {
 
 		data['rewards'] = [];
 
-		this.load.model('customer/customer');
+		this.load.model('customer/customer',this);
 
 		const results = await this.model_customer_customer.getRewards(customer_id, (page - 1) * limit, limit);
 
@@ -1216,7 +1216,7 @@ if ((this.request.get['filter_name'])) {
 			json['error'] = this.language.get('error_permission');
 		}
 
-		this.load.model('customer/customer');
+		this.load.model('customer/customer',this);
 
 		customer_info await this.model_customer_customer.getCustomer(customer_id);
 
@@ -1225,7 +1225,7 @@ if ((this.request.get['filter_name'])) {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('customer/customer');
+			this.load.model('customer/customer',this);
 
 			await this.model_customer_customer.addReward(customer_id, this.request.post['description'], this.request.post['points']);
 
@@ -1265,7 +1265,7 @@ if ((this.request.get['filter_name'])) {
 
 		data['ips'] = [];
 
-		this.load.model('customer/customer');
+		this.load.model('customer/customer',this);
 		this.load.model('setting/store',this);
 
 		const results = await this.model_customer_customer.getIps(customer_id, (page - 1) * limit, limit);
@@ -1331,7 +1331,7 @@ if ((this.request.get['filter_name'])) {
 				'limit'            : 5
 			];
 
-			this.load.model('customer/customer');
+			this.load.model('customer/customer',this);
 
 			const results = await this.model_customer_customer.getCustomers(filter_data);
 
@@ -1377,7 +1377,7 @@ if ((this.request.get['filter_name'])) {
 			address_id = 0;
 		}
 
-		this.load.model('customer/customer');
+		this.load.model('customer/customer',this);
 
 		address_info await this.model_customer_customer.getAddress(address_id);
 

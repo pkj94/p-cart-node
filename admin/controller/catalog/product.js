@@ -19,8 +19,8 @@ module.exports = class ProductController extends Controller {
 		}
 
 		let filter_model = '';
-		if ((this.request.get['filter_model '])) {
-			filter_model = this.request.get['filter_model '];
+		if ((this.request.get['filter_model'])) {
+			filter_model = this.request.get['filter_model'];
 		}
 
 		let filter_price = '';
@@ -29,13 +29,13 @@ module.exports = class ProductController extends Controller {
 		}
 
 		let filter_quantity = '';
-		if ((this.request.get['filter_quantity '])) {
-			filter_quantity = this.request.get['filter_quantity '];
+		if ((this.request.get['filter_quantity'])) {
+			filter_quantity = this.request.get['filter_quantity'];
 		}
 
 		let filter_status = '';
-		if ((this.request.get['filter_status '])) {
-			filter_status = this.request.get['filter_status '];
+		if (typeof this.request.get['filter_status'] != 'undefined' && this.request.get['filter_status'] !== '') {
+			filter_status = this.request.get['filter_status'];
 		}
 
 		let url = '';
@@ -125,8 +125,8 @@ module.exports = class ProductController extends Controller {
 		}
 
 		let filter_model = '';
-		if ((this.request.get['filter_model '])) {
-			filter_model = this.request.get['filter_model '];
+		if ((this.request.get['filter_model'])) {
+			filter_model = this.request.get['filter_model'];
 		}
 
 		let filter_price = '';
@@ -135,13 +135,13 @@ module.exports = class ProductController extends Controller {
 		}
 
 		let filter_quantity = '';
-		if ((this.request.get['filter_quantity '])) {
-			filter_quantity = this.request.get['filter_quantity '];
+		if ((this.request.get['filter_quantity'])) {
+			filter_quantity = this.request.get['filter_quantity'];
 		}
 
 		let filter_status = '';
-		if ((this.request.get['filter_status '])) {
-			filter_status = this.request.get['filter_status '];
+		if (typeof this.request.get['filter_status'] != 'undefined' && this.request.get['filter_status'] !== '') {
+			filter_status = this.request.get['filter_status'];
 		}
 		let sort = 'pd.name';
 		if ((this.request.get['sort'])) {
@@ -568,7 +568,7 @@ module.exports = class ProductController extends Controller {
 		}
 
 		if (product_info && product_info.product_id) {
-			data['date_available'] = (product_info['date_available'] != '0000-00-00') ? product_info['date_available'] : '';
+			data['date_available'] = (product_info['date_available'] != '0000-00-00') ? date('Y-m-d', product_info['date_available']) : '';
 		} else {
 			data['date_available'] = date('Y-m-d');
 		}
@@ -808,9 +808,9 @@ module.exports = class ProductController extends Controller {
 							'subtract': product_option_value['subtract'],
 							'price': product_option_value['price'],
 							'price_prefix': product_option_value['price_prefix'],
-							'points': round(product_option_value['points']),
+							'points': Math.round(Number(product_option_value['points'])),
 							'points_prefix': product_option_value['points_prefix'],
-							'weight': round(product_option_value['weight']),
+							'weight': Math.round(Number(product_option_value['weight'])),
 							'weight_prefix': product_option_value['weight_prefix']
 						});
 					}
@@ -840,14 +840,14 @@ module.exports = class ProductController extends Controller {
 
 		// Variants
 		if (product_info && product_info.product_id) {
-			data['variant'] = json_decode(product_info['variant'], true);
+			data['variant'] = product_info['variant'] ? JSON.parse(product_info['variant']) : {};
 		} else {
 			data['variant'] = [];
 		}
 
 		// Overrides
 		if (product_info && product_info.product_id) {
-			data['override'] = json_decode(product_info['override'], true);
+			data['override'] = product_info['override'] ? JSON.parse(product_info['override']) : {};
 		} else {
 			data['override'] = [];
 		}
@@ -948,7 +948,7 @@ module.exports = class ProductController extends Controller {
 
 		data['placeholder'] = await this.model_tool_image.resize('no_image.png', 100, 100);
 
-		if (fs.existsSync(DIR_IMAGE + html_entity_decode(data['image']))) {
+		if (data['image'] && fs.existsSync(DIR_IMAGE + html_entity_decode(data['image']))) {
 			data['thumb'] = await this.model_tool_image.resize(html_entity_decode(data['image']), 100, 100);
 		} else {
 			data['thumb'] = data['placeholder'];
@@ -1033,7 +1033,7 @@ module.exports = class ProductController extends Controller {
 		}
 
 		for (let [language_id, value] of Object.entries(this.request.post['product_description'])) {
-			language_id = language_id.split('-')[1];
+			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 			if ((oc_strlen(trim(value['name'])) < 1) || (oc_strlen(value['name']) > 255)) {
 				json['error']['name_' + language_id] = this.language.get('error_name');
 			}
@@ -1063,9 +1063,9 @@ module.exports = class ProductController extends Controller {
 			this.load.model('design/seo_url', this);
 
 			for (let [store_id, language] of Object.entries(this.request.post['product_seo_url'])) {
-				store_id = store_id.split('-')[1];
+				store_id = store_id.indexOf('store') >= 0 ? store_id.split('-')[1] : store_id;
 				for (let [language_id, keyword] of Object.entries(language)) {
-					language_id = language_id.split('-')[1];
+					language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 					if ((oc_strlen(trim(keyword)) < 1) || (oc_strlen(keyword) > 64)) {
 						json['error']['keyword_' + store_id + '_' + language_id] = this.language.get('error_keyword');
 					}
@@ -1258,8 +1258,8 @@ module.exports = class ProductController extends Controller {
 		}
 
 		let filter_model = '';
-		if ((this.request.get['filter_model '])) {
-			filter_model = this.request.get['filter_model '];
+		if ((this.request.get['filter_model'])) {
+			filter_model = this.request.get['filter_model'];
 		}
 
 		let limit = 5;

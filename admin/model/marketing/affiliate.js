@@ -104,7 +104,7 @@ class AffiliateModel  extends Model {
 			implode.push("DATE(`ca.``date_added`) <= DATE(" + this.db.escape(data['filter_date_to']) + ")";
 		}
 
-		if (data['filter_status'] && data['filter_status'] !== '') {
+		if (typeof data['filter_status'] != 'undefined' && data['filter_status'] !== '') {
 			implode.push("`ca`.`status` = '" + data['filter_status'] + "'";
 		}
 
@@ -185,7 +185,7 @@ if (data['limit'] < 1) {
 			implode.push("DATE(`ca`.`date_added`) <= DATE(" + this.db.escape(data['filter_date_to']) + ")";
 		}
 
-		if (data['filter_status'] && data['filter_status'] !== '') {
+		if (typeof data['filter_status'] != 'undefined' && data['filter_status'] !== '') {
 			implode.push("`ca`.`status` = '" + data['filter_status'] + "'";
 		}
 

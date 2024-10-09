@@ -291,7 +291,7 @@ class CustomerGroupController extends Controller {
 		}
 
 		this.load.model('setting/store',this);
-		this.load.model('customer/customer');
+		this.load.model('customer/customer',this);
 
 		for (let customer_group_id of selected) {
 			if (this.config.get('config_customer_group_id') == customer_group_id) {

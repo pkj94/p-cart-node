@@ -13,7 +13,7 @@ module.exports = class FilterCatalogModel extends Model {
 		const filter_group_id = this.db.getLastId();
 
 		for (let [language_id, value] of Object.entries(data['filter_group_description'])) {
-			language_id = language_id.split('-')[1];
+			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 			await this.db.query("INSERT INTO `" + DB_PREFIX + "filter_group_description` SET `filter_group_id` = '" + filter_group_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + "");
 		}
 
@@ -24,7 +24,7 @@ module.exports = class FilterCatalogModel extends Model {
 				let filter_id = this.db.getLastId();
 
 				for (let [language_id, filter_description] of Object.entries(filter['filter_description'])) {
-					language_id = language_id.split('-')[1];
+					language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 					await this.db.query("INSERT INTO `" + DB_PREFIX + "filter_description` SET `filter_id` = '" + filter_id + "', `language_id` = '" + language_id + "', `filter_group_id` = '" + filter_group_id + "', `name` = " + this.db.escape(filter_description['name']));
 				}
 			}
@@ -45,7 +45,7 @@ module.exports = class FilterCatalogModel extends Model {
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "filter_group_description` WHERE `filter_group_id` = '" + filter_group_id + "'");
 
 		for (let [language_id, value] of Object.entries(data['filter_group_description'])) {
-			language_id = language_id.split('-')[1];
+			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 			await this.db.query("INSERT INTO `" + DB_PREFIX + "filter_group_description` SET `filter_group_id` = '" + filter_group_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + "");
 		}
 
@@ -63,7 +63,7 @@ module.exports = class FilterCatalogModel extends Model {
 				let filter_id = this.db.getLastId();
 
 				for (let [language_id, filter_description] of Object.entries(filter['filter_description'])) {
-					language_id = language_id.split('-')[1];
+					language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 					await this.db.query("INSERT INTO `" + DB_PREFIX + "filter_description` SET `filter_id` = '" + filter_id + "', `language_id` = '" + language_id + "', `filter_group_id` = '" + filter_group_id + "', `name` = " + this.db.escape(filter_description['name']));
 				}
 			}

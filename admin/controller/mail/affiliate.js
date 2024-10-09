@@ -21,7 +21,7 @@ class AffiliateController extends Controller {
 			customer_id = 0;
 		}
 
-		this.load.model('customer/customer');
+		this.load.model('customer/customer',this);
 
 		customer_info await this.model_customer_customer.getCustomer(customer_id);
 
@@ -104,7 +104,7 @@ class AffiliateController extends Controller {
 			customer_id = 0;
 		}
 
-		this.load.model('customer/customer');
+		this.load.model('customer/customer',this);
 
 		customer_info await this.model_customer_customer.getCustomer(customer_id);
 

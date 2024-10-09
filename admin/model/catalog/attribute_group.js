@@ -2,9 +2,6 @@ module.exports = class AttributeGroupCatalogModel extends Model {
 	constructor(registry) {
 		super(registry)
 	}
-	constructor(registry) {
-		super(registry)
-	}
 	/**
 	 * @param data
 	 *
@@ -16,7 +13,7 @@ module.exports = class AttributeGroupCatalogModel extends Model {
 		const attribute_group_id = this.db.getLastId();
 
 		for (let [language_id, value] of Object.entries(data['attribute_group_description'])) {
-			language_id = language_id.split('-')[1];
+			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 			await this.db.query("INSERT INTO `" + DB_PREFIX + "attribute_group_description` SET `attribute_group_id` = '" + attribute_group_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + "");
 		}
 
@@ -35,7 +32,7 @@ module.exports = class AttributeGroupCatalogModel extends Model {
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "attribute_group_description` WHERE `attribute_group_id` = '" + attribute_group_id + "'");
 
 		for (let [language_id, value] of Object.entries(data['attribute_group_description'])) {
-			language_id = language_id.split('-')[1];
+			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 			await this.db.query("INSERT INTO `" + DB_PREFIX + "attribute_group_description` SET `attribute_group_id` = '" + attribute_group_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + "");
 		}
 	}
@@ -113,7 +110,7 @@ module.exports = class AttributeGroupCatalogModel extends Model {
 		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "attribute_group_description` WHERE `attribute_group_id` = '" + attribute_group_id + "'");
 
 		for (let result of query.rows) {
-			attribute_group_data[result['language_id']] = {'name' : result['name']};
+			attribute_group_data[result['language_id']] = { 'name': result['name'] };
 		}
 
 		return attribute_group_data;

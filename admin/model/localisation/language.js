@@ -374,13 +374,13 @@ module.exports = class LanguageLocalisationModel extends Model {
             sql += " LIMIT " + data['start'] + "," + data['limit'];
         }
 
-        let results = await this.cache.get('language+' + crypto.createHash('md5').update(sql).digest('hex'));
+        let results = await this.cache.get('language+' + md5(sql));
         if ((results && !results.length) || !results) {
             let query = await this.db.query(sql);
 
             results = query.rows;
 
-            await this.cache.set('language+' + crypto.createHash('md5').update(sql).digest('hex'), results);
+            await this.cache.set('language+' + md5(sql), results);
         }
 
         let language_data = {};

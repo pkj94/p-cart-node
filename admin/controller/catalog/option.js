@@ -1,8 +1,12 @@
+const sprintf = require("locutus/php/strings/sprintf");
+const fs = require('fs')
 module.exports = class OptionController extends Controller {
+
 	/**
 	 * @return void
 	 */
 	async index() {
+		const data = {};
 		await this.load.language('catalog/option');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -24,13 +28,13 @@ module.exports = class OptionController extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('text_home'),
+			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('catalog/option', 'user_token=' + this.session.data['user_token'] + url)
+			'text': this.language.get('heading_title'),
+			'href': this.url.link('catalog/option', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
 		data['add'] = this.url.link('catalog/option.form', 'user_token=' + this.session.data['user_token'] + url);
@@ -60,15 +64,15 @@ module.exports = class OptionController extends Controller {
 	 * @return string
 	 */
 	async getList() {
+		const data = {};
+		let sort = 'od.name';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
-		} else {
-			sort = 'od.name';
 		}
 
-		let order= 'ASC';
+		let order = 'ASC';
 		if ((this.request.get['order'])) {
-			order= this.request.get['order'];
+			order = this.request.get['order'];
 		}
 
 		let page = 1;
@@ -95,28 +99,28 @@ module.exports = class OptionController extends Controller {
 		data['options'] = [];
 
 		let filter_data = {
-			'sort'  : sort,
-			'order' : order,
-			'start' : (page - 1) * this.config.get('config_pagination_admin'),
-			'limit' : this.config.get('config_pagination_admin')
-		});
+			'sort': sort,
+			'order': order,
+			'start': (page - 1) * this.config.get('config_pagination_admin'),
+			'limit': this.config.get('config_pagination_admin')
+		};
 
-		this.load.model('catalog/option',this);
+		this.load.model('catalog/option', this);
 
-		option_total await this.model_catalog_option.getTotalOptions();
+		const option_total = await this.model_catalog_option.getTotalOptions();
 
 		const results = await this.model_catalog_option.getOptions(filter_data);
 
 		for (let result of results) {
 			data['options'].push({
-				'option_id'  : result['option_id'],
-				'name'       : result['name'],
-				'sort_order' : result['sort_order'],
-				'edit'       : this.url.link('catalog/option.form', 'user_token=' + this.session.data['user_token'] + '&option_id=' + result['option_id'] + url)
-			];
+				'option_id': result['option_id'],
+				'name': result['name'],
+				'sort_order': result['sort_order'],
+				'edit': this.url.link('catalog/option.form', 'user_token=' + this.session.data['user_token'] + '&option_id=' + result['option_id'] + url)
+			});
 		}
 
-		let url = '';
+		url = '';
 
 		if (order == 'ASC') {
 			url += '&order=DESC';
@@ -127,7 +131,7 @@ module.exports = class OptionController extends Controller {
 		data['sort_name'] = this.url.link('catalog/option.list', 'user_token=' + this.session.data['user_token'] + '&sort=od.name' + url);
 		data['sort_sort_order'] = this.url.link('catalog/option.list', 'user_token=' + this.session.data['user_token'] + '&sort=o.sort_order' + url);
 
-		let url = '';
+		url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -138,11 +142,11 @@ module.exports = class OptionController extends Controller {
 		}
 
 		data['pagination'] = await this.load.controller('common/pagination', {
-			'total' : option_total,
-			'page'  : page,
-			'limit' : this.config.get('config_pagination_admin'),
-			'url'   : this.url.link('catalog/option.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
-		]);
+			'total': option_total,
+			'page': page,
+			'limit': this.config.get('config_pagination_admin'),
+			'url': this.url.link('catalog/option.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
+		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (option_total) ? ((page - 1) * this.config.get('config_pagination_admin')) + 1 : 0, (((page - 1) * this.config.get('config_pagination_admin')) > (option_total - this.config.get('config_pagination_admin'))) ? option_total : (((page - 1) * this.config.get('config_pagination_admin')) + this.config.get('config_pagination_admin')), option_total, Math.ceil(option_total / this.config.get('config_pagination_admin')));
 
@@ -156,6 +160,7 @@ module.exports = class OptionController extends Controller {
 	 * @return void
 	 */
 	async form() {
+		const data = {};
 		await this.load.language('catalog/option');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -179,22 +184,22 @@ module.exports = class OptionController extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('text_home'),
+			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('catalog/option', 'user_token=' + this.session.data['user_token'] + url)
+			'text': this.language.get('heading_title'),
+			'href': this.url.link('catalog/option', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
 		data['save'] = this.url.link('catalog/option.save', 'user_token=' + this.session.data['user_token']);
 		data['back'] = this.url.link('catalog/option', 'user_token=' + this.session.data['user_token'] + url);
-
+		let option_info;
 		if ((this.request.get['option_id'])) {
-			this.load.model('catalog/option',this);
+			this.load.model('catalog/option', this);
 
-			option_info await this.model_catalog_option.getOption(this.request.get['option_id']);
+			option_info = await this.model_catalog_option.getOption(this.request.get['option_id']);
 		}
 
 		if ((this.request.get['option_id'])) {
@@ -203,7 +208,7 @@ module.exports = class OptionController extends Controller {
 			data['option_id'] = 0;
 		}
 
-		this.load.model('localisation/language',this);
+		this.load.model('localisation/language', this);
 
 		data['languages'] = await this.model_localisation_language.getLanguages();
 
@@ -224,33 +229,29 @@ module.exports = class OptionController extends Controller {
 		} else {
 			data['sort_order'] = '';
 		}
-
+		let option_values = []
 		if ((this.request.get['option_id'])) {
-			option_values await this.model_catalog_option.getValueDescriptions(this.request.get['option_id']);
-		} else {
-			option_values = [];
+			option_values = await this.model_catalog_option.getValueDescriptions(this.request.get['option_id']);
 		}
-
-		this.load.model('tool/image',this);
+		this.load.model('tool/image', this);
 
 		data['option_values'] = [];
 
-		for (option_values of option_value) {
-			if (is_file(DIR_IMAGE + html_entity_decode(option_value['image']))) {
+		for (let option_value of option_values) {
+			let image = '';
+			let thumb = 'no_image.png';
+			if (fs.existsSync(DIR_IMAGE + html_entity_decode(option_value['image']))) {
 				image = option_value['image'];
 				thumb = option_value['image'];
-			} else {
-				image = '';
-				thumb = 'no_image.png';
 			}
 
 			data['option_values'].push({
-				'option_value_id'          : option_value['option_value_id'],
-				'option_value_description' : option_value['option_value_description'],
-				'image'                    : image,
-				'thumb'                    : this.model_tool_image.resize(html_entity_decode(thumb), 100, 100),
-				'sort_order'               : option_value['sort_order']
-			];
+				'option_value_id': option_value['option_value_id'],
+				'option_value_description': option_value['option_value_description'],
+				'image': image,
+				'thumb': await this.model_tool_image.resize(html_entity_decode(thumb), 100, 100),
+				'sort_order': option_value['sort_order']
+			});
 		}
 
 		data['placeholder'] = await this.model_tool_image.resize('no_image.png', 100, 100);
@@ -270,13 +271,13 @@ module.exports = class OptionController extends Controller {
 	async save() {
 		await this.load.language('catalog/option');
 
-		const json = {};
+		const json = { error: {} };
 
 		if (!await this.user.hasPermission('modify', 'catalog/option')) {
 			json['error']['warning'] = this.language.get('error_permission');
 		}
 
-		for (this.request.post['option_description'] of language_id : value) {
+		for (let [language_id, value] of Object.entries(this.request.post['option_description'])) {
 			if ((oc_strlen(trim(value['name'])) < 1) || (oc_strlen(value['name']) > 128)) {
 				json['error']['name_' + language_id] = this.language.get('error_name');
 			}
@@ -288,29 +289,29 @@ module.exports = class OptionController extends Controller {
 
 		if ((this.request.post['option_value'])) {
 			if ((this.request.post['option_id'])) {
-				this.load.model('catalog/product',this);
+				this.load.model('catalog/product', this);
 
-				option_value_data = [];
+				let option_value_data = [];
 
-				for (this.request.post['option_value'] of option_value) {
+				for (let option_value of this.request.post['option_value']) {
 					if (option_value['option_value_id']) {
-						option_value_data[] = option_value['option_value_id'];
+						option_value_data.push(option_value['option_value_id']);
 					}
 				}
 
-				product_option_values await this.model_catalog_product.getOptionValuesByOptionId(this.request.post['option_id']);
+				const product_option_values = await this.model_catalog_product.getOptionValuesByOptionId(this.request.post['option_id']);
 
-				for (product_option_values of product_option_value) {
-					if (!in_array(product_option_value['option_value_id'], option_value_data)) {
-						json['error']['warning'] = sprintf(this.language.get('error_value'), this.model_catalog_product.getTotalProductsByOptionValueId(product_option_value['option_value_id']));
+				for (let product_option_value of product_option_values) {
+					if (!option_value_data.includes(product_option_value['option_value_id'])) {
+						json['error']['warning'] = sprintf(this.language.get('error_value'), await this.model_catalog_product.getTotalProductsByOptionValueId(product_option_value['option_value_id']));
 					}
 				}
 			}
 		}
 
 		if ((this.request.post['option_value'])) {
-			for (this.request.post['option_value'] of option_value_id : option_value) {
-				for (option_value['option_value_description'] of language_id : option_value_description) {
+			for (let [option_value_id, option_value] of Object.entries(this.request.post['option_value'])) {
+				for (let [language_id, option_value_description] of Object.entries(option_value['option_value_description'])) {
 					if ((oc_strlen(trim(option_value_description['name'])) < 1) || (oc_strlen(option_value_description['name']) > 128)) {
 						json['error']['option_value_' + option_value_id + '_' + language_id] = this.language.get('error_option_value');
 					}
@@ -321,9 +322,9 @@ module.exports = class OptionController extends Controller {
 		if (Object.keys(json['error']).length && !(json['error']['warning'])) {
 			json['error']['warning'] = this.language.get('error_warning');
 		}
-
-		if (!Object.keys(json).length) {
-			this.load.model('catalog/option',this);
+		this.request.post['option_id'] = Number(this.request.post['option_id']);
+		if (!Object.keys(json.error).length) {
+			this.load.model('catalog/option', this);
 
 			if (!this.request.post['option_id']) {
 				json['option_id'] = await this.model_catalog_option.addOption(this.request.post);
@@ -347,7 +348,7 @@ module.exports = class OptionController extends Controller {
 		const json = {};
 
 		let selected = [];
-                 if ((this.request.post['selected'])) {
+		if ((this.request.post['selected'])) {
 			selected = this.request.post['selected'];
 		}
 
@@ -355,7 +356,7 @@ module.exports = class OptionController extends Controller {
 			json['error'] = this.language.get('error_permission');
 		}
 
-		this.load.model('catalog/product',this);
+		this.load.model('catalog/product', this);
 
 		for (let option_id of selected) {
 			const product_total = await this.model_catalog_product.getTotalProductsByOptionId(option_id);
@@ -366,7 +367,7 @@ module.exports = class OptionController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('catalog/option',this);
+			this.load.model('catalog/option', this);
 
 			for (let option_id of selected) {
 				await this.model_catalog_option.deleteOption(option_id);
@@ -383,53 +384,53 @@ module.exports = class OptionController extends Controller {
 	 * @return void
 	 */
 	async autocomplete() {
-		const json = {};
+		let json = [];
 
 		if ((this.request.get['filter_name'])) {
 			await this.load.language('catalog/option');
 
-			this.load.model('catalog/option',this);
+			this.load.model('catalog/option', this);
 
-			this.load.model('tool/image',this);
+			this.load.model('tool/image', this);
 
 			let filter_data = {
-				'filter_name' : this.request.get['filter_name'],
-				'start'       : 0,
-				'limit'       : 5
-			];
+				'filter_name': this.request.get['filter_name'],
+				'start': 0,
+				'limit': 5
+			};
 
-			options await this.model_catalog_option.getOptions(filter_data);
+			const options = await this.model_catalog_option.getOptions(filter_data);
 
-			for (options of option) {
-				option_value_data = [];
+			for (let option of options) {
+				let option_value_data = [];
 
 				if (option['type'] == 'select' || option['type'] == 'radio' || option['type'] == 'checkbox' || option['type'] == 'image') {
-					option_values await this.model_catalog_option.getValues(option['option_id']);
+					const option_values = await this.model_catalog_option.getValues(option['option_id']);
 
-					for (option_values of option_value) {
-						if (is_file(DIR_IMAGE + html_entity_decode(option_value['image']))) {
-							image await this.model_tool_image.resize(html_entity_decode(option_value['image']), 50, 50);
-						} else {
-							image await this.model_tool_image.resize('no_image.png', 50, 50);
+					for (let option_value of option_values) {
+						let image = await this.model_tool_image.resize('no_image.png', 50, 50);
+						if (fs.existsSync(DIR_IMAGE + html_entity_decode(option_value['image']))) {
+							image = await this.model_tool_image.resize(html_entity_decode(option_value['image']), 50, 50);
 						}
 
 						option_value_data.push({
-							'option_value_id' : option_value['option_value_id'],
-							'name'            : strip_tags(html_entity_decode(option_value['name'])),
-							'image'           : image
-						];
+							'option_value_id': option_value['option_value_id'],
+							'name': strip_tags(html_entity_decode(option_value['name'])),
+							'image': image
+						});
 					}
 
-					sort_order = [];
+					let sort_order = [];
 
-					for (option_value_data of key : value) {
+					for (let [key, value] of Object.entries(option_value_data)) {
 						sort_order[key] = value['name'];
 					}
 
-					option_value_data= multiSort(option_value_data,sort_order,'ASC');
+					// option_value_data = multiSort(option_value_data, sort_order, 'ASC');
+					option_value_data = option_value_data.sort((a, b) => a.name - b.name);
 				}
 
-				type = '';
+				let type = '';
 
 				if (option['type'] == 'select' || option['type'] == 'radio' || option['type'] == 'checkbox') {
 					type = this.language.get('text_choose');
@@ -448,22 +449,23 @@ module.exports = class OptionController extends Controller {
 				}
 
 				json.push({
-					'option_id'    : option['option_id'],
-					'name'         : strip_tags(html_entity_decode(option['name'])),
-					'category'     : type,
-					'type'         : option['type'],
-					'option_value' : option_value_data
-				];
+					'option_id': option['option_id'],
+					'name': strip_tags(html_entity_decode(option['name'])),
+					'category': type,
+					'type': option['type'],
+					'option_value': option_value_data
+				});
 			}
 		}
 
-		sort_order = [];
+		let sort_order = [];
 
-		for (let [key , value] of json) {
+		for (let [key, value] of json) {
 			sort_order[key] = value['name'];
 		}
 
-		json= multiSort(json,sort_order,'ASC');
+		// json = multiSort(json, sort_order, 'ASC');
+		json = json.sort((a, b) => a.name - b.name);
 
 		this.response.addHeader('Content-Type: application/json');
 		this.response.setOutput(json);

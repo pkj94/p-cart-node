@@ -1,8 +1,11 @@
+const sprintf = require("locutus/php/strings/sprintf");
+
 module.exports = class FilterController extends Controller {
 	/**
 	 * @return void
 	 */
 	async index() {
+		const data = {};
 		await this.load.language('catalog/filter');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -24,13 +27,13 @@ module.exports = class FilterController extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('text_home'),
+			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('catalog/filter', 'user_token=' + this.session.data['user_token'] + url)
+			'text': this.language.get('heading_title'),
+			'href': this.url.link('catalog/filter', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
 		data['add'] = this.url.link('catalog/filter.form', 'user_token=' + this.session.data['user_token'] + url);
@@ -60,15 +63,15 @@ module.exports = class FilterController extends Controller {
 	 * @return string
 	 */
 	async getList() {
+		const data = {};
+		let sort = 'fgd.name';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
-		} else {
-			sort = 'fgd.name';
 		}
 
-		let order= 'ASC';
+		let order = 'ASC';
 		if ((this.request.get['order'])) {
-			order= this.request.get['order'];
+			order = this.request.get['order'];
 		}
 
 		let page = 1;
@@ -95,28 +98,28 @@ module.exports = class FilterController extends Controller {
 		data['filters'] = [];
 
 		let filter_data = {
-			'sort'  : sort,
-			'order' : order,
-			'start' : (page - 1) * this.config.get('config_pagination_admin'),
-			'limit' : this.config.get('config_pagination_admin')
-		});
+			'sort': sort,
+			'order': order,
+			'start': (page - 1) * this.config.get('config_pagination_admin'),
+			'limit': this.config.get('config_pagination_admin')
+		};
 
-		this.load.model('catalog/filter',this);
+		this.load.model('catalog/filter', this);
 
-		filter_total await this.model_catalog_filter.getTotalGroups();
+		const filter_total = await this.model_catalog_filter.getTotalGroups();
 
 		const results = await this.model_catalog_filter.getGroups(filter_data);
 
 		for (let result of results) {
 			data['filters'].push({
-				'filter_group_id' : result['filter_group_id'],
-				'name'            : result['name'],
-				'sort_order'      : result['sort_order'],
-				'edit'            : this.url.link('catalog/filter.form', 'user_token=' + this.session.data['user_token'] + '&filter_group_id=' + result['filter_group_id'] + url)
-			];
+				'filter_group_id': result['filter_group_id'],
+				'name': result['name'],
+				'sort_order': result['sort_order'],
+				'edit': this.url.link('catalog/filter.form', 'user_token=' + this.session.data['user_token'] + '&filter_group_id=' + result['filter_group_id'] + url)
+			});
 		}
 
-		let url = '';
+		url = '';
 
 		if (order == 'ASC') {
 			url += '&order=DESC';
@@ -131,7 +134,7 @@ module.exports = class FilterController extends Controller {
 		data['sort_name'] = this.url.link('catalog/filter.list', 'user_token=' + this.session.data['user_token'] + '&sort=fgd.name' + url);
 		data['sort_sort_order'] = this.url.link('catalog/filter.list', 'user_token=' + this.session.data['user_token'] + '&sort=fg.sort_order' + url);
 
-		let url = '';
+		url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -142,11 +145,11 @@ module.exports = class FilterController extends Controller {
 		}
 
 		data['pagination'] = await this.load.controller('common/pagination', {
-			'total' : filter_total,
-			'page'  : page,
-			'limit' : this.config.get('config_pagination_admin'),
-			'url'   : this.url.link('catalog/filter.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
-		]);
+			'total': filter_total,
+			'page': page,
+			'limit': this.config.get('config_pagination_admin'),
+			'url': this.url.link('catalog/filter.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
+		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (filter_total) ? ((page - 1) * this.config.get('config_pagination_admin')) + 1 : 0, (((page - 1) * this.config.get('config_pagination_admin')) > (filter_total - this.config.get('config_pagination_admin'))) ? filter_total : (((page - 1) * this.config.get('config_pagination_admin')) + this.config.get('config_pagination_admin')), filter_total, Math.ceil(filter_total / this.config.get('config_pagination_admin')));
 
@@ -160,6 +163,7 @@ module.exports = class FilterController extends Controller {
 	 * @return void
 	 */
 	async form() {
+		const data = {};
 		await this.load.language('catalog/filter');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -183,22 +187,22 @@ module.exports = class FilterController extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('text_home'),
+			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('catalog/filter', 'user_token=' + this.session.data['user_token'] + url)
+			'text': this.language.get('heading_title'),
+			'href': this.url.link('catalog/filter', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
 		data['save'] = this.url.link('catalog/filter.save', 'user_token=' + this.session.data['user_token']);
 		data['back'] = this.url.link('catalog/filter', 'user_token=' + this.session.data['user_token'] + url);
-
+		let filter_group_info;
 		if ((this.request.get['filter_group_id'])) {
-			this.load.model('catalog/filter',this);
+			this.load.model('catalog/filter', this);
 
-			filter_group_info await this.model_catalog_filter.getGroup(this.request.get['filter_group_id']);
+			filter_group_info = await this.model_catalog_filter.getGroup(this.request.get['filter_group_id']);
 		}
 
 		if ((this.request.get['filter_group_id'])) {
@@ -207,7 +211,7 @@ module.exports = class FilterController extends Controller {
 			data['filter_group_id'] = 0;
 		}
 
-		this.load.model('localisation/language',this);
+		this.load.model('localisation/language', this);
 
 		data['languages'] = await this.model_localisation_language.getLanguages();
 
@@ -242,36 +246,36 @@ module.exports = class FilterController extends Controller {
 	async save() {
 		await this.load.language('catalog/filter');
 
-		const json = {};
+		const json = { error: {} };
 
 		if (!await this.user.hasPermission('modify', 'catalog/filter')) {
 			json['error']['warning'] = this.language.get('error_permission');
 		}
 
-		for (this.request.post['filter_group_description'] of language_id : value) {
+		for (let [language_id, value] of Object.entries(this.request.post['filter_group_description'])) {
 			if ((oc_strlen(trim(value['name'])) < 1) || (oc_strlen(value['name']) > 64)) {
 				json['error']['group_' + language_id] = this.language.get('error_group');
 			}
 		}
 
 		if ((this.request.post['filter'])) {
-			for (this.request.post['filter'] of key : filter) {
-				for (filter['filter_description'] of language_id : filter_description) {
+			for (let [key, filter] of Object.entries(this.request.post['filter'])) {
+				for (let [language_id, filter_description] of Object.entries(filter['filter_description'])) {
 					if ((oc_strlen(trim(filter_description['name'])) < 1) || (oc_strlen(filter_description['name']) > 64)) {
 						json['error']['filter_' + key + '_' + language_id] = this.language.get('error_name');
 					}
 				}
 			}
 		} else {
-			json['error']['warning']  = this.language.get('error_values');
+			json['error']['warning'] = this.language.get('error_values');
 		}
 
 		if (Object.keys(json['error']).length && !(json['error']['warning'])) {
 			json['error']['warning'] = this.language.get('error_warning');
 		}
-
-		if (!Object.keys(json).length) {
-			this.load.model('catalog/filter',this);
+		this.request.post['filter_group_id'] = Number(this.request.post['filter_group_id']);
+		if (!Object.keys(json.error).length) {
+			this.load.model('catalog/filter', this);
 
 			if (!this.request.post['filter_group_id']) {
 				json['filter_group_id'] = await this.model_catalog_filter.addFilter(this.request.post);
@@ -295,7 +299,7 @@ module.exports = class FilterController extends Controller {
 		const json = {};
 
 		let selected = [];
-                 if ((this.request.post['selected'])) {
+		if ((this.request.post['selected'])) {
 			selected = this.request.post['selected'];
 		}
 
@@ -304,7 +308,7 @@ module.exports = class FilterController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('catalog/filter',this);
+			this.load.model('catalog/filter', this);
 
 			for (let filter_id of selected) {
 				await this.model_catalog_filter.deleteFilter(filter_id);
@@ -321,34 +325,36 @@ module.exports = class FilterController extends Controller {
 	 * @return void
 	 */
 	async autocomplete() {
-		const json = {};
+		let json = [];
 
 		if ((this.request.get['filter_name'])) {
-			this.load.model('catalog/filter',this);
+			this.load.model('catalog/filter', this);
 
 			let filter_data = {
-				'filter_name' : this.request.get['filter_name'],
-				'start'       : 0,
-				'limit'       : 5
-			];
+				'filter_name': this.request.get['filter_name'],
+				'start': 0,
+				'limit': 5
+			};
 
-			filters = await this.model_catalog_filter.getFilters(filter_data);
+			const filters = await this.model_catalog_filter.getFilters(filter_data);
 
-			for (filters of filter) {
+			for (let filter of filters) {
 				json.push({
-					'filter_id' : filter['filter_id'],
-					'name'      : strip_tags(html_entity_decode(filter['group'] + ' &gt; ' + filter['name']))
-				];
+					'filter_id': filter['filter_id'],
+					'name': strip_tags(html_entity_decode(filter['group'] + ' &gt; ' + filter['name']))
+				});
 			}
 		}
 
-		sort_order = [];
+		let sort_order = [];
 
-		for (let [key , value] of json) {
+		for (let [key, value] of json) {
 			sort_order[key] = value['name'];
 		}
 
-		json= multiSort(json,sort_order,'ASC');
+		// json= multiSort(json,sort_order,'ASC');
+		json = json.sort((a, b) => a.name - b.name);
+
 
 		this.response.addHeader('Content-Type: application/json');
 		this.response.setOutput(json);

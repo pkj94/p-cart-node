@@ -69,7 +69,7 @@ class ContactController extends Controller {
 		if (!Object.keys(json).length) {
 			this.load.model('setting/store',this);
 			this.load.model('setting/setting',this);
-			this.load.model('customer/customer');
+			this.load.model('customer/customer',this);
 			this.load.model('sale/order');
 
 			const store_info = await this.model_setting_store.getStore(this.request.post['store_id']);

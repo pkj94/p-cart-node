@@ -51,8 +51,8 @@ class AffiliateController extends Controller {
 		}
 
 		let filter_status = '';
-if ((this.request.get['filter_status '])) {
-			filter_status = this.request.get['filter_status '];
+if (typeof this.request.get['filter_status'] != 'undefined' && this.request.get['filter_status'] !== '') {
+			filter_status = this.request.get['filter_status'];
 		}
 
 		if ((this.request.get['limit'])) {
@@ -241,8 +241,8 @@ if ((this.request.get['filter_status '])) {
 		}
 
 		let filter_status = '';
-if ((this.request.get['filter_status '])) {
-			filter_status = this.request.get['filter_status '];
+if (typeof this.request.get['filter_status'] != 'undefined' && this.request.get['filter_status'] !== '') {
+			filter_status = this.request.get['filter_status'];
 		}
 
 		if ((this.request.get['sort'])) {
@@ -332,7 +332,7 @@ if ((this.request.get['filter_status '])) {
 		});
 
 		this.load.model('marketing/affiliate');
-		this.load.model('customer/customer');
+		this.load.model('customer/customer',this);
 
 		affiliate_total await this.model_marketing_affiliate.getTotalAffiliates(filter_data);
 
@@ -697,7 +697,7 @@ if ((this.request.get['filter_status '])) {
 			json['error']['warning'] = this.language.get('error_permission');
 		}
 
-		this.load.model('customer/customer');
+		this.load.model('customer/customer',this);
 
 		customer_info await this.model_customer_customer.getCustomer(this.request.post['customer_id']);
 
@@ -824,7 +824,7 @@ if ((this.request.get['filter_status '])) {
 
 		if (!Object.keys(json).length) {
 			this.load.model('marketing/affiliate');
-			this.load.model('customer/customer');
+			this.load.model('customer/customer',this);
 
 			const results = await this.model_marketing_affiliate.getAffiliates(['filter_status' : 1]);
 
@@ -912,7 +912,7 @@ if ((this.request.get['filter_status '])) {
 
 		if (!Object.keys(json).length) {
 			this.load.model('marketing/affiliate');
-			this.load.model('customer/customer');
+			this.load.model('customer/customer',this);
 
 			for (let customer_id of selected) {
 				affiliate_info await this.model_marketing_affiliate.getAffiliate(customer_id);
@@ -937,13 +937,13 @@ if ((this.request.get['filter_status '])) {
 	async report() {
 		await this.load.language('marketing/affiliate');
 
-		this.response.setOutput(this.getReport());
+		this.response.setOutput(await this.getReport());
 	}
 
 	/**
 	 * @return string
 	 */
-	private function getReport() {
+	async getReport() {
 		if ((this.request.get['customer_id'])) {
 			customer_id = this.request.get['customer_id'];
 		} else {
@@ -961,7 +961,7 @@ if ((this.request.get['filter_status '])) {
 		data['reports'] = [];
 
 		this.load.model('marketing/affiliate');
-		this.load.model('customer/customer');
+		this.load.model('customer/customer',this);
 		this.load.model('setting/store',this);
 
 		const results = await this.model_marketing_affiliate.getReports(customer_id, (page - 1) * limit, limit);

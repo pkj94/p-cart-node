@@ -11,7 +11,7 @@ module.exports = class CategoryCatalogModel extends Model {
 		await this.db.query("INSERT INTO `" + DB_PREFIX + "category` SET `image` = " + this.db.escape(data['image']) + ", `parent_id` = '" + data['parent_id'] + "', `top` = '" + ((data['top']) ? data['top'] : 0) + "', `column` = '" + data['column'] + "', `sort_order` = '" + data['sort_order'] + "', `status` = '" + (data['status'] ? data['status'] : 0) + "', `date_modified` = NOW(), `date_added` = NOW()");
 		let category_id = this.db.getLastId();
 		for (let [language_id, value] of Object.entries(data['category_description'])) {
-			language_id = language_id.split('-')[1];
+			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 			await this.db.query("INSERT INTO `" + DB_PREFIX + "category_description` SET `category_id` = '" + category_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + ", `description` = " + this.db.escape(value['description']) + ", `meta_title` = " + this.db.escape(value['meta_title']) + ", `meta_description` = " + this.db.escape(value['meta_description']) + ", `meta_keyword` = " + this.db.escape(value['meta_keyword']) + "");
 		}
 
@@ -56,9 +56,9 @@ module.exports = class CategoryCatalogModel extends Model {
 		})
 
 		for (let [store_id, language] of Object.entries(data['category_seo_url'])) {
-			store_id = store_id.split('-')[1];
+			store_id = store_id.indexOf('store') >= 0 ? store_id.split('-')[1] : store_id;
 			for (let [language_id, keyword] of Object.entries(language)) {
-				language_id = language_id.split('-')[1];
+				language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 				let seo_url_info = await this.model_design_seo_url.getSeoUrlByKeyValue('path', parent_path, store_id, language_id);
 
 				if (seo_url_info) {
@@ -72,7 +72,7 @@ module.exports = class CategoryCatalogModel extends Model {
 		// Set which layout to use with this category
 		if ((data['category_layout'])) {
 			for (let [store_id, layout_id] of Object.entries(data['category_layout'])) {
-				store_id = store_id.split('-')[1];
+				store_id = store_id.indexOf('store') >= 0 ? store_id.split('-')[1] : store_id;
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "category_to_layout` SET `category_id` = '" + category_id + "', `store_id` = '" + store_id + "', `layout_id` = '" + layout_id + "'");
 			}
 		}
@@ -93,7 +93,7 @@ module.exports = class CategoryCatalogModel extends Model {
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "category_description` WHERE `category_id` = '" + category_id + "'");
 
 		for (let [language_id, value] of Object.entries(data['category_description'])) {
-			language_id = language_id.split('-')[1];
+			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 			await this.db.query("INSERT INTO `" + DB_PREFIX + "category_description` SET `category_id` = '" + category_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + ", `description` = " + this.db.escape(value['description']) + ", `meta_title` = " + this.db.escape(value['meta_title']) + ", `meta_description` = " + this.db.escape(value['meta_description']) + ", `meta_keyword` = " + this.db.escape(value['meta_keyword']) + "");
 		}
 
@@ -188,9 +188,9 @@ module.exports = class CategoryCatalogModel extends Model {
 			return key;
 		})
 		for (let [store_id, language] of Object.entries(data['category_seo_url'])) {
-			store_id = store_id.split('-')[1];
+			store_id = store_id.indexOf('store') >= 0 ? store_id.split('-')[1] : store_id;
 			for (let [language_id, keyword] of Object.entries(language)) {
-				language_id = language_id.split('-')[1];
+				language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 				let parent_info = await this.model_design_seo_url.getSeoUrlByKeyValue('path', path_parent, store_id, language_id);
 
 				if (parent_info) {
@@ -211,7 +211,7 @@ module.exports = class CategoryCatalogModel extends Model {
 
 		if ((data['category_layout'])) {
 			for (let [store_id, layout_id] of Object.entries(data['category_layout'])) {
-				store_id = store_id.split('-')[1];
+				store_id = store_id.indexOf('store') >= 0 ? store_id.split('-')[1] : store_id;
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "category_to_layout` SET `category_id` = '" + category_id + "', `store_id` = '" + store_id + "', `layout_id` = '" + layout_id + "'");
 			}
 		}
