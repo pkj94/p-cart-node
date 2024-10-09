@@ -1,5 +1,6 @@
 const expressPath = require('path');
 const fs = require('fs');
+const sprintf = require('locutus/php/strings/sprintf');
 module.exports = class FileManagerController extends Controller {
 	/**
 	 * @return void
@@ -53,7 +54,7 @@ module.exports = class FileManagerController extends Controller {
 		}
 		let filter_name = '';
 		if ((this.request.get['filter_name'])) {
-			filter_name = basename(html_entity_decode(this.request.get['filter_name']));
+			filter_name = expressPath.basename(html_entity_decode(this.request.get['filter_name']));
 		}
 		let page = 1;
 		if ((this.request.get['page'])) {
@@ -79,7 +80,7 @@ module.exports = class FileManagerController extends Controller {
 		this.load.model('tool/image', this);
 
 		// Get directories and files
-		let paths = fs.readdirSync(directory).filter(a => (a.indexOf('.') == -1 || allowed.indexOf('.' + (a.split('.')[a.split('.').length - 1])) != -1) && a.indexOf(filterName) != -1)
+		let paths = fs.readdirSync(directory).filter(a => (a.indexOf('.') == -1 || allowed.indexOf('.' + (a.split('.')[a.split('.').length - 1])) != -1) && a.indexOf(filter_name) != -1)
 
 
 		let total = paths.length;
@@ -89,8 +90,8 @@ module.exports = class FileManagerController extends Controller {
 		if (paths) {
 			// Split the array based on current page number and max number of items per page of 10
 			for (let path of paths.slice(start, limit)) {
-				path = fs.realpathSync(path).replaceAll('\\', '/');
-
+				path = directory + path
+				path = fs.lstatSync(path).isDirectory() ? fs.realpathSync(path).replaceAll('\\', '/') : path;
 				if (path.substring(0, path.length) == path) {
 					let name = expressPath.basename(path);
 
@@ -129,7 +130,7 @@ module.exports = class FileManagerController extends Controller {
 		}
 
 		if ((this.request.get['directory'])) {
-			data['directory'] = urldecode(this.request.get['directory']);
+			data['directory'] = decodeURIComponent(this.request.get['directory']);
 		} else {
 			data['directory'] = '';
 		}
@@ -141,7 +142,7 @@ module.exports = class FileManagerController extends Controller {
 		}
 
 		// Parent
-		url = '';
+		let url = '';
 
 		if ((this.request.get['directory'])) {
 			let pos = this.request.get['directory'].indexOf('/');
@@ -194,7 +195,7 @@ module.exports = class FileManagerController extends Controller {
 
 		data['refresh'] = this.url.link('common/filemanager.list', 'user_token=' + this.session.data['user_token'] + url);
 
-		let url = '';
+		url = '';
 
 		if ((this.request.get['directory'])) {
 			url += '&directory=' + encodeURIComponent(html_entity_decode(this.request.get['directory']));
@@ -230,245 +231,235 @@ module.exports = class FileManagerController extends Controller {
 	/**
 	 * @return void
 	 */
-	// async upload() {
-	// 	await this.load.language('common/filemanager');
+	async upload() {
+		await this.load.language('common/filemanager');
+		const json = {};
 
-	// 	const json = {};
+		let base = DIR_IMAGE + 'catalog/';
 
-	// 	let base = DIR_IMAGE + 'catalog/';
+		// Check user has permission
+		if (!await this.user.hasPermission('modify', 'common/filemanager')) {
+			json['error'] = this.language.get('error_permission');
+		}
 
-	// 	// Check user has permission
-	// 	if (!await this.user.hasPermission('modify', 'common/filemanager')) {
-	// 		json['error'] = this.language.get('error_permission');
-	// 	}
+		// Make sure we have the correct directory
+		let directory = base;
+		if ((this.request.get['directory'])) {
+			directory = base + html_entity_decode(this.request.get['directory']) + '/';
+		}
 
-	// 	// Make sure we have the correct directory
-	// 	let directory = base;
-	// 	if ((this.request.get['directory'])) {
-	// 		directory = base + html_entity_decode(this.request.get['directory']) + '/';
-	// 	}
+		// Check it's a directory
+		if (!fs.lstatSync(directory).isDirectory() || (fs.realpathSync(directory).replaceAll('\\', '/') + '/').substring(0, base.length) != base) {
+			json['error'] = this.language.get('error_directory');
+		}
 
-	// 	// Check it's a directory
-	// 	if (!fs.lstatSync(directory).isDirectory() || (fs.realpathSync(directory).replaceAll('\\', '/') + '/').substring(0, base.length) != base) {
-	// 		json['error'] = this.language.get('error_directory');
-	// 	}
+		if (!json.error) {
+			// Check if multiple files are uploaded or just one
+			let files = [];
+			if (this.request.files.file && !Array.isArray(this.request.files.file)) {
+				files = [this.request.files.file];
+			} else if (this.request.files.file) {
+				files = this.request.files.file;
+			}
+			if (!files.length) {
+				json['error'] = this.language.get('error_upload');
+			}
+			for (let file of files) {
+				// Sanitize the filename
+				// console.log('file--', file, file['name'])
+				let filename = file['name'].replace(new RegExp('[/\\?%*:|"<>]'), '');
+				// console.log('filename----', filename)
 
-	// 	if (!json.error) {
-	// 		// Check if multiple files are uploaded or just one
-	// 		let files = [];
+				// Validate the filename length
+				if ((oc_strlen(filename) < 4) || (oc_strlen(filename) > 255)) {
+					json['error'] = this.language.get('error_filename');
+				}
 
-	// 		if ((this.request.files['file']['name']) && is_array(this.request.files['file']['name'])) {
-	// 			for (array_keys(this.request.files['file']['name']) of key) {
-	// 				files.push({
-	// 					'name': this.request.files['file']['name'][key],
-	// 					'type': this.request.files['file']['type'][key],
-	// 					'tmp_name': this.request.files['file']['tmp_name'][key],
-	// 					'error': this.request.files['file']['error'][key],
-	// 					'size': this.request.files['file']['size'][key]
-	// 				});
-	// 			}
-	// 		}
+				// Allowed file extension types
+				let allowed = [
+					'ico',
+					'jpg',
+					'jpeg',
+					'png',
+					'gif',
+					'webp',
+					'JPG',
+					'JPEG',
+					'PNG',
+					'GIF'
+				];
+				// console.log('filename------', filename, filename.split('.').pop())
+				if (!allowed.includes(filename.split('.').pop())) {
+					json['error'] = this.language.get('error_file_type');
+				}
 
-	// 		for (files of file) {
-	// 			if (is_file(file['tmp_name'])) {
-	// 				// Sanitize the filename
-	// 				filename = preg_replace('[/\\?%*:|"<>]', '', basename(html_entity_decode(file['name'])));
+				// Allowed file mime types
+				allowed = [
+					'image/x-icon',
+					'image/jpeg',
+					'image/pjpeg',
+					'image/png',
+					'image/x-png',
+					'image/gif',
+					'image/webp'
+				];
 
-	// 				// Validate the filename length
-	// 				if ((oc_strlen(filename) < 4) || (oc_strlen(filename) > 255)) {
-	// 					json['error'] = this.language.get('error_filename');
-	// 				}
+				if (!allowed.includes(file['mimetype'])) {
+					json['error'] = this.language.get('error_file_type');
+				}
 
-	// 				// Allowed file extension types
-	// 				allowed = [
-	// 					'ico',
-	// 					'jpg',
-	// 					'jpeg',
-	// 					'png',
-	// 					'gif',
-	// 					'webp',
-	// 					'JPG',
-	// 					'JPEG',
-	// 					'PNG',
-	// 					'GIF'
-	// 				];
+				// Return any upload error
+				// if (file['error'] != UPLOAD_ERR_OK) {
+				// 	json['error'] = this.language.get('error_upload_' + file['error']);
+				// }
 
-	// 				if (!in_array(substr(filename, strrpos(filename, '.') + 1), allowed)) {
-	// 					json['error'] = this.language.get('error_file_type');
-	// 				}
 
-	// 				// Allowed file mime types
-	// 				allowed = [
-	// 					'image/x-icon',
-	// 					'image/jpeg',
-	// 					'image/pjpeg',
-	// 					'image/png',
-	// 					'image/x-png',
-	// 					'image/gif',
-	// 					'image/webp'
-	// 				];
+				if (!json.error) {
+					try {
+						await uploadFile(file, directory + filename)
+					} catch (err) {
+						json['error'] = this.language.get('error_upload_' + file['error']);
+					}
+				}
+			}
+		}
 
-	// 				if (!in_array(file['type'], allowed)) {
-	// 					json['error'] = this.language.get('error_file_type');
-	// 				}
+		if (!json.error) {
+			json['success'] = this.language.get('text_uploaded');
+		}
 
-	// 				// Return any upload error
-	// 				if (file['error'] != UPLOAD_ERR_OK) {
-	// 					json['error'] = this.language.get('error_upload_' + file['error']);
-	// 				}
-	// 			} else {
-	// 				json['error'] = this.language.get('error_upload');
-	// 			}
-
-	// 			if (!Object.keys(json).length) {
-	// 				move_uploaded_file(file['tmp_name'], directory + filename);
-	// 			}
-	// 		}
-	// 	}
-
-	// 	if (!Object.keys(json).length) {
-	// 		json['success'] = this.language.get('text_uploaded');
-	// 	}
-
-	// 	this.response.addHeader('Content-Type: application/json');
-	// 	this.response.setOutput(json);
-	// }
+		this.response.addHeader('Content-Type: application/json');
+		this.response.setOutput(json);
+	}
 
 	/**
 	 * @return void
 	 */
-	// async folder() {
-	// 	await this.load.language('common/filemanager');
+	async folder() {
+		await this.load.language('common/filemanager');
 
-	// 	const json = {};
+		const json = {};
 
-	// 	base = DIR_IMAGE + 'catalog/';
+		let base = DIR_IMAGE + 'catalog/';
 
-	// 	// Check user has permission
-	// 	if (!await this.user.hasPermission('modify', 'common/filemanager')) {
-	// 		json['error'] = this.language.get('error_permission');
-	// 	}
+		// Check user has permission
+		if (!await this.user.hasPermission('modify', 'common/filemanager')) {
+			json['error'] = this.language.get('error_permission');
+		}
 
-	// 	// Make sure we have the correct directory
-	// 	if ((this.request.get['directory'])) {
-	// 		directory = base + html_entity_decode(this.request.get['directory']) + '/';
-	// 	} else {
-	// 		directory = base;
-	// 	}
+		// Make sure we have the correct directory
+		let directory = base;
+		if ((this.request.get['directory'])) {
+			directory = base + html_entity_decode(this.request.get['directory']) + '/';
+		}
 
-	// 	// Check its a directory
-	// 	if (!fs.lstatSync(directory).isDirectory() || substr(str_replace('\\', '/', realpath(directory)) + '/', 0, strlen(base)) != base) {
-	// 		json['error'] = this.language.get('error_directory');
-	// 	}
+		// Check its a directory
+		if (!fs.lstatSync(directory).isDirectory() || (fs.realpathSync(directory).replaceAll('\\', '/') + '/').substring(0, base.length) != base) {
+			json['error'] = this.language.get('error_directory');
+		}
+		let folder = '';
+		if (this.request.server['method'] == 'POST') {
+			// Sanitize the folder name
+			folder = this.request.post['folder'].replace(new RegExp('[/\\?%*&:|"<>]'), '');
+			// Validate the filename length
+			if ((oc_strlen(folder) < 3) || (oc_strlen(folder) > 128)) {
+				json['error'] = this.language.get('error_folder');
+			}
 
-	// 	if (this.request.server['REQUEST_METHOD'] == 'POST') {
-	// 		// Sanitize the folder name
-	// 		folder = preg_replace('[/\\?%*&:|"<>]', '', basename(html_entity_decode(this.request.post['folder'])));
+			// Check if directory already exists or not
+			if (fs.existsSync(directory + folder)) {
+				json['error'] = this.language.get('error_exists');
+			}
+		}
+		if (!json.error) {
+			fs.mkdirSync(directory + '/' + folder);
 
-	// 		// Validate the filename length
-	// 		if ((oc_strlen(folder) < 3) || (oc_strlen(folder) > 128)) {
-	// 			json['error'] = this.language.get('error_folder');
-	// 		}
+			fs.writeFileSync(directory + '/' + folder + '/' + 'index.html', '');
 
-	// 		// Check if directory already exists or not
-	// 		if (is_dir(directory + folder)) {
-	// 			json['error'] = this.language.get('error_exists');
-	// 		}
-	// 	}
+			json['success'] = this.language.get('text_directory');
+		}
 
-	// 	if (!Object.keys(json).length) {
-	// 		mkdir(directory + '/' + folder, 0777);
-
-	// 		chmod(directory + '/' + folder, 0777);
-
-	// 		@touch(directory + '/' + folder + '/' + 'index.html');
-
-	// 		json['success'] = this.language.get('text_directory');
-	// 	}
-
-	// 	this.response.addHeader('Content-Type: application/json');
-	// 	this.response.setOutput(json);
-	// }
+		this.response.addHeader('Content-Type: application/json');
+		this.response.setOutput(json);
+	}
 
 	/**
 	 * @return void
 	 */
-	// async delete() {
-	// 	await this.load.language('common/filemanager');
+	async delete() {
+		await this.load.language('common/filemanager');
 
-	// 	const json = {};
+		const json = {};
 
-	// 	base = DIR_IMAGE + 'catalog/';
+		let base = DIR_IMAGE + 'catalog/';
 
-	// 	// Check user has permission
-	// 	if (!await this.user.hasPermission('modify', 'common/filemanager')) {
-	// 		json['error'] = this.language.get('error_permission');
-	// 	}
+		// Check user has permission
+		if (!await this.user.hasPermission('modify', 'common/filemanager')) {
+			json['error'] = this.language.get('error_permission');
+		}
+		let paths = [];
+		if ((this.request.post['path'])) {
+			paths = this.request.post['path'];
+		}
+		// Loop through each path to run validations
+		for (let path of paths) {
+			// Convert any html encoded characters.
+			path = html_entity_decode(path);
 
-	// 	if ((this.request.post['path'])) {
-	// 		paths = this.request.post['path'];
-	// 	} else {
-	// 		paths = [];
-	// 	}
+			// Check path exists
+			if ((path == base) || ((fs.realpathSync(base + path).replaceAll('\\', '/') + '/').substring(0, base.length) != base)) {
+				json['error'] = this.language.get('error_delete');
 
-	// 	// Loop through each path to run validations
-	// 	for (paths of path) {
-	// 		// Convert any html encoded characters.
-	// 		path = html_entity_decode(path);
+				break;
+			}
+		}
 
-	// 		// Check path exists
-	// 		if ((path == base) || (substr(str_replace('\\', '/', realpath(base + path)) + '/', 0, strlen(base)) != base)) {
-	// 			json['error'] = this.language.get('error_delete');
+		if (!json.error) {
+			// Loop through each path
+			for (let path of paths) {
+				path = rtrim(base + html_entity_decode(path), '/');
 
-	// 			break;
-	// 		}
-	// 	}
+				let files = [];
 
-	// 	if (!Object.keys(json).length) {
-	// 		// Loop through each path
-	// 		for (paths of path) {
-	// 			path = rtrim(base + html_entity_decode(path), '/');
+				// Make path into an array
+				let directory = [path];
 
-	// 			files = [];
+				// While the path array is still populated keep looping through
+				while (directory.length != 0) {
+					let next = directory.shift('');
 
-	// 			// Make path into an array
-	// 			directory = [path];
+					if (next && fs.lstatSync(next).isDirectory()) {
+						for (let file of fs.readdirSync(next)) {
+							// If directory add to path array
+							directory.push(next + '/' + file);
+						}
+					}
 
-	// 			// While the path array is still populated keep looping through
-	// 			while (count(directory) != 0) {
-	// 				next = array_shift(directory);
+					// Add the file to the files to be deleted array
+					if (next)
+						files.push(next);
+				}
 
-	// 				if (is_dir(next)) {
-	// 					for (glob(trim(next, '/') + '/{*,.[!.]*,..?*}', GLOB_BRACE) of file) {
-	// 						// If directory add to path array
-	// 						directory[] = file;
-	// 					}
-	// 				}
+				// Reverse sort the file array
+				files = files.reverse();
 
-	// 				// Add the file to the files to be deleted array
-	// 				files[] = next;
-	// 			}
+				for (let file of files) {
+					// If file just delete
+					if (fs.lstatSync(file).isFile()) {
+						fs.unlinkSync(file);
+					}
 
-	// 			// Reverse sort the file array
-	// 			rsort(files);
+					// If directory use the remove directory function
+					if (fs.existsSync(file) && fs.lstatSync(file).isDirectory()) {
+						fs.rmdirSync(file);
+					}
+				}
+			}
 
-	// 			for (files of file) {
-	// 				// If file just delete
-	// 				if (fs.lstatSync(file).isFile()) {
-	// 					fs.unlinkSync(file);
-	// 				}
+			json['success'] = this.language.get('text_delete');
+		}
 
-	// 				// If directory use the remove directory function
-	// 				if (is_dir(file)) {
-	// 					fs.rmdirSync(file);
-	// 				}
-	// 			}
-	// 		}
-
-	// 		json['success'] = this.language.get('text_delete');
-	// 	}
-
-	// 	this.response.addHeader('Content-Type: application/json');
-	// 	this.response.setOutput(json);
-	// }
+		this.response.addHeader('Content-Type: application/json');
+		this.response.setOutput(json);
+	}
 }

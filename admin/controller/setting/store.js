@@ -35,7 +35,7 @@ class StoreController extends Controller {
 		data['add'] = this.url.link('setting/store.form', 'user_token=' + this.session.data['user_token'] + url);
 		data['delete'] = this.url.link('setting/store.delete', 'user_token=' + this.session.data['user_token']);
 
-		data['list'] = this.getList();
+		data['list'] = await this.getList();
 
 		data['user_token'] = this.session.data['user_token'];
 
@@ -52,17 +52,16 @@ class StoreController extends Controller {
 	async list() {
 		await this.load.language('setting/store');
 
-		this.response.setOutput(this.getList());
+		this.response.setOutput(await this.getList());
 	}
 
 	/**
 	 * @return string
 	 */
 	async getList() {
-		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
+		let page = 1;
+		if ((this.request.get['page '])) {
+			page = this.request.get['page '];
 		}
 
 		let url = '';
@@ -88,7 +87,7 @@ class StoreController extends Controller {
 			];
 		}
 
-		this.load.model('setting/store');
+		this.load.model('setting/store',this);
 
 		this.load.model('setting/setting',this);
 
@@ -156,7 +155,7 @@ class StoreController extends Controller {
 		if ((this.request.get['store_id'])) {
 			this.load.model('setting/setting',this);
 
-			store_info await this.model_setting_setting.getSetting('config', this.request.get['store_id']);
+			const store_info = await this.model_setting_setting.getSetting('config', this.request.get['store_id']);
 		}
 
 		if ((this.request.get['store_id'])) {
@@ -379,7 +378,7 @@ class StoreController extends Controller {
 			data['config_tax_customer'] = '';
 		}
 
-		this.load.model('customer/customer_group');
+		this.load.model('customer/customer_group',this);
 
 		data['customer_groups'] = await this.model_customer_customer_group.getCustomerGroups();
 
@@ -698,7 +697,7 @@ class StoreController extends Controller {
 		if (!Object.keys(json).length) {
 			this.load.model('setting/setting',this);
 
-			this.load.model('setting/store');
+			this.load.model('setting/store',this);
 
 			if (!this.request.post['store_id']) {
 				json['store_id'] = await this.model_setting_store.addStore(this.request.post);
@@ -725,10 +724,9 @@ class StoreController extends Controller {
 
 		const json = {};
 
-		if ((this.request.post['selected'])) {
+		let selected = [];
+                 if ((this.request.post['selected'])) {
 			selected = this.request.post['selected'];
-		} else {
-			selected = [];
 		}
 
 		if (!await this.user.hasPermission('modify', 'setting/store')) {
@@ -757,7 +755,7 @@ class StoreController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('setting/store');
+			this.load.model('setting/store',this);
 
 			this.load.model('setting/setting',this);
 

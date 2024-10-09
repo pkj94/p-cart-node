@@ -43,7 +43,7 @@ class LayoutController extends Controller {
 		data['add'] = this.url.link('design/layout.form', 'user_token=' + this.session.data['user_token'] + url);
 		data['delete'] = this.url.link('design/layout.delete', 'user_token=' + this.session.data['user_token']);
 
-		data['list'] = this.getList();
+		data['list'] = await this.getList();
 
 		data['user_token'] = this.session.data['user_token'];
 
@@ -60,7 +60,7 @@ class LayoutController extends Controller {
 	async list() {
 		await this.load.language('design/layout');
 
-		this.response.setOutput(this.getList());
+		this.response.setOutput(await this.getList());
 	}
 
 	/**
@@ -73,16 +73,14 @@ class LayoutController extends Controller {
 			sort = 'name';
 		}
 
+		let order= 'ASC';
 		if ((this.request.get['order'])) {
-			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
+			order= this.request.get['order'];
 		}
 
-		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
+		let page = 1;
+		if ((this.request.get['page '])) {
+			page = this.request.get['page '];
 		}
 
 		let url = '';
@@ -216,7 +214,7 @@ class LayoutController extends Controller {
 			data['name'] = '';
 		}
 
-		this.load.model('setting/store');
+		this.load.model('setting/store',this);
 
 		data['stores'] = await this.model_setting_store.getStores();
 
@@ -342,23 +340,22 @@ class LayoutController extends Controller {
 
 		const json = {};
 
-		if ((this.request.post['selected'])) {
+		let selected = [];
+                 if ((this.request.post['selected'])) {
 			selected = this.request.post['selected'];
-		} else {
-			selected = [];
 		}
 
 		if (!await this.user.hasPermission('modify', 'design/layout')) {
 			json['error'] = this.language.get('error_permission');
 		}
 
-		this.load.model('setting/store');
-		this.load.model('catalog/product');
+		this.load.model('setting/store',this);
+		this.load.model('catalog/product',this);
 		this.load.model('catalog/category',this);
-		this.load.model('catalog/manufacturer');
+		this.load.model('catalog/manufacturer',this);
 		this.load.model('catalog/information');
 
-		for (selected of layout_id) {
+		for (let layout_id of selected) {
 			if (this.config.get('config_layout_id') == layout_id) {
 				json['error'] = this.language.get('error_default');
 			}
@@ -369,7 +366,7 @@ class LayoutController extends Controller {
 				json['error'] = sprintf(this.language.get('error_store'), store_total);
 			}
 
-			product_total await this.model_catalog_product.getTotalProductsByLayoutId(layout_id);
+			const product_total = await this.model_catalog_product.getTotalProductsByLayoutId(layout_id);
 
 			if (product_total) {
 				json['error'] = sprintf(this.language.get('error_product'), product_total);
@@ -397,7 +394,7 @@ class LayoutController extends Controller {
 		if (!Object.keys(json).length) {
 			this.load.model('design/layout',this);
 
-			for (selected of layout_id) {
+			for (let layout_id of selected) {
 				await this.model_design_layout.deleteLayout(layout_id);
 			}
 

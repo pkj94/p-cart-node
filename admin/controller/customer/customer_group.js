@@ -43,7 +43,7 @@ class CustomerGroupController extends Controller {
 		data['add'] = this.url.link('customer/customer_group.form', 'user_token=' + this.session.data['user_token'] + url);
 		data['delete'] = this.url.link('customer/customer_group.delete', 'user_token=' + this.session.data['user_token']);
 
-		data['list'] = this.getList();
+		data['list'] = await this.getList();
 
 		data['user_token'] = this.session.data['user_token'];
 
@@ -60,7 +60,7 @@ class CustomerGroupController extends Controller {
 	async list() {
 		await this.load.language('customer/customer_group');
 
-		this.response.setOutput(this.getList());
+		this.response.setOutput(await this.getList());
 	}
 
 	/**
@@ -73,16 +73,14 @@ class CustomerGroupController extends Controller {
 			sort = 'cgd.name';
 		}
 
+		let order= 'ASC';
 		if ((this.request.get['order'])) {
-			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
+			order= this.request.get['order'];
 		}
 
-		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
+		let page = 1;
+		if ((this.request.get['page '])) {
+			page = this.request.get['page '];
 		}
 
 		let url = '';
@@ -110,7 +108,7 @@ class CustomerGroupController extends Controller {
 			'limit' : this.config.get('config_pagination_admin')
 		});
 
-		this.load.model('customer/customer_group');
+		this.load.model('customer/customer_group',this);
 
 		customer_group_total await this.model_customer_customer_group.getTotalCustomerGroups();
 
@@ -201,7 +199,7 @@ class CustomerGroupController extends Controller {
 		data['back'] = this.url.link('customer/customer_group', 'user_token=' + this.session.data['user_token'] + url);
 
 		if ((this.request.get['customer_group_id'])) {
-			this.load.model('customer/customer_group');
+			this.load.model('customer/customer_group',this);
 
 			customer_group_info await this.model_customer_customer_group.getCustomerGroup(this.request.get['customer_group_id']);
 		}
@@ -260,7 +258,7 @@ class CustomerGroupController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('customer/customer_group');
+			this.load.model('customer/customer_group',this);
 
 			if (!this.request.post['customer_group_id']) {
 				json['customer_group_id'] = await this.model_customer_customer_group.addCustomerGroup(this.request.post);
@@ -283,20 +281,19 @@ class CustomerGroupController extends Controller {
 
 		const json = {};
 
-		if ((this.request.post['selected'])) {
+		let selected = [];
+                 if ((this.request.post['selected'])) {
 			selected = this.request.post['selected'];
-		} else {
-			selected = [];
 		}
 
 		if (!await this.user.hasPermission('modify', 'customer/customer_group')) {
 			json['error'] = this.language.get('error_permission');
 		}
 
-		this.load.model('setting/store');
+		this.load.model('setting/store',this);
 		this.load.model('customer/customer');
 
-		for (selected of customer_group_id) {
+		for (let customer_group_id of selected) {
 			if (this.config.get('config_customer_group_id') == customer_group_id) {
 				json['error'] = this.language.get('error_default');
 			}
@@ -315,9 +312,9 @@ class CustomerGroupController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('customer/customer_group');
+			this.load.model('customer/customer_group',this);
 
-			for (selected of customer_group_id) {
+			for (let customer_group_id of selected) {
 				await this.model_customer_customer_group.deleteCustomerGroup(customer_group_id);
 			}
 

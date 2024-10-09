@@ -28,7 +28,7 @@ class ThemeController extends Controller {
 
 		data['stores'] = [];
 
-		this.load.model('setting/store');
+		this.load.model('setting/store',this);
 
 		const results = await this.model_setting_store.getStores();
 
@@ -54,27 +54,26 @@ class ThemeController extends Controller {
 	async history() {
 		await this.load.language('design/theme');
 
-		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
+		let page = 1;
+		if ((this.request.get['page '])) {
+			page = this.request.get['page '];
 		}
 
-		limit = 10;
+		let limit = 10;
 
 		data['histories'] = [];
 
 		this.load.model('design/theme');
-		this.load.model('setting/store');
+		this.load.model('setting/store',this);
 
 		history_total await this.model_design_theme.getTotalThemes();
 
 		const results = await this.model_design_theme.getThemes((page - 1) * limit, limit);
 
 		for (let result of results) {
-			store_info await this.model_setting_store.getStore(result['store_id']);
+			const store_info = await this.model_setting_store.getStore(result['store_id']);
 
-			if (store_info) {
+			if (store_info && store_info.store_id) {
 				store = store_info['name'];
 			} else {
 				store = '';

@@ -14,10 +14,9 @@ class ZoneController extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		if ((this.request.get['filter_name'])) {
+		let filter_name = '';
+if ((this.request.get['filter_name'])) {
 			filter_name = this.request.get['filter_name'];
-		} else {
-			filter_name = '';
 		}
 
 		if ((this.request.get['filter_country'])) {
@@ -61,7 +60,7 @@ class ZoneController extends Controller {
 		data['add'] = this.url.link('localisation/zone.form', 'user_token=' + this.session.data['user_token'] + url);
 		data['delete'] = this.url.link('localisation/zone.delete', 'user_token=' + this.session.data['user_token']);
 
-		data['list'] = this.getList();
+		data['list'] = await this.getList();
 
 		data['filter_name'] = filter_name;
 		data['filter_country'] = filter_country;
@@ -82,17 +81,16 @@ class ZoneController extends Controller {
 	async list() {
 		await this.load.language('localisation/zone');
 
-		this.response.setOutput(this.getList());
+		this.response.setOutput(await this.getList());
 	}
 
 	/**
 	 * @return string
 	 */
 	async getList() {
-		if ((this.request.get['filter_name'])) {
+		let filter_name = '';
+if ((this.request.get['filter_name'])) {
 			filter_name = this.request.get['filter_name'];
-		} else {
-			filter_name = '';
 		}
 
 		if ((this.request.get['filter_country'])) {
@@ -113,16 +111,14 @@ class ZoneController extends Controller {
 			sort = 'c.name';
 		}
 
+		let order= 'ASC';
 		if ((this.request.get['order'])) {
-			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
+			order= this.request.get['order'];
 		}
 
-		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
+		let page = 1;
+		if ((this.request.get['page '])) {
+			page = this.request.get['page '];
 		}
 
 		let url = '';
@@ -381,17 +377,16 @@ class ZoneController extends Controller {
 
 		const json = {};
 
-		if ((this.request.post['selected'])) {
+		let selected = [];
+                 if ((this.request.post['selected'])) {
 			selected = this.request.post['selected'];
-		} else {
-			selected = [];
 		}
 
 		if (!await this.user.hasPermission('modify', 'localisation/zone')) {
 			json['error'] = this.language.get('error_permission');
 		}
 
-		this.load.model('setting/store');
+		this.load.model('setting/store',this);
 		this.load.model('customer/customer');
 		this.load.model('localisation/geo_zone');
 

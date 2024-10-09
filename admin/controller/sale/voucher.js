@@ -43,7 +43,7 @@ class VoucherController extends Controller {
 		data['add'] = this.url.link('sale/voucher.form', 'user_token=' + this.session.data['user_token'] + url);
 		data['delete'] = this.url.link('sale/voucher.delete', 'user_token=' + this.session.data['user_token']);
 
-		data['list'] = this.getList();
+		data['list'] = await this.getList();
 
 		data['user_token'] = this.session.data['user_token'];
 
@@ -60,7 +60,7 @@ class VoucherController extends Controller {
 	async list() {
 		await this.load.language('sale/voucher');
 
-		this.response.setOutput(this.getList());
+		this.response.setOutput(await this.getList());
 	}
 
 	/**
@@ -79,10 +79,9 @@ class VoucherController extends Controller {
 			order = 'DESC';
 		}
 
-		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
+		let page = 1;
+		if ((this.request.get['page '])) {
+			page = this.request.get['page '];
 		}
 
 		let url = '';
@@ -321,7 +320,7 @@ class VoucherController extends Controller {
 		if (voucher_info) {
 			if (!(this.request.post['voucher_id'])) {
 				json['error']['warning'] = this.language.get('error_exists');
-			} elseif (voucher_info['voucher_id'] != this.request.post['voucher_id'])  {
+			} else if (voucher_info['voucher_id'] != this.request.post['voucher_id'])  {
 				json['error']['warning'] = this.language.get('error_exists');
 			}
 		}
@@ -368,10 +367,9 @@ class VoucherController extends Controller {
 
 		const json = {};
 
-		if ((this.request.post['selected'])) {
+		let selected = [];
+                 if ((this.request.post['selected'])) {
 			selected = this.request.post['selected'];
-		} else {
-			selected = [];
 		}
 
 		if (!await this.user.hasPermission('modify', 'sale/voucher')) {
@@ -380,7 +378,7 @@ class VoucherController extends Controller {
 
 		this.load.model('sale/order');
 
-		for (selected of voucher_id) {
+		for (let voucher_id of selected) {
 			order_voucher_info await this.model_sale_order.getVoucherByVoucherId(voucher_id);
 
 			if (order_voucher_info) {
@@ -393,7 +391,7 @@ class VoucherController extends Controller {
 		if (!Object.keys(json).length) {
 			this.load.model('sale/voucher');
 
-			for (selected of voucher_id) {
+			for (let voucher_id of selected) {
 				await this.model_sale_voucher.deleteVoucher(voucher_id);
 			}
 
@@ -429,7 +427,7 @@ class VoucherController extends Controller {
 			page = 1;
 		}
 
-		limit = 10;
+		let limit = 10;
 
 		data['histories'] = [];
 

@@ -31,7 +31,6 @@ module.exports = class ImageLibrary {
      * @param {number} quality - JPEG quality (1-100)
      */
     async save(file, quality = 90) {
-        console.log(this)
         if (this.mime === Jimp.MIME_JPEG) {
             await this.image.getBuffer(this.mime, {
                 quality: quality,

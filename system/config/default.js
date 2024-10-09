@@ -31,7 +31,7 @@ module.exports = {
     // Session
     'session_autostart': false,
     'session_engine': 'file', // db or file
-    'session_name': 'OCSESSID',
+    'session_name': 'PCSESSID',
     'session_domain': '',
     'session_path': '/',
     'session_expire': 86400,

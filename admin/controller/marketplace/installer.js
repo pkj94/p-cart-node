@@ -33,7 +33,7 @@ class InstallerController extends Controller {
 
 		data['upload'] = this.url.link('tool/installer.upload', 'user_token=' + this.session.data['user_token']);
 
-		data['list'] = this.getList();
+		data['list'] = await this.getList();
 
 		if ((this.request.get['filter_extension_id'])) {
 			data['filter_extension_download_id'] = this.request.get['filter_extension_download_id'];
@@ -56,7 +56,7 @@ class InstallerController extends Controller {
 	async list() {
 		await this.load.language('marketplace/cron');
 
-		this.response.setOutput(this.getList());
+		this.response.setOutput(await this.getList());
 	}
 
 	/**
@@ -77,16 +77,14 @@ class InstallerController extends Controller {
 			sort = 'name';
 		}
 
+		let order= 'ASC';
 		if ((this.request.get['order'])) {
-			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
+			order= this.request.get['order'];
 		}
 
-		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
+		let page = 1;
+		if ((this.request.get['page '])) {
+			page = this.request.get['page '];
 		}
 
 		this.load.model('setting/extension');
@@ -142,7 +140,7 @@ class InstallerController extends Controller {
 		for (let result of results) {
 			if (result['extension_id']) {
 				link = this.url.link('marketplace/marketplace.info', 'user_token=' + this.session.data['user_token'] + '&extension_id=' + result['extension_id']);
-			} elseif (result['link']) {
+			} else if (result['link']) {
 				link = result['link'];
 			} else {
 				link = '';
@@ -306,10 +304,9 @@ class InstallerController extends Controller {
 			extension_install_id = 0;
 		}
 
-		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
+		let page = 1;
+		if ((this.request.get['page '])) {
+			page = this.request.get['page '];
 		}
 
 		if (!await this.user.hasPermission('modify', 'marketplace/installer')) {
@@ -357,19 +354,19 @@ class InstallerController extends Controller {
 
 					// Only extract the contents of the upload folder
 					path = extension_install_info['code'] + '/' + destination;
-					base = DIR_EXTENSION;
+					let base = DIR_EXTENSION;
 					prefix = '';
 
 					// image > image
 					if (substr(destination, 0, 6) == 'image/') {
 						path = destination;
-						base = substr(DIR_IMAGE, 0, -6);
+						let base = substr(DIR_IMAGE, 0, -6);
 					}
 
 					// We need to store the path differently for vendor folders.
 					if (substr(destination, 0, 15) == 'system/storage/') {
 						path = substr(destination, 15);
-						base = DIR_STORAGE;
+						let base = DIR_STORAGE;
 						prefix = 'system/storage/';
 					}
 

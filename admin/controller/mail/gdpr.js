@@ -51,11 +51,11 @@ class GdprController extends Controller {
 	 * @throws \Exception
 	 */
 	async export(array gdpr_info) {
-		this.load.model('setting/store');
+		this.load.model('setting/store',this);
 
 		store_info await this.model_setting_store.getStore(gdpr_info['store_id']);
 
-		if (store_info) {
+		if (store_info && store_info.store_id) {
 			this.load.model('setting/setting',this);
 
 			store_logo = html_entity_decode(this.model_setting_setting.getValue('config_logo', store_info['store_id']));
@@ -227,11 +227,11 @@ class GdprController extends Controller {
 	 * @throws \Exception
 	 */
 	async approve(array gdpr_info) {
-		this.load.model('setting/store');
+		this.load.model('setting/store',this);
 
 		store_info await this.model_setting_store.getStore(gdpr_info['store_id']);
 
-		if (store_info) {
+		if (store_info && store_info.store_id) {
 			this.load.model('setting/setting',this);
 
 			store_logo = html_entity_decode(this.model_setting_setting.getValue('config_logo', store_info['store_id']));
@@ -318,11 +318,11 @@ class GdprController extends Controller {
 	 * @throws \Exception
 	 */
 	async deny(array gdpr_info) {
-		this.load.model('setting/store');
+		this.load.model('setting/store',this);
 
 		store_info await this.model_setting_store.getStore(gdpr_info['store_id']);
 
-		if (store_info) {
+		if (store_info && store_info.store_id) {
 			this.load.model('setting/setting',this);
 
 			store_logo = html_entity_decode(this.model_setting_setting.getValue('config_logo', store_info['store_id']));
@@ -409,11 +409,11 @@ class GdprController extends Controller {
 	 * @throws \Exception
 	 */
 	async remove(array gdpr_info) {
-		this.load.model('setting/store');
+		this.load.model('setting/store',this);
 
 		store_info await this.model_setting_store.getStore(gdpr_info['store_id']);
 
-		if (store_info) {
+		if (store_info && store_info.store_id) {
 			this.load.model('setting/setting',this);
 
 			store_logo = html_entity_decode(this.model_setting_setting.getValue('config_logo', store_info['store_id']));

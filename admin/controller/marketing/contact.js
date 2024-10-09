@@ -28,11 +28,11 @@ class ContactController extends Controller {
 			'href' : this.url.link('marketing/contact', 'user_token=' + this.session.data['user_token'])
 		});
 
-		this.load.model('setting/store');
+		this.load.model('setting/store',this);
 
 		data['stores'] = await this.model_setting_store.getStores();
 
-		this.load.model('customer/customer_group');
+		this.load.model('customer/customer_group',this);
 
 		data['customer_groups'] = await this.model_customer_customer_group.getCustomerGroups();
 
@@ -67,14 +67,14 @@ class ContactController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('setting/store');
+			this.load.model('setting/store',this);
 			this.load.model('setting/setting',this);
 			this.load.model('customer/customer');
 			this.load.model('sale/order');
 
-			store_info await this.model_setting_store.getStore(this.request.post['store_id']);
+			const store_info = await this.model_setting_store.getStore(this.request.post['store_id']);
 
-			if (store_info) {
+			if (store_info && store_info.store_id) {
 				store_name = store_info['name'];
 			} else {
 				store_name = this.config.get('config_name');
@@ -90,7 +90,7 @@ class ContactController extends Controller {
 				page = 1;
 			}
 
-			limit = 10;
+			let limit = 10;
 
 			email_total = 0;
 

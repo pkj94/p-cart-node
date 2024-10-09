@@ -38,7 +38,7 @@ module.exports = class DownloadController extends Controller {
 
 		data['user_token'] = this.session.data['user_token'];
 
-		data['list'] = this.getList();
+		data['list'] = await this.getList();
 
 		data['header'] = await this.load.controller('common/header');
 		data['column_left'] = await this.load.controller('common/column_left');
@@ -53,7 +53,7 @@ module.exports = class DownloadController extends Controller {
 	async list() {
 		await this.load.language('catalog/download');
 
-		this.response.setOutput(this.getList());
+		this.response.setOutput(await this.getList());
 	}
 
 	/**
@@ -66,16 +66,14 @@ module.exports = class DownloadController extends Controller {
 			sort = 'dd.name';
 		}
 
+		let order= 'ASC';
 		if ((this.request.get['order'])) {
-			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
+			order= this.request.get['order'];
 		}
 
-		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
+		let page = 1;
+		if ((this.request.get['page '])) {
+			page = this.request.get['page '];
 		}
 
 		let url = '';
@@ -103,7 +101,7 @@ module.exports = class DownloadController extends Controller {
 			'limit' : this.config.get('config_pagination_admin')
 		});
 
-		this.load.model('catalog/download');
+		this.load.model('catalog/download',this);
 
 		download_total await this.model_catalog_download.getTotalDownloads();
 
@@ -200,7 +198,7 @@ module.exports = class DownloadController extends Controller {
 		data['upload'] = this.url.link('catalog/download.upload', 'user_token=' + this.session.data['user_token']);
 
 		if ((this.request.get['download_id'])) {
-			this.load.model('catalog/download');
+			this.load.model('catalog/download',this);
 
 			download_info await this.model_catalog_download.getDownload(this.request.get['download_id']);
 		}
@@ -291,7 +289,7 @@ module.exports = class DownloadController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('catalog/download');
+			this.load.model('catalog/download',this);
 
 			if (!this.request.post['download_id']) {
 				json['download_id'] = await this.model_catalog_download.addDownload(this.request.post);
@@ -314,20 +312,19 @@ module.exports = class DownloadController extends Controller {
 
 		const json = {};
 
-		if ((this.request.post['selected'])) {
+		let selected = [];
+                 if ((this.request.post['selected'])) {
 			selected = this.request.post['selected'];
-		} else {
-			selected = [];
 		}
 
 		if (!await this.user.hasPermission('modify', 'catalog/download')) {
 			json['error'] = this.language.get('error_permission');
 		}
 
-		this.load.model('catalog/product');
+		this.load.model('catalog/product',this);
 
-		for (selected of download_id) {
-			product_total await this.model_catalog_product.getTotalProductsByDownloadId(download_id);
+		for (let download_id of selected) {
+			const product_total = await this.model_catalog_product.getTotalProductsByDownloadId(download_id);
 
 			if (product_total) {
 				json['error'] = sprintf(this.language.get('error_product'), product_total);
@@ -335,9 +332,9 @@ module.exports = class DownloadController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('catalog/download');
+			this.load.model('catalog/download',this);
 
-			for (selected of download_id) {
+			for (let download_id of selected) {
 				await this.model_catalog_download.deleteDownload(download_id);
 			}
 
@@ -373,22 +370,22 @@ module.exports = class DownloadController extends Controller {
 			page = 1;
 		}
 
-		limit = 10;
+		let limit = 10;
 
 		data['reports'] = [];
 
-		this.load.model('catalog/download');
+		this.load.model('catalog/download',this);
 		this.load.model('customer/customer');
-		this.load.model('setting/store');
+		this.load.model('setting/store',this);
 
 		const results = await this.model_catalog_download.getReports(download_id, (page - 1) * limit, limit);
 
 		for (let result of results) {
-			store_info await this.model_setting_store.getStore(result['store_id']);
+			const store_info = await this.model_setting_store.getStore(result['store_id']);
 
-			if (store_info) {
+			if (store_info && store_info.store_id) {
 				store = store_info['name'];
-			} elseif (!result['store_id']) {
+			} else if (!result['store_id']) {
 				store = this.config.get('config_name');
 			} else {
 				store = '';
@@ -404,7 +401,7 @@ module.exports = class DownloadController extends Controller {
 			];
 		}
 
-		report_total await this.model_catalog_download.getTotalReports(download_id);
+		const report_total = await this.model_catalog_download.getTotalReports(download_id);
 
 		data['pagination'] = await this.load.controller('common/pagination', {
 			'total' : report_total,
@@ -557,7 +554,7 @@ module.exports = class DownloadController extends Controller {
 		const json = {};
 
 		if ((this.request.get['filter_name'])) {
-			this.load.model('catalog/download');
+			this.load.model('catalog/download',this);
 
 			let filter_data = {
 				'filter_name' : this.request.get['filter_name'],

@@ -10,7 +10,7 @@ class ThemeController extends Controller {
 	 * @return void
 	 */
 	async index() {
-		this.response.setOutput(this.getList());
+		this.response.setOutput(await this.getList());
 	}
 
 	/**
@@ -41,7 +41,7 @@ class ThemeController extends Controller {
 			}
 		}
 
-		this.load.model('setting/store');
+		this.load.model('setting/store',this);
 		this.load.model('setting/setting',this);
 
 		let stores = await this.model_setting_store.getStores();

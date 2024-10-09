@@ -292,7 +292,6 @@ module.exports = class CategoryCatalogController extends Controller {
 		} else {
 			data['thumb'] = data['placeholder'];
 		}
-		console.log('data.image==========', data.image, data.thumb, data['placeholder'])
 
 		if ((category_info)) {
 			data['top'] = category_info['top'];
@@ -474,7 +473,7 @@ module.exports = class CategoryCatalogController extends Controller {
 		if (!Object.keys(json).length) {
 			this.load.model('catalog/category', this);
 
-			for (selected of category_id) {
+			for (let category_id of selected) {
 				await this.model_catalog_category.deleteCategory(category_id);
 			}
 

@@ -26,7 +26,7 @@ class StatisticsController extends Controller {
 			'href' : this.url.link('report/statistics', 'user_token=' + this.session.data['user_token'])
 		});
 
-		data['list'] = this.getList();
+		data['list'] = await this.getList();
 
 		data['user_token'] = this.session.data['user_token'];
 
@@ -43,7 +43,7 @@ class StatisticsController extends Controller {
 	async list() {
 		await this.load.language('report/statistics');
 
-		this.response.setOutput(this.getList());
+		this.response.setOutput(await this.getList());
 	}
 
 	/**
@@ -218,7 +218,7 @@ class StatisticsController extends Controller {
 
 		if (!Object.keys(json).length) {
 			this.load.model('report/statistics');
-			this.load.model('catalog/product');
+			this.load.model('catalog/product',this);
 
 			await this.model_report_statistics.editValue('product', this.model_catalog_product.getTotalProducts(['filter_quantity' : 0]));
 

@@ -26,7 +26,7 @@ class NotificationController extends Controller {
 			'href' : this.url.link('tool/notification', 'user_token=' + this.session.data['user_token'])
 		});
 
-		data['list'] = this.getList();
+		data['list'] = await this.getList();
 
 		data['user_token'] = this.session.data['user_token'];
 
@@ -43,17 +43,16 @@ class NotificationController extends Controller {
 	async list() {
 		await this.load.language('tool/notification');
 
-		this.response.setOutput(this.getList());
+		this.response.setOutput(await this.getList());
 	}
 
 	/**
 	 * @return string
 	 */
 	async getList() {
-		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
+		let page = 1;
+		if ((this.request.get['page '])) {
+			page = this.request.get['page '];
 		}
 
 		let url = '';
@@ -152,10 +151,9 @@ class NotificationController extends Controller {
 
 		const json = {};
 
-		if ((this.request.post['selected'])) {
+		let selected = [];
+                 if ((this.request.post['selected'])) {
 			selected = this.request.post['selected'];
-		} else {
-			selected = [];
 		}
 
 		if (!await this.user.hasPermission('modify', 'tool/notification')) {

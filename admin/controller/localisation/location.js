@@ -43,7 +43,7 @@ class LocationController extends Controller {
 		data['add'] = this.url.link('localisation/location.form', 'user_token=' + this.session.data['user_token'] + url);
 		data['delete'] = this.url.link('localisation/location.delete', 'user_token=' + this.session.data['user_token']);
 
-		data['list'] = this.getList();
+		data['list'] = await this.getList();
 
 		data['user_token'] = this.session.data['user_token'];
 
@@ -60,7 +60,7 @@ class LocationController extends Controller {
 	async list() {
 		await this.load.language('localisation/location');
 
-		this.response.setOutput(this.getList());
+		this.response.setOutput(await this.getList());
 	}
 
 	/**
@@ -73,16 +73,14 @@ class LocationController extends Controller {
 			sort = 'name';
 		}
 
+		let order= 'ASC';
 		if ((this.request.get['order'])) {
-			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
+			order= this.request.get['order'];
 		}
 
-		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
+		let page = 1;
+		if ((this.request.get['page '])) {
+			page = this.request.get['page '];
 		}
 
 		let url = '';
@@ -212,7 +210,7 @@ class LocationController extends Controller {
 			data['location_id'] = 0;
 		}
 
-		this.load.model('setting/store');
+		this.load.model('setting/store',this);
 
 		if ((location_info)) {
 			data['name'] = location_info['name'];
@@ -323,10 +321,9 @@ class LocationController extends Controller {
 
 		const json = {};
 
-		if ((this.request.post['selected'])) {
+		let selected = [];
+                 if ((this.request.post['selected'])) {
 			selected = this.request.post['selected'];
-		} else {
-			selected = [];
 		}
 
 		if (!await this.user.hasPermission('modify', 'localisation/location')) {

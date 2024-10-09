@@ -31,11 +31,12 @@ class TopicModel  extends Model {
 
 		for (data['topic_seo_url'] of store_id : language) {
 			for (let [language_id , keyword] of language ) {
+				language_id = language_id.split('-')[1];
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "seo_url` SET `store_id` = '" + store_id + "', `language_id` = '" + language_id + "', `key` = 'topic_id', `value`= '" + topic_id + "', `keyword` = " + this.db.escape(keyword) + "");
 			}
 		}
 
-		this.cache.delete('topic');
+		await this.cache.delete('topic');
 
 		return topic_id;
 	}
@@ -67,11 +68,12 @@ class TopicModel  extends Model {
 
 		for (data['topic_seo_url'] of store_id : language) {
 			for (let [language_id , keyword] of language ) {
+				language_id = language_id.split('-')[1];
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "seo_url` SET `store_id` = '" + store_id + "', `language_id` = '" + language_id + "', `key` = 'topic_id', `value` = '" + topic_id + "', `keyword` = " + this.db.escape(keyword) + "");
 			}
 		}
 
-		this.cache.delete('topic');
+		await this.cache.delete('topic');
 	}
 
 	/**
@@ -85,7 +87,7 @@ class TopicModel  extends Model {
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "topic_to_store` WHERE `topic_id` = '" + topic_id + "'");
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "seo_url` WHERE `key` = 'topic_id' AND `value` = '" + topic_id + "'");
 
-		this.cache.delete('topic');
+		await this.cache.delete('topic');
 	}
 
 	/**
@@ -96,14 +98,14 @@ class TopicModel  extends Model {
 	async getTopic(topic_id) {
 		let sql = "SELECT DISTINCT * FROM `" + DB_PREFIX + "topic` `t` LEFT JOIN `" + DB_PREFIX + "topic_description` `td` ON (`t`.`topic_id` = `td`.`topic_id`) WHERE `t`.`topic_id` = '" + topic_id + "' AND `td`.`language_id` = '" + this.config.get('config_language_id') + "'";
 
-		topic_data = await this.cache.get('topic.'. crypto.createHash('md5').update(sql).digest('hex'));
+		topic_data = await this.cache.get('topic.'. md5(sql));
 
 		if (!topic_data) {
 			let query = await this.db.query(sql);
 
 			topic_data = query.row;
 
-			this.cache.set('topic.'. crypto.createHash('md5').update(sql).digest('hex'), topic_data);
+			await this.cache.set('topic.'. md5(sql), topic_data);
 		}
 
 		return topic_data;
@@ -148,14 +150,14 @@ if (data['limit'] < 1) {
 			sql += " LIMIT " + data['start'] + "," + data['limit'];
 		}
 
-		topic_data = await this.cache.get('topic.'. crypto.createHash('md5').update(sql).digest('hex'));
+		topic_data = await this.cache.get('topic.'. md5(sql));
 
 		if (!topic_data) {
 			let query = await this.db.query(sql);
 
 			topic_data = query.rows;
 
-			this.cache.set('topic.'. crypto.createHash('md5').update(sql).digest('hex'), topic_data);
+			await this.cache.set('topic.'. md5(sql), topic_data);
 		}
 
 		return topic_data;

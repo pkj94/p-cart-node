@@ -40,7 +40,7 @@ class OnlineController extends Controller {
 			'href' : this.url.link('report/online', 'user_token=' + this.session.data['user_token'])
 		});
 
-		data['list'] = this.getList();
+		data['list'] = await this.getList();
 
 		data['user_token'] = this.session.data['user_token'];
 
@@ -57,7 +57,7 @@ class OnlineController extends Controller {
 	async list() {
 		await this.load.language('report/online');
 
-		this.response.setOutput(this.getList());
+		this.response.setOutput(await this.getList());
 	}
 
 	/**
@@ -76,10 +76,9 @@ class OnlineController extends Controller {
 			filter_ip = '';
 		}
 
-		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
+		let page = 1;
+		if ((this.request.get['page '])) {
+			page = this.request.get['page '];
 		}
 
 		data['customers'] = [];

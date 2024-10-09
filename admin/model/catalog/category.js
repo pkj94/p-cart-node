@@ -248,12 +248,12 @@ module.exports = class CategoryCatalogModel extends Model {
 	async repairCategories(parent_id = 0) {
 		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "category` WHERE `parent_id` = '" + parent_id + "'");
 
-		for (query.rows of category) {
+		for (let category of query.rows) {
 			// Delete the path below the current one
 			await this.db.query("DELETE FROM `" + DB_PREFIX + "category_path` WHERE `category_id` = '" + category['category_id'] + "'");
 
 			// Fix for records with no paths
-			level = 0;
+			let level = 0;
 
 			let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "category_path` WHERE `category_id` = '" + parent_id + "' ORDER BY `level` ASC");
 

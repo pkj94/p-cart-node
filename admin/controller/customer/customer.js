@@ -14,10 +14,9 @@ class CustomerController extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		if ((this.request.get['filter_name'])) {
+		let filter_name = '';
+if ((this.request.get['filter_name'])) {
 			filter_name = this.request.get['filter_name'];
-		} else {
-			filter_name = '';
 		}
 
 		if ((this.request.get['filter_email'])) {
@@ -32,10 +31,9 @@ class CustomerController extends Controller {
 			filter_customer_group_id = '';
 		}
 
-		if ((this.request.get['filter_status'])) {
-			filter_status = this.request.get['filter_status'];
-		} else {
-			filter_status = '';
+		let filter_status = '';
+if ((this.request.get['filter_status '])) {
+			filter_status = this.request.get['filter_status '];
 		}
 
 		if ((this.request.get['filter_ip'])) {
@@ -113,9 +111,9 @@ class CustomerController extends Controller {
 		data['add'] = this.url.link('customer/customer.form', 'user_token=' + this.session.data['user_token'] + url);
 		data['delete'] = this.url.link('customer/customer.delete', 'user_token=' + this.session.data['user_token']);
 
-		data['list'] = this.getList();
+		data['list'] = await this.getList();
 
-		this.load.model('customer/customer_group');
+		this.load.model('customer/customer_group',this);
 
 		data['customer_groups'] = await this.model_customer_customer_group.getCustomerGroups();
 
@@ -142,17 +140,16 @@ class CustomerController extends Controller {
 	async list() {
 		await this.load.language('customer/customer');
 
-		this.response.setOutput(this.getList());
+		this.response.setOutput(await this.getList());
 	}
 
 	/**
 	 * @return string
 	 */
 	async getList() {
-		if ((this.request.get['filter_name'])) {
+		let filter_name = '';
+if ((this.request.get['filter_name'])) {
 			filter_name = this.request.get['filter_name'];
-		} else {
-			filter_name = '';
 		}
 
 		if ((this.request.get['filter_email'])) {
@@ -197,16 +194,14 @@ class CustomerController extends Controller {
 			sort = 'name';
 		}
 
+		let order= 'ASC';
 		if ((this.request.get['order'])) {
-			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
+			order= this.request.get['order'];
 		}
 
-		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
+		let page = 1;
+		if ((this.request.get['page '])) {
+			page = this.request.get['page '];
 		}
 
 		let url = '';
@@ -253,7 +248,7 @@ class CustomerController extends Controller {
 
 		data['action'] = this.url.link('customer/customer.list', 'user_token=' + this.session.data['user_token'] + url);
 
-		this.load.model('setting/store');
+		this.load.model('setting/store',this);
 
 		let stores = await this.model_setting_store.getStores();
 
@@ -511,7 +506,7 @@ class CustomerController extends Controller {
 			'name'     : this.language.get('text_default')
 		});
 
-		this.load.model('setting/store');
+		this.load.model('setting/store',this);
 
 		let stores = await this.model_setting_store.getStores();
 
@@ -528,7 +523,7 @@ class CustomerController extends Controller {
 			data['store_id'] = [0];
 		}
 
-		this.load.model('customer/customer_group');
+		this.load.model('customer/customer_group',this);
 
 		data['customer_groups'] = await this.model_customer_customer_group.getCustomerGroups();
 
@@ -690,7 +685,7 @@ class CustomerController extends Controller {
 			if (custom_field['status']) {
 				if ((custom_field['location'] == 'account') && custom_field['required'] && !(this.request.post['custom_field'][custom_field['custom_field_id']])) {
 					json['error']['custom_field_' + custom_field['custom_field_id']] = sprintf(this.language.get('error_custom_field'), custom_field['name']);
-				} elseif ((custom_field['location'] == 'account') && (custom_field['type'] == 'text') && (custom_field['validation']) && !preg_match(html_entity_decode(custom_field['validation']), this.request.post['custom_field'][custom_field['custom_field_id']])) {
+				} else if ((custom_field['location'] == 'account') && (custom_field['type'] == 'text') && (custom_field['validation']) && !preg_match(html_entity_decode(custom_field['validation']), this.request.post['custom_field'][custom_field['custom_field_id']])) {
 					json['error']['custom_field_' + custom_field['custom_field_id']] = sprintf(this.language.get('error_regex'), custom_field['name']);
 				}
 			}
@@ -745,7 +740,7 @@ class CustomerController extends Controller {
 					if (custom_field['status']) {
 						if ((custom_field['location'] == 'address') && custom_field['required'] && !(value['custom_field'][custom_field['custom_field_id']])) {
 							json['error']['address_' + key + '_custom_field_' + custom_field['custom_field_id']] = sprintf(this.language.get('error_custom_field'), custom_field['name']);
-						} elseif ((custom_field['location'] == 'address') && (custom_field['type'] == 'text') && (custom_field['validation']) && !preg_match(html_entity_decode(custom_field['validation']), value['custom_field'][custom_field['custom_field_id']])) {
+						} else if ((custom_field['location'] == 'address') && (custom_field['type'] == 'text') && (custom_field['validation']) && !preg_match(html_entity_decode(custom_field['validation']), value['custom_field'][custom_field['custom_field_id']])) {
 							json['error']['address_' + key + '_custom_field_' + custom_field['custom_field_id']] = sprintf(this.language.get('error_regex'), custom_field['name']);
 						}
 					}
@@ -807,10 +802,9 @@ class CustomerController extends Controller {
 
 		const json = {};
 
-		if ((this.request.post['selected'])) {
+		let selected = [];
+                 if ((this.request.post['selected'])) {
 			selected = this.request.post['selected'];
-		} else {
-			selected = [];
 		}
 
 		if (!await this.user.hasPermission('modify', 'customer/customer')) {
@@ -820,7 +814,7 @@ class CustomerController extends Controller {
 		if (!Object.keys(json).length) {
 			this.load.model('customer/customer');
 
-			for (selected of customer_id) {
+			for (let customer_id of selected) {
 				await this.model_customer_customer.deleteCustomer(customer_id);
 			}
 
@@ -857,11 +851,11 @@ class CustomerController extends Controller {
 				store_id = 0;
 			}
 
-			this.load.model('setting/store');
+			this.load.model('setting/store',this);
 
-			store_info await this.model_setting_store.getStore(store_id);
+			const store_info = await this.model_setting_store.getStore(store_id);
 
-			if (store_info) {
+			if (store_info && store_info.store_id) {
 				this.response.setRedirect(store_info['url'] + 'account/login.token&email=' + encodeURIComponent(customer_info['email']). '&login_token=' + token);
 			} else {
 				this.response.setRedirect(HTTP_CATALOG + 'account/login.token&email=' + encodeURIComponent(customer_info['email']) + '&login_token=' + token);
@@ -898,7 +892,7 @@ class CustomerController extends Controller {
 			page = 1;
 		}
 
-		limit = 10;
+		let limit = 10;
 
 		data['payment_methods'] = [];
 
@@ -993,7 +987,7 @@ class CustomerController extends Controller {
 			page = 1;
 		}
 
-		limit = 10;
+		let limit = 10;
 
 		data['histories'] = [];
 
@@ -1077,7 +1071,7 @@ class CustomerController extends Controller {
 			page = 1;
 		}
 
-		limit = 10;
+		let limit = 10;
 
 		data['transactions'] = [];
 
@@ -1172,7 +1166,7 @@ class CustomerController extends Controller {
 			page = 1;
 		}
 
-		limit = 10;
+		let limit = 10;
 
 		data['rewards'] = [];
 
@@ -1267,21 +1261,21 @@ class CustomerController extends Controller {
 			page = 1;
 		}
 
-		limit = 10;
+		let limit = 10;
 
 		data['ips'] = [];
 
 		this.load.model('customer/customer');
-		this.load.model('setting/store');
+		this.load.model('setting/store',this);
 
 		const results = await this.model_customer_customer.getIps(customer_id, (page - 1) * limit, limit);
 
 		for (let result of results) {
-			store_info await this.model_setting_store.getStore(result['store_id']);
+			const store_info = await this.model_setting_store.getStore(result['store_id']);
 
-			if (store_info) {
+			if (store_info && store_info.store_id) {
 				store = store_info['name'];
-			} elseif (!result['store_id']) {
+			} else if (!result['store_id']) {
 				store = this.config.get('config_name');
 			} else {
 				store = '';

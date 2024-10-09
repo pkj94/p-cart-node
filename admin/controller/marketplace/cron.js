@@ -45,7 +45,7 @@ class CronController extends Controller {
 		// Example cron URL
 		data['cron'] = HTTP_CATALOG + 'cron/cron';
 
-		data['list'] = this.getList();
+		data['list'] = await this.getList();
 
 		data['user_token'] = this.session.data['user_token'];
 
@@ -62,7 +62,7 @@ class CronController extends Controller {
 	async list() {
 		await this.load.language('marketplace/cron');
 
-		this.response.setOutput(this.getList());
+		this.response.setOutput(await this.getList());
 	}
 
 	/**
@@ -75,16 +75,14 @@ class CronController extends Controller {
 			sort = 'code';
 		}
 
+		let order= 'ASC';
 		if ((this.request.get['order'])) {
-			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
+			order= this.request.get['order'];
 		}
 
-		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
+		let page = 1;
+		if ((this.request.get['page '])) {
+			page = this.request.get['page '];
 		}
 
 		let url = '';
@@ -198,7 +196,7 @@ class CronController extends Controller {
 
 			if (cron_info) {
 				// Create a store instance using loader class to call controllers, models, views, libraries
-				this.load.model('setting/store');
+				this.load.model('setting/store',this);
 
 				store await this.model_setting_store.createStoreInstance(0, this.config.get('config_language'));
 
@@ -297,7 +295,7 @@ class CronController extends Controller {
 		if (!Object.keys(json).length) {
 			this.load.model('setting/cron');
 
-			for (selected of cron_id) {
+			for (let cron_id of selected) {
 				await this.model_setting_cron.deleteCron(cron_id);
 			}
 

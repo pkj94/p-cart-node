@@ -43,7 +43,7 @@ class CouponController extends Controller {
 		data['add'] = this.url.link('marketing/coupon.form', 'user_token=' + this.session.data['user_token'] + url);
 		data['delete'] = this.url.link('marketing/coupon.delete', 'user_token=' + this.session.data['user_token']);
 
-		data['list'] = this.getList();
+		data['list'] = await this.getList();
 
 		data['user_token'] = this.session.data['user_token'];
 
@@ -60,7 +60,7 @@ class CouponController extends Controller {
 	async list() {
 		await this.load.language('marketing/coupon');
 
-		this.response.setOutput(this.getList());
+		this.response.setOutput(await this.getList());
 	}
 
 	/**
@@ -73,16 +73,14 @@ class CouponController extends Controller {
 			sort = 'name';
 		}
 
+		let order= 'ASC';
 		if ((this.request.get['order'])) {
-			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
+			order= this.request.get['order'];
 		}
 
-		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
+		let page = 1;
+		if ((this.request.get['page '])) {
+			page = this.request.get['page '];
 		}
 
 		let url = '';
@@ -268,12 +266,12 @@ class CouponController extends Controller {
 			products = [];
 		}
 
-		this.load.model('catalog/product');
+		this.load.model('catalog/product',this);
 
 		data['coupon_products'] = [];
 
 		for (products of product_id) {
-			product_info await this.model_catalog_product.getProduct(product_id);
+			const product_info = await this.model_catalog_product.getProduct(product_id);
 
 			if (product_info) {
 				data['coupon_products'].push({
@@ -284,7 +282,7 @@ class CouponController extends Controller {
 		}
 
 		if ((coupon_info)) {
-			categories await this.model_marketing_coupon.getCategories(this.request.get['coupon_id']);
+			categories = await this.model_marketing_coupon.getCategories(this.request.get['coupon_id']);
 		} else {
 			categories = [];
 		}
@@ -293,7 +291,7 @@ class CouponController extends Controller {
 
 		data['coupon_categories'] = [];
 
-		for (categories of category_id) {
+		for (let category_id of categories) {
 			let category_info = await this.model_catalog_category.getCategory(category_id);
 
 			if (category_info) {
@@ -372,7 +370,7 @@ class CouponController extends Controller {
 		if (coupon_info) {
 			if (!(this.request.post['coupon_id'])) {
 				json['error']['warning'] = this.language.get('error_exists');
-			} elseif (coupon_info['coupon_id'] != this.request.post['coupon_id']) {
+			} else if (coupon_info['coupon_id'] != this.request.post['coupon_id']) {
 				json['error']['warning'] = this.language.get('error_exists');
 			}
 		}
@@ -399,10 +397,9 @@ class CouponController extends Controller {
 
 		const json = {};
 
-		if ((this.request.post['selected'])) {
+		let selected = [];
+                 if ((this.request.post['selected'])) {
 			selected = this.request.post['selected'];
-		} else {
-			selected = [];
 		}
 
 		if (!await this.user.hasPermission('modify', 'marketing/coupon')) {
@@ -448,7 +445,7 @@ class CouponController extends Controller {
 			page = 1;
 		}
 
-		limit = 10;
+		let limit = 10;
 
 		this.load.model('marketing/coupon');
 

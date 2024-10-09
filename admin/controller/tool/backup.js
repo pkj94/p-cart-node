@@ -140,10 +140,9 @@ class BackupController extends Controller {
 			backup = [];
 		}
 
-		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
+		let page = 1;
+		if ((this.request.get['page '])) {
+			page = this.request.get['page '];
 		}
 
 		if (!await this.user.hasPermission('modify', 'tool/backup')) {
@@ -223,7 +222,7 @@ class BackupController extends Controller {
 
 			if (!table) {
 				json['success'] = this.language.get('text_success');
-			} elseif ((page * 200) >= record_total) {
+			} else if ((page * 200) >= record_total) {
 				json['text'] = sprintf(this.language.get('text_backup'), table, (page - 1) * 200, record_total);
 
 				json['next'] = this.url.link('tool/backup.backup', 'user_token=' + this.session.data['user_token'] + '&filename=' + encodeURIComponent(filename) + '&table=' + table + '&page=1', true);

@@ -83,7 +83,7 @@ class SubscriptionController extends Controller {
                                 // Store
                                 store_info await this.model_setting_setting.getSetting('config', customer_info['store_id']);
 
-                                if (store_info) {
+                                if (store_info && store_info.store_id) {
                                     from = store_info['config_email'];
                                     store_name = store_info['config_name'];
                                     store_url = store_info['config_url'];

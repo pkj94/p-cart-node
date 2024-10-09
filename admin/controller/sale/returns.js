@@ -38,10 +38,9 @@ class ReturnsController extends Controller {
 			filter_product = '';
 		}
 
-		if ((this.request.get['filter_model'])) {
-			filter_model = this.request.get['filter_model'];
-		} else {
-			filter_model = '';
+		let filter_model = '';
+if ((this.request.get['filter_model '])) {
+			filter_model = this.request.get['filter_model '];
 		}
 
 		if ((this.request.get['filter_return_status_id'])) {
@@ -123,7 +122,7 @@ class ReturnsController extends Controller {
 		data['add'] = this.url.link('sale/returns.form', 'user_token=' + this.session.data['user_token'] + url);
 		data['delete'] = this.url.link('sale/returns.delete', 'user_token=' + this.session.data['user_token']);
 
-		data['list'] = this.getList();
+		data['list'] = await this.getList();
 
 		this.load.model('localisation/return_status');
 
@@ -153,7 +152,7 @@ class ReturnsController extends Controller {
 	async list() {
 		await this.load.language('sale/returns');
 
-		this.response.setOutput(this.getList());
+		this.response.setOutput(await this.getList());
 	}
 
 	/**
@@ -184,10 +183,9 @@ class ReturnsController extends Controller {
 			filter_product = '';
 		}
 
-		if ((this.request.get['filter_model'])) {
-			filter_model = this.request.get['filter_model'];
-		} else {
-			filter_model = '';
+		let filter_model = '';
+if ((this.request.get['filter_model '])) {
+			filter_model = this.request.get['filter_model '];
 		}
 
 		if ((this.request.get['filter_return_status_id'])) {
@@ -220,10 +218,9 @@ class ReturnsController extends Controller {
 			order = 'DESC';
 		}
 
-		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
+		let page = 1;
+		if ((this.request.get['page '])) {
+			page = this.request.get['page '];
 		}
 
 		let url = '';
@@ -697,10 +694,9 @@ class ReturnsController extends Controller {
 
 		const json = {};
 
-		if ((this.request.post['selected'])) {
+		let selected = [];
+                 if ((this.request.post['selected'])) {
 			selected = this.request.post['selected'];
-		} else {
-			selected = [];
 		}
 
 		if (!await this.user.hasPermission('modify', 'sale/returns')) {
@@ -710,7 +706,7 @@ class ReturnsController extends Controller {
 		if (!Object.keys(json).length) {
 			this.load.model('sale/returns');
 
-			for (selected of return_id) {
+			for (let return_id of selected) {
 				await this.model_sale_returns.deleteReturn(return_id);
 			}
 
@@ -746,7 +742,7 @@ class ReturnsController extends Controller {
 			page = 1;
 		}
 
-		limit = 10;
+		let limit = 10;
 
 		data['histories'] = [];
 

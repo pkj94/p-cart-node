@@ -43,7 +43,7 @@ class BannerController extends Controller {
 		data['add'] = this.url.link('design/banner.form', 'user_token=' + this.session.data['user_token'] + url);
 		data['delete'] = this.url.link('design/banner.delete', 'user_token=' + this.session.data['user_token']);
 
-		data['list'] = this.getList();
+		data['list'] = await this.getList();
 
 		data['user_token'] = this.session.data['user_token'];
 
@@ -60,7 +60,7 @@ class BannerController extends Controller {
 	async list() {
 		await this.load.language('design/banner');
 
-		this.response.setOutput(this.getList());
+		this.response.setOutput(await this.getList());
 	}
 
 	/**
@@ -73,16 +73,14 @@ class BannerController extends Controller {
 			sort = 'name';
 		}
 
+		let order= 'ASC';
 		if ((this.request.get['order'])) {
-			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
+			order= this.request.get['order'];
 		}
 
-		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
+		let page = 1;
+		if ((this.request.get['page '])) {
+			page = this.request.get['page '];
 		}
 
 		let url = '';
@@ -318,10 +316,9 @@ class BannerController extends Controller {
 
 		const json = {};
 
-		if ((this.request.post['selected'])) {
+		let selected = [];
+                 if ((this.request.post['selected'])) {
 			selected = this.request.post['selected'];
-		} else {
-			selected = [];
 		}
 
 		if (!await this.user.hasPermission('modify', 'design/banner')) {
@@ -331,7 +328,7 @@ class BannerController extends Controller {
 		if (!Object.keys(json).length) {
 			this.load.model('design/banner');
 
-			for (selected of banner_id) {
+			for (let banner_id of selected) {
 				await this.model_design_banner.deleteBanner(banner_id);
 			}
 

@@ -26,11 +26,11 @@ class CustomerController extends Controller {
 		customer_info await this.model_customer_customer.getCustomer(customer_id);
 
 		if (customer_info) {
-			this.load.model('setting/store');
+			this.load.model('setting/store',this);
 
-			store_info await this.model_setting_store.getStore(customer_info['store_id']);
+			const store_info = await this.model_setting_store.getStore(customer_info['store_id']);
 
-			if (store_info) {
+			if (store_info && store_info.store_id) {
 				this.load.model('setting/setting',this);
 
 				store_logo = html_entity_decode(this.model_setting_setting.getValue('config_logo', store_info['store_id']));
@@ -121,11 +121,11 @@ class CustomerController extends Controller {
 		customer_info await this.model_customer_customer.getCustomer(customer_id);
 
 		if (customer_info) {
-			this.load.model('setting/store');
+			this.load.model('setting/store',this);
 
-			store_info await this.model_setting_store.getStore(customer_info['store_id']);
+			const store_info = await this.model_setting_store.getStore(customer_info['store_id']);
 
-			if (store_info) {
+			if (store_info && store_info.store_id) {
 				this.load.model('setting/setting',this);
 
 				store_logo = html_entity_decode(this.model_setting_setting.getValue('config_logo', customer_info['store_id']));

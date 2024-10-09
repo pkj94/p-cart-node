@@ -77,7 +77,7 @@ class Login extends \Opencart\System\Engine\Controller {
 
 			unset($this->session->data['redirect']);
 		} elseif (isset($this->request->get['redirect'])) {
-			$data['redirect'] = urldecode($this->request->get['redirect']);
+			$data['redirect'] = decodeURIComponent($this->request->get['redirect']);
 		} else {
 			$data['redirect'] = '';
 		}

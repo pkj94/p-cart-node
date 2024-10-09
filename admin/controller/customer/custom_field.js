@@ -43,7 +43,7 @@ class CustomFieldController extends Controller {
 		data['add'] = this.url.link('customer/custom_field.form', 'user_token=' + this.session.data['user_token'] + url);
 		data['delete'] = this.url.link('customer/custom_field.delete', 'user_token=' + this.session.data['user_token']);
 
-		data['list'] = this.getList();
+		data['list'] = await this.getList();
 
 		data['user_token'] = this.session.data['user_token'];
 
@@ -60,7 +60,7 @@ class CustomFieldController extends Controller {
 	async list() {
 		await this.load.language('customer/custom_field');
 
-		this.response.setOutput(this.getList());
+		this.response.setOutput(await this.getList());
 	}
 
 	/**
@@ -73,16 +73,14 @@ class CustomFieldController extends Controller {
 			sort = 'cfd.name';
 		}
 
+		let order= 'ASC';
 		if ((this.request.get['order'])) {
-			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
+			order= this.request.get['order'];
 		}
 
-		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
+		let page = 1;
+		if ((this.request.get['page '])) {
+			page = this.request.get['page '];
 		}
 
 		let url = '';
@@ -329,7 +327,7 @@ class CustomFieldController extends Controller {
 			}
 		}
 
-		this.load.model('customer/customer_group');
+		this.load.model('customer/customer_group',this);
 
 		data['customer_groups'] = await this.model_customer_customer_group.getCustomerGroups();
 
@@ -412,10 +410,9 @@ class CustomFieldController extends Controller {
 
 		const json = {};
 
-		if ((this.request.post['selected'])) {
+		let selected = [];
+                 if ((this.request.post['selected'])) {
 			selected = this.request.post['selected'];
-		} else {
-			selected = [];
 		}
 
 		if (!await this.user.hasPermission('modify', 'customer/custom_field')) {
@@ -425,7 +422,7 @@ class CustomFieldController extends Controller {
 		if (!Object.keys(json).length) {
 			this.load.model('customer/custom_field');
 
-			for (selected of custom_field_id) {
+			for (let custom_field_id of selected) {
 				await this.model_customer_custom_field.deleteCustomField(custom_field_id);
 			}
 

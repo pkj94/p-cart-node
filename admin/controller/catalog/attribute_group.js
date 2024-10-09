@@ -36,7 +36,7 @@ module.exports = class AttributeGroupController extends Controller {
 		data['add'] = this.url.link('catalog/attribute_group.form', 'user_token=' + this.session.data['user_token'] + url);
 		data['delete'] = this.url.link('catalog/attribute_group.delete', 'user_token=' + this.session.data['user_token']);
 
-		data['list'] = this.getList();
+		data['list'] = await this.getList();
 
 		data['user_token'] = this.session.data['user_token'];
 
@@ -53,7 +53,7 @@ module.exports = class AttributeGroupController extends Controller {
 	async list() {
 		await this.load.language('catalog/attribute_group');
 
-		this.response.setOutput(this.getList());
+		this.response.setOutput(await this.getList());
 	}
 
 	/**
@@ -66,16 +66,14 @@ module.exports = class AttributeGroupController extends Controller {
 			sort = 'agd.name';
 		}
 
+		let order= 'ASC';
 		if ((this.request.get['order'])) {
-			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
+			order= this.request.get['order'];
 		}
 
-		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
+		let page = 1;
+		if ((this.request.get['page '])) {
+			page = this.request.get['page '];
 		}
 
 		let url = '';
@@ -276,17 +274,16 @@ module.exports = class AttributeGroupController extends Controller {
 
 		const json = {};
 
-		if ((this.request.post['selected'])) {
+		let selected = [];
+                 if ((this.request.post['selected'])) {
 			selected = this.request.post['selected'];
-		} else {
-			selected = [];
 		}
 
 		if (!await this.user.hasPermission('modify', 'catalog/attribute_group')) {
 			json['error'] = this.language.get('error_permission');
 		}
 
-		this.load.model('catalog/attribute');
+		this.load.model('catalog/attribute',this);
 
 		for (selected of attribute_group_id) {
 			attribute_total await this.model_catalog_attribute.getTotalAttributesByAttributeGroupId(attribute_group_id);

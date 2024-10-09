@@ -42,7 +42,7 @@ class EventController extends Controller {
 
 		data['delete'] = this.url.link('marketplace/event.delete', 'user_token=' + this.session.data['user_token']);
 
-		data['list'] = this.getList();
+		data['list'] = await this.getList();
 
 		data['user_token'] = this.session.data['user_token'];
 
@@ -59,7 +59,7 @@ class EventController extends Controller {
 	async list() {
 		await this.load.language('marketplace/event');
 
-		this.response.setOutput(this.getList());
+		this.response.setOutput(await this.getList());
 	}
 
 	/**
@@ -72,16 +72,14 @@ class EventController extends Controller {
 			sort = 'code';
 		}
 
+		let order= 'ASC';
 		if ((this.request.get['order'])) {
-			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
+			order= this.request.get['order'];
 		}
 
-		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
+		let page = 1;
+		if ((this.request.get['page '])) {
+			page = this.request.get['page '];
 		}
 
 		let url = '';
@@ -246,7 +244,7 @@ class EventController extends Controller {
 		if (!Object.keys(json).length) {
 			this.load.model('setting/event');
 
-			for (selected of event_id) {
+			for (let event_id of selected) {
 				await this.model_setting_event.deleteEvent(event_id);
 			}
 

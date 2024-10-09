@@ -43,7 +43,7 @@ class VoucherThemeController extends Controller {
 		data['add'] = this.url.link('sale/voucher_theme.form', 'user_token=' + this.session.data['user_token'] + url);
 		data['delete'] = this.url.link('sale/voucher_theme.delete', 'user_token=' + this.session.data['user_token']);
 
-		data['list'] = this.getList();
+		data['list'] = await this.getList();
 
 		data['user_token'] = this.session.data['user_token'];
 
@@ -60,7 +60,7 @@ class VoucherThemeController extends Controller {
 	async list() {
 		await this.load.language('sale/voucher_theme');
 
-		this.response.setOutput(this.getList());
+		this.response.setOutput(await this.getList());
 	}
 
 	/**
@@ -73,16 +73,14 @@ class VoucherThemeController extends Controller {
 			sort = 'vtd.name';
 		}
 
+		let order= 'ASC';
 		if ((this.request.get['order'])) {
-			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
+			order= this.request.get['order'];
 		}
 
-		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
+		let page = 1;
+		if ((this.request.get['page '])) {
+			page = this.request.get['page '];
 		}
 
 		let url = '';
@@ -291,10 +289,9 @@ class VoucherThemeController extends Controller {
 
 		const json = {};
 
-		if ((this.request.post['selected'])) {
+		let selected = [];
+                 if ((this.request.post['selected'])) {
 			selected = this.request.post['selected'];
-		} else {
-			selected = [];
 		}
 
 		if (!await this.user.hasPermission('modify', 'sale/voucher_theme')) {
@@ -303,7 +300,7 @@ class VoucherThemeController extends Controller {
 
 		this.load.model('sale/voucher');
 
-		for (selected of voucher_theme_id) {
+		for (let voucher_theme_id of selected) {
 			voucher_total await this.model_sale_voucher.getTotalVouchersByVoucherThemeId(voucher_theme_id);
 
 			if (voucher_total) {
@@ -314,7 +311,7 @@ class VoucherThemeController extends Controller {
 		if (!Object.keys(json).length) {
 			this.load.model('sale/voucher_theme');
 
-			for (selected of voucher_theme_id) {
+			for (let voucher_theme_id of selected) {
 				await this.model_sale_voucher_theme.deleteVoucherTheme(voucher_theme_id);
 			}
 

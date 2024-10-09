@@ -13,10 +13,11 @@ module.exports = class VoucherThemeSaleModel  extends Model {
 		let voucher_theme_id = this.db.getLastId();
 
 		for (let [language_id, value] of Object.entries(data['voucher_theme_description'])) {
+			language_id = language_id.split('-')[1];
 			await this.db.query("INSERT INTO `" + DB_PREFIX + "voucher_theme_description` SET `voucher_theme_id` = '" + voucher_theme_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + "");
 		}
 
-		this.cache.delete('voucher_theme');
+		await this.cache.delete('voucher_theme');
 
 		return voucher_theme_id;
 	}
@@ -33,10 +34,11 @@ module.exports = class VoucherThemeSaleModel  extends Model {
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "voucher_theme_description` WHERE `voucher_theme_id` = '" + voucher_theme_id + "'");
 
 		for (let [language_id, value] of Object.entries(data['voucher_theme_description'])) {
+			language_id = language_id.split('-')[1];
 			await this.db.query("INSERT INTO `" + DB_PREFIX + "voucher_theme_description` SET `voucher_theme_id` = '" + voucher_theme_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + "");
 		}
 
-		this.cache.delete('voucher_theme');
+		await this.cache.delete('voucher_theme');
 	}
 
 	/**
@@ -48,7 +50,7 @@ module.exports = class VoucherThemeSaleModel  extends Model {
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "voucher_theme` WHERE `voucher_theme_id` = '" + voucher_theme_id + "'");
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "voucher_theme_description` WHERE `voucher_theme_id` = '" + voucher_theme_id + "'");
 
-		this.cache.delete('voucher_theme');
+		await this.cache.delete('voucher_theme');
 	}
 
 	/**
@@ -90,14 +92,14 @@ if (data['limit'] < 1) {
 			sql += " LIMIT " + data['start'] + "," + data['limit'];
 		}
 
-		voucher_theme_data = await this.cache.get('voucher_theme.' + crypto.createHash('md5').update(sql).digest('hex'));
+		voucher_theme_data = await this.cache.get('voucher_theme.' + md5(sql));
 
 		if (!voucher_theme_data) {
 			let query = await this.db.query(sql);
 
 			voucher_theme_data = query.rows;
 
-			this.cache.set('voucher_theme.' + crypto.createHash('md5').update(sql).digest('hex'), voucher_theme_data);
+			await this.cache.set('voucher_theme.' + md5(sql), voucher_theme_data);
 		}
 
 		return voucher_theme_data;

@@ -41,7 +41,7 @@ class Weight
 		data['add'] = this.url.link('localisation/weight_class.form', 'user_token=' + this.session.data['user_token'] + url);
 		data['delete'] = this.url.link('localisation/weight_class.delete', 'user_token=' + this.session.data['user_token']);
 
-		data['list'] = this.getList();
+		data['list'] = await this.getList();
 
 		data['user_token'] = this.session.data['user_token'];
 
@@ -58,7 +58,7 @@ class Weight
 	async list() {
 		await this.load.language('localisation/weight_class');
 
-		this.response.setOutput(this.getList());
+		this.response.setOutput(await this.getList());
 	}
 
 	/**
@@ -71,16 +71,14 @@ class Weight
 			sort = 'title';
 		}
 
+		let order= 'ASC';
 		if ((this.request.get['order'])) {
-			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
+			order= this.request.get['order'];
 		}
 
-		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
+		let page = 1;
+		if ((this.request.get['page '])) {
+			page = this.request.get['page '];
 		}
 
 		let url = '';
@@ -108,7 +106,7 @@ class Weight
 			'limit' : this.config.get('config_pagination_admin')
 		});
 
-		this.load.model('localisation/weight_class');
+		this.load.model('localisation/weight_class',this);
 
 		weight_class_total await this.model_localisation_weight_class.getTotalWeightClasses();
 
@@ -201,7 +199,7 @@ class Weight
 		data['back'] = this.url.link('localisation/weight_class', 'user_token=' + this.session.data['user_token'] + url);
 
 		if ((this.request.get['weight_class_id'])) {
-			this.load.model('localisation/weight_class');
+			this.load.model('localisation/weight_class',this);
 
 			weight_class_info await this.model_localisation_weight_class.getWeightClass(this.request.get['weight_class_id']);
 		}
@@ -258,7 +256,7 @@ class Weight
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('localisation/weight_class');
+			this.load.model('localisation/weight_class',this);
 
 			if (!this.request.post['weight_class_id']) {
 				json['weight_class_id'] = await this.model_localisation_weight_class.addWeightClass(this.request.post);
@@ -281,24 +279,23 @@ class Weight
 
 		const json = {};
 
-		if ((this.request.post['selected'])) {
+		let selected = [];
+                 if ((this.request.post['selected'])) {
 			selected = this.request.post['selected'];
-		} else {
-			selected = [];
 		}
 
 		if (!await this.user.hasPermission('modify', 'localisation/weight_class')) {
 			json['error'] = this.language.get('error_permission');
 		}
 
-		this.load.model('catalog/product');
+		this.load.model('catalog/product',this);
 
 		for (selected of weight_class_id) {
 			if (this.config.get('config_weight_class_id') == weight_class_id) {
 				json['error'] = this.language.get('error_default');
 			}
 
-			product_total await this.model_catalog_product.getTotalProductsByWeightClassId(weight_class_id);
+			const product_total = await this.model_catalog_product.getTotalProductsByWeightClassId(weight_class_id);
 
 			if (product_total) {
 				json['error'] = sprintf(this.language.get('error_product'), product_total);
@@ -306,7 +303,7 @@ class Weight
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('localisation/weight_class');
+			this.load.model('localisation/weight_class',this);
 
 			for (selected of weight_class_id) {
 				await this.model_localisation_weight_class.deleteWeightClass(weight_class_id);

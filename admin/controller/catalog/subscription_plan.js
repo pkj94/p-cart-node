@@ -37,7 +37,7 @@ module.exports = class SubscriptionPlanController extends Controller {
 		data['copy'] = this.url.link('catalog/subscription_plan.copy', 'user_token=' + this.session.data['user_token'] + url);
 		data['delete'] = this.url.link('catalog/subscription_plan.delete', 'user_token=' + this.session.data['user_token']);
 
-		data['list'] = this.getList();
+		data['list'] = await this.getList();
 
 		data['user_token'] = this.session.data['user_token'];
 
@@ -54,7 +54,7 @@ module.exports = class SubscriptionPlanController extends Controller {
 	async list() {
 		await this.load.language('catalog/subscription_plan');
 
-		this.response.setOutput(this.getList());
+		this.response.setOutput(await this.getList());
 	}
 
 	/**
@@ -67,16 +67,14 @@ module.exports = class SubscriptionPlanController extends Controller {
 			sort = 'rd.name';
 		}
 
+		let order= 'ASC';
 		if ((this.request.get['order'])) {
-			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
+			order= this.request.get['order'];
 		}
 
-		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
+		let page = 1;
+		if ((this.request.get['page '])) {
+			page = this.request.get['page '];
 		}
 
 		let url = '';
@@ -104,7 +102,7 @@ module.exports = class SubscriptionPlanController extends Controller {
 			'limit' : this.config.get('config_pagination_admin')
 		});
 
-		this.load.model('catalog/subscription_plan');
+		this.load.model('catalog/subscription_plan',this);
 
 		subscription_plan_total await this.model_catalog_subscription_plan.getTotalSubscriptionPlans();
 
@@ -196,7 +194,7 @@ module.exports = class SubscriptionPlanController extends Controller {
 		data['back'] = this.url.link('catalog/subscription_plan', 'user_token=' + this.session.data['user_token'] + url);
 
 		if ((this.request.get['subscription_plan_id'])) {
-			this.load.model('catalog/subscription_plan');
+			this.load.model('catalog/subscription_plan',this);
 
 			subscription_info await this.model_catalog_subscription_plan.getSubscriptionPlan(this.request.get['subscription_plan_id']);
 		}
@@ -334,7 +332,7 @@ module.exports = class SubscriptionPlanController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('catalog/subscription_plan');
+			this.load.model('catalog/subscription_plan',this);
 
 			if (!this.request.post['subscription_plan_id']) {
 				json['subscription_plan_id'] = await this.model_catalog_subscription_plan.addSubscriptionPlan(this.request.post);
@@ -357,10 +355,9 @@ module.exports = class SubscriptionPlanController extends Controller {
 
 		const json = {};
 
-		if ((this.request.post['selected'])) {
+		let selected = [];
+                 if ((this.request.post['selected'])) {
 			selected = this.request.post['selected'];
-		} else {
-			selected = [];
 		}
 
 		if (!await this.user.hasPermission('modify', 'catalog/subscription_plan')) {
@@ -368,9 +365,9 @@ module.exports = class SubscriptionPlanController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('catalog/subscription_plan');
+			this.load.model('catalog/subscription_plan',this);
 
-			for (selected of subscription_plan_id) {
+			for (let subscription_plan_id of selected) {
 				await this.model_catalog_subscription_plan.copySubscriptionPlan(subscription_plan_id);
 			}
 
@@ -389,20 +386,19 @@ module.exports = class SubscriptionPlanController extends Controller {
 
 		const json = {};
 
-		if ((this.request.post['selected'])) {
+		let selected = [];
+                 if ((this.request.post['selected'])) {
 			selected = this.request.post['selected'];
-		} else {
-			selected = [];
 		}
 
 		if (!await this.user.hasPermission('modify', 'catalog/subscription_plan')) {
 			json['error'] = this.language.get('error_permission');
 		}
 
-		this.load.model('catalog/product');
+		this.load.model('catalog/product',this);
 
-		for (selected of subscription_id) {
-			product_total await this.model_catalog_product.getTotalProductsBySubscriptionPlanId(subscription_id);
+		for (let subscription_id of selected) {
+			const product_total = await this.model_catalog_product.getTotalProductsBySubscriptionPlanId(subscription_id);
 
 			if (product_total) {
 				json['error'] = sprintf(this.language.get('error_product'), product_total);
@@ -410,9 +406,9 @@ module.exports = class SubscriptionPlanController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('catalog/subscription_plan');
+			this.load.model('catalog/subscription_plan',this);
 
-			for (selected of subscription_plan_id) {
+			for (let subscription_plan_id of selected) {
 				await this.model_catalog_subscription_plan.deleteSubscriptionPlan(subscription_plan_id);
 			}
 

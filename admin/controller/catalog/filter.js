@@ -38,7 +38,7 @@ module.exports = class FilterController extends Controller {
 
 		data['user_token'] = this.session.data['user_token'];
 
-		data['list'] = this.getList();
+		data['list'] = await this.getList();
 
 		data['header'] = await this.load.controller('common/header');
 		data['column_left'] = await this.load.controller('common/column_left');
@@ -53,7 +53,7 @@ module.exports = class FilterController extends Controller {
 	async list() {
 		await this.load.language('catalog/filter');
 
-		this.response.setOutput(this.getList());
+		this.response.setOutput(await this.getList());
 	}
 
 	/**
@@ -66,16 +66,14 @@ module.exports = class FilterController extends Controller {
 			sort = 'fgd.name';
 		}
 
+		let order= 'ASC';
 		if ((this.request.get['order'])) {
-			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
+			order= this.request.get['order'];
 		}
 
-		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
+		let page = 1;
+		if ((this.request.get['page '])) {
+			page = this.request.get['page '];
 		}
 
 		let url = '';
@@ -296,10 +294,9 @@ module.exports = class FilterController extends Controller {
 
 		const json = {};
 
-		if ((this.request.post['selected'])) {
+		let selected = [];
+                 if ((this.request.post['selected'])) {
 			selected = this.request.post['selected'];
-		} else {
-			selected = [];
 		}
 
 		if (!await this.user.hasPermission('modify', 'catalog/filter')) {
@@ -309,7 +306,7 @@ module.exports = class FilterController extends Controller {
 		if (!Object.keys(json).length) {
 			this.load.model('catalog/filter',this);
 
-			for (selected of filter_id) {
+			for (let filter_id of selected) {
 				await this.model_catalog_filter.deleteFilter(filter_id);
 			}
 

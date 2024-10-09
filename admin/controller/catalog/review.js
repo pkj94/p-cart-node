@@ -19,10 +19,9 @@ module.exports = class ReviewController extends Controller {
 			filter_author = '';
 		}
 
-		if ((this.request.get['filter_status'])) {
-			filter_status = this.request.get['filter_status'];
-		} else {
-			filter_status = '';
+		let filter_status = '';
+if ((this.request.get['filter_status '])) {
+			filter_status = this.request.get['filter_status '];
 		}
 
 		if ((this.request.get['filter_date_from'])) {
@@ -86,7 +85,7 @@ module.exports = class ReviewController extends Controller {
 		data['add'] = this.url.link('catalog/review.form', 'user_token=' + this.session.data['user_token'] + url);
 		data['delete'] = this.url.link('catalog/review.delete', 'user_token=' + this.session.data['user_token']);
 
-		data['list'] = this.getList();
+		data['list'] = await this.getList();
 
 		data['user_token'] = this.session.data['user_token'];
 
@@ -103,7 +102,7 @@ module.exports = class ReviewController extends Controller {
 	async list() {
 		await this.load.language('catalog/review');
 
-		this.response.setOutput(this.getList());
+		this.response.setOutput(await this.getList());
 	}
 
 	/**
@@ -122,10 +121,9 @@ module.exports = class ReviewController extends Controller {
 			filter_author = '';
 		}
 
-		if ((this.request.get['filter_status'])) {
-			filter_status = this.request.get['filter_status'];
-		} else {
-			filter_status = '';
+		let filter_status = '';
+if ((this.request.get['filter_status '])) {
+			filter_status = this.request.get['filter_status '];
 		}
 
 		if ((this.request.get['filter_date_from'])) {
@@ -152,10 +150,9 @@ module.exports = class ReviewController extends Controller {
 			sort = 'r.date_added';
 		}
 
-		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
+		let page = 1;
+		if ((this.request.get['page '])) {
+			page = this.request.get['page '];
 		}
 
 		let url = '';
@@ -488,10 +485,9 @@ module.exports = class ReviewController extends Controller {
 
 		const json = {};
 
-		if ((this.request.post['selected'])) {
+		let selected = [];
+                 if ((this.request.post['selected'])) {
 			selected = this.request.post['selected'];
-		} else {
-			selected = [];
 		}
 
 		if (!await this.user.hasPermission('modify', 'catalog/review')) {
@@ -501,7 +497,7 @@ module.exports = class ReviewController extends Controller {
 		if (!Object.keys(json).length) {
 			this.load.model('catalog/review');
 
-			for (selected of review_id) {
+			for (let review_id of selected) {
 				await this.model_catalog_review.deleteReview(review_id);
 			}
 
@@ -520,10 +516,9 @@ module.exports = class ReviewController extends Controller {
 
 		const json = {};
 
-		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
+		let page = 1;
+		if ((this.request.get['page '])) {
+			page = this.request.get['page '];
 		}
 
 		if (!await this.user.hasPermission('modify', 'catalog/review')) {
@@ -531,11 +526,11 @@ module.exports = class ReviewController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('catalog/product');
+			this.load.model('catalog/product',this);
 			this.load.model('catalog/review');
 
 			total await this.model_catalog_product.getTotalProducts();
-			limit = 10;
+			let limit = 10;
 
 			start = (page - 1) * limit;
 			end = start > (total - limit) ? total : (start + limit);

@@ -36,7 +36,7 @@ module.exports = class AttributeController extends Controller {
 		data['add'] = this.url.link('catalog/attribute.form', 'user_token=' + this.session.data['user_token'] + url);
 		data['delete'] = this.url.link('catalog/attribute.delete', 'user_token=' + this.session.data['user_token']);
 
-		data['list'] = this.getList();
+		data['list'] = await this.getList();
 
 		data['user_token'] = this.session.data['user_token'];
 
@@ -53,7 +53,7 @@ module.exports = class AttributeController extends Controller {
 	async list() {
 		await this.load.language('catalog/attribute');
 
-		this.response.setOutput(this.getList());
+		this.response.setOutput(await this.getList());
 	}
 
 	/**
@@ -66,16 +66,14 @@ module.exports = class AttributeController extends Controller {
 			sort = 'ad.name';
 		}
 
+		let order= 'ASC';
 		if ((this.request.get['order'])) {
-			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
+			order= this.request.get['order'];
 		}
 
-		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
+		let page = 1;
+		if ((this.request.get['page '])) {
+			page = this.request.get['page '];
 		}
 
 		let url = '';
@@ -103,7 +101,7 @@ module.exports = class AttributeController extends Controller {
 			'limit' : this.config.get('config_pagination_admin')
 		});
 
-		this.load.model('catalog/attribute');
+		this.load.model('catalog/attribute',this);
 
 		attribute_total await this.model_catalog_attribute.getTotalAttributes();
 
@@ -196,7 +194,7 @@ module.exports = class AttributeController extends Controller {
 		data['back'] = this.url.link('catalog/attribute', 'user_token=' + this.session.data['user_token'] + url);
 
 		if ((this.request.get['attribute_id'])) {
-			this.load.model('catalog/attribute');
+			this.load.model('catalog/attribute',this);
 
 			attribute_info await this.model_catalog_attribute.getAttribute(this.request.get['attribute_id']);
 		}
@@ -269,7 +267,7 @@ module.exports = class AttributeController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('catalog/attribute');
+			this.load.model('catalog/attribute',this);
 
 			if (!this.request.post['attribute_id']) {
 				json['attribute_id'] = await this.model_catalog_attribute.addAttribute(this.request.post);
@@ -292,20 +290,19 @@ module.exports = class AttributeController extends Controller {
 
 		const json = {};
 
-		if ((this.request.post['selected'])) {
+		let selected = [];
+                 if ((this.request.post['selected'])) {
 			selected = this.request.post['selected'];
-		} else {
-			selected = [];
 		}
 
 		if (!await this.user.hasPermission('modify', 'catalog/attribute')) {
 			json['error'] = this.language.get('error_permission');
 		}
 
-		this.load.model('catalog/product');
+		this.load.model('catalog/product',this);
 
-		for (selected of attribute_id) {
-			product_total await this.model_catalog_product.getTotalProductsByAttributeId(attribute_id);
+		for (let attribute_id of selected) {
+			const product_total = await this.model_catalog_product.getTotalProductsByAttributeId(attribute_id);
 
 			if (product_total) {
 				json['error'] = sprintf(this.language.get('error_product'), product_total);
@@ -313,9 +310,9 @@ module.exports = class AttributeController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('catalog/attribute');
+			this.load.model('catalog/attribute',this);
 
-			for (selected of attribute_id) {
+			for (let attribute_id of selected) {
 				await this.model_catalog_attribute.deleteAttribute(attribute_id);
 			}
 
@@ -333,7 +330,7 @@ module.exports = class AttributeController extends Controller {
 		const json = {};
 
 		if ((this.request.get['filter_name'])) {
-			this.load.model('catalog/attribute');
+			this.load.model('catalog/attribute',this);
 
 			let filter_data = {
 				'filter_name' : this.request.get['filter_name'],

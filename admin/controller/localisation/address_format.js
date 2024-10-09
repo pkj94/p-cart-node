@@ -35,7 +35,7 @@ class AddressFormatController extends Controller {
 		data['add'] = this.url.link('localisation/address_format.form', 'user_token=' + this.session.data['user_token'] + url);
 		data['delete'] = this.url.link('localisation/address_format.delete', 'user_token=' + this.session.data['user_token']);
 
-		data['list'] = this.getList();
+		data['list'] = await this.getList();
 
 		data['user_token'] = this.session.data['user_token'];
 
@@ -52,17 +52,16 @@ class AddressFormatController extends Controller {
 	async list() {
 		await this.load.language('localisation/address_format');
 
-		this.response.setOutput(this.getList());
+		this.response.setOutput(await this.getList());
 	}
 
 	/**
 	 * @return string
 	 */
 	async getList() {
-		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
+		let page = 1;
+		if ((this.request.get['page '])) {
+			page = this.request.get['page '];
 		}
 
 		let url = '';
@@ -209,10 +208,9 @@ class AddressFormatController extends Controller {
 
 		const json = {};
 
-		if ((this.request.post['selected'])) {
+		let selected = [];
+                 if ((this.request.post['selected'])) {
 			selected = this.request.post['selected'];
-		} else {
-			selected = [];
 		}
 
 		if (!await this.user.hasPermission('modify', 'localisation/address_format')) {
@@ -221,7 +219,7 @@ class AddressFormatController extends Controller {
 
 		this.load.model('localisation/country');
 
-		for (selected of address_format_id) {
+		for (let address_format_id of selected) {
 			if (this.config.get('config_address_format_id') == address_format_id) {
 				json['error'] = this.language.get('error_default');
 			}
@@ -236,7 +234,7 @@ class AddressFormatController extends Controller {
 		if (!Object.keys(json).length) {
 			this.load.model('localisation/address_format');
 
-			for (selected of address_format_id) {
+			for (let address_format_id of selected) {
 				await this.model_localisation_address_format.deleteAddressFormat(address_format_id);
 			}
 

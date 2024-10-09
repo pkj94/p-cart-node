@@ -43,7 +43,7 @@ class ArticleController extends Controller {
 		data['add'] = this.url.link('cms/article.form', 'user_token=' + this.session.data['user_token'] + url);
 		data['delete'] = this.url.link('cms/article.delete', 'user_token=' + this.session.data['user_token']);
 
-		data['list'] = this.getList();
+		data['list'] = await this.getList();
 
 		data['user_token'] = this.session.data['user_token'];
 
@@ -60,7 +60,7 @@ class ArticleController extends Controller {
 	async list() {
 		await this.load.language('cms/article');
 
-		this.response.setOutput(this.getList());
+		this.response.setOutput(await this.getList());
 	}
 
 	/**
@@ -73,16 +73,14 @@ class ArticleController extends Controller {
 			sort = 'date_added';
 		}
 
+		let order= 'ASC';
 		if ((this.request.get['order'])) {
-			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
+			order= this.request.get['order'];
 		}
 
-		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
+		let page = 1;
+		if ((this.request.get['page '])) {
+			page = this.request.get['page '];
 		}
 
 		let url = '';
@@ -264,7 +262,7 @@ class ArticleController extends Controller {
 			'name'     : this.language.get('text_default')
 		});
 
-		this.load.model('setting/store');
+		this.load.model('setting/store',this);
 
 		let stores = await this.model_setting_store.getStores();
 
@@ -359,6 +357,7 @@ class ArticleController extends Controller {
 
 			for (this.request.post['article_seo_url'] of store_id : language) {
 				for (let [language_id , keyword] of language ) {
+					language_id = language_id.split('-')[1];
 					if ((oc_strlen(trim(keyword)) < 1) || (oc_strlen(keyword) > 64)) {
 						json['error']['keyword_' + store_id + '_' + language_id] = this.language.get('error_keyword');
 					}
@@ -404,10 +403,9 @@ class ArticleController extends Controller {
 
 		const json = {};
 
-		if ((this.request.post['selected'])) {
+		let selected = [];
+                 if ((this.request.post['selected'])) {
 			selected = this.request.post['selected'];
-		} else {
-			selected = [];
 		}
 
 		if (!await this.user.hasPermission('modify', 'cms/article')) {

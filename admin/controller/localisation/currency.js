@@ -44,7 +44,7 @@ class CurrencyController extends Controller {
 		data['add'] = this.url.link('localisation/currency.form', 'user_token=' + this.session.data['user_token'] + url);
 		data['delete'] = this.url.link('localisation/currency.delete', 'user_token=' + this.session.data['user_token']);
 
-		data['list'] = this.getList();
+		data['list'] = await this.getList();
 
 		data['user_token'] = this.session.data['user_token'];
 
@@ -61,7 +61,7 @@ class CurrencyController extends Controller {
 	async list() {
 		await this.load.language('localisation/currency');
 
-		this.response.setOutput(this.getList());
+		this.response.setOutput(await this.getList());
 	}
 
 	/**
@@ -74,16 +74,14 @@ class CurrencyController extends Controller {
 			sort = 'title';
 		}
 
+		let order= 'ASC';
 		if ((this.request.get['order'])) {
-			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
+			order= this.request.get['order'];
 		}
 
-		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
+		let page = 1;
+		if ((this.request.get['page '])) {
+			page = this.request.get['page '];
 		}
 
 		let url = '';
@@ -356,10 +354,9 @@ class CurrencyController extends Controller {
 
 		const json = {};
 
-		if ((this.request.post['selected'])) {
+		let selected = [];
+                 if ((this.request.post['selected'])) {
 			selected = this.request.post['selected'];
-		} else {
-			selected = [];
 		}
 
 		if (!await this.user.hasPermission('modify', 'localisation/currency')) {
@@ -367,7 +364,7 @@ class CurrencyController extends Controller {
 		}
 
 		this.load.model('localisation/currency');
-		this.load.model('setting/store');
+		this.load.model('setting/store',this);
 		this.load.model('sale/order');
 
 		for (selected of currency_id) {

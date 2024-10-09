@@ -1,12 +1,5 @@
-<?php
-namespace Opencart\Admin\Model\Catalog;
-/**
- * Class Subscription Plan
- *
- * @package Opencart\Admin\Model\Catalog
- */
-class SubscriptionPlanModel  extends Model {
-	constructor(registry){
+module.exports = class SubscriptionPlanCatalogModel extends Model {
+	constructor(registry) {
 		super(registry)
 	}
 	/**
@@ -15,12 +8,13 @@ class SubscriptionPlanModel  extends Model {
 	 * @return int
 	 */
 	async addSubscriptionPlan(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "subscription_plan` SET `trial_frequency` = '" + this.db.escape(data['trial_frequency']) + "', `trial_duration` = '" + data['trial_duration'] + "', `trial_cycle` = '" + data['trial_cycle'] + "', `trial_status` = '" + data['trial_status'] + "', `frequency` = '" + this.db.escape(data['frequency']) + "', `duration` = '" + data['duration'] + "', `cycle` = '" + data['cycle'] + "', `status` = '" + (data['status'] ? data['status'] : 0) + "', `sort_order` = '" + data['sort_order'] + "'");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "subscription_plan` SET `trial_frequency` = " + this.db.escape(data['trial_frequency']) + ", `trial_duration` = '" + data['trial_duration'] + "', `trial_cycle` = '" + data['trial_cycle'] + "', `trial_status` = '" + data['trial_status'] + "', `frequency` = " + this.db.escape(data['frequency']) + ", `duration` = '" + data['duration'] + "', `cycle` = '" + data['cycle'] + "', `status` = '" + (data['status'] ? data['status'] : 0) + "', `sort_order` = '" + data['sort_order'] + "'");
 
-		subscription_plan_id = this.db.getLastId();
+		const subscription_plan_id = this.db.getLastId();
 
-		for (data['subscription_plan_description'] of language_id : subscription_plan_description) {
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "subscription_plan_description` SET `subscription_plan_id` = '" + subscription_plan_id + "', `language_id` = '" + language_id + "', `name` = '" + this.db.escape(subscription_plan_description['name']) + "'");
+		for (let [language_id, subscription_plan_description] of Object.entries(data['subscription_plan_description'])) {
+			language_id = language_id.split('-')[1];
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "subscription_plan_description` SET `subscription_plan_id` = '" + subscription_plan_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(subscription_plan_description['name']));
 		}
 
 		return subscription_plan_id;
@@ -33,12 +27,13 @@ class SubscriptionPlanModel  extends Model {
 	 * @return void
 	 */
 	async editSubscriptionPlan(subscription_plan_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "subscription_plan` SET  `trial_frequency` = '" + this.db.escape(data['trial_frequency']) + "', `trial_duration` = '" + data['trial_duration'] + "', `trial_cycle` = '" + data['trial_cycle'] + "', `trial_status` = '" + data['trial_status'] + "', `frequency` = '" + this.db.escape(data['frequency']) + "', `duration` = '" + data['duration'] + "', `cycle` = '" + data['cycle'] + "', `status` = '" + (data['status'] ? data['status'] : 0) + "', `sort_order` = '" + data['sort_order'] + "' WHERE `subscription_plan_id` = '" + subscription_plan_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "subscription_plan` SET  `trial_frequency` = " + this.db.escape(data['trial_frequency']) + ", `trial_duration` = '" + data['trial_duration'] + "', `trial_cycle` = '" + data['trial_cycle'] + "', `trial_status` = '" + data['trial_status'] + "', `frequency` = " + this.db.escape(data['frequency']) + ", `duration` = '" + data['duration'] + "', `cycle` = '" + data['cycle'] + "', `status` = '" + (data['status'] ? data['status'] : 0) + "', `sort_order` = '" + data['sort_order'] + "' WHERE `subscription_plan_id` = '" + subscription_plan_id + "'");
 
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "subscription_plan_description` WHERE `subscription_plan_id` = '" + subscription_plan_id + "'");
 
-		for (data['subscription_plan_description'] of language_id : subscription_plan_description) {
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "subscription_plan_description` SET `subscription_plan_id` = '" + subscription_plan_id + "', `language_id` = '" + language_id + "', `name` = '" + this.db.escape(subscription_plan_description['name']) + "'");
+		for (let [language_id, subscription_plan_description] of Object.entries(data['subscription_plan_description'])) {
+			language_id = language_id.split('-')[1];
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "subscription_plan_description` SET `subscription_plan_id` = '" + subscription_plan_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(subscription_plan_description['name']));
 		}
 	}
 
@@ -48,11 +43,11 @@ class SubscriptionPlanModel  extends Model {
 	 * @return void
 	 */
 	async copySubscriptionPlan(subscription_plan_id) {
-		data = this.getSubscriptionPlan(subscription_plan_id);
+		let data = await this.getSubscriptionPlan(subscription_plan_id);
 
-		data['subscription_plan_description'] = this.getDescription(subscription_plan_id);
+		data['subscription_plan_description'] = await this.getDescription(subscription_plan_id);
 
-		this.addSubscriptionPlan(data);
+		await this.addSubscriptionPlan(data);
 	}
 
 	/**
@@ -84,12 +79,12 @@ class SubscriptionPlanModel  extends Model {
 	 * @return array
 	 */
 	async getDescription(subscription_plan_id) {
-		subscription_plan_description_data = [];
+		let subscription_plan_description_data = {};
 
 		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "subscription_plan_description` WHERE `subscription_plan_id` = '" + subscription_plan_id + "'");
 
 		for (let result of query.rows) {
-			subscription_plan_description_data[result['language_id']] = ['name' : result['name']];
+			subscription_plan_description_data[result['language_id']] = { 'name': result['name'] };
 		}
 
 		return subscription_plan_description_data;
@@ -104,7 +99,7 @@ class SubscriptionPlanModel  extends Model {
 		let sql = "SELECT * FROM `" + DB_PREFIX + "subscription_plan` sp LEFT JOIN `" + DB_PREFIX + "subscription_plan_description` spd ON (sp.`subscription_plan_id` = spd.`subscription_plan_id`) WHERE spd.`language_id` = '" + this.config.get('config_language_id') + "'";
 
 		if (data['filter_name']) {
-			sql += " AND spd.`name` LIKE '" + this.db.escape(data['filter_name'] + '%') + "'";
+			sql += " AND spd.`name` LIKE " + this.db.escape(data['filter_name'] + '%');
 		}
 
 		let sort_data = [
@@ -125,13 +120,13 @@ class SubscriptionPlanModel  extends Model {
 		}
 
 		if (data['start'] || data['limit']) {
-                        data['start'] = data['start']||0;
+			data['start'] = data['start'] || 0;
 			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 

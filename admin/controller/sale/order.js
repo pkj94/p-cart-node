@@ -135,7 +135,7 @@ class OrderController extends Controller {
 		data['invoice'] = this.url.link('sale/order.invoice', 'user_token=' + this.session.data['user_token']);
 		data['shipping'] = this.url.link('sale/order.shipping', 'user_token=' + this.session.data['user_token']);
 
-		data['list'] = this.getList();
+		data['list'] = await this.getList();
 
 		data['stores'] = [];
 
@@ -144,7 +144,7 @@ class OrderController extends Controller {
 			'name'     : this.language.get('text_default')
 		});
 
-		this.load.model('setting/store');
+		this.load.model('setting/store',this);
 
 		let stores = await this.model_setting_store.getStores();
 
@@ -184,7 +184,7 @@ class OrderController extends Controller {
 	async list() {
 		await this.load.language('sale/order');
 
-		this.response.setOutput(this.getList());
+		this.response.setOutput(await this.getList());
 	}
 
 	/**
@@ -257,10 +257,9 @@ class OrderController extends Controller {
 			order = 'DESC';
 		}
 
-		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
+		let page = 1;
+		if ((this.request.get['page '])) {
+			page = this.request.get['page '];
 		}
 
 		let url = '';
@@ -588,7 +587,7 @@ class OrderController extends Controller {
 			data['customer_id'] = 0;
 		}
 
-		this.load.model('customer/customer_group');
+		this.load.model('customer/customer_group',this);
 
 		data['customer_groups'] = await this.model_customer_customer_group.getCustomerGroups();
 
@@ -671,7 +670,7 @@ class OrderController extends Controller {
 		products await this.model_sale_order.getProducts(order_id);
 
 		for (products of product) {
-			option_data = [];
+			let option_data = [];
 
 			options await this.model_sale_order.getOptions(order_id, product['order_product_id']);
 
@@ -790,7 +789,7 @@ class OrderController extends Controller {
 		}
 
 		// Create a store instance using loader class to call controllers, models, views, libraries
-		this.load.model('setting/store');
+		this.load.model('setting/store',this);
 
 		store await this.model_setting_store.createStoreInstance(store_id, language);
 
@@ -823,7 +822,7 @@ class OrderController extends Controller {
 			'name'     : this.config.get('config_name')
 		});
 
-		this.load.model('setting/store');
+		this.load.model('setting/store',this);
 
 		const results = await this.model_setting_store.getStores();
 
@@ -1276,7 +1275,7 @@ class OrderController extends Controller {
 
 		if (!Object.keys(json).length) {
 			// 1. Create a store instance using loader class to call controllers, models, views, libraries
-			this.load.model('setting/store');
+			this.load.model('setting/store',this);
 
 			store await this.model_setting_store.createStoreInstance(store_id, language, session_id);
 
@@ -1344,9 +1343,9 @@ class OrderController extends Controller {
 			order_info await this.model_sale_order.getOrder(order_id);
 
 			if (order_info) {
-				store_info await this.model_setting_setting.getSetting('config', order_info['store_id']);
+				const store_info = await this.model_setting_setting.getSetting('config', order_info['store_id']);
 
-				if (store_info) {
+				if (store_info && store_info.store_id) {
 					store_address = store_info['config_address'];
 					store_email = store_info['config_email'];
 					store_telephone = store_info['config_telephone'];
@@ -1437,7 +1436,7 @@ class OrderController extends Controller {
 				products await this.model_sale_order.getProducts(order_id);
 
 				for (products of product) {
-					option_data = [];
+					let option_data = [];
 
 					options await this.model_sale_order.getOptions(order_id, product['order_product_id']);
 
@@ -1568,7 +1567,7 @@ class OrderController extends Controller {
 		data['bootstrap_js'] = 'view/javascript/bootstrap/js/bootstrap.bundle.min.js';
 
 		this.load.model('sale/order');
-		this.load.model('catalog/product');
+		this.load.model('catalog/product',this);
 		this.load.model('setting/setting',this);
 		this.load.model('tool/upload');
 		this.load.model('sale/subscription');
@@ -1590,9 +1589,9 @@ class OrderController extends Controller {
 
 			// Make sure there is a shipping method
 			if (order_info && order_info['shipping_method']) {
-				store_info await this.model_setting_setting.getSetting('config', order_info['store_id']);
+				const store_info = await this.model_setting_setting.getSetting('config', order_info['store_id']);
 
-				if (store_info) {
+				if (store_info && store_info.store_id) {
 					store_address = store_info['config_address'];
 					store_email = store_info['config_email'];
 					store_telephone = store_info['config_telephone'];
@@ -1650,10 +1649,10 @@ class OrderController extends Controller {
 				for (products of product) {
 					option_weight = 0;
 
-					product_info await this.model_catalog_product.getProduct(product['product_id']);
+					const product_info = await this.model_catalog_product.getProduct(product['product_id']);
 
 					if (product_info) {
-						option_data = [];
+						let option_data = [];
 
 						options await this.model_sale_order.getOptions(order_id, product['order_product_id']);
 
@@ -1680,7 +1679,7 @@ class OrderController extends Controller {
 							if ((product_option_value_info['weight'])) {
 								if (product_option_value_info['weight_prefix'] == '+') {
 									option_weight += product_option_value_info['weight'];
-								} elseif (product_option_value_info['weight_prefix'] == '-') {
+								} else if (product_option_value_info['weight_prefix'] == '-') {
 									option_weight -= product_option_value_info['weight'];
 								}
 							}
@@ -1750,7 +1749,7 @@ class OrderController extends Controller {
 			page = 1;
 		}
 
-		limit = 10;
+		let limit = 10;
 
 		data['histories'] = [];
 

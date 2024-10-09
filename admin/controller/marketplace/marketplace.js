@@ -56,10 +56,9 @@ class MarketplaceController extends Controller {
 			sort = 'date_modified';
 		}
 
-		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
+		let page = 1;
+		if ((this.request.get['page '])) {
+			page = this.request.get['page '];
 		}
 
 		let url = '';
@@ -251,7 +250,7 @@ class MarketplaceController extends Controller {
 
 		if (!this.config.get('opencart_username') || !this.config.get('opencart_secret')) {
 			data['error_warning'] = this.language.get('error_api');
-		} elseif ((response_info['error'])) {
+		} else if ((response_info['error'])) {
 			data['error_warning'] = response_info['error'];
 		} else {
 			data['error_warning'] = '';
@@ -582,7 +581,7 @@ class MarketplaceController extends Controller {
 
 			if (!this.config.get('opencart_username') || !this.config.get('opencart_secret')) {
 				data['error_warning'] = this.language.get('error_api');
-			} elseif ((response_info['error'])) {
+			} else if ((response_info['error'])) {
 				data['error_warning'] = response_info['error'];
 			} else {
 				data['error_warning'] = '';
@@ -836,7 +835,7 @@ class MarketplaceController extends Controller {
 				}
 
 				json['success'] = response_info['success'];
-			} elseif ((response_info['error'])) {
+			} else if ((response_info['error'])) {
 				json['error'] = response_info['error'];
 			} else {
 				json['error'] = this.language.get('error_purchase');
@@ -934,7 +933,7 @@ class MarketplaceController extends Controller {
 				} else {
 					json['redirect'] = response_info['download'];
 				}
-			} elseif ((response_info['error'])) {
+			} else if ((response_info['error'])) {
 				json['error'] = response_info['error'];
 			} else {
 				json['error'] = this.language.get('error_download');
@@ -1013,7 +1012,7 @@ class MarketplaceController extends Controller {
 
 			if ((response_info['success'])) {
 				json['success'] = response_info['success'];
-			} elseif ((response_info['error'])) {
+			} else if ((response_info['error'])) {
 				json['error'] = response_info['error'];
 			} else {
 				json['error'] = this.language.get('error_comment');
@@ -1036,10 +1035,9 @@ class MarketplaceController extends Controller {
 			extension_id = 0;
 		}
 
-		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
+		let page = 1;
+		if ((this.request.get['page '])) {
+			page = this.request.get['page '];
 		}
 
 		data['button_more'] = this.language.get('button_more');
@@ -1116,10 +1114,9 @@ class MarketplaceController extends Controller {
 			parent_id = 0;
 		}
 
-		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
+		let page = 1;
+		if ((this.request.get['page '])) {
+			page = this.request.get['page '];
 		}
 
 		curl = curl_init(OPENCART_SERVER + 'api/marketplace/comment&extension_id=' + extension_id + '&parent_id=' + parent_id + '&page=' + page);

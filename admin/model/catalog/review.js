@@ -1,12 +1,5 @@
-<?php
-namespace Opencart\Admin\Model\Catalog;
-/**
- * Class Review
- *
- * @package Opencart\Admin\Model\Catalog
- */
-class ReviewModel  extends Model {
-	constructor(registry){
+module.exports = class ReviewCatalogModel extends Model {
+	constructor(registry) {
 		super(registry)
 	}
 	/**
@@ -15,16 +8,16 @@ class ReviewModel  extends Model {
 	 * @return int
 	 */
 	async addReview(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "review` SET `author` = '" + this.db.escape(data['author']) + "', `product_id` = '" + data['product_id'] + "', `text` = '" + this.db.escape(strip_tags(data['text'])) + "', `rating` = '" + data['rating'] + "', `status` = '" + (data['status'] ? data['status'] : 0) + "', `date_added` = '" + this.db.escape(data['date_added']) + "'");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "review` SET `author` = " + this.db.escape(data['author']) + ", `product_id` = '" + data['product_id'] + "', `text` = " + this.db.escape(strip_tags(data['text'])) + ", `rating` = '" + data['rating'] + "', `status` = '" + (data['status'] ? data['status'] : 0) + "', `date_added` = " + this.db.escape(data['date_added']));
 
-		review_id = this.db.getLastId();
+		const review_id = this.db.getLastId();
 
 		// Update product rating
-		this.load.model('catalog/product');
+		this.load.model('catalog/product', this);
 
-		this.model_catalog_product.editRating(data['product_id'], this.getRating(data['product_id']));
+		this.registry.get('model_catalog_product').editRating(data['product_id'], this.getRating(data['product_id']));
 
-		this.cache.delete('product');
+		await this.cache.delete('product');
 
 		return review_id;
 	}
@@ -36,14 +29,14 @@ class ReviewModel  extends Model {
 	 * @return void
 	 */
 	async editReview(review_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "review` SET `author` = '" + this.db.escape(data['author']) + "', `product_id` = '" + data['product_id'] + "', `text` = '" + this.db.escape(strip_tags(data['text'])) + "', `rating` = '" + data['rating'] + "', `status` = '" + (data['status'] ? data['status'] : 0) + "', `date_added` = '" + this.db.escape(data['date_added']) + "', `date_modified` = NOW() WHERE `review_id` = '" + review_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "review` SET `author` = " + this.db.escape(data['author']) + ", `product_id` = '" + data['product_id'] + "', `text` = " + this.db.escape(strip_tags(data['text'])) + ", `rating` = '" + data['rating'] + "', `status` = '" + (data['status'] ? data['status'] : 0) + "', `date_added` = " + this.db.escape(data['date_added']) + ", `date_modified` = NOW() WHERE `review_id` = '" + review_id + "'");
 
 		// Update product rating
-		this.load.model('catalog/product');
+		this.load.model('catalog/product', this);
 
-		this.model_catalog_product.editRating(data['product_id'], this.getRating(data['product_id']));
+		this.registry.get('model_catalog_product').editRating(data['product_id'], this.getRating(data['product_id']));
 
-		this.cache.delete('product');
+		await this.cache.delete('product');
 	}
 
 	/**
@@ -52,17 +45,17 @@ class ReviewModel  extends Model {
 	 * @return void
 	 */
 	async deleteReview(review_id) {
-		review_info = this.getReview(review_id);
+		const review_info = await this.getReview(review_id);
 
-		if (review_info) {
+		if (review_info && review_info.review_id) {
 			await this.db.query("DELETE FROM `" + DB_PREFIX + "review` WHERE `review_id` = '" + review_info['review_id'] + "'");
 
 			// Update product rating
-			this.load.model('catalog/product');
+			this.load.model('catalog/product', this);
 
-			this.model_catalog_product.editRating(review_info['product_id'], this.getRating(review_info['product_id']));
+			this.registry.get('model_catalog_product').editRating(review_info['product_id'], this.getRating(review_info['product_id']));
 
-			this.cache.delete('product');
+			await this.cache.delete('product');
 		}
 	}
 
@@ -101,11 +94,11 @@ class ReviewModel  extends Model {
 		let sql = "SELECT r.`review_id`, pd.`name`, r.`author`, r.`rating`, r.`status`, r.`date_added` FROM `" + DB_PREFIX + "review` r LEFT JOIN `" + DB_PREFIX + "product_description` pd ON (r.`product_id` = pd.`product_id`) WHERE pd.`language_id` = '" + this.config.get('config_language_id') + "'";
 
 		if ((data['filter_product'])) {
-			sql += " AND pd.`name` LIKE '" + this.db.escape(data['filter_product'] + '%') + "'";
+			sql += " AND pd.`name` LIKE " + this.db.escape(data['filter_product'] + '%');
 		}
 
 		if ((data['filter_author'])) {
-			sql += " AND r.`author` LIKE '" + this.db.escape(data['filter_author'] + '%') + "'";
+			sql += " AND r.`author` LIKE " + this.db.escape(data['filter_author'] + '%');
 		}
 
 		if (data['filter_status'] && data['filter_status'] !== '') {
@@ -141,19 +134,19 @@ class ReviewModel  extends Model {
 		}
 
 		if (data['start'] || data['limit']) {
-                        data['start'] = data['start']||0;
+			data['start'] = data['start'] || 0;
 			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
 			sql += " LIMIT " + data['start'] + "," + data['limit'];
 		}
-		
+
 		let query = await this.db.query(sql);
 
 		return query.rows;
@@ -168,11 +161,11 @@ if (data['limit'] < 1) {
 		let sql = "SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "review` r LEFT JOIN `" + DB_PREFIX + "product_description` pd ON (r.`product_id` = pd.`product_id`) WHERE pd.`language_id` = '" + this.config.get('config_language_id') + "'";
 
 		if ((data['filter_product'])) {
-			sql += " AND pd.`name` LIKE '" + this.db.escape(data['filter_product'] + '%') + "'";
+			sql += " AND pd.`name` LIKE " + this.db.escape(data['filter_product'] + '%');
 		}
 
 		if ((data['filter_author'])) {
-			sql += " AND r.`author` LIKE '" + this.db.escape(data['filter_author'] + '%') + "'";
+			sql += " AND r.`author` LIKE " + this.db.escape(data['filter_author'] + '%');
 		}
 
 		if (data['filter_status'] && data['filter_status'] !== '') {

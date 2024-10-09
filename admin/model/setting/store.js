@@ -15,7 +15,7 @@ module.exports = class StoreSettingModel extends Model {
 			await this.db.query("INSERT INTO `" + DB_PREFIX + "layout_route` SET `layout_id` = '" + layout_route['layout_id'] + "', `route` = '" + this.db.escape(layout_route['route']) + "', `store_id` = '" + store_id + "'");
 		}
 
-		this.cache.delete('store');
+		await this.cache.delete('store');
 
 		return store_id;
 	}
@@ -29,7 +29,7 @@ module.exports = class StoreSettingModel extends Model {
 	async editStore(store_id, data) {
 		await this.db.query("UPDATE `" + DB_PREFIX + "store` SET `name` = " + this.db.escape(data['config_name']) + ", `url` = " + this.db.escape(data['config_url']) + "' WHERE `store_id` = '" + store_id );
 
-		this.cache.delete('store');
+		await this.cache.delete('store');
 	}
 
 	/**
@@ -64,7 +64,7 @@ module.exports = class StoreSettingModel extends Model {
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "translation` WHERE `store_id` = '" + store_id + "'");
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "seo_url` WHERE `store_id` = '" + store_id + "'");
 
-		this.cache.delete('store');
+		await this.cache.delete('store');
 	}
 
 	/**
@@ -86,13 +86,13 @@ module.exports = class StoreSettingModel extends Model {
 	async getStores(data = {}) {
 		let sql = "SELECT * FROM `" + DB_PREFIX + "store` ORDER BY `url`";
 
-		let store_data = await this.cache.get('store.' + crypto.createHash('md5').update(sql).digest('hex'));
+		let store_data = await this.cache.get('store.' + md5(sql));
 		if (!store_data) {
 			let query = await this.db.query(sql);
 
 			store_data = query.rows;
 
-			this.cache.set('store.' + crypto.createHash('md5').update(sql).digest('hex'), store_data);
+			await this.cache.set('store.' + md5(sql), store_data);
 		}
 
 		return store_data;

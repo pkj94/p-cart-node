@@ -26,11 +26,11 @@ class AffiliateController extends Controller {
 		customer_info await this.model_customer_customer.getCustomer(customer_id);
 
 		if (customer_info) {
-			this.load.model('setting/store');
+			this.load.model('setting/store',this);
 
-			store_info await this.model_setting_store.getStore(customer_info['store_id']);
+			const store_info = await this.model_setting_store.getStore(customer_info['store_id']);
 
-			if (store_info) {
+			if (store_info && store_info.store_id) {
 				store_name = html_entity_decode(store_info['name']);
 				store_url = store_info['url'];
 			} else {
@@ -109,11 +109,11 @@ class AffiliateController extends Controller {
 		customer_info await this.model_customer_customer.getCustomer(customer_id);
 
 		if (customer_info) {
-			this.load.model('setting/store');
+			this.load.model('setting/store',this);
 
-			store_info await this.model_setting_store.getStore(customer_info['store_id']);
+			const store_info = await this.model_setting_store.getStore(customer_info['store_id']);
 
-			if (store_info) {
+			if (store_info && store_info.store_id) {
 				store_name = html_entity_decode(store_info['name']);
 				store_url = store_info['url'];
 			} else {

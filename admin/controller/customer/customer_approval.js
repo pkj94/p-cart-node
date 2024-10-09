@@ -29,11 +29,11 @@ class CustomerApprovalController extends Controller {
 		data['approve'] = this.url.link('customer/customer_approval.approve', 'user_token=' + this.session.data['user_token'], true);
 		data['deny'] = this.url.link('customer/customer_approval.deny', 'user_token=' + this.session.data['user_token'], true);
 
-		this.load.model('customer/customer_group');
+		this.load.model('customer/customer_group',this);
 
 		data['customer_groups'] = await this.model_customer_customer_group.getCustomerGroups();
 
-		data['list'] = this.getList();
+		data['list'] = await this.getList();
 
 		data['user_token'] = this.session.data['user_token'];
 
@@ -50,7 +50,7 @@ class CustomerApprovalController extends Controller {
 	async list() {
 		await this.load.language('customer/customer_approval');
 
-		this.response.setOutput(this.getList());
+		this.response.setOutput(await this.getList());
 	}
 
 	/**
@@ -93,10 +93,9 @@ class CustomerApprovalController extends Controller {
 			filter_date_to = '';
 		}
 						
-		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
+		let page = 1;
+		if ((this.request.get['page '])) {
+			page = this.request.get['page '];
 		}
 
 		let url = '';

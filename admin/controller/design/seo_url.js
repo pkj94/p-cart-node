@@ -93,9 +93,9 @@ class SeoUrlController extends Controller {
 		data['add'] = this.url.link('design/seo_url.form', 'user_token=' + this.session.data['user_token'] + url);
 		data['delete'] = this.url.link('design/seo_url.delete', 'user_token=' + this.session.data['user_token']);
 
-		data['list'] = this.getList();
+		data['list'] = await this.getList();
 
-		this.load.model('setting/store');
+		this.load.model('setting/store',this);
 
 		data['stores'] = await this.model_setting_store.getStores();
 
@@ -124,7 +124,7 @@ class SeoUrlController extends Controller {
 	async list() {
 		await this.load.language('design/seo_url');
 
-		this.response.setOutput(this.getList());
+		this.response.setOutput(await this.getList());
 	}
 
 	/**
@@ -167,16 +167,14 @@ class SeoUrlController extends Controller {
 			sort = 'key';
 		}
 
+		let order= 'ASC';
 		if ((this.request.get['order'])) {
-			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
+			order= this.request.get['order'];
 		}
 
-		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
+		let page = 1;
+		if ((this.request.get['page '])) {
+			page = this.request.get['page '];
 		}
 
 		let url = '';
@@ -418,7 +416,7 @@ class SeoUrlController extends Controller {
 			'name'     : this.language.get('text_default')
 		});
 
-		this.load.model('setting/store');
+		this.load.model('setting/store',this);
 
 		let stores = await this.model_setting_store.getStores();
 
@@ -547,10 +545,9 @@ class SeoUrlController extends Controller {
 
 		const json = {};
 
-		if ((this.request.post['selected'])) {
+		let selected = [];
+                 if ((this.request.post['selected'])) {
 			selected = this.request.post['selected'];
-		} else {
-			selected = [];
 		}
 
 		if (!await this.user.hasPermission('modify', 'design/seo_url')) {
@@ -560,7 +557,7 @@ class SeoUrlController extends Controller {
 		if (!Object.keys(json).length) {
 			this.load.model('design/seo_url',this);
 
-			for (selected of seo_url_id) {
+			for (let seo_url_id of selected) {
 				await this.model_design_seo_url.deleteSeoUrl(seo_url_id);
 			}
 

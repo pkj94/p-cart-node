@@ -1,12 +1,5 @@
-<?php
-namespace Opencart\Admin\Model\Catalog;
-/**
- * Class Download
- *
- * @package Opencart\Admin\Model\Catalog
- */
-class DownloadModel  extends Model {
-	constructor(registry){
+module.exports = class DownloadCatalogModel extends Model {
+	constructor(registry) {
 		super(registry)
 	}
 	/**
@@ -15,11 +8,12 @@ class DownloadModel  extends Model {
 	 * @return int
 	 */
 	async addDownload(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "download` SET `filename` = '" + this.db.escape(data['filename']) + "', `mask` = '" + this.db.escape(data['mask']) + "', `date_added` = NOW()");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "download` SET `filename` = " + this.db.escape(data['filename']) + ", `mask` = " + this.db.escape(data['mask']) + ", `date_added` = NOW()");
 
 		download_id = this.db.getLastId();
 
-		for (data['download_description'] of language_id : value) {
+		for (let [language_id, value] of Object.entries(data['download_description'])) {
+			language_id = language_id.split('-')[1];
 			await this.db.query("INSERT INTO `" + DB_PREFIX + "download_description` SET `download_id` = '" + download_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + "");
 		}
 
@@ -33,11 +27,12 @@ class DownloadModel  extends Model {
 	 * @return void
 	 */
 	async editDownload(download_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "download` SET `filename` = '" + this.db.escape(data['filename']) + "', `mask` = '" + this.db.escape(data['mask']) + "' WHERE `download_id` = '" + download_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "download` SET `filename` = " + this.db.escape(data['filename']) + ", `mask` = " + this.db.escape(data['mask']) + " WHERE `download_id` = '" + download_id + "'");
 
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "download_description` WHERE `download_id` = '" + download_id + "'");
 
-		for (data['download_description'] of language_id : value) {
+		for (let [language_id, value] of Object.entries(data['download_description'])) {
+			language_id = language_id.split('-')[1];
 			await this.db.query("INSERT INTO `" + DB_PREFIX + "download_description` SET `download_id` = '" + download_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + "");
 		}
 	}
@@ -72,7 +67,7 @@ class DownloadModel  extends Model {
 		let sql = "SELECT * FROM `" + DB_PREFIX + "download` d LEFT JOIN `" + DB_PREFIX + "download_description` dd ON (d.`download_id` = dd.`download_id`) WHERE dd.`language_id` = '" + this.config.get('config_language_id') + "'";
 
 		if (data['filter_name']) {
-			sql += " AND dd.`name` LIKE '" + this.db.escape(data['filter_name'] + '%') + "'";
+			sql += " AND dd.`name` LIKE " + this.db.escape(data['filter_name'] + '%');
 		}
 
 		let sort_data = [
@@ -93,13 +88,13 @@ class DownloadModel  extends Model {
 		}
 
 		if (data['start'] || data['limit']) {
-                        data['start'] = data['start']||0;
+			data['start'] = data['start'] || 0;
 			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
@@ -117,12 +112,12 @@ if (data['limit'] < 1) {
 	 * @return array
 	 */
 	async getDescriptions(download_id) {
-		download_description_data = [];
+		let download_description_data = {};
 
 		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "download_description` WHERE `download_id` = '" + download_id + "'");
 
 		for (let result of query.rows) {
-			download_description_data[result['language_id']] = ['name' : result['name']];
+			download_description_data[result['language_id']] = {'name' : result['name']};
 		}
 
 		return download_description_data;

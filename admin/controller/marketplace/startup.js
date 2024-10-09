@@ -42,7 +42,7 @@ class StartupController extends Controller {
 
 		data['delete'] = this.url.link('marketplace/startup.delete', 'user_token=' + this.session.data['user_token']);
 
-		data['list'] = this.getList();
+		data['list'] = await this.getList();
 
 		data['user_token'] = this.session.data['user_token'];
 
@@ -59,7 +59,7 @@ class StartupController extends Controller {
 	async list() {
 		await this.load.language('marketplace/startup');
 
-		this.response.setOutput(this.getList());
+		this.response.setOutput(await this.getList());
 	}
 
 	/**
@@ -72,16 +72,14 @@ class StartupController extends Controller {
 			sort = 'code';
 		}
 
+		let order= 'ASC';
 		if ((this.request.get['order'])) {
-			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
+			order= this.request.get['order'];
 		}
 
-		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
+		let page = 1;
+		if ((this.request.get['page '])) {
+			page = this.request.get['page '];
 		}
 
 		let url = '';
@@ -245,7 +243,7 @@ class StartupController extends Controller {
 		if (!Object.keys(json).length) {
 			this.load.model('setting/startup');
 
-			for (selected of startup_id) {
+			for (let startup_id of selected) {
 				await this.model_setting_startup.deleteStartup(startup_id);
 			}
 

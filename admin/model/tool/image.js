@@ -14,7 +14,7 @@ module.exports = class ImageToolModel extends Model {
 	 * @throws \Exception
 	 */
 	async resize(filename, width_new, height_new) {
-		if (!fs.existsSync(DIR_IMAGE + filename) || fs.realpathSync(DIR_IMAGE + filename).substring(0, DIR_IMAGE.length).replaceAll('\\','/') != DIR_IMAGE) {
+		if (!fs.existsSync(DIR_IMAGE + filename) || fs.realpathSync(DIR_IMAGE + filename).substring(0, DIR_IMAGE.length).replaceAll('\\', '/') != DIR_IMAGE) {
 			return '';
 		}
 
@@ -24,10 +24,9 @@ module.exports = class ImageToolModel extends Model {
 		let image_new = 'cache/' + oc_substr(filename, 0, oc_strrpos(filename, '.')) + '-' + width_new + 'x' + height_new + '.' + extension;
 
 		if (!fs.existsSync(DIR_IMAGE + image_new) || (fs.statSync(DIR_IMAGE + image_old).mtime > fs.statSync(DIR_IMAGE + image_new).mtime)) {
-			const { width, height, format: image_type } = await sharp(DIR_IMAGE + image_old)
-				.metadata();
+			const { width, height, format: image_type } = await sharp(DIR_IMAGE + image_old).metadata();
 			console.log(image_type)
-			if (!['png', 'jpeg', 'gif', 'webp','jpg'].includes(image_type)) {
+			if (!['png', 'jpeg', 'gif', 'webp', 'jpg'].includes(image_type)) {
 				return HTTP_CATALOG + 'image/' + image_old;
 			}
 

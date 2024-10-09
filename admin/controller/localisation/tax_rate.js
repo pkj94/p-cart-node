@@ -43,7 +43,7 @@ class TaxRateController extends Controller {
 		data['add'] = this.url.link('localisation/tax_rate.form', 'user_token=' + this.session.data['user_token'] + url);
 		data['delete'] = this.url.link('localisation/tax_rate.delete', 'user_token=' + this.session.data['user_token']);
 
-		data['list'] = this.getList();
+		data['list'] = await this.getList();
 
 		data['user_token'] = this.session.data['user_token'];
 
@@ -60,7 +60,7 @@ class TaxRateController extends Controller {
 	async list() {
 		await this.load.language('localisation/tax_rate');
 
-		this.response.setOutput(this.getList());
+		this.response.setOutput(await this.getList());
 	}
 
 	/**
@@ -73,16 +73,14 @@ class TaxRateController extends Controller {
 			sort = 'tr.name';
 		}
 
+		let order= 'ASC';
 		if ((this.request.get['order'])) {
-			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
+			order= this.request.get['order'];
 		}
 
-		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
+		let page = 1;
+		if ((this.request.get['page '])) {
+			page = this.request.get['page '];
 		}
 
 		let url = '';
@@ -238,7 +236,7 @@ class TaxRateController extends Controller {
 			data['type'] = '';
 		}
 
-		this.load.model('customer/customer_group');
+		this.load.model('customer/customer_group',this);
 
 		data['customer_groups'] = await this.model_customer_customer_group.getCustomerGroups();
 
@@ -309,17 +307,16 @@ class TaxRateController extends Controller {
 
 		const json = {};
 
-		if ((this.request.post['selected'])) {
+		let selected = [];
+                 if ((this.request.post['selected'])) {
 			selected = this.request.post['selected'];
-		} else {
-			selected = [];
 		}
 
 		if (!await this.user.hasPermission('modify', 'localisation/tax_rate')) {
 			json['error'] = this.language.get('error_permission');
 		}
 
-		this.load.model('localisation/tax_class');
+		this.load.model('localisation/tax_class',this);
 
 		for (this.request.post['selected'] of tax_rate_id) {
 			tax_rule_total await this.model_localisation_tax_class.getTotalTaxRulesByTaxRateId(tax_rate_id);

@@ -43,7 +43,7 @@ class Length
 		data['add'] = this.url.link('localisation/length_class.form', 'user_token=' + this.session.data['user_token'] + url);
 		data['delete'] = this.url.link('localisation/length_class.delete', 'user_token=' + this.session.data['user_token']);
 
-		data['list'] = this.getList();
+		data['list'] = await this.getList();
 
 		data['user_token'] = this.session.data['user_token'];
 
@@ -60,7 +60,7 @@ class Length
 	async list() {
 		await this.load.language('localisation/length_class');
 
-		this.response.setOutput(this.getList());
+		this.response.setOutput(await this.getList());
 	}
 
 	/**
@@ -73,16 +73,14 @@ class Length
 			sort = 'title';
 		}
 
+		let order= 'ASC';
 		if ((this.request.get['order'])) {
-			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
+			order= this.request.get['order'];
 		}
 
-		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
+		let page = 1;
+		if ((this.request.get['page '])) {
+			page = this.request.get['page '];
 		}
 
 		let url = '';
@@ -110,7 +108,7 @@ class Length
 			'limit' : this.config.get('config_pagination_admin')
 		});
 
-		this.load.model('localisation/length_class');
+		this.load.model('localisation/length_class',this);
 
 		length_class_total await this.model_localisation_length_class.getTotalLengthClasses();
 
@@ -203,7 +201,7 @@ class Length
 		data['back'] = this.url.link('localisation/length_class', 'user_token=' + this.session.data['user_token'] + url);
 
 		if ((this.request.get['length_class_id'])) {
-			this.load.model('localisation/length_class');
+			this.load.model('localisation/length_class',this);
 
 			length_class_info await this.model_localisation_length_class.getLengthClass(this.request.get['length_class_id']);
 		}
@@ -260,7 +258,7 @@ class Length
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('localisation/length_class');
+			this.load.model('localisation/length_class',this);
 
 			if (!this.request.post['length_class_id']) {
 				json['length_class_id'] = await this.model_localisation_length_class.addLengthClass(this.request.post);
@@ -283,24 +281,23 @@ class Length
 
 		const json = {};
 
-		if ((this.request.post['selected'])) {
+		let selected = [];
+                 if ((this.request.post['selected'])) {
 			selected = this.request.post['selected'];
-		} else {
-			selected = [];
 		}
 
 		if (!await this.user.hasPermission('modify', 'localisation/length_class')) {
 			json['error'] = this.language.get('error_permission');
 		}
 
-		this.load.model('catalog/product');
+		this.load.model('catalog/product',this);
 
 		for (selected of length_class_id) {
 			if (this.config.get('config_length_class_id') == length_class_id) {
 				json['error'] = this.language.get('error_default');
 			}
 
-			product_total await this.model_catalog_product.getTotalProductsByLengthClassId(length_class_id);
+			const product_total = await this.model_catalog_product.getTotalProductsByLengthClassId(length_class_id);
 
 			if (product_total) {
 				json['error'] = sprintf(this.language.get('error_product'), product_total);
@@ -308,7 +305,7 @@ class Length
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('localisation/length_class');
+			this.load.model('localisation/length_class',this);
 
 			for (selected of length_class_id) {
 				await this.model_localisation_length_class.deleteLengthClass(length_class_id);

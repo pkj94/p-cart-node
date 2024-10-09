@@ -32,7 +32,7 @@ class GdprController extends Controller {
 		data['deny'] = this.url.link('customer/gdpr.deny', 'user_token=' + this.session.data['user_token'], true);
 		data['delete'] = this.url.link('customer/gdpr.delete', 'user_token=' + this.session.data['user_token'], true);
 
-		data['list'] = this.getList();
+		data['list'] = await this.getList();
 
 		data['user_token'] = this.session.data['user_token'];
 
@@ -49,7 +49,7 @@ class GdprController extends Controller {
 	async list() {
 		await this.load.language('customer/gdpr');
 
-		this.response.setOutput(this.getList());
+		this.response.setOutput(await this.getList());
 	}
 
 	/**
@@ -70,10 +70,9 @@ class GdprController extends Controller {
 			filter_action = '';
 		}
 
-		if ((this.request.get['filter_status'])) {
-			filter_status = this.request.get['filter_status'];
-		} else {
-			filter_status = '';
+		let filter_status = '';
+if ((this.request.get['filter_status '])) {
+			filter_status = this.request.get['filter_status '];
 		}
 
 		if ((this.request.get['filter_date_from'])) {
@@ -88,10 +87,9 @@ class GdprController extends Controller {
 			filter_date_to = '';
 		}
 
-		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
+		let page = 1;
+		if ((this.request.get['page '])) {
+			page = this.request.get['page '];
 		}
 
 		let url = '';

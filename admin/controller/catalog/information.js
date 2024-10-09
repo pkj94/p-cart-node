@@ -24,19 +24,19 @@ module.exports = class InformationController extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('text_home'),
+			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('catalog/information', 'user_token=' + this.session.data['user_token'] + url)
+			'text': this.language.get('heading_title'),
+			'href': this.url.link('catalog/information', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
 		data['add'] = this.url.link('catalog/information.form', 'user_token=' + this.session.data['user_token'] + url);
 		data['delete'] = this.url.link('catalog/information.delete', 'user_token=' + this.session.data['user_token']);
 
-		data['list'] = this.getList();
+		data['list'] = await this.getList();
 
 		data['user_token'] = this.session.data['user_token'];
 
@@ -53,7 +53,7 @@ module.exports = class InformationController extends Controller {
 	async list() {
 		await this.load.language('catalog/information');
 
-		this.response.setOutput(this.getList());
+		this.response.setOutput(await this.getList());
 	}
 
 	/**
@@ -66,16 +66,14 @@ module.exports = class InformationController extends Controller {
 			sort = 'id.title';
 		}
 
+		let order = 'ASC';
 		if ((this.request.get['order'])) {
 			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
 		}
 
-		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
+		let page = 1;
+		if ((this.request.get['page '])) {
+			page = this.request.get['page '];
 		}
 
 		let url = '';
@@ -97,10 +95,10 @@ module.exports = class InformationController extends Controller {
 		data['informations'] = [];
 
 		let filter_data = {
-			'sort'  : sort,
-			'order' : order,
-			'start' : (page - 1) * this.config.get('config_pagination_admin'),
-			'limit' : this.config.get('config_pagination_admin')
+			'sort': sort,
+			'order': order,
+			'start': (page - 1) * this.config.get('config_pagination_admin'),
+			'limit': this.config.get('config_pagination_admin')
 		});
 
 		this.load.model('catalog/information');
@@ -111,11 +109,11 @@ module.exports = class InformationController extends Controller {
 
 		for (let result of results) {
 			data['informations'].push({
-				'information_id' : result['information_id'],
-				'title'          : result['title'],
-				'status'         : result['status'],
-				'sort_order'     : result['sort_order'],
-				'edit'           : this.url.link('catalog/information.form', 'user_token=' + this.session.data['user_token'] + '&information_id=' + result['information_id'] + url)
+				'information_id': result['information_id'],
+				'title': result['title'],
+				'status': result['status'],
+				'sort_order': result['sort_order'],
+				'edit': this.url.link('catalog/information.form', 'user_token=' + this.session.data['user_token'] + '&information_id=' + result['information_id'] + url)
 			];
 		}
 
@@ -141,10 +139,10 @@ module.exports = class InformationController extends Controller {
 		}
 
 		data['pagination'] = await this.load.controller('common/pagination', {
-			'total' : information_total,
-			'page'  : page,
-			'limit' : this.config.get('config_pagination_admin'),
-			'url'   : this.url.link('catalog/information.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
+			'total': information_total,
+			'page': page,
+			'limit': this.config.get('config_pagination_admin'),
+			'url': this.url.link('catalog/information.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		]);
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (information_total) ? ((page - 1) * this.config.get('config_pagination_admin')) + 1 : 0, (((page - 1) * this.config.get('config_pagination_admin')) > (information_total - this.config.get('config_pagination_admin'))) ? information_total : (((page - 1) * this.config.get('config_pagination_admin')) + this.config.get('config_pagination_admin')), information_total, Math.ceil(information_total / this.config.get('config_pagination_admin')));
@@ -163,7 +161,7 @@ module.exports = class InformationController extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		
+
 
 		data['text_form'] = !(this.request.get['information_id']) ? this.language.get('text_add') : this.language.get('text_edit');
 
@@ -184,13 +182,13 @@ module.exports = class InformationController extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('text_home'),
+			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('catalog/information', 'user_token=' + this.session.data['user_token'] + url)
+			'text': this.language.get('heading_title'),
+			'href': this.url.link('catalog/information', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
 		data['save'] = this.url.link('catalog/information.save', 'user_token=' + this.session.data['user_token']);
@@ -208,7 +206,7 @@ module.exports = class InformationController extends Controller {
 			data['information_id'] = 0;
 		}
 
-		this.load.model('localisation/language',this);
+		this.load.model('localisation/language', this);
 
 		data['languages'] = await this.model_localisation_language.getLanguages();
 
@@ -221,18 +219,18 @@ module.exports = class InformationController extends Controller {
 		data['stores'] = [];
 
 		data['stores'].push({
-			'store_id' : 0,
-			'name'     : this.language.get('text_default')
+			'store_id': 0,
+			'name': this.language.get('text_default')
 		});
 
-		this.load.model('setting/store');
+		this.load.model('setting/store', this);
 
 		let stores = await this.model_setting_store.getStores();
 
 		for (let store of stores) {
 			data['stores'].push({
-				'store_id' : store['store_id'],
-				'name'     : store['name']
+				'store_id': store['store_id'],
+				'name': store['name']
 			];
 		}
 
@@ -266,7 +264,7 @@ module.exports = class InformationController extends Controller {
 			data['information_seo_url'] = [];
 		}
 
-		this.load.model('design/layout',this);
+		this.load.model('design/layout', this);
 
 		data['layouts'] = await this.model_design_layout.getLayouts();
 
@@ -297,7 +295,8 @@ module.exports = class InformationController extends Controller {
 			json['error']['warning'] = this.language.get('error_permission');
 		}
 
-		for (let [language_id , value] of this.request.post['information_description']) {
+		for (let [language_id, value] of this.request.post['information_description']) {
+			language_id = language_id.split('-')[1];
 			if ((oc_strlen(trim(value['title'])) < 1) || (oc_strlen(value['title']) > 64)) {
 				json['error']['title_' + language_id] = this.language.get('error_title');
 			}
@@ -308,10 +307,12 @@ module.exports = class InformationController extends Controller {
 		}
 
 		if (this.request.post['information_seo_url']) {
-			this.load.model('design/seo_url',this);
+			this.load.model('design/seo_url', this);
 
-			for (let [store_id , language] of this.request.post['information_seo_url']) {
-				for (let [language_id , keyword] of language ) {
+			for (let [store_id, language] of this.request.post['information_seo_url']) {
+				store_id = store_id.split('-')[1];
+				for (let [language_id, keyword] of language) {
+					language_id = language_id.split('-')[1];
 					if ((oc_strlen(trim(keyword)) < 1) || (oc_strlen(keyword) > 64)) {
 						json['error']['keyword_' + store_id + '_' + language_id] = this.language.get('error_keyword');
 					}
@@ -320,7 +321,7 @@ module.exports = class InformationController extends Controller {
 						json['error']['keyword_' + store_id + '_' + language_id] = this.language.get('error_keyword_character');
 					}
 
-					let seo_url_info =  await this.model_design_seo_url.getSeoUrlByKeyword(keyword, store_id);
+					let seo_url_info = await this.model_design_seo_url.getSeoUrlByKeyword(keyword, store_id);
 
 					if (seo_url_info.key && (!(this.request.post['information_id']) || seo_url_info['key'] != 'information_id' || seo_url_info['value'] != this.request.post['information_id'])) {
 						json['error']['keyword_' + store_id + '_' + language_id] = this.language.get('error_keyword_exists');
@@ -357,19 +358,18 @@ module.exports = class InformationController extends Controller {
 
 		const json = {};
 
+		let selected = [];
 		if ((this.request.post['selected'])) {
 			selected = this.request.post['selected'];
-		} else {
-			selected = [];
 		}
 
 		if (!await this.user.hasPermission('modify', 'catalog/information')) {
 			json['error'] = this.language.get('error_permission');
 		}
 
-		this.load.model('setting/store');
+		this.load.model('setting/store', this);
 
-		for (selected of information_id) {
+		for (let attribute_id of selected) {
 			if (this.config.get('config_account_id') == information_id) {
 				json['error'] = this.language.get('error_account');
 			}
@@ -396,7 +396,7 @@ module.exports = class InformationController extends Controller {
 		if (!Object.keys(json).length) {
 			this.load.model('catalog/information');
 
-			for (selected of information_id) {
+			for (let attribute_id of selected) {
 				await this.model_catalog_information.deleteInformation(information_id);
 			}
 

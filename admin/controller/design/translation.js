@@ -43,7 +43,7 @@ class TranslationController extends Controller {
 		data['add'] = this.url.link('design/translation.form', 'user_token=' + this.session.data['user_token'] + url);
 		data['delete'] = this.url.link('design/translation.delete', 'user_token=' + this.session.data['user_token']);
 
-		data['list'] = this.getList();
+		data['list'] = await this.getList();
 
 		data['user_token'] = this.session.data['user_token'];
 
@@ -60,7 +60,7 @@ class TranslationController extends Controller {
 	async list() {
 		await this.load.language('design/translation');
 
-		this.response.setOutput(this.getList());
+		this.response.setOutput(await this.getList());
 	}
 
 	/**
@@ -73,16 +73,14 @@ class TranslationController extends Controller {
 			sort = 'store';
 		}
 
+		let order= 'ASC';
 		if ((this.request.get['order'])) {
-			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
+			order= this.request.get['order'];
 		}
 
-		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
+		let page = 1;
+		if ((this.request.get['page '])) {
+			page = this.request.get['page '];
 		}
 
 		let url = '';
@@ -221,7 +219,7 @@ class TranslationController extends Controller {
 			data['translation_id'] = 0;
 		}
 
-		this.load.model('setting/store');
+		this.load.model('setting/store',this);
 
 		data['stores'] = await this.model_setting_store.getStores();
 
@@ -308,10 +306,9 @@ class TranslationController extends Controller {
 
 		const json = {};
 
-		if ((this.request.post['selected'])) {
+		let selected = [];
+                 if ((this.request.post['selected'])) {
 			selected = this.request.post['selected'];
-		} else {
-			selected = [];
 		}
 
 		if (!await this.user.hasPermission('modify', 'design/translation')) {

@@ -49,7 +49,7 @@ class AntispamController extends Controller {
 		data['add'] = this.url.link('cms/antispam.form', 'user_token=' + this.session.data['user_token'] + url);
 		data['delete'] = this.url.link('cms/antispam.delete', 'user_token=' + this.session.data['user_token']);
 
-		data['list'] = this.getList();
+		data['list'] = await this.getList();
 
 		data['filter_keyword'] = filter_keyword;
 
@@ -68,7 +68,7 @@ class AntispamController extends Controller {
 	async list() {
 		await this.load.language('cms/antispam');
 
-		this.response.setOutput(this.getList());
+		this.response.setOutput(await this.getList());
 	}
 
 	/**
@@ -87,16 +87,14 @@ class AntispamController extends Controller {
 			sort = 'keyword';
 		}
 
+		let order= 'ASC';
 		if ((this.request.get['order'])) {
-			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
+			order= this.request.get['order'];
 		}
 
-		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
+		let page = 1;
+		if ((this.request.get['page '])) {
+			page = this.request.get['page '];
 		}
 
 		let url = '';
@@ -294,10 +292,9 @@ class AntispamController extends Controller {
 
 		const json = {};
 
-		if ((this.request.post['selected'])) {
+		let selected = [];
+                 if ((this.request.post['selected'])) {
 			selected = this.request.post['selected'];
-		} else {
-			selected = [];
 		}
 
 		if (!await this.user.hasPermission('modify', 'cms/antispam')) {

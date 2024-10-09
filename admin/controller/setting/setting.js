@@ -162,13 +162,13 @@ class SettingController extends Controller {
 		data['config_currency_engine'] = this.config.get('config_currency_engine');
 		data['config_currency_auto'] = this.config.get('config_currency_auto');
 
-		this.load.model('localisation/length_class');
+		this.load.model('localisation/length_class',this);
 
 		data['length_classes'] = await this.model_localisation_length_class.getLengthClasses();
 
 		data['config_length_class_id'] = this.config.get('config_length_class_id');
 
-		this.load.model('localisation/weight_class');
+		this.load.model('localisation/weight_class',this);
 
 		data['weight_classes'] = await this.model_localisation_weight_class.getWeightClasses();
 
@@ -225,7 +225,7 @@ class SettingController extends Controller {
 		data['config_customer_activity'] = this.config.get('config_customer_activity');
 		data['config_customer_search'] = this.config.get('config_customer_search');
 
-		this.load.model('customer/customer_group');
+		this.load.model('customer/customer_group',this);
 
 		data['customer_groups'] = await this.model_customer_customer_group.getCustomerGroups();
 
@@ -815,9 +815,9 @@ class SettingController extends Controller {
 
 		if (!this.request.post['config_error_filename']) {
 			json['error']['error_filename'] = this.language.get('error_log_required');
-		} elseif (preg_match('/\.\.[\/\\\]?/', this.request.post['config_error_filename'])) {
+		} else if (preg_match('/\.\.[\/\\\]?/', this.request.post['config_error_filename'])) {
 			json['error']['error_filename'] = this.language.get('error_log_invalid');
-		} elseif (substr(this.request.post['config_error_filename'], strrpos(this.request.post['config_error_filename'], '.')) != '.log') {
+		} else if (substr(this.request.post['config_error_filename'], strrpos(this.request.post['config_error_filename'], '.')) != '.log') {
 			json['error']['error_filename'] = this.language.get('error_log_extension');
 		}
 

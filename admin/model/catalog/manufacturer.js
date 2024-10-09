@@ -1,12 +1,5 @@
-<?php
-namespace Opencart\Admin\Model\Catalog;
-/**
- * Class Manufacturer
- *
- * @package Opencart\Admin\Model\Catalog
- */
-class ManufacturerModel  extends Model {
-	constructor(registry){
+module.exports = class ManufacturerCatalogModel extends Model {
+	constructor(registry) {
 		super(registry)
 	}
 	/**
@@ -15,9 +8,9 @@ class ManufacturerModel  extends Model {
 	 * @return int
 	 */
 	async addManufacturer(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "manufacturer` SET `name` = '" + this.db.escape(data['name']) + "', `image` = " + this.db.escape(data['image']) + ", `sort_order` = '" + data['sort_order'] + "'");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "manufacturer` SET `name` = " + this.db.escape(data['name']) + ", `image` = " + this.db.escape(data['image']) + ", `sort_order` = '" + data['sort_order'] + "'");
 
-		manufacturer_id = this.db.getLastId();
+		const manufacturer_id = this.db.getLastId();
 
 		if ((data['manufacturer_store'])) {
 			for (data['manufacturer_store'] of store_id) {
@@ -27,20 +20,23 @@ class ManufacturerModel  extends Model {
 
 		// SEO URL
 		if ((data['manufacturer_seo_url'])) {
-			for (data['manufacturer_seo_url'] of store_id : language) {
-				for (let [language_id , keyword] of language ) {
+			for (let [store_id, language] of Object.entries(data['manufacturer_seo_url'])) {
+				store_id = store_id.split('-')[1];
+				for (let [language_id, keyword] of Object.entries(language)) {
+					language_id = language_id.split('-')[1];
 					await this.db.query("INSERT INTO `" + DB_PREFIX + "seo_url` SET `store_id` = '" + store_id + "', `language_id` = '" + language_id + "', `key` = 'manufacturer_id', `value` = '" + manufacturer_id + "', `keyword` = " + this.db.escape(keyword) + "");
 				}
 			}
 		}
 
 		if ((data['manufacturer_layout'])) {
-			for (data['manufacturer_layout'] of store_id : layout_id) {
+			for (let [store_id, layout_id] of Object.entries(data['manufacturer_layout'])) {
+				store_id = store_id.split('-')[1];
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "manufacturer_to_layout` SET `manufacturer_id` = '" + manufacturer_id + "', `store_id` = '" + store_id + "', `layout_id` = '" + layout_id + "'");
 			}
 		}
 
-		this.cache.delete('manufacturer');
+		await this.cache.delete('manufacturer');
 
 		return manufacturer_id;
 	}
@@ -52,7 +48,7 @@ class ManufacturerModel  extends Model {
 	 * @return void
 	 */
 	async editManufacturer(manufacturer_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "manufacturer` SET `name` = '" + this.db.escape(data['name']) + "', `image` = " + this.db.escape(data['image']) + ", `sort_order` = '" + data['sort_order'] + "' WHERE `manufacturer_id` = '" + manufacturer_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "manufacturer` SET `name` = " + this.db.escape(data['name']) + ", `image` = " + this.db.escape(data['image']) + ", `sort_order` = '" + data['sort_order'] + "' WHERE `manufacturer_id` = '" + manufacturer_id + "'");
 
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "manufacturer_to_store` WHERE `manufacturer_id` = '" + manufacturer_id + "'");
 
@@ -65,8 +61,10 @@ class ManufacturerModel  extends Model {
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "seo_url` WHERE `key` = 'manufacturer_id' AND `value` = '" + manufacturer_id + "'");
 
 		if ((data['manufacturer_seo_url'])) {
-			for (data['manufacturer_seo_url'] of store_id : language) {
-				for (let [language_id , keyword] of language ) {
+			for (let [store_id, language] of Object.entries(data['manufacturer_seo_url'])) {
+				store_id = store_id.split('-')[1];
+				for (let [language_id, keyword] of Object.entries(language)) {
+					language_id = language_id.split('-')[1];
 					await this.db.query("INSERT INTO `" + DB_PREFIX + "seo_url` SET `store_id` = '" + store_id + "', `language_id` = '" + language_id + "', `key` = 'manufacturer_id', `value` = '" + manufacturer_id + "', `keyword` = " + this.db.escape(keyword) + "");
 				}
 			}
@@ -75,12 +73,13 @@ class ManufacturerModel  extends Model {
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "manufacturer_to_layout` WHERE `manufacturer_id` = '" + manufacturer_id + "'");
 
 		if ((data['manufacturer_layout'])) {
-			for (data['manufacturer_layout'] of store_id : layout_id) {
+			for (let [store_id, layout_id] of Object.entries(data['manufacturer_layout'])) {
+				store_id = store_id.split('-')[1];
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "manufacturer_to_layout` SET `manufacturer_id` = '" + manufacturer_id + "', `store_id` = '" + store_id + "', `layout_id` = '" + layout_id + "'");
 			}
 		}
 
-		this.cache.delete('manufacturer');
+		await this.cache.delete('manufacturer');
 	}
 
 	/**
@@ -94,7 +93,7 @@ class ManufacturerModel  extends Model {
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "manufacturer_to_layout` WHERE `manufacturer_id` = '" + manufacturer_id + "'");
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "seo_url` WHERE `key` = 'manufacturer_id' AND `value` = '" + manufacturer_id + "'");
 
-		this.cache.delete('manufacturer');
+		await this.cache.delete('manufacturer');
 	}
 
 	/**
@@ -117,7 +116,7 @@ class ManufacturerModel  extends Model {
 		let sql = "SELECT * FROM `" + DB_PREFIX + "manufacturer`";
 
 		if (data['filter_name']) {
-			sql += " WHERE `name` LIKE '" + this.db.escape(data['filter_name'] + '%') + "'";
+			sql += " WHERE `name` LIKE " + this.db.escape(data['filter_name'] + '%');
 		}
 
 		let sort_data = [
@@ -138,13 +137,13 @@ class ManufacturerModel  extends Model {
 		}
 
 		if (data['start'] || data['limit']) {
-                        data['start'] = data['start']||0;
+			data['start'] = data['start'] || 0;
 			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
@@ -162,12 +161,12 @@ if (data['limit'] < 1) {
 	 * @return array
 	 */
 	async getStores(manufacturer_id) {
-		manufacturer_store_data = [];
+		let manufacturer_store_data = [];
 
 		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "manufacturer_to_store` WHERE `manufacturer_id` = '" + manufacturer_id + "'");
 
 		for (let result of query.rows) {
-			manufacturer_store_data[] = result['store_id'];
+			manufacturer_store_data.push(result['store_id']);
 		}
 
 		return manufacturer_store_data;
@@ -179,11 +178,12 @@ if (data['limit'] < 1) {
 	 * @return array
 	 */
 	async getSeoUrls(manufacturer_id) {
-		manufacturer_seo_url_data = [];
+		let manufacturer_seo_url_data = {};
 
 		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "seo_url` WHERE `key` = 'manufacturer_id' AND `value` = '" + manufacturer_id + "'");
 
 		for (let result of query.rows) {
+			manufacturer_seo_url_data[result['store_id']] = manufacturer_seo_url_data[result['store_id']]||{}
 			manufacturer_seo_url_data[result['store_id']][result['language_id']] = result['keyword'];
 		}
 
@@ -196,7 +196,7 @@ if (data['limit'] < 1) {
 	 * @return array
 	 */
 	async getLayouts(manufacturer_id) {
-		manufacturer_layout_data = [];
+		let manufacturer_layout_data = {};
 
 		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "manufacturer_to_layout` WHERE `manufacturer_id` = '" + manufacturer_id + "'");
 

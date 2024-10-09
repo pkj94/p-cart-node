@@ -1,15 +1,8 @@
-<?php
-namespace Opencart\Admin\Model\Catalog;
-/**
- * Class Attribute Group
- *
- * @package Opencart\Admin\Model\Catalog
- */
-class AttributeGroupModel  extends Model {
-	constructor(registry){
+module.exports = class AttributeGroupCatalogModel extends Model {
+	constructor(registry) {
 		super(registry)
 	}
-	constructor(registry){
+	constructor(registry) {
 		super(registry)
 	}
 	/**
@@ -20,9 +13,10 @@ class AttributeGroupModel  extends Model {
 	async addAttributeGroup(data) {
 		await this.db.query("INSERT INTO `" + DB_PREFIX + "attribute_group` SET `sort_order` = '" + data['sort_order'] + "'");
 
-		attribute_group_id = this.db.getLastId();
+		const attribute_group_id = this.db.getLastId();
 
-		for (data['attribute_group_description'] of language_id : value) {
+		for (let [language_id, value] of Object.entries(data['attribute_group_description'])) {
+			language_id = language_id.split('-')[1];
 			await this.db.query("INSERT INTO `" + DB_PREFIX + "attribute_group_description` SET `attribute_group_id` = '" + attribute_group_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + "");
 		}
 
@@ -40,7 +34,8 @@ class AttributeGroupModel  extends Model {
 
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "attribute_group_description` WHERE `attribute_group_id` = '" + attribute_group_id + "'");
 
-		for (data['attribute_group_description'] of language_id : value) {
+		for (let [language_id, value] of Object.entries(data['attribute_group_description'])) {
+			language_id = language_id.split('-')[1];
 			await this.db.query("INSERT INTO `" + DB_PREFIX + "attribute_group_description` SET `attribute_group_id` = '" + attribute_group_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + "");
 		}
 	}
@@ -89,13 +84,13 @@ class AttributeGroupModel  extends Model {
 		}
 
 		if (data['start'] || data['limit']) {
-                        data['start'] = data['start']||0;
+			data['start'] = data['start'] || 0;
 			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
@@ -113,12 +108,12 @@ if (data['limit'] < 1) {
 	 * @return array
 	 */
 	async getDescriptions(attribute_group_id) {
-		attribute_group_data = [];
+		let attribute_group_data = {};
 
 		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "attribute_group_description` WHERE `attribute_group_id` = '" + attribute_group_id + "'");
 
 		for (let result of query.rows) {
-			attribute_group_data[result['language_id']] = ['name' : result['name']];
+			attribute_group_data[result['language_id']] = {'name' : result['name']};
 		}
 
 		return attribute_group_data;

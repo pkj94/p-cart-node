@@ -25,7 +25,7 @@ class ForgottenController extends Controller {
 		}
 
 		if ((args[0])) {
-			email = urldecode(args[0]);
+			email = decodeURIComponent(args[0]);
 		} else {
 			email = '';
 		}

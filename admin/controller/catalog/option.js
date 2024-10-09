@@ -36,7 +36,7 @@ module.exports = class OptionController extends Controller {
 		data['add'] = this.url.link('catalog/option.form', 'user_token=' + this.session.data['user_token'] + url);
 		data['delete'] = this.url.link('catalog/option.delete', 'user_token=' + this.session.data['user_token']);
 
-		data['list'] = this.getList();
+		data['list'] = await this.getList();
 
 		data['user_token'] = this.session.data['user_token'];
 
@@ -53,7 +53,7 @@ module.exports = class OptionController extends Controller {
 	async list() {
 		await this.load.language('catalog/option');
 
-		this.response.setOutput(this.getList());
+		this.response.setOutput(await this.getList());
 	}
 
 	/**
@@ -66,16 +66,14 @@ module.exports = class OptionController extends Controller {
 			sort = 'od.name';
 		}
 
+		let order= 'ASC';
 		if ((this.request.get['order'])) {
-			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
+			order= this.request.get['order'];
 		}
 
-		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
+		let page = 1;
+		if ((this.request.get['page '])) {
+			page = this.request.get['page '];
 		}
 
 		let url = '';
@@ -103,7 +101,7 @@ module.exports = class OptionController extends Controller {
 			'limit' : this.config.get('config_pagination_admin')
 		});
 
-		this.load.model('catalog/option');
+		this.load.model('catalog/option',this);
 
 		option_total await this.model_catalog_option.getTotalOptions();
 
@@ -194,7 +192,7 @@ module.exports = class OptionController extends Controller {
 		data['back'] = this.url.link('catalog/option', 'user_token=' + this.session.data['user_token'] + url);
 
 		if ((this.request.get['option_id'])) {
-			this.load.model('catalog/option');
+			this.load.model('catalog/option',this);
 
 			option_info await this.model_catalog_option.getOption(this.request.get['option_id']);
 		}
@@ -290,7 +288,7 @@ module.exports = class OptionController extends Controller {
 
 		if ((this.request.post['option_value'])) {
 			if ((this.request.post['option_id'])) {
-				this.load.model('catalog/product');
+				this.load.model('catalog/product',this);
 
 				option_value_data = [];
 
@@ -325,7 +323,7 @@ module.exports = class OptionController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('catalog/option');
+			this.load.model('catalog/option',this);
 
 			if (!this.request.post['option_id']) {
 				json['option_id'] = await this.model_catalog_option.addOption(this.request.post);
@@ -348,20 +346,19 @@ module.exports = class OptionController extends Controller {
 
 		const json = {};
 
-		if ((this.request.post['selected'])) {
+		let selected = [];
+                 if ((this.request.post['selected'])) {
 			selected = this.request.post['selected'];
-		} else {
-			selected = [];
 		}
 
 		if (!await this.user.hasPermission('modify', 'catalog/option')) {
 			json['error'] = this.language.get('error_permission');
 		}
 
-		this.load.model('catalog/product');
+		this.load.model('catalog/product',this);
 
-		for (selected of option_id) {
-			product_total await this.model_catalog_product.getTotalProductsByOptionId(option_id);
+		for (let option_id of selected) {
+			const product_total = await this.model_catalog_product.getTotalProductsByOptionId(option_id);
 
 			if (product_total) {
 				json['error'] = sprintf(this.language.get('error_product'), product_total);
@@ -369,9 +366,9 @@ module.exports = class OptionController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('catalog/option');
+			this.load.model('catalog/option',this);
 
-			for (selected of option_id) {
+			for (let option_id of selected) {
 				await this.model_catalog_option.deleteOption(option_id);
 			}
 
@@ -391,7 +388,7 @@ module.exports = class OptionController extends Controller {
 		if ((this.request.get['filter_name'])) {
 			await this.load.language('catalog/option');
 
-			this.load.model('catalog/option');
+			this.load.model('catalog/option',this);
 
 			this.load.model('tool/image',this);
 

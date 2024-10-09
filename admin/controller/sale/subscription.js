@@ -103,7 +103,7 @@ class SubscriptionController extends Controller {
 		data['add'] = this.url.link('sale/subscription.form', 'user_token=' + this.session.data['user_token'] + url);
 		data['delete'] = this.url.link('sale/subscription.delete', 'user_token=' + this.session.data['user_token']);
 
-		data['list'] = this.getList();
+		data['list'] = await this.getList();
 
 		this.load.model('localisation/subscription_status');
 
@@ -131,7 +131,7 @@ class SubscriptionController extends Controller {
 	async list() {
 		await this.load.language('sale/subscription');
 
-		this.response.setOutput(this.getList());
+		this.response.setOutput(await this.getList());
 	}
 
 	/**
@@ -186,10 +186,9 @@ class SubscriptionController extends Controller {
 			order = 'DESC';
 		}
 
-		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
+		let page = 1;
+		if ((this.request.get['page '])) {
+			page = this.request.get['page '];
 		}
 
 		let url = '';
@@ -477,7 +476,7 @@ class SubscriptionController extends Controller {
 		// Subscription
 		data['subscription_plans'] = [];
 
-		this.load.model('catalog/subscription_plan');
+		this.load.model('catalog/subscription_plan',this);
 
 		const results = await this.model_catalog_subscription_plan.getSubscriptionPlans();
 
@@ -517,7 +516,7 @@ class SubscriptionController extends Controller {
 			data['subscription_plan_id'] = 0;
 		}
 
-		subscription_plan_info await this.model_catalog_subscription_plan.getSubscriptionPlan(data['subscription_plan_id']);
+		subscription_plan_info = await this.model_catalog_subscription_plan.getSubscriptionPlan(data['subscription_plan_id']);
 
 		if ((subscription_plan_info)) {
 			data['subscription_plan'] = '';
@@ -668,7 +667,7 @@ class SubscriptionController extends Controller {
 		if ((subscription_info)) {
 			this.load.model('sale/order');
 
-			product_info await this.model_sale_order.getProductByOrderProductId(subscription_info['order_id'], subscription_info['order_product_id']);
+			const product_info = await this.model_sale_order.getProductByOrderProductId(subscription_info['order_id'], subscription_info['order_product_id']);
 		}
 
 		if ((product_info['name'])) {
@@ -677,7 +676,7 @@ class SubscriptionController extends Controller {
 			data['product_name'] = '';
 		}
 
-		if ((product_info)) {
+		if (product_info && product_info.product_id) {
 			data['product'] = this.url.link('catalog/product.form', 'user_token=' + this.session.data['user_token'] + '&product_id=' + product_info['product_id']);
 		} else {
 			data['product'] = '';
@@ -710,7 +709,7 @@ class SubscriptionController extends Controller {
 
 
 
-		if ((product_info)) {
+		if (product_info && product_info.product_id) {
 			data['quantity'] = product_info['quantity'];
 		} else {
 			data['quantity'] = '';
@@ -781,13 +780,13 @@ class SubscriptionController extends Controller {
 
 		if (!await this.user.hasPermission('modify', 'sale/subscription')) {
 			json['error'] = this.language.get('error_permission');
-		} elseif (this.request.post['subscription_plan_id'] == '') {
+		} else if (this.request.post['subscription_plan_id'] == '') {
             json['error'] = this.language.get('error_subscription_plan');
         }
 
-		this.load.model('catalog/subscription_plan');
+		this.load.model('catalog/subscription_plan',this);
 
-		subscription_plan_info await this.model_catalog_subscription_plan.getSubscriptionPlan(this.request.post['subscription_plan_id']);
+		subscription_plan_info = await this.model_catalog_subscription_plan.getSubscriptionPlan(this.request.post['subscription_plan_id']);
 
 		if (!subscription_plan_info) {
 			json['error'] = this.language.get('error_subscription_plan');
@@ -844,7 +843,7 @@ class SubscriptionController extends Controller {
 			page = 1;
 		}
 
-		limit = 10;
+		let limit = 10;
 
 		data['histories'] = [];
 
@@ -946,7 +945,7 @@ class SubscriptionController extends Controller {
 			page = 1;
 		}
 
-		limit = 10;
+		let limit = 10;
 
 		data['orders'] = [];
 

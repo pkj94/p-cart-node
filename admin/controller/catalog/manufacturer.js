@@ -36,7 +36,7 @@ module.exports = class ManufacturerController extends Controller {
 		data['add'] = this.url.link('catalog/manufacturer.form', 'user_token=' + this.session.data['user_token'] + url);
 		data['delete'] = this.url.link('catalog/manufacturer.delete', 'user_token=' + this.session.data['user_token']);
 
-		data['list'] = this.getList();
+		data['list'] = await this.getList();
 
 		data['user_token'] = this.session.data['user_token'];
 
@@ -53,7 +53,7 @@ module.exports = class ManufacturerController extends Controller {
 	async list() {
 		await this.load.language('catalog/manufacturer');
 
-		this.response.setOutput(this.getList());
+		this.response.setOutput(await this.getList());
 	}
 
 	/**
@@ -66,16 +66,14 @@ module.exports = class ManufacturerController extends Controller {
 			sort = 'name';
 		}
 
+		let order= 'ASC';
 		if ((this.request.get['order'])) {
-			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
+			order= this.request.get['order'];
 		}
 
-		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
+		let page = 1;
+		if ((this.request.get['page '])) {
+			page = this.request.get['page '];
 		}
 
 		let url = '';
@@ -103,7 +101,7 @@ module.exports = class ManufacturerController extends Controller {
 			'limit' : this.config.get('config_pagination_admin')
 		});
 
-		this.load.model('catalog/manufacturer');
+		this.load.model('catalog/manufacturer',this);
 
 		manufacturer_total await this.model_catalog_manufacturer.getTotalManufacturers();
 
@@ -194,9 +192,9 @@ module.exports = class ManufacturerController extends Controller {
 		data['back'] = this.url.link('catalog/manufacturer', 'user_token=' + this.session.data['user_token'] + url);
 
 		if ((this.request.get['manufacturer_id'])) {
-			this.load.model('catalog/manufacturer');
+			this.load.model('catalog/manufacturer',this);
 
-			manufacturer_info await this.model_catalog_manufacturer.getManufacturer(this.request.get['manufacturer_id']);
+			const manufacturer_info = await this.model_catalog_manufacturer.getManufacturer(this.request.get['manufacturer_id']);
 		}
 
 		if ((this.request.get['manufacturer_id'])) {
@@ -218,7 +216,7 @@ module.exports = class ManufacturerController extends Controller {
 			'name'     : this.language.get('text_default')
 		});
 
-		this.load.model('setting/store');
+		this.load.model('setting/store',this);
 
 		let stores = await this.model_setting_store.getStores();
 
@@ -307,6 +305,7 @@ module.exports = class ManufacturerController extends Controller {
 
 			for (this.request.post['manufacturer_seo_url'] of store_id : language) {
 				for (let [language_id , keyword] of language ) {
+					language_id = language_id.split('-')[1];
 					if ((oc_strlen(trim(keyword)) < 1) || (oc_strlen(keyword) > 64)) {
 						json['error']['keyword_' + store_id + '_' + language_id] = this.language.get('error_keyword');
 					}
@@ -329,7 +328,7 @@ module.exports = class ManufacturerController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('catalog/manufacturer');
+			this.load.model('catalog/manufacturer',this);
 
 			if (!this.request.post['manufacturer_id']) {
 				json['manufacturer_id'] = await this.model_catalog_manufacturer.addManufacturer(this.request.post);
@@ -352,20 +351,19 @@ module.exports = class ManufacturerController extends Controller {
 
 		const json = {};
 
-		if ((this.request.post['selected'])) {
+		let selected = [];
+                 if ((this.request.post['selected'])) {
 			selected = this.request.post['selected'];
-		} else {
-			selected = [];
 		}
 
 		if (!await this.user.hasPermission('modify', 'catalog/manufacturer')) {
 			json['error'] = this.language.get('error_permission');
 		}
 
-		this.load.model('catalog/product');
+		this.load.model('catalog/product',this);
 
-		for (selected of manufacturer_id) {
-			product_total await this.model_catalog_product.getTotalProductsByManufacturerId(manufacturer_id);
+		for (let manufacturer_id of selected) {
+			const product_total = await this.model_catalog_product.getTotalProductsByManufacturerId(manufacturer_id);
 
 			if (product_total) {
 				json['error'] = sprintf(this.language.get('error_product'), product_total);
@@ -373,9 +371,9 @@ module.exports = class ManufacturerController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('catalog/manufacturer');
+			this.load.model('catalog/manufacturer',this);
 
-			for (selected of manufacturer_id) {
+			for (let manufacturer_id of selected) {
 				await this.model_catalog_manufacturer.deleteManufacturer(manufacturer_id);
 			}
 
@@ -393,7 +391,7 @@ module.exports = class ManufacturerController extends Controller {
 		const json = {};
 
 		if ((this.request.get['filter_name'])) {
-			this.load.model('catalog/manufacturer');
+			this.load.model('catalog/manufacturer',this);
 
 			let filter_data = {
 				'filter_name' : this.request.get['filter_name'],

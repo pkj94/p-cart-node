@@ -56,7 +56,7 @@ class ExtensionController extends Controller {
 
 		if ((this.request.get['type'])) {
 			data['extension'] = await this.load.controller('extension/' + basename(this.request.get['type']) + '.getList');
-		} elseif (data['categories']) {
+		} else if (data['categories']) {
 			data['extension'] = await this.load.controller('extension/' + data['categories'][0]['code'] + '.getList');
 		} else {
 			data['extension'] = '';

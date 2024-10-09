@@ -21,7 +21,7 @@ module.exports = class PaginationController extends Controller {
 		if ((setting['limit']) && setting['limit']) {
 			limit = setting['limit'];
 		} else {
-			limit = 10;
+			let limit = 10;
 		}
 		let url = '';
 		if ((setting['url'])) {

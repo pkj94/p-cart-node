@@ -43,7 +43,7 @@ class Tax
 		data['add'] = this.url.link('localisation/tax_class.form', 'user_token=' + this.session.data['user_token'] + url);
 		data['delete'] = this.url.link('localisation/tax_class.delete', 'user_token=' + this.session.data['user_token']);
 
-		data['list'] = this.getList();
+		data['list'] = await this.getList();
 
 		data['user_token'] = this.session.data['user_token'];
 
@@ -60,7 +60,7 @@ class Tax
 	async list() {
 		await this.load.language('localisation/tax_class');
 		
-		this.response.setOutput(this.getList());
+		this.response.setOutput(await this.getList());
 	}
 
 	/**
@@ -73,16 +73,14 @@ class Tax
 			sort = 'title';
 		}
 
+		let order= 'ASC';
 		if ((this.request.get['order'])) {
-			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
+			order= this.request.get['order'];
 		}
 
-		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
+		let page = 1;
+		if ((this.request.get['page '])) {
+			page = this.request.get['page '];
 		}
 
 		let url = '';
@@ -110,7 +108,7 @@ class Tax
 			'limit' : this.config.get('config_pagination_admin')
 		});
 
-		this.load.model('localisation/tax_class');
+		this.load.model('localisation/tax_class',this);
 
 		tax_class_total await this.model_localisation_tax_class.getTotalTaxClasses();
 
@@ -199,7 +197,7 @@ class Tax
 		data['back'] = this.url.link('localisation/tax_class', 'user_token=' + this.session.data['user_token'] + url);
 
 		if ((this.request.get['tax_class_id'])) {
-			this.load.model('localisation/tax_class');
+			this.load.model('localisation/tax_class',this);
 
 			tax_class_info await this.model_localisation_tax_class.getTaxClass(this.request.get['tax_class_id']);
 		}
@@ -260,7 +258,7 @@ class Tax
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('localisation/tax_class');
+			this.load.model('localisation/tax_class',this);
 
 			if (!this.request.post['tax_class_id']) {
 				json['tax_class_id'] = await this.model_localisation_tax_class.addTaxClass(this.request.post);
@@ -283,20 +281,19 @@ class Tax
 
 		const json = {};
 
-		if ((this.request.post['selected'])) {
+		let selected = [];
+                 if ((this.request.post['selected'])) {
 			selected = this.request.post['selected'];
-		} else {
-			selected = [];
 		}
 
 		if (!await this.user.hasPermission('modify', 'localisation/tax_class')) {
 			json['error'] = this.language.get('error_permission');
 		}
 
-		this.load.model('catalog/product');
+		this.load.model('catalog/product',this);
 
 		for (selected of tax_class_id) {
-			product_total await this.model_catalog_product.getTotalProductsByTaxClassId(tax_class_id);
+			const product_total = await this.model_catalog_product.getTotalProductsByTaxClassId(tax_class_id);
 
 			if (product_total) {
 				json['error'] = sprintf(this.language.get('error_product'), product_total);
@@ -304,7 +301,7 @@ class Tax
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('localisation/tax_class');
+			this.load.model('localisation/tax_class',this);
 
 			for (selected of tax_class_id) {
 				await this.model_localisation_tax_class.deleteTaxClass(tax_class_id);

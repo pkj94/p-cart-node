@@ -10,7 +10,7 @@ class FraudController extends Controller {
 	 * @return void
 	 */
 	async index() {
-		this.response.setOutput(this.getList());
+		this.response.setOutput(await this.getList());
 	}
 
 	/**

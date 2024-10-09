@@ -43,7 +43,7 @@ class StockStatusController extends Controller {
 		data['add'] = this.url.link('localisation/stock_status.form', 'user_token=' + this.session.data['user_token'] + url);
 		data['delete'] = this.url.link('localisation/stock_status.delete', 'user_token=' + this.session.data['user_token']);
 
-		data['list'] = this.getList();
+		data['list'] = await this.getList();
 
 		data['user_token'] = this.session.data['user_token'];
 
@@ -60,7 +60,7 @@ class StockStatusController extends Controller {
 	async list() {
 		await this.load.language('localisation/stock_status');
 
-		this.response.setOutput(this.getList());
+		this.response.setOutput(await this.getList());
 	}
 
 	/**
@@ -73,16 +73,14 @@ class StockStatusController extends Controller {
 			sort = 'name';
 		}
 
+		let order= 'ASC';
 		if ((this.request.get['order'])) {
-			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
+			order= this.request.get['order'];
 		}
 
-		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
+		let page = 1;
+		if ((this.request.get['page '])) {
+			page = this.request.get['page '];
 		}
 
 		let url = '';
@@ -110,7 +108,7 @@ class StockStatusController extends Controller {
 			'limit' : this.config.get('config_pagination_admin')
 		});
 
-		this.load.model('localisation/stock_status');
+		this.load.model('localisation/stock_status',this);
 
 		stock_status_total await this.model_localisation_stock_status.getTotalStockStatuses();
 
@@ -209,7 +207,7 @@ class StockStatusController extends Controller {
 		data['languages'] = await this.model_localisation_language.getLanguages();
 
 		if ((this.request.get['stock_status_id'])) {
-			this.load.model('localisation/stock_status');
+			this.load.model('localisation/stock_status',this);
 
 			data['stock_status'] = await this.model_localisation_stock_status.getDescriptions(this.request.get['stock_status_id']);
 		} else {
@@ -242,7 +240,7 @@ class StockStatusController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('localisation/stock_status');
+			this.load.model('localisation/stock_status',this);
 
 			if (!this.request.post['stock_status_id']) {
 				json['stock_status_id'] = await this.model_localisation_stock_status.addStockStatus(this.request.post);
@@ -265,20 +263,19 @@ class StockStatusController extends Controller {
 
 		const json = {};
 
-		if ((this.request.post['selected'])) {
+		let selected = [];
+                 if ((this.request.post['selected'])) {
 			selected = this.request.post['selected'];
-		} else {
-			selected = [];
 		}
 
 		if (!await this.user.hasPermission('modify', 'localisation/stock_status')) {
 			json['error'] = this.language.get('error_permission');
 		}
 
-		this.load.model('catalog/product');
+		this.load.model('catalog/product',this);
 
 		for (selected of stock_status_id) {
-			product_total await this.model_catalog_product.getTotalProductsByStockStatusId(stock_status_id);
+			const product_total = await this.model_catalog_product.getTotalProductsByStockStatusId(stock_status_id);
 
 			if (product_total) {
 				json['error'] = sprintf(this.language.get('error_product'), product_total);
@@ -286,7 +283,7 @@ class StockStatusController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('localisation/stock_status');
+			this.load.model('localisation/stock_status',this);
 
 			for (selected of stock_status_id) {
 				await this.model_localisation_stock_status.deleteStockStatus(stock_status_id);

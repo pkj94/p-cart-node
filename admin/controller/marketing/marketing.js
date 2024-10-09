@@ -14,10 +14,9 @@ class MarketingController extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		if ((this.request.get['filter_name'])) {
+		let filter_name = '';
+if ((this.request.get['filter_name'])) {
 			filter_name = this.request.get['filter_name'];
-		} else {
-			filter_name = '';
 		}
 
 		if ((this.request.get['filter_code'])) {
@@ -83,7 +82,7 @@ class MarketingController extends Controller {
 		data['add'] = this.url.link('marketing/marketing.form', 'user_token=' + this.session.data['user_token'] + url);
 		data['delete'] = this.url.link('marketing/marketing.delete', 'user_token=' + this.session.data['user_token']);
 
-		data['list'] = this.getList();
+		data['list'] = await this.getList();
 
 		data['filter_name'] = filter_name;
 		data['filter_code'] = filter_code;
@@ -105,17 +104,16 @@ class MarketingController extends Controller {
 	async list() {
 		await this.load.language('marketing/marketing');
 
-		this.response.setOutput(this.getList());
+		this.response.setOutput(await this.getList());
 	}
 
 	/**
 	 * @return string
 	 */
 	async getList() {
-		if ((this.request.get['filter_name'])) {
+		let filter_name = '';
+if ((this.request.get['filter_name'])) {
 			filter_name = this.request.get['filter_name'];
-		} else {
-			filter_name = '';
 		}
 
 		if ((this.request.get['filter_code'])) {
@@ -142,16 +140,14 @@ class MarketingController extends Controller {
 			sort = 'm.name';
 		}
 
+		let order= 'ASC';
 		if ((this.request.get['order'])) {
-			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
+			order= this.request.get['order'];
 		}
 
-		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
+		let page = 1;
+		if ((this.request.get['page '])) {
+			page = this.request.get['page '];
 		}
 
 		let url = '';
@@ -434,10 +430,9 @@ class MarketingController extends Controller {
 
 		const json = {};
 
-		if ((this.request.post['selected'])) {
+		let selected = [];
+                 if ((this.request.post['selected'])) {
 			selected = this.request.post['selected'];
-		} else {
-			selected = [];
 		}
 
 		if (!await this.user.hasPermission('modify', 'marketing/marketing')) {
@@ -483,22 +478,22 @@ class MarketingController extends Controller {
 			page = 1;
 		}
 
-		limit = 10;
+		let limit = 10;
 
 		data['reports'] = [];
 
 		this.load.model('marketing/marketing');
 		this.load.model('customer/customer');
-		this.load.model('setting/store');
+		this.load.model('setting/store',this);
 
 		const results = await this.model_marketing_marketing.getReports(marketing_id, (page - 1) * limit, limit);
 
 		for (let result of results) {
-			store_info await this.model_setting_store.getStore(result['store_id']);
+			const store_info = await this.model_setting_store.getStore(result['store_id']);
 
-			if (store_info) {
+			if (store_info && store_info.store_id) {
 				store = store_info['name'];
-			} elseif (!result['store_id']) {
+			} else if (!result['store_id']) {
 				store = this.config.get('config_name');
 			} else {
 				store = '';
@@ -514,7 +509,7 @@ class MarketingController extends Controller {
 			];
 		}
 
-		report_total await this.model_marketing_marketing.getTotalReports(marketing_id);
+		const report_total = await this.model_marketing_marketing.getTotalReports(marketing_id);
 
 		data['pagination'] = await this.load.controller('common/pagination', {
 			'total' : report_total,
