@@ -75,8 +75,8 @@ module.exports = class FilterController extends Controller {
 		}
 
 		let page = 1;
-		if ((this.request.get['page '])) {
-			page = this.request.get['page '];
+		if ((this.request.get['page'])) {
+			page = this.request.get['page'];
 		}
 
 		let url = '';

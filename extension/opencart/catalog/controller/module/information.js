@@ -15,7 +15,7 @@ class InformationController extends Controller {
 	async index() {
 		this.load.language('extension/opencart/module/information');
 
-		this.load.model('catalog/information');
+		this.load.model('catalog/information',this);
 
 		data['informations'] = [];
 

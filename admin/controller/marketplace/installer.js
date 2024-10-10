@@ -83,8 +83,8 @@ class InstallerController extends Controller {
 		}
 
 		let page = 1;
-		if ((this.request.get['page '])) {
-			page = this.request.get['page '];
+		if ((this.request.get['page'])) {
+			page = this.request.get['page'];
 		}
 
 		this.load.model('setting/extension');
@@ -305,8 +305,8 @@ class InstallerController extends Controller {
 		}
 
 		let page = 1;
-		if ((this.request.get['page '])) {
-			page = this.request.get['page '];
+		if ((this.request.get['page'])) {
+			page = this.request.get['page'];
 		}
 
 		if (!await this.user.hasPermission('modify', 'marketplace/installer')) {

@@ -57,8 +57,8 @@ class MarketplaceController extends Controller {
 		}
 
 		let page = 1;
-		if ((this.request.get['page '])) {
-			page = this.request.get['page '];
+		if ((this.request.get['page'])) {
+			page = this.request.get['page'];
 		}
 
 		let url = '';
@@ -1036,8 +1036,8 @@ class MarketplaceController extends Controller {
 		}
 
 		let page = 1;
-		if ((this.request.get['page '])) {
-			page = this.request.get['page '];
+		if ((this.request.get['page'])) {
+			page = this.request.get['page'];
 		}
 
 		data['button_more'] = this.language.get('button_more');
@@ -1115,8 +1115,8 @@ class MarketplaceController extends Controller {
 		}
 
 		let page = 1;
-		if ((this.request.get['page '])) {
-			page = this.request.get['page '];
+		if ((this.request.get['page'])) {
+			page = this.request.get['page'];
 		}
 
 		curl = curl_init(OPENCART_SERVER + 'api/marketplace/comment&extension_id=' + extension_id + '&parent_id=' + parent_id + '&page=' + page);

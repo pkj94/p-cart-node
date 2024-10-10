@@ -1,5 +1,6 @@
 const fs = require('fs');
 global.VERSION = '4.0.2.3';
+global.APPROOT = __dirname;
 global.date = require('php-date-format');
 global.Framework = require('./system/framework');
 

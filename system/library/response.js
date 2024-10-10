@@ -6,6 +6,7 @@ module.exports = class ResponseLibrary {
     this.level = 0;
     this.outputData = '';
     this.redirect = '';
+    this.file = '';
   }
   addHeader(header) {
     this.headers.push(header);
@@ -18,6 +19,9 @@ module.exports = class ResponseLibrary {
   }
   setCompression(level) {
     this.level = level;
+  }
+  setFile(file) {
+    this.file = file;
   }
   setOutput(output) {
     this.outputData = output;

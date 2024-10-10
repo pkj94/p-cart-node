@@ -55,8 +55,8 @@ class ThemeController extends Controller {
 		await this.load.language('design/theme');
 
 		let page = 1;
-		if ((this.request.get['page '])) {
-			page = this.request.get['page '];
+		if ((this.request.get['page'])) {
+			page = this.request.get['page'];
 		}
 
 		let limit = 10;

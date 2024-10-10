@@ -1,8 +1,11 @@
+const sprintf = require("locutus/php/strings/sprintf");
+
 module.exports = class InformationController extends Controller {
 	/**
 	 * @return void
 	 */
 	async index() {
+		const data = {};
 		await this.load.language('catalog/information');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -60,20 +63,19 @@ module.exports = class InformationController extends Controller {
 	 * @return string
 	 */
 	async getList() {
+		const data = {};
+		let sort = 'id.title';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
-		} else {
-			sort = 'id.title';
 		}
-
 		let order = 'ASC';
 		if ((this.request.get['order'])) {
 			order = this.request.get['order'];
 		}
 
 		let page = 1;
-		if ((this.request.get['page '])) {
-			page = this.request.get['page '];
+		if ((this.request.get['page'])) {
+			page = this.request.get['page'];
 		}
 
 		let url = '';
@@ -99,11 +101,11 @@ module.exports = class InformationController extends Controller {
 			'order': order,
 			'start': (page - 1) * this.config.get('config_pagination_admin'),
 			'limit': this.config.get('config_pagination_admin')
-		});
+		};
 
-		this.load.model('catalog/information');
+		this.load.model('catalog/information', this);
 
-		information_total await this.model_catalog_information.getTotalInformations();
+		const information_total = await this.model_catalog_information.getTotalInformations();
 
 		const results = await this.model_catalog_information.getInformations(filter_data);
 
@@ -114,10 +116,10 @@ module.exports = class InformationController extends Controller {
 				'status': result['status'],
 				'sort_order': result['sort_order'],
 				'edit': this.url.link('catalog/information.form', 'user_token=' + this.session.data['user_token'] + '&information_id=' + result['information_id'] + url)
-			];
+			});
 		}
 
-		let url = '';
+		url = '';
 
 		if (order == 'ASC') {
 			url += '&order=DESC';
@@ -128,7 +130,7 @@ module.exports = class InformationController extends Controller {
 		data['sort_title'] = this.url.link('catalog/information.list', 'user_token=' + this.session.data['user_token'] + '&sort=id.title' + url);
 		data['sort_sort_order'] = this.url.link('catalog/information.list', 'user_token=' + this.session.data['user_token'] + '&sort=i.sort_order' + url);
 
-		let url = '';
+		url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -143,7 +145,7 @@ module.exports = class InformationController extends Controller {
 			'page': page,
 			'limit': this.config.get('config_pagination_admin'),
 			'url': this.url.link('catalog/information.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
-		]);
+		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (information_total) ? ((page - 1) * this.config.get('config_pagination_admin')) + 1 : 0, (((page - 1) * this.config.get('config_pagination_admin')) > (information_total - this.config.get('config_pagination_admin'))) ? information_total : (((page - 1) * this.config.get('config_pagination_admin')) + this.config.get('config_pagination_admin')), information_total, Math.ceil(information_total / this.config.get('config_pagination_admin')));
 
@@ -157,6 +159,7 @@ module.exports = class InformationController extends Controller {
 	 * @return void
 	 */
 	async form() {
+		const data = {};
 		await this.load.language('catalog/information');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -193,11 +196,11 @@ module.exports = class InformationController extends Controller {
 
 		data['save'] = this.url.link('catalog/information.save', 'user_token=' + this.session.data['user_token']);
 		data['back'] = this.url.link('catalog/information', 'user_token=' + this.session.data['user_token'] + url);
-
+		let information_info;
 		if ((this.request.get['information_id'])) {
-			this.load.model('catalog/information');
+			this.load.model('catalog/information', this);
 
-			information_info await this.model_catalog_information.getInformation(this.request.get['information_id']);
+			information_info = await this.model_catalog_information.getInformation(this.request.get['information_id']);
 		}
 
 		if ((this.request.get['information_id'])) {
@@ -231,7 +234,7 @@ module.exports = class InformationController extends Controller {
 			data['stores'].push({
 				'store_id': store['store_id'],
 				'name': store['name']
-			];
+			});
 		}
 
 		if ((this.request.get['information_id'])) {
@@ -289,13 +292,13 @@ module.exports = class InformationController extends Controller {
 	async save() {
 		await this.load.language('catalog/information');
 
-		const json = {};
+		const json = { error: {} };
 
 		if (!await this.user.hasPermission('modify', 'catalog/information')) {
 			json['error']['warning'] = this.language.get('error_permission');
 		}
 
-		for (let [language_id, value] of this.request.post['information_description']) {
+		for (let [language_id, value] of Object.entries(this.request.post['information_description'])) {
 			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 			if ((oc_strlen(trim(value['title'])) < 1) || (oc_strlen(value['title']) > 64)) {
 				json['error']['title_' + language_id] = this.language.get('error_title');
@@ -309,7 +312,7 @@ module.exports = class InformationController extends Controller {
 		if (this.request.post['information_seo_url']) {
 			this.load.model('design/seo_url', this);
 
-			for (let [store_id, language] of this.request.post['information_seo_url']) {
+			for (let [store_id, language] of Object.entries(this.request.post['information_seo_url'])) {
 				store_id = store_id.indexOf('store') >= 0 ? store_id.split('-')[1] : store_id;
 				for (let [language_id, keyword] of Object.entries(language)) {
 					language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
@@ -334,8 +337,8 @@ module.exports = class InformationController extends Controller {
 			json['error']['warning'] = this.language.get('error_warning');
 		}
 		this.request.post['information_id'] = Number(this.request.post['information_id']);
-		if (!Object.keys(json).length) {
-			this.load.model('catalog/information');
+		if (!Object.keys(json.error).length) {
+			this.load.model('catalog/information', this);
 
 			if (!this.request.post['information_id']) {
 				json['information_id'] = await this.model_catalog_information.addInformation(this.request.post);
@@ -369,7 +372,7 @@ module.exports = class InformationController extends Controller {
 
 		this.load.model('setting/store', this);
 
-		for (let attribute_id of selected) {
+		for (let information_id of selected) {
 			if (this.config.get('config_account_id') == information_id) {
 				json['error'] = this.language.get('error_account');
 			}
@@ -386,7 +389,7 @@ module.exports = class InformationController extends Controller {
 				json['error'] = this.language.get('error_return');
 			}
 
-			store_total await this.model_setting_store.getTotalStoresByInformationId(information_id);
+			const store_total = await this.model_setting_store.getTotalStoresByInformationId(information_id);
 
 			if (store_total) {
 				json['error'] = sprintf(this.language.get('error_store'), store_total);
@@ -394,9 +397,9 @@ module.exports = class InformationController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('catalog/information');
+			this.load.model('catalog/information', this);
 
-			for (let attribute_id of selected) {
+			for (let information_id of selected) {
 				await this.model_catalog_information.deleteInformation(information_id);
 			}
 

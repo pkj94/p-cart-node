@@ -79,8 +79,8 @@ class LayoutController extends Controller {
 		}
 
 		let page = 1;
-		if ((this.request.get['page '])) {
-			page = this.request.get['page '];
+		if ((this.request.get['page'])) {
+			page = this.request.get['page'];
 		}
 
 		let url = '';
@@ -353,7 +353,7 @@ class LayoutController extends Controller {
 		this.load.model('catalog/product',this);
 		this.load.model('catalog/category',this);
 		this.load.model('catalog/manufacturer',this);
-		this.load.model('catalog/information');
+		this.load.model('catalog/information',this);
 
 		for (let layout_id of selected) {
 			if (this.config.get('config_layout_id') == layout_id) {

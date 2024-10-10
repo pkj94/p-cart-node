@@ -247,7 +247,7 @@ class SettingController extends Controller {
 			data['config_login_attempts'] = 5;
 		}
 
-		this.load.model('catalog/information');
+		this.load.model('catalog/information',this);
 
 		data['informations'] = await this.model_catalog_information.getInformations();
 

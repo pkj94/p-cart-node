@@ -20,11 +20,17 @@ module.exports = function () {
         global.config = new Config();
         registry.set('config', global.config);
         new Framework().init(req, res, next).then(output => {
-            if (registry.get('response').redirect) {
+            if (registry.get('response').file) {
+                console.log(global.registry.get('response').headers);
+                global.registry.get('response').headers.forEach(header => {
+                    res.header((header.split(':')[0] || '').trim(), (header.split(':')[1] || '').trim());
+                });
+                res.sendFile(registry.get('response').file);
+            } else if (registry.get('response').redirect) {
                 res.redirect(registry.get('response').redirect);
             } else {
                 global.registry.get('response').headers.forEach(header => {
-                    res.header(header.split(':')[0].trim(), header.split(':')[1].trim());
+                    res.header((header.split(':')[0] || '').trim(), (header.split(':')[1] || '').trim());
                 });
                 res.status(200).send(output);
             }

@@ -132,3 +132,5 @@ system/storage/cache/*
 !system/storage/cache/index.html
 image/cache/*
 !image/cache/index.html
+system/storage/download/*
+!system/storage/download/index.html

@@ -257,8 +257,8 @@ if (typeof this.request.get['filter_status'] != 'undefined' && this.request.get[
 		}
 
 		let page = 1;
-		if ((this.request.get['page '])) {
-			page = this.request.get['page '];
+		if ((this.request.get['page'])) {
+			page = this.request.get['page'];
 		}
 
 		if ((this.request.get['limit'])) {

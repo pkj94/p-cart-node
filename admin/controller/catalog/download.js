@@ -1,4 +1,5 @@
 const fs = require('fs');
+const expressPath = require('path');
 const sprintf = require('locutus/php/strings/sprintf');
 const strtotime = require('locutus/php/datetime/strtotime');
 module.exports = class DownloadController extends Controller {
@@ -76,8 +77,8 @@ module.exports = class DownloadController extends Controller {
 		}
 
 		let page = 1;
-		if ((this.request.get['page '])) {
-			page = this.request.get['page '];
+		if ((this.request.get['page'])) {
+			page = this.request.get['page'];
 		}
 
 		let url = '';
@@ -168,9 +169,9 @@ module.exports = class DownloadController extends Controller {
 		data['text_form'] = !(this.request.get['download_id']) ? this.language.get('text_add') : this.language.get('text_edit');
 
 		// Use the ini_get('upload_max_filesize') for the max file size
-		data['error_upload_size'] = sprintf(this.language.get('error_upload_size'), ini_get('upload_max_filesize'));
+		data['error_upload_size'] = sprintf(this.language.get('error_upload_size'), process.env.UPLOAD_MAX_FILESIZE || '2M');
 
-		data['config_file_max_size'] = (preg_filter('/[^0-9]/', '', ini_get('upload_max_filesize')) * 1024 * 1024);
+		data['config_file_max_size'] = ((process.env.UPLOAD_MAX_FILESIZE || '2M').replace(/[^0-9]/g, '') * 1024 * 1024);
 
 		let url = '';
 
@@ -429,13 +430,13 @@ module.exports = class DownloadController extends Controller {
 			json['error'] = this.language.get('error_permission');
 		}
 
-		if (!(this.request.files['file']['name']) || !is_file(this.request.files['file']['tmp_name'])) {
+		if (!(this.request.files['file']['name'])) {
 			json['error'] = this.language.get('error_upload');
 		}
-
+		let filename = '';
 		if (!Object.keys(json).length) {
 			// Sanitize the filename
-			let filename = basename(html_entity_decode(this.request.files['file']['name']));
+			filename = expressPath.basename(html_entity_decode(this.request.files['file']['name']));
 
 			// Validate the filename length
 			if ((oc_strlen(filename) < 3) || (oc_strlen(filename) > 128)) {
@@ -445,14 +446,13 @@ module.exports = class DownloadController extends Controller {
 			// Allowed file extension types
 			let allowed = [];
 
-			let extension_allowed = preg_replace('~\r?\n~', "\n", this.config.get('config_file_ext_allowed'));
+			let extension_allowed = this.config.get('config_file_ext_allowed').replace('~\r?\n~', "\n");
 
 			let filetypes = extension_allowed.split("\n");
 
 			for (let filetype of filetypes) {
 				allowed.push(filetype.trim());
 			}
-
 			if (!allowed.includes(filename.split('.').pop().toLowerCase())) {
 				json['error'] = this.language.get('error_file_type');
 			}
@@ -460,7 +460,7 @@ module.exports = class DownloadController extends Controller {
 			// Allowed file mime types
 			allowed = [];
 
-			let mime_allowed = preg_replace('~\r?\n~', "\n", this.config.get('config_file_mime_allowed'));
+			let mime_allowed = this.config.get('config_file_mime_allowed').replace('~\r?\n~', "\n");
 
 			filetypes = mime_allowed.split("\n");
 
@@ -468,7 +468,7 @@ module.exports = class DownloadController extends Controller {
 				allowed.push(filetype.trim());
 			}
 
-			if (!allowed.includes(this.request.files['file']['type'])) {
+			if (!allowed.includes(this.request.files['file']['mimetype'])) {
 				json['error'] = this.language.get('error_file_type');
 			}
 
@@ -481,7 +481,7 @@ module.exports = class DownloadController extends Controller {
 		if (!Object.keys(json).length) {
 			let file = filename + '.' + oc_token(32);
 
-			move_uploaded_file(this.request.files['file']['tmp_name'], DIR_DOWNLOAD + file);
+			await uploadFile(this.request.files['file'], DIR_DOWNLOAD + file);
 
 			json['filename'] = file;
 			json['mask'] = filename;
@@ -496,57 +496,44 @@ module.exports = class DownloadController extends Controller {
 	/**
 	 * @return void
 	 */
-	// async download() {
-	// 	await this.load.language('catalog/download');
+	async download() {
+		await this.load.language('catalog/download');
+		let filename = '';
+		if ((this.request.get['filename'])) {
+			filename = expressPath.basename(this.request.get['filename']);
+		}
+		let file = DIR_DOWNLOAD + filename;
 
-	// 	if ((this.request.get['filename'])) {
-	// 		filename = basename(this.request.get['filename']);
-	// 	} else {
-	// 		filename = '';
-	// 	}
+		if (fs.existsSync(file) && fs.lstatSync(file).isFile()) {
+			this.response.headers = [];
+			this.response.addHeader('Content-Disposition: attachment; filename=' + filename);
+			this.response.addHeader('Content-Transfer-Encoding :binary');
+			this.response.addHeader('Content-Type :application/octet-stream');
+			this.response.setFile(file)
+		} else {
+			await this.load.language('error/not_found');
 
-	// 	file = DIR_DOWNLOAD + filename;
+			this.document.setTitle(this.language.get('heading_title'));
 
-	// 	if (fs.lstatSync(file).isFile()) {
-	// 		if (!headers_sent()) {
-	// 			header('Content-Type: application/octet-stream');
-	// 			header('Content-Description: File Transfer');
-	// 			header('Content-Disposition: attachment; filename="' + filename + '"');
-	// 			header('Content-Transfer-Encoding: binary');
-	// 			header('Expires: 0');
-	// 			header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-	// 			header('Pragma: public');
-	// 			header('Content-Length: ' + filesize(file));
+			data['breadcrumbs'] = [];
 
-	// 			readfile(file, 'rb');
-	// 			exit;
-	// 		} else {
-	// 			exit(this.language.get('error_headers_sent'));
-	// 		}
-	// 	} else {
-	// 		await this.load.language('error/not_found');
+			data['breadcrumbs'].push({
+				'text': this.language.get('text_home'),
+				'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			});
 
-	// 		this.document.setTitle(this.language.get('heading_title'));
+			data['breadcrumbs'].push({
+				'text': this.language.get('heading_title'),
+				'href': this.url.link('error/not_found', 'user_token=' + this.session.data['user_token'])
+			});
 
-	// 		data['breadcrumbs'] = [];
+			data['header'] = await this.load.controller('common/header');
+			data['column_left'] = await this.load.controller('common/column_left');
+			data['footer'] = await this.load.controller('common/footer');
 
-	// 		data['breadcrumbs'].push({
-	// 			'text': this.language.get('text_home'),
-	// 			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
-	// 		];
-
-	// 		data['breadcrumbs'].push({
-	// 			'text': this.language.get('heading_title'),
-	// 			'href': this.url.link('error/not_found', 'user_token=' + this.session.data['user_token'])
-	// 		];
-
-	// 		data['header'] = await this.load.controller('common/header');
-	// 		data['column_left'] = await this.load.controller('common/column_left');
-	// 		data['footer'] = await this.load.controller('common/footer');
-
-	// 		this.response.setOutput(await this.load.view('error/not_found', data));
-	// 	}
-	// }
+			this.response.setOutput(await this.load.view('error/not_found', data));
+		}
+	}
 
 	/**
 	 * @return void

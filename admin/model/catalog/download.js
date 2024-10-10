@@ -10,7 +10,7 @@ module.exports = class DownloadCatalogModel extends Model {
 	async addDownload(data) {
 		await this.db.query("INSERT INTO `" + DB_PREFIX + "download` SET `filename` = " + this.db.escape(data['filename']) + ", `mask` = " + this.db.escape(data['mask']) + ", `date_added` = NOW()");
 
-		download_id = this.db.getLastId();
+		const download_id = this.db.getLastId();
 
 		for (let [language_id, value] of Object.entries(data['download_description'])) {
 			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;

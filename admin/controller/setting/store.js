@@ -60,8 +60,8 @@ class StoreController extends Controller {
 	 */
 	async getList() {
 		let page = 1;
-		if ((this.request.get['page '])) {
-			page = this.request.get['page '];
+		if ((this.request.get['page'])) {
+			page = this.request.get['page'];
 		}
 
 		let url = '';
@@ -400,7 +400,7 @@ class StoreController extends Controller {
 			data['config_customer_price'] = '';
 		}
 
-		this.load.model('catalog/information');
+		this.load.model('catalog/information',this);
 
 		data['informations'] = await this.model_catalog_information.getInformations();
 
