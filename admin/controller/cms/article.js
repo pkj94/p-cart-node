@@ -80,7 +80,7 @@ class ArticleController extends Controller {
 
 		let page = 1;
 		if ((this.request.get['page'])) {
-			page = this.request.get['page'];
+			page = Number(this.request.get['page']);
 		}
 
 		let url = '';

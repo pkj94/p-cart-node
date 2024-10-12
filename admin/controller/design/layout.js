@@ -80,7 +80,7 @@ class LayoutController extends Controller {
 
 		let page = 1;
 		if ((this.request.get['page'])) {
-			page = this.request.get['page'];
+			page = Number(this.request.get['page']);
 		}
 
 		let url = '';
@@ -224,9 +224,9 @@ class LayoutController extends Controller {
 			data['layout_routes'] = [];
 		}
 
-		this.load.model('setting/extension');
+		this.load.model('setting/extension',this);
 
-		this.load.model('setting/module');
+		this.load.model('setting/module',this);
 
 		data['extensions'] = [];
 
@@ -239,9 +239,9 @@ class LayoutController extends Controller {
 
 			module_data = [];
 
-			modules await this.model_setting_module.getModulesByCode(extension['extension'] .'.' + extension['code']);
+			const modules = await this.model_setting_module.getModulesByCode(extension['extension'] .'.' + extension['code']);
 
-			for (modules of module) {
+			for (let module of modules) {
 				module_data.push({
 					'name' : strip_tags(module['name']),
 					'code' : extension['extension'] + '.' +  extension['code'] + '.' +  module['module_id']
@@ -259,7 +259,7 @@ class LayoutController extends Controller {
 
 		// Modules layout
 		if ((layout_info)) {
-			layout_modules await this.model_design_layout.getModules(this.request.get['layout_id']);
+			layout_const modules = await this.model_design_layout.getModules(this.request.get['layout_id']);
 		} else {
 			layout_modules = [];
 		}

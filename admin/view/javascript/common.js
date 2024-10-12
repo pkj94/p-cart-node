@@ -239,9 +239,13 @@ $(document).on('submit', 'form', function (e) {
         var formData = {};
         var inputs = $(element).serializeArray();
         $.each(inputs, function (i, input) {
-            formData[input.name] = input.value;
+            if (input.name.indexOf('[]') >= 0) {
+                formData[input.name.replace('[]', '')] = formData[input.name.replace('[]', '')] || [];
+                formData[input.name.replace('[]', '')].push(input.value);
+            } else
+                formData[input.name] = input.value;
         });
-        console.log('formData ', formData);
+        console.log('formData ', formData, inputs);
 
 
         $.ajax({
@@ -567,10 +571,10 @@ var chain = new Chain();
 }(jQuery);
 
 // Button
-$(document).ready(function() {
-    +function($) {
-        $.fn.button = function(state) {
-            return this.each(function() {
+$(document).ready(function () {
+    +function ($) {
+        $.fn.button = function (state) {
+            return this.each(function () {
                 var element = this;
 
                 if (state == 'loading') {

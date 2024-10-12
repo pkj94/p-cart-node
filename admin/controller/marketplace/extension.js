@@ -1,15 +1,11 @@
-<?php
-namespace Opencart\Admin\Controller\Marketplace;
-/**
- * 
- *
- * @package Opencart\Admin\Controller\Marketplace
- */
-class ExtensionController extends Controller {
+const fs = require('fs');
+const expressPath = require('path');
+module.exports = class ExtensionController extends Controller {
 	/**
 	 * @return void
 	 */
 	async index() {
+		const data = {};
 		await this.load.language('marketplace/extension');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -17,13 +13,13 @@ class ExtensionController extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('text_home'),
+			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('heading_title'),
+			'href': this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'])
 		});
 
 		if ((this.request.get['type'])) {
@@ -34,28 +30,26 @@ class ExtensionController extends Controller {
 
 		data['categories'] = [];
 
-		this.load.model('setting/extension');
+		this.load.model('setting/extension', this);
 
-		files = glob(DIR_APPLICATION + 'controller/extension/*.php');
-
-		for (files of file) {
-			extension = basename(file, '.php');
-
+		let files = fs.readdirSync(DIR_APPLICATION + 'controller/extension/').filter(a => a.indexOf('.js') >= 0);
+		for (let file of files) {
+			let extension = expressPath.basename(file).replace('.js','');
 			await this.load.language('extension/' + extension, extension);
 
 			if (await this.user.hasPermission('access', 'extension/' + extension)) {
-				extensions await this.model_setting_extension.getPaths('%/admin/controller/' + extension + '/%.php');
+				let extensions = await this.model_setting_extension.getPaths('%/admin/controller/' + extension + '/%.js');
 
 				data['categories'].push({
-					'code' : extension,
-					'text' : this.language.get(extension + '_heading_title') + ' (' + count(extensions) + ')',
-					'href' : this.url.link('extension/' + extension, 'user_token=' + this.session.data['user_token'])
-				];
+					'code': extension,
+					'text': this.language.get(extension + '_heading_title') + ' (' + extensions.length + ')',
+					'href': this.url.link('extension/' + extension, 'user_token=' + this.session.data['user_token'])
+				});
 			}
 		}
 
 		if ((this.request.get['type'])) {
-			data['extension'] = await this.load.controller('extension/' + basename(this.request.get['type']) + '.getList');
+			data['extension'] = await this.load.controller('extension/' + expressPath.basename(this.request.get['type']) + '.getList');
 		} else if (data['categories']) {
 			data['extension'] = await this.load.controller('extension/' + data['categories'][0]['code'] + '.getList');
 		} else {

@@ -1,15 +1,9 @@
-<?php
-namespace Opencart\Admin\Controller\Error;
-/**
- * 
- *
- * @package Opencart\Admin\Controller\Error
- */
-class PermissionController extends Controller {
+module.exports = class PermissionErrorController extends Controller {
 	/**
 	 * @return void
 	 */
 	async index() {
+		const data = {};
 		await this.load.language('error/permission');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -17,13 +11,13 @@ class PermissionController extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('text_home'),
+			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : this.url.link(this.request.get['route'], 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('heading_title'),
+			'href': this.url.link(this.request.get['route'], 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['header'] = await this.load.controller('common/header');

@@ -191,7 +191,7 @@ class Order extends \Opencart\System\Engine\Model {
 			$this->load->model('localisation/country');
 			$this->load->model('localisation/zone');
 
-			$order_data['custom_field'] = json_decode($order_query->row['custom_field'], true);
+			$order_data['custom_field'] = JSON.parse($order_query->row['custom_field'], true);
 
 			foreach (['payment', 'shipping'] as $column) {
 				$country_info = $this->model_localisation_country->getCountry($order_query->row[$column . '_country_id']);
@@ -212,12 +212,12 @@ class Order extends \Opencart\System\Engine\Model {
 					$order_data[$column . '_zone_code'] = '';
 				}
 
-				$order_data[$column . '_custom_field'] = json_decode($order_query->row[$column . '_custom_field'], true);
+				$order_data[$column . '_custom_field'] = JSON.parse($order_query->row[$column . '_custom_field'], true);
 
-				$order_data[$column . '_custom_field'] = json_decode($order_query->row[$column . '_custom_field'], true);
+				$order_data[$column . '_custom_field'] = JSON.parse($order_query->row[$column . '_custom_field'], true);
 
 				// Payment and shipping method details
-				$order_data[$column . '_method'] = json_decode($order_query->row[$column . '_method'], true);
+				$order_data[$column . '_method'] = JSON.parse($order_query->row[$column . '_method'], true);
 			}
 
 			return $order_data;

@@ -8,6 +8,7 @@ module.exports = class ECBCurrencyController extends Controller {
     this.document.setTitle(this.language.get('heading_title'));
 
     const data = {
+      text_support: this.language.get('text_support'),
       breadcrumbs: [
         {
           text: this.language.get('text_home'),

@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Admin\Model\Design;
-/**
- * Class Theme
- *
- * @package Opencart\Admin\Model\Design
- */
-class ThemeModel  extends Model {
+module.exports = class ThemeDesignModel  extends Model {
 	constructor(registry){
 		super(registry)
 	}

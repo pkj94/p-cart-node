@@ -259,7 +259,7 @@ class OrderController extends Controller {
 
 		let page = 1;
 		if ((this.request.get['page'])) {
-			page = this.request.get['page'];
+			page = Number(this.request.get['page']);
 		}
 
 		let url = '';
@@ -1159,7 +1159,7 @@ class OrderController extends Controller {
 		data['tabs'] = [];
 
 		// Extension Order Tabs can are called here.
-		this.load.model('setting/extension');
+		this.load.model('setting/extension',this);
 
 		if ((order_info['payment_method']['code'])) {
 			if ((order_info['payment_method']['code'])) {
@@ -1186,7 +1186,7 @@ class OrderController extends Controller {
 		}
 
 		// Extension Order Tabs can are called here.
-		this.load.model('setting/extension');
+		this.load.model('setting/extension',this);
 
 		extensions await this.model_setting_extension.getExtensionsByType('fraud');
 

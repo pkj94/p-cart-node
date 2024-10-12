@@ -40,7 +40,7 @@ class UpgradeController extends Controller {
 		data['current_version'] = VERSION;
 		data['upgrade'] = false;
 
-		curl = curl_init(OPENCART_SERVER + 'api/upgrade');
+		curl = curl_init(OPENCART_SERVER + 'index.php?route=api/upgrade');
 
 		curl_setopt(curl, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt(curl, CURLOPT_FORBID_REUSE, 1);
@@ -51,7 +51,7 @@ class UpgradeController extends Controller {
 
 		curl_close(curl);
 
-		response_info = json_decode(response, true);
+		response_info = JSON.parse(response, true);
 
 		if (response_info) {
 			data['latest_version'] = response_info['version'];

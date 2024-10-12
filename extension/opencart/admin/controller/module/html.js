@@ -7,9 +7,6 @@ module.exports = class HTMLModuleController extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.document.addScript('view/javascript/ckeditor/ckeditor+js');
-		this.document.addScript('view/javascript/ckeditor/adapters/jquery+js');
-
 		const data = { breadcrumbs: [] };
 
 		data['breadcrumbs'].push({
@@ -35,14 +32,14 @@ module.exports = class HTMLModuleController extends Controller {
 		}
 
 		if (!(this.request.get['module_id'])) {
-			data['save'] = this.url.link('extension/opencart/module/html+save', 'user_token=' + this.session.data['user_token']);
+			data['save'] = this.url.link('extension/opencart/module/html.save', 'user_token=' + this.session.data['user_token']);
 		} else {
-			data['save'] = this.url.link('extension/opencart/module/html+save', 'user_token=' + this.session.data['user_token'] + '&module_id=' + this.request.get['module_id']);
+			data['save'] = this.url.link('extension/opencart/module/html.save', 'user_token=' + this.session.data['user_token'] + '&module_id=' + this.request.get['module_id']);
 		}
 
 		data['back'] = this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=module');
 		let module_info = {};
-		if ((this.request.get['module_id']) && (this.request.server['REQUEST_METHOD'] != 'POST')) {
+		if ((this.request.get['module_id']) && (this.request.server['mrthod'] != 'POST')) {
 			this.load.model('setting/module', this);
 
 			module_info = await this.model_setting_module.getModule(this.request.get['module_id']);
@@ -55,12 +52,16 @@ module.exports = class HTMLModuleController extends Controller {
 		}
 
 		if ((module_info['module_description'])) {
-			data['module_description'] = module_info['module_description'];
+			data['module_description'] = {};
+			for (let [language_id, value] of Object.entries(module_info['module_description'])) {
+				language_id = language_id.indexOf('language-') >= 0 ? language_id.split('-')[1] : language_id;
+				data['module_description'][language_id] = value;
+			}
 		} else {
-			data['module_description'] = [];
+			data['module_description'] = {};
 		}
 
-		this.load.model('localisation/language');
+		this.load.model('localisation/language', this);
 
 		data['languages'] = await this.model_localisation_language.getLanguages();
 
@@ -89,8 +90,7 @@ module.exports = class HTMLModuleController extends Controller {
 	async save() {
 		await this.load.language('extension/opencart/module/html');
 
-		const json = {};
-
+		const json = { error: {} };
 		if (!await this.user.hasPermission('modify', 'extension/opencart/module/html')) {
 			json['error']['warning'] = this.language.get('error_permission');
 		}
@@ -99,11 +99,11 @@ module.exports = class HTMLModuleController extends Controller {
 			json['error']['name'] = this.language.get('error_name');
 		}
 
-		if (!json) {
+		if (!Object.keys(json.error).length) {
 			this.load.model('setting/module', this);
-
+			this.request.post.module_id = Number(this.request.post.module_id);
 			if (!this.request.post['module_id']) {
-				json['module_id'] = await this.model_setting_module.addModule('opencart+html', this.request.post);
+				json['module_id'] = await this.model_setting_module.addModule('opencart.html', this.request.post);
 			} else {
 				await this.model_setting_module.editModule(this.request.post['module_id'], this.request.post);
 			}

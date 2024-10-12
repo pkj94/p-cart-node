@@ -81,7 +81,7 @@ class CurrencyController extends Controller {
 
 		let page = 1;
 		if ((this.request.get['page'])) {
-			page = this.request.get['page'];
+			page = Number(this.request.get['page']);
 		}
 
 		let url = '';
@@ -328,7 +328,7 @@ class CurrencyController extends Controller {
 			json['error'] = this.language.get('error_permission');
 		}
 
-		this.load.model('setting/extension');
+		this.load.model('setting/extension',this);
 
 		extension_info await this.model_setting_extension.getExtensionByCode('currency', this.config.get('config_currency_engine'));
 

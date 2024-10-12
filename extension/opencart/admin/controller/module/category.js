@@ -31,11 +31,11 @@ module.exports = class CategoryModuleController extends Controller {
 
 		data.module_category_status = this.config.get('module_category_status');
 
-		data.header = await this.loadController('common/header');
-		data.column_left = await this.loadController('common/column_left');
-		data.footer = await this.loadController('common/footer');
+		data.header = await this.load.controller('common/header');
+		data.column_left = await this.load.controller('common/column_left');
+		data.footer = await this.load.controller('common/footer');
 
-		this.response.setOutput(await this.loadView('extension/opencart/module/category', data));
+		this.response.setOutput(await this.load.view('extension/opencart/module/category', data));
 	}
 
 	async save() {

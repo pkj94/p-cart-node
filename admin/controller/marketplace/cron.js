@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Admin\Controller\Marketplace;
-/**
- * 
- *
- * @package Opencart\Admin\Controller\Marketplace
- */
-class CronController extends Controller {
+module.exports=class CronController extends Controller {
 	/**
 	 * @return void
 	 */
@@ -82,7 +75,7 @@ class CronController extends Controller {
 
 		let page = 1;
 		if ((this.request.get['page'])) {
-			page = this.request.get['page'];
+			page = Number(this.request.get['page']);
 		}
 
 		let url = '';

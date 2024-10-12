@@ -48,7 +48,7 @@ class Language extends \Opencart\System\Engine\Controller {
 	 * @return void
 	 */
 	public function after(string &$route, array &$args, mixed &$output): void {
-		$data = json_decode($this->language->get('backup'), true);
+		$data = JSON.parse($this->language->get('backup'), true);
 
 		if (is_array($data)) {
 			$this->language->clear();

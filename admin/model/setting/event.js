@@ -4,7 +4,7 @@ module.exports = class EventSettingModel extends Model {
     }
 
     async addEvent(data) {
-        await this.db.query(`INSERT INTO ${DB_PREFIX}event SET code = '${this.db.escape(data.code)}', description = '${this.db.escape(data.description)}', trigger = '${this.db.escape(data.trigger)}', action = '${this.db.escape(data.action)}', status = ${data.status}, sort_order = ${parseInt(data.sort_order)}`);
+        await this.db.query(`INSERT INTO ${DB_PREFIX}event SET code = ${this.db.escape(data.code)}, description = ${this.db.escape(data.description)}, trigger = ${this.db.escape(data.trigger)}, action = ${this.db.escape(data.action)}, status = ${data.status}, sort_order = ${parseInt(data.sort_order)}`);
         return this.db.getLastId();
     }
 
@@ -13,7 +13,7 @@ module.exports = class EventSettingModel extends Model {
     }
 
     async deleteEventByCode(code) {
-        await this.db.query(`DELETE FROM ${DB_PREFIX}event WHERE code = '${this.db.escape(code)}'`);
+        await this.db.query(`DELETE FROM ${DB_PREFIX}event WHERE code = ${this.db.escape(code)}`);
     }
 
     async editStatus(event_id, status) {
@@ -26,7 +26,7 @@ module.exports = class EventSettingModel extends Model {
     }
 
     async getEventByCode(code) {
-        const query = await this.db.query(`SELECT DISTINCT * FROM ${DB_PREFIX}event WHERE code = '${this.db.escape(code)}' LIMIT 1`);
+        const query = await this.db.query(`SELECT DISTINCT * FROM ${DB_PREFIX}event WHERE code = ${this.db.escape(code)} LIMIT 1`);
         return query.row;
     }
 
@@ -43,7 +43,7 @@ module.exports = class EventSettingModel extends Model {
         ];
 
         if (data.sort && sort_data.includes(data.sort)) {
-            sql += ` ORDER BY ${data.sort}`;
+            sql += ` ORDER BY $${data.sort}`;
         } else {
             sql += ` ORDER BY sort_order`;
         }
@@ -57,7 +57,7 @@ module.exports = class EventSettingModel extends Model {
         if (data.start >= 0 || data.limit > 0) {
             const start = data.start < 0 ? 0 : parseInt(data.start);
             const limit = data.limit < 1 ? 20 : parseInt(data.limit);
-            sql += ` LIMIT ${start}, ${limit}`;
+            sql += ` LIMIT $${start}, $${limit}`;
         }
 
         const query = await this.db.query(sql);

@@ -61,7 +61,7 @@ class StoreController extends Controller {
 	async getList() {
 		let page = 1;
 		if ((this.request.get['page'])) {
-			page = this.request.get['page'];
+			page = Number(this.request.get['page']);
 		}
 
 		let url = '';
@@ -190,7 +190,7 @@ class StoreController extends Controller {
 
 		data['themes'] = [];
 
-		this.load.model('setting/extension');
+		this.load.model('setting/extension',this);
 
 		extensions await this.model_setting_extension.getExtensionsByType('theme');
 

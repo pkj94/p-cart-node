@@ -188,7 +188,7 @@ class SubscriptionController extends Controller {
 
 		let page = 1;
 		if ((this.request.get['page'])) {
-			page = this.request.get['page'];
+			page = Number(this.request.get['page']);
 		}
 
 		let url = '';
@@ -735,7 +735,7 @@ class SubscriptionController extends Controller {
 
 		// Extension Order Tabs can are called here.
 		/*
-		this.load.model('setting/extension');
+		this.load.model('setting/extension',this);
 
 		if ((order_info)) {
 			extension_info await this.model_setting_extension.getExtensionByCode('payment', order_info['payment_method']['code']);

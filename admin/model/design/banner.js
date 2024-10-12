@@ -1,12 +1,5 @@
-<?php
-namespace Opencart\Admin\Model\Design;
-/**
- *  Class Banner
- *
- * @package Opencart\Admin\Model\Design
- */
-class BannerModel  extends Model {
-	constructor(registry){
+module.exports = class BannerModel extends Model {
+	constructor(registry) {
 		super(registry)
 	}
 	/**
@@ -17,12 +10,12 @@ class BannerModel  extends Model {
 	async addBanner(data) {
 		await this.db.query("INSERT INTO `" + DB_PREFIX + "banner` SET `name` = '" + this.db.escape(data['name']) + "', `status` = '" + (data['status'] ? data['status'] : 0) + "'");
 
-		banner_id = this.db.getLastId();
+		const banner_id = this.db.getLastId();
 
 		if ((data['banner_image'])) {
-			for (data['banner_image'] of language_id : value) {
-				for (value of banner_image) {
-					await this.db.query("INSERT INTO `" + DB_PREFIX + "banner_image` SET `banner_id` = '" + banner_id + "', `language_id` = '" + language_id + "', `title` = '" +  this.db.escape(banner_image['title']) + "', `link` = '" +  this.db.escape(banner_image['link']) + "', `image` = '" +  this.db.escape(banner_image['image']) + "', `sort_order` = '" +  banner_image['sort_order'] + "'");
+			for (let [language_id, value] of Object.entries(data['banner_image'])) {
+				for (let banner_image of value) {
+					await this.db.query("INSERT INTO `" + DB_PREFIX + "banner_image` SET `banner_id` = '" + banner_id + "', `language_id` = '" + language_id + "', `title` = '" + this.db.escape(banner_image['title']) + "', `link` = '" + this.db.escape(banner_image['link']) + "', `image` = '" + this.db.escape(banner_image['image']) + "', `sort_order` = '" + banner_image['sort_order'] + "'");
 				}
 			}
 		}
@@ -42,9 +35,9 @@ class BannerModel  extends Model {
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "banner_image` WHERE `banner_id` = '" + banner_id + "'");
 
 		if ((data['banner_image'])) {
-			for (data['banner_image'] of language_id : value) {
-				for (value of banner_image) {
-					await this.db.query("INSERT INTO `" + DB_PREFIX + "banner_image` SET `banner_id` = '" + banner_id + "', `language_id` = '" + language_id + "', `title` = '" +  this.db.escape(banner_image['title']) + "', `link` = '" +  this.db.escape(banner_image['link']) + "', `image` = '" +  this.db.escape(banner_image['image']) + "', `sort_order` = '" + banner_image['sort_order'] + "'");
+			for (let [language_id, value] of Object.entries(data['banner_image'])) {
+				for (let banner_image of value) {
+					await this.db.query("INSERT INTO `" + DB_PREFIX + "banner_image` SET `banner_id` = '" + banner_id + "', `language_id` = '" + language_id + "', `title` = '" + this.db.escape(banner_image['title']) + "', `link` = '" + this.db.escape(banner_image['link']) + "', `image` = '" + this.db.escape(banner_image['image']) + "', `sort_order` = '" + banner_image['sort_order'] + "'");
 				}
 			}
 		}
@@ -97,13 +90,13 @@ class BannerModel  extends Model {
 		}
 
 		if (data['start'] || data['limit']) {
-                        data['start'] = data['start']||0;
+			data['start'] = data['start'] || 0;
 			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
@@ -121,17 +114,18 @@ if (data['limit'] < 1) {
 	 * @return array
 	 */
 	async getImages(banner_id) {
-		banner_image_data = [];
+		let banner_image_data = {};
 
-		banner_image_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "banner_image` WHERE `banner_id` = '" + banner_id + "' ORDER BY `sort_order` ASC");
+		const banner_image_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "banner_image` WHERE `banner_id` = '" + banner_id + "' ORDER BY `sort_order` ASC");
 
-		for (banner_image_query.rows of banner_image) {
-			banner_image_data[banner_image['language_id']][] = [
-				'title'      : banner_image['title'],
-				'link'       : banner_image['link'],
-				'image'      : banner_image['image'],
-				'sort_order' : banner_image['sort_order']
-			];
+		for (let banner_image of banner_image_query.rows) {
+			banner_image_data[banner_image['language_id']] = banner_image_data[banner_image['language_id']] || [];
+			banner_image_data[banner_image['language_id']].push({
+				'title': banner_image['title'],
+				'link': banner_image['link'],
+				'image': banner_image['image'],
+				'sort_order': banner_image['sort_order']
+			});
 		}
 
 		return banner_image_data;

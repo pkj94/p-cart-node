@@ -258,7 +258,7 @@ if (typeof this.request.get['filter_status'] != 'undefined' && this.request.get[
 
 		let page = 1;
 		if ((this.request.get['page'])) {
-			page = this.request.get['page'];
+			page = Number(this.request.get['page']);
 		}
 
 		if ((this.request.get['limit'])) {
@@ -667,7 +667,7 @@ if (typeof this.request.get['filter_status'] != 'undefined' && this.request.get[
 		}
 
 		if ((affiliate_info)) {
-			data['affiliate_custom_field'] = json_decode(affiliate_info['custom_field'], true);
+			data['affiliate_custom_field'] = JSON.parse(affiliate_info['custom_field'], true);
 		} else {
 			data['affiliate_custom_field'] = [];
 		}
@@ -1037,7 +1037,7 @@ if ((this.request.get['filter_name'])) {
 			];
 		}
 
-		sort_order = [];
+		let sort_order = [];
 
 		for (let [key , value] of json) {
 			sort_order[key] = value['name'];

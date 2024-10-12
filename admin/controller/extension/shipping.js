@@ -1,11 +1,6 @@
-<?php
-namespace Opencart\Admin\Controller\Extension;
-/**
- * 
- *
- * @package Opencart\Admin\Controller\Extension
- */
-class ShippingController extends Controller {
+const expressPath = require('path');
+const fs= require('fs');
+module.exports = class ShippingController extends Controller {
 	/**
 	 * @return void
 	 */
@@ -17,25 +12,26 @@ class ShippingController extends Controller {
 	 * @return string
 	 */
 	async getList() {
+		const data = {};
 		await this.load.language('extension/shipping');
 
-		available = [];
+		let available = [];
 
-		this.load.model('setting/extension');
+		this.load.model('setting/extension', this);
 
-		const results = await this.model_setting_extension.getPaths('%/admin/controller/shipping/%.php');
+		const results = await this.model_setting_extension.getPaths('%/admin/controller/shipping/%.js');
 
 		for (let result of results) {
-			available[] = basename(result['path'], '.php');
+			available.push(expressPath.basename(result['path'], '.js'));
 		}
 
-		installed = [];
+		let installed = [];
 
-		extensions await this.model_setting_extension.getExtensionsByType('shipping');
+		const extensions = await this.model_setting_extension.getExtensionsByType('shipping');
 
-		for (extensions of extension) {
-			if (in_array(extension['code'], available)) {
-				installed[] = extension['code'];
+		for (let extension of extensions) {
+			if (available.includes(extension['code'])) {
+				installed.push(extension['code']);
 			} else {
 				await this.model_setting_extension.uninstall('shipping', extension['code']);
 			}
@@ -45,21 +41,21 @@ class ShippingController extends Controller {
 
 		if (results) {
 			for (let result of results) {
-				extension = substr(result['path'], 0, strpos(result['path'], '/'));
+				const extension = result['path'].substring(0, result['path'].indexOf('/'));
 
-				code = basename(result['path'], '.php');
+				const code = expressPath.basename(result['path'], '.js');
 
 				await this.load.language('extension/' + extension + '/shipping/' + code, code);
 
 				data['extensions'].push({
-					'name'       : this.language.get(code + '_heading_title'),
-					'status'     : this.config.get('shipping_' + code + '_status') ? this.language.get('text_enabled') : this.language.get('text_disabled'),
-					'sort_order' : this.config.get('shipping_' + code + '_sort_order'),
-					'install'    : this.url.link('extension/shipping.install', 'user_token=' + this.session.data['user_token'] + '&extension=' + extension + '&code=' + code),
-					'uninstall'  : this.url.link('extension/shipping.uninstall', 'user_token=' + this.session.data['user_token'] + '&extension=' + extension + '&code=' + code),
-					'installed'  : in_array(code, installed),
-					'edit'       : this.url.link('extension/' + extension + '/shipping/' + code, 'user_token=' + this.session.data['user_token'])
-				];
+					'name': this.language.get(code + '_heading_title'),
+					'status': this.config.get('shipping_' + code + '_status') ? this.language.get('text_enabled') : this.language.get('text_disabled'),
+					'sort_order': this.config.get('shipping_' + code + '_sort_order'),
+					'install': this.url.link('extension/shipping.install', 'user_token=' + this.session.data['user_token'] + '&extension=' + extension + '&code=' + code),
+					'uninstall': this.url.link('extension/shipping.uninstall', 'user_token=' + this.session.data['user_token'] + '&extension=' + extension + '&code=' + code),
+					'installed': installed.includes(code),
+					'edit': this.url.link('extension/' + extension + '/shipping/' + code, 'user_token=' + this.session.data['user_token'])
+				});
 			}
 		}
 
@@ -76,54 +72,76 @@ class ShippingController extends Controller {
 
 		const json = {};
 
+		let extension = '';
 		if ((this.request.get['extension'])) {
-			extension = basename(this.request.get['extension']);
-		} else {
-			extension = '';
+			extension = expressPath.basename(this.request.get['extension']);
 		}
 
+		let code = '';
 		if ((this.request.get['code'])) {
-			code = basename(this.request.get['code']);
-		} else {
-			code = '';
+			code = expressPath.basename(this.request.get['code']);
 		}
 
 		if (!await this.user.hasPermission('modify', 'extension/shipping')) {
 			json['error'] = this.language.get('error_permission');
 		}
 
-		if (!is_file(DIR_EXTENSION + extension + '/admin/controller/shipping/' + code + '.php')) {
+		if (!fs.existsSync(DIR_EXTENSION + extension + '/admin/controller/shipping/' + code + '.js')) {
 			json['error'] = this.language.get('error_extension');
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('setting/extension');
+			this.load.model('setting/extension', this);
 
 			await this.model_setting_extension.install('shipping', extension, code);
 
-			this.load.model('user/user_group');
+			this.load.model('user/user_group', this);
 
 			await this.model_user_user_group.addPermission(this.user.getGroupId(), 'access', 'extension/' + extension + '/shipping/' + code);
 			await this.model_user_user_group.addPermission(this.user.getGroupId(), 'modify', 'extension/' + extension + '/shipping/' + code);
 
-			namespace = str_replace(['_', '/'], ['', '\\'], ucwords(extension, '_/'));
+
 
 			// Register controllers, models and system extension folders
-			this.autoloader.register('Opencart\Admin\Controller\Extension\\' + namespace, DIR_EXTENSION + extension + '/admin/controller/');
-			this.autoloader.register('Opencart\Admin\Model\Extension\\' + namespace, DIR_EXTENSION + extension + '/admin/model/');
-			this.autoloader.register('Opencart\System\Extension\\' + namespace, DIR_EXTENSION + extension + '/system/');
+			if (fs.existsSync(`${DIR_EXTENSION}${extension}/admin/controller/`))
+				fs.readdirSync(`${DIR_EXTENSION}${extension}/admin/controller/`).forEach((folder) => {
+					fs.readdirSync(`${DIR_EXTENSION}${extension}/admin/controller/${folder}`).forEach((controller) => {
+						if (controller.indexOf('.html') == -1) {
+							let name = ucfirst(controller).replace('.js', '') + ucfirst(folder) + 'Controller';
+							global[name] = require(DIR_EXTENSION + extension + '/admin/controller/' + folder + '/' + controller);
+						}
+					})
+				});
+			if (fs.existsSync(`${DIR_EXTENSION}${extension}/admin/model/`))
+				fs.readdirSync(`${DIR_EXTENSION}${extension}/admin/model/`).forEach((folder) => {
+					fs.readdirSync(`${DIR_EXTENSION}${extension}/admin/model/${folder}`).forEach((model) => {
+						let name = ucfirst(model).replace('.js', '') + ucfirst(folder) + 'Model';
+						global[name] = require(DIR_EXTENSION + extension + '/admin/model/' + folder + '/' + model)
+					})
+				});
+			if (fs.existsSync(`${DIR_EXTENSION}${extension}/system/library/`))
+				fs.readdirSync(`${DIR_EXTENSION}${extension}/system/library/`).forEach((library) => {
+					let name = ucfirst(library).replace('.js', '') + 'Library';
+					global[name] = require(DIR_EXTENSION + extension + '/system/library/' + '/' + library);
+				});
 
 			// Template directory
-			this.template.addPath('extension/' + extension, DIR_EXTENSION + extension + '/admin/view/template/');
+			if (fs.existsSync(`${DIR_EXTENSION}${extension}/admin/view/template/`))
+				this.template.addPath(`extension/${extension}`, `${DIR_EXTENSION}${extension}/admin/view/template/`);
+
 
 			// Language directory
-			this.language.addPath('extension/' + extension, DIR_EXTENSION + extension + '/admin/language/');
+			if (fs.existsSync(`${DIR_EXTENSION}${extension}/admin/language/`))
+				this.language.addPath(`extension/${extension}`, `${DIR_EXTENSION}${extension}/admin/language/`);
+
 
 			// Config directory
-			this.config.addPath('extension/' + extension, DIR_EXTENSION + extension + '/system/config/');
+			if (fs.existsSync(`${DIR_EXTENSION}${extension}/system/config/`))
+				this.language.addPath(`extension/${extension}`, `${DIR_EXTENSION}${extension}/system/config/`);
+
 
 			// Call install method if it exists
-			this.load.controller('extension/' + extension + '/shipping/' + code + '.install');
+			await this.load.controller('extension/' + extension + '/shipping/' + code + '.install');
 
 			json['success'] = this.language.get('text_success');
 		}
@@ -145,12 +163,12 @@ class ShippingController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('setting/extension');
+			this.load.model('setting/extension', this);
 
 			await this.model_setting_extension.uninstall('shipping', this.request.get['code']);
 
 			// Call uninstall method if it exists
-			this.load.controller('extension/' + this.request.get['extension'] + '/shipping/' + this.request.get['code'] + '.uninstall');
+			await this.load.controller('extension/' + this.request.get['extension'] + '/shipping/' + this.request.get['code'] + '.uninstall');
 
 			json['success'] = this.language.get('text_success');
 		}

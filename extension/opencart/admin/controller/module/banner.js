@@ -4,14 +4,11 @@
  * @package Opencart\Admin\Controller\Extension\Opencart\Module
  */
 module.exports = class BannerModuleController extends Controller {
-	constructor(registry) {
-		super(registry)
-	}
 	/**
 	 * @return void
 	 */
 	async index() {
-		await this.this.load.language('extension/opencart/module/banner');
+		await this.load.language('extension/opencart/module/banner');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
@@ -48,15 +45,15 @@ module.exports = class BannerModuleController extends Controller {
 
 		let module_info;
 		if (this.request.get['module_id']) {
-			this.model.load('setting/module', this);
-			module_info = await this.model.setting_module.getModule(this.request.get['module_id']);
+			this.load.model('setting/module', this);
+			module_info = await this.model_setting_module.getModule(this.request.get['module_id']);
 		}
 
 		data.name = module_info?.name || '';
 		data.banner_id = module_info?.banner_id || '';
 
-		this.model.load('design/banner', this);
-		data.banners = await this.model.design_banner.getBanners();
+		this.load.model('design/banner', this);
+		data.banners = await this.model_design_banner.getBanners();
 
 		data.effect = module_info?.effect || '';
 		data.items = module_info?.items || 4;
@@ -80,7 +77,7 @@ module.exports = class BannerModuleController extends Controller {
 	 * @return void
 	 */
 	async save() {
-		await this.this.load.language('extension/opencart/module/banner');
+		await this.load.language('extension/opencart/module/banner');
 
 		const json = {};
 
@@ -105,12 +102,12 @@ module.exports = class BannerModuleController extends Controller {
 		}
 
 		if (!json.error) {
-			this.model.load('setting/module', this);
-
+			this.load.model('setting/module', this);
+			this.request.post.module_id = Number(this.request.post.module_id);
 			if (!this.request.post['module_id']) {
-				json.module_id = await this.model.setting_module.addModule('opencart.banner', this.request.post);
+				json.module_id = await this.model_setting_module.addModule('opencart.banner', this.request.post);
 			} else {
-				await this.model.setting_module.editModule(this.request.post['module_id'], this.request.post);
+				await this.model_setting_module.editModule(this.request.post['module_id'], this.request.post);
 			}
 
 			json.success = this.language.get('text_success');

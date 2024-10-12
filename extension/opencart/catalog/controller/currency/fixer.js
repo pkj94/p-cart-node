@@ -29,7 +29,7 @@ class FixerController extends Controller {
 
 			curl_close($curl);
 
-			$response_info = json_decode($response, true);
+			$response_info = JSON.parse($response, true);
 
 			if (is_array($response_info) && ($response_info['rates'])) {
 				// Compile all the rates into an array

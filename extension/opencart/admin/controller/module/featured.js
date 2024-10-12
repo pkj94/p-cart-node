@@ -4,7 +4,7 @@ module.exports = class FeaturedModuleController extends Controller {
 	}
 
 	async index() {
-		this.load.language('extension/opencart/module/featured');
+		await this.load.language('extension/opencart/module/featured');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
@@ -48,8 +48,9 @@ module.exports = class FeaturedModuleController extends Controller {
 		data.products = [];
 		const products = module_info && module_info.product ? module_info.product : [];
 		this.load.model('catalog/product', this);
+		console.log(products);
 		for (const product_id of products) {
-			const product_info = this.model_catalog_product.getProduct(product_id);
+			const product_info = await this.model_catalog_product.getProduct(product_id);
 			if (product_info) {
 				data.products.push({
 					product_id: product_info.product_id,
@@ -93,7 +94,8 @@ module.exports = class FeaturedModuleController extends Controller {
 			json.error = { ...json.error, height: this.language.get('error_height') };
 		}
 		this.load.model('setting/module', this);
-		if (!json.error) {
+		if (!Object.keys(json.error).length) {
+			this.request.post.module_id = Number(this.request.post.module_id);
 			if (!this.request.post['module_id']) {
 				json.module_id = await this.model_setting_module.addModule('opencart.featured', this.request.post);
 			} else {
@@ -103,8 +105,7 @@ module.exports = class FeaturedModuleController extends Controller {
 			json.success = this.language.get('text_success');
 		}
 
-		this.response.setHeader('Content-Type', 'application/json');
-		this.response.end(json);
+		this.response.addHeader('Content-Type', 'application/json');
+		this.response.setOutput(json);
 	}
 }
-

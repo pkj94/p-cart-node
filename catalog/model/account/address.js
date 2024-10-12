@@ -102,7 +102,7 @@ class Address extends \Opencart\System\Engine\Model {
 				'iso_code_2'     => $iso_code_2,
 				'iso_code_3'     => $iso_code_3,
 				'address_format' => $address_format,
-				'custom_field'   => json_decode($address_query->row['custom_field'], true),
+				'custom_field'   => JSON.parse($address_query->row['custom_field'], true),
 				'default'        => $address_query->row['default']
 			];
 		} else {

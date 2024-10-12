@@ -151,3 +151,8 @@ global.strip_tags = (input, allowed) => {
         return allowed.indexOf('<' + $1.toLowerCase() + '>') > -1 ? $0 : ''
     })
 }
+global.hash_hmac = (string, secret) => {
+    return crypto.createHmac('sha1', secret)
+        .update(string)
+        .digest('hex')
+}

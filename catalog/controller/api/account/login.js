@@ -36,7 +36,7 @@ class Login extends \Opencart\System\Engine\Controller {
 	 * curl_close($curl);
 	 *
 	 * if ($status == 200) {
-	 *		$api_token = json_decode($response, true);
+	 *		$api_token = JSON.parse($response, true);
 	 *
 	 * 		if (isset($api_token['api_token'])) {
 	 *

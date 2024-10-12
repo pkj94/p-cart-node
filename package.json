@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/pkj94/p-cart-node#readme",
   "dependencies": {
+    "adm-zip": "^0.5.16",
     "async": "^3.2.5",
     "axios": "^1.7.7",
     "bcrypt": "^5.1.1",

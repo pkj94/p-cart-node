@@ -23,7 +23,7 @@ module.exports = class ExtensionModel extends Model {
         const codes = extensions.map(ext => ext.code);
 
         if (!codes.includes(code)) {
-            await this.db.query(`INSERT INTO extension SET extension = ${this.db.escape(extension)}, type = ${this.db.escape(type)}, code = ${this.db.escape(code)}`);
+            await this.db.query(`INSERT INTO ${DB_PREFIX}extension SET extension = ${this.db.escape(extension)}, type = ${this.db.escape(type)}, code = ${this.db.escape(code)}`);
         }
     }
 
@@ -33,7 +33,7 @@ module.exports = class ExtensionModel extends Model {
     }
 
     async addInstall(data) {
-        await this.db.query(`INSERT INTO extension_install SET extension_id = '${parseInt(data.extension_id)}', extension_download_id = '${parseInt(data.extension_download_id)}', name = ${this.db.escape(data.name)}, code = ${this.db.escape(data.code)}, version = ${this.db.escape(data.version)}, author = ${this.db.escape(data.author)}, link = ${this.db.escape(data.link)}, status = '0', date_added = NOW()`);
+        await this.db.query(`INSERT INTO ${DB_PREFIX}extension_install SET extension_id = '${parseInt(data.extension_id)}', extension_download_id = '${parseInt(data.extension_download_id)}', name = ${this.db.escape(data.name)}, code = ${this.db.escape(data.code)}, version = ${this.db.escape(data.version)}, author = ${this.db.escape(data.author)}, link = ${this.db.escape(data.link)}, status = '0', date_added = NOW()`);
         return await this.db.getLastId();
     }
 
@@ -42,7 +42,7 @@ module.exports = class ExtensionModel extends Model {
     }
 
     async editStatus(extension_install_id, status) {
-        await this.db.query(`UPDATE extension_install SET status = '${status}' WHERE extension_install_id = '${parseInt(extension_install_id)}'`);
+        await this.db.query(`UPDATE ${DB_PREFIX}extension_install SET status = '${status}' WHERE extension_install_id = '${parseInt(extension_install_id)}'`);
     }
 
     async getInstall(extension_install_id) {
@@ -69,7 +69,7 @@ module.exports = class ExtensionModel extends Model {
         const sort_data = ['name', 'version', 'date_added'];
 
         if (data.sort && sort_data.includes(data.sort)) {
-            sql += ` ORDER BY {data.sort}`;
+            sql += ` ORDER BY ${data.sort}`;
         } else {
             sql += " ORDER BY date_added";
         }
@@ -83,7 +83,7 @@ module.exports = class ExtensionModel extends Model {
         if (data.start >= 0 || data.limit > 0) {
             const start = data.start < 0 ? 0 : parseInt(data.start);
             const limit = data.limit < 1 ? 20 : parseInt(data.limit);
-            sql += ` LIMIT {start}, {limit}`;
+            sql += ` LIMIT ${start}, ${limit}`;
         }
 
         const query = await this.db.query(sql);
@@ -102,7 +102,7 @@ module.exports = class ExtensionModel extends Model {
     }
 
     async addPath(extension_install_id, path) {
-        await this.db.query(`INSERT INTO extension_path SET extension_install_id = ${parseInt(extension_install_id)}, path = ${this.db.escape(path)}`);
+        await this.db.query(`INSERT INTO ${DB_PREFIX}extension_path SET extension_install_id = ${parseInt(extension_install_id)}, path = ${this.db.escape(path)}`);
     }
 
     async deletePath(extension_path_id) {
@@ -115,12 +115,12 @@ module.exports = class ExtensionModel extends Model {
     }
 
     async getPaths(path) {
-        const query = await this.db.query(`SELECT * FROM ${DB_PREFIX}extension_path WHERE path LIKE {this.db.escape(path)} ORDER BY path ASC`);
+        const query = await this.db.query(`SELECT * FROM ${DB_PREFIX}extension_path WHERE path LIKE ${this.db.escape(path)} ORDER BY path ASC`);
         return query.rows;
     }
 
     async getTotalPaths(path) {
-        const query = await this.db.query(`SELECT COUNT(*) AS total FROM ${DB_PREFIX}extension_path WHERE path LIKE {this.db.escape(path)}`);
+        const query = await this.db.query(`SELECT COUNT(*) AS total FROM ${DB_PREFIX}extension_path WHERE path LIKE ${this.db.escape(path)}`);
         return parseInt(query.row.total, 10);
     }
 }

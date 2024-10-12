@@ -80,7 +80,7 @@ class UserPermissionController extends Controller {
 
 		let page = 1;
 		if ((this.request.get['page'])) {
-			page = this.request.get['page'];
+			page = Number(this.request.get['page']);
 		}
 
 		let url = '';
@@ -288,7 +288,7 @@ class UserPermissionController extends Controller {
 		data['extensions'] = [];
 
 		// Extension permissions
-		this.load.model('setting/extension');
+		this.load.model('setting/extension',this);
 
 		const results = await this.model_setting_extension.getPaths('%/admin/controller/%.php');
 

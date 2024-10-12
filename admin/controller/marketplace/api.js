@@ -1,15 +1,9 @@
-<?php
-namespace Opencart\Admin\Controller\Marketplace;
-/**
- * 
- *
- * @package Opencart\Admin\Controller\Marketplace
- */
-class ApiController extends Controller {
+module.exports = class ApiMarketplaceController extends Controller {
 	/**
 	 * @return void
 	 */
 	async index() {
+		const data = {};
 		await this.load.language('marketplace/api');
 			
 		data['user_token'] = this.session.data['user_token'];	
@@ -23,7 +17,7 @@ class ApiController extends Controller {
 	async save() {
 		await this.load.language('marketplace/api');
 
-		const json = {};
+		const json = {error:{}};
 		
 		if (!await this.user.hasPermission('modify', 'marketplace/api')) {
 			json['error']['warning'] = this.language.get('error_permission');
@@ -37,7 +31,7 @@ class ApiController extends Controller {
 			json['error']['secret'] = this.language.get('error_secret');
 		}		
 
-		if (!Object.keys(json).length) {
+		if (!Object.keys(json.error).length) {
 			this.load.model('setting/setting',this);
 			
 			await this.model_setting_setting.editSetting('opencart', this.request.post);

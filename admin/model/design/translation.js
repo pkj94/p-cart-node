@@ -1,12 +1,5 @@
-<?php
-namespace Opencart\Admin\Model\Design;
-/**
- * Class Translation
- *
- * @package Opencart\Admin\Model\Design
- */
-class TranslationModel  extends Model {
-	constructor(registry){
+module.exports = class TranslationDesignModel extends Model {
+	constructor(registry) {
 		super(registry)
 	}
 	/**
@@ -77,13 +70,13 @@ class TranslationModel  extends Model {
 		}
 
 		if (data['start'] || data['limit']) {
-                        data['start'] = data['start']||0;
+			data['start'] = data['start'] || 0;
 			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 

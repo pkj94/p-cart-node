@@ -60,11 +60,11 @@ module.exports = class PaginationController extends Controller {
 				start = 1;
 				end = num_pages;
 			} else {
-				start = page - floor(num_links / 2);
-				end = page + floor(num_links / 2);
+				start = page - Math.floor(num_links / 2);
+				end = page + Math.floor(num_links / 2);
 
 				if (start < 1) {
-					end += abs(start) + 1;
+					end += Math.abs(start) + 1;
 					start = 1;
 				}
 

@@ -122,9 +122,9 @@ module.exports = class SpecialModuleController extends Controller {
 
 		if (!Object.keys(json.keys)) {
 			this.load.model('setting/module',this);
-
+			this.request.post.module_id = Number(this.request.post.module_id);
 			if (!this.request.post['module_id']) {
-				json['module_id'] = await this.model_setting_module.addModule('opencart+special', this.request.post);
+				json['module_id'] = await this.model_setting_module.addModule('opencart.special', this.request.post);
 			} else {
 				await this.model_setting_module.editModule(this.request.post['module_id'], this.request.post);
 			}

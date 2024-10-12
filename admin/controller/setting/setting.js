@@ -43,7 +43,7 @@ class SettingController extends Controller {
 
 		data['themes'] = [];
 
-		this.load.model('setting/extension');
+		this.load.model('setting/extension',this);
 
 		extensions await this.model_setting_extension.getExtensionsByType('theme');
 
@@ -144,7 +144,7 @@ class SettingController extends Controller {
 
 		data['currency_engines'] = [];
 
-		this.load.model('setting/extension');
+		this.load.model('setting/extension',this);
 
 		extensions await this.model_setting_extension.getExtensionsByType('currency');
 
@@ -356,7 +356,7 @@ class SettingController extends Controller {
 		// Captcha
 		data['config_captcha'] = this.config.get('config_captcha');
 
-		this.load.model('setting/extension');
+		this.load.model('setting/extension',this);
 
 		data['captchas'] = [];
 
@@ -847,7 +847,7 @@ class SettingController extends Controller {
 			theme = '';
 		}
 
-		this.load.model('setting/extension');
+		this.load.model('setting/extension',this);
 
 		extension_info await this.model_setting_extension.getExtensionByCode('theme', theme);
 

@@ -49,11 +49,18 @@ module.exports = class LanguageLibrary {
                 const filePath = `${this.directory}${code}/${filename}.js`;
                 const namespaceParts = filename.split('/');
                 let namespace = '';
-
+                // console.log('namespaceParts-----', namespaceParts, namespace)
                 for (const part of namespaceParts) {
-                    namespace += part;
+                    if (!namespace) {
+                        namespace += part;
+                    } else {
+                        namespace += '/' + part;
+                    }
+                    // console.log('namespace-----', namespace, this.path)
+
                     if (this.path[namespace]) {
                         const nsFilePath = `${this.path[namespace]}${code}${filename.slice(namespace.length)}.js`;
+                        // console.log('nsFilePath----', nsFilePath)
                         if (fs.existsSync(nsFilePath)) {
                             let _language = require(nsFilePath);
                             fileContent = _language;

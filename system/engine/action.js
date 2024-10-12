@@ -27,22 +27,30 @@ module.exports = class Action {
                 // console.log('className----===',className)
                 let classT = this.class.split('opencart/')[1].split('/').reverse().map(a => ucfirst(a)).join('');
                 if (global[classT + 'Controller']) {
-                    let controller = new (global[classT + 'Controller'])(registry);
-                    // console.log(controller);
-                    resolve(await controller[this.method](...args));
+                    try {
+                        let controller = new (global[classT + 'Controller'])(registry);
+                        // console.log(classT);
+                        if (typeof controller[this.method] == 'function') {
+                            resolve(await controller[this.method](...args));
+                        } else {
+                            resolve('')
+                        }
+                    } catch (e) {
+                        console.log('errror', classT, e)
+                        reject(new Error(`Error: Could not call route ${this.route}!`));
+                    }
                 }
             } else {
                 try {
-                    // console.log('className---', className)
                     const ControllerClass = require(`${className}`);
                     const controller = new ControllerClass(registry);
-                    if (typeof controller[this.method] === 'function') {
+                    if (typeof controller[this.method] == 'function') {
                         resolve(await controller[this.method](...args));
                     } else {
                         reject(new Error(`Error: Could not call route ${this.route}!`));
                     }
                 } catch (e) {
-                    console.log(e)
+                    console.log('errror', className, e)
                     reject(new Error(`Error: Could not call route ${this.route}!`));
                 }
             }

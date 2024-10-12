@@ -90,7 +90,7 @@ module.exports = class BestSellerModuleController extends Controller {
 
 		if (!json.error) {
 			this.load.model('setting/module', this);
-
+			this.request.post.module_id = Number(this.request.post.module_id);
 			if (!this.request.post['module_id']) {
 				json.module_id = await this.model_setting_module.addModule('opencart.bestseller', this.request.post);
 			} else {

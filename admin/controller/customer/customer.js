@@ -165,7 +165,7 @@ if ((this.request.get['filter_name'])) {
 		}
 
 		if ((this.request.get['filter_status'])) {
-			filter_status = (bool)this.request.get['filter_status'];
+			filter_status = this.request.get['filter_status'];
 		} else {
 			filter_status = '';
 		}
@@ -201,7 +201,7 @@ if ((this.request.get['filter_name'])) {
 
 		let page = 1;
 		if ((this.request.get['page'])) {
-			page = this.request.get['page'];
+			page = Number(this.request.get['page']);
 		}
 
 		let url = '';
@@ -584,7 +584,7 @@ if ((this.request.get['filter_name'])) {
 		}
 
 		if ((customer_info)) {
-			data['account_custom_field'] = json_decode(customer_info['custom_field'], true);
+			data['account_custom_field'] = JSON.parse(customer_info['custom_field'], true);
 		} else {
 			data['account_custom_field'] = [];
 		}
@@ -1345,13 +1345,13 @@ if ((this.request.get['filter_name'])) {
 					'lastname'          : result['lastname'],
 					'email'             : result['email'],
 					'telephone'         : result['telephone'],
-					'custom_field'      : json_decode(result['custom_field'], true),
+					'custom_field'      : JSON.parse(result['custom_field'], true),
 					'address'           : this.model_customer_customer.getAddresses(result['customer_id'])
 				];
 			}
 		}
 
-		sort_order = [];
+		let sort_order = [];
 
 		for (let [key , value] of json) {
 			sort_order[key] = value['name'];

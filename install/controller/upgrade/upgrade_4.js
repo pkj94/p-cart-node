@@ -44,7 +44,7 @@ class Upgrade4 extends \Opencart\System\Engine\Controller {
 				if (!$setting['serialized']) {
 					$settings[$setting['key']] = $setting['value'];
 				} else {
-					$settings[$setting['key']] = json_decode($setting['value'], true);
+					$settings[$setting['key']] = JSON.parse($setting['value'], true);
 				}
 			}
 

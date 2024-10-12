@@ -35,7 +35,7 @@ class ReportController extends Controller {
 		// Reports
 		data['reports'] = [];
 
-		this.load.model('setting/extension');
+		this.load.model('setting/extension',this);
 
 		// Get a list of installed modules
 		const results = await this.model_setting_extension.getExtensionsByType('report');
@@ -54,7 +54,7 @@ class ReportController extends Controller {
 			}
 		}
 
-		sort_order = [];
+		let sort_order = [];
 
 		for (data['reports'] of key : value) {
 			sort_order[key] = value['sort_order'];

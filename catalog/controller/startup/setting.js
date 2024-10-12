@@ -43,7 +43,7 @@ class Setting extends \Opencart\System\Engine\Controller {
 			if (!$result['serialized']) {
 				$this->config->set($result['key'], $result['value']);
 			} else {
-				$this->config->set($result['key'], json_decode($result['value'], true));
+				$this->config->set($result['key'], JSON.parse($result['value'], true));
 			}
 		}
 
