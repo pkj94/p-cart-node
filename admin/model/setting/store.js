@@ -108,7 +108,7 @@ module.exports = class StoreSettingModel extends Model {
 	 */
 	async createStoreInstance(store_id = 0, language = '', session_id = '') {
 		// Autoloader
-		this.autoloader.register('Opencart\Catalog', DIR_CATALOG);
+		// this.autoloader.register('Opencart\Catalog', DIR_CATALOG);
 
 		// Registry
 		let registry = new Registry();
@@ -168,11 +168,12 @@ module.exports = class StoreSettingModel extends Model {
 		registry.set('cache', this.cache);
 
 		// Session
-		let session = new SessionLibrary(config.get('session_engine'), registry);
+		// let session = new SessionLibrary(config.get('session_engine'), registry);
+		let session = new SessionLibrary(registry);
 		registry.set('session', session);
 
 		// Start session
-		session.start(session_id);
+		// session.start(session_id);
 
 		// Template
 		let template = new TemplateLibrary(config.get('template_engine'));
@@ -180,7 +181,7 @@ module.exports = class StoreSettingModel extends Model {
 		registry.set('template', template);
 
 		// Adding language var to the GET variable so there is a default language
-		registry.request.get['language'] = language;
+		registry.get('request').get['language'] = language;
 
 		// Language
 		let languageLib = new LanguageLibrary(config.get('language_code'));

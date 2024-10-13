@@ -45,7 +45,7 @@ class SettingController extends Controller {
 
 		this.load.model('setting/extension',this);
 
-		extensions await this.model_setting_extension.getExtensionsByType('theme');
+		const extensions = await this.model_setting_extension.getExtensionsByType('theme');
 
 		for (extensions of extension) {
 			await this.load.language('extension/' + extension['extension'] + '/theme/' + extension['code'], 'extension');
@@ -97,7 +97,7 @@ class SettingController extends Controller {
 		}
 
 		// Localisation
-		this.load.model('localisation/country');
+		this.load.model('localisation/country',this);
 
 		data['countries'] = await this.model_localisation_country.getCountries();
 
@@ -136,7 +136,7 @@ class SettingController extends Controller {
 
 		data['config_language_admin'] = this.config.get('config_language_admin');
 
-		this.load.model('localisation/currency');
+		this.load.model('localisation/currency',this);
 
 		data['currencies'] = await this.model_localisation_currency.getCurrencies();
 
@@ -146,7 +146,7 @@ class SettingController extends Controller {
 
 		this.load.model('setting/extension',this);
 
-		extensions await this.model_setting_extension.getExtensionsByType('currency');
+		const extensions = await this.model_setting_extension.getExtensionsByType('currency');
 
 		for (extensions of extension) {
 			if (this.config.get('currency_' + extension['code'] + '_status')) {
@@ -265,7 +265,7 @@ class SettingController extends Controller {
 			data['config_invoice_prefix'] = 'INV-' + date('Y') + '-00';
 		}
 
-		this.load.model('localisation/order_status');
+		this.load.model('localisation/order_status',this);
 
 		data['order_statuses'] = await this.model_localisation_order_status.getOrderStatuses();
 
@@ -361,7 +361,7 @@ class SettingController extends Controller {
 		data['captchas'] = [];
 
 		// Get a list of installed captchas
-		extensions await this.model_setting_extension.getExtensionsByType('captcha');
+		const extensions = await this.model_setting_extension.getExtensionsByType('captcha');
 
 		for (extensions of extension) {
 			await this.load.language('extension/' + extension['extension'] + '/captcha/' + extension['code'], 'extension');
@@ -849,7 +849,7 @@ class SettingController extends Controller {
 
 		this.load.model('setting/extension',this);
 
-		extension_info await this.model_setting_extension.getExtensionByCode('theme', theme);
+		const extension_info = await this.model_setting_extension.getExtensionByCode('theme', theme);
 
 		if (extension_info) {
 			this.response.setOutput(HTTP_CATALOG + 'extension/' + extension_info['extension'] + '/admin/view/image/' + extension_info['code'] + '.png');

@@ -32,7 +32,7 @@ class ShippingController extends Controller {
 				data['code'] = '';
 			}
 
-			this.load.model('localisation/country');
+			this.load.model('localisation/country',this);
 
 			data['countries'] = this.model_localisation_country.getCountries();
 
@@ -72,7 +72,7 @@ class ShippingController extends Controller {
 			$json['error']['warning'] = sprintf(this.language.get('error_no_shipping'), this.url.link('information/contact', 'language=' . this.config.get('config_language')));
 		}
 
-		this.load.model('localisation/country');
+		this.load.model('localisation/country',this);
 
 		$country_info = this.model_localisation_country.getCountry(this.request.post['country_id']);
 

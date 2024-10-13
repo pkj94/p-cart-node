@@ -75,7 +75,7 @@ class AddressFormatController extends Controller {
 		data['address_formats'] = [];
 
 		let filter_data = {
-			'start' : (page - 1) * this.config.get('config_pagination_admin'),
+			'start' : (page - 1) * Number(this.config.get('config_pagination_admin')),
 			'limit' : this.config.get('config_pagination_admin')
 		});
 
@@ -101,7 +101,7 @@ class AddressFormatController extends Controller {
 			'url'   : this.url.link('localisation/address_format.list', 'user_token=' + this.session.data['user_token'] + '&page={page}')
 		]);
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (address_format_total) ? ((page - 1) * this.config.get('config_pagination_admin')) + 1 : 0, (((page - 1) * this.config.get('config_pagination_admin')) > (address_format_total - this.config.get('config_pagination_admin'))) ? address_format_total : (((page - 1) * this.config.get('config_pagination_admin')) + this.config.get('config_pagination_admin')), address_format_total, Math.ceil(address_format_total / this.config.get('config_pagination_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (address_format_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (address_format_total - this.config.get('config_pagination_admin'))) ? address_format_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), address_format_total, Math.ceil(address_format_total / this.config.get('config_pagination_admin')));
 
 		return await this.load.view('localisation/address_format_list', data);
 	}
@@ -217,7 +217,7 @@ class AddressFormatController extends Controller {
 			json['error'] = this.language.get('error_permission');
 		}
 
-		this.load.model('localisation/country');
+		this.load.model('localisation/country',this);
 
 		for (let address_format_id of selected) {
 			if (this.config.get('config_address_format_id') == address_format_id) {

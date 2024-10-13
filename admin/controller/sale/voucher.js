@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Admin\Controller\Sale;
-/**
- * 
- *
- * @package Opencart\Admin\Controller\Sale
- */
-class VoucherController extends Controller {
+module.exports=class VoucherController extends Controller {
 	/**
 	 * @return void
 	 */
@@ -105,7 +98,7 @@ class VoucherController extends Controller {
 		let filter_data = {
 			'sort'  : sort,
 			'order' : order,
-			'start' : (page - 1) * this.config.get('config_pagination_admin'),
+			'start' : (page - 1) * Number(this.config.get('config_pagination_admin')),
 			'limit' : this.config.get('config_pagination_admin')
 		});
 
@@ -169,7 +162,7 @@ class VoucherController extends Controller {
 			'url'   : this.url.link('sale/voucher.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		]);
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (voucher_total) ? ((page - 1) * this.config.get('config_pagination_admin')) + 1 : 0, (((page - 1) * this.config.get('config_pagination_admin')) > (voucher_total - this.config.get('config_pagination_admin'))) ? voucher_total : (((page - 1) * this.config.get('config_pagination_admin')) + this.config.get('config_pagination_admin')), voucher_total, Math.ceil(voucher_total / this.config.get('config_pagination_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (voucher_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (voucher_total - this.config.get('config_pagination_admin'))) ? voucher_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), voucher_total, Math.ceil(voucher_total / this.config.get('config_pagination_admin')));
 
 		data['sort'] = sort;
 		data['order'] = order;
@@ -258,7 +251,7 @@ class VoucherController extends Controller {
 			data['to_email'] = '';
 		}
 
-		this.load.model('sale/voucher_theme');
+		this.load.model('sale/voucher_theme',this);
 
 		data['voucher_themes'] = await this.model_sale_voucher_theme.getVoucherThemes();
 
@@ -376,7 +369,7 @@ class VoucherController extends Controller {
 			json['error'] = this.language.get('error_permission');
 		}
 
-		this.load.model('sale/order');
+		this.load.model('sale/order',this);
 
 		for (let voucher_id of selected) {
 			order_voucher_info await this.model_sale_order.getVoucherByVoucherId(voucher_id);
@@ -444,7 +437,7 @@ class VoucherController extends Controller {
 			];
 		}
 
-		history_total await this.model_sale_voucher.getTotalHistories(voucher_id);
+		const history_total = await this.model_sale_voucher.getTotalHistories(voucher_id);
 
 		data['pagination'] = await this.load.controller('common/pagination', {
 			'total' : history_total,

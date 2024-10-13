@@ -104,7 +104,7 @@ class LanguageController extends Controller {
 		let filter_data = {
 			'sort'  : sort,
 			'order' : order,
-			'start' : (page - 1) * this.config.get('config_pagination_admin'),
+			'start' : (page - 1) * Number(this.config.get('config_pagination_admin')),
 			'limit' : this.config.get('config_pagination_admin')
 		});
 
@@ -154,7 +154,7 @@ class LanguageController extends Controller {
 			'url'   : this.url.link('localisation/language.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		]);
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (language_total) ? ((page - 1) * this.config.get('config_pagination_admin')) + 1 : 0, (((page - 1) * this.config.get('config_pagination_admin')) > (language_total - this.config.get('config_pagination_admin'))) ? language_total : (((page - 1) * this.config.get('config_pagination_admin')) + this.config.get('config_pagination_admin')), language_total, Math.ceil(language_total / this.config.get('config_pagination_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (language_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (language_total - this.config.get('config_pagination_admin'))) ? language_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), language_total, Math.ceil(language_total / this.config.get('config_pagination_admin')));
 
 		data['sort'] = sort;
 		data['order'] = order;
@@ -326,7 +326,7 @@ class LanguageController extends Controller {
 		}
 
 		this.load.model('setting/store',this);
-		this.load.model('sale/order');
+		this.load.model('sale/order',this);
 
 		for (selected of language_id) {
 			language_info await this.model_localisation_language.getLanguage(language_id);

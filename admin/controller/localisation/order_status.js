@@ -104,11 +104,11 @@ class OrderStatusController extends Controller {
 		let filter_data = {
 			'sort'  : sort,
 			'order' : order,
-			'start' : (page - 1) * this.config.get('config_pagination_admin'),
+			'start' : (page - 1) * Number(this.config.get('config_pagination_admin')),
 			'limit' : this.config.get('config_pagination_admin')
 		});
 
-		this.load.model('localisation/order_status');
+		this.load.model('localisation/order_status',this);
 
 		order_status_total await this.model_localisation_order_status.getTotalOrderStatuses();
 
@@ -149,7 +149,7 @@ class OrderStatusController extends Controller {
 			'url'   : this.url.link('localisation/order_status.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		]);
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (order_status_total) ? ((page - 1) * this.config.get('config_pagination_admin')) + 1 : 0, (((page - 1) * this.config.get('config_pagination_admin')) > (order_status_total - this.config.get('config_pagination_admin'))) ? order_status_total : (((page - 1) * this.config.get('config_pagination_admin')) + this.config.get('config_pagination_admin')), order_status_total, Math.ceil(order_status_total / this.config.get('config_pagination_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (order_status_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (order_status_total - this.config.get('config_pagination_admin'))) ? order_status_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), order_status_total, Math.ceil(order_status_total / this.config.get('config_pagination_admin')));
 
 		data['sort'] = sort;
 		data['order'] = order;
@@ -207,7 +207,7 @@ class OrderStatusController extends Controller {
 		data['languages'] = await this.model_localisation_language.getLanguages();
 
 		if ((this.request.get['order_status_id'])) {
-			this.load.model('localisation/order_status');
+			this.load.model('localisation/order_status',this);
 
 			data['order_status'] = await this.model_localisation_order_status.getDescriptions(this.request.get['order_status_id']);
 		} else {
@@ -242,7 +242,7 @@ class OrderStatusController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('localisation/order_status');
+			this.load.model('localisation/order_status',this);
 
 			if (!this.request.post['order_status_id']) {
 				json['order_status_id'] = await this.model_localisation_order_status.addOrderStatus(this.request.post);
@@ -275,7 +275,7 @@ class OrderStatusController extends Controller {
 		}
 
 		this.load.model('setting/store',this);
-		this.load.model('sale/order');
+		this.load.model('sale/order',this);
 
 		for (selected of order_status_id) {
 			if (this.config.get('config_order_status_id') == order_status_id) {
@@ -296,7 +296,7 @@ class OrderStatusController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('localisation/order_status');
+			this.load.model('localisation/order_status',this);
 
 			for (selected of order_status_id) {
 				await this.model_localisation_order_status.deleteOrderStatus(order_status_id);

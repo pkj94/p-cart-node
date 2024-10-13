@@ -1,47 +1,33 @@
-<?php
-namespace Opencart\Admin\Controller\Design;
-/**
- * 
- *
- * @package Opencart\Admin\Controller\Design
- */
-class SeoUrlController extends Controller {
+const sprintf = require("locutus/php/strings/sprintf");
+
+module.exports = class SeoUrlController extends Controller {
 	/**
 	 * @return void
 	 */
 	async index() {
+		const data = {};
 		await this.load.language('design/seo_url');
 
 		this.document.setTitle(this.language.get('heading_title'));
-
+		let filter_keyword = '';
 		if ((this.request.get['filter_keyword'])) {
 			filter_keyword = this.request.get['filter_keyword'];
-		} else {
-			filter_keyword = '';
 		}
-
+		let filter_key = '';
 		if ((this.request.get['filter_key'])) {
 			filter_key = this.request.get['filter_key'];
-		} else {
-			filter_key = '';
 		}
-
+		let filter_value = '';
 		if ((this.request.get['filter_value'])) {
 			filter_value = this.request.get['filter_value'];
-		} else {
-			filter_value = '';
 		}
-
+		let filter_store_id = '';
 		if ((this.request.get['filter_store_id'])) {
 			filter_store_id = this.request.get['filter_store_id'];
-		} else {
-			filter_store_id = '';
 		}
-
+		let filter_language_id = 0;
 		if ((this.request.get['filter_language_id'])) {
 			filter_language_id = this.request.get['filter_language_id'];
-		} else {
-			filter_language_id = 0;
 		}
 
 		let url = '';
@@ -81,13 +67,13 @@ class SeoUrlController extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('text_home'),
+			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('design/seo_url', 'user_token=' + this.session.data['user_token'] + url)
+			'text': this.language.get('heading_title'),
+			'href': this.url.link('design/seo_url', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
 		data['add'] = this.url.link('design/seo_url.form', 'user_token=' + this.session.data['user_token'] + url);
@@ -95,11 +81,11 @@ class SeoUrlController extends Controller {
 
 		data['list'] = await this.getList();
 
-		this.load.model('setting/store',this);
+		this.load.model('setting/store', this);
 
 		data['stores'] = await this.model_setting_store.getStores();
 
-		this.load.model('localisation/language',this);
+		this.load.model('localisation/language', this);
 
 		data['languages'] = await this.model_localisation_language.getLanguages();
 
@@ -131,45 +117,35 @@ class SeoUrlController extends Controller {
 	 * @return string
 	 */
 	async getList() {
+		const data = {};
+		let filter_keyword = '';
 		if ((this.request.get['filter_keyword'])) {
 			filter_keyword = this.request.get['filter_keyword'];
-		} else {
-			filter_keyword = '';
 		}
-
+		let filter_key = '';
 		if ((this.request.get['filter_key'])) {
 			filter_key = this.request.get['filter_key'];
-		} else {
-			filter_key = '';
 		}
-
+		let filter_value = '';
 		if ((this.request.get['filter_value'])) {
 			filter_value = this.request.get['filter_value'];
-		} else {
-			filter_value = '';
 		}
-
+		let filter_store_id = '';
 		if ((this.request.get['filter_store_id'])) {
 			filter_store_id = this.request.get['filter_store_id'];
-		} else {
-			filter_store_id = '';
 		}
-
+		let filter_language_id = 0;
 		if ((this.request.get['filter_language_id'])) {
 			filter_language_id = this.request.get['filter_language_id'];
-		} else {
-			filter_language_id = 0;
 		}
-
+		let sort = 'key';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
-		} else {
-			sort = 'key';
 		}
 
-		let order= 'ASC';
+		let order = 'ASC';
 		if ((this.request.get['order'])) {
-			order= this.request.get['order'];
+			order = this.request.get['order'];
 		}
 
 		let page = 1;
@@ -216,49 +192,47 @@ class SeoUrlController extends Controller {
 		data['seo_urls'] = [];
 
 		let filter_data = {
-			'filter_keyword'     : filter_keyword,
-			'filter_key'         : filter_key,
-			'filter_value'       : filter_value,
-			'filter_store_id'    : filter_store_id,
-			'filter_language_id' : filter_language_id,
-			'sort'               : sort,
-			'order'              : order,
-			'start'              : (page - 1) * this.config.get('config_pagination_admin'),
-			'limit'              : this.config.get('config_pagination_admin')
-		});
+			'filter_keyword': filter_keyword,
+			'filter_key': filter_key,
+			'filter_value': filter_value,
+			'filter_store_id': filter_store_id,
+			'filter_language_id': filter_language_id,
+			'sort': sort,
+			'order': order,
+			'start': (page - 1) * Number(this.config.get('config_pagination_admin')),
+			'limit': this.config.get('config_pagination_admin')
+		};
 
-		this.load.model('design/seo_url',this);
-		this.load.model('localisation/language',this);
+		this.load.model('design/seo_url', this);
+		this.load.model('localisation/language', this);
 
-		seo_url_total await this.model_design_seo_url.getTotalSeoUrls(filter_data);
+		const seo_url_total = await this.model_design_seo_url.getTotalSeoUrls(filter_data);
 
 		const results = await this.model_design_seo_url.getSeoUrls(filter_data);
 
 		for (let result of results) {
-			language_info await this.model_localisation_language.getLanguage(result['language_id']);
-
-			if (language_info) {
+			const language_info = await this.model_localisation_language.getLanguage(result['language_id']);
+			let code = '';
+			let image = '';
+			if (language_info.language_id) {
 				code = language_info['code'];
 				image = language_info['image'];
-			} else {
-				code = '';
-				image = '';
 			}
 
 			data['seo_urls'].push({
-				'seo_url_id' : result['seo_url_id'],
-				'keyword'    : result['keyword'],
-				'image'      : image,
-				'language'   : code,
-				'key'        : result['key'],
-				'value'      : result['value'],
-				'sort_order' : result['sort_order'],
-				'store'      : result['store_id'] ? result['store'] : this.language.get('text_default'),
-				'edit'       : this.url.link('design/seo_url.form', 'user_token=' + this.session.data['user_token'] + '&seo_url_id=' + result['seo_url_id'] + url)
-			];
+				'seo_url_id': result['seo_url_id'],
+				'keyword': result['keyword'],
+				'image': image,
+				'language': code,
+				'key': result['key'],
+				'value': result['value'],
+				'sort_order': result['sort_order'],
+				'store': result['store_id'] ? result['store'] : this.language.get('text_default'),
+				'edit': this.url.link('design/seo_url.form', 'user_token=' + this.session.data['user_token'] + '&seo_url_id=' + result['seo_url_id'] + url)
+			});
 		}
 
-		let url = '';
+		url = '';
 
 		if ((this.request.get['filter_keyword'])) {
 			url += '&filter_keyword=' + encodeURIComponent(html_entity_decode(this.request.get['filter_keyword']));
@@ -293,7 +267,7 @@ class SeoUrlController extends Controller {
 		data['sort_store'] = this.url.link('design/seo_url.list', 'user_token=' + this.session.data['user_token'] + '&sort=store' + url);
 		data['sort_language'] = this.url.link('design/seo_url.list', 'user_token=' + this.session.data['user_token'] + '&sort=language' + url);
 
-		let url = '';
+		url = '';
 
 		if ((this.request.get['filter_keyword'])) {
 			url += '&filter_keyword=' + encodeURIComponent(html_entity_decode(this.request.get['filter_keyword']));
@@ -324,13 +298,13 @@ class SeoUrlController extends Controller {
 		}
 
 		data['pagination'] = await this.load.controller('common/pagination', {
-			'total' : seo_url_total,
-			'page'  : page,
-			'limit' : this.config.get('config_pagination_admin'),
-			'url'   : this.url.link('design/seo_url.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
-		]);
+			'total': seo_url_total,
+			'page': page,
+			'limit': this.config.get('config_pagination_admin'),
+			'url': this.url.link('design/seo_url.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
+		});
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (seo_url_total) ? ((page - 1) * this.config.get('config_pagination_admin')) + 1 : 0, (((page - 1) * this.config.get('config_pagination_admin')) > (seo_url_total - this.config.get('config_pagination_admin'))) ? seo_url_total : (((page - 1) * this.config.get('config_pagination_admin')) + this.config.get('config_pagination_admin')), seo_url_total, Math.ceil(seo_url_total / this.config.get('config_pagination_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (seo_url_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (seo_url_total - this.config.get('config_pagination_admin'))) ? seo_url_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), seo_url_total, Math.ceil(seo_url_total / this.config.get('config_pagination_admin')));
 
 		data['sort'] = sort;
 		data['order'] = order;
@@ -342,6 +316,7 @@ class SeoUrlController extends Controller {
 	 * @return void
 	 */
 	async form() {
+		const data = {}
 		await this.load.language('design/seo_url');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -385,22 +360,22 @@ class SeoUrlController extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('text_home'),
+			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('design/seo_url', 'user_token=' + this.session.data['user_token'] + url)
+			'text': this.language.get('heading_title'),
+			'href': this.url.link('design/seo_url', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
 		data['save'] = this.url.link('design/seo_url.save', 'user_token=' + this.session.data['user_token']);
 		data['back'] = this.url.link('design/seo_url', 'user_token=' + this.session.data['user_token'] + url);
-
+		let seo_url_info;
 		if ((this.request.get['seo_url_id'])) {
-			this.load.model('design/seo_url',this);
+			this.load.model('design/seo_url', this);
 
-			seo_url_info await this.model_design_seo_url.getSeoUrl(this.request.get['seo_url_id']);
+			seo_url_info = await this.model_design_seo_url.getSeoUrl(this.request.get['seo_url_id']);
 		}
 
 		if ((this.request.get['seo_url_id'])) {
@@ -412,19 +387,19 @@ class SeoUrlController extends Controller {
 		data['stores'] = [];
 
 		data['stores'].push({
-			'store_id' : 0,
-			'name'     : this.language.get('text_default')
+			'store_id': 0,
+			'name': this.language.get('text_default')
 		});
 
-		this.load.model('setting/store',this);
+		this.load.model('setting/store', this);
 
 		let stores = await this.model_setting_store.getStores();
 
 		for (let store of stores) {
 			data['stores'].push({
-				'store_id' : store['store_id'],
-				'name'     : store['name']
-			];
+				'store_id': store['store_id'],
+				'name': store['name']
+			});
 		}
 
 		if ((seo_url_info)) {
@@ -433,7 +408,7 @@ class SeoUrlController extends Controller {
 			data['store_id'] = '';
 		}
 
-		this.load.model('localisation/language',this);
+		this.load.model('localisation/language', this);
 
 		data['languages'] = await this.model_localisation_language.getLanguages();
 
@@ -480,7 +455,7 @@ class SeoUrlController extends Controller {
 	async save() {
 		await this.load.language('design/seo_url');
 
-		const json = {};
+		const json = { error: {} };
 
 		if (!await this.user.hasPermission('modify', 'design/seo_url')) {
 			json['error']['warning'] = this.language.get('error_permission');
@@ -494,19 +469,19 @@ class SeoUrlController extends Controller {
 			json['error']['value'] = this.language.get('error_value');
 		}
 
-		this.load.model('design/seo_url',this);
+		this.load.model('design/seo_url', this);
 
 		// Check if there is already a key value pair on the same store using the same language
-		seo_url_info await this.model_design_seo_url.getSeoUrlByKeyValue(this.request.post['key'], this.request.post['value'], this.request.post['store_id'], this.request.post['language_id']);
+		let seo_url_info = await this.model_design_seo_url.getSeoUrlByKeyValue(this.request.post['key'], this.request.post['value'], this.request.post['store_id'], this.request.post['language_id']);
 
 		if (seo_url_info.key && (!(this.request.post['seo_url_id']) || seo_url_info['seo_url_id'] != this.request.post['seo_url_id'])) {
 			json['error']['value'] = this.language.get('error_value_exists');
 		}
 
 		// Split keywords by / so we can validate each keyword
-		keywords = explode('/', this.request.post['keyword']);
+		let keywords = this.request.post['keyword'].split('/');
 
-		for (keywords of keyword) {
+		for (let keyword of keywords) {
 			if ((oc_strlen(trim(keyword)) < 1) || (oc_strlen(keyword) > 64)) {
 				json['error']['keyword'] = this.language.get('error_keyword');
 			}
@@ -517,13 +492,14 @@ class SeoUrlController extends Controller {
 		}
 
 		// Check if keyword already exists and on the same store of long of the keyword matches the key / value pair
-		seo_url_info await this.model_design_seo_url.getSeoUrlByKeyword(this.request.post['keyword'], this.request.post['store_id']);
+		seo_url_info = await this.model_design_seo_url.getSeoUrlByKeyword(this.request.post['keyword'], this.request.post['store_id']);
 
-		if (seo_url_info && ((seo_url_info['key'] != this.request.post['key']) || (seo_url_info['value'] != this.request.post['value']))) {
+		if (seo_url_info.seo_url_id && ((seo_url_info['key'] != this.request.post['key']) || (seo_url_info['value'] != this.request.post['value']))) {
 			json['error']['keyword'] = this.language.get('error_keyword_exists');
 		}
 
-		if (!Object.keys(json).length) {
+		if (!Object.keys(json.error).length) {
+			this.request.post['seo_url_id'] = Number(this.request.post['seo_url_id']);
 			if (!this.request.post['seo_url_id']) {
 				json['seo_url_id'] = await this.model_design_seo_url.addSeoUrl(this.request.post);
 			} else {
@@ -546,7 +522,7 @@ class SeoUrlController extends Controller {
 		const json = {};
 
 		let selected = [];
-                 if ((this.request.post['selected'])) {
+		if ((this.request.post['selected'])) {
 			selected = this.request.post['selected'];
 		}
 
@@ -555,7 +531,7 @@ class SeoUrlController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('design/seo_url',this);
+			this.load.model('design/seo_url', this);
 
 			for (let seo_url_id of selected) {
 				await this.model_design_seo_url.deleteSeoUrl(seo_url_id);

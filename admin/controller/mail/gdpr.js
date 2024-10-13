@@ -99,7 +99,7 @@ class GdprController extends Controller {
 
 		this.load.model('customer/customer',this);
 
-		customer_info await this.model_customer_customer.getCustomerByEmail(gdpr_info['email']);
+		const customer_info = await this.model_customer_customer.getCustomerByEmail(gdpr_info['email']);
 
 		if (customer_info) {
 			data['text_hello'] = sprintf(this.language.get('mail_text_hello'), html_entity_decode(customer_info['firstname']));
@@ -141,12 +141,12 @@ class GdprController extends Controller {
 		}
 
 		// Order Addresses
-		this.load.model('sale/order');
+		this.load.model('sale/order',this);
 
 		const results = await this.model_sale_order.getOrders(['filter_email' : gdpr_info['email']]);
 
 		for (let result of results) {
-			order_info await this.model_sale_order.getOrder(result['order_id']);
+			const order_info = await this.model_sale_order.getOrder(result['order_id']);
 
 			if (order_info['payment_country_id']) {
 				address = [
@@ -277,7 +277,7 @@ class GdprController extends Controller {
 
 		this.load.model('customer/customer',this);
 
-		customer_info await this.model_customer_customer.getCustomerByEmail(gdpr_info['email']);
+		const customer_info = await this.model_customer_customer.getCustomerByEmail(gdpr_info['email']);
 
 		if (customer_info) {
 			data['text_hello'] = sprintf(this.language.get('mail_text_hello'), html_entity_decode(customer_info['firstname']));
@@ -370,7 +370,7 @@ class GdprController extends Controller {
 
 		this.load.model('customer/customer',this);
 
-		customer_info await this.model_customer_customer.getCustomerByEmail(gdpr_info['email']);
+		const customer_info = await this.model_customer_customer.getCustomerByEmail(gdpr_info['email']);
 
 		if (customer_info) {
 			data['text_hello'] = sprintf(this.language.get('mail_text_hello'), html_entity_decode(customer_info['firstname']));
@@ -459,7 +459,7 @@ class GdprController extends Controller {
 
 		this.load.model('customer/customer',this);
 
-		customer_info await this.model_customer_customer.getCustomerByEmail(gdpr_info['email']);
+		const customer_info = await this.model_customer_customer.getCustomerByEmail(gdpr_info['email']);
 
 		if (customer_info) {
 			data['text_hello'] = sprintf(this.language.get('mail_text_hello'), html_entity_decode(customer_info['firstname']));

@@ -1,71 +1,50 @@
-<?php
-namespace Opencart\Admin\Controller\Sale;
-/**
- * 
- *
- * @package Opencart\Admin\Controller\Sale
- */
-class OrderController extends Controller {
+const nl2br = require("locutus/php/strings/nl2br");
+const sprintf = require("locutus/php/strings/sprintf");
+
+module.exports = class OrderController extends Controller {
 	/**
 	 * @return void
 	 */
 	async index() {
+		const data = {};
 		await this.load.language('sale/order');
 
 		this.document.setTitle(this.language.get('heading_title'));
-
+		let filter_order_id = '';
 		if ((this.request.get['filter_order_id'])) {
 			filter_order_id = this.request.get['filter_order_id'];
-		} else {
-			filter_order_id = '';
 		}
-
+		let filter_customer_id = '';
 		if ((this.request.get['filter_customer_id'])) {
 			filter_customer_id = this.request.get['filter_customer_id'];
-		} else {
-			filter_customer_id = '';
 		}
-
+		let filter_customer = '';
 		if ((this.request.get['filter_customer'])) {
 			filter_customer = this.request.get['filter_customer'];
-		} else {
-			filter_customer = '';
 		}
-
+		let filter_store_id = '';
 		if ((this.request.get['filter_store_id'])) {
 			filter_store_id = this.request.get['filter_store_id'];
-		} else {
-			filter_store_id = '';
 		}
-
+		let filter_order_status = '';
 		if ((this.request.get['filter_order_status'])) {
 			filter_order_status = this.request.get['filter_order_status'];
-		} else {
-			filter_order_status = '';
 		}
-
+		let filter_order_status_id = '';
 		if ((this.request.get['filter_order_status_id'])) {
 			filter_order_status_id = this.request.get['filter_order_status_id'];
-		} else {
-			filter_order_status_id = '';
 		}
-
+		let filter_total = '';
 		if ((this.request.get['filter_total'])) {
 			filter_total = this.request.get['filter_total'];
-		} else {
-			filter_total = '';
 		}
-
+		let filter_date_from = '';
 		if ((this.request.get['filter_date_from'])) {
 			filter_date_from = this.request.get['filter_date_from'];
-		} else {
-			filter_date_from = '';
 		}
-
+		let filter_date_to = '';
 		if ((this.request.get['filter_date_to'])) {
 			filter_date_to = this.request.get['filter_date_to'];
-		} else {
-			filter_date_to = '';
 		}
 
 		let url = '';
@@ -121,13 +100,13 @@ class OrderController extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('text_home'),
+			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('sale/order', 'user_token=' + this.session.data['user_token'] + url)
+			'text': this.language.get('heading_title'),
+			'href': this.url.link('sale/order', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
 		data['add'] = this.url.link('sale/order.info', 'user_token=' + this.session.data['user_token'] + url);
@@ -140,22 +119,22 @@ class OrderController extends Controller {
 		data['stores'] = [];
 
 		data['stores'].push({
-			'store_id' : 0,
-			'name'     : this.language.get('text_default')
+			'store_id': 0,
+			'name': this.language.get('text_default')
 		});
 
-		this.load.model('setting/store',this);
+		this.load.model('setting/store', this);
 
 		let stores = await this.model_setting_store.getStores();
 
 		for (let store of stores) {
 			data['stores'].push({
-				'store_id' : store['store_id'],
-				'name'     : store['name']
-			];
+				'store_id': store['store_id'],
+				'name': store['name']
+			});
 		}
 
-		this.load.model('localisation/order_status');
+		this.load.model('localisation/order_status', this);
 
 		data['order_statuses'] = await this.model_localisation_order_status.getOrderStatuses();
 
@@ -191,70 +170,50 @@ class OrderController extends Controller {
 	 * @return string
 	 */
 	async getList() {
+		const data = {};
+		let filter_order_id = '';
 		if ((this.request.get['filter_order_id'])) {
 			filter_order_id = this.request.get['filter_order_id'];
-		} else {
-			filter_order_id = '';
 		}
-
+		let filter_customer_id = '';
 		if ((this.request.get['filter_customer_id'])) {
 			filter_customer_id = this.request.get['filter_customer_id'];
-		} else {
-			filter_customer_id = '';
 		}
-
+		let filter_customer = '';
 		if ((this.request.get['filter_customer'])) {
 			filter_customer = this.request.get['filter_customer'];
-		} else {
-			filter_customer = '';
 		}
-
+		let filter_store_id = '';
 		if ((this.request.get['filter_store_id'])) {
 			filter_store_id = this.request.get['filter_store_id'];
-		} else {
-			filter_store_id = '';
 		}
-
+		let filter_order_status = '';
 		if ((this.request.get['filter_order_status'])) {
 			filter_order_status = this.request.get['filter_order_status'];
-		} else {
-			filter_order_status = '';
 		}
-
+		let filter_order_status_id = '';
 		if ((this.request.get['filter_order_status_id'])) {
 			filter_order_status_id = this.request.get['filter_order_status_id'];
-		} else {
-			filter_order_status_id = '';
 		}
-
+		let filter_total = '';
 		if ((this.request.get['filter_total'])) {
 			filter_total = this.request.get['filter_total'];
-		} else {
-			filter_total = '';
 		}
-
+		let filter_date_from = '';
 		if ((this.request.get['filter_date_from'])) {
 			filter_date_from = this.request.get['filter_date_from'];
-		} else {
-			filter_date_from = '';
 		}
-
+		let filter_date_to = '';
 		if ((this.request.get['filter_date_to'])) {
 			filter_date_to = this.request.get['filter_date_to'];
-		} else {
-			filter_date_to = '';
 		}
-
+		let sort = 'o.order_id';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
-		} else {
-			sort = 'o.order_id';
 		}
-
+		let order = 'DESC';
 		if ((this.request.get['order'])) {
 			order = this.request.get['order'];
-		} else {
-			order = 'DESC';
 		}
 
 		let page = 1;
@@ -317,42 +276,42 @@ class OrderController extends Controller {
 		data['orders'] = [];
 
 		let filter_data = {
-			'filter_order_id'        : filter_order_id,
-			'filter_customer_id'     : filter_customer_id,
-			'filter_customer'        : filter_customer,
-			'filter_store_id'        : filter_store_id,
-			'filter_order_status'    : filter_order_status,
-			'filter_order_status_id' : filter_order_status_id,
-			'filter_total'           : filter_total,
-			'filter_date_from'       : filter_date_from,
-			'filter_date_to'         : filter_date_to,
-			'sort'                   : sort,
-			'order'                  : order,
-			'start'                  : (page - 1) * this.config.get('config_pagination_admin'),
-			'limit'                  : this.config.get('config_pagination_admin')
-		});
+			'filter_order_id': filter_order_id,
+			'filter_customer_id': filter_customer_id,
+			'filter_customer': filter_customer,
+			'filter_store_id': filter_store_id,
+			'filter_order_status': filter_order_status,
+			'filter_order_status_id': filter_order_status_id,
+			'filter_total': filter_total,
+			'filter_date_from': filter_date_from,
+			'filter_date_to': filter_date_to,
+			'sort': sort,
+			'order': order,
+			'start': (page - 1) * Number(this.config.get('config_pagination_admin')),
+			'limit': this.config.get('config_pagination_admin')
+		};
 
-		this.load.model('sale/order');
+		this.load.model('sale/order', this);
 
-		order_total await this.model_sale_order.getTotalOrders(filter_data);
+		const order_total = await this.model_sale_order.getTotalOrders(filter_data);
 
 		const results = await this.model_sale_order.getOrders(filter_data);
 
 		for (let result of results) {
 			data['orders'].push({
-				'order_id'        : result['order_id'],
-				'store_name'      : result['store_name'],
-				'customer'        : result['customer'],
-				'order_status'    : result['order_status'] ? result['order_status'] : this.language.get('text_missing'),
-				'total'           : this.currency.format(result['total'], result['currency_code'], result['currency_value']),
-				'date_added'      : date(this.language.get('date_format_short'), strtotime(result['date_added'])),
-				'date_modified'   : date(this.language.get('date_format_short'), strtotime(result['date_modified'])),
-				'shipping_method' : result['shipping_method'],
-				'view'            : this.url.link('sale/order.info', 'user_token=' + this.session.data['user_token'] + '&order_id=' + result['order_id'] + url)
-			];
+				'order_id': result['order_id'],
+				'store_name': result['store_name'],
+				'customer': result['customer'],
+				'order_status': result['order_status'] ? result['order_status'] : this.language.get('text_missing'),
+				'total': this.currency.format(result['total'], result['currency_code'], result['currency_value']),
+				'date_added': date(this.language.get('date_format_short'), strtotime(result['date_added'])),
+				'date_modified': date(this.language.get('date_format_short'), strtotime(result['date_modified'])),
+				'shipping_method': result['shipping_method'],
+				'view': this.url.link('sale/order.info', 'user_token=' + this.session.data['user_token'] + '&order_id=' + result['order_id'] + url)
+			});
 		}
 
-		let url = '';
+		url = '';
 
 		if ((this.request.get['filter_order_id'])) {
 			url += '&filter_order_id=' + this.request.get['filter_order_id'];
@@ -404,7 +363,7 @@ class OrderController extends Controller {
 		data['sort_date_added'] = this.url.link('sale/order.list', 'user_token=' + this.session.data['user_token'] + '&sort=o.date_added' + url);
 		data['sort_date_modified'] = this.url.link('sale/order.list', 'user_token=' + this.session.data['user_token'] + '&sort=o.date_modified' + url);
 
-		let url = '';
+		url = '';
 
 		if ((this.request.get['filter_order_id'])) {
 			url += '&filter_order_id=' + this.request.get['filter_order_id'];
@@ -451,13 +410,13 @@ class OrderController extends Controller {
 		}
 
 		data['pagination'] = await this.load.controller('common/pagination', {
-			'total' : order_total,
-			'page'  : page,
-			'limit' : this.config.get('config_pagination_admin'),
-			'url'   : this.url.link('sale/order.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
-		]);
+			'total': order_total,
+			'page': page,
+			'limit': this.config.get('config_pagination_admin'),
+			'url': this.url.link('sale/order.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
+		});
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (order_total) ? ((page - 1) * this.config.get('config_pagination_admin')) + 1 : 0, (((page - 1) * this.config.get('config_pagination_admin')) > (order_total - this.config.get('config_pagination_admin'))) ? order_total : (((page - 1) * this.config.get('config_pagination_admin')) + this.config.get('config_pagination_admin')), order_total, Math.ceil(order_total / this.config.get('config_pagination_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (order_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (order_total - this.config.get('config_pagination_admin'))) ? order_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), order_total, Math.ceil(order_total / this.config.get('config_pagination_admin')));
 
 		data['sort'] = sort;
 		data['order'] = order;
@@ -470,12 +429,11 @@ class OrderController extends Controller {
 	 * @throws \Exception
 	 */
 	async info() {
+		const data = {};
 		await this.load.language('sale/order');
-
+		let order_id = 0;
 		if ((this.request.get['order_id'])) {
 			order_id = this.request.get['order_id'];
-		} else {
-			order_id = 0;
 		}
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -540,13 +498,13 @@ class OrderController extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('text_home'),
+			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('sale/order', 'user_token=' + this.session.data['user_token'] + url)
+			'text': this.language.get('heading_title'),
+			'href': this.url.link('sale/order', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
 		data['shipping'] = this.url.link('sale/order.shipping', 'user_token=' + this.session.data['user_token'] + '&order_id=' + order_id);
@@ -554,11 +512,11 @@ class OrderController extends Controller {
 		data['back'] = this.url.link('sale/order', 'user_token=' + this.session.data['user_token'] + url);
 		data['upload'] = this.url.link('tool/upload.upload', 'user_token=' + this.session.data['user_token']);
 		data['customer_add'] = this.url.link('customer/customer.form', 'user_token=' + this.session.data['user_token']);
-
+		let order_info;
 		if (order_id) {
-			this.load.model('sale/order');
+			this.load.model('sale/order', this);
 
-			order_info await this.model_sale_order.getOrder(order_id);
+			order_info = await this.model_sale_order.getOrder(order_id);
 		}
 
 		if ((order_info)) {
@@ -587,7 +545,7 @@ class OrderController extends Controller {
 			data['customer_id'] = 0;
 		}
 
-		this.load.model('customer/customer_group',this);
+		this.load.model('customer/customer_group', this);
 
 		data['customer_groups'] = await this.model_customer_customer_group.getCustomerGroups();
 
@@ -597,7 +555,7 @@ class OrderController extends Controller {
 			data['customer_group_id'] = this.config.get('config_customer_group_id');
 		}
 
-		customer_group_info await this.model_customer_customer_group.getCustomerGroup(data['customer_group_id']);
+		const customer_group_info = await this.model_customer_customer_group.getCustomerGroup(data['customer_group_id']);
 
 		if (customer_group_info) {
 			data['customer_group'] = customer_group_info['name'];
@@ -639,67 +597,67 @@ class OrderController extends Controller {
 		data['custom_fields'] = [];
 
 		let filter_data = {
-			'filter_status' : 1,
-			'sort'          : 'cf.sort_order',
-			'order'         : 'ASC'
-		});
+			'filter_status': 1,
+			'sort': 'cf.sort_order',
+			'order': 'ASC'
+		};
 
-		this.load.model('customer/custom_field');
+		this.load.model('customer/custom_field', this);
 
-		custom_fields await this.model_customer_custom_field.getCustomFields(filter_data);
+		const custom_fields = await this.model_customer_custom_field.getCustomFields(filter_data);
 
-		for (custom_fields of custom_field) {
+		for (let custom_field of custom_fields) {
 			data['custom_fields'].push({
-				'custom_field_id'    : custom_field['custom_field_id'],
-				'custom_field_value' : this.model_customer_custom_field.getValues(custom_field['custom_field_id']),
-				'name'               : custom_field['name'],
-				'value'              : custom_field['value'],
-				'type'               : custom_field['type'],
-				'location'           : custom_field['location'],
-				'sort_order'         : custom_field['sort_order']
-			];
+				'custom_field_id': custom_field['custom_field_id'],
+				'custom_field_value': this.model_customer_custom_field.getValues(custom_field['custom_field_id']),
+				'name': custom_field['name'],
+				'value': custom_field['value'],
+				'type': custom_field['type'],
+				'location': custom_field['location'],
+				'sort_order': custom_field['sort_order']
+			});
 		}
 
 		// Products
 		data['order_products'] = [];
 
-		this.load.model('sale/order');
-		this.load.model('sale/subscription');
-		this.load.model('tool/upload');
+		this.load.model('sale/order', this);
+		this.load.model('sale/subscription', this);
+		this.load.model('tool/upload', this);
 
-		products await this.model_sale_order.getProducts(order_id);
+		const products = await this.model_sale_order.getProducts(order_id);
 
-		for (products of product) {
+		for (let product of products) {
 			let option_data = [];
 
-			options await this.model_sale_order.getOptions(order_id, product['order_product_id']);
+			const options = await this.model_sale_order.getOptions(order_id, product['order_product_id']);
 
 			for (options of option) {
 				if (option['type'] != 'file') {
 					option_data.push({
-						'name'  : option['name'],
-						'value' : option['value'],
-						'type'  : option['type']
-					];
+						'name': option['name'],
+						'value': option['value'],
+						'type': option['type']
+					});
 				} else {
-					upload_info await this.model_tool_upload.getUploadByCode(option['value']);
+					const upload_info = await this.model_tool_upload.getUploadByCode(option['value']);
 
 					if (upload_info) {
 						option_data.push({
-							'name'  : option['name'],
-							'value' : upload_info['name'],
-							'type'  : option['type'],
-							'href'  : this.url.link('tool/upload.download', 'user_token=' + this.session.data['user_token'] + '&code=' + upload_info['code'])
-						];
+							'name': option['name'],
+							'value': upload_info['name'],
+							'type': option['type'],
+							'href': this.url.link('tool/upload.download', 'user_token=' + this.session.data['user_token'] + '&code=' + upload_info['code'])
+						});
 					}
 				}
 			}
 
-			description = '';
+			let description = '';
 
-			subscription_info await this.model_sale_order.getSubscription(order_id, product['order_product_id']);
+			let subscription_info = await this.model_sale_order.getSubscription(order_id, product['order_product_id']);
 
-			if (subscription_info) {
+			if (subscription_info.subscription_id) {
 				if (subscription_info['trial_status']) {
 					trial_price = this.currency.format(subscription_info['trial_price'], this.config.get('config_currency'));
 					trial_cycle = subscription_info['trial_cycle'];
@@ -709,7 +667,7 @@ class OrderController extends Controller {
 					description += sprintf(this.language.get('text_subscription_trial'), trial_price, trial_cycle, trial_frequency, trial_duration);
 				}
 
-				price = this.currency.format(subscription_info['price'], this.config.get('config_currency'));
+				let price = this.currency.format(subscription_info['price'], this.config.get('config_currency'));
 				cycle = subscription_info['cycle'];
 				frequency = this.language.get('text_' + subscription_info['frequency']);
 				duration = subscription_info['duration'];
@@ -721,77 +679,71 @@ class OrderController extends Controller {
 				}
 			}
 
-			subscription_info await this.model_sale_subscription.getSubscriptionByOrderProductId(order_id, product['order_product_id']);
-
+			subscription_info = await this.model_sale_subscription.getSubscriptionByOrderProductId(order_id, product['order_product_id']);
+			let subscription = '';
 			if (subscription_info) {
 				subscription = this.url.link('sale/subscription.info', 'user_token=' + this.session.data['user_token'] + '&subscription_id=' + subscription_info['subscription_id']);
-			} else {
-				subscription = '';
 			}
 
 			data['order_products'].push({
-				'order_product_id'         : product['order_product_id'],
-				'product_id'               : product['product_id'],
-				'name'                     : product['name'],
-				'model'                    : product['model'],
-				'option'                   : option_data,
-				'subscription'             : subscription,
-				'subscription_description' : description,
-				'quantity'                 : product['quantity'],
-				'price'                    : this.currency.format(product['price'] + (this.config.get('config_tax') ? product['tax'] : 0), order_info['currency_code'], order_info['currency_value']),
-				'total'                    : this.currency.format(product['total'] + (this.config.get('config_tax') ? (product['tax'] * product['quantity']) : 0), order_info['currency_code'], order_info['currency_value']),
-				'reward'                   : product['reward']
-			];
+				'order_product_id': product['order_product_id'],
+				'product_id': product['product_id'],
+				'name': product['name'],
+				'model': product['model'],
+				'option': option_data,
+				'subscription': subscription,
+				'subscription_description': description,
+				'quantity': product['quantity'],
+				'price': this.currency.format(product['price'] + (this.config.get('config_tax') ? product['tax'] : 0), order_info['currency_code'], order_info['currency_value']),
+				'total': this.currency.format(product['total'] + (this.config.get('config_tax') ? (product['tax'] * product['quantity']) : 0), order_info['currency_code'], order_info['currency_value']),
+				'reward': product['reward']
+			});
 		}
 
 		// Vouchers
 		data['order_vouchers'] = [];
 
-		vouchers await this.model_sale_order.getVouchers(order_id);
+		const vouchers = await this.model_sale_order.getVouchers(order_id);
 
-		for (vouchers of voucher) {
+		for (let voucher of vouchers) {
 			data['order_vouchers'].push({
-				'description' : voucher['description'],
-				'amount'      : this.currency.format(voucher['amount'], order_info['currency_code'], order_info['currency_value']),
-				'href'        : this.url.link('sale/voucher.form', 'user_token=' + this.session.data['user_token'] + '&voucher_id=' + voucher['voucher_id'])
-			];
+				'description': voucher['description'],
+				'amount': this.currency.format(voucher['amount'], order_info['currency_code'], order_info['currency_value']),
+				'href': this.url.link('sale/voucher.form', 'user_token=' + this.session.data['user_token'] + '&voucher_id=' + voucher['voucher_id'])
+			});
 		}
 
 		// Totals
 		data['order_totals'] = [];
 
-		totals await this.model_sale_order.getTotals(order_id);
+		const totals = await this.model_sale_order.getTotals(order_id);
 
-		for (totals of total) {
+		for (let total of totals) {
 			data['order_totals'].push({
-				'title' : total['title'],
-				'text'  : this.currency.format(total['value'], order_info['currency_code'], order_info['currency_value'])
-			];
+				'title': total['title'],
+				'text': this.currency.format(total['value'], order_info['currency_code'], order_info['currency_value'])
+			});
 		}
 
 		// Delete any old session
 		if ((this.session.data['api_session'])) {
-			session = new \Opencart\System\Library\Session(this.config.get('session_engine'), this.registry);
+			let session = new SessionLibrary(this.registry);
 			session.start(this.session.data['api_session']);
 			session.destroy();
 		}
-
+		let store_id = 0;
 		if ((order_info)) {
 			store_id = order_info['store_id'];
-		} else {
-			store_id = 0;
 		}
-
+		let language = this.config.get('config_language');
 		if ((order_info)) {
 			language = order_info['language_code'];
-		} else {
-			language = this.config.get('config_language');
 		}
 
 		// Create a store instance using loader class to call controllers, models, views, libraries
-		this.load.model('setting/store',this);
+		this.load.model('setting/store', this);
 
-		store await this.model_setting_store.createStoreInstance(store_id, language);
+		const store = await this.model_setting_store.createStoreInstance(store_id, language);
 
 		// 2. Store the new session ID so we're not creating new session on every page load
 		this.session.data['api_session'] = store.session.getId();
@@ -808,29 +760,29 @@ class OrderController extends Controller {
 			store.request.get['route'] = 'api/sale/order.load';
 			store.request.get['language'] = language;
 
-			delete (store.request.get['user_token']);
-			delete (store.request.get['action']);
+			delete store.request.get['user_token'];
+			delete store.request.get['action'];
 
-			store.load.controller(store.request.get['route']);
+			await store.load.controller(store.request.get['route']);
 		}
 
 		// Store
 		data['stores'] = [];
 
 		data['stores'].push({
-			'store_id' : 0,
-			'name'     : this.config.get('config_name')
+			'store_id': 0,
+			'name': this.config.get('config_name')
 		});
 
-		this.load.model('setting/store',this);
+		this.load.model('setting/store', this);
 
 		const results = await this.model_setting_store.getStores();
 
 		for (let result of results) {
 			data['stores'].push({
-				'store_id' : result['store_id'],
-				'name'     : result['name']
-			];
+				'store_id': result['store_id'],
+				'name': result['name']
+			});
 		}
 
 		if ((order_info)) {
@@ -840,7 +792,7 @@ class OrderController extends Controller {
 		}
 
 		// Language
-		this.load.model('localisation/language',this);
+		this.load.model('localisation/language', this);
 
 		data['languages'] = await this.model_localisation_language.getLanguages();
 
@@ -851,12 +803,12 @@ class OrderController extends Controller {
 		}
 
 		// Voucher themes
-		this.load.model('sale/voucher_theme');
+		this.load.model('sale/voucher_theme', this);
 
 		data['voucher_themes'] = await this.model_sale_voucher_theme.getVoucherThemes();
 
 		// Currency
-		this.load.model('localisation/currency');
+		this.load.model('localisation/currency', this);
 
 		data['currencies'] = await this.model_localisation_currency.getCurrencies();
 
@@ -872,15 +824,15 @@ class OrderController extends Controller {
 		data['total_reward'] = 0;
 
 		if (order_id) {
-			order_totals await this.model_sale_order.getTotals(order_id);
+			const order_totals = await this.model_sale_order.getTotals(order_id);
 
-			for (order_totals of order_total) {
+			for (let order_total of order_totals) {
 				// If coupon, voucher or reward points
-				start = strpos(order_total['title'], '(') + 1;
-				end = strrpos(order_total['title'], ')');
+				let start = order_total['title'].indexOf('(') + 1;
+				let end = order_total['title'].indexOf(')');
 
 				if (start && end) {
-					data['total_' + order_total['code']] = substr(order_total['title'], start, end - start);
+					data['total_' + order_total['code']] = order_total['title'].substring(start, end - start);
 				}
 			}
 		}
@@ -913,7 +865,7 @@ class OrderController extends Controller {
 		}
 
 		// Commission
-		if ((order_info) && (float)order_info['commission']) {
+		if ((order_info) && order_info['commission']) {
 			data['commission'] = this.currency.format(order_info['commission'], this.config.get('config_currency'));
 		} else {
 			data['commission'] = '';
@@ -927,7 +879,7 @@ class OrderController extends Controller {
 
 		// Addresses
 		if ((order_info)) {
-			this.load.model('customer/customer',this);
+			this.load.model('customer/customer', this);
 
 			data['addresses'] = await this.model_customer_customer.getAddresses(order_info['customer_id']);
 		} else {
@@ -984,7 +936,7 @@ class OrderController extends Controller {
 		}
 
 		// Countries
-		this.load.model('localisation/country');
+		this.load.model('localisation/country', this);
 
 		data['countries'] = await this.model_localisation_country.getCountries();
 
@@ -1134,18 +1086,18 @@ class OrderController extends Controller {
 		data['order_totals'] = [];
 
 		if ((order_info)) {
-			totals await this.model_sale_order.getTotals(order_id);
+			const totals = await this.model_sale_order.getTotals(order_id);
 
 			for (totals of total) {
 				data['order_totals'].push({
-					'title' : total['title'],
-					'text'  : this.currency.format(total['value'], order_info['currency_code'], order_info['currency_value'])
-				];
+					'title': total['title'],
+					'text': this.currency.format(total['value'], order_info['currency_code'], order_info['currency_value'])
+				});
 			}
 		}
 
 		// Order Status
-		this.load.model('localisation/order_status');
+		this.load.model('localisation/order_status', this);
 
 		data['order_statuses'] = await this.model_localisation_order_status.getOrderStatuses();
 
@@ -1159,7 +1111,7 @@ class OrderController extends Controller {
 		data['tabs'] = [];
 
 		// Extension Order Tabs can are called here.
-		this.load.model('setting/extension',this);
+		this.load.model('setting/extension', this);
 
 		if ((order_info['payment_method']['code'])) {
 			if ((order_info['payment_method']['code'])) {
@@ -1168,40 +1120,40 @@ class OrderController extends Controller {
 				code = '';
 			}
 
-			extension_info await this.model_setting_extension.getExtensionByCode('payment', code);
+			const extension_info = await this.model_setting_extension.getExtensionByCode('payment', code);
 
-			if (extension_info && await this.user.hasPermission('access', 'extension/' + extension_info['extension'] + '/payment/' + extension_info['code'])) {
-				output = await this.load.controller('extension/' + extension_info['extension'] + '/payment/' + extension_info['code'] + '.order');
+			if (extension_info.extension_id && await this.user.hasPermission('access', 'extension/' + extension_info['extension'] + '/payment/' + extension_info['code'])) {
+				let output = await this.load.controller('extension/' + extension_info['extension'] + '/payment/' + extension_info['code'] + '.order');
 
-				if (!output instanceof \Exception) {
+				if (!output instanceof Exception) {
 					await this.load.language('extension/' + extension_info['extension'] + '/payment/' + extension_info['code'], 'extension');
 
 					data['tabs'].push({
-						'code'    : extension_info['code'],
-						'title'   : this.language.get('extension_heading_title'),
-						'content' : output
-					];
+						'code': extension_info['code'],
+						'title': this.language.get('extension_heading_title'),
+						'content': output
+					});
 				}
 			}
 		}
 
 		// Extension Order Tabs can are called here.
-		this.load.model('setting/extension',this);
+		this.load.model('setting/extension', this);
 
-		extensions await this.model_setting_extension.getExtensionsByType('fraud');
+		const extensions = await this.model_setting_extension.getExtensionsByType('fraud');
 
-		for (extensions of extension) {
+		for (let extension of extensions) {
 			if (this.config.get('fraud_' + extension['code'] + '_status')) {
 				await this.load.language('extension/' + extension['extension'] + '/fraud/' + extension['code'], 'extension');
 
-				output = await this.load.controller('extension/' + extension['extension'] + '/fraud/' + extension['code'] + '.order');
+				let output = await this.load.controller('extension/' + extension['extension'] + '/fraud/' + extension['code'] + '.order');
 
-				if (!output instanceof \Exception) {
+				if (!output instanceof Exception) {
 					data['tabs'].push({
-						'code'    : extension['extension'],
-						'title'   : this.language.get('extension_heading_title'),
-						'content' : output
-					];
+						'code': extension['extension'],
+						'title': this.language.get('extension_heading_title'),
+						'content': output
+					});
 				}
 			}
 		}
@@ -1224,7 +1176,7 @@ class OrderController extends Controller {
 		}
 
 		// Histories
-		data['history'] = this.getHistory();
+		data['history'] = await this.getHistory();
 
 		data['user_token'] = this.session.data['user_token'];
 
@@ -1243,41 +1195,33 @@ class OrderController extends Controller {
 	async call() {
 		await this.load.language('sale/order');
 
-		const json = {};
-
+		const json = { error: {} };
+		let store_id = 0;
 		if ((this.request.get['store_id'])) {
 			store_id = this.request.get['store_id'];
-		} else {
-			store_id = 0;
 		}
-
+		let language = this.config.get('config_language');
 		if ((this.request.get['language'])) {
 			language = this.request.get['language'];
-		} else {
-			language = this.config.get('config_language');
 		}
-
+		let action = '';
 		if ((this.request.get['action'])) {
 			action = this.request.get['action'];
-		} else {
-			action = '';
 		}
-
+		let session_id = '';
 		if ((this.session.data['api_session'])) {
 			session_id = this.session.data['api_session'];
-		} else {
-			session_id = '';
 		}
 
 		if (!await this.user.hasPermission('modify', 'sale/order')) {
 			json['error']['warning'] = this.language.get('error_permission');
 		}
-
-		if (!Object.keys(json).length) {
+		let output = json;
+		if (!Object.keys(json.error).length) {
 			// 1. Create a store instance using loader class to call controllers, models, views, libraries
-			this.load.model('setting/store',this);
+			this.load.model('setting/store', this);
 
-			store await this.model_setting_store.createStoreInstance(store_id, language, session_id);
+			const store = await this.model_setting_store.createStoreInstance(store_id, language, session_id);
 
 			// 2. Add the request vars and remove the unneeded ones
 			store.request.get = this.request.get;
@@ -1286,15 +1230,13 @@ class OrderController extends Controller {
 			store.request.get['route'] = 'api/' + action;
 
 			// 3. Remove the unneeded keys
-			delete (store.request.get['action']);
-			delete (store.request.get['user_token']);
+			delete store.request.get['action'];
+			delete store.request.get['user_token'];
 
 			// Call the required API controller
-			store.load.controller(store.request.get['route']);
+			await store.load.controller(store.request.get['route']);
 
 			output = store.response.getOutput();
-		} else {
-			output = json;
 		}
 
 		this.response.addHeader('Content-Type: application/json');
@@ -1305,6 +1247,7 @@ class OrderController extends Controller {
 	 * @return void
 	 */
 	async invoice() {
+		const data = {};
 		await this.load.language('sale/order');
 
 		data['title'] = this.language.get('text_invoice');
@@ -1322,53 +1265,48 @@ class OrderController extends Controller {
 		data['jquery'] = 'view/javascript/jquery/jquery-3.7.1.min.js';
 		data['bootstrap_js'] = 'view/javascript/bootstrap/js/bootstrap.bundle.min.js';
 
-		this.load.model('sale/order');
-		this.load.model('setting/setting',this);
-		this.load.model('tool/upload');
-		this.load.model('sale/subscription');
+		this.load.model('sale/order', this);
+		this.load.model('setting/setting', this);
+		this.load.model('tool/upload', this);
+		this.load.model('sale/subscription', this);
 
 		data['orders'] = [];
 
-		orders = [];
+		let orders = [];
 
 		if ((this.request.post['selected'])) {
 			orders = this.request.post['selected'];
 		}
 
 		if ((this.request.get['order_id'])) {
-			orders[] = this.request.get['order_id'];
+			orders.push(this.request.get['order_id']);
 		}
 
 		for (orders of order_id) {
-			order_info await this.model_sale_order.getOrder(order_id);
+			const order_info = await this.model_sale_order.getOrder(order_id);
 
-			if (order_info) {
+			if (order_info.order_id) {
 				const store_info = await this.model_setting_setting.getSetting('config', order_info['store_id']);
-
+				let store_address = this.config.get('config_address');
+				let store_email = this.config.get('config_email');
+				let store_telephone = this.config.get('config_telephone');
 				if (store_info && store_info.store_id) {
 					store_address = store_info['config_address'];
 					store_email = store_info['config_email'];
 					store_telephone = store_info['config_telephone'];
-				} else {
-					store_address = this.config.get('config_address');
-					store_email = this.config.get('config_email');
-					store_telephone = this.config.get('config_telephone');
 				}
-
+				let invoice_no = '';
 				if (order_info['invoice_no']) {
 					invoice_no = order_info['invoice_prefix'] + order_info['invoice_no'];
-				} else {
-					invoice_no = '';
 				}
 
 				// Payment Address
+				let format = '{firstname} {lastname}' + "\n" + '{company}' + "\n" + '{address_1}' + "\n" + '{address_2}' + "\n" + '{city} {postcode}' + "\n" + '{zone}' + "\n" + '{country}';
 				if (order_info['payment_address_format']) {
 					format = order_info['payment_address_format'];
-				} else {
-					format = '{firstname} {lastname}' + "\n" + '{company}' + "\n" + '{address_1}' + "\n" + '{address_2}' + "\n" + '{city} {postcode}' + "\n" + '{zone}' + "\n" + '{country}';
 				}
 
-				find = [
+				let find = [
 					'{firstname}',
 					'{lastname}',
 					'{company}',
@@ -1381,20 +1319,20 @@ class OrderController extends Controller {
 					'{country}'
 				];
 
-				replace = [
-					'firstname' : order_info['payment_firstname'],
-					'lastname'  : order_info['payment_lastname'],
-					'company'   : order_info['payment_company'],
-					'address_1' : order_info['payment_address_1'],
-					'address_2' : order_info['payment_address_2'],
-					'city'      : order_info['payment_city'],
-					'postcode'  : order_info['payment_postcode'],
-					'zone'      : order_info['payment_zone'],
-					'zone_code' : order_info['payment_zone_code'],
-					'country'   : order_info['payment_country']
-				];
+				let replace = {
+					'firstname': order_info['payment_firstname'],
+					'lastname': order_info['payment_lastname'],
+					'company': order_info['payment_company'],
+					'address_1': order_info['payment_address_1'],
+					'address_2': order_info['payment_address_2'],
+					'city': order_info['payment_city'],
+					'postcode': order_info['payment_postcode'],
+					'zone': order_info['payment_zone'],
+					'zone_code': order_info['payment_zone_code'],
+					'country': order_info['payment_country']
+				};
 
-				payment_address = str_replace(["\r\n", "\r", "\n"], '<br/>', preg_replace(["/\s\s+/", "/\r\r+/", "/\n\n+/"], '<br/>', trim(str_replace(find, replace, format))));
+				let payment_address = str_replace(["\r\n", "\r", "\n"], '<br/>', preg_replace(["/\s\s+/", "/\r\r+/", "/\n\n+/"], '<br/>', trim(format.replaceAll(find, replace))));
 
 				// Shipping Address
 				if (order_info['shipping_address_format']) {
@@ -1416,37 +1354,38 @@ class OrderController extends Controller {
 					'{country}'
 				];
 
-				replace = [
-					'firstname' : order_info['shipping_firstname'],
-					'lastname'  : order_info['shipping_lastname'],
-					'company'   : order_info['shipping_company'],
-					'address_1' : order_info['shipping_address_1'],
-					'address_2' : order_info['shipping_address_2'],
-					'city'      : order_info['shipping_city'],
-					'postcode'  : order_info['shipping_postcode'],
-					'zone'      : order_info['shipping_zone'],
-					'zone_code' : order_info['shipping_zone_code'],
-					'country'   : order_info['shipping_country']
-				];
+				replace = {
+					'firstname': order_info['shipping_firstname'],
+					'lastname': order_info['shipping_lastname'],
+					'company': order_info['shipping_company'],
+					'address_1': order_info['shipping_address_1'],
+					'address_2': order_info['shipping_address_2'],
+					'city': order_info['shipping_city'],
+					'postcode': order_info['shipping_postcode'],
+					'zone': order_info['shipping_zone'],
+					'zone_code': order_info['shipping_zone_code'],
+					'country': order_info['shipping_country']
+				};
 
-				shipping_address = str_replace(["\r\n", "\r", "\n"], '<br/>', preg_replace(["/\s\s+/", "/\r\r+/", "/\n\n+/"], '<br/>', trim(str_replace(find, replace, format))));
+				shipping_address = str_replace(["\r\n", "\r", "\n"], '<br/>', preg_replace(["/\s\s+/", "/\r\r+/", "/\n\n+/"], '<br/>', trim(format.replaceAll(find, replace))));
 
-				product_data = [];
+				let product_data = [];
 
-				products await this.model_sale_order.getProducts(order_id);
+				const products = await this.model_sale_order.getProducts(order_id);
 
-				for (products of product) {
+				for (let product of products) {
 					let option_data = [];
 
-					options await this.model_sale_order.getOptions(order_id, product['order_product_id']);
+					const options = await this.model_sale_order.getOptions(order_id, product['order_product_id']);
 
-					for (options of option) {
+					for (let option of options) {
+						let value = '';
 						if (option['type'] != 'file') {
 							value = option['value'];
 						} else {
-							upload_info await this.model_tool_upload.getUploadByCode(option['value']);
+							const upload_info = await this.model_tool_upload.getUploadByCode(option['value']);
 
-							if (upload_info) {
+							if (upload_info.upload_id) {
 								value = upload_info['name'];
 							} else {
 								value = '';
@@ -1454,17 +1393,17 @@ class OrderController extends Controller {
 						}
 
 						option_data.push({
-							'name'  : option['name'],
-							'value' : value
-						];
+							'name': option['name'],
+							'value': value
+						});
 					}
 
 					// Subscription
-					description = '';
+					let description = '';
 
-					subscription_info await this.model_sale_order.getSubscription(order_id, product['order_product_id']);
+					const subscription_info = await this.model_sale_order.getSubscription(order_id, product['order_product_id']);
 
-					if (subscription_info) {
+					if (subscription_info.subscription_id) {
 						if (subscription_info['trial_status']) {
 							trial_price = this.currency.format(subscription_info['trial_price'], this.config.get('config_currency'));
 							trial_cycle = subscription_info['trial_cycle'];
@@ -1474,10 +1413,10 @@ class OrderController extends Controller {
 							description += sprintf(this.language.get('text_subscription_trial'), trial_price, trial_cycle, trial_frequency, trial_duration);
 						}
 
-						price = this.currency.format(subscription_info['price'], this.config.get('config_currency'));
-						cycle = subscription_info['cycle'];
-						frequency = this.language.get('text_' + subscription_info['frequency']);
-						duration = subscription_info['duration'];
+						let price = this.currency.format(subscription_info['price'], this.config.get('config_currency'));
+						let cycle = subscription_info['cycle'];
+						let frequency = this.language.get('text_' + subscription_info['frequency']);
+						let duration = subscription_info['duration'];
 
 						if (subscription_info['duration']) {
 							description += sprintf(this.language.get('text_subscription_duration'), price, cycle, frequency, duration);
@@ -1487,58 +1426,58 @@ class OrderController extends Controller {
 					}
 
 					product_data.push({
-						'name'     		: product['name'],
-						'model'    		: product['model'],
-						'option'   		: option_data,
-						'subscription'	: description,
-						'quantity' 		: product['quantity'],
-						'price'    		: this.currency.format(product['price'] + (this.config.get('config_tax') ? product['tax'] : 0), order_info['currency_code'], order_info['currency_value']),
-						'total'    		: this.currency.format(product['total'] + (this.config.get('config_tax') ? (product['tax'] * product['quantity']) : 0), order_info['currency_code'], order_info['currency_value'])
-					];
+						'name': product['name'],
+						'model': product['model'],
+						'option': option_data,
+						'subscription': description,
+						'quantity': product['quantity'],
+						'price': this.currency.format(product['price'] + (this.config.get('config_tax') ? product['tax'] : 0), order_info['currency_code'], order_info['currency_value']),
+						'total': this.currency.format(product['total'] + (this.config.get('config_tax') ? (product['tax'] * product['quantity']) : 0), order_info['currency_code'], order_info['currency_value'])
+					});
 				}
 
-				voucher_data = [];
+				let voucher_data = [];
 
-				vouchers await this.model_sale_order.getVouchers(order_id);
+				const vouchers = await this.model_sale_order.getVouchers(order_id);
 
 				for (vouchers of voucher) {
 					voucher_data.push({
-						'description' : voucher['description'],
-						'amount'      : this.currency.format(voucher['amount'], order_info['currency_code'], order_info['currency_value'])
-					];
+						'description': voucher['description'],
+						'amount': this.currency.format(voucher['amount'], order_info['currency_code'], order_info['currency_value'])
+					});
 				}
 
-				total_data = [];
+				let total_data = [];
 
-				totals await this.model_sale_order.getTotals(order_id);
+				const totals = await this.model_sale_order.getTotals(order_id);
 
 				for (totals of total) {
 					total_data.push({
-						'title' : total['title'],
-						'text'  : this.currency.format(total['value'], order_info['currency_code'], order_info['currency_value'])
-					];
+						'title': total['title'],
+						'text': this.currency.format(total['value'], order_info['currency_code'], order_info['currency_value'])
+					});
 				}
 
 				data['orders'].push({
-					'order_id'         : order_id,
-					'invoice_no'       : invoice_no,
-					'date_added'       : date(this.language.get('date_format_short'), strtotime(order_info['date_added'])),
-					'store_name'       : order_info['store_name'],
-					'store_url'        : rtrim(order_info['store_url'], '/'),
-					'store_address'    : nl2br(store_address),
-					'store_email'      : store_email,
-					'store_telephone'  : store_telephone,
-					'email'            : order_info['email'],
-					'telephone'        : order_info['telephone'],
-					'shipping_address' : shipping_address,
-					'shipping_method'  : (order_info['shipping_method'] ? order_info['shipping_method']['name'] : ''),
-					'payment_address'  : payment_address,
-					'payment_method'   : order_info['payment_method']['name'],
-					'product'          : product_data,
-					'voucher'          : voucher_data,
-					'total'            : total_data,
-					'comment'          : nl2br(order_info['comment'])
-				];
+					'order_id': order_id,
+					'invoice_no': invoice_no,
+					'date_added': date(this.language.get('date_format_short'), strtotime(order_info['date_added'])),
+					'store_name': order_info['store_name'],
+					'store_url': rtrim(order_info['store_url'], '/'),
+					'store_address': nl2br(store_address),
+					'store_email': store_email,
+					'store_telephone': store_telephone,
+					'email': order_info['email'],
+					'telephone': order_info['telephone'],
+					'shipping_address': shipping_address,
+					'shipping_method': (order_info['shipping_method'] ? order_info['shipping_method']['name'] : ''),
+					'payment_address': payment_address,
+					'payment_method': order_info['payment_method']['name'],
+					'product': product_data,
+					'voucher': voucher_data,
+					'total': total_data,
+					'comment': nl2br(order_info['comment'])
+				});
 			}
 		}
 
@@ -1549,6 +1488,7 @@ class OrderController extends Controller {
 	 * @return void
 	 */
 	async shipping() {
+		const data = {};
 		await this.load.language('sale/order');
 
 		data['title'] = this.language.get('text_shipping');
@@ -1566,55 +1506,52 @@ class OrderController extends Controller {
 		data['jquery'] = 'view/javascript/jquery/jquery-3.7.1.min.js';
 		data['bootstrap_js'] = 'view/javascript/bootstrap/js/bootstrap.bundle.min.js';
 
-		this.load.model('sale/order');
-		this.load.model('catalog/product',this);
-		this.load.model('setting/setting',this);
-		this.load.model('tool/upload');
-		this.load.model('sale/subscription');
+		this.load.model('sale/order', this);
+		this.load.model('catalog/product', this);
+		this.load.model('setting/setting', this);
+		this.load.model('tool/upload', this);
+		this.load.model('sale/subscription', this);
 
 		data['orders'] = [];
 
-		orders = [];
+		let orders = [];
 
 		if ((this.request.post['selected'])) {
 			orders = this.request.post['selected'];
 		}
 
 		if ((this.request.get['order_id'])) {
-			orders[] = this.request.get['order_id'];
+			orders.push(this.request.get['order_id']);
 		}
 
-		for (orders of order_id) {
-			order_info await this.model_sale_order.getOrder(order_id);
+		for (let order_id of orders) {
+			const order_info = await this.model_sale_order.getOrder(order_id);
 
 			// Make sure there is a shipping method
 			if (order_info && order_info['shipping_method']) {
 				const store_info = await this.model_setting_setting.getSetting('config', order_info['store_id']);
 
+				let store_address = this.config.get('config_address');
+				let store_email = this.config.get('config_email');
+				let store_telephone = this.config.get('config_telephone');
+
 				if (store_info && store_info.store_id) {
 					store_address = store_info['config_address'];
 					store_email = store_info['config_email'];
 					store_telephone = store_info['config_telephone'];
-				} else {
-					store_address = this.config.get('config_address');
-					store_email = this.config.get('config_email');
-					store_telephone = this.config.get('config_telephone');
 				}
-
+				let invoice_no = '';
 				if (order_info['invoice_no']) {
 					invoice_no = order_info['invoice_prefix'] + order_info['invoice_no'];
-				} else {
-					invoice_no = '';
 				}
 
 				// Shipping Address
+				let format = '{firstname} {lastname}' + "\n" + '{company}' + "\n" + '{address_1}' + "\n" + '{address_2}' + "\n" + '{city} {postcode}' + "\n" + '{zone}' + "\n" + '{country}';
 				if (order_info['shipping_address_format']) {
 					format = order_info['shipping_address_format'];
-				} else {
-					format = '{firstname} {lastname}' + "\n" + '{company}' + "\n" + '{address_1}' + "\n" + '{address_2}' + "\n" + '{city} {postcode}' + "\n" + '{zone}' + "\n" + '{country}';
 				}
 
-				find = [
+				let find = [
 					'{firstname}',
 					'{lastname}',
 					'{company}',
@@ -1627,42 +1564,43 @@ class OrderController extends Controller {
 					'{country}'
 				];
 
-				replace = [
-					'firstname' : order_info['shipping_firstname'],
-					'lastname'  : order_info['shipping_lastname'],
-					'company'   : order_info['shipping_company'],
-					'address_1' : order_info['shipping_address_1'],
-					'address_2' : order_info['shipping_address_2'],
-					'city'      : order_info['shipping_city'],
-					'postcode'  : order_info['shipping_postcode'],
-					'zone'      : order_info['shipping_zone'],
-					'zone_code' : order_info['shipping_zone_code'],
-					'country'   : order_info['shipping_country']
-				];
+				let replace = {
+					'firstname': order_info['shipping_firstname'],
+					'lastname': order_info['shipping_lastname'],
+					'company': order_info['shipping_company'],
+					'address_1': order_info['shipping_address_1'],
+					'address_2': order_info['shipping_address_2'],
+					'city': order_info['shipping_city'],
+					'postcode': order_info['shipping_postcode'],
+					'zone': order_info['shipping_zone'],
+					'zone_code': order_info['shipping_zone_code'],
+					'country': order_info['shipping_country']
+				};
 
-				shipping_address = str_replace(["\r\n", "\r", "\n"], '<br/>', preg_replace(["/\s\s+/", "/\r\r+/", "/\n\n+/"], '<br/>', trim(str_replace(find, replace, format))));
+				let shipping_address = str_replace(["\r\n", "\r", "\n"], '<br/>', preg_replace(["/\s\s+/", "/\r\r+/", "/\n\n+/"], '<br/>', trim(str_replace(find, replace, format))));
 
-				product_data = [];
+				let product_data = [];
 
-				products await this.model_sale_order.getProducts(order_id);
+				const products = await this.model_sale_order.getProducts(order_id);
 
-				for (products of product) {
-					option_weight = 0;
+				for (let product of products) {
+					let option_weight = 0;
 
 					const product_info = await this.model_catalog_product.getProduct(product['product_id']);
 
-					if (product_info) {
+					if (product_info.product_id) {
 						let option_data = [];
 
-						options await this.model_sale_order.getOptions(order_id, product['order_product_id']);
+						const options = await this.model_sale_order.getOptions(order_id, product['order_product_id']);
 
-						for (options of option) {
+						for (let option of options) {
+							let value = '';
 							if (option['type'] != 'file') {
 								value = option['value'];
 							} else {
-								upload_info await this.model_tool_upload.getUploadByCode(option['value']);
+								const upload_info = await this.model_tool_upload.getUploadByCode(option['value']);
 
-								if (upload_info) {
+								if (upload_info.upload_id) {
 									value = upload_info['name'];
 								} else {
 									value = '';
@@ -1670,11 +1608,11 @@ class OrderController extends Controller {
 							}
 
 							option_data.push({
-								'name'  : option['name'],
-								'value' : value
-							];
+								'name': option['name'],
+								'value': value
+							});
 
-							product_option_value_info await this.model_catalog_product.getOptionValue(product['product_id'], option['product_option_value_id']);
+							const product_option_value_info = await this.model_catalog_product.getOptionValue(product['product_id'], option['product_option_value_id']);
 
 							if ((product_option_value_info['weight'])) {
 								if (product_option_value_info['weight_prefix'] == '+') {
@@ -1686,38 +1624,38 @@ class OrderController extends Controller {
 						}
 
 						product_data.push({
-							'name'     	   : product_info['name'],
-							'model'    	   : product_info['model'],
-							'option'   	   : option_data,
-							'quantity'     : product['quantity'],
-							'location'     : product_info['location'],
-							'sku'          : product_info['sku'],
-							'upc'          : product_info['upc'],
-							'ean'          : product_info['ean'],
-							'jan'          : product_info['jan'],
-							'isbn'         : product_info['isbn'],
-							'mpn'          : product_info['mpn'],
-							'weight'       : this.weight.format((product_info['weight'] + (float)option_weight) * product['quantity'], product_info['weight_class_id'], this.language.get('decimal_point'), this.language.get('thousand_point'))
-						];
+							'name': product_info['name'],
+							'model': product_info['model'],
+							'option': option_data,
+							'quantity': product['quantity'],
+							'location': product_info['location'],
+							'sku': product_info['sku'],
+							'upc': product_info['upc'],
+							'ean': product_info['ean'],
+							'jan': product_info['jan'],
+							'isbn': product_info['isbn'],
+							'mpn': product_info['mpn'],
+							'weight': this.weight.format((product_info['weight'] + option_weight) * product['quantity'], product_info['weight_class_id'], this.language.get('decimal_point'), this.language.get('thousand_point'))
+						});
 					}
 				}
 
 				data['orders'].push({
-					'order_id'         : order_id,
-					'invoice_no'       : invoice_no,
-					'date_added'       : date(this.language.get('date_format_short'), strtotime(order_info['date_added'])),
-					'store_name'       : order_info['store_name'],
-					'store_url'        : rtrim(order_info['store_url'], '/'),
-					'store_address'    : nl2br(store_address),
-					'store_email'      : store_email,
-					'store_telephone'  : store_telephone,
-					'email'            : order_info['email'],
-					'telephone'        : order_info['telephone'],
-					'shipping_address' : shipping_address,
-					'shipping_method'  : order_info['shipping_method']['name'],
-					'product'          : product_data,
-					'comment'          : nl2br(order_info['comment'])
-				];
+					'order_id': order_id,
+					'invoice_no': invoice_no,
+					'date_added': date(this.language.get('date_format_short'), strtotime(order_info['date_added'])),
+					'store_name': order_info['store_name'],
+					'store_url': rtrim(order_info['store_url'], '/'),
+					'store_address': nl2br(store_address),
+					'store_email': store_email,
+					'store_telephone': store_telephone,
+					'email': order_info['email'],
+					'telephone': order_info['telephone'],
+					'shipping_address': shipping_address,
+					'shipping_method': order_info['shipping_method']['name'],
+					'product': product_data,
+					'comment': nl2br(order_info['comment'])
+				});
 			}
 		}
 
@@ -1737,43 +1675,41 @@ class OrderController extends Controller {
 	 * @return string
 	 */
 	async getHistory() {
+		const data = {};
+		let order_id = 0;
 		if ((this.request.get['order_id'])) {
 			order_id = this.request.get['order_id'];
-		} else {
-			order_id = 0;
 		}
-
+		let page = 1;
 		if ((this.request.get['page']) && this.request.get['route'] == 'sale/order.history') {
 			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
 		}
 
 		let limit = 10;
 
 		data['histories'] = [];
 
-		this.load.model('sale/order');
+		this.load.model('sale/order', this);
 
 		const results = await this.model_sale_order.getHistories(order_id, (page - 1) * limit, limit);
 
 		for (let result of results) {
 			data['histories'].push({
-				'status'     : result['status'],
-				'comment'    : nl2br(result['comment']),
-				'notify'     : result['notify'] ? this.language.get('text_yes') : this.language.get('text_no'),
-				'date_added' : date(this.language.get('date_format_short'), strtotime(result['date_added']))
-			];
+				'status': result['status'],
+				'comment': nl2br(result['comment']),
+				'notify': result['notify'] ? this.language.get('text_yes') : this.language.get('text_no'),
+				'date_added': date(this.language.get('date_format_short'), strtotime(result['date_added']))
+			});
 		}
 
-		history_total await this.model_sale_order.getTotalHistories(order_id);
+		const history_total = await this.model_sale_order.getTotalHistories(order_id);
 
 		data['pagination'] = await this.load.controller('common/pagination', {
-			'total' : history_total,
-			'page'  : page,
-			'limit' : limit,
-			'url'   : this.url.link('sale/order.history', 'user_token=' + this.session.data['user_token'] + '&order_id=' + order_id + '&page={page}')
-		]);
+			'total': history_total,
+			'page': page,
+			'limit': limit,
+			'url': this.url.link('sale/order.history', 'user_token=' + this.session.data['user_token'] + '&order_id=' + order_id + '&page={page}')
+		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (history_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (history_total - limit)) ? history_total : (((page - 1) * limit) + limit), history_total, Math.ceil(history_total / limit));
 
@@ -1787,22 +1723,20 @@ class OrderController extends Controller {
 		await this.load.language('sale/order');
 
 		const json = {};
-
+		let order_id = 0;
 		if ((this.request.get['order_id'])) {
 			order_id = this.request.get['order_id'];
-		} else {
-			order_id = 0;
 		}
 
 		if (!await this.user.hasPermission('modify', 'sale/order')) {
 			json['error'] = this.language.get('error_permission');
 		}
 
-		this.load.model('sale/order');
+		this.load.model('sale/order', this);
 
-		order_info await this.model_sale_order.getOrder(order_id);
+		const order_info = await this.model_sale_order.getOrder(order_id);
 
-		if (order_info) {
+		if (order_info.order_id) {
 			if (order_info['invoice_no']) {
 				json['error'] = this.language.get('error_invoice_no');
 			}
@@ -1813,7 +1747,7 @@ class OrderController extends Controller {
 		if (!Object.keys(json).length) {
 			json['success'] = this.language.get('text_success');
 
-			this.load.model('sale/order');
+			this.load.model('sale/order', this);
 
 			json['invoice_no'] = await this.model_sale_order.createInvoiceNo(order_id);
 		}
@@ -1829,20 +1763,18 @@ class OrderController extends Controller {
 		await this.load.language('sale/order');
 
 		const json = {};
-
+		let order_id = 0;
 		if ((this.request.get['order_id'])) {
 			order_id = this.request.get['order_id'];
-		} else {
-			order_id = 0;
 		}
 
 		if (!await this.user.hasPermission('modify', 'sale/order')) {
 			json['error'] = this.language.get('error_permission');
 		}
 
-		this.load.model('sale/order');
+		this.load.model('sale/order', this);
 
-		order_info await this.model_sale_order.getOrder(order_id);
+		const order_info = await this.model_sale_order.getOrder(order_id);
 
 		if (order_info) {
 			if (!order_info['customer_id']) {
@@ -1852,9 +1784,9 @@ class OrderController extends Controller {
 			json['error'] = this.language.get('error_order');
 		}
 
-		this.load.model('customer/customer',this);
+		this.load.model('customer/customer', this);
 
-		reward_total await this.model_customer_customer.getTotalRewardsByOrderId(order_id);
+		const reward_total = await this.model_customer_customer.getTotalRewardsByOrderId(order_id);
 
 		if (reward_total) {
 			json['error'] = this.language.get('error_reward_add');
@@ -1877,27 +1809,25 @@ class OrderController extends Controller {
 		await this.load.language('sale/order');
 
 		const json = {};
-
+		let order_id = 0;
 		if ((this.request.get['order_id'])) {
 			order_id = this.request.get['order_id'];
-		} else {
-			order_id = 0;
 		}
 
 		if (!await this.user.hasPermission('modify', 'sale/order')) {
 			json['error'] = this.language.get('error_permission');
 		}
 
-		this.load.model('sale/order');
+		this.load.model('sale/order', this);
 
-		order_info await this.model_sale_order.getOrder(order_id);
+		const order_info = await this.model_sale_order.getOrder(order_id);
 
-		if (!order_info) {
+		if (!order_info.order_id) {
 			json['error'] = this.language.get('error_order');
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('customer/customer',this);
+			this.load.model('customer/customer', this);
 
 			await this.model_customer_customer.deleteReward(order_id);
 
@@ -1915,31 +1845,29 @@ class OrderController extends Controller {
 		await this.load.language('sale/order');
 
 		const json = {};
-
+		let order_id = 0;
 		if ((this.request.get['order_id'])) {
 			order_id = this.request.get['order_id'];
-		} else {
-			order_id = 0;
 		}
 
 		if (!await this.user.hasPermission('modify', 'sale/order')) {
 			json['error'] = this.language.get('error_permission');
 		}
 
-		this.load.model('sale/order');
+		this.load.model('sale/order', this);
 
-		order_info await this.model_sale_order.getOrder(order_id);
+		const order_info = await this.model_sale_order.getOrder(order_id);
 
 		if (order_info) {
-			this.load.model('customer/customer',this);
+			this.load.model('customer/customer', this);
 
-			customer_info await this.model_customer_customer.getCustomer(order_info['affiliate_id']);
+			const customer_info = await this.model_customer_customer.getCustomer(order_info['affiliate_id']);
 
 			if (!customer_info) {
 				json['error'] = this.language.get('error_affiliate');
 			}
 
-			affiliate_total await this.model_customer_customer.getTotalTransactionsByOrderId(order_id);
+			const affiliate_total = await this.model_customer_customer.getTotalTransactionsByOrderId(order_id);
 
 			if (affiliate_total) {
 				json['error'] = this.language.get('error_commission_add');
@@ -1965,27 +1893,25 @@ class OrderController extends Controller {
 		await this.load.language('sale/order');
 
 		const json = {};
-
+		let order_id = 0;
 		if ((this.request.get['order_id'])) {
 			order_id = this.request.get['order_id'];
-		} else {
-			order_id = 0;
-		}
+		} 
 
 		if (!await this.user.hasPermission('modify', 'sale/order')) {
 			json['error'] = this.language.get('error_permission');
 		}
 
-		this.load.model('sale/order');
+		this.load.model('sale/order', this);
 
-		order_info await this.model_sale_order.getOrder(order_id);
+		const order_info = await this.model_sale_order.getOrder(order_id);
 
-		if (!order_info) {
+		if (!order_info.order_id) {
 			json['error'] = this.language.get('error_order');
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('customer/customer',this);
+			this.load.model('customer/customer', this);
 
 			await this.model_customer_customer.deleteTransactionByOrderId(order_id);
 

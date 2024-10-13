@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Admin\Controller\Sale;
-/**
- * 
- *
- * @package Opencart\Admin\Controller\Sale
- */
-class VoucherThemeController extends Controller {
+module.exports=class VoucherThemeController extends Controller {
 	/**
 	 * @return void
 	 */
@@ -104,11 +97,11 @@ class VoucherThemeController extends Controller {
 		let filter_data = {
 			'sort'  : sort,
 			'order' : order,
-			'start' : (page - 1) * this.config.get('config_pagination_admin'),
+			'start' : (page - 1) * Number(this.config.get('config_pagination_admin')),
 			'limit' : this.config.get('config_pagination_admin')
 		});
 
-		this.load.model('sale/voucher_theme');
+		this.load.model('sale/voucher_theme',this);
 
 		voucher_theme_total await this.model_sale_voucher_theme.getTotalVoucherThemes();
 
@@ -149,7 +142,7 @@ class VoucherThemeController extends Controller {
 			'url'   : this.url.link('sale/voucher_theme.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		]);
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (voucher_theme_total) ? ((page - 1) * this.config.get('config_pagination_admin')) + 1 : 0, (((page - 1) * this.config.get('config_pagination_admin')) > (voucher_theme_total - this.config.get('config_pagination_admin'))) ? voucher_theme_total : (((page - 1) * this.config.get('config_pagination_admin')) + this.config.get('config_pagination_admin')), voucher_theme_total, Math.ceil(voucher_theme_total / this.config.get('config_pagination_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (voucher_theme_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (voucher_theme_total - this.config.get('config_pagination_admin'))) ? voucher_theme_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), voucher_theme_total, Math.ceil(voucher_theme_total / this.config.get('config_pagination_admin')));
 
 		data['sort'] = sort;
 		data['order'] = order;
@@ -197,7 +190,7 @@ class VoucherThemeController extends Controller {
 		data['back'] = this.url.link('sale/voucher_theme', 'user_token=' + this.session.data['user_token'] + url);
 
 		if ((this.request.get['voucher_theme_id'])) {
-			this.load.model('sale/voucher_theme');
+			this.load.model('sale/voucher_theme',this);
 
 			voucher_theme_info await this.model_sale_voucher_theme.getVoucherTheme(this.request.get['voucher_theme_id']);
 		}
@@ -266,7 +259,7 @@ class VoucherThemeController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('sale/voucher_theme');
+			this.load.model('sale/voucher_theme',this);
 
 			if (!this.request.post['voucher_theme_id']) {
 				json['voucher_theme_id'] = await this.model_sale_voucher_theme.addVoucherTheme(this.request.post);
@@ -309,7 +302,7 @@ class VoucherThemeController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('sale/voucher_theme');
+			this.load.model('sale/voucher_theme',this);
 
 			for (let voucher_theme_id of selected) {
 				await this.model_sale_voucher_theme.deleteVoucherTheme(voucher_theme_id);

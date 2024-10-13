@@ -104,7 +104,7 @@ class TopicController extends Controller {
 		let filter_data = {
 			'sort'  : sort,
 			'order' : order,
-			'start' : (page - 1) * this.config.get('config_pagination_admin'),
+			'start' : (page - 1) * Number(this.config.get('config_pagination_admin')),
 			'limit' : this.config.get('config_pagination_admin')
 		});
 
@@ -152,7 +152,7 @@ class TopicController extends Controller {
 			'url'   : this.url.link('cms/topic.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		]);
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (topic_total) ? ((page - 1) * this.config.get('config_pagination_admin')) + 1 : 0, (((page - 1) * this.config.get('config_pagination_admin')) > (topic_total - this.config.get('config_pagination_admin'))) ? topic_total : (((page - 1) * this.config.get('config_pagination_admin')) + this.config.get('config_pagination_admin')), topic_total, Math.ceil(topic_total / this.config.get('config_pagination_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (topic_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (topic_total - this.config.get('config_pagination_admin'))) ? topic_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), topic_total, Math.ceil(topic_total / this.config.get('config_pagination_admin')));
 
 		data['sort'] = sort;
 		data['order'] = order;

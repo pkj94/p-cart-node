@@ -70,7 +70,7 @@ class ContactController extends Controller {
 			this.load.model('setting/store',this);
 			this.load.model('setting/setting',this);
 			this.load.model('customer/customer',this);
-			this.load.model('sale/order');
+			this.load.model('sale/order',this);
 
 			const store_info = await this.model_setting_store.getStore(this.request.post['store_id']);
 
@@ -148,7 +148,7 @@ class ContactController extends Controller {
 						customers = array_slice(this.request.post['customer'], (page - 1) * limit, limit);
 
 						for (customers of customer_id) {
-							customer_info await this.model_customer_customer.getCustomer(customer_id);
+							const customer_info = await this.model_customer_customer.getCustomer(customer_id);
 
 							if (customer_info) {
 								emails[] = customer_info['email'];

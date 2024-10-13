@@ -157,7 +157,7 @@ if ((this.request.get['filter_name'])) {
 			'filter_code'    : filter_code,
 			'sort'           : sort,
 			'order'          : order,
-			'start'          : (page - 1) * this.config.get('config_pagination_admin'),
+			'start'          : (page - 1) * Number(this.config.get('config_pagination_admin')),
 			'limit'          : this.config.get('config_pagination_admin')
 		});
 
@@ -231,7 +231,7 @@ if ((this.request.get['filter_name'])) {
 			'url'   : this.url.link('localisation/zone.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		]);
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (zone_total) ? ((page - 1) * this.config.get('config_pagination_admin')) + 1 : 0, (((page - 1) * this.config.get('config_pagination_admin')) > (zone_total - this.config.get('config_pagination_admin'))) ? zone_total : (((page - 1) * this.config.get('config_pagination_admin')) + this.config.get('config_pagination_admin')), zone_total, Math.ceil(zone_total / this.config.get('config_pagination_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (zone_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (zone_total - this.config.get('config_pagination_admin'))) ? zone_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), zone_total, Math.ceil(zone_total / this.config.get('config_pagination_admin')));
 
 		data['sort'] = sort;
 		data['order'] = order;
@@ -320,7 +320,7 @@ if ((this.request.get['filter_name'])) {
 			data['code'] = '';
 		}
 
-		this.load.model('localisation/country');
+		this.load.model('localisation/country',this);
 
 		data['countries'] = await this.model_localisation_country.getCountries();
 

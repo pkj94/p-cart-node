@@ -21,7 +21,42 @@ function getURLVar(key) {
         }
     }
 }
-
+function form2Json(str) {
+    "use strict";
+    var obj, i, pt, keys, j, ev;
+    if (typeof form2Json.br !== 'function') {
+        form2Json.br = function (repl) {
+            if (repl.indexOf(']') !== -1) {
+                return repl.replace(/\](.+?)(,|$)/g, function ($1, $2, $3) {
+                    return form2Json.br($2 + '}' + $3);
+                });
+            }
+            return repl;
+        };
+    }
+    str = '{"' + (str.indexOf('%') !== -1 ? decodeURI(str) : str) + '"}';
+    obj = str.replace(/\=/g, '":"').replace(/&/g, '","').replace(/\[/g, '":{"');
+    obj = JSON.parse(obj.replace(/\](.+?)(,|$)/g, function ($1, $2, $3) { return form2Json.br($2 + '}' + $3); }));
+    pt = ('&' + str).replace(/(\[|\]|\=)/g, '"$1"').replace(/\]"+/g, ']').replace(/&([^\[\=]+?)(\[|\=)/g, '"&["$1]$2');
+    pt = (pt + '"').replace(/^"&/, '').split('&');
+    for (i = 0; i < pt.length; i++) {
+        ev = obj;
+        keys = pt[i].match(/(?!:(\["))([^"]+?)(?=("\]))/g);
+        for (j = 0; j < keys.length; j++) {
+            if (!ev.hasOwnProperty(keys[j])) {
+                if (keys.length > (j + 1)) {
+                    ev[keys[j]] = {};
+                }
+                else {
+                    ev[keys[j]] = pt[i].split('=')[1].replace(/"/g, '');
+                    break;
+                }
+            }
+            ev = ev[keys[j]];
+        }
+    }
+    return obj;
+}
 // On August 17 2021, Internet Explorer 11 (IE11) will no longer be supported by Microsoft's 365 applications and services.
 function isIE() {
     if (!!window.ActiveXObject || "ActiveXObject" in window) return true;
@@ -236,15 +271,17 @@ $(document).on('submit', 'form', function (e) {
         console.log('method ' + method);
         console.log('enctype ' + enctype);
         console.log($(element).serialize());
-        var formData = {};
+        var formData = form2Json($(element).serialize());
         var inputs = $(element).serializeArray();
-        $.each(inputs, function (i, input) {
-            if (input.name.indexOf('[]') >= 0) {
-                formData[input.name.replace('[]', '')] = formData[input.name.replace('[]', '')] || [];
-                formData[input.name.replace('[]', '')].push(input.value);
-            } else
-                formData[input.name] = input.value;
-        });
+        // $.each(inputs, function (i, input) {
+        //     if (input.name.indexOf('[]') >= 0) {
+        //         formData[input.name.replace('[]', '')] = formData[input.name.replace('[]', '')] || [];
+        //         formData[input.name.replace('[]', '')].push(input.value);
+        //     } else if (input.name.indexOf('[*]') >= 0) {
+
+        //     } else
+        //         formData[input.name] = input.value;
+        // });
         console.log('formData ', formData, inputs);
 
 
@@ -253,7 +290,7 @@ $(document).on('submit', 'form', function (e) {
             type: method,
             data: formData,
             dataType: 'json',
-            // contentType: enctype,
+            contentType: enctype,
             beforeSend: function () {
                 $(button).button('loading');
             },

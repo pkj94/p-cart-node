@@ -57,6 +57,7 @@ module.exports = class Step3Controller extends Controller {
                 output.DIR_EXTENSION = DIR_OPENCART + 'extension/';
                 output.DIR_IMAGE = DIR_OPENCART + 'image/';
                 output.DIR_SYSTEM = DIR_OPENCART + 'system/';
+                output.DIR_CATALOG = DIR_OPENCART + 'catalog/';
                 output.DIR_STORAGE = output.DIR_SYSTEM + 'storage/';
                 output.DIR_LANGUAGE = output.DIR_APPLICATION + 'language/';
                 output.DIR_TEMPLATE = output.DIR_APPLICATION + 'view/template/';

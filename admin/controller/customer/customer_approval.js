@@ -139,7 +139,7 @@ class CustomerApprovalController extends Controller {
 			'filter_type'              : filter_type,
 			'filter_date_from'         : filter_date_from,
 			'filter_date_to'           : filter_date_to,
-			'start'                    : (page - 1) * this.config.get('config_pagination_admin'),
+			'start'                    : (page - 1) * Number(this.config.get('config_pagination_admin')),
 			'limit'                    : this.config.get('config_pagination_admin')
 		});
 
@@ -197,7 +197,7 @@ class CustomerApprovalController extends Controller {
 			'url'   : this.url.link('customer/customer_approval.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		]);
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (customer_approval_total) ? ((page - 1) * this.config.get('config_pagination_admin')) + 1 : 0, (((page - 1) * this.config.get('config_pagination_admin')) > (customer_approval_total - this.config.get('config_pagination_admin'))) ? customer_approval_total : (((page - 1) * this.config.get('config_pagination_admin')) + this.config.get('config_pagination_admin')), customer_approval_total, Math.ceil(customer_approval_total / this.config.get('config_pagination_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (customer_approval_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (customer_approval_total - this.config.get('config_pagination_admin'))) ? customer_approval_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), customer_approval_total, Math.ceil(customer_approval_total / this.config.get('config_pagination_admin')));
 
 		return await this.load.view('customer/customer_approval_list', data);
 	}

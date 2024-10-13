@@ -131,7 +131,7 @@ module.exports = class InstallerMarketplaceController extends Controller {
 			'filter_extension_download_id': filter_extension_download_id,
 			'sort': sort,
 			'order': order,
-			'start': (page - 1) * this.config.get('config_pagination_admin'),
+			'start': (page - 1) * Number(this.config.get('config_pagination_admin')),
 			'limit': this.config.get('config_pagination_admin')
 		};
 
@@ -160,7 +160,7 @@ module.exports = class InstallerMarketplaceController extends Controller {
 			});
 		}
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (extension_total) ? ((page - 1) * this.config.get('config_pagination_admin')) + 1 : 0, (((page - 1) * this.config.get('config_pagination_admin')) > (extension_total - this.config.get('config_pagination_admin'))) ? extension_total : (((page - 1) * this.config.get('config_pagination_admin')) + this.config.get('config_pagination_admin')), extension_total, Math.ceil(extension_total / this.config.get('config_pagination_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (extension_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (extension_total - this.config.get('config_pagination_admin'))) ? extension_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), extension_total, Math.ceil(extension_total / this.config.get('config_pagination_admin')));
 
 		let url = '';
 

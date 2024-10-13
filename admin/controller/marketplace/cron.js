@@ -1,8 +1,12 @@
-module.exports=class CronController extends Controller {
+const strtotime = require("locutus/php/datetime/strtotime");
+const sprintf = require("locutus/php/strings/sprintf");
+
+module.exports = class CronController extends Controller {
 	/**
 	 * @return void
 	 */
 	async index() {
+		const data = {};
 		await this.load.language('marketplace/cron');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -24,13 +28,13 @@ module.exports=class CronController extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('text_home'),
+			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('marketplace/cron', 'user_token=' + this.session.data['user_token'] + url)
+			'text': this.language.get('heading_title'),
+			'href': this.url.link('marketplace/cron', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
 		data['delete'] = this.url.link('marketplace/cron.delete', 'user_token=' + this.session.data['user_token']);
@@ -62,15 +66,15 @@ module.exports=class CronController extends Controller {
 	 * @return string
 	 */
 	async getList() {
+		const data = {};
+		let sort = 'code';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
-		} else {
-			sort = 'code';
 		}
 
-		let order= 'ASC';
+		let order = 'ASC';
 		if ((this.request.get['order'])) {
-			order= this.request.get['order'];
+			order = this.request.get['order'];
 		}
 
 		let page = 1;
@@ -97,35 +101,35 @@ module.exports=class CronController extends Controller {
 		data['crons'] = [];
 
 		let filter_data = {
-			'sort'  : sort,
-			'order' : order,
-			'start' : (page - 1) * this.config.get('config_pagination_admin'),
-			'limit' : this.config.get('config_pagination_admin')
-		});
+			'sort': sort,
+			'order': order,
+			'start': (page - 1) * Number(this.config.get('config_pagination_admin')),
+			'limit': this.config.get('config_pagination_admin')
+		};
 
-		this.load.model('setting/cron');
+		this.load.model('setting/cron', this);
 
-		cron_total await this.model_setting_cron.getTotalCrons();
+		const cron_total = await this.model_setting_cron.getTotalCrons();
 
 		const results = await this.model_setting_cron.getCrons(filter_data);
 
 		for (let result of results) {
 			data['crons'].push({
-				'cron_id'       : result['cron_id'],
-				'code'          : result['code'],
-				'description'   : result['description'],
-				'cycle'         : this.language.get('text_' + result['cycle']),
-				'action'        : result['action'],
-				'status'        : result['status'],
-				'date_added'    : date(this.language.get('datetime_format'), strtotime(result['date_added'])),
-				'date_modified' : date(this.language.get('datetime_format'), strtotime(result['date_modified'])),
-				'run'           : this.url.link('marketplace/cron.run', 'user_token=' + this.session.data['user_token'] + '&cron_id=' + result['cron_id']),
-				'enable'        : this.url.link('marketplace/cron.enable', 'user_token=' + this.session.data['user_token'] + '&cron_id=' + result['cron_id']),
-				'disable'       : this.url.link('marketplace/cron.disable', 'user_token=' + this.session.data['user_token'] + '&cron_id=' + result['cron_id'])
-			];
+				'cron_id': result['cron_id'],
+				'code': result['code'],
+				'description': result['description'],
+				'cycle': this.language.get('text_' + result['cycle']),
+				'action': result['action'],
+				'status': result['status'],
+				'date_added': date(this.language.get('datetime_format'), strtotime(result['date_added'])),
+				'date_modified': date(this.language.get('datetime_format'), strtotime(result['date_modified'])),
+				'run': this.url.link('marketplace/cron.run', 'user_token=' + this.session.data['user_token'] + '&cron_id=' + result['cron_id']),
+				'enable': this.url.link('marketplace/cron.enable', 'user_token=' + this.session.data['user_token'] + '&cron_id=' + result['cron_id']),
+				'disable': this.url.link('marketplace/cron.disable', 'user_token=' + this.session.data['user_token'] + '&cron_id=' + result['cron_id'])
+			});
 		}
 
-		let url = '';
+		url = '';
 
 		if (order == 'ASC') {
 			url += '&order=DESC';
@@ -139,7 +143,7 @@ module.exports=class CronController extends Controller {
 		data['sort_date_added'] = this.url.link('marketplace/cron.list', 'user_token=' + this.session.data['user_token'] + '&sort=date_added' + url);
 		data['sort_date_modified'] = this.url.link('marketplace/cron.list', 'user_token=' + this.session.data['user_token'] + '&sort=date_modified' + url);
 
-		let url = '';
+		url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -150,13 +154,13 @@ module.exports=class CronController extends Controller {
 		}
 
 		data['pagination'] = await this.load.controller('common/pagination', {
-			'total' : cron_total,
-			'page'  : page,
-			'limit' : this.config.get('config_pagination_admin'),
-			'url'   : this.url.link('marketplace/cron.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
-		]);
+			'total': cron_total,
+			'page': page,
+			'limit': this.config.get('config_pagination_admin'),
+			'url': this.url.link('marketplace/cron.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
+		});
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (cron_total) ? ((page - 1) * this.config.get('config_pagination_admin')) + 1 : 0, (((page - 1) * this.config.get('config_pagination_admin')) > (cron_total - this.config.get('config_pagination_admin'))) ? cron_total : (((page - 1) * this.config.get('config_pagination_admin')) + this.config.get('config_pagination_admin')), cron_total, Math.ceil(cron_total / this.config.get('config_pagination_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (cron_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (cron_total - this.config.get('config_pagination_admin'))) ? cron_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), cron_total, Math.ceil(cron_total / this.config.get('config_pagination_admin')));
 
 		data['sort'] = sort;
 		data['order'] = order;
@@ -171,11 +175,9 @@ module.exports=class CronController extends Controller {
 		await this.load.language('marketplace/cron');
 
 		const json = {};
-
+		let cron_id = 0;
 		if ((this.request.get['cron_id'])) {
 			cron_id = this.request.get['cron_id'];
-		} else {
-			cron_id = 0;
 		}
 
 		if (!await this.user.hasPermission('modify', 'marketplace/cron')) {
@@ -183,19 +185,19 @@ module.exports=class CronController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('setting/cron');
+			this.load.model('setting/cron', this);
 
-			cron_info await this.model_setting_cron.getCron(cron_id);
+			const cron_info = await this.model_setting_cron.getCron(cron_id);
 
-			if (cron_info) {
+			if (cron_info && cron_info.cron_id) {
 				// Create a store instance using loader class to call controllers, models, views, libraries
-				this.load.model('setting/store',this);
+				this.load.model('setting/store', this);
 
-				store await this.model_setting_store.createStoreInstance(0, this.config.get('config_language'));
+				const store = await this.model_setting_store.createStoreInstance(0, this.config.get('config_language'));
 
-				store.load.controller(cron_info['action'], cron_id, cron_info['code'], cron_info['cycle'], cron_info['date_added'], cron_info['date_modified']);
+				await store.load.controller(cron_info['action'], cron_id, cron_info['code'], cron_info['cycle'], cron_info['date_added'], cron_info['date_modified']);
 
-				store.session.destroy(store.session.getId());
+				await store.session.destroy(store.session.getId());
 
 				await this.model_setting_cron.editCron(cron_info['cron_id']);
 			}
@@ -214,19 +216,16 @@ module.exports=class CronController extends Controller {
 		await this.load.language('marketplace/cron');
 
 		const json = {};
-
+		let cron_id = 0;
 		if ((this.request.get['cron_id'])) {
 			cron_id = this.request.get['cron_id'];
-		} else {
-			cron_id = 0;
 		}
-
 		if (!await this.user.hasPermission('modify', 'marketplace/cron')) {
 			json['error'] = this.language.get('error_permission');
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('setting/cron');
+			this.load.model('setting/cron', this);
 
 			await this.model_setting_cron.editStatus(cron_id, 1);
 
@@ -244,11 +243,9 @@ module.exports=class CronController extends Controller {
 		await this.load.language('marketplace/cron');
 
 		const json = {};
-
+		let cron_id = 0;
 		if ((this.request.get['cron_id'])) {
 			cron_id = this.request.get['cron_id'];
-		} else {
-			cron_id = 0;
 		}
 
 		if (!await this.user.hasPermission('modify', 'marketplace/cron')) {
@@ -256,7 +253,7 @@ module.exports=class CronController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('setting/cron');
+			this.load.model('setting/cron', this);
 
 			await this.model_setting_cron.editStatus(cron_id, 0);
 
@@ -274,11 +271,9 @@ module.exports=class CronController extends Controller {
 		await this.load.language('marketplace/cron');
 
 		const json = {};
-
+		let selected = [];
 		if ((this.request.post['selected'])) {
-			selected = (array)this.request.post['selected'];
-		} else {
-			selected = [];
+			selected = this.request.post['selected'];
 		}
 
 		if (!await this.user.hasPermission('modify', 'marketplace/event')) {
@@ -286,7 +281,7 @@ module.exports=class CronController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('setting/cron');
+			this.load.model('setting/cron', this);
 
 			for (let cron_id of selected) {
 				await this.model_setting_cron.deleteCron(cron_id);

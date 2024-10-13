@@ -41,7 +41,7 @@ class FixerController extends Controller {
 					$currencies[$key] = $value;
 				}
 
-				this.load.model('localisation/currency');
+				this.load.model('localisation/currency',this);
 
 				const results = await this.model_localisation_currency.getCurrencies();
 

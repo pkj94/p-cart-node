@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Admin\Controller\Sale;
-/**
- * 
- *
- * @package Opencart\Admin\Controller\Sale
- */
-class ReturnsController extends Controller {
+module.exports=class ReturnsController extends Controller {
 	/**
 	 * @return void
 	 */
@@ -284,7 +277,7 @@ if ((this.request.get['filter_model'])) {
 			'filter_date_to'          : filter_date_to,
 			'sort'                    : sort,
 			'order'                   : order,
-			'start'                   : (page - 1) * this.config.get('config_pagination_admin'),
+			'start'                   : (page - 1) * Number(this.config.get('config_pagination_admin')),
 			'limit'                   : this.config.get('config_pagination_admin')
 		});
 
@@ -406,7 +399,7 @@ if ((this.request.get['filter_model'])) {
 			'url'   : this.url.link('sale/returns.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		]);
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (return_total) ? ((page - 1) * this.config.get('config_pagination_admin')) + 1 : 0, (((page - 1) * this.config.get('config_pagination_admin')) > (return_total - this.config.get('config_pagination_admin'))) ? return_total : (((page - 1) * this.config.get('config_pagination_admin')) + this.config.get('config_pagination_admin')), return_total, Math.ceil(return_total / this.config.get('config_pagination_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (return_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (return_total - this.config.get('config_pagination_admin'))) ? return_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), return_total, Math.ceil(return_total / this.config.get('config_pagination_admin')));
 
 		data['sort'] = sort;
 		data['order'] = order;
@@ -759,7 +752,7 @@ if ((this.request.get['filter_model'])) {
 			];
 		}
 
-		history_total await this.model_sale_returns.getTotalHistories(return_id);
+		const history_total = await this.model_sale_returns.getTotalHistories(return_id);
 
 		data['pagination'] = await this.load.controller('common/pagination', {
 			'total' : history_total,

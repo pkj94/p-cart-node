@@ -104,11 +104,11 @@ class CustomFieldController extends Controller {
 		let filter_data = {
 			'sort'  : sort,
 			'order' : order,
-			'start' : (page - 1) * this.config.get('config_pagination_admin'),
+			'start' : (page - 1) * Number(this.config.get('config_pagination_admin')),
 			'limit' : this.config.get('config_pagination_admin')
 		});
 
-		this.load.model('customer/custom_field');
+		this.load.model('customer/custom_field',this);
 
 		custom_field_total await this.model_customer_custom_field.getTotalCustomFields();
 
@@ -192,7 +192,7 @@ class CustomFieldController extends Controller {
 			'url'   : this.url.link('customer/custom_field.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		]);
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (custom_field_total) ? ((page - 1) * this.config.get('config_pagination_admin')) + 1 : 0, (((page - 1) * this.config.get('config_pagination_admin')) > (custom_field_total - this.config.get('config_pagination_admin'))) ? custom_field_total : (((page - 1) * this.config.get('config_pagination_admin')) + this.config.get('config_pagination_admin')), custom_field_total, Math.ceil(custom_field_total / this.config.get('config_pagination_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (custom_field_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (custom_field_total - this.config.get('config_pagination_admin'))) ? custom_field_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), custom_field_total, Math.ceil(custom_field_total / this.config.get('config_pagination_admin')));
 
 		data['sort'] = sort;
 		data['order'] = order;
@@ -240,7 +240,7 @@ class CustomFieldController extends Controller {
 		data['back'] = this.url.link('customer/custom_field', 'user_token=' + this.session.data['user_token'] + url);
 
 		if ((this.request.get['custom_field_id'])) {
-			this.load.model('customer/custom_field');
+			this.load.model('customer/custom_field',this);
 
 			custom_field_info await this.model_customer_custom_field.getCustomField(this.request.get['custom_field_id']);
 		}
@@ -387,7 +387,7 @@ class CustomFieldController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('customer/custom_field');
+			this.load.model('customer/custom_field',this);
 
 			if (!this.request.post['custom_field_id']) {
 				json['custom_field_id'] = await this.model_customer_custom_field.addCustomField(this.request.post);
@@ -420,7 +420,7 @@ class CustomFieldController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('customer/custom_field');
+			this.load.model('customer/custom_field',this);
 
 			for (let custom_field_id of selected) {
 				await this.model_customer_custom_field.deleteCustomField(custom_field_id);

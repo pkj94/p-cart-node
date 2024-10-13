@@ -104,7 +104,7 @@ class CouponController extends Controller {
 		let filter_data = {
 			'sort'  : sort,
 			'order' : order,
-			'start' : (page - 1) * this.config.get('config_pagination_admin'),
+			'start' : (page - 1) * Number(this.config.get('config_pagination_admin')),
 			'limit' : this.config.get('config_pagination_admin')
 		});
 
@@ -159,7 +159,7 @@ class CouponController extends Controller {
 			'url'   : this.url.link('marketing/coupon.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		]);
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (coupon_total) ? ((page - 1) * this.config.get('config_pagination_admin')) + 1 : 0, (((page - 1) * this.config.get('config_pagination_admin')) > (coupon_total - this.config.get('config_pagination_admin'))) ? coupon_total : (((page - 1) * this.config.get('config_pagination_admin')) + this.config.get('config_pagination_admin')), coupon_total, Math.ceil(coupon_total / this.config.get('config_pagination_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (coupon_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (coupon_total - this.config.get('config_pagination_admin'))) ? coupon_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), coupon_total, Math.ceil(coupon_total / this.config.get('config_pagination_admin')));
 
 		data['sort'] = sort;
 		data['order'] = order;
@@ -261,7 +261,7 @@ class CouponController extends Controller {
 		}
 
 		if ((coupon_info)) {
-			products await this.model_marketing_coupon.getProducts(this.request.get['coupon_id']);
+			const products = await this.model_marketing_coupon.getProducts(this.request.get['coupon_id']);
 		} else {
 			products = [];
 		}
@@ -270,7 +270,7 @@ class CouponController extends Controller {
 
 		data['coupon_products'] = [];
 
-		for (products of product_id) {
+		for (let product of products_id) {
 			const product_info = await this.model_catalog_product.getProduct(product_id);
 
 			if (product_info) {
@@ -462,7 +462,7 @@ class CouponController extends Controller {
 			];
 		}
 
-		history_total await this.model_marketing_coupon.getTotalHistories(coupon_id);
+		const history_total = await this.model_marketing_coupon.getTotalHistories(coupon_id);
 
 		data['pagination'] = await this.load.controller('common/pagination', {
 			'total' : history_total,

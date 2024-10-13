@@ -83,7 +83,7 @@ module.exports = class ECBCurrencyController extends Controller {
           const value = currencies[default_] || currencies.EUR;
 
           if (Object.keys(currencies).length) {
-            this.load.model('localisation/currency');
+            this.load.model('localisation/currency',this);
 
             const results = this.model_localisation_currency.getCurrencies();
 

@@ -33,9 +33,9 @@ module.exports = class LatestModuleController extends Controller {
 		}
 
 		if (!(this.request.get['module_id'])) {
-			data['save'] = this.url.link('extension/opencart/module/latest+save', 'user_token=' + this.session.data['user_token']);
+			data['save'] = this.url.link('extension/opencart/module/latest.save', 'user_token=' + this.session.data['user_token']);
 		} else {
-			data['save'] = this.url.link('extension/opencart/module/latest+save', 'user_token=' + this.session.data['user_token'] + '&module_id=' + this.request.get['module_id']);
+			data['save'] = this.url.link('extension/opencart/module/latest.save', 'user_token=' + this.session.data['user_token'] + '&module_id=' + this.request.get['module_id']);
 		}
 
 		data['back'] = this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=module');
@@ -119,7 +119,7 @@ module.exports = class LatestModuleController extends Controller {
 			json['error']['height'] = this.language.get('error_height');
 		}
 
-		if (!Object.keys(json.error)) {
+		if (!Object.keys(json.error).length) {
 			this.load.model('setting/module', this);
 			this.request.post.module_id = Number(this.request.post.module_id);
 			if (!this.request.post['module_id']) {
@@ -128,7 +128,7 @@ module.exports = class LatestModuleController extends Controller {
 				await this.model_setting_module.editModule(this.request.post['module_id'], this.request.post);
 			}
 
-			this.cache.delete('product');
+			await this.cache.delete('product');
 
 			json['success'] = this.language.get('text_success');
 		}

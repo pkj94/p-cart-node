@@ -104,7 +104,7 @@ class SubscriptionStatusController extends Controller {
 		let filter_data = {
 			'sort'  : sort,
 			'order' : order,
-			'start' : (page - 1) * this.config.get('config_pagination_admin'),
+			'start' : (page - 1) * Number(this.config.get('config_pagination_admin')),
 			'limit' : this.config.get('config_pagination_admin')
 		});
 
@@ -149,7 +149,7 @@ class SubscriptionStatusController extends Controller {
 			'url'   : this.url.link('localisation/subscription_status.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		]);
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (subscription_status_total) ? ((page - 1) * this.config.get('config_pagination_admin')) + 1 : 0, (((page - 1) * this.config.get('config_pagination_admin')) > (subscription_status_total - this.config.get('config_pagination_admin'))) ? subscription_status_total : (((page - 1) * this.config.get('config_pagination_admin')) + this.config.get('config_pagination_admin')), subscription_status_total, Math.ceil(subscription_status_total / this.config.get('config_pagination_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (subscription_status_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (subscription_status_total - this.config.get('config_pagination_admin'))) ? subscription_status_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), subscription_status_total, Math.ceil(subscription_status_total / this.config.get('config_pagination_admin')));
 
 		data['sort'] = sort;
 		data['order'] = order;
@@ -275,7 +275,7 @@ class SubscriptionStatusController extends Controller {
 		}
 
 		this.load.model('setting/store',this);
-		this.load.model('sale/subscription');
+		this.load.model('sale/subscription',this);
 
 		for (selected of subscription_status_id) {
 			if (this.config.get('config_subscription_status_id') == subscription_status_id) {

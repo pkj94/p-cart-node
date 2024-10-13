@@ -81,7 +81,7 @@ class StatisticsController extends Controller {
 
 		if (!Object.keys(json).length) {
 			this.load.model('report/statistics');
-			this.load.model('sale/order');
+			this.load.model('sale/order',this);
 
 			await this.model_report_statistics.editValue('order_sale', this.model_sale_order.getTotalSales(['filter_order_status' : implode(',', array_merge(this.config.get('config_complete_status'), this.config.get('config_processing_status')))]));
 
@@ -106,7 +106,7 @@ class StatisticsController extends Controller {
 
 		if (!Object.keys(json).length) {
 			this.load.model('report/statistics');
-			this.load.model('sale/order');
+			this.load.model('sale/order',this);
 
 			await this.model_report_statistics.editValue('order_processing', this.model_sale_order.getTotalOrders(['filter_order_status' : implode(',', this.config.get('config_processing_status'))]));
 
@@ -131,7 +131,7 @@ class StatisticsController extends Controller {
 
 		if (!Object.keys(json).length) {
 			this.load.model('report/statistics');
-			this.load.model('sale/order');
+			this.load.model('sale/order',this);
 
 			await this.model_report_statistics.editValue('order_complete', this.model_sale_order.getTotalOrders(['filter_order_status' : implode(',', this.config.get('config_complete_status'))]));
 
@@ -156,7 +156,7 @@ class StatisticsController extends Controller {
 
 		if (!Object.keys(json).length) {
 			this.load.model('report/statistics');
-			this.load.model('localisation/order_status');
+			this.load.model('localisation/order_status',this);
 
 			order_status_data = [];
 
@@ -168,7 +168,7 @@ class StatisticsController extends Controller {
 				}
 			}
 
-			this.load.model('sale/order');
+			this.load.model('sale/order',this);
 
 			await this.model_report_statistics.editValue('order_other', this.model_sale_order.getTotalOrders(['filter_order_status' : implode(',', order_status_data)]));
 

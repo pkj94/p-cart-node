@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Admin\Controller\Sale;
-/**
- * 
- *
- * @package Opencart\Admin\Controller\Sale
- */
-class SubscriptionController extends Controller {
+module.exports=class SubscriptionController extends Controller {
 	/**
 	 * @return void
 	 */
@@ -240,11 +233,11 @@ class SubscriptionController extends Controller {
 			'filter_date_to'                : filter_date_to,
 			'order'                         : order,
 			'sort'                          : sort,
-			'start'                         : (page - 1) * this.config.get('config_pagination_admin'),
+			'start'                         : (page - 1) * Number(this.config.get('config_pagination_admin')),
 			'limit'                         : this.config.get('config_pagination_admin')
 		});
 
-		this.load.model('sale/subscription');
+		this.load.model('sale/subscription',this);
 
 		subscription_total await this.model_sale_subscription.getTotalSubscriptions(filter_data);
 
@@ -341,7 +334,7 @@ class SubscriptionController extends Controller {
 			'url'   : this.url.link('sale/subscription.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		]);
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (subscription_total) ? ((page - 1) * this.config.get('config_pagination_admin')) + 1 : 0, (((page - 1) * this.config.get('config_pagination_admin')) > (subscription_total - this.config.get('config_pagination_admin'))) ? subscription_total : (((page - 1) * this.config.get('config_pagination_admin')) + this.config.get('config_pagination_admin')), subscription_total, Math.ceil(subscription_total / this.config.get('config_pagination_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (subscription_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (subscription_total - this.config.get('config_pagination_admin'))) ? subscription_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), subscription_total, Math.ceil(subscription_total / this.config.get('config_pagination_admin')));
 
 		data['sort'] = sort;
 		data['order'] = order;
@@ -419,9 +412,9 @@ class SubscriptionController extends Controller {
 
 		data['subscription_id'] = subscription_id;
 
-		this.load.model('sale/subscription');
+		this.load.model('sale/subscription',this);
 
-		subscription_info await this.model_sale_subscription.getSubscription(data['subscription_id']);
+		const subscription_info = await this.model_sale_subscription.getSubscription(data['subscription_id']);
 
 		if ((subscription_info)) {
 			data['subscription_id'] = subscription_info['subscription_id'];
@@ -431,9 +424,9 @@ class SubscriptionController extends Controller {
 
 		// Order
 		if ((subscription_info)) {
-			this.load.model('sale/order');
+			this.load.model('sale/order',this);
 
-			order_info await this.model_sale_order.getOrder(subscription_info['order_id']);
+			const order_info = await this.model_sale_order.getOrder(subscription_info['order_id']);
 		}
 
 		if ((subscription_info)) {
@@ -452,7 +445,7 @@ class SubscriptionController extends Controller {
 		if ((subscription_info)) {
 			this.load.model('customer/customer',this);
 
-			customer_info await this.model_customer_customer.getCustomer(subscription_info['customer_id']);
+			const customer_info = await this.model_customer_customer.getCustomer(subscription_info['customer_id']);
 		}
 
 		if ((customer_info)) {
@@ -665,7 +658,7 @@ class SubscriptionController extends Controller {
 
 		// Product data
 		if ((subscription_info)) {
-			this.load.model('sale/order');
+			this.load.model('sale/order',this);
 
 			const product_info = await this.model_sale_order.getProductByOrderProductId(subscription_info['order_id'], subscription_info['order_product_id']);
 		}
@@ -684,8 +677,8 @@ class SubscriptionController extends Controller {
 
 		data['options'] = [];
 
-		options await this.model_sale_order.getOptions(subscription_info['order_id'], subscription_info['order_product_id']);
-		this.load.model('tool/upload');
+		const options = await this.model_sale_order.getOptions(subscription_info['order_id'], subscription_info['order_product_id']);
+		this.load.model('tool/upload',this);
 		for (options of option) {
 			if (option['type'] != 'file') {
 				data['options'].push({
@@ -694,7 +687,7 @@ class SubscriptionController extends Controller {
 					'type'  : option['type']
 				];
 			} else {
-				upload_info await this.model_tool_upload.getUploadByCode(option['value']);
+				const upload_info = await this.model_tool_upload.getUploadByCode(option['value']);
 
 				if (upload_info) {
 					data['options'].push({
@@ -738,7 +731,7 @@ class SubscriptionController extends Controller {
 		this.load.model('setting/extension',this);
 
 		if ((order_info)) {
-			extension_info await this.model_setting_extension.getExtensionByCode('payment', order_info['payment_method']['code']);
+			const extension_info = await this.model_setting_extension.getExtensionByCode('payment', order_info['payment_method']['code']);
 
 			if (extension_info && await this.user.hasPermission('access', 'extension/' + extension_info['extension'] + '/payment/' + extension_info['code'])) {
 				output = await this.load.controller('extension/payment/' + order_info['payment_code'] + '.subscription');
@@ -792,9 +785,9 @@ class SubscriptionController extends Controller {
 			json['error'] = this.language.get('error_subscription_plan');
 		}
 
-		this.load.model('sale/subscription');
+		this.load.model('sale/subscription',this);
 
-		subscription_info await this.model_sale_subscription.getSubscription(subscription_id);
+		const subscription_info = await this.model_sale_subscription.getSubscription(subscription_id);
 
 		if (!subscription_info) {
 			this.load.model('customer/customer',this);
@@ -847,7 +840,7 @@ class SubscriptionController extends Controller {
 
 		data['histories'] = [];
 
-		this.load.model('sale/subscription');
+		this.load.model('sale/subscription',this);
 
 		const results = await this.model_sale_subscription.getHistories(subscription_id, (page - 1) * limit, limit);
 
@@ -893,9 +886,9 @@ class SubscriptionController extends Controller {
         }
 
 		// Subscription
-		this.load.model('sale/subscription');
+		this.load.model('sale/subscription',this);
 
-		subscription_info await this.model_sale_subscription.getSubscription(subscription_id);
+		const subscription_info = await this.model_sale_subscription.getSubscription(subscription_id);
 
 		if (!subscription_info) {
 			json['error'] = this.language.get('error_subscription');
@@ -949,7 +942,7 @@ class SubscriptionController extends Controller {
 
 		data['orders'] = [];
 
-		this.load.model('sale/order');
+		this.load.model('sale/order',this);
 
 		const results = await this.model_sale_order.getOrdersBySubscriptionId(subscription_id, (page - 1) * limit, limit);
 

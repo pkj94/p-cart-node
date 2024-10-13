@@ -123,7 +123,7 @@ class AntispamController extends Controller {
 			'filter_keyword' : filter_keyword,
 			'sort'           : sort,
 			'order'          : order,
-			'start'          : (page - 1) * this.config.get('config_pagination_admin'),
+			'start'          : (page - 1) * Number(this.config.get('config_pagination_admin')),
 			'limit'          : this.config.get('config_pagination_admin')
 		});
 
@@ -176,7 +176,7 @@ class AntispamController extends Controller {
 			'url'   : this.url.link('cms/antispam.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		]);
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (antispam_total) ? ((page - 1) * this.config.get('config_pagination_admin')) + 1 : 0, (((page - 1) * this.config.get('config_pagination_admin')) > (antispam_total - this.config.get('config_pagination_admin'))) ? antispam_total : (((page - 1) * this.config.get('config_pagination_admin')) + this.config.get('config_pagination_admin')), antispam_total, Math.ceil(antispam_total / this.config.get('config_pagination_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (antispam_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (antispam_total - this.config.get('config_pagination_admin'))) ? antispam_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), antispam_total, Math.ceil(antispam_total / this.config.get('config_pagination_admin')));
 
 		data['sort'] = sort;
 		data['order'] = order;

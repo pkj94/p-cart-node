@@ -137,11 +137,11 @@ if ((this.request.get['filter_name'])) {
 			'filter_date_to'   : filter_date_to,
 			'sort'             : sort,
 			'order'            : order,
-			'start'            : (page - 1) * this.config.get('config_pagination_admin'),
+			'start'            : (page - 1) * Number(this.config.get('config_pagination_admin')),
 			'limit'            : this.config.get('config_pagination_admin')
 		});
 
-		this.load.model('tool/upload');
+		this.load.model('tool/upload',this);
 
 		upload_total await this.model_tool_upload.getTotalUploads(filter_data);
 
@@ -214,7 +214,7 @@ if ((this.request.get['filter_name'])) {
 			'url'   : this.url.link('tool/upload.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		]);
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (upload_total) ? ((page - 1) * this.config.get('config_pagination_admin')) + 1 : 0, (((page - 1) * this.config.get('config_pagination_admin')) > (upload_total - this.config.get('config_pagination_admin'))) ? upload_total : (((page - 1) * this.config.get('config_pagination_admin')) + this.config.get('config_pagination_admin')), upload_total, Math.ceil(upload_total / this.config.get('config_pagination_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (upload_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (upload_total - this.config.get('config_pagination_admin'))) ? upload_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), upload_total, Math.ceil(upload_total / this.config.get('config_pagination_admin')));
 
 		data['filter_name'] = filter_name;
 		data['filter_date_from'] = filter_date_from;
@@ -244,11 +244,11 @@ if ((this.request.get['filter_name'])) {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('tool/upload');
+			this.load.model('tool/upload',this);
 
 			for (selected of upload_id) {
 				// Remove file before deleting DB record.
-				upload_info await this.model_tool_upload.getUpload(upload_id);
+				const upload_info = await this.model_tool_upload.getUpload(upload_id);
 
 				if (upload_info && is_file(DIR_UPLOAD + upload_info['filename'])) {
 					fs.unlinkSync(DIR_UPLOAD + upload_info['filename']);
@@ -276,9 +276,9 @@ if ((this.request.get['filter_name'])) {
 			code = '';
 		}
 
-		this.load.model('tool/upload');
+		this.load.model('tool/upload',this);
 
-		upload_info await this.model_tool_upload.getUploadByCode(code);
+		const upload_info = await this.model_tool_upload.getUploadByCode(code);
 
 		if (upload_info) {
 			file = DIR_UPLOAD + upload_info['filename'];
@@ -396,7 +396,7 @@ if ((this.request.get['filter_name'])) {
 			move_uploaded_file(this.request.files['file']['tmp_name'], DIR_UPLOAD + file);
 
 			// Hide the uploaded file name so people cannot link to it directly.
-			this.load.model('tool/upload');
+			this.load.model('tool/upload',this);
 
 			json['code'] = await this.model_tool_upload.addUpload(filename, file);
 

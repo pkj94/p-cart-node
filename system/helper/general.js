@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt');
-
+const htmlEntity = require('html-entities');
 // Import required libraries
 const crypto = require('crypto');
 // String
@@ -109,20 +109,10 @@ global.multiSort = (array, sortObject = [], sort = 'ASC') => {
     });
 }
 global.html_entity_decode = (encodedString = '') => {
-    var translate_re = /&(nbsp|amp|quot|lt|gt);/g;
-    var translate = {
-        "nbsp": " ",
-        "amp": "&",
-        "quot": "\"",
-        "lt": "<",
-        "gt": ">"
-    };
-    return encodedString.replace(translate_re, function (match, entity) {
-        return translate[entity];
-    }).replace(/&#(\d+);/gi, function (match, numStr) {
-        var num = parseInt(numStr, 10);
-        return String.fromCharCode(num);
-    });
+    return htmlEntity.decode(encodedString);
+}
+global.html_entity_encode = (encodedString = '') => {
+    return htmlEntity.encode(encodedString);
 }
 global.rtrim = (string) => {
     return string.replace(/\/*$/, '')

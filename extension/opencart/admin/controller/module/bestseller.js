@@ -97,7 +97,7 @@ module.exports = class BestSellerModuleController extends Controller {
 				await this.model_setting_module.editModule(this.request.post['module_id'], this.request.post);
 			}
 
-			this.cache.delete('product');
+			await this.cache.delete('product');
 
 			json.success = this.language.get('text_success');
 		}

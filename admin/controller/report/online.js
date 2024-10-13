@@ -86,7 +86,7 @@ class OnlineController extends Controller {
 		let filter_data = {
 			'filter_customer' : filter_customer,
 			'filter_ip'       : filter_ip,
-			'start'           : (page - 1) * this.config.get('config_pagination_admin'),
+			'start'           : (page - 1) * Number(this.config.get('config_pagination_admin')),
 			'limit'           : this.config.get('config_pagination_admin')
 		});
 
@@ -98,7 +98,7 @@ class OnlineController extends Controller {
 		const results = await this.model_report_online.getOnline(filter_data);
 
 		for (let result of results) {
-			customer_info await this.model_customer_customer.getCustomer(result['customer_id']);
+			const customer_info = await this.model_customer_customer.getCustomer(result['customer_id']);
 
 			if (customer_info) {
 				customer = customer_info['firstname'] + ' ' + customer_info['lastname'];
@@ -134,7 +134,7 @@ class OnlineController extends Controller {
 			'url'   : this.url.link('report/online.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		]);
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (customer_total) ? ((page - 1) * this.config.get('config_pagination_admin')) + 1 : 0, (((page - 1) * this.config.get('config_pagination_admin')) > (customer_total - this.config.get('config_pagination_admin'))) ? customer_total : (((page - 1) * this.config.get('config_pagination_admin')) + this.config.get('config_pagination_admin')), customer_total, Math.ceil(customer_total / this.config.get('config_pagination_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (customer_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (customer_total - this.config.get('config_pagination_admin'))) ? customer_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), customer_total, Math.ceil(customer_total / this.config.get('config_pagination_admin')));
 
 		return await this.load.view('report/online_list', data);
 	}

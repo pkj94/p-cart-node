@@ -124,7 +124,7 @@ if (typeof this.request.get['filter_status'] != 'undefined' && this.request.get[
 			'filter_status'    : filter_status,
 			'filter_date_from' : filter_date_from,
 			'filter_date_to'   : filter_date_to,
-			'start'            : (page - 1) * this.config.get('config_pagination_admin'),
+			'start'            : (page - 1) * Number(this.config.get('config_pagination_admin')),
 			'limit'            : this.config.get('config_pagination_admin')
 		});
 
@@ -136,7 +136,7 @@ if (typeof this.request.get['filter_status'] != 'undefined' && this.request.get[
 		const results = await this.model_customer_gdpr.getGdprs(filter_data);
 
 		for (let result of results) {
-			customer_info await this.model_customer_customer.getCustomerByEmail(result['email']);
+			const customer_info = await this.model_customer_customer.getCustomerByEmail(result['email']);
 
 			if (customer_info) {
 				edit = this.url.link('customer/customer.form', 'user_token=' + this.session.data['user_token'] + '&customer_id=' + customer_info['customer_id'], true);
@@ -186,7 +186,7 @@ if (typeof this.request.get['filter_status'] != 'undefined' && this.request.get[
 			'url'   : this.url.link('customer/gdpr.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		]);
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (gdpr_total) ? ((page - 1) * this.config.get('config_pagination_admin')) + 1 : 0, (((page - 1) * this.config.get('config_pagination_admin')) > (gdpr_total - this.config.get('config_pagination_admin'))) ? gdpr_total : (((page - 1) * this.config.get('config_pagination_admin')) + this.config.get('config_pagination_admin')), gdpr_total, Math.ceil(gdpr_total / this.config.get('config_pagination_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (gdpr_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (gdpr_total - this.config.get('config_pagination_admin'))) ? gdpr_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), gdpr_total, Math.ceil(gdpr_total / this.config.get('config_pagination_admin')));
 
 		return await this.load.view('customer/gdpr_list', data);
 	}

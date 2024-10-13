@@ -45,9 +45,9 @@ class ReturnsController extends Controller {
 			return_info await this.model_sale_returns.getReturn(return_id);
 
 			if (return_info) {
-				this.load.model('sale/order');
+				this.load.model('sale/order',this);
 
-				order_info await this.model_sale_order.getOrder(return_info['order_id']);
+				const order_info = await this.model_sale_order.getOrder(return_info['order_id']);
 
 				if (order_info) {
 					store_name = html_entity_decode(order_info['store_name']);

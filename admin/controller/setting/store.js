@@ -111,7 +111,7 @@ class StoreController extends Controller {
 			'url'   : this.url.link('setting/store.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		]);
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (store_total) ? ((page - 1) * this.config.get('config_pagination_admin')) + 1 : 0, (((page - 1) * this.config.get('config_pagination_admin')) > (store_total - this.config.get('config_pagination_admin'))) ? store_total : (((page - 1) * this.config.get('config_pagination_admin')) + this.config.get('config_pagination_admin')), store_total, Math.ceil(store_total / this.config.get('config_pagination_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (store_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (store_total - this.config.get('config_pagination_admin'))) ? store_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), store_total, Math.ceil(store_total / this.config.get('config_pagination_admin')));
 
 		return await this.load.view('setting/store_list', data);
 	}
@@ -192,7 +192,7 @@ class StoreController extends Controller {
 
 		this.load.model('setting/extension',this);
 
-		extensions await this.model_setting_extension.getExtensionsByType('theme');
+		const extensions = await this.model_setting_extension.getExtensionsByType('theme');
 
 		for (extensions of extension) {
 			await this.load.language('extension/' + extension['extension'] + '/theme/' + extension['code'], 'extension');
@@ -293,7 +293,7 @@ class StoreController extends Controller {
 			data['config_location'] = [];
 		}
 
-		this.load.model('localisation/country');
+		this.load.model('localisation/country',this);
 
 		data['countries'] = await this.model_localisation_country.getCountries();
 
@@ -319,7 +319,7 @@ class StoreController extends Controller {
 			data['config_language'] = this.config.get('config_language');
 		}
 
-		this.load.model('localisation/currency');
+		this.load.model('localisation/currency',this);
 
 		data['currencies'] = await this.model_localisation_currency.getCurrencies();
 
@@ -733,8 +733,8 @@ class StoreController extends Controller {
 			json['error'] = this.language.get('error_permission');
 		}
 
-		this.load.model('sale/order');
-		this.load.model('sale/subscription');
+		this.load.model('sale/order',this);
+		this.load.model('sale/subscription',this);
 
 		for (selected of store_id) {
 			if (!store_id) {

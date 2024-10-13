@@ -26,14 +26,14 @@ module.exports = class ImageToolModel extends Model {
 
 		if (!fs.existsSync(DIR_IMAGE + image_new) || (fs.statSync(DIR_IMAGE + image_old).mtime > fs.statSync(DIR_IMAGE + image_new).mtime)) {
 			let width = 0, height = 0, image_type = '';
-			if (image_old.indexOf('.ico')) {
+			if (image_old.indexOf('.ico') >= 0) {
 				const image = await ico.sharpsFromIco(DIR_IMAGE + image_old).forEach(async (icon, index) => {
 					const metadata = await icon.metadata();
 					width = metadata.width;
 					height = metadata.height;
 					image_type = metadata.format;
 				})
-				
+
 			} else {
 				const image = await sharp(DIR_IMAGE + image_old).metadata();
 				width = image.width;

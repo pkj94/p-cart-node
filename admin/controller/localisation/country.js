@@ -157,11 +157,11 @@ if ((this.request.get['filter_name'])) {
 			'filter_iso_code_3' : filter_iso_code_3,
 			'sort'              : sort,
 			'order'             : order,
-			'start'             : (page - 1) * this.config.get('config_pagination_admin'),
+			'start'             : (page - 1) * Number(this.config.get('config_pagination_admin')),
 			'limit'             : this.config.get('config_pagination_admin')
 		});
 
-		this.load.model('localisation/country');
+		this.load.model('localisation/country',this);
 
 		country_total await this.model_localisation_country.getTotalCountries(filter_data);
 
@@ -231,7 +231,7 @@ if ((this.request.get['filter_name'])) {
 			'url'   : this.url.link('localisation/country.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		]);
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (country_total) ? ((page - 1) * this.config.get('config_pagination_admin')) + 1 : 0, (((page - 1) * this.config.get('config_pagination_admin')) > (country_total - this.config.get('config_pagination_admin'))) ? country_total : (((page - 1) * this.config.get('config_pagination_admin')) + this.config.get('config_pagination_admin')), country_total, Math.ceil(country_total / this.config.get('config_pagination_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (country_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (country_total - this.config.get('config_pagination_admin'))) ? country_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), country_total, Math.ceil(country_total / this.config.get('config_pagination_admin')));
 
 		data['sort'] = sort;
 		data['order'] = order;
@@ -291,7 +291,7 @@ if ((this.request.get['filter_name'])) {
 		data['back'] = this.url.link('localisation/country', 'user_token=' + this.session.data['user_token'] + url);
 
 		if ((this.request.get['country_id'])) {
-			this.load.model('localisation/country');
+			this.load.model('localisation/country',this);
 
 			country_info await this.model_localisation_country.getCountry(this.request.get['country_id']);
 		}
@@ -366,7 +366,7 @@ if ((this.request.get['filter_name'])) {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('localisation/country');
+			this.load.model('localisation/country',this);
 
 			if (!this.request.post['country_id']) {
 				json['country_id'] = await this.model_localisation_country.addCountry(this.request.post);
@@ -434,7 +434,7 @@ if ((this.request.get['filter_name'])) {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('localisation/country');
+			this.load.model('localisation/country',this);
 
 			for (selected of country_id) {
 				await this.model_localisation_country.deleteCountry(country_id);
@@ -459,7 +459,7 @@ if ((this.request.get['filter_name'])) {
 			country_id = 0;
 		}
 
-		this.load.model('localisation/country');
+		this.load.model('localisation/country',this);
 
 		country_info await this.model_localisation_country.getCountry(country_id);
 

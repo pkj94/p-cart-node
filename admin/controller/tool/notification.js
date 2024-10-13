@@ -68,7 +68,7 @@ class NotificationController extends Controller {
 		notification_total await this.model_tool_notification.getTotalNotifications();
 
 		let filter_data = {
-			'start' : (page - 1) * this.config.get('config_pagination_admin'),
+			'start' : (page - 1) * Number(this.config.get('config_pagination_admin')),
 			'limit' : this.config.get('config_pagination_admin')
 		});
 
@@ -111,7 +111,7 @@ class NotificationController extends Controller {
 			'url'   : this.url.link('tool/notification.list', 'user_token=' + this.session.data['user_token'] + '&page={page}')
 		]);
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (notification_total) ? ((page - 1) * this.config.get('config_pagination_admin')) + 1 : 0, (((page - 1) * this.config.get('config_pagination_admin')) > (notification_total - this.config.get('config_pagination_admin'))) ? notification_total : (((page - 1) * this.config.get('config_pagination_admin')) + this.config.get('config_pagination_admin')), notification_total, Math.ceil(notification_total / this.config.get('config_pagination_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (notification_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (notification_total - this.config.get('config_pagination_admin'))) ? notification_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), notification_total, Math.ceil(notification_total / this.config.get('config_pagination_admin')));
 
 		return await this.load.view('tool/notification_list', data);
 	}

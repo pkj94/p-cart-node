@@ -23,7 +23,7 @@ class CustomerController extends Controller {
 
 		this.load.model('customer/customer',this);
 
-		customer_info await this.model_customer_customer.getCustomer(customer_id);
+		const customer_info = await this.model_customer_customer.getCustomer(customer_id);
 
 		if (customer_info) {
 			this.load.model('setting/store',this);
@@ -118,7 +118,7 @@ class CustomerController extends Controller {
 
 		this.load.model('customer/customer',this);
 
-		customer_info await this.model_customer_customer.getCustomer(customer_id);
+		const customer_info = await this.model_customer_customer.getCustomer(customer_id);
 
 		if (customer_info) {
 			this.load.model('setting/store',this);

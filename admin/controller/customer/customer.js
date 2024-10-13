@@ -264,7 +264,7 @@ if ((this.request.get['filter_name'])) {
 			'filter_date_to'           : filter_date_to,
 			'sort'                     : sort,
 			'order'                    : order,
-			'start'                    : (page - 1) * this.config.get('config_pagination_admin'),
+			'start'                    : (page - 1) * Number(this.config.get('config_pagination_admin')),
 			'limit'                    : this.config.get('config_pagination_admin')
 		});
 
@@ -400,7 +400,7 @@ if ((this.request.get['filter_name'])) {
 			'url'   : this.url.link('customer/customer.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		]);
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (customer_total) ? ((page - 1) * this.config.get('config_pagination_admin')) + 1 : 0, (((page - 1) * this.config.get('config_pagination_admin')) > (customer_total - this.config.get('config_pagination_admin'))) ? customer_total : (((page - 1) * this.config.get('config_pagination_admin')) + this.config.get('config_pagination_admin')), customer_total, Math.ceil(customer_total / this.config.get('config_pagination_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (customer_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (customer_total - this.config.get('config_pagination_admin'))) ? customer_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), customer_total, Math.ceil(customer_total / this.config.get('config_pagination_admin')));
 
 		data['sort'] = sort;
 		data['order'] = order;
@@ -490,7 +490,7 @@ if ((this.request.get['filter_name'])) {
 		if ((this.request.get['customer_id'])) {
 			this.load.model('customer/customer',this);
 
-			customer_info await this.model_customer_customer.getCustomer(this.request.get['customer_id']);
+			const customer_info = await this.model_customer_customer.getCustomer(this.request.get['customer_id']);
 		}
 
 		if ((this.request.get['customer_id'])) {
@@ -558,7 +558,7 @@ if ((this.request.get['filter_name'])) {
 		}
 
 		// Custom Fields
-		this.load.model('customer/custom_field');
+		this.load.model('customer/custom_field',this);
 
 		data['custom_fields'] = [];
 
@@ -567,7 +567,7 @@ if ((this.request.get['filter_name'])) {
 			'order' : 'ASC'
 		});
 
-		custom_fields await this.model_customer_custom_field.getCustomFields(filter_data);
+		const custom_fields = await this.model_customer_custom_field.getCustomFields(filter_data);
 
 		for (custom_fields of custom_field) {
 			if (custom_field['status']) {
@@ -610,7 +610,7 @@ if ((this.request.get['filter_name'])) {
 			data['safe'] = 0;
 		}
 
-		this.load.model('localisation/country');
+		this.load.model('localisation/country',this);
 
 		data['countries'] = await this.model_localisation_country.getCountries();
 
@@ -660,7 +660,7 @@ if ((this.request.get['filter_name'])) {
 
 		this.load.model('customer/customer',this);
 
-		customer_info await this.model_customer_customer.getCustomerByEmail(this.request.post['email']);
+		const customer_info = await this.model_customer_customer.getCustomerByEmail(this.request.post['email']);
 
 		if (!this.request.post['customer_id']) {
 			if (customer_info) {
@@ -677,9 +677,9 @@ if ((this.request.get['filter_name'])) {
 		}
 
 		// Custom field validation
-		this.load.model('customer/custom_field');
+		this.load.model('customer/custom_field',this);
 
-		custom_fields await this.model_customer_custom_field.getCustomFields(['filter_customer_group_id' : this.request.post['customer_group_id']]);
+		const custom_fields = await this.model_customer_custom_field.getCustomFields(['filter_customer_group_id' : this.request.post['customer_group_id']]);
 
 		for (custom_fields of custom_field) {
 			if (custom_field['status']) {
@@ -723,7 +723,7 @@ if ((this.request.get['filter_name'])) {
 					json['error']['address_' + key + '_country'] = this.language.get('error_country');
 				} else {
 
-					this.load.model('localisation/country');
+					this.load.model('localisation/country',this);
 
 					country_info await this.model_localisation_country.getCountry(value['country_id']);
 
@@ -837,7 +837,7 @@ if ((this.request.get['filter_name'])) {
 
 		this.load.model('customer/customer',this);
 
-		customer_info await this.model_customer_customer.getCustomer(customer_id);
+		const customer_info = await this.model_customer_customer.getCustomer(customer_id);
 
 		if (customer_info) {
 			// Create token to login with
@@ -1002,7 +1002,7 @@ if ((this.request.get['filter_name'])) {
 			];
 		}
 
-		history_total await this.model_customer_customer.getTotalHistories(customer_id);
+		const history_total = await this.model_customer_customer.getTotalHistories(customer_id);
 
 		data['pagination'] = await this.load.controller('common/pagination', {
 			'total' : history_total,
@@ -1123,7 +1123,7 @@ if ((this.request.get['filter_name'])) {
 
 		this.load.model('customer/customer',this);
 
-		customer_info await this.model_customer_customer.getCustomer(customer_id);
+		const customer_info = await this.model_customer_customer.getCustomer(customer_id);
 
 		if (!customer_info) {
 			json['error'] = this.language.get('error_customer');
@@ -1184,7 +1184,7 @@ if ((this.request.get['filter_name'])) {
 
 		data['balance'] = await this.model_customer_customer.getRewardTotal(customer_id);
 
-		reward_total await this.model_customer_customer.getTotalRewards(customer_id);
+		const reward_total = await this.model_customer_customer.getTotalRewards(customer_id);
 
 		data['pagination'] = await this.load.controller('common/pagination', {
 			'total' : reward_total,
@@ -1218,7 +1218,7 @@ if ((this.request.get['filter_name'])) {
 
 		this.load.model('customer/customer',this);
 
-		customer_info await this.model_customer_customer.getCustomer(customer_id);
+		const customer_info = await this.model_customer_customer.getCustomer(customer_id);
 
 		if (!customer_info) {
 			json['error'] = this.language.get('error_customer');
@@ -1406,9 +1406,9 @@ if ((this.request.get['filter_name'])) {
 			customer_group_id = this.config.get('config_customer_group_id');
 		}
 
-		this.load.model('customer/custom_field');
+		this.load.model('customer/custom_field',this);
 
-		custom_fields await this.model_customer_custom_field.getCustomFields(['filter_customer_group_id' : customer_group_id]);
+		const custom_fields = await this.model_customer_custom_field.getCustomFields(['filter_customer_group_id' : customer_group_id]);
 
 		for (custom_fields of custom_field) {
 			json.push({

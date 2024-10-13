@@ -334,7 +334,7 @@ if (typeof this.request.get['filter_status'] != 'undefined' && this.request.get[
 		this.load.model('marketing/affiliate');
 		this.load.model('customer/customer',this);
 
-		affiliate_total await this.model_marketing_affiliate.getTotalAffiliates(filter_data);
+		const affiliate_total = await this.model_marketing_affiliate.getTotalAffiliates(filter_data);
 
 		const results = await this.model_marketing_affiliate.getAffiliates(filter_data);
 
@@ -648,9 +648,9 @@ if (typeof this.request.get['filter_status'] != 'undefined' && this.request.get[
 		});
 
 		// Custom Fields
-		this.load.model('customer/custom_field');
+		this.load.model('customer/custom_field',this);
 
-		custom_fields await this.model_customer_custom_field.getCustomFields(filter_data);
+		const custom_fields = await this.model_customer_custom_field.getCustomFields(filter_data);
 
 		for (custom_fields of custom_field) {
 			if (custom_field['status']) {
@@ -699,7 +699,7 @@ if (typeof this.request.get['filter_status'] != 'undefined' && this.request.get[
 
 		this.load.model('customer/customer',this);
 
-		customer_info await this.model_customer_customer.getCustomer(this.request.post['customer_id']);
+		const customer_info = await this.model_customer_customer.getCustomer(this.request.post['customer_id']);
 
 		if (!customer_info) {
 			json['error']['customer'] = this.language.get('error_customer');
@@ -745,9 +745,9 @@ if (typeof this.request.get['filter_status'] != 'undefined' && this.request.get[
 
 		// Custom field validation
 		if (customer_info) {
-			this.load.model('customer/custom_field');
+			this.load.model('customer/custom_field',this);
 
-			custom_fields await this.model_customer_custom_field.getCustomFields(['filter_customer_group_id' : customer_info['customer_group_id']]);
+			const custom_fields = await this.model_customer_custom_field.getCustomFields(['filter_customer_group_id' : customer_info['customer_group_id']]);
 
 			for (custom_fields of custom_field) {
 				if (custom_field['status']) {

@@ -47,7 +47,7 @@ global.APP = async () => {
         res.send("pong!");
     });
 
-    app.use(bodyParser.json({ limit: '50mb' }));
+    // app.use(bodyParser.json({ limit: '50mb' }));
     app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
     app.use(compression());
     app.use('/image', express.static('image'));
@@ -58,7 +58,7 @@ global.APP = async () => {
     app.use(morgan('dev'));
 
     app.all('*', (req, res, next) => {
-        console.log(req.url)
+        console.log(req.body)
         next();
     });
 

@@ -104,7 +104,7 @@ class GeoZoneController extends Controller {
 		let filter_data = {
 			'sort'  : sort,
 			'order' : order,
-			'start' : (page - 1) * this.config.get('config_pagination_admin'),
+			'start' : (page - 1) * Number(this.config.get('config_pagination_admin')),
 			'limit' : this.config.get('config_pagination_admin')
 		});
 
@@ -151,7 +151,7 @@ class GeoZoneController extends Controller {
 			'url'   : this.url.link('localisation/geo_zone.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		]);
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (geo_zone_total) ? ((page - 1) * this.config.get('config_pagination_admin')) + 1 : 0, (((page - 1) * this.config.get('config_pagination_admin')) > (geo_zone_total - this.config.get('config_pagination_admin'))) ? geo_zone_total : (((page - 1) * this.config.get('config_pagination_admin')) + this.config.get('config_pagination_admin')), geo_zone_total, Math.ceil(geo_zone_total / this.config.get('config_pagination_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (geo_zone_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (geo_zone_total - this.config.get('config_pagination_admin'))) ? geo_zone_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), geo_zone_total, Math.ceil(geo_zone_total / this.config.get('config_pagination_admin')));
 
 		data['sort'] = sort;
 		data['order'] = order;
@@ -222,7 +222,7 @@ class GeoZoneController extends Controller {
 			data['description'] = '';
 		}
 
-		this.load.model('localisation/country');
+		this.load.model('localisation/country',this);
 
 		data['countries'] = await this.model_localisation_country.getCountries();
 

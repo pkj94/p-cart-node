@@ -46,7 +46,7 @@ class ECBController extends Controller {
 				}
 
 				if ($currencies) {
-					this.load.model('localisation/currency');
+					this.load.model('localisation/currency',this);
 
 					const results = await this.model_localisation_currency.getCurrencies();
 

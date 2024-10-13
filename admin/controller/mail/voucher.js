@@ -13,7 +13,7 @@ class VoucherController extends Controller {
 	 * @throws \Exception
 	 */
 	async index(int voucher_id) {
-		this.load.model('sale/order');
+		this.load.model('sale/order',this);
 
 		voucher_info await this.model_sale_voucher.getVoucher(voucher_id);
 
@@ -27,7 +27,7 @@ class VoucherController extends Controller {
 				order_id = 0;
 			}
 
-			order_info await this.model_sale_order.getOrder(order_id);
+			const order_info = await this.model_sale_order.getOrder(order_id);
 
 			// If voucher belongs to an order
 			if (order_info) {
@@ -64,7 +64,7 @@ class VoucherController extends Controller {
 				data['text_from'] = sprintf(this.language.get('mail_text_from'), from_name);
 				data['text_redeem'] = sprintf(this.language.get('mail_text_redeem'), voucher_info['code']);
 
-				this.load.model('sale/voucher_theme');
+				this.load.model('sale/voucher_theme',this);
 
 				voucher_theme_info await this.model_sale_voucher_theme.getVoucherTheme(voucher_info['voucher_theme_id']);
 
@@ -91,7 +91,7 @@ class VoucherController extends Controller {
 				data['text_from'] = sprintf(this.language.get('text_from'), from_name);
 				data['text_redeem'] = sprintf(this.language.get('text_redeem'), voucher_info['code']);
 
-				this.load.model('sale/voucher_theme');
+				this.load.model('sale/voucher_theme',this);
 
 				voucher_theme_info await this.model_sale_voucher_theme.getVoucherTheme(voucher_info['voucher_theme_id']);
 

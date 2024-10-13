@@ -1,15 +1,11 @@
-<?php
-namespace Opencart\Admin\Controller\Design;
-/**
- * 
- *
- * @package Opencart\Admin\Controller\Design
- */
-class LayoutController extends Controller {
+const sprintf = require("locutus/php/strings/sprintf");
+
+module.exports = class LayoutDesignController extends Controller {
 	/**
 	 * @return void
 	 */
 	async index() {
+		const data = {};
 		await this.load.language('design/layout');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -31,13 +27,13 @@ class LayoutController extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('text_home'),
+			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('design/layout', 'user_token=' + this.session.data['user_token'] + url)
+			'text': this.language.get('heading_title'),
+			'href': this.url.link('design/layout', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
 		data['add'] = this.url.link('design/layout.form', 'user_token=' + this.session.data['user_token'] + url);
@@ -67,15 +63,15 @@ class LayoutController extends Controller {
 	 * @return string
 	 */
 	async getList() {
+		const data = {};
+		let sort = 'name';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
-		} else {
-			sort = 'name';
 		}
 
-		let order= 'ASC';
+		let order = 'ASC';
 		if ((this.request.get['order'])) {
-			order= this.request.get['order'];
+			order = this.request.get['order'];
 		}
 
 		let page = 1;
@@ -102,27 +98,27 @@ class LayoutController extends Controller {
 		data['layouts'] = [];
 
 		let filter_data = {
-			'sort'  : sort,
-			'order' : order,
-			'start' : (page - 1) * this.config.get('config_pagination_admin'),
-			'limit' : this.config.get('config_pagination_admin')
-		});
+			'sort': sort,
+			'order': order,
+			'start': (page - 1) * Number(this.config.get('config_pagination_admin')),
+			'limit': this.config.get('config_pagination_admin')
+		};
 
-		this.load.model('design/layout',this);
+		this.load.model('design/layout', this);
 
-		layout_total await this.model_design_layout.getTotalLayouts();
+		const layout_total = await this.model_design_layout.getTotalLayouts();
 
 		const results = await this.model_design_layout.getLayouts(filter_data);
 
 		for (let result of results) {
 			data['layouts'].push({
-				'layout_id' : result['layout_id'],
-				'name'      : result['name'],
-				'edit'      : this.url.link('design/layout.form', 'user_token=' + this.session.data['user_token'] + '&layout_id=' + result['layout_id'] + url)
-			];
+				'layout_id': result['layout_id'],
+				'name': result['name'],
+				'edit': this.url.link('design/layout.form', 'user_token=' + this.session.data['user_token'] + '&layout_id=' + result['layout_id'] + url)
+			});
 		}
 
-		let url = '';
+		url = '';
 
 		if (order == 'ASC') {
 			url += '&order=DESC';
@@ -132,7 +128,7 @@ class LayoutController extends Controller {
 
 		data['sort_name'] = this.url.link('design/layout.list', 'user_token=' + this.session.data['user_token'] + '&sort=name' + url);
 
-		let url = '';
+		url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -143,13 +139,13 @@ class LayoutController extends Controller {
 		}
 
 		data['pagination'] = await this.load.controller('common/pagination', {
-			'total' : layout_total,
-			'page'  : page,
-			'limit' : this.config.get('config_pagination_admin'),
-			'url'   : this.url.link('design/layout.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
-		]);
+			'total': layout_total,
+			'page': page,
+			'limit': this.config.get('config_pagination_admin'),
+			'url': this.url.link('design/layout.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
+		});
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (layout_total) ? ((page - 1) * this.config.get('config_pagination_admin')) + 1 : 0, (((page - 1) * this.config.get('config_pagination_admin')) > (layout_total - this.config.get('config_pagination_admin'))) ? layout_total : (((page - 1) * this.config.get('config_pagination_admin')) + this.config.get('config_pagination_admin')), layout_total, Math.ceil(layout_total / this.config.get('config_pagination_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (layout_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (layout_total - this.config.get('config_pagination_admin'))) ? layout_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), layout_total, Math.ceil(layout_total / this.config.get('config_pagination_admin')));
 
 		data['sort'] = sort;
 		data['order'] = order;
@@ -161,6 +157,7 @@ class LayoutController extends Controller {
 	 * @return void
 	 */
 	async form() {
+		const data = {};
 		await this.load.language('design/layout');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -184,22 +181,22 @@ class LayoutController extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('text_home'),
+			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('design/layout', 'user_token=' + this.session.data['user_token'] + url)
+			'text': this.language.get('heading_title'),
+			'href': this.url.link('design/layout', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
 		data['save'] = this.url.link('design/layout.save', 'user_token=' + this.session.data['user_token']);
 		data['back'] = this.url.link('design/layout', 'user_token=' + this.session.data['user_token'] + url);
-
+		let layout_info;
 		if ((this.request.get['layout_id'])) {
-			this.load.model('design/layout',this);
+			this.load.model('design/layout', this);
 
-			layout_info await this.model_design_layout.getLayout(this.request.get['layout_id']);
+			layout_info = await this.model_design_layout.getLayout(this.request.get['layout_id']);
 		}
 
 		if ((this.request.get['layout_id'])) {
@@ -214,7 +211,7 @@ class LayoutController extends Controller {
 			data['name'] = '';
 		}
 
-		this.load.model('setting/store',this);
+		this.load.model('setting/store', this);
 
 		data['stores'] = await this.model_setting_store.getStores();
 
@@ -224,69 +221,68 @@ class LayoutController extends Controller {
 			data['layout_routes'] = [];
 		}
 
-		this.load.model('setting/extension',this);
+		this.load.model('setting/extension', this);
 
-		this.load.model('setting/module',this);
+		this.load.model('setting/module', this);
 
 		data['extensions'] = [];
 
 		// Get a list of installed modules
-		extensions await this.model_setting_extension.getExtensionsByType('module');
+		const extensions = await this.model_setting_extension.getExtensionsByType('module');
 
 		// Add all the modules which have multiple settings for each module
-		for (extensions of extension) {
+		for (let extension of extensions) {
 			await this.load.language('extension/' + extension['extension'] + '/module/' + extension['code'], extension['code']);
 
-			module_data = [];
+			let module_data = [];
 
-			const modules = await this.model_setting_module.getModulesByCode(extension['extension'] .'.' + extension['code']);
+			const modules = await this.model_setting_module.getModulesByCode(extension['extension'] + '.' + extension['code']);
 
 			for (let module of modules) {
 				module_data.push({
-					'name' : strip_tags(module['name']),
-					'code' : extension['extension'] + '.' +  extension['code'] + '.' +  module['module_id']
-				];
+					'name': strip_tags(module['name']),
+					'code': extension['extension'] + '.' + extension['code'] + '.' + module['module_id']
+				});
 			}
 
 			if (this.config.has('module_' + extension['code'] + '_status') || module_data) {
 				data['extensions'].push({
-					'name'   : strip_tags(this.language.get(extension['code'] + '_heading_title')),
-					'code'   : extension['extension'] + '.' +  extension['code'],
-					'module' : module_data
-				];
+					'name': strip_tags(this.language.get(extension['code'] + '_heading_title')),
+					'code': extension['extension'] + '.' + extension['code'],
+					'module': module_data
+				});
 			}
 		}
 
 		// Modules layout
+		let layout_modules = [];
 		if ((layout_info)) {
-			layout_const modules = await this.model_design_layout.getModules(this.request.get['layout_id']);
-		} else {
-			layout_modules = [];
+			layout_modules = await this.model_design_layout.getModules(this.request.get['layout_id']);
 		}
 
 		data['layout_modules'] = [];
 
 		// Add all the modules which have multiple settings for each module
-		for (layout_modules of layout_module) {
-			part = explode('.', layout_module['code']);
+		for (let layout_module of layout_modules) {
+			let part = layout_module['code'].split('.');
 
 			if (!(part[2])) {
 				data['layout_modules'].push({
-					'code'       : layout_module['code'],
-					'position'   : layout_module['position'],
-					'sort_order' : layout_module['sort_order'],
-					'edit'       : this.url.link('extension/' + part[0] + '/module/' + part[1], 'user_token=' + this.session.data['user_token'])
-				];
+					'code': layout_module['code'],
+					'position': layout_module['position'],
+					'sort_order': layout_module['sort_order'],
+					'edit': this.url.link('extension/' + part[0] + '/module/' + part[1], 'user_token=' + this.session.data['user_token'])
+				});
 			} else {
-				module_info await this.model_setting_module.getModule(part[2]);
+				const module_info = await this.model_setting_module.getModule(part[2]);
 
-				if (module_info) {
+				if (module_info && module_info.module_id) {
 					data['layout_modules'].push({
-						'code'       : layout_module['code'],
-						'position'   : layout_module['position'],
-						'sort_order' : layout_module['sort_order'],
-						'edit'   	 : this.url.link('extension/' + part[0] + '/module/' + part[1], 'user_token=' + this.session.data['user_token'] + '&module_id=' + part[2])
-					];
+						'code': layout_module['code'],
+						'position': layout_module['position'],
+						'sort_order': layout_module['sort_order'],
+						'edit': this.url.link('extension/' + part[0] + '/module/' + part[1], 'user_token=' + this.session.data['user_token'] + '&module_id=' + part[2])
+					});
 				}
 			}
 		}
@@ -306,7 +302,7 @@ class LayoutController extends Controller {
 	async save() {
 		await this.load.language('design/layout');
 
-		const json = {};
+		const json = { error: {} };
 
 		if (!await this.user.hasPermission('modify', 'design/layout')) {
 			json['error']['warning'] = this.language.get('error_permission');
@@ -316,9 +312,9 @@ class LayoutController extends Controller {
 			json['error']['name'] = this.language.get('error_name');
 		}
 
-		if (!Object.keys(json).length) {
-			this.load.model('design/layout',this);
-
+		if (!Object.keys(json.error).length) {
+			this.load.model('design/layout', this);
+			this.request.post['layout_id'] = Number(this.request.post['layout_id']);
 			if (!this.request.post['layout_id']) {
 				json['layout_id'] = await this.model_design_layout.addLayout(this.request.post);
 			} else {
@@ -341,7 +337,7 @@ class LayoutController extends Controller {
 		const json = {};
 
 		let selected = [];
-                 if ((this.request.post['selected'])) {
+		if ((this.request.post['selected'])) {
 			selected = this.request.post['selected'];
 		}
 
@@ -349,18 +345,18 @@ class LayoutController extends Controller {
 			json['error'] = this.language.get('error_permission');
 		}
 
-		this.load.model('setting/store',this);
-		this.load.model('catalog/product',this);
-		this.load.model('catalog/category',this);
-		this.load.model('catalog/manufacturer',this);
-		this.load.model('catalog/information',this);
+		this.load.model('setting/store', this);
+		this.load.model('catalog/product', this);
+		this.load.model('catalog/category', this);
+		this.load.model('catalog/manufacturer', this);
+		this.load.model('catalog/information', this);
 
 		for (let layout_id of selected) {
 			if (this.config.get('config_layout_id') == layout_id) {
 				json['error'] = this.language.get('error_default');
 			}
 
-			store_total await this.model_setting_store.getTotalStoresByLayoutId(layout_id);
+			const store_total = await this.model_setting_store.getTotalStoresByLayoutId(layout_id);
 
 			if (store_total) {
 				json['error'] = sprintf(this.language.get('error_store'), store_total);
@@ -378,13 +374,13 @@ class LayoutController extends Controller {
 				json['error'] = sprintf(this.language.get('error_category'), category_total);
 			}
 
-			manufacturer_total await this.model_catalog_manufacturer.getTotalManufacturersByLayoutId(layout_id);
+			const manufacturer_total = await this.model_catalog_manufacturer.getTotalManufacturersByLayoutId(layout_id);
 
 			if (manufacturer_total) {
 				json['error'] = sprintf(this.language.get('error_manufacturer'), manufacturer_total);
 			}
 
-			information_total await this.model_catalog_information.getTotalInformationsByLayoutId(layout_id);
+			const information_total = await this.model_catalog_information.getTotalInformationsByLayoutId(layout_id);
 
 			if (information_total) {
 				json['error'] = sprintf(this.language.get('error_information'), information_total);
@@ -392,7 +388,7 @@ class LayoutController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('design/layout',this);
+			this.load.model('design/layout', this);
 
 			for (let layout_id of selected) {
 				await this.model_design_layout.deleteLayout(layout_id);

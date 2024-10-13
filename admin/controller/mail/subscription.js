@@ -41,7 +41,7 @@ class SubscriptionController extends Controller {
         }
 
         // Subscription
-        this.load.model('sale/subscription');
+        this.load.model('sale/subscription',this);
 
         filter_data = [
             'filter_subscription_id'        : subscription_id,
@@ -211,7 +211,7 @@ class SubscriptionController extends Controller {
         }
 
         // Subscription
-        this.load.model('sale/subscription');
+        this.load.model('sale/subscription',this);
 
         filter_data = [
             'filter_subscription_id'        : subscription_id,
@@ -227,7 +227,7 @@ class SubscriptionController extends Controller {
 
                 if (transaction_total) {
                     // Orders
-                    this.load.model('sale/order');
+                    this.load.model('sale/order',this);
 
                     order_info await this.model_sale_order.getOrder(order_id);
 

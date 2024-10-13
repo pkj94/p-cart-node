@@ -22,27 +22,27 @@ module.exports = class SpecialModuleController extends Controller {
 		});
 
 		if (!this.request.get['module_id']) {
-			breadcrumbs.push({
+			data.breadcrumbs.push({
 				text: this.language.get('heading_title'),
 				href: this.url.link('extension/opencart/module/special', 'user_token=' + this.session.data['user_token'])
 			});
 		} else {
-			breadcrumbs.push({
+			data.breadcrumbs.push({
 				text: this.language.get('heading_title'),
 				href: this.url.link('extension/opencart/module/special', 'user_token=' + this.session.data['user_token'] + '&module_id=' + this.request.get['module_id'])
 			});
 		}
 
 		if (!this.request.get['module_id']) {
-			data['save'] = this.url.link('extension/opencart/module/special+save', 'user_token=' + this.session.data['user_token']);
+			data['save'] = this.url.link('extension/opencart/module/special.save', 'user_token=' + this.session.data['user_token']);
 		} else {
-			data['save'] = this.url.link('extension/opencart/module/special+save', 'user_token=' + this.session.data['user_token'] + '&module_id=' + this.request.get['module_id']);
+			data['save'] = this.url.link('extension/opencart/module/special.save', 'user_token=' + this.session.data['user_token'] + '&module_id=' + this.request.get['module_id']);
 		}
 
 		data['back'] = this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=module');
 		let module_info = {};
 		if (this.request.get['module_id']) {
-			this.load.model('setting/module',this);
+			this.load.model('setting/module', this);
 
 			module_info = await this.model_setting_module.getModule(this.request.get['module_id']);
 		}
@@ -102,7 +102,7 @@ module.exports = class SpecialModuleController extends Controller {
 	async save() {
 		await this.load.language('extension/opencart/module/special');
 
-		const json = {error:{}};
+		const json = { error: {} };
 
 		if (!await this.user.hasPermission('modify', 'extension/opencart/module/special')) {
 			json['error']['warning'] = this.language.get('error_permission');
@@ -120,8 +120,8 @@ module.exports = class SpecialModuleController extends Controller {
 			json['error']['height'] = this.language.get('error_height');
 		}
 
-		if (!Object.keys(json.keys)) {
-			this.load.model('setting/module',this);
+		if (!Object.keys(json.error).length) {
+			this.load.model('setting/module', this);
 			this.request.post.module_id = Number(this.request.post.module_id);
 			if (!this.request.post['module_id']) {
 				json['module_id'] = await this.model_setting_module.addModule('opencart.special', this.request.post);
@@ -129,7 +129,7 @@ module.exports = class SpecialModuleController extends Controller {
 				await this.model_setting_module.editModule(this.request.post['module_id'], this.request.post);
 			}
 
-			this.cache.delete('product');
+			await this.cache.delete('product');
 
 			json['success'] = this.language.get('text_success');
 		}

@@ -117,11 +117,11 @@ class CurrencyController extends Controller {
 		let filter_data = {
 			'sort'  : sort,
 			'order' : order,
-			'start' : (page - 1) * this.config.get('config_pagination_admin'),
+			'start' : (page - 1) * Number(this.config.get('config_pagination_admin')),
 			'limit' : this.config.get('config_pagination_admin')
 		});
 
-		this.load.model('localisation/currency');
+		this.load.model('localisation/currency',this);
 
 		currency_total await this.model_localisation_currency.getTotalCurrencies();
 
@@ -170,7 +170,7 @@ class CurrencyController extends Controller {
 			'url'   : this.url.link('localisation/currency.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		]);
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (currency_total) ? ((page - 1) * this.config.get('config_pagination_admin')) + 1 : 0, (((page - 1) * this.config.get('config_pagination_admin')) > (currency_total - this.config.get('config_pagination_admin'))) ? currency_total : (((page - 1) * this.config.get('config_pagination_admin')) + this.config.get('config_pagination_admin')), currency_total, Math.ceil(currency_total / this.config.get('config_pagination_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (currency_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (currency_total - this.config.get('config_pagination_admin'))) ? currency_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), currency_total, Math.ceil(currency_total / this.config.get('config_pagination_admin')));
 
 		data['sort'] = sort;
 		data['order'] = order;
@@ -218,7 +218,7 @@ class CurrencyController extends Controller {
 		data['back'] = this.url.link('localisation/currency', 'user_token=' + this.session.data['user_token'] + url);
 
 		if ((this.request.get['currency_id'])) {
-			this.load.model('localisation/currency');
+			this.load.model('localisation/currency',this);
 
 			currency_info await this.model_localisation_currency.getCurrency(this.request.get['currency_id']);
 		}
@@ -301,7 +301,7 @@ class CurrencyController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('localisation/currency');
+			this.load.model('localisation/currency',this);
 
 			if (!this.request.post['currency_id']) {
 				json['currency_id'] = await this.model_localisation_currency.addCurrency(this.request.post);
@@ -330,7 +330,7 @@ class CurrencyController extends Controller {
 
 		this.load.model('setting/extension',this);
 
-		extension_info await this.model_setting_extension.getExtensionByCode('currency', this.config.get('config_currency_engine'));
+		const extension_info = await this.model_setting_extension.getExtensionByCode('currency', this.config.get('config_currency_engine'));
 
 		if (!extension_info) {
 			json['error'] = this.language.get('error_extension');
@@ -363,9 +363,9 @@ class CurrencyController extends Controller {
 			json['error'] = this.language.get('error_permission');
 		}
 
-		this.load.model('localisation/currency');
+		this.load.model('localisation/currency',this);
 		this.load.model('setting/store',this);
-		this.load.model('sale/order');
+		this.load.model('sale/order',this);
 
 		for (selected of currency_id) {
 			currency_info await this.model_localisation_currency.getCurrency(currency_id);

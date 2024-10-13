@@ -1,15 +1,12 @@
-<?php
-namespace Opencart\Admin\Controller\Design;
-/**
- * 
- *
- * @package Opencart\Admin\Controller\Design
- */
-class ThemeController extends Controller {
+const sprintf = require("locutus/php/strings/sprintf");
+const fs = require('fs');
+const expressPath = require('path');
+module.exports = class ThemeController extends Controller {
 	/**
 	 * @return void
 	 */
 	async index() {
+		const data = {};
 		await this.load.language('design/theme');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -17,26 +14,26 @@ class ThemeController extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('text_home'),
+			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('design/theme', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('heading_title'),
+			'href': this.url.link('design/theme', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['stores'] = [];
 
-		this.load.model('setting/store',this);
+		this.load.model('setting/store', this);
 
 		const results = await this.model_setting_store.getStores();
 
 		for (let result of results) {
 			data['stores'].push({
-				'store_id' : result['store_id'],
-				'name'     : result['name']
-			];
+				'store_id': result['store_id'],
+				'name': result['name']
+			});
 		}
 
 		data['user_token'] = this.session.data['user_token'];
@@ -52,6 +49,7 @@ class ThemeController extends Controller {
 	 * @return void
 	 */
 	async history() {
+		const data = {};
 		await this.load.language('design/theme');
 
 		let page = 1;
@@ -63,10 +61,10 @@ class ThemeController extends Controller {
 
 		data['histories'] = [];
 
-		this.load.model('design/theme');
-		this.load.model('setting/store',this);
+		this.load.model('design/theme', this);
+		this.load.model('setting/store', this);
 
-		history_total await this.model_design_theme.getTotalThemes();
+		const history_total = await this.model_design_theme.getTotalThemes();
 
 		const results = await this.model_design_theme.getThemes((page - 1) * limit, limit);
 
@@ -80,21 +78,21 @@ class ThemeController extends Controller {
 			}
 
 			data['histories'].push({
-				'store_id'   : result['store_id'],
-				'store'      : (result['store_id'] ? store : this.language.get('text_default')),
-				'route'      : result['route'],
-				'date_added' : date(this.language.get('date_format_short'), strtotime(result['date_added'])),
-				'edit'       : this.url.link('design/theme.template', 'user_token=' + this.session.data['user_token']),
-				'delete'     : this.url.link('design/theme.delete', 'user_token=' + this.session.data['user_token'] + '&theme_id=' + result['theme_id'])
-			];
+				'store_id': result['store_id'],
+				'store': (result['store_id'] ? store : this.language.get('text_default')),
+				'route': result['route'],
+				'date_added': date(this.language.get('date_format_short'), strtotime(result['date_added'])),
+				'edit': this.url.link('design/theme.template', 'user_token=' + this.session.data['user_token']),
+				'delete': this.url.link('design/theme.delete', 'user_token=' + this.session.data['user_token'] + '&theme_id=' + result['theme_id'])
+			});
 		}
 
 		data['pagination'] = await this.load.controller('common/pagination', {
-			'total' : history_total,
-			'page'  : page,
-			'limit' : limit,
-			'url'   : this.url.link('design/theme.history', 'user_token=' + this.session.data['user_token'] + '&page={page}')
-		]);
+			'total': history_total,
+			'page': page,
+			'limit': limit,
+			'url': this.url.link('design/theme.history', 'user_token=' + this.session.data['user_token'] + '&page={page}')
+		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (history_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (history_total - limit)) ? history_total : (((page - 1) * limit) + limit), history_total, Math.ceil(history_total / limit));
 
@@ -108,51 +106,47 @@ class ThemeController extends Controller {
 		await this.load.language('design/theme');
 
 		const json = {};
-
+		let store_id = 0;
 		if ((this.request.get['store_id'])) {
 			store_id = this.request.get['store_id'];
-		} else {
-			store_id = 0;
 		}
-
+		let path = '';
 		if ((this.request.get['path'])) {
 			path = this.request.get['path'];
-		} else {
-			path = '';
 		}
 
 		// Default templates
 		json['directory'] = [];
 		json['file'] = [];
 
-		directory = DIR_CATALOG + 'view/template';
+		let directory = DIR_CATALOG + 'view/template';
 
-		if (substr(str_replace('\\', '/', realpath(directory + '/' + path)), 0, strlen(directory)) == directory) {
+		if (fs.realpathSync(directory + '/' + path).replaceAll('\\', '/').substring(0, directory.length) == directory) {
 			// We grab the files from the default template directory
-			files = glob(rtrim(DIR_CATALOG + 'view/template/' + path, '/') + '/*');
+			let files = fs.readdirSync(rtrim(DIR_CATALOG + 'view/template/' + path, '/') + '/');
 
-			for (files of file) {
-				if (is_dir(file)) {
+			for (let file of files) {
+				if (fs.existsSync(file) && fs.lstatSync(file).isDirectory()) {
 					json['directory'].push({
-						'name' : basename(file),
-						'path' : trim(path + '/' + basename(file), '/')
-					];
+						'name': expressPath.basename(file),
+						'path': trim(path + '/' + basename(file), '/')
+					});
 				}
 
-				if (fs.lstatSync(file).isFile()) {
+				if (fs.existsSync(file) && fs.lstatSync(file).isFile()) {
 					json['file'].push({
-						'name' : basename(file),
-						'path' : trim(path + '/' + basename(file), '/')
-					];
+						'name': expressPath.basename(file),
+						'path': trim(path + '/' + basename(file), '/')
+					});
 				}
 			}
 		}
 
 		if (!path) {
 			json['directory'].push({
-				'name' : this.language.get('text_extension'),
-				'path' : 'extension',
-			];
+				'name': this.language.get('text_extension'),
+				'path': 'extension',
+			});
 		}
 
 		// Extension templates
@@ -160,71 +154,72 @@ class ThemeController extends Controller {
 
 		// List all the extensions
 		if (path == 'extension') {
-			directories = glob(DIR_EXTENSION + '*', GLOB_ONLYDIR);
+			let directories = fs.readdirSync(DIR_EXTENSION);
 
 			for (directories of directory) {
 				json['extension']['directory'].push({
-					'name' : basename(directory),
-					'path' : 'extension/' + basename(directory)
-				];
+					'name': expressPath.basename(directory),
+					'path': 'extension/' + basename(directory)
+				});
 			}
 		}
 
 		// List extension sub directories directories
-		if (substr(path, 0, 10) == 'extension/') {
-			route = '';
+		if (path.substring(0, 10) == 'extension/') {
+			let route = '';
 
-			part = explode('/', path);
+			let part = path.split('/');
 
-			extension = part[1];
+			let extension = part[1];
 
-			delete (part[0]);
-			delete (part[1]);
+			delete part[0];
+			delete part[1];
 
 			if ((part[2])) {
-				route = implode('/', part);
+				route = part.join('/');
 			}
 
-			safe = true;
+			let safe = true;
 
-			if (substr(str_replace('\\', '/', realpath(DIR_EXTENSION + extension)), 0, strlen(DIR_EXTENSION)) != DIR_EXTENSION) {
+			if (fs.realpathSync(DIR_EXTENSION + extension).replaceAll('\\', '/').substring(0, DIR_EXTENSION.length) != DIR_EXTENSION) {
 				safe = false;
 			}
 
-			directory = DIR_EXTENSION + extension + '/catalog/view/template';
+			let directory = DIR_EXTENSION + extension + '/catalog/view/template';
 
-			if (substr(str_replace('\\', '/', realpath(directory + '/' + route)), 0, strlen(directory)) != directory) {
+			if (fs.realpathSync(directory + '/' + route).replaceAll('\\', '/').substring(0, directory.length) != directory) {
 				safe = false;
 			}
 
 			if (safe) {
-				files = glob(rtrim(DIR_EXTENSION + extension + '/catalog/view/template/' + route, '/') + '/*');
+				let files = fs.readdirSync(rtrim(DIR_EXTENSION + extension + '/catalog/view/template/' + route, '/') + '/');
 
-				sort(files);
+				// sort(files);
+				files = files.sort();
 
-				for (files of file) {
-					if (is_dir(file)) {
+				for (let file of files) {
+					if (fs.lstatSync(file).isDirectory()) {
 						json['extension']['directory'].push({
-							'name' : basename(file),
-							'path' : path + '/' + basename(file)
-						];
+							'name': expressPath.basename(file),
+							'path': path + '/' + basename(file)
+						});
 					}
 
 					if (fs.lstatSync(file).isFile()) {
 						json['extension']['file'].push({
-							'name' : basename(file),
-							'path' : path + '/' + basename(file)
-						];
+							'name': expressPath.basename(file),
+							'path': path + '/' + basename(file)
+						});
 					}
 				}
 			}
 		}
 
 		if (path) {
-			json['back'] = [
-				'name' : this.language.get('button_back'),
-				'path' : encodeURIComponent(substr(path, 0, strrpos(path, '/'))),
-			];
+			json['back'] = {
+				'name': this.language.get('button_back'),
+				'path': encodeURIComponent(path.substring(0, path.indexOf('/'))),
+			};
 		}
 
 		this.response.addHeader('Content-Type: application/json');
@@ -238,58 +233,54 @@ class ThemeController extends Controller {
 		await this.load.language('design/theme');
 
 		const json = {};
-
+		let store_id = 0;
 		if ((this.request.get['store_id'])) {
 			store_id = this.request.get['store_id'];
-		} else {
-			store_id = 0;
 		}
-
+		let path = '';
 		if ((this.request.get['path'])) {
 			path = this.request.get['path'];
-		} else {
-			path = '';
 		}
 
 		// Default template load
-		directory = DIR_CATALOG + 'view/template';
+		let directory = DIR_CATALOG + 'view/template';
 
-		if (is_file(directory + '/' + path) && (substr(str_replace('\\', '/', realpath(directory + '/' + path)), 0, strlen(directory)) == directory)) {
-			json['code'] = file_get_contents(DIR_CATALOG + 'view/template/' + path);
+		if (fs.lstatSync(directory + '/' + path).isFile() && (fs.realpathSync(directory + '/' + path).replaceAll('\\', '/').substring(0, directory.length) == directory)) {
+			json['code'] = fs.readFileSync(DIR_CATALOG + 'view/template/' + path).toString();
 		}
 
 		// Extension template load
-		if (substr(path, 0, 10) == 'extension/') {
-			part = explode('/', path);
+		if (path.substring(0, 10) == 'extension/') {
+			let part = path.split('/');
 
-			extension = part[1];
+			let extension = part[1];
 
-			delete (part[0]);
-			delete (part[1]);
+			delete part[0];
+			delete part[1];
 
-			route = implode('/', part);
+			let route = part.join('/');
 
-			safe = true;
+			let safe = true;
 
-			if (substr(str_replace('\\', '/', realpath(DIR_EXTENSION + extension)), 0, strlen(DIR_EXTENSION)) != DIR_EXTENSION) {
+			if (fs.realpathSync(DIR_EXTENSION + extension).replaceAll('\\', '/').substring(0, DIR_EXTENSION.length) != DIR_EXTENSION) {
 				safe = false;
 			}
 
-			directory = DIR_EXTENSION + extension + '/catalog/view/template';
+			let directory = DIR_EXTENSION + extension + '/catalog/view/template';
 
-			if (substr(str_replace('\\', '/', realpath(directory + '/' + route)), 0, strlen(directory)) != directory) {
+			if (fs.realpathSync(directory + '/' + route).replaceAll('\\', '/').substring(0, directory.length) != directory) {
 				safe = false;
 			}
 
-			if (safe && is_file(directory + '/' + route)) {
-				json['code'] = file_get_contents(directory + '/' + route);
+			if (safe && fs.lstatSync(directory + '/' + route).isFile()) {
+				json['code'] = fs.readFileSync(directory + '/' + route).toString();
 			}
 		}
 
 		// Custom template load
-		this.load.model('design/theme');
+		this.load.model('design/theme', this);
 
-		theme_info await this.model_design_theme.getTheme(store_id, path);
+		const theme_info = await this.model_design_theme.getTheme(store_id, path);
 
 		if (theme_info) {
 			json['code'] = html_entity_decode(theme_info['code']);
@@ -306,17 +297,13 @@ class ThemeController extends Controller {
 		await this.load.language('design/theme');
 
 		const json = {};
-
+		let store_id = 0;
 		if ((this.request.get['store_id'])) {
 			store_id = this.request.get['store_id'];
-		} else {
-			store_id = 0;
 		}
-
+		let path = '';
 		if ((this.request.get['path'])) {
 			path = this.request.get['path'];
-		} else {
-			path = '';
 		}
 
 		// Check user has permission
@@ -329,9 +316,9 @@ class ThemeController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('design/theme');
+			this.load.model('design/theme', this);
 
-			pos = strpos(path, '.');
+			let pos = path.indexOf('.');
 
 			await this.model_design_theme.editTheme(store_id, (pos !== false) ? substr(path, 0, pos) : path, this.request.post['code']);
 
@@ -347,50 +334,46 @@ class ThemeController extends Controller {
 	 */
 	async reset() {
 		const json = {};
-
+		let store_id = 0;
 		if ((this.request.get['store_id'])) {
 			store_id = this.request.get['store_id'];
-		} else {
-			store_id = 0;
 		}
-
+		let path = '';
 		if ((this.request.get['path'])) {
 			path = this.request.get['path'];
-		} else {
-			path = '';
 		}
 
-		directory = DIR_CATALOG + 'view/template';
+		let directory = DIR_CATALOG + 'view/template';
 
-		if (is_file(directory + '/' + path) && (substr(str_replace('\\', '/', realpath(directory + '/' + path)), 0, strlen(directory)) == directory)) {
-			json['code'] = file_get_contents(DIR_CATALOG + 'view/template/' + path);
+		if (fs.lstatSync(directory + '/' + path).isFile() && (fs.realpathSync(directory + '/' + path).replaceAll('\\', '/').substring(0, directory.length) == directory)) {
+			json['code'] = fs.readFileSync(DIR_CATALOG + 'view/template/' + path).toString();
 		}
 
 		// Extension template load
-		if (substr(path, 0, 10) == 'extension/') {
-			part = explode('/', path);
+		if (path.substring(0, 10) == 'extension/') {
+			let part = path.split('/');
 
-			extension = part[1];
+			let extension = part[1];
 
-			delete (part[0]);
-			delete (part[1]);
+			delete part[0];
+			delete part[1];
 
-			route = implode('/', part);
+			let route = part.join('/');
 
-			safe = true;
+			let safe = true;
 
-			if (substr(str_replace('\\', '/', realpath(DIR_EXTENSION + extension)), 0, strlen(DIR_EXTENSION)) != DIR_EXTENSION) {
+			if (fs.realpathSync(DIR_EXTENSION + extension).replaceAll('\\', '/').substring(0, DIR_EXTENSION.length) != DIR_EXTENSION) {
 				safe = false;
 			}
 
-			directory = DIR_EXTENSION + extension + '/catalog/view/template';
+			let directory = DIR_EXTENSION + extension + '/catalog/view/template';
 
-			if (substr(str_replace('\\', '/', realpath(directory + '/' + route)), 0, strlen(directory)) != directory) {
+			if (fs.realpathSync(directory + '/' + route).replaceAll('\\', '/').substring(0, directory.length) != directory) {
 				safe = false;
 			}
 
-			if (safe && is_file(directory + '/' + route)) {
-				json['code'] = file_get_contents(directory + '/' + route);
+			if (safe && fs.lstatSync(directory + '/' + route).isFile()) {
+				json['code'] = fs.readFileSync(directory + '/' + route).toString();
 			}
 		}
 
@@ -405,11 +388,9 @@ class ThemeController extends Controller {
 		await this.load.language('design/theme');
 
 		const json = {};
-
+		let theme_id = 0;
 		if ((this.request.get['theme_id'])) {
 			theme_id = this.request.get['theme_id'];
-		} else {
-			theme_id = 0;
 		}
 
 		// Check user has permission
@@ -418,7 +399,7 @@ class ThemeController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('design/theme');
+			this.load.model('design/theme', this);
 
 			await this.model_design_theme.deleteTheme(theme_id);
 

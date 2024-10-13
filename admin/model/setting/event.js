@@ -43,7 +43,7 @@ module.exports = class EventSettingModel extends Model {
         ];
 
         if (data.sort && sort_data.includes(data.sort)) {
-            sql += ` ORDER BY $${data.sort}`;
+            sql += ` ORDER BY ${data.sort}`;
         } else {
             sql += ` ORDER BY sort_order`;
         }
@@ -57,7 +57,7 @@ module.exports = class EventSettingModel extends Model {
         if (data.start >= 0 || data.limit > 0) {
             const start = data.start < 0 ? 0 : parseInt(data.start);
             const limit = data.limit < 1 ? 20 : parseInt(data.limit);
-            sql += ` LIMIT $${start}, $${limit}`;
+            sql += ` LIMIT ${start}, ${limit}`;
         }
 
         const query = await this.db.query(sql);
