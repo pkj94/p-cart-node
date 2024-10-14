@@ -1,8 +1,11 @@
-module.exports=class UserController extends Controller {
+const sprintf = require("locutus/php/strings/sprintf");
+const fs = require('fs');
+module.exports = class UserController extends Controller {
 	/**
 	 * @return void
 	 */
 	async index() {
+		const data = {};
 		await this.load.language('user/user');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -24,13 +27,13 @@ module.exports=class UserController extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('text_home'),
+			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('user/user', 'user_token=' + this.session.data['user_token'] + url)
+			'text': this.language.get('heading_title'),
+			'href': this.url.link('user/user', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
 		data['add'] = this.url.link('user/user.form', 'user_token=' + this.session.data['user_token'] + url);
@@ -60,15 +63,15 @@ module.exports=class UserController extends Controller {
 	 * @return string
 	 */
 	async getList() {
+		const data = {};
+		let sort = 'username';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
-		} else {
-			sort = 'username';
 		}
 
-		let order= 'ASC';
+		let order = 'ASC';
 		if ((this.request.get['order'])) {
-			order= this.request.get['order'];
+			order = this.request.get['order'];
 		}
 
 		let page = 1;
@@ -95,29 +98,29 @@ module.exports=class UserController extends Controller {
 		data['users'] = [];
 
 		let filter_data = {
-			'sort'  : sort,
-			'order' : order,
-			'start' : (page - 1) * Number(this.config.get('config_pagination_admin')),
-			'limit' : this.config.get('config_pagination_admin')
-		});
+			'sort': sort,
+			'order': order,
+			'start': (page - 1) * Number(this.config.get('config_pagination_admin')),
+			'limit': this.config.get('config_pagination_admin')
+		};
 
-		this.load.model('user/user',this);
+		this.load.model('user/user', this);
 
-		user_total await this.model_user_user.getTotalUsers();
+		const user_total = await this.model_user_user.getTotalUsers();
 
 		const results = await this.model_user_user.getUsers(filter_data);
 
 		for (let result of results) {
 			data['users'].push({
-				'user_id'    : result['user_id'],
-				'username'   : result['username'],
-				'status'     : (result['status'] ? this.language.get('text_enabled') : this.language.get('text_disabled')),
-				'date_added' : date(this.language.get('date_format_short'), new Date(result['date_added'])),
-				'edit'       : this.url.link('user/user.form', 'user_token=' + this.session.data['user_token'] + '&user_id=' + result['user_id'] + url)
-			];
+				'user_id': result['user_id'],
+				'username': result['username'],
+				'status': (result['status'] ? this.language.get('text_enabled') : this.language.get('text_disabled')),
+				'date_added': date(this.language.get('date_format_short'), new Date(result['date_added'])),
+				'edit': this.url.link('user/user.form', 'user_token=' + this.session.data['user_token'] + '&user_id=' + result['user_id'] + url)
+			});
 		}
 
-		let url = '';
+		url = '';
 
 		if (order == 'ASC') {
 			url += '&order=DESC';
@@ -129,7 +132,7 @@ module.exports=class UserController extends Controller {
 		data['sort_status'] = this.url.link('user/user.list', 'user_token=' + this.session.data['user_token'] + '&sort=status' + url);
 		data['sort_date_added'] = this.url.link('user/user.list', 'user_token=' + this.session.data['user_token'] + '&sort=date_added' + url);
 
-		let url = '';
+		url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -140,11 +143,11 @@ module.exports=class UserController extends Controller {
 		}
 
 		data['pagination'] = await this.load.controller('common/pagination', {
-			'total' : user_total,
-			'page'  : page,
-			'limit' : this.config.get('config_pagination_admin'),
-			'url'   : this.url.link('user/user.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
-		]);
+			'total': user_total,
+			'page': page,
+			'limit': this.config.get('config_pagination_admin'),
+			'url': this.url.link('user/user.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
+		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (user_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (user_total - this.config.get('config_pagination_admin'))) ? user_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), user_total, Math.ceil(user_total / this.config.get('config_pagination_admin')));
 
@@ -158,6 +161,7 @@ module.exports=class UserController extends Controller {
 	 * @return void
 	 */
 	async form() {
+		const data = {};
 		await this.load.language('user/user');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -180,11 +184,11 @@ module.exports=class UserController extends Controller {
 
 		data['save'] = this.url.link('user/user.save', 'user_token=' + this.session.data['user_token']);
 		data['back'] = this.url.link('user/user', 'user_token=' + this.session.data['user_token'] + url);
-
+		let user_info
 		if ((this.request.get['user_id'])) {
-			this.load.model('user/user',this);
+			this.load.model('user/user', this);
 
-			const user_info = await this.model_user_user.getUser(this.request.get['user_id']);
+			user_info = await this.model_user_user.getUser(this.request.get['user_id']);
 		}
 
 		if ((this.request.get['user_id'])) {
@@ -199,7 +203,7 @@ module.exports=class UserController extends Controller {
 			data['username'] = '';
 		}
 
-		this.load.model('user/user_group');
+		this.load.model('user/user_group', this);
 
 		data['user_groups'] = await this.model_user_user_group.getUserGroups();
 
@@ -233,11 +237,11 @@ module.exports=class UserController extends Controller {
 			data['image'] = '';
 		}
 
-		this.load.model('tool/image',this);
+		this.load.model('tool/image', this);
 
 		data['placeholder'] = await this.model_tool_image.resize('no_image.png', 100, 100);
 
-		if (is_file(DIR_IMAGE + html_entity_decode(data['image']))) {
+		if (data['image'] && fs.existsSync(DIR_IMAGE + html_entity_decode(data['image']))) {
 			data['thumb'] = await this.model_tool_image.resize(html_entity_decode(data['image']), 100, 100);
 		} else {
 			data['thumb'] = data['placeholder'];
@@ -249,8 +253,8 @@ module.exports=class UserController extends Controller {
 			data['status'] = 0;
 		}
 
-		data['authorize'] = this.getAuthorize();
-		data['login'] = this.getLogin();
+		data['authorize'] = await this.getAuthorize();
+		data['login'] = await this.getLogin();
 
 		data['user_token'] = this.session.data['user_token'];
 
@@ -266,8 +270,8 @@ module.exports=class UserController extends Controller {
 	 */
 	async save() {
 		await this.load.language('user/user');
-
-		const json = {};
+		this.request.post['user_id'] = Number(this.request.post['user_id']);
+		const json = { error: {} };
 
 		if (!await this.user.hasPermission('modify', 'user/user')) {
 			json['error']['warning'] = this.language.get('error_permission');
@@ -277,16 +281,16 @@ module.exports=class UserController extends Controller {
 			json['error']['username'] = this.language.get('error_username');
 		}
 
-		this.load.model('user/user',this);
+		this.load.model('user/user', this);
 
-		const user_info = await this.model_user_user.getUserByUsername(this.request.post['username']);
+		let user_info = await this.model_user_user.getUserByUsername(this.request.post['username']);
 
 		if (!this.request.post['user_id']) {
-			if (user_info) {
+			if (user_info.user_id) {
 				json['error']['warning'] = this.language.get('error_username_exists');
 			}
 		} else {
-			if (user_info && (this.request.post['user_id'] != user_info['user_id'])) {
+			if (user_info.user_id && (this.request.post['user_id'] != user_info['user_id'])) {
 				json['error']['warning'] = this.language.get('error_username_exists');
 			}
 		}
@@ -299,18 +303,18 @@ module.exports=class UserController extends Controller {
 			json['error']['lastname'] = this.language.get('error_lastname');
 		}
 
-		if ((oc_strlen(this.request.post['email']) > 96) || !filter_var(this.request.post['email'], FILTER_VALIDATE_EMAIL)) {
+		if ((oc_strlen(this.request.post['email']) > 96) || !isEmailValid(this.request.post['email'])) {
 			json['error']['email'] = this.language.get('error_email');
 		}
 
-		const user_info = await this.model_user_user.getUserByEmail(this.request.post['email']);
+		user_info = await this.model_user_user.getUserByEmail(this.request.post['email']);
 
 		if (!this.request.post['user_id']) {
-			if (user_info) {
+			if (user_info.user_id) {
 				json['error']['warning'] = this.language.get('error_email_exists');
 			}
 		} else {
-			if (user_info && (this.request.post['user_id'] != user_info['user_id'])) {
+			if (user_info.user_id && (this.request.post['user_id'] != user_info['user_id'])) {
 				json['error']['warning'] = this.language.get('error_email_exists');
 			}
 		}
@@ -325,7 +329,7 @@ module.exports=class UserController extends Controller {
 			}
 		}
 
-		if (!Object.keys(json).length) {
+		if (!Object.keys(json.error).length) {
 			if (!this.request.post['user_id']) {
 				json['user_id'] = await this.model_user_user.addUser(this.request.post);
 			} else {
@@ -348,7 +352,7 @@ module.exports=class UserController extends Controller {
 		const json = {};
 
 		let selected = [];
-                 if ((this.request.post['selected'])) {
+		if ((this.request.post['selected'])) {
 			selected = this.request.post['selected'];
 		}
 
@@ -356,16 +360,17 @@ module.exports=class UserController extends Controller {
 			json['error'] = this.language.get('error_permission');
 		}
 
-		for (selected of user_id) {
+		for (let user_id of selected) {
 			if (this.user.getId() == user_id) {
+				json['error'] = json['error'] || {};
 				json['error']['warning'] = this.language.get('error_account');
 			}
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('user/user',this);
+			this.load.model('user/user', this);
 
-			for (selected of user_id) {
+			for (let user_id of selected) {
 				await this.model_user_user.deleteUser(user_id);
 			}
 
@@ -382,53 +387,51 @@ module.exports=class UserController extends Controller {
 	async authorize() {
 		await this.load.language('user/user');
 
-		this.response.setOutput(this.getAuthorize());
+		this.response.setOutput(await this.getAuthorize());
 	}
 
 	/**
 	 * @return string
 	 */
 	async getAuthorize() {
+		const data = {};
+		let user_id = 0;
 		if ((this.request.get['user_id'])) {
 			user_id = this.request.get['user_id'];
-		} else {
-			user_id = 0;
 		}
-
+		let page = 1;
 		if ((this.request.get['page']) && this.request.get['route'] == 'user/user.login') {
 			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
 		}
 
 		let limit = 10;
 
 		data['authorizes'] = [];
 
-		this.load.model('user/user',this);
+		this.load.model('user/user', this);
 
 		const results = await this.model_user_user.getAuthorizes(user_id, (page - 1) * limit, limit);
 
 		for (let result of results) {
 			data['authorizes'].push({
-				'token'      : result['token'],
-				'ip'         : result['ip'],
-				'user_agent' : result['user_agent'],
-				'status'     : result['status'] ? this.language.get('text_enabled') : this.language.get('text_disabled'),
-				'total'      : result['total'],
-				'date_added' : date(this.language.get('datetime_format'), new Date(result['date_added'])),
-				'delete'     : this.url.link('user/user.deleteAuthorize', 'user_token=' + this.session.data['user_token'] + '&user_authorize_id=' + result['user_authorize_id'])
-			];
+				'token': result['token'],
+				'ip': result['ip'],
+				'user_agent': result['user_agent'],
+				'status': result['status'] ? this.language.get('text_enabled') : this.language.get('text_disabled'),
+				'total': result['total'],
+				'date_added': date(this.language.get('datetime_format'), new Date(result['date_added'])),
+				'delete': this.url.link('user/user.deleteAuthorize', 'user_token=' + this.session.data['user_token'] + '&user_authorize_id=' + result['user_authorize_id'])
+			});
 		}
 
-		authorize_total await this.model_user_user.getTotalAuthorizes(user_id);
+		const authorize_total = await this.model_user_user.getTotalAuthorizes(user_id);
 
 		data['pagination'] = await this.load.controller('common/pagination', {
-			'total' : authorize_total,
-			'page'  : page,
-			'limit' : limit,
-			'url'   : this.url.link('user/user.authorize', 'user_token=' + this.session.data['user_token'] + '&user_id=' + user_id + '&page={page}')
-		]);
+			'total': authorize_total,
+			'page': page,
+			'limit': limit,
+			'url': this.url.link('user/user.authorize', 'user_token=' + this.session.data['user_token'] + '&user_id=' + user_id + '&page={page}')
+		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (authorize_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (authorize_total - limit)) ? authorize_total : (((page - 1) * limit) + limit), authorize_total, Math.ceil(authorize_total / limit));
 
@@ -442,28 +445,24 @@ module.exports=class UserController extends Controller {
 		await this.load.language('user/user');
 
 		const json = {};
-
+		let user_authorize_id = 0;
 		if ((this.request.get['user_authorize_id'])) {
 			user_authorize_id = this.request.get['user_authorize_id'];
-		} else {
-			user_authorize_id = 0;
 		}
-
+		let token = '';
 		if ((this.request.cookie['authorize'])) {
 			token = this.request.cookie['authorize'];
-		} else {
-			token = '';
 		}
 
 		if (!await this.user.hasPermission('modify', 'user/user')) {
 			json['error'] = this.language.get('error_permission');
 		}
 
-		this.load.model('user/user',this);
+		this.load.model('user/user', this);
 
 		const login_info = await this.model_user_user.getAuthorize(user_authorize_id);
 
-		if (!login_info) {
+		if (!login_info.login_id) {
 			json['error'] = this.language.get('error_authorize');
 		}
 
@@ -490,49 +489,47 @@ module.exports=class UserController extends Controller {
 	async login() {
 		await this.load.language('user/user');
 
-		this.response.setOutput(this.getLogin());
+		this.response.setOutput(await this.getLogin());
 	}
 
 	/**
 	 * @return string
 	 */
 	async getLogin() {
+		const data = {};
+		let user_id = 0;
 		if ((this.request.get['user_id'])) {
 			user_id = this.request.get['user_id'];
-		} else {
-			user_id = 0;
 		}
-
+		let page = 1;
 		if ((this.request.get['page']) && this.request.get['route'] == 'user/user.login') {
 			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
 		}
 
 		let limit = 10;
 
 		data['logins'] = [];
 
-		this.load.model('user/user',this);
+		this.load.model('user/user', this);
 
 		const results = await this.model_user_user.getLogins(user_id, (page - 1) * limit, limit);
 
 		for (let result of results) {
 			data['logins'].push({
-				'ip'         : result['ip'],
-				'user_agent' : result['user_agent'],
-				'date_added' : date(this.language.get('datetime_format'), new Date(result['date_added']))
-			];
+				'ip': result['ip'],
+				'user_agent': result['user_agent'],
+				'date_added': date(this.language.get('datetime_format'), new Date(result['date_added']))
+			});
 		}
 
-		login_total await this.model_user_user.getTotalLogins(user_id);
+		const login_total = await this.model_user_user.getTotalLogins(user_id);
 
 		data['pagination'] = await this.load.controller('common/pagination', {
-			'total' : login_total,
-			'page'  : page,
-			'limit' : limit,
-			'url'   : this.url.link('user/user.login', 'user_token=' + this.session.data['user_token'] + '&user_id=' + user_id + '&page={page}')
-		]);
+			'total': login_total,
+			'page': page,
+			'limit': limit,
+			'url': this.url.link('user/user.login', 'user_token=' + this.session.data['user_token'] + '&user_id=' + user_id + '&page={page}')
+		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (login_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (login_total - limit)) ? login_total : (((page - 1) * limit) + limit), login_total, Math.ceil(login_total / limit));
 

@@ -41,7 +41,7 @@ module.exports = class UserGroupUserModel extends Model {
 
 		const user_group = {
 			'name': query.row['name'],
-			'permission': JSON.parse(query.row['permission'])
+			'permission': query.row['permission'] ? JSON.parse(query.row['permission']) : { access: [], modify: [] }
 		};
 
 		return user_group;
@@ -52,7 +52,7 @@ module.exports = class UserGroupUserModel extends Model {
 	 *
 	 * @return array
 	 */
-	async getUserGroups(data = []) {
+	async getUserGroups(data = {}) {
 		let sql = "SELECT * FROM `" + DB_PREFIX + "user_group` ORDER BY `name`";
 
 		if ((data['order']) && (data['order'] == 'DESC')) {

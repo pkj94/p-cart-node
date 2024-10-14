@@ -117,6 +117,7 @@ module.exports = class StoreController extends Controller {
 	 * @return void
 	 */
 	async form() {
+		const data = {};
 		await this.load.language('setting/store');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -148,7 +149,7 @@ module.exports = class StoreController extends Controller {
 
 		data['save'] = this.url.link('setting/store.save', 'user_token=' + this.session.data['user_token']);
 		data['back'] = this.url.link('setting/store', 'user_token=' + this.session.data['user_token']);
-		let store_info;
+		let store_info = {};
 		if ((this.request.get['store_id'])) {
 			this.load.model('setting/setting', this);
 			store_info = await this.model_setting_setting.getSetting('config', this.request.get['store_id']);
@@ -279,7 +280,7 @@ module.exports = class StoreController extends Controller {
 			data['config_comment'] = '';
 		}
 
-		this.load.model('localisation/location',this);
+		this.load.model('localisation/location', this);
 
 		data['locations'] = await this.model_localisation_location.getLocations();
 
@@ -626,7 +627,7 @@ module.exports = class StoreController extends Controller {
 			json['error']['address'] = this.language.get('error_address');
 		}
 
-		if ((oc_strlen(this.request.post['config_email']) > 96) || !filter_var(this.request.post['config_email'], FILTER_VALIDATE_EMAIL)) {
+		if ((oc_strlen(this.request.post['config_email']) > 96) || !isEmailValid(this.request.post['config_email'])) {
 			json['error']['email'] = this.language.get('error_email');
 		}
 
@@ -634,7 +635,7 @@ module.exports = class StoreController extends Controller {
 			json['error']['telephone'] = this.language.get('error_telephone');
 		}
 
-		if ((this.request.post['config_customer_group_display']) && !in_array(this.request.post['config_customer_group_id'], this.request.post['config_customer_group_display'])) {
+		if ((this.request.post['config_customer_group_display']) && !this.request.post['config_customer_group_display'].includes(this.request.post['config_customer_group_id'])) {
 			json['error']['customer_group_display'] = this.language.get('error_customer_group_display');
 		}
 
@@ -732,7 +733,7 @@ module.exports = class StoreController extends Controller {
 		this.load.model('sale/order', this);
 		this.load.model('sale/subscription', this);
 
-		for (selected of store_id) {
+		for (let store_id of selected) {
 			if (!store_id) {
 				json['error'] = this.language.get('error_default');
 			}

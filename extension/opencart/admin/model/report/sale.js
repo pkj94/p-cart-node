@@ -37,7 +37,7 @@ module.exports = class SaleReportModel extends Model {
 
 		let order_data = {};
 
-		for (i = 0; i < 24; i++) {
+		for (let i = 0; i < 24; i++) {
 			order_data[i] = {
 				'hour': i,
 				'total': 0
@@ -103,7 +103,7 @@ module.exports = class SaleReportModel extends Model {
 
 		let order_data = {};
 
-		for (i = 1; i <= date('t'); i++) {
+		for (let i = 1; i <= date('t'); i++) {
 			date = date('Y') + '-' + date('m') + '-' + i;
 
 			order_data[date('j', new Date(date))] = {
@@ -136,7 +136,7 @@ module.exports = class SaleReportModel extends Model {
 
 		let order_data = {};
 
-		for (i = 1; i <= 12; i++) {
+		for (let i = 1; i <= 12; i++) {
 			order_data[i] = {
 				'month': date('M', mktime(0, 0, 0, i, 1)),
 				'total': 0
@@ -204,8 +204,8 @@ module.exports = class SaleReportModel extends Model {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
@@ -310,8 +310,8 @@ if (data['limit'] < 1) {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
@@ -420,8 +420,8 @@ if (data['limit'] < 1) {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 

@@ -4,14 +4,15 @@ module.exports = class SmtpMailLibrary {
     constructor(option = {}) {
         this.option = option;
         this.transporter = nodemailer.createTransport({
-            host: this.option.host || 'localhost',
-            port: this.option.port || 25,
+            host: this.option.smtp_hostname || 'localhost',
+            port: this.option.smtp_port ? Number(this.option.smtp_port) : 25,
             secure: this.option.secure || false, // true for 465, false for other ports
             auth: {
-                user: this.option.username,
-                pass: this.option.password
+                user: this.option.smtp_username,
+                pass: this.option.smtp_password
             }
         });
+        
     }
 
     async send() {
@@ -39,6 +40,7 @@ module.exports = class SmtpMailLibrary {
             let info = await this.transporter.sendMail(mailOptions);
             return info;
         } catch (error) {
+            console.log(error)
             throw new Error(`Error: Could not send mail! Message: ${error.message}`);
         }
     }

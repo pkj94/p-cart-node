@@ -226,7 +226,7 @@ module.exports = class ContactController extends Controller {
 					const mail = new MailLibrary(this.config.get('config_mail_engine'), mail_option);
 
 					for (let email of emails) {
-						if (filter_var(email, FILTER_VALIDATE_EMAIL)) {
+						if (isEmailValid(email)) {
 							mail.setTo(trim(email));
 							mail.setFrom(store_email);
 							mail.setSender(html_entity_decode(store_name));

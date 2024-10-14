@@ -59,13 +59,20 @@ global.APP = async () => {
     app.use(morgan('dev'));
     const decodeObject = (obj) => {
         for (let [key, value] of Object.entries(obj)) {
-            if (typeof value == 'object')
-                obj[key] = decodeObject(value);
-            else if (Array.isArray(value)) {
-                for (let i = 0; i < value.length; i++) {
-                    obj[key][i] = decodeObject(value[i]);
-                }
-            } else {
+            // console.log('value----', typeof value, value)
+            if (typeof value == 'object') {
+                if (Array.isArray(value)) {
+                    // console.log('value----', value)
+                    if (value.filter(a => a == '0' || a == '1').length == value.length) {
+                        obj[key] = decodeURIComponent(value[1]);
+                    } else
+                        for (let i = 0; i < value.length; i++) {
+                            obj[key][i] = decodeObject(value[i]);
+                        }
+                } else
+                    obj[key] = decodeObject(value);
+            }
+            else {
                 try {
                     obj[key] = decodeURIComponent(value);
                 } catch (e) {
@@ -78,6 +85,7 @@ global.APP = async () => {
     app.all('*', (req, res, next) => {
         // console.log('decoded before---', req.body)
         req.body = decodeObject(req.body);
+
         // console.log('decoded---', req.body)
         next();
     });

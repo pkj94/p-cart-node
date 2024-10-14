@@ -12,7 +12,7 @@ module.exports = class StoreSettingModel extends Model {
 		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "layout_route` WHERE `store_id` = '0'");
 
 		for (let layout_route of query.rows) {
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "layout_route` SET `layout_id` = '" + layout_route['layout_id'] + "', `route` = '" + this.db.escape(layout_route['route']) + "', `store_id` = '" + store_id + "'");
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "layout_route` SET `layout_id` = '" + layout_route['layout_id'] + "', `route` = " + this.db.escape(layout_route['route']) + ", `store_id` = '" + store_id + "'");
 		}
 
 		await this.cache.delete('store');

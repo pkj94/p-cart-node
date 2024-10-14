@@ -27,7 +27,7 @@ module.exports = class ApiModel extends Model {
 	 * @return void
 	 */
 	async editApi(api_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "api` SET `username` = '" + this.db.escape(data['username']) + "', `key` = '" + this.db.escape(data['key']) + "', `status` = '" + ((data['status']) ? data['status'] : 0) + "', `date_modified` = NOW() WHERE `api_id` = '" + api_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "api` SET `username` = " + this.db.escape(data['username']) + ", `key` = '" + this.db.escape(data['key']) + "', `status` = '" + ((data['status']) ? data['status'] : 0) + "', `date_modified` = NOW() WHERE `api_id` = '" + api_id + "'");
 
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "api_ip` WHERE `api_id` = '" + api_id + "'");
 

@@ -217,11 +217,10 @@ module.exports = class SettingController extends Controller {
 		data['config_customer_group_id'] = this.config.get('config_customer_group_id');
 
 		if (this.config.get('config_customer_group_display')) {
-			data['config_customer_group_display'] = this.config.get('config_customer_group_display');
+			data['config_customer_group_display'] = this.config.get('config_customer_group_display').map(a=>Number(a));
 		} else {
 			data['config_customer_group_display'] = [];
 		}
-
 		data['config_customer_price'] = this.config.get('config_customer_price');
 		data['config_telephone_display'] = this.config.get('config_telephone_display');
 		data['config_telephone_required'] = this.config.get('config_telephone_required');
@@ -257,13 +256,12 @@ module.exports = class SettingController extends Controller {
 		data['config_order_status_id'] = this.config.get('config_order_status_id');
 
 		if (this.config.get('config_processing_status')) {
-			data['config_processing_status'] = this.config.get('config_processing_status');
+			data['config_processing_status'] = this.config.get('config_processing_status').map(a => Number(a));
 		} else {
 			data['config_processing_status'] = [];
 		}
-
 		if (this.config.get('config_complete_status')) {
-			data['config_complete_status'] = this.config.get('config_complete_status');
+			data['config_complete_status'] = this.config.get('config_complete_status').map(a => Number(a));
 		} else {
 			data['config_complete_status'] = [];
 		}
@@ -686,7 +684,7 @@ module.exports = class SettingController extends Controller {
 			json['error']['article_description_length'] = this.language.get('error_article_description_length');
 		}
 
-		if ((this.request.post['config_customer_group_display']) && !in_array(this.request.post['config_customer_group_id'], this.request.post['config_customer_group_display'])) {
+		if ((this.request.post['config_customer_group_display']) && !this.request.post['config_customer_group_display'].includes(this.request.post['config_customer_group_id'])) {
 			json['error']['customer_group_display'] = this.language.get('error_customer_group_display');
 		}
 
