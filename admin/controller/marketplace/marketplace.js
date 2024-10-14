@@ -609,8 +609,8 @@ module.exports = class MarketplaceMarketplaceController extends Controller {
 			data['downloaded'] = response_info['downloaded'];
 			data['sales'] = response_info['sales'];
 
-			data['date_added'] = date(this.language.get('date_format_short'), strtotime(response_info['date_added']));
-			data['date_modified'] = date(this.language.get('date_format_short'), strtotime(response_info['date_modified']));
+			data['date_added'] = date(this.language.get('date_format_short'), new Date(response_info['date_added']));
+			data['date_modified'] = date(this.language.get('date_format_short'), new Date(response_info['date_modified']));
 
 			data['member_username'] = response_info['member_username'];
 			data['member_image'] = response_info['member_image'];
@@ -710,7 +710,7 @@ module.exports = class MarketplaceMarketplaceController extends Controller {
 
 					data['downloads'].push({
 						'name': result['name'],
-						'date_added': date(this.language.get('date_format_short'), strtotime(result['date_added'])),
+						'date_added': date(this.language.get('date_format_short'), new Date(result['date_added'])),
 						'download': download,
 						'install': install,
 						'uninstall': uninstall,
@@ -777,7 +777,7 @@ module.exports = class MarketplaceMarketplaceController extends Controller {
 			if ((response_info['success'])) {
 				// If purchase complete we update the status for all downloads to be available.
 				if ((this.session.data['extension_download'][extension_id])) {
-					results = this.session.data['extension_download'][extension_id];
+					let results = this.session.data['extension_download'][extension_id];
 
 					for (let key of Object.keys(results)) {
 						this.session.data['extension_download'][extension_id][key]['status'] = 1;

@@ -75,7 +75,7 @@ class NotificationController extends Controller {
 		const results = await this.model_tool_notification.getNotifications(filter_data);
 
 		for (let result of results) {
-			second = time() - strtotime(result['date_added']);
+			second = time() - new Date(result['date_added']);
 			
 			ranges = [
 				'second'	: second,

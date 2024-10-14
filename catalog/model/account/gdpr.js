@@ -23,7 +23,7 @@ class Gdpr extends \Opencart\System\Engine\Model {
 	 *
 	 * @return void
 	 */
-	public function editStatus(int $gdpr_id, int $status): void {
+	public function editStatus($gdpr_id, int $status): void {
 		$this->db->query("UPDATE `" . DB_PREFIX . "gdpr` SET `status` = '" . (int)$status . "' WHERE `gdpr_id` = '" . (int)$gdpr_id . "'");
 	}
 
@@ -32,7 +32,7 @@ class Gdpr extends \Opencart\System\Engine\Model {
 	 *
 	 * @return array
 	 */
-	public function getGdpr(int $gdpr_id): array {
+	public function getGdpr($gdpr_id): array {
 		$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "gdpr` WHERE `gdpr_id` = '" . (int)$gdpr_id . "'");
 
 		return $query->row;

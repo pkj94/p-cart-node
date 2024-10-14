@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Admin\Controller\Mail;
-/**
- * 
- *
- * @package Opencart\Admin\Controller\Mail
- */
-class ReturnsController extends Controller {
+module.exports=class ReturnsController extends Controller {
 	/**
 	 * @param string route
 	 * @param array  args
@@ -40,9 +33,9 @@ class ReturnsController extends Controller {
 		}
 
 		if (notify) {
-			this.load.model('sale/returns');
+			this.load.model('sale/returns',this);
 
-			return_info await this.model_sale_returns.getReturn(return_id);
+			const return_info = await this.model_sale_returns.getReturn(return_id);
 
 			if (return_info) {
 				this.load.model('sale/order',this);
@@ -59,7 +52,7 @@ class ReturnsController extends Controller {
 
 				this.load.model('localisation/language',this);
 				
-				language_info await this.model_localisation_language.getLanguage(return_info['language_id']);
+				const language_info = await this.model_localisation_language.getLanguage(return_info['language_id']);
 
 				if (language_info) {
 					language_code = language_info['code'];
@@ -70,10 +63,10 @@ class ReturnsController extends Controller {
 				await this.load.language('default', 'mail', language_code);
 				await this.load.language('mail/returns', 'mail', language_code);
 
-				subject = sprintf(this.language.get('mail_text_subject'), store_name, return_id);
+				let subject = sprintf(this.language.get('mail_text_subject'), store_name, return_id);
 
 				data['return_id'] = return_id;
-				data['date_added'] = date(this.language.get('date_format_short'), strtotime(return_info['date_modified']));
+				data['date_added'] = date(this.language.get('date_format_short'), new Date(return_info['date_modified']));
 				data['return_status'] = return_info['return_status'];
 				data['comment'] = nl2br(comment);
 
@@ -90,7 +83,7 @@ class ReturnsController extends Controller {
 						'smtp_timeout'  : this.config.get('config_mail_smtp_timeout')
 					];
 
-					mail = new \Opencart\System\Library\Mail(this.config.get('config_mail_engine'), mail_option);
+					mail = new MailLibrary(this.config.get('config_mail_engine'), mail_option);
 					mail.setTo(return_info['email']);
 					mail.setFrom(this.config.get('config_email'));
 					mail.setSender(store_name);

@@ -25,7 +25,7 @@ class Api extends \Opencart\System\Engine\Model {
 	 *
 	 * @return int
 	 */
-	public function addSession(int $api_id, string $session_id, string $ip): int {
+	public function addSession($api_id, string $session_id, string $ip): int {
 		$this->db->query("INSERT INTO `" . DB_PREFIX . "api_session` SET `api_id` = '" . (int)$api_id . "', `session_id` = '" . $this->db->escape($session_id) . "', `ip` = '" . $this->db->escape($ip) . "', `date_added` = NOW(), `date_modified` = NOW()");
 
 		return $this->db->getLastId();
@@ -36,7 +36,7 @@ class Api extends \Opencart\System\Engine\Model {
 	 *
 	 * @return array
 	 */
-	public function getIps(int $api_id): array {
+	public function getIps($api_id): array {
 		$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "api_ip` WHERE `api_id` = '" . (int)$api_id . "'");
 
 		return $query->rows;

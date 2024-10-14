@@ -180,7 +180,7 @@ class Review extends \Opencart\System\Engine\Controller {
 				'author'     => $result['author'],
 				'text'       => nl2br($result['text']),
 				'rating'     => (int)$result['rating'],
-				'date_added' => date($this->language->get('date_format_short'), strtotime($result['date_added']))
+				'date_added' => date($this->language->get('date_format_short'), new Date($result['date_added']))
 			];
 		}
 

@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Admin\Controller\Localisation;
-/**
- * 
- *
- * @package Opencart\Admin\Controller\Localisation
- */
-class ReturnActionController extends Controller {
+module.exports=class ReturnActionController extends Controller {
 
 	/**
 	 * @return void
@@ -109,7 +102,7 @@ class ReturnActionController extends Controller {
 			'limit' : this.config.get('config_pagination_admin')
 		});
 
-		this.load.model('localisation/return_action');
+		this.load.model('localisation/return_action',this);
 
 		return_action_total await this.model_localisation_return_action.getTotalReturnActions();
 
@@ -208,7 +201,7 @@ class ReturnActionController extends Controller {
 		data['languages'] = await this.model_localisation_language.getLanguages();
 
 		if ((this.request.get['return_action_id'])) {
-			this.load.model('localisation/return_action');
+			this.load.model('localisation/return_action',this);
 
 			data['return_action'] = await this.model_localisation_return_action.getDescriptions(this.request.get['return_action_id']);
 		} else {
@@ -241,7 +234,7 @@ class ReturnActionController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('localisation/return_action');
+			this.load.model('localisation/return_action',this);
 
 			if (!this.request.post['return_action_id']) {
 				json['return_action_id'] = await this.model_localisation_return_action.addReturnAction(this.request.post);
@@ -273,10 +266,10 @@ class ReturnActionController extends Controller {
 			json['error'] = this.language.get('error_permission');
 		}
 
-		this.load.model('sale/returns');
+		this.load.model('sale/returns',this);
 
 		for (selected of return_action_id) {
-			return_total await this.model_sale_returns.getTotalReturnsByReturnActionId(return_action_id);
+			let return_total = await this.model_sale_returns.getTotalReturnsByReturnActionId(return_action_id);
 
 			if (return_total) {
 				json['error'] = sprintf(this.language.get('error_return'), return_total);
@@ -284,7 +277,7 @@ class ReturnActionController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('localisation/return_action');
+			this.load.model('localisation/return_action',this);
 
 			for (selected of return_action_id) {
 				await this.model_localisation_return_action.deleteReturnAction(return_action_id);

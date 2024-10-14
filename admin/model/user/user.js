@@ -8,7 +8,7 @@ module.exports = class UserModel extends Model {
      * @return int
      */
     async addUser(data) {
-        await this.db.query("INSERT INTO `" + DB_PREFIX + "user` SET `username` = '" + this.db.escape(data['username']) + "', `user_group_id` = '" + data['user_group_id'] + "', `password` = '" + this.db.escape(password_hash(html_entity_decode(data['password']), PASSWORD_DEFAULT)) + "', `firstname` = " + this.db.escape(data['firstname']) + ", `lastname` = " + this.db.escape(data['lastname']) + ", `email` = " + this.db.escape(data['email']) + ", `image` = " + this.db.escape(data['image']) + ", `status` = '" + (data['status'] ? data['status'] : 0) + "', `date_added` = NOW()");
+        await this.db.query("INSERT INTO `" + DB_PREFIX + "user` SET `username` = '" + this.db.escape(data['username']) + "', `user_group_id` = '" + data['user_group_id'] + "', `password` = '" + this.db.escape(await password_hash(html_entity_decode(data['password']), PASSWORD_DEFAULT)) + "', `firstname` = " + this.db.escape(data['firstname']) + ", `lastname` = " + this.db.escape(data['lastname']) + ", `email` = " + this.db.escape(data['email']) + ", `image` = " + this.db.escape(data['image']) + ", `status` = '" + (data['status'] ? data['status'] : 0) + "', `date_added` = NOW()");
         return this.db.getLastId();
     }
 
@@ -22,7 +22,7 @@ module.exports = class UserModel extends Model {
         await this.db.query("UPDATE `" + DB_PREFIX + "user` SET `username` = '" + this.db.escape(data['username']) + "', `user_group_id` = '" + data['user_group_id'] + "', `firstname` = " + this.db.escape(data['firstname']) + ", `lastname` = " + this.db.escape(data['lastname']) + ", `email` = " + this.db.escape(data['email']) + ", `image` = " + this.db.escape(data['image']) + ", `status` = '" + (data['status'] ? data['status'] : 0) + "' WHERE `user_id` = '" + user_id + "'");
 
         if (data['password']) {
-            await this.db.query("UPDATE `" + DB_PREFIX + "user` SET `password` = '" + this.db.escape(password_hash(data['password'], PASSWORD_DEFAULT)) + "' WHERE `user_id` = '" + user_id + "'");
+            await this.db.query("UPDATE `" + DB_PREFIX + "user` SET `password` = '" + this.db.escape(await password_hash(data['password'], PASSWORD_DEFAULT)) + "' WHERE `user_id` = '" + user_id + "'");
         }
     }
 
@@ -33,7 +33,7 @@ module.exports = class UserModel extends Model {
      * @return void
      */
     async editPassword(user_id, password) {
-        await this.db.query("UPDATE `" + DB_PREFIX + "user` SET `password` = '" + this.db.escape(password_hash(password)) + "', `code` = '' WHERE `user_id` = '" + user_id + "'");
+        await this.db.query("UPDATE `" + DB_PREFIX + "user` SET `password` = '" + this.db.escape(await password_hash(password)) + "', `code` = '' WHERE `user_id` = '" + user_id + "'");
     }
 
     /**

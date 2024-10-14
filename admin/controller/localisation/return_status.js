@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Admin\Controller\Localisation;
-/**
- * 
- *
- * @package Opencart\Admin\Controller\Localisation
- */
-class ReturnStatusController extends Controller {
+module.exports=class ReturnStatusController extends Controller {
 	/**
 	 * @return void
 	 */
@@ -108,7 +101,7 @@ class ReturnStatusController extends Controller {
 			'limit' : this.config.get('config_pagination_admin')
 		});
 
-		this.load.model('localisation/return_status');
+		this.load.model('localisation/return_status',this);
 
 		return_status_total await this.model_localisation_return_status.getTotalReturnStatuses();
 
@@ -207,7 +200,7 @@ class ReturnStatusController extends Controller {
 		data['languages'] = await this.model_localisation_language.getLanguages();
 
 		if ((this.request.get['return_status_id'])) {
-			this.load.model('localisation/return_status');
+			this.load.model('localisation/return_status',this);
 
 			data['return_status'] = await this.model_localisation_return_status.getDescriptions(this.request.get['return_status_id']);
 		} else {
@@ -240,7 +233,7 @@ class ReturnStatusController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('localisation/return_status');
+			this.load.model('localisation/return_status',this);
 
 			if (!this.request.post['return_status_id']) {
 				json['return_status_id'] = await this.model_localisation_return_status.addReturnStatus(this.request.post);
@@ -272,20 +265,20 @@ class ReturnStatusController extends Controller {
 			json['error'] = this.language.get('error_permission');
 		}
 
-		this.load.model('sale/returns');
+		this.load.model('sale/returns',this);
 
 		for (this.request.post['selected'] of return_status_id) {
 			if (this.config.get('config_return_status_id') == return_status_id) {
 				json['error'] = this.language.get('error_default');
 			}
 
-			return_total await this.model_sale_returns.getTotalReturnsByReturnStatusId(return_status_id);
+			let return_total = await this.model_sale_returns.getTotalReturnsByReturnStatusId(return_status_id);
 
 			if (return_total) {
 				json['error'] = sprintf(this.language.get('error_return'), return_total);
 			}
 
-			return_total await this.model_sale_returns.getTotalHistoriesByReturnStatusId(return_status_id);
+			let return_total = await this.model_sale_returns.getTotalHistoriesByReturnStatusId(return_status_id);
 
 			if (return_total) {
 				json['error'] = sprintf(this.language.get('error_return'), return_total);
@@ -293,7 +286,7 @@ class ReturnStatusController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('localisation/return_status');
+			this.load.model('localisation/return_status',this);
 
 			for (selected of return_status_id) {
 				await this.model_localisation_return_status.deleteReturnStatus(return_status_id);

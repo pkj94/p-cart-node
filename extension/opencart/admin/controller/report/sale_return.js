@@ -78,7 +78,7 @@ module.exports = class SaleReturnReportController extends Controller {
 			list: await this.getReport()
 		}
 
-		this.load.model('localisation/return_status');
+		this.load.model('localisation/return_status',this);
 
 		data['return_statuses'] = await this.model_localisation_return_status.getReturnStatuses();
 
@@ -165,8 +165,8 @@ module.exports = class SaleReturnReportController extends Controller {
 
 		for (let result of results) {
 			data['returns'].push({
-				'date_start': date(this.language.get('date_format_short'), strtotime(result['date_start'])),
-				'date_end': date(this.language.get('date_format_short'), strtotime(result['date_end'])),
+				'date_start': date(this.language.get('date_format_short'), new Date(result['date_start'])),
+				'date_end': date(this.language.get('date_format_short'), new Date(result['date_end'])),
 				'returns': result['returns']
 			})
 		}

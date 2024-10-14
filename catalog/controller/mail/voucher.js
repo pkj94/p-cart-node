@@ -57,7 +57,7 @@ class Voucher extends \Opencart\System\Engine\Controller {
 						'smtp_timeout'  => $this->config->get('config_mail_smtp_timeout')
 					];
 
-					$mail = new \Opencart\System\Library\Mail($this->config->get('config_mail_engine'), $mail_option);
+					$mail = new MailLibrary($this->config->get('config_mail_engine'), $mail_option);
 
 					foreach ($voucher_query->rows as $voucher) {
 						$from_name = html_entity_decode($voucher['from_name']);

@@ -271,24 +271,24 @@ $(document).on('submit', 'form', function (e) {
         console.log('method ' + method);
         console.log('enctype ' + enctype);
         console.log($(element).serialize());
-        var formData = form2Json($(element).serialize());
+        var formData = {}//form2Json($(element).serialize());
         var inputs = $(element).serializeArray();
-        // $.each(inputs, function (i, input) {
-        //     if (input.name.indexOf('[]') >= 0) {
-        //         formData[input.name.replace('[]', '')] = formData[input.name.replace('[]', '')] || [];
-        //         formData[input.name.replace('[]', '')].push(input.value);
-        //     } else if (input.name.indexOf('[*]') >= 0) {
+        $.each(inputs, function (i, input) {
+            if (input.name.indexOf('[]') >= 0) {
+                formData[input.name.replace('[]', '')] = formData[input.name.replace('[]', '')] || [];
+                formData[input.name.replace('[]', '')].push(input.value);
+            } else if (input.name.indexOf('[*]') >= 0) {
 
-        //     } else
-        //         formData[input.name] = input.value;
-        // });
-        console.log('formData ', formData, inputs);
+            } else
+                formData[input.name] = input.value;
+        });
+        console.log('formData ', formData, inputs,JSON.parse(JSON.stringify(inputs)),$(element).serialize());
 
 
         $.ajax({
             url: action.replaceAll('&amp;', '&'),
             type: method,
-            data: formData,
+            data: $(element).serialize(),
             dataType: 'json',
             contentType: enctype,
             beforeSend: function () {

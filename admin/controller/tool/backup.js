@@ -50,7 +50,7 @@ class BackupController extends Controller {
 			}
 		}
 
-		data['history'] = this.getHistory();
+		data['history'] = await this.getHistory();
 
 		data['user_token'] = this.session.data['user_token'];
 
@@ -67,7 +67,7 @@ class BackupController extends Controller {
 	async history() {
 		await this.load.language('tool/backup');
 
-		this.response.setOutput(this.getHistory());
+		this.response.setOutput(await this.getHistory());
 	}
 
 	/**

@@ -1552,7 +1552,7 @@ setDocument = Sizzle.setDocument = function( node ) {
 			var elem,
 				tmp = [],
 				i = 0,
-				results = context.getElementsByTagName( tag );
+				let results = context.getElementsByTagName( tag );
 
 			// Filter out possible comments
 			if ( tag === "*" ) {
@@ -2188,7 +2188,7 @@ Expr = Sizzle.selectors = {
 			// to avoid treating leading and trailing
 			// spaces as combinators
 			var input = [],
-				results = [],
+				let results = [],
 				matcher = compile( selector.replace( rtrim, "$1" ) );
 
 			return matcher[ expando ] ?

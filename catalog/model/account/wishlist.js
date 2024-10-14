@@ -11,7 +11,7 @@ class Wishlist extends \Opencart\System\Engine\Model {
 	 *
 	 * @return void
 	 */
-	public function addWishlist(int $product_id): void {
+	public function addWishlist($product_id): void {
 		$this->db->query("DELETE FROM `" . DB_PREFIX . "customer_wishlist` WHERE `customer_id` = '" . (int)$this->customer->getId() . "' AND `product_id` = '" . (int)$product_id . "'");
 
 		$this->db->query("INSERT INTO `" . DB_PREFIX . "customer_wishlist` SET `customer_id` = '" . (int)$this->customer->getId() . "', `product_id` = '" . (int)$product_id . "', `date_added` = NOW()");
@@ -22,7 +22,7 @@ class Wishlist extends \Opencart\System\Engine\Model {
 	 *
 	 * @return void
 	 */
-	public function deleteWishlist(int $product_id): void {
+	public function deleteWishlist($product_id): void {
 		$this->db->query("DELETE FROM `" . DB_PREFIX . "customer_wishlist` WHERE `customer_id` = '" . (int)$this->customer->getId() . "' AND `product_id` = '" . (int)$product_id . "'");
 	}
 

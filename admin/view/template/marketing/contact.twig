@@ -242,10 +242,6 @@ $('#button-send').on('click', function () {
 
     $(element).button('loading');
 
-    for (instance in CKEDITOR.instances) {
-        CKEDITOR.instances[instance].updateElement();
-    }
-
     var next = '?route=marketing/contact.send&user_token={{ user_token }}';
 
     var send = function () {

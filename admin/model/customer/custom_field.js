@@ -8,11 +8,12 @@ module.exports = class CustomFieldModel extends Model {
 	 * @return int
 	 */
 	async addCustomField(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "custom_field` SET `type` = '" + this.db.escape(data['type']) + "', `value` = " + this.db.escape(data['value']) + ", `validation` = '" + this.db.escape(data['validation']) + "', `location` = " + this.db.escape(data['location']) + ", `status` = '" + (data['status'] ? data['status'] : 0) + "', `sort_order` = '" + data['sort_order'] + "'");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "custom_field` SET `type` = " + this.db.escape(data['type']) + ", `value` = " + this.db.escape(data['value']) + ", `validation` = " + this.db.escape(data['validation']) + ", `location` = " + this.db.escape(data['location']) + ", `status` = '" + (data['status'] ? data['status'] : 0) + "', `sort_order` = '" + data['sort_order'] + "'");
 
 		const custom_field_id = this.db.getLastId();
 
 		for (let [language_id, value] of Object.entries(data['custom_field_description'])) {
+			language_id = language_id.includes('language-') ? language_id.split('-')[1] : language_id;
 			await this.db.query("INSERT INTO `" + DB_PREFIX + "custom_field_description` SET `custom_field_id` = '" + custom_field_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + "");
 		}
 
@@ -31,7 +32,8 @@ module.exports = class CustomFieldModel extends Model {
 				let custom_field_value_id = this.db.getLastId();
 
 				for (let [language_id, custom_field_value_description] of Object.entries(custom_field_value['custom_field_value_description'])) {
-					await this.db.query("INSERT INTO `" + DB_PREFIX + "custom_field_value_description` SET `custom_field_value_id` = '" + custom_field_value_id + "', `language_id` = '" + language_id + "', `custom_field_id` = '" + custom_field_id + "', `name` = '" + this.db.escape(custom_field_value_description['name']) + "'");
+					language_id = language_id.includes('language-') ? language_id.split('-')[1] : language_id;
+					await this.db.query("INSERT INTO `" + DB_PREFIX + "custom_field_value_description` SET `custom_field_value_id` = '" + custom_field_value_id + "', `language_id` = '" + language_id + "', `custom_field_id` = '" + custom_field_id + "', `name` = " + this.db.escape(custom_field_value_description['name']));
 				}
 			}
 		}
@@ -46,11 +48,12 @@ module.exports = class CustomFieldModel extends Model {
 	 * @return void
 	 */
 	async editCustomField(custom_field_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "custom_field` SET `type` = '" + this.db.escape(data['type']) + "', `value` = " + this.db.escape(data['value']) + ", `validation` = '" + this.db.escape(data['validation']) + "', `location` = " + this.db.escape(data['location']) + ", `status` = '" + (data['status'] ? data['status'] : 0) + "', `sort_order` = '" + data['sort_order'] + "' WHERE `custom_field_id` = '" + custom_field_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "custom_field` SET `type` = " + this.db.escape(data['type']) + ", `value` = " + this.db.escape(data['value']) + ", `validation` = " + this.db.escape(data['validation']) + ", `location` = " + this.db.escape(data['location']) + ", `status` = '" + (data['status'] ? data['status'] : 0) + "', `sort_order` = '" + data['sort_order'] + "' WHERE `custom_field_id` = '" + custom_field_id + "'");
 
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "custom_field_description` WHERE `custom_field_id` = '" + custom_field_id + "'");
 
 		for (let [language_id, value] of Object.entries(data['custom_field_description'])) {
+			language_id = language_id.includes('language-') ? language_id.split('-')[1] : language_id;
 			await this.db.query("INSERT INTO `" + DB_PREFIX + "custom_field_description` SET `custom_field_id` = '" + custom_field_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + "");
 		}
 
@@ -75,10 +78,11 @@ module.exports = class CustomFieldModel extends Model {
 					await this.db.query("INSERT INTO `" + DB_PREFIX + "custom_field_value` SET `custom_field_id` = '" + custom_field_id + "', `sort_order` = '" + custom_field_value['sort_order'] + "'");
 				}
 
-				custom_field_value_id = this.db.getLastId();
+				const custom_field_value_id = this.db.getLastId();
 
 				for (let [language_id, custom_field_value_description] of Object.entries(custom_field_value['custom_field_value_description'])) {
-					await this.db.query("INSERT INTO `" + DB_PREFIX + "custom_field_value_description` SET `custom_field_value_id` = '" + custom_field_value_id + "', `language_id` = '" + language_id + "', `custom_field_id` = '" + custom_field_id + "', `name` = '" + this.db.escape(custom_field_value_description['name']) + "'");
+					language_id = language_id.includes('language-') ? language_id.split('-')[1] : language_id;
+					await this.db.query("INSERT INTO `" + DB_PREFIX + "custom_field_value_description` SET `custom_field_value_id` = '" + custom_field_value_id + "', `language_id` = '" + language_id + "', `custom_field_id` = '" + custom_field_id + "', `name` = " + this.db.escape(custom_field_value_description['name']));
 				}
 			}
 		}
@@ -122,7 +126,7 @@ module.exports = class CustomFieldModel extends Model {
 		}
 
 		if (data['filter_name']) {
-			sql += " AND cfd.`name` LIKE '" + this.db.escape(data['filter_name'] + '%') + "'";
+			sql += " AND cfd.`name` LIKE " + this.db.escape(data['filter_name'] + '%');
 		}
 
 		if (data['filter_status']) {
@@ -130,7 +134,7 @@ module.exports = class CustomFieldModel extends Model {
 		}
 
 		if ((data['filter_location'])) {
-			sql += " AND cf.`location` = '" + this.db.escape(data['filter_location']) + "'";
+			sql += " AND cf.`location` = " + this.db.escape(data['filter_location']);
 		}
 
 		if ((data['filter_customer_group_id'])) {

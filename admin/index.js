@@ -20,8 +20,13 @@ module.exports = function () {
         global.config = new Config();
         registry.set('config', global.config);
         new Framework().init(req, res, next).then(output => {
-            if (registry.get('response').file) {
-                console.log(global.registry.get('response').headers);
+            if (registry.get('response').end) {
+                global.registry.get('response').headers.forEach(header => {
+                    res.header((header.split(':')[0] || '').trim(), (header.split(':')[1] || '').trim());
+                });
+                res.end(registry.get('response').end);
+            } else if (registry.get('response').file) {
+
                 global.registry.get('response').headers.forEach(header => {
                     res.header((header.split(':')[0] || '').trim(), (header.split(':')[1] || '').trim());
                 });

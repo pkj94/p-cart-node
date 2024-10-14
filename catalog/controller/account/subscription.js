@@ -112,7 +112,7 @@ class Subscription extends \Opencart\System\Engine\Controller {
 					'description'     => $description,
 					'product'         => $this->url->link('product/product', 'language=' . $this->config->get('config_language') . '&product_id=' . $result['product_id']),
 					'status'          => $subscription_status,
-					'date_added'      => date($this->language->get('date_format_short'), strtotime($result['date_added'])),
+					'date_added'      => date($this->language->get('date_format_short'), new Date($result['date_added'])),
 					'view'            => $this->url->link('account/subscription.info', 'language=' . $this->config->get('config_language') . '&customer_token=' . $this->session->data['customer_token'] . '&subscription_id=' . $result['subscription_id'])
 				];
 			}
@@ -209,7 +209,7 @@ class Subscription extends \Opencart\System\Engine\Controller {
 				$data['subscription_status'] = '';
 			}
 
-			$data['date_added'] = date($this->language->get('date_format_short'), strtotime($subscription_info['date_added']));
+			$data['date_added'] = date($this->language->get('date_format_short'), new Date($subscription_info['date_added']));
 
 			// Payment Address
 			if ($subscription_info['payment_address_id']) {
@@ -432,7 +432,7 @@ class Subscription extends \Opencart\System\Engine\Controller {
 			$data['histories'][] = [
 				'status'     => $result['status'],
 				'comment'    => nl2br($result['comment']),
-				'date_added' => date($this->language->get('date_format_short'), strtotime($result['date_added']))
+				'date_added' => date($this->language->get('date_format_short'), new Date($result['date_added']))
 			];
 		}
 
@@ -488,7 +488,7 @@ class Subscription extends \Opencart\System\Engine\Controller {
 				'order_id'   => $result['order_id'],
 				'status'     => $result['status'],
 				'total'      => $this->currency->format($result['total'], $result['currency_code'], $result['currency_value']),
-				'date_added' => date($this->language->get('date_format_short'), strtotime($result['date_added'])),
+				'date_added' => date($this->language->get('date_format_short'), new Date($result['date_added'])),
 				'view'       => $this->url->link('sale/subscription.order', 'customer_token=' . $this->session->data['customer_token'] . '&order_id=' . $result['order_id'] . '&page={page}')
 			];
 		}

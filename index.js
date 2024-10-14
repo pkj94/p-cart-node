@@ -47,8 +47,9 @@ global.APP = async () => {
         res.send("pong!");
     });
 
-    // app.use(bodyParser.json({ limit: '50mb' }));
     app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+    app.use(bodyParser.json({ limit: '50mb' }));
+
     app.use(compression());
     app.use('/image', express.static('image'));
     app.use('/catalog/view/stylesheet', express.static('catalog/view/stylesheet'));
@@ -56,9 +57,28 @@ global.APP = async () => {
     app.use('/catalog/view/image', express.static('catalog/view/image'));
     app.use('/catalog/language', express.static('catalog/language'));
     app.use(morgan('dev'));
-
+    const decodeObject = (obj) => {
+        for (let [key, value] of Object.entries(obj)) {
+            if (typeof value == 'object')
+                obj[key] = decodeObject(value);
+            else if (Array.isArray(value)) {
+                for (let i = 0; i < value.length; i++) {
+                    obj[key][i] = decodeObject(value[i]);
+                }
+            } else {
+                try {
+                    obj[key] = decodeURIComponent(value);
+                } catch (e) {
+                    obj[key] = value
+                }
+            }
+        }
+        return obj;
+    }
     app.all('*', (req, res, next) => {
-        console.log(req.body)
+        // console.log('decoded before---', req.body)
+        req.body = decodeObject(req.body);
+        // console.log('decoded---', req.body)
         next();
     });
 

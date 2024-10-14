@@ -38,8 +38,8 @@ global.microtime = (get_as_float = false) => {
         return (hrTime[0] + hrTime[1] / 1e9) + ' ' + hrTime[0];
     }
 }
-global.password_hash = (string, saltRounds = 10) => {
-    return bcrypt.hash(password, saltRounds)
+global.password_hash = async (string, saltRounds = 10) => {
+    return await bcrypt.hash(string, saltRounds)
 }
 global.http_build_query = (params = {}) => {
     return new URLSearchParams(params).toString();
@@ -145,4 +145,31 @@ global.hash_hmac = (string, secret) => {
     return crypto.createHmac('sha1', secret)
         .update(string)
         .digest('hex')
+}
+global.isEmailValid = (email) => {
+    var emailRegex = /^[-!#$%&'*+\/0-9=?A-Z^_a-z{|}~](\.?[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~])*@[a-zA-Z0-9](-*\.?[a-zA-Z0-9])*\.[a-zA-Z](-?[a-zA-Z0-9])+$/;
+
+    if (!email)
+        return false;
+
+    if (email.length > 254)
+        return false;
+
+    var valid = emailRegex.test(email);
+    if (!valid)
+        return false;
+
+    // Further checking of some things regex can't handle
+    var parts = email.split("@");
+    if (parts[0].length > 64)
+        return false;
+
+    var domainParts = parts[1].split(".");
+    if (domainParts.some(function (part) { return part.length > 63; }))
+        return false;
+
+    return true;
+}
+global.time = () => {
+    return Math.floor(Date.now() / 1000);
 }

@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Admin\Controller\Localisation;
-/**
- * 
- *
- * @package Opencart\Admin\Controller\Localisation
- */
-class Length
+module.exports=class Length
 	/**
 	 * @return void
 	 */

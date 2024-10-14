@@ -128,12 +128,12 @@ module.exports = class ChartDashboardController extends Controller {
 				}
 
 
-				date_start = strtotime('-' + date('w') + ' days');
+				date_start = new Date('-' + date('w') + ' days');
 
 				for (i = 0; i < 7; i++) {
 					date = date('Y-m-d', date_start + (i * 86400));
 
-					json['xaxis'].push([date('w', strtotime(date)), date('D', strtotime(date))]);
+					json['xaxis'].push([date('w', new Date(date)), date('D', new Date(date))]);
 				}
 				break;
 			case 'month':
@@ -152,7 +152,7 @@ module.exports = class ChartDashboardController extends Controller {
 				for (i = 1; i <= date('t'); i++) {
 					date = date('Y') + '-' + date('m') + '-' + i;
 
-					json['xaxis'].push([date('j', strtotime(date)), date('d', strtotime(date))]);
+					json['xaxis'].push([date('j', new Date(date)), date('d', new Date(date))]);
 				}
 				break;
 			case 'year':

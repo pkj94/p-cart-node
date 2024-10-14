@@ -121,7 +121,7 @@ module.exports = class IpFaudController extends Controller {
 			data['ips'].push({
 				'ip': result['ip'],
 				'total': await this.model_customer_customer.getTotalCustomersByIp(result['ip']),
-				'date_added': date('d/m/y', strtotime(result['date_added'])),
+				'date_added': date('d/m/y', new Date(result['date_added'])),
 				'filter_ip': this.url.link('customer/customer', 'user_token=' + this.session.data['user_token'] + '&filter_ip=' + result['ip'])
 			});
 		}

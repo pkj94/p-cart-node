@@ -348,7 +348,7 @@ module.exports = class FilterController extends Controller {
 
 		let sort_order = [];
 
-		for (let [key, value] of json) {
+		for (let [key, value] of Object.entries(json)) {
 			sort_order[key] = value['name'];
 		}
 

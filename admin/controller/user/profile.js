@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Admin\Controller\User;
-/**
- * 
- *
- * @package Opencart\Admin\Controller\User
- */
-class ProfileController extends Controller {
+module.exports=class ProfileController extends Controller {
 	/**
 	 * @return void
 	 */

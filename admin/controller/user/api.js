@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Admin\Controller\User;
-/**
- * 
- *
- * @package Opencart\Admin\Controller\User
- */
-class ApiController extends Controller {
+module.exports = class ApiController extends Controller {
 	/**
 	 * @return void
 	 */
@@ -31,13 +24,13 @@ class ApiController extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('text_home'),
+			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('user/api', 'user_token=' + this.session.data['user_token'] + url)
+			'text': this.language.get('heading_title'),
+			'href': this.url.link('user/api', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
 		data['add'] = this.url.link('user/api.form', 'user_token=' + this.session.data['user_token'] + url);
@@ -73,9 +66,9 @@ class ApiController extends Controller {
 			sort = 'username';
 		}
 
-		let order= 'ASC';
+		let order = 'ASC';
 		if ((this.request.get['order'])) {
-			order= this.request.get['order'];
+			order = this.request.get['order'];
 		}
 
 		let page = 1;
@@ -102,13 +95,13 @@ class ApiController extends Controller {
 		data['apis'] = [];
 
 		let filter_data = {
-			'sort'  : sort,
-			'order' : order,
-			'start' : (page - 1) * Number(this.config.get('config_pagination_admin')),
-			'limit' : this.config.get('config_pagination_admin')
+			'sort': sort,
+			'order': order,
+			'start': (page - 1) * Number(this.config.get('config_pagination_admin')),
+			'limit': this.config.get('config_pagination_admin')
 		});
 
-		this.load.model('user/api');
+		this.load.model('user/api',this);
 
 		user_total await this.model_user_api.getTotalApis();
 
@@ -116,12 +109,12 @@ class ApiController extends Controller {
 
 		for (let result of results) {
 			data['apis'].push({
-				'api_id'        : result['api_id'],
-				'username'      : result['username'],
-				'status'        : (result['status'] ? this.language.get('text_enabled') : this.language.get('text_disabled')),
-				'date_added'    : date(this.language.get('date_format_short'), strtotime(result['date_added'])),
-				'date_modified' : date(this.language.get('date_format_short'), strtotime(result['date_modified'])),
-				'edit'          : this.url.link('user/api.form', 'user_token=' + this.session.data['user_token'] + '&api_id=' + result['api_id'] + url)
+				'api_id': result['api_id'],
+				'username': result['username'],
+				'status': (result['status'] ? this.language.get('text_enabled') : this.language.get('text_disabled')),
+				'date_added': date(this.language.get('date_format_short'), new Date(result['date_added'])),
+				'date_modified': date(this.language.get('date_format_short'), new Date(result['date_modified'])),
+				'edit': this.url.link('user/api.form', 'user_token=' + this.session.data['user_token'] + '&api_id=' + result['api_id'] + url)
 			];
 		}
 
@@ -149,10 +142,10 @@ class ApiController extends Controller {
 		}
 
 		data['pagination'] = await this.load.controller('common/pagination', {
-			'total' : user_total,
-			'page'  : page,
-			'limit' : this.config.get('config_pagination_admin'),
-			'url'   : this.url.link('user/api.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
+			'total': user_total,
+			'page': page,
+			'limit': this.config.get('config_pagination_admin'),
+			'url': this.url.link('user/api.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		]);
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (user_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (user_total - this.config.get('config_pagination_admin'))) ? user_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), user_total, Math.ceil(user_total / this.config.get('config_pagination_admin')));
@@ -173,9 +166,9 @@ class ApiController extends Controller {
 
 		data['text_form'] = !(this.request.get['api_id']) ? this.language.get('text_add') : this.language.get('text_edit');
 		data['text_ip'] = sprintf(this.language.get('text_ip'), this.request.server.headers['x-forwarded-for'] || (
-                    this.request.server.connection ? (this.request.server.connection.remoteAddress ||
-                        this.request.server.socket.remoteAddress ||
-                        this.request.server.connection.socket.remoteAddress) : ''));
+			this.request.server.connection ? (this.request.server.connection.remoteAddress ||
+				this.request.server.socket.remoteAddress ||
+				this.request.server.connection.socket.remoteAddress) : ''));
 
 		if ((this.request.get['api_id'])) {
 			data['api_id'] = this.request.get['api_id'];
@@ -200,20 +193,20 @@ class ApiController extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('text_home'),
+			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('user/api', 'user_token=' + this.session.data['user_token'] + url)
+			'text': this.language.get('heading_title'),
+			'href': this.url.link('user/api', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
 		data['save'] = this.url.link('user/api.save', 'user_token=' + this.session.data['user_token']);
 		data['back'] = this.url.link('user/api', 'user_token=' + this.session.data['user_token'] + url);
 
 		if ((this.request.get['api_id'])) {
-			this.load.model('user/api');
+			this.load.model('user/api',this);
 
 			api_info await this.model_user_api.getApi(this.request.get['api_id']);
 		}
@@ -257,11 +250,11 @@ class ApiController extends Controller {
 
 			for (let result of results) {
 				data['api_sessions'].push({
-					'api_session_id' : result['api_session_id'],
-					'session_id'     : result['session_id'],
-					'ip'             : result['ip'],
-					'date_added'     : date(this.language.get('datetime_format'), strtotime(result['date_added'])),
-					'date_modified'  : date(this.language.get('datetime_format'), strtotime(result['date_modified']))
+					'api_session_id': result['api_session_id'],
+					'session_id': result['session_id'],
+					'ip': result['ip'],
+					'date_added': date(this.language.get('datetime_format'), new Date(result['date_added'])),
+					'date_modified': date(this.language.get('datetime_format'), new Date(result['date_modified']))
 				];
 			}
 		}
@@ -300,7 +293,7 @@ class ApiController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('user/api');
+			this.load.model('user/api',this);
 
 			if (!this.request.post['api_id']) {
 				json['api_id'] = await this.model_user_api.addApi(this.request.post);
@@ -324,7 +317,7 @@ class ApiController extends Controller {
 		const json = {};
 
 		let selected = [];
-                 if ((this.request.post['selected'])) {
+		if ((this.request.post['selected'])) {
 			selected = this.request.post['selected'];
 		}
 
@@ -333,7 +326,7 @@ class ApiController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('user/api');
+			this.load.model('user/api',this);
 
 			for (selected of api_id) {
 				await this.model_user_api.deleteApi(api_id);
@@ -359,7 +352,7 @@ class ApiController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('user/api');
+			this.load.model('user/api',this);
 
 			await this.model_user_api.deleteSession(this.request.get['api_session_id']);
 

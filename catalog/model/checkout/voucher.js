@@ -12,8 +12,8 @@ class Voucher extends \Opencart\System\Engine\Model {
 	 *
 	 * @return int
 	 */
-	public function addVoucher(int $order_id, array $data): int {
-		$this->db->query("INSERT INTO `" . DB_PREFIX . "voucher` SET `order_id` = '" . (int)$order_id . "', `code` = '" . $this->db->escape((string)$data['code']) . "', `from_name` = '" . $this->db->escape((string)$data['from_name']) . "', `from_email` = '" . $this->db->escape((string)$data['from_email']) . "', `to_name` = '" . $this->db->escape((string)$data['to_name']) . "', `to_email` = '" . $this->db->escape((string)$data['to_email']) . "', `voucher_theme_id` = '" . (int)$data['voucher_theme_id'] . "', `message` = '" . $this->db->escape((string)$data['message']) . "', `amount` = '" . (float)$data['amount'] . "', `status` = '1', `date_added` = NOW()");
+	public function addVoucher($order_id, array $data): int {
+		$this->db->query("INSERT INTO `" . DB_PREFIX . "voucher` SET `order_id` = '" . (int)$order_id . "', `code` = '" . $this->db->escape((string)$data['code']) . "', `from_name` = '" . $this->db->escape((string)$data['from_name']) . "', `from_email` = '" . $this->db->escape((string)$data['from_email']) . "', `to_name` = '" . $this->db->escape((string)$data['to_name']) . "', `to_email` = '" . $this->db->escape((string)$data['to_email']) . "', `voucher_theme_id` = '" . (int)$data['voucher_theme_id'] . "', `message` = '" . $this->db->escape((string)$data['message']) . "', `amount` = '" . $data['amount'] . "', `status` = '1', `date_added` = NOW()");
 
 		return $this->db->getLastId();
 	}
@@ -23,7 +23,7 @@ class Voucher extends \Opencart\System\Engine\Model {
 	 *
 	 * @return void
 	 */
-	public function disableVoucher(int $order_id): void {
+	public function disableVoucher($order_id): void {
 		$this->db->query("UPDATE `" . DB_PREFIX . "voucher` SET `status` = '0' WHERE `order_id` = '" . (int)$order_id . "'");
 	}
 
@@ -99,7 +99,7 @@ class Voucher extends \Opencart\System\Engine\Model {
 	 *
 	 * @return void
 	 */
-	public function deleteVoucherByOrderId(int $order_id): void {
+	public function deleteVoucherByOrderId($order_id): void {
 		$this->db->query("DELETE FROM `" . DB_PREFIX . "voucher` WHERE `order_id` = '" . (int)$order_id . "'");
 	}
 }

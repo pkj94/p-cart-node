@@ -149,7 +149,7 @@ class Blog extends \Opencart\System\Engine\Controller {
 				'description'   => oc_substr(trim(strip_tags(html_entity_decode($result['description']))), 0, $this->config->get('config_article_description_length')) . '..',
 				'author'        => $result['author'],
 				'comment_total' => $this->model_cms_article->getTotalComments($result['article_id']),
-				'date_added'    => date($this->language->get('date_format_short'), strtotime($result['date_added'])),
+				'date_added'    => date($this->language->get('date_format_short'), new Date($result['date_added'])),
 				'href'          => $this->url->link('cms/blog.info', 'language=' . $this->config->get('config_language') . '&article_id=' . $result['article_id'] . $url)
 			];
 		}
@@ -349,7 +349,7 @@ class Blog extends \Opencart\System\Engine\Controller {
 			$data['articles'][] = [
 				'text'       => nl2br($result['text']),
 				'author'     => $result['author'],
-				'date_added' => date($this->language->get('date_format_short'), strtotime($result['date_added']))
+				'date_added' => date($this->language->get('date_format_short'), new Date($result['date_added']))
 			];
 		}
 

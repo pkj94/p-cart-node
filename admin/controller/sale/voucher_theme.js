@@ -1,8 +1,11 @@
-module.exports=class VoucherThemeController extends Controller {
+const sprintf = require("locutus/php/strings/sprintf");
+const fs = require('fs');
+module.exports = class VoucherThemeController extends Controller {
 	/**
 	 * @return void
 	 */
 	async index() {
+		const data = {};
 		await this.load.language('sale/voucher_theme');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -24,13 +27,13 @@ module.exports=class VoucherThemeController extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('text_home'),
+			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('sale/voucher_theme', 'user_token=' + this.session.data['user_token'] + url)
+			'text': this.language.get('heading_title'),
+			'href': this.url.link('sale/voucher_theme', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
 		data['add'] = this.url.link('sale/voucher_theme.form', 'user_token=' + this.session.data['user_token'] + url);
@@ -60,15 +63,15 @@ module.exports=class VoucherThemeController extends Controller {
 	 * @return string
 	 */
 	async getList() {
+		const data = {};
+		let sort = 'vtd.name';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
-		} else {
-			sort = 'vtd.name';
 		}
 
-		let order= 'ASC';
+		let order = 'ASC';
 		if ((this.request.get['order'])) {
-			order= this.request.get['order'];
+			order = this.request.get['order'];
 		}
 
 		let page = 1;
@@ -95,27 +98,27 @@ module.exports=class VoucherThemeController extends Controller {
 		data['voucher_themes'] = [];
 
 		let filter_data = {
-			'sort'  : sort,
-			'order' : order,
-			'start' : (page - 1) * Number(this.config.get('config_pagination_admin')),
-			'limit' : this.config.get('config_pagination_admin')
-		});
+			'sort': sort,
+			'order': order,
+			'start': (page - 1) * Number(this.config.get('config_pagination_admin')),
+			'limit': this.config.get('config_pagination_admin')
+		};
 
-		this.load.model('sale/voucher_theme',this);
+		this.load.model('sale/voucher_theme', this);
 
-		voucher_theme_total await this.model_sale_voucher_theme.getTotalVoucherThemes();
+		const voucher_theme_total = await this.model_sale_voucher_theme.getTotalVoucherThemes();
 
 		const results = await this.model_sale_voucher_theme.getVoucherThemes(filter_data);
 
 		for (let result of results) {
 			data['voucher_themes'].push({
-				'voucher_theme_id' : result['voucher_theme_id'],
-				'name'             : result['name'],
-				'edit'             : this.url.link('sale/voucher_theme.form', 'user_token=' + this.session.data['user_token'] + '&voucher_theme_id=' + result['voucher_theme_id'] + url)
-			];
+				'voucher_theme_id': result['voucher_theme_id'],
+				'name': result['name'],
+				'edit': this.url.link('sale/voucher_theme.form', 'user_token=' + this.session.data['user_token'] + '&voucher_theme_id=' + result['voucher_theme_id'] + url)
+			});
 		}
 
-		let url = '';
+		url = '';
 
 		if (order == 'ASC') {
 			url += '&order=DESC';
@@ -125,7 +128,7 @@ module.exports=class VoucherThemeController extends Controller {
 
 		data['sort_name'] = this.url.link('sale/voucher_theme.list', 'user_token=' + this.session.data['user_token'] + '&sort=name' + url);
 
-		let url = '';
+		url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -136,11 +139,11 @@ module.exports=class VoucherThemeController extends Controller {
 		}
 
 		data['pagination'] = await this.load.controller('common/pagination', {
-			'total' : voucher_theme_total,
-			'page'  : page,
-			'limit' : this.config.get('config_pagination_admin'),
-			'url'   : this.url.link('sale/voucher_theme.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
-		]);
+			'total': voucher_theme_total,
+			'page': page,
+			'limit': this.config.get('config_pagination_admin'),
+			'url': this.url.link('sale/voucher_theme.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
+		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (voucher_theme_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (voucher_theme_total - this.config.get('config_pagination_admin'))) ? voucher_theme_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), voucher_theme_total, Math.ceil(voucher_theme_total / this.config.get('config_pagination_admin')));
 
@@ -154,6 +157,7 @@ module.exports=class VoucherThemeController extends Controller {
 	 * @return void
 	 */
 	async form() {
+		const data = {};
 		await this.load.language('sale/voucher_theme');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -177,22 +181,22 @@ module.exports=class VoucherThemeController extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('text_home'),
+			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('sale/voucher_theme', 'user_token=' + this.session.data['user_token'] + url)
+			'text': this.language.get('heading_title'),
+			'href': this.url.link('sale/voucher_theme', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
 		data['save'] = this.url.link('sale/voucher_theme.save', 'user_token=' + this.session.data['user_token']);
 		data['back'] = this.url.link('sale/voucher_theme', 'user_token=' + this.session.data['user_token'] + url);
-
+		let voucher_theme_info;
 		if ((this.request.get['voucher_theme_id'])) {
-			this.load.model('sale/voucher_theme',this);
+			this.load.model('sale/voucher_theme', this);
 
-			voucher_theme_info await this.model_sale_voucher_theme.getVoucherTheme(this.request.get['voucher_theme_id']);
+				let voucher_theme_info = await this.model_sale_voucher_theme.getVoucherTheme(this.request.get['voucher_theme_id']);
 		}
 
 		if ((this.request.get['voucher_theme_id'])) {
@@ -201,7 +205,7 @@ module.exports=class VoucherThemeController extends Controller {
 			data['voucher_theme_id'] = 0;
 		}
 
-		this.load.model('localisation/language',this);
+		this.load.model('localisation/language', this);
 
 		data['languages'] = await this.model_localisation_language.getLanguages();
 
@@ -217,16 +221,16 @@ module.exports=class VoucherThemeController extends Controller {
 			data['image'] = '';
 		}
 
-		this.load.model('tool/image',this);
+		this.load.model('tool/image', this);
 
 		data['placeholder'] = await this.model_tool_image.resize('no_image.png', 100, 100);
 
-		if (is_file(DIR_IMAGE + html_entity_decode(data['image']))) {
+		if (data['image'] && fs.existsSync(DIR_IMAGE + html_entity_decode(data['image']))) {
 			data['thumb'] = await this.model_tool_image.resize(html_entity_decode(data['image']), 100, 100);
 		} else {
 			data['thumb'] = data['placeholder'];
 		}
-
+		// console.log("================", data['thumb'], data['placeholder'])
 		data['user_token'] = this.session.data['user_token'];
 
 		data['header'] = await this.load.controller('common/header');
@@ -242,13 +246,14 @@ module.exports=class VoucherThemeController extends Controller {
 	async save() {
 		await this.load.language('sale/voucher_theme');
 
-		const json = {};
+		const json = { error: {} };
 
 		if (!await this.user.hasPermission('modify', 'sale/voucher_theme')) {
 			json['error']['warning'] = this.language.get('error_permission');
 		}
 
-		for (this.request.post['voucher_theme_description'] of language_id : value) {
+		for (let [language_id, value] of Object.entries(this.request.post['voucher_theme_description'])) {
+			language_id = language_id.indexOf('language-') >= 0 ? language_id.split('-')[1] : language_id;
 			if ((oc_strlen(value['name']) < 3) || (oc_strlen(value['name']) > 32)) {
 				json['error']['name_' + language_id] = this.language.get('error_name');
 			}
@@ -258,9 +263,9 @@ module.exports=class VoucherThemeController extends Controller {
 			json['error']['image'] = this.language.get('error_image');
 		}
 
-		if (!Object.keys(json).length) {
-			this.load.model('sale/voucher_theme',this);
-
+		if (!Object.keys(json.error).length) {
+			this.load.model('sale/voucher_theme', this);
+			this.request.post['voucher_theme_id'] = Number(this.request.post['voucher_theme_id']);
 			if (!this.request.post['voucher_theme_id']) {
 				json['voucher_theme_id'] = await this.model_sale_voucher_theme.addVoucherTheme(this.request.post);
 			} else {
@@ -283,7 +288,7 @@ module.exports=class VoucherThemeController extends Controller {
 		const json = {};
 
 		let selected = [];
-                 if ((this.request.post['selected'])) {
+		if ((this.request.post['selected'])) {
 			selected = this.request.post['selected'];
 		}
 
@@ -291,10 +296,10 @@ module.exports=class VoucherThemeController extends Controller {
 			json['error'] = this.language.get('error_permission');
 		}
 
-		this.load.model('sale/voucher');
+		this.load.model('sale/voucher', this);
 
 		for (let voucher_theme_id of selected) {
-			voucher_total await this.model_sale_voucher.getTotalVouchersByVoucherThemeId(voucher_theme_id);
+			const voucher_total = await this.model_sale_voucher.getTotalVouchersByVoucherThemeId(voucher_theme_id);
 
 			if (voucher_total) {
 				json['error'] = sprintf(this.language.get('error_voucher'), voucher_total);
@@ -302,7 +307,7 @@ module.exports=class VoucherThemeController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('sale/voucher_theme',this);
+			this.load.model('sale/voucher_theme', this);
 
 			for (let voucher_theme_id of selected) {
 				await this.model_sale_voucher_theme.deleteVoucherTheme(voucher_theme_id);

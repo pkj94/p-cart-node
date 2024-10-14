@@ -157,8 +157,8 @@ module.exports = class CustomerReportController extends Controller {
 
 		for (let result of results) {
 			data['customers'].push({
-				'date_start': date(this.language.get('date_format_short'), strtotime(result['date_start'])),
-				'date_end': date(this.language.get('date_format_short'), strtotime(result['date_end'])),
+				'date_start': date(this.language.get('date_format_short'), new Date(result['date_start'])),
+				'date_end': date(this.language.get('date_format_short'), new Date(result['date_end'])),
 				'total': result['total'],
 			});
 		}

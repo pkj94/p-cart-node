@@ -217,7 +217,7 @@ class Subscription extends \Opencart\System\Engine\Controller {
 									$data['link'] = $order_info['store_url'] . 'account/subscription.info&subscription_id=' . $subscription_id;
 
 									$data['order_id'] = $order_info['order_id'];
-									$data['date_added'] = date($this->language->get('date_format_short'), strtotime($value['date_added']));
+									$data['date_added'] = date($this->language->get('date_format_short'), new Date($value['date_added']));
 									$data['payment_method'] = $order_info['payment_method'];
 									$data['email'] = $order_info['email'];
 									$data['telephone'] = $order_info['telephone'];
@@ -295,13 +295,13 @@ class Subscription extends \Opencart\System\Engine\Controller {
 													// as with the use of the APIs
 													if ($customer_info && (int)$subscription_info['cycle'] >= 0 && $subscription_info['cycle'] == $value['cycle'] && in_array($subscription_info['frequency'], $frequencies)) {
 														if ($subscription_info['frequency'] == 'semi_month') {
-															$period = strtotime("2 weeks");
+															$period = new Date("2 weeks");
 														} else {
-															$period = strtotime($subscription_info['cycle'] . ' ' . $subscription_info['frequency']);
+															$period = new Date($subscription_info['cycle'] . ' ' . $subscription_info['frequency']);
 														}
 
 														// New customer once the trial period has ended
-														$customer_period = strtotime($customer_info['date_added']);
+														$customer_period = new Date($customer_info['date_added']);
 
 														$trial_period = 0;
 														$validate_trial = 0;
@@ -309,9 +309,9 @@ class Subscription extends \Opencart\System\Engine\Controller {
 														// Trial
 														if ($subscription_info['trial_cycle'] && $subscription_info['trial_frequency'] && $subscription_info['trial_cycle'] == $value['trial_cycle'] && $subscription_info['trial_frequency'] == $value['trial_frequency']) {
 															if ($subscription_info['trial_frequency'] == 'semi_month') {
-																$trial_period = strtotime("2 weeks");
+																$trial_period = new Date("2 weeks");
 															} else {
-																$trial_period = strtotime($subscription_info['trial_cycle'] . ' ' . $subscription_info['trial_frequency']);
+																$trial_period = new Date($subscription_info['trial_cycle'] . ' ' . $subscription_info['trial_frequency']);
 															}
 
 															$trial_period = ($trial_period - $customer_period);
@@ -356,7 +356,7 @@ class Subscription extends \Opencart\System\Engine\Controller {
 											'smtp_timeout' => $this->config->get('config_mail_smtp_timeout')
 										];
 
-										$mail = new \Opencart\System\Library\Mail($this->config->get('config_mail_engine'), $mail_option);
+										$mail = new MailLibrary($this->config->get('config_mail_engine'), $mail_option);
 										$mail->setTo($order_info['email']);
 										$mail->setFrom($from);
 										$mail->setSender($store_name);

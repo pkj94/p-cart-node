@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Admin\Controller\User;
-/**
- * 
- *
- * @package Opencart\Admin\Controller\User
- */
-class UserController extends Controller {
+module.exports=class UserController extends Controller {
 	/**
 	 * @return void
 	 */
@@ -119,7 +112,7 @@ class UserController extends Controller {
 				'user_id'    : result['user_id'],
 				'username'   : result['username'],
 				'status'     : (result['status'] ? this.language.get('text_enabled') : this.language.get('text_disabled')),
-				'date_added' : date(this.language.get('date_format_short'), strtotime(result['date_added'])),
+				'date_added' : date(this.language.get('date_format_short'), new Date(result['date_added'])),
 				'edit'       : this.url.link('user/user.form', 'user_token=' + this.session.data['user_token'] + '&user_id=' + result['user_id'] + url)
 			];
 		}
@@ -423,7 +416,7 @@ class UserController extends Controller {
 				'user_agent' : result['user_agent'],
 				'status'     : result['status'] ? this.language.get('text_enabled') : this.language.get('text_disabled'),
 				'total'      : result['total'],
-				'date_added' : date(this.language.get('datetime_format'), strtotime(result['date_added'])),
+				'date_added' : date(this.language.get('datetime_format'), new Date(result['date_added'])),
 				'delete'     : this.url.link('user/user.deleteAuthorize', 'user_token=' + this.session.data['user_token'] + '&user_authorize_id=' + result['user_authorize_id'])
 			];
 		}
@@ -528,7 +521,7 @@ class UserController extends Controller {
 			data['logins'].push({
 				'ip'         : result['ip'],
 				'user_agent' : result['user_agent'],
-				'date_added' : date(this.language.get('datetime_format'), strtotime(result['date_added']))
+				'date_added' : date(this.language.get('datetime_format'), new Date(result['date_added']))
 			];
 		}
 

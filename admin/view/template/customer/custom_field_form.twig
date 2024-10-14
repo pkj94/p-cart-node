@@ -180,11 +180,11 @@ $('#input-type').on('change', function () {
 
     if (this.value == 'date') {
         $('#display-value > div').html('<div class="input-group"><input type="text" name="value" value="' + $('#input-value').val() + '" placeholder="{{ entry_value|escape('js') }}" id="input-value" class="form-control date"/><div class="input-group-text"><i class="fa-regular fa-calendar"></i></div></div>');
-    } elseif (this.value == 'time') {
+    } else if (this.value == 'time') {
         $('#display-value > div').html('<div class="input-group"><input type="text" name="value" value="' + $('#input-value').val() + '" placeholder="{{ entry_value|escape('js') }}" id="input-value" class="form-control time"/><div class="input-group-text"><i class="fa-regular fa-calendar"></i></div></div>');
-    } elseif (this.value == 'datetime') {
+    } else if (this.value == 'datetime') {
         $('#display-value > div').html('<div class="input-group"><input type="text" name="value" value="' + $('#input-value').val() + '" placeholder="{{ entry_value|escape('js') }}" id="input-value" class="form-control datetime"/><div class="input-group-text"><i class="fa-regular fa-calendar"></i></div></div>');
-    } elseif (this.value == 'textarea') {
+    } else if (this.value == 'textarea') {
         $('#display-value > div').html('<textarea name="value" placeholder="{{ entry_value|escape('js') }}" id="input-value" class="form-control">' + $('#input-value').val() + '</textarea>');
     } else {
         $('#display-value > div').html('<input type="text" name="value" value="' + $('#input-value').val() + '" placeholder="{{ entry_value|escape('js') }}" id="input-value" class="form-control"/>');

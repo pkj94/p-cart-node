@@ -91,9 +91,9 @@ module.exports = class OrderDashboardController extends Controller {
 		// Total Orders
 		this.load.model('sale/order', this);
 
-		let today = await this.model_sale_order.getTotalOrders({ 'filter_date_added': date('Y-m-d', strtotime('-1 day')) });
+		let today = await this.model_sale_order.getTotalOrders({ 'filter_date_added': date('Y-m-d', new Date('-1 day')) });
 
-		let yesterday = await this.model_sale_order.getTotalOrders({ 'filter_date_added': date('Y-m-d', strtotime('-2 day')) });
+		let yesterday = await this.model_sale_order.getTotalOrders({ 'filter_date_added': date('Y-m-d', new Date('-2 day')) });
 
 		let difference = today - yesterday;
 

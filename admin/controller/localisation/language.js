@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Admin\Controller\Localisation;
-/**
- * 
- *
- * @package Opencart\Admin\Controller\Localisation
- */
-class LanguageController extends Controller {
+module.exports=class LanguageController extends Controller {
 	/**
 	 * @return void
 	 */
@@ -204,7 +197,7 @@ class LanguageController extends Controller {
 		if ((this.request.get['language_id'])) {
 			this.load.model('localisation/language',this);
 
-			language_info await this.model_localisation_language.getLanguage(this.request.get['language_id']);
+			const language_info = await this.model_localisation_language.getLanguage(this.request.get['language_id']);
 		}
 
 		if ((this.request.get['language_id'])) {
@@ -280,7 +273,7 @@ class LanguageController extends Controller {
 			json['error']['locale'] = this.language.get('error_locale');
 		}
 		
-		language_info await this.model_localisation_language.getLanguageByCode(this.request.post['code']);
+		const language_info = await this.model_localisation_language.getLanguageByCode(this.request.post['code']);
 
 		if (!this.request.post['language_id']) {
 			if (language_info) {
@@ -329,7 +322,7 @@ class LanguageController extends Controller {
 		this.load.model('sale/order',this);
 
 		for (selected of language_id) {
-			language_info await this.model_localisation_language.getLanguage(language_id);
+			const language_info = await this.model_localisation_language.getLanguage(language_id);
 
 			if (language_info) {
 				if (this.config.get('config_language') == language_info['code']) {
@@ -340,7 +333,7 @@ class LanguageController extends Controller {
 					json['error'] = this.language.get('error_admin');
 				}
 
-				store_total await this.model_setting_store.getTotalStoresByLanguage(language_info['code']);
+				const store_total = await this.model_setting_store.getTotalStoresByLanguage(language_info['code']);
 
 				if (store_total) {
 					json['error'] = sprintf(this.language.get('error_store'), store_total);

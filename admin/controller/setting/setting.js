@@ -1,15 +1,11 @@
-<?php
-namespace Opencart\Admin\Controller\Setting;
-/**
- * 
- *
- * @package Opencart\Admin\Controller\Setting
- */
-class SettingController extends Controller {
+const fs = require('fs');
+var moment = require('moment-timezone');
+module.exports = class SettingController extends Controller {
 	/**
 	 * @return void
 	 */
 	async index() {
+		const data = {};
 		await this.load.language('setting/setting');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -17,18 +13,18 @@ class SettingController extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('text_home'),
+			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_stores'),
-			'href' : this.url.link('setting/store', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('text_stores'),
+			'href': this.url.link('setting/store', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('setting/setting', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('heading_title'),
+			'href': this.url.link('setting/setting', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['save'] = this.url.link('setting/setting.save', 'user_token=' + this.session.data['user_token']);
@@ -43,22 +39,22 @@ class SettingController extends Controller {
 
 		data['themes'] = [];
 
-		this.load.model('setting/extension',this);
+		this.load.model('setting/extension', this);
 
-		const extensions = await this.model_setting_extension.getExtensionsByType('theme');
+		let extensions = await this.model_setting_extension.getExtensionsByType('theme');
 
-		for (extensions of extension) {
+		for (let extension of extensions) {
 			await this.load.language('extension/' + extension['extension'] + '/theme/' + extension['code'], 'extension');
 
 			data['themes'].push({
-				'text'  : this.language.get('extension_heading_title'),
-				'value' : extension['code']
-			];
+				'text': this.language.get('extension_heading_title'),
+				'value': extension['code']
+			});
 		}
 
 		data['config_theme'] = this.config.get('config_theme');
 
-		this.load.model('design/layout',this);
+		this.load.model('design/layout', this);
 
 		data['layouts'] = await this.model_design_layout.getLayouts();
 
@@ -73,11 +69,11 @@ class SettingController extends Controller {
 		data['config_telephone'] = this.config.get('config_telephone');
 		data['config_image'] = this.config.get('config_image');
 
-		this.load.model('tool/image',this);
+		this.load.model('tool/image', this);
 
 		data['placeholder'] = await this.model_tool_image.resize('no_image.png', 100, 100);
 
-		if (is_file(DIR_IMAGE + html_entity_decode(data['config_image']))) {
+		if (data['config_image'] && fs.existsSync(DIR_IMAGE + html_entity_decode(data['config_image']))) {
 			data['thumb'] = await this.model_tool_image.resize(html_entity_decode(data['config_image']), 100, 100);
 		} else {
 			data['thumb'] = data['placeholder'];
@@ -86,7 +82,7 @@ class SettingController extends Controller {
 		data['config_open'] = this.config.get('config_open');
 		data['config_comment'] = this.config.get('config_comment');
 
-		this.load.model('localisation/location');
+		this.load.model('localisation/location', this);
 
 		data['locations'] = await this.model_localisation_location.getLocations();
 
@@ -97,7 +93,7 @@ class SettingController extends Controller {
 		}
 
 		// Localisation
-		this.load.model('localisation/country',this);
+		this.load.model('localisation/country', this);
 
 		data['countries'] = await this.model_localisation_country.getCountries();
 
@@ -111,24 +107,13 @@ class SettingController extends Controller {
 			data['config_timezone'] = 'UTC';
 		}
 
-		data['timezones'] = [];
+		data['timezones'] = Intl.supportedValuesOf('timeZone').map((a) => ({ value: a, text: a + ' (' + moment().tz(a).format('Z') + ')' }));
+		data['timezones'].push({
+			value: 'UTC',
+			text: 'UTC (+00:00)',
+		});
 
-		timestamp = date_create('now');
-
-		timezones = timezone_identifiers_list();
-
-		for (timezones of timezone) {
-			date_timezone_set(timestamp, timezone_open(timezone));
-
-			hour = ' (' + date_format(timestamp, 'P') + ')';
-
-			data['timezones'].push({
-				'text'  : timezone + hour,
-				'value' : timezone
-			];
-		}
-
-		this.load.model('localisation/language',this);
+		this.load.model('localisation/language', this);
 
 		data['languages'] = await this.model_localisation_language.getLanguages();
 
@@ -136,7 +121,7 @@ class SettingController extends Controller {
 
 		data['config_language_admin'] = this.config.get('config_language_admin');
 
-		this.load.model('localisation/currency',this);
+		this.load.model('localisation/currency', this);
 
 		data['currencies'] = await this.model_localisation_currency.getCurrencies();
 
@@ -144,31 +129,31 @@ class SettingController extends Controller {
 
 		data['currency_engines'] = [];
 
-		this.load.model('setting/extension',this);
+		this.load.model('setting/extension', this);
 
-		const extensions = await this.model_setting_extension.getExtensionsByType('currency');
+		extensions = await this.model_setting_extension.getExtensionsByType('currency');
 
-		for (extensions of extension) {
+		for (let extension of extensions) {
 			if (this.config.get('currency_' + extension['code'] + '_status')) {
 				await this.load.language('extension/' + extension['extension'] + '/currency/' + extension['code'], 'extension');
 
 				data['currency_engines'].push({
-					'text'  : this.language.get('extension_heading_title'),
-					'value' : extension['code']
-				];
+					'text': this.language.get('extension_heading_title'),
+					'value': extension['code']
+				});
 			}
 		}
 
 		data['config_currency_engine'] = this.config.get('config_currency_engine');
 		data['config_currency_auto'] = this.config.get('config_currency_auto');
 
-		this.load.model('localisation/length_class',this);
+		this.load.model('localisation/length_class', this);
 
 		data['length_classes'] = await this.model_localisation_length_class.getLengthClasses();
 
 		data['config_length_class_id'] = this.config.get('config_length_class_id');
 
-		this.load.model('localisation/weight_class',this);
+		this.load.model('localisation/weight_class', this);
 
 		data['weight_classes'] = await this.model_localisation_weight_class.getWeightClasses();
 
@@ -225,7 +210,7 @@ class SettingController extends Controller {
 		data['config_customer_activity'] = this.config.get('config_customer_activity');
 		data['config_customer_search'] = this.config.get('config_customer_search');
 
-		this.load.model('customer/customer_group',this);
+		this.load.model('customer/customer_group', this);
 
 		data['customer_groups'] = await this.model_customer_customer_group.getCustomerGroups();
 
@@ -247,7 +232,7 @@ class SettingController extends Controller {
 			data['config_login_attempts'] = 5;
 		}
 
-		this.load.model('catalog/information',this);
+		this.load.model('catalog/information', this);
 
 		data['informations'] = await this.model_catalog_information.getInformations();
 
@@ -265,7 +250,7 @@ class SettingController extends Controller {
 			data['config_invoice_prefix'] = 'INV-' + date('Y') + '-00';
 		}
 
-		this.load.model('localisation/order_status',this);
+		this.load.model('localisation/order_status', this);
 
 		data['order_statuses'] = await this.model_localisation_order_status.getOrderStatuses();
 
@@ -286,7 +271,7 @@ class SettingController extends Controller {
 		data['config_fraud_status_id'] = this.config.get('config_fraud_status_id');
 
 		// Subscription
-		this.load.model('localisation/subscription_status');
+		this.load.model('localisation/subscription_status', this);
 
 		data['subscription_statuses'] = await this.model_localisation_subscription_status.getSubscriptionStatuses();
 
@@ -299,7 +284,7 @@ class SettingController extends Controller {
 		data['config_subscription_denied_status_id'] = this.config.get('config_subscription_denied_status_id');
 
 		// Api
-		this.load.model('user/api');
+		this.load.model('user/api', this);
 
 		data['apis'] = await this.model_user_api.getApis();
 
@@ -344,7 +329,7 @@ class SettingController extends Controller {
 		// Affiliate terms
 		data['config_affiliate_id'] = this.config.get('config_affiliate_id');
 
-		this.load.model('localisation/return_status');
+		this.load.model('localisation/return_status', this);
 
 		data['return_statuses'] = await this.model_localisation_return_status.getReturnStatuses();
 
@@ -356,26 +341,26 @@ class SettingController extends Controller {
 		// Captcha
 		data['config_captcha'] = this.config.get('config_captcha');
 
-		this.load.model('setting/extension',this);
+		this.load.model('setting/extension', this);
 
 		data['captchas'] = [];
 
 		// Get a list of installed captchas
-		const extensions = await this.model_setting_extension.getExtensionsByType('captcha');
+		extensions = await this.model_setting_extension.getExtensionsByType('captcha');
 
-		for (extensions of extension) {
+		for (let extension of extensions) {
 			await this.load.language('extension/' + extension['extension'] + '/captcha/' + extension['code'], 'extension');
 
 			if (this.config.get('captcha_' + extension['code'] + '_status')) {
 				data['captchas'].push({
-					'text'  : this.language.get('extension_heading_title'),
-					'value' : extension['code']
-				];
+					'text': this.language.get('extension_heading_title'),
+					'value': extension['code']
+				});
 			}
 		}
 
 		if (this.config.has('config_captcha_page')) {
-		   	data['config_captcha_page'] = this.config.get('config_captcha_page');
+			data['config_captcha_page'] = this.config.get('config_captcha_page');
 		} else {
 			data['config_captcha_page'] = [];
 		}
@@ -383,43 +368,43 @@ class SettingController extends Controller {
 		data['captcha_pages'] = [];
 
 		data['captcha_pages'].push({
-			'text'  : this.language.get('text_register'),
-			'value' : 'register'
+			'text': this.language.get('text_register'),
+			'value': 'register'
 		});
 
 		data['captcha_pages'].push({
-			'text'  : this.language.get('text_guest'),
-			'value' : 'guest'
+			'text': this.language.get('text_guest'),
+			'value': 'guest'
 		});
 
 		data['captcha_pages'].push({
-			'text'  : this.language.get('text_review'),
-			'value' : 'review'
+			'text': this.language.get('text_review'),
+			'value': 'review'
 		});
 
 		data['captcha_pages'].push({
-			'text'  : this.language.get('text_comment'),
-			'value' : 'comment'
+			'text': this.language.get('text_comment'),
+			'value': 'comment'
 		});
 
 		data['captcha_pages'].push({
-			'text'  : this.language.get('text_return'),
-			'value' : 'returns'
+			'text': this.language.get('text_return'),
+			'value': 'returns'
 		});
 
 		data['captcha_pages'].push({
-			'text'  : this.language.get('text_contact'),
-			'value' : 'contact'
+			'text': this.language.get('text_contact'),
+			'value': 'contact'
 		});
 
 		// Images
 		data['config_logo'] = this.config.get('config_logo');
 
-		this.load.model('tool/image',this);
+		this.load.model('tool/image', this);
 
 		data['placeholder'] = await this.model_tool_image.resize('no_image.png', 100, 100);
 
-		if (is_file(DIR_IMAGE + html_entity_decode(data['config_logo']))) {
+		if (data['config_logo'] && fs.existsSync(DIR_IMAGE + html_entity_decode(data['config_logo']))) {
 			data['logo'] = await this.model_tool_image.resize(html_entity_decode(data['config_logo']), 100, 100);
 		} else {
 			data['logo'] = data['placeholder'];
@@ -540,7 +525,7 @@ class SettingController extends Controller {
 		}
 
 		if (this.config.get('config_image_cart_height')) {
-			data['config_image_cart_height'] =this.config.get('config_image_cart_height');
+			data['config_image_cart_height'] = this.config.get('config_image_cart_height');
 		} else {
 			data['config_image_cart_height'] = 47;
 		}
@@ -577,7 +562,7 @@ class SettingController extends Controller {
 		}
 
 		if (this.config.has('config_mail_alert')) {
-		   	data['config_mail_alert'] = this.config.get('config_mail_alert');
+			data['config_mail_alert'] = this.config.get('config_mail_alert');
 		} else {
 			data['config_mail_alert'] = [];
 		}
@@ -585,23 +570,23 @@ class SettingController extends Controller {
 		data['mail_alerts'] = [];
 
 		data['mail_alerts'].push({
-			'text'  : this.language.get('text_mail_account'),
-			'value' : 'account'
+			'text': this.language.get('text_mail_account'),
+			'value': 'account'
 		});
 
 		data['mail_alerts'].push({
-			'text'  : this.language.get('text_mail_affiliate'),
-			'value' : 'affiliate'
+			'text': this.language.get('text_mail_affiliate'),
+			'value': 'affiliate'
 		});
 
 		data['mail_alerts'].push({
-			'text'  : this.language.get('text_mail_order'),
-			'value' : 'order'
+			'text': this.language.get('text_mail_order'),
+			'value': 'order'
 		});
 
 		data['mail_alerts'].push({
-			'text'  : this.language.get('text_mail_review'),
-			'value' : 'review'
+			'text': this.language.get('text_mail_review'),
+			'value': 'review'
 		});
 
 		data['config_mail_alert_email'] = this.config.get('config_mail_alert_email');
@@ -655,7 +640,7 @@ class SettingController extends Controller {
 	async save() {
 		await this.load.language('setting/setting');
 
-		const json = {};
+		const json = { error: {} };
 
 		if (!await this.user.hasPermission('modify', 'setting/setting')) {
 			json['error']['warning'] = this.language.get('error_permission');
@@ -677,7 +662,7 @@ class SettingController extends Controller {
 			json['error']['address'] = this.language.get('error_address');
 		}
 
-		if ((oc_strlen(this.request.post['config_email']) > 96) || !filter_var(this.request.post['config_email'], FILTER_VALIDATE_EMAIL)) {
+		if ((oc_strlen(this.request.post['config_email']) > 96) || !isEmailValid(this.request.post['config_email'])) {
 			json['error']['email'] = this.language.get('error_email');
 		}
 
@@ -781,16 +766,16 @@ class SettingController extends Controller {
 			json['error']['file_max_size'] = this.language.get('error_file_max_size');
 		}
 
-		disallowed = [
+		let disallowed = [
 			'php',
 			'php4',
 			'php3'
-		});
+		];
 
-		extensions = explode("\n", this.request.post['config_file_ext_allowed']);
+		let extensions = this.request.post['config_file_ext_allowed'].split("\n");
 
-		for (extensions of extension) {
-			if (in_array(trim(extension), disallowed)) {
+		for (let extension of extensions) {
+			if (disallowed.includes(extension.trim())) {
 				json['error']['file_ext_allowed'] = this.language.get('error_extension');
 
 				break;
@@ -801,12 +786,12 @@ class SettingController extends Controller {
 			'php',
 			'php4',
 			'php3'
-		});
+		];
 
-		mimes = explode("\n", this.request.post['config_file_mime_allowed']);
+		let mimes = this.request.post['config_file_mime_allowed'].split("\n");
 
-		for (mimes of mime) {
-			if (in_array(trim(mime), disallowed)) {
+		for (let mime of mimes) {
+			if (disallowed.includes(mime.trim())) {
 				json['error']['file_mime_allowed'] = this.language.get('error_mime');
 
 				break;
@@ -815,9 +800,9 @@ class SettingController extends Controller {
 
 		if (!this.request.post['config_error_filename']) {
 			json['error']['error_filename'] = this.language.get('error_log_required');
-		} else if (preg_match('/\.\.[\/\\\]?/', this.request.post['config_error_filename'])) {
+		} else if (/\.\.[\/\\]?/.test(this.request.post['config_error_filename'])) {
 			json['error']['error_filename'] = this.language.get('error_log_invalid');
-		} else if (substr(this.request.post['config_error_filename'], strrpos(this.request.post['config_error_filename'], '.')) != '.log') {
+		} else if (this.request.post['config_error_filename'].substring(this.request.post['config_error_filename'].indexOf('.')) != '.log') {
 			json['error']['error_filename'] = this.language.get('error_log_extension');
 		}
 
@@ -825,8 +810,8 @@ class SettingController extends Controller {
 			json['error']['warning'] = this.language.get('error_warning');
 		}
 
-		if (!Object.keys(json).length) {
-			this.load.model('setting/setting',this);
+		if (!Object.keys(json.error).length) {
+			this.load.model('setting/setting', this);
 
 			await this.model_setting_setting.editSetting('config', this.request.post);
 
@@ -841,17 +826,16 @@ class SettingController extends Controller {
 	 * @return void
 	 */
 	async theme() {
+		let theme = '';
 		if ((this.request.get['theme'])) {
 			theme = basename(this.request.get['theme']);
-		} else {
-			theme = '';
 		}
 
-		this.load.model('setting/extension',this);
+		this.load.model('setting/extension', this);
 
 		const extension_info = await this.model_setting_extension.getExtensionByCode('theme', theme);
 
-		if (extension_info) {
+		if (extension_info.extension_id) {
 			this.response.setOutput(HTTP_CATALOG + 'extension/' + extension_info['extension'] + '/admin/view/image/' + extension_info['code'] + '.png');
 		} else {
 			this.response.setOutput(HTTP_CATALOG + 'image/no_image.png');

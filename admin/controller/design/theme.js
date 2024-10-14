@@ -81,7 +81,7 @@ module.exports = class ThemeController extends Controller {
 				'store_id': result['store_id'],
 				'store': (result['store_id'] ? store : this.language.get('text_default')),
 				'route': result['route'],
-				'date_added': date(this.language.get('date_format_short'), strtotime(result['date_added'])),
+				'date_added': date(this.language.get('date_format_short'), new Date(result['date_added'])),
 				'edit': this.url.link('design/theme.template', 'user_token=' + this.session.data['user_token']),
 				'delete': this.url.link('design/theme.delete', 'user_token=' + this.session.data['user_token'] + '&theme_id=' + result['theme_id'])
 			});

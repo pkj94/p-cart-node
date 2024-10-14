@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Admin\Controller\Localisation;
-/**
- * 
- *
- * @package Opencart\Admin\Controller\Localisation
- */
-class CurrencyController extends Controller {
+module.exports=class CurrencyController extends Controller {
 	/**
 	 * @return void
 	 */
@@ -134,7 +127,7 @@ class CurrencyController extends Controller {
 				'code'          : result['code'],
 				'value'         : result['value'],
 				'status'        : result['status'],
-				'date_modified' : date(this.language.get('date_format_short'), strtotime(result['date_modified'])),
+				'date_modified' : date(this.language.get('date_format_short'), new Date(result['date_modified'])),
 				'edit'          : this.url.link('localisation/currency.form', 'user_token=' + this.session.data['user_token'] + '&currency_id=' + result['currency_id'] + url)
 			];
 		}
@@ -375,7 +368,7 @@ class CurrencyController extends Controller {
 					json['error'] = this.language.get('error_default');
 				}
 
-				store_total await this.model_setting_store.getTotalStoresByCurrency(currency_info['code']);
+				const store_total = await this.model_setting_store.getTotalStoresByCurrency(currency_info['code']);
 
 				if (store_total) {
 					json['error'] = sprintf(this.language.get('error_store'), store_total);

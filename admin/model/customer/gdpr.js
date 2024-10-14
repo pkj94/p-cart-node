@@ -1,12 +1,7 @@
-<?php
-namespace Opencart\Admin\Model\Customer;
-/**
- * Class GDPR
- *
- * @package Opencart\Admin\Model\Customer
- */
-class GdprModel  extends Model {
-	constructor(registry){
+const strtotime = require("locutus/php/datetime/strtotime");
+
+module.exports = class GdprModel extends Model {
+	constructor(registry) {
 		super(registry)
 	}
 	/**
@@ -39,23 +34,23 @@ class GdprModel  extends Model {
 		let implode = [];
 
 		if ((data['filter_email'])) {
-			implode.push("`email` LIKE '" + this.db.escape(data['filter_email']) + "'";
+			implode.push("`email` LIKE " + this.db.escape(data['filter_email']));
 		}
 
 		if ((data['filter_action'])) {
-			implode.push("`action` = '" + this.db.escape(data['filter_action']) + "'";
+			implode.push("`action` = " + this.db.escape(data['filter_action']));
 		}
 
 		if (typeof data['filter_status'] != 'undefined' && data['filter_status'] !== '') {
-			implode.push("`status` = '" + data['filter_status'] + "'";
+			implode.push("`status` = '" + data['filter_status'] + "'");
 		}
 
 		if ((data['filter_date_from'])) {
-			implode.push("DATE(`date_added`) >= DATE(" + this.db.escape(data['filter_date_from']) + ")";
+			implode.push("DATE(`date_added`) >= DATE(" + this.db.escape(data['filter_date_from']) + ")");
 		}
 
 		if ((data['filter_date_to'])) {
-			implode.push("DATE(`date_added`) <= DATE(" + this.db.escape(data['filter_date_to']) + ")";
+			implode.push("DATE(`date_added`) <= DATE(" + this.db.escape(data['filter_date_to']) + ")");
 		}
 
 		if (implode.length) {
@@ -65,13 +60,13 @@ class GdprModel  extends Model {
 		sql += " ORDER BY `date_added` DESC";
 
 		if (data['start'] || data['limit']) {
-                        data['start'] = data['start']||0;
+			data['start'] = data['start'] || 0;
 			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
@@ -105,23 +100,23 @@ if (data['limit'] < 1) {
 		let implode = [];
 
 		if ((data['filter_email'])) {
-			implode.push("`email` LIKE '" + this.db.escape(data['filter_email']) + "'";
+			implode.push("`email` LIKE " + this.db.escape(data['filter_email']));
 		}
 
 		if ((data['filter_action'])) {
-			implode.push("`action` = '" + this.db.escape(data['filter_action']) + "'";
+			implode.push("`action` = " + this.db.escape(data['filter_action']));
 		}
 
 		if (typeof data['filter_status'] != 'undefined' && data['filter_status'] !== '') {
-			implode.push("`status` = '" + data['filter_status'] + "'";
+			implode.push("`status` = '" + data['filter_status'] + "'");
 		}
 
 		if ((data['filter_date_from'])) {
-			implode.push("DATE(`date_added`) >= DATE(" + this.db.escape(data['filter_date_from']) + ")";
+			implode.push("DATE(`date_added`) >= DATE(" + this.db.escape(data['filter_date_from']) + ")");
 		}
 
 		if ((data['filter_date_to'])) {
-			implode.push("DATE(`date_added`) <= DATE(" + this.db.escape(data['filter_date_to']) + ")";
+			implode.push("DATE(`date_added`) <= DATE(" + this.db.escape(data['filter_date_to']) + ")");
 		}
 
 		if (implode.length) {
@@ -137,7 +132,7 @@ if (data['limit'] < 1) {
 	 * @return array
 	 */
 	async getExpires() {
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "gdpr` WHERE `status` = '2' AND DATE(`date_added`) <= DATE('" + this.db.escape(date('Y-m-d', strtotime('.' + this.config.get('config_gdpr_limit') + ' days'))) + "') ORDER BY `date_added` DESC");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "gdpr` WHERE `status` = '2' AND DATE(`date_added`) <= DATE(" + this.db.escape(date('Y-m-d', new Date('.' + this.config.get('config_gdpr_limit') + ' days'))) + ") ORDER BY `date_added` DESC");
 
 		return query.rows;
 	}

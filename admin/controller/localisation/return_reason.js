@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Admin\Controller\Localisation;
-/**
- * 
- *
- * @package Opencart\Admin\Controller\Localisation
- */
-class ReturnReasonController extends Controller {
+module.exports=class ReturnReasonController extends Controller {
 	/**
 	 * @return void
 	 */
@@ -108,7 +101,7 @@ class ReturnReasonController extends Controller {
 			'limit' : this.config.get('config_pagination_admin')
 		});
 
-		this.load.model('localisation/return_reason');
+		this.load.model('localisation/return_reason',this);
 
 		return_reason_total await this.model_localisation_return_reason.getTotalReturnReasons();
 
@@ -207,7 +200,7 @@ class ReturnReasonController extends Controller {
 		data['languages'] = await this.model_localisation_language.getLanguages();
 
 		if ((this.request.get['return_reason_id'])) {
-			this.load.model('localisation/return_reason');
+			this.load.model('localisation/return_reason',this);
 
 			data['return_reason'] = await this.model_localisation_return_reason.getDescriptions(this.request.get['return_reason_id']);
 		} else {
@@ -240,7 +233,7 @@ class ReturnReasonController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('localisation/return_reason');
+			this.load.model('localisation/return_reason',this);
 
 			if (!this.request.post['return_reason_id']) {
 				json['return_reason_id'] = await this.model_localisation_return_reason.addReturnReason(this.request.post);
@@ -272,10 +265,10 @@ class ReturnReasonController extends Controller {
 			json['error'] = this.language.get('error_permission');
 		}
 
-		this.load.model('sale/returns');
+		this.load.model('sale/returns',this);
 
 		for (selected of return_reason_id) {
-			return_total await this.model_sale_returns.getTotalReturnsByReturnReasonId(return_reason_id);
+			let return_total = await this.model_sale_returns.getTotalReturnsByReturnReasonId(return_reason_id);
 
 			if (return_total) {
 				json['error'] = sprintf(this.language.get('error_return'), return_total);
@@ -283,7 +276,7 @@ class ReturnReasonController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('localisation/return_reason');
+			this.load.model('localisation/return_reason',this);
 
 			for (selected of return_reason_id) {
 				await this.model_localisation_return_reason.deleteReturnReason(return_reason_id);

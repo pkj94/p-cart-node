@@ -204,7 +204,7 @@ module.exports = class ReviewController extends Controller {
 				'author': result['author'],
 				'rating': result['rating'],
 				'status': result['status'],
-				'date_added': date(this.language.get('date_format_short'), strtotime(result['date_added'])),
+				'date_added': date(this.language.get('date_format_short'), new Date(result['date_added'])),
 				'edit': this.url.link('catalog/review.form', 'user_token=' + this.session.data['user_token'] + '&review_id=' + result['review_id'] + url)
 			});
 		}

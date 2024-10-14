@@ -113,7 +113,7 @@ module.exports = class CurrencyLocalisationModel extends Model {
 			sql += " LIMIT " + data['start'] + "," + data['limit'];
 		}
 
-		const results = await this.cache.get('currency+' + md5(sql));
+		let results = await this.cache.get('currency+' + md5(sql));
 
 		if (!results) {
 			const query = await this.db.query(sql);
@@ -123,9 +123,9 @@ module.exports = class CurrencyLocalisationModel extends Model {
 			await this.cache.set('currency+' + md5(sql), results);
 		}
 
-		let currency_data = [];
+		let currency_data = {};
 
-		for (results of result) {
+		for (let result of results) {
 			currency_data[result['code']] = {
 				'currency_id': result['currency_id'],
 				'title': result['title'],

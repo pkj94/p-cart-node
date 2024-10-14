@@ -16,7 +16,7 @@ class Language extends \Opencart\System\Engine\Model {
 	 *
 	 * @return array
 	 */
-	public function getLanguage(int $language_id): array {
+	public function getLanguage($language_id): array {
 		if (isset($this->data[$language_id])) {
 			return $this->data[$language_id];
 		}

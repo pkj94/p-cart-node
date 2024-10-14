@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Admin\Controller\Localisation;
-/**
- * 
- *
- * @package Opencart\Admin\Controller\Localisation
- */
-class GeoZoneController extends Controller {
+module.exports=class GeoZoneController extends Controller {
 	/**
 	 * @return void
 	 */
@@ -108,7 +101,7 @@ class GeoZoneController extends Controller {
 			'limit' : this.config.get('config_pagination_admin')
 		});
 
-		this.load.model('localisation/geo_zone');
+		this.load.model('localisation/geo_zone',this);
 
 		geo_zone_total await this.model_localisation_geo_zone.getTotalGeoZones();
 
@@ -199,7 +192,7 @@ class GeoZoneController extends Controller {
 		data['back'] = this.url.link('localisation/geo_zone', 'user_token=' + this.session.data['user_token'] + url);
 
 		if ((this.request.get['geo_zone_id'])) {
-			this.load.model('localisation/geo_zone');
+			this.load.model('localisation/geo_zone',this);
 
 			geo_zone_info await this.model_localisation_geo_zone.getGeoZone(this.request.get['geo_zone_id']);
 		}
@@ -262,7 +255,7 @@ class GeoZoneController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('localisation/geo_zone');
+			this.load.model('localisation/geo_zone',this);
 
 			if (!this.request.post['geo_zone_id']) {
 				json['geo_zone_id'] = await this.model_localisation_geo_zone.addGeoZone(this.request.post);
@@ -305,7 +298,7 @@ class GeoZoneController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('localisation/geo_zone');
+			this.load.model('localisation/geo_zone',this);
 
 			for (selected of geo_zone_id) {
 				await this.model_localisation_geo_zone.deleteGeoZone(geo_zone_id);

@@ -55,7 +55,7 @@ class UpgradeController extends Controller {
 
 		if (response_info) {
 			data['latest_version'] = response_info['version'];
-			data['date_added'] = date(this.language.get('date_format_short'), strtotime(response_info['date_added']));
+			data['date_added'] = date(this.language.get('date_format_short'), new Date(response_info['date_added']));
 			data['log'] = nl2br(response_info['log']);
 
 			if (!version_compare(VERSION, response_info['version'], '>=')) {

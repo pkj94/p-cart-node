@@ -28,7 +28,7 @@ class PaymentMethod extends \Opencart\System\Engine\Model {
 	 *
 	 * @return void
 	 */
-	public function deletePaymentMethod(int $customer_payment_id): void {
+	public function deletePaymentMethod($customer_payment_id): void {
 		$this->db->query("DELETE FROM `" . DB_PREFIX . "customer_payment` WHERE `customer_id` = '" . (int)$this->customer->getId() . "' AND `customer_payment_id` = '" . (int)$customer_payment_id . "'");
 	}
 
@@ -38,7 +38,7 @@ class PaymentMethod extends \Opencart\System\Engine\Model {
 	 *
 	 * @return array
 	 */
-	public function getPaymentMethod(int $customer_id, int $customer_payment_id): array {
+	public function getPaymentMethod($customer_id, int $customer_payment_id): array {
 		$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "customer_payment` WHERE `customer_id` = '" . (int)$customer_id . "' AND `customer_payment_id` = '" . (int)$customer_payment_id . "'");
 
 		return $query->row;
@@ -49,7 +49,7 @@ class PaymentMethod extends \Opencart\System\Engine\Model {
 	 *
 	 * @return array
 	 */
-	public function getPaymentMethods(int $customer_id): array {
+	public function getPaymentMethods($customer_id): array {
 		$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "customer_payment` WHERE `customer_id` = '" . (int)$customer_id . "'");
 
 		return $query->rows;

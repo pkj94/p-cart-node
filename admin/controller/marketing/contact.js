@@ -1,38 +1,32 @@
-<?php
-namespace Opencart\Admin\Controller\Marketing;
-/**
- * 
- *
- * @package Opencart\Admin\Controller\Marketing
- */
-class ContactController extends Controller {
+const sprintf = require("locutus/php/strings/sprintf");
+
+module.exports = class ContactController extends Controller {
 	/**
 	 * @return void
 	 */
 	async index() {
+		const data = {};
 		await this.load.language('marketing/contact');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		
-
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('text_home'),
+			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('marketing/contact', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('heading_title'),
+			'href': this.url.link('marketing/contact', 'user_token=' + this.session.data['user_token'])
 		});
 
-		this.load.model('setting/store',this);
+		this.load.model('setting/store', this);
 
 		data['stores'] = await this.model_setting_store.getStores();
 
-		this.load.model('customer/customer_group',this);
+		this.load.model('customer/customer_group', this);
 
 		data['customer_groups'] = await this.model_customer_customer_group.getCustomerGroups();
 
@@ -52,7 +46,7 @@ class ContactController extends Controller {
 	async send() {
 		await this.load.language('marketing/contact');
 
-		const json = {};
+		const json = { error: {} };
 
 		if (!await this.user.hasPermission('modify', 'marketing/contact')) {
 			json['error']['warning'] = this.language.get('error_permission');
@@ -66,77 +60,75 @@ class ContactController extends Controller {
 			json['error']['message'] = this.language.get('error_message');
 		}
 
-		if (!Object.keys(json).length) {
-			this.load.model('setting/store',this);
-			this.load.model('setting/setting',this);
-			this.load.model('customer/customer',this);
-			this.load.model('sale/order',this);
+		if (!Object.keys(json.error).length) {
+			this.load.model('setting/store', this);
+			this.load.model('setting/setting', this);
+			this.load.model('customer/customer', this);
+			this.load.model('sale/order', this);
 
 			const store_info = await this.model_setting_store.getStore(this.request.post['store_id']);
-
+			let store_name = this.config.get('config_name');
 			if (store_info && store_info.store_id) {
 				store_name = store_info['name'];
-			} else {
-				store_name = this.config.get('config_name');
 			}
 
-			setting await this.model_setting_setting.getSetting('config', this.request.post['store_id']);
+			const setting = await this.model_setting_setting.getSetting('config', this.request.post['store_id']);
 
-			store_email = (setting['config_email']) ? setting['config_email'] : this.config.get('config_email');
-
+			let store_email = (setting['config_email']) ? setting['config_email'] : this.config.get('config_email');
+			let page = 1;
 			if ((this.request.get['page'])) {
 				page = Number(this.request.get['page']);
-			} else {
-				page = 1;
 			}
 
 			let limit = 10;
 
-			email_total = 0;
+			let email_total = 0;
 
-			emails = [];
-
+			let emails = [];
+			let results;
+			let customer_data;
+			let affiliate_data;
 			switch (this.request.post['to']) {
 				case 'newsletter':
-					customer_data = [
-						'filter_newsletter' : 1,
-						'start'             : (page - 1) * limit,
-						'limit'             : limit
-					];
+					customer_data = {
+						'filter_newsletter': 1,
+						'start': (page - 1) * limit,
+						'limit': limit
+					};
 
-					email_total await this.model_customer_customer.getTotalCustomers(customer_data);
+					email_total = await this.model_customer_customer.getTotalCustomers(customer_data);
 
-					const results = await this.model_customer_customer.getCustomers(customer_data);
+					results = await this.model_customer_customer.getCustomers(customer_data);
 
 					for (let result of results) {
-						emails[] = result['email'];
+						emails.push(result['email']);
 					}
 					break;
 				case 'customer_all':
-					customer_data = [
-						'start' : (page - 1) * limit,
-						'limit' : limit
-					];
+					customer_data = {
+						'start': (page - 1) * limit,
+						'limit': limit
+					};
 
-					email_total await this.model_customer_customer.getTotalCustomers(customer_data);
+					email_total = await this.model_customer_customer.getTotalCustomers(customer_data);
 
-					const results = await this.model_customer_customer.getCustomers(customer_data);
+					results = await this.model_customer_customer.getCustomers(customer_data);
 
 					for (let result of results) {
-						emails[] = result['email'];
+						emails.push(result['email']);
 					}
 					break;
 				case 'customer_group':
-					customer_data = [
-						'filter_customer_group_id' : this.request.post['customer_group_id'],
-						'start'                    : (page - 1) * limit,
-						'limit'                    : limit
-					];
+					customer_data = {
+						'filter_customer_group_id': this.request.post['customer_group_id'],
+						'start': (page - 1) * limit,
+						'limit': limit
+					};
 
-					email_total await this.model_customer_customer.getTotalCustomers(customer_data);
+					email_total = await this.model_customer_customer.getTotalCustomers(customer_data);
 
-					const results = await this.model_customer_customer.getCustomers(customer_data);
-
+					results = await this.model_customer_customer.getCustomers(customer_data);
+					emails = {};
 					for (let result of results) {
 						emails[result['customer_id']] = result['email'];
 					}
@@ -151,57 +143,57 @@ class ContactController extends Controller {
 							const customer_info = await this.model_customer_customer.getCustomer(customer_id);
 
 							if (customer_info) {
-								emails[] = customer_info['email'];
+								emails.push(customer_info['email']);
 							}
 						}
 					}
 					break;
 				case 'affiliate_all':
-					affiliate_data = [
-						'filter_affiliate' : 1,
-						'start'            : (page - 1) * limit,
-						'limit'            : limit
-					];
+					affiliate_data = {
+						'filter_affiliate': 1,
+						'start': (page - 1) * limit,
+						'limit': limit
+					};
 
-					email_total await this.model_customer_customer.getTotalCustomers(affiliate_data);
+					email_total = await this.model_customer_customer.getTotalCustomers(affiliate_data);
 
-					const results = await this.model_customer_customer.getCustomers(affiliate_data);
+					results = await this.model_customer_customer.getCustomers(affiliate_data);
 
 					for (let result of results) {
-						emails[] = result['email'];
+						emails.push(result['email']);
 					}
 					break;
 				case 'affiliate':
 					if ((this.request.post['affiliate'])) {
 						affiliates = array_slice(this.request.post['affiliate'], (page - 1) * limit, limit);
 
-						for (affiliates of affiliate_id) {
-							affiliate_info await this.model_customer_customer.getCustomer(affiliate_id);
+						for (let affiliate_id of affiliates) {
+							const affiliate_info = await this.model_customer_customer.getCustomer(affiliate_id);
 
-							if (affiliate_info) {
-								emails[] = affiliate_info['email'];
+							if (affiliate_info.customer_id) {
+								emails.push(affiliate_info['email']);
 							}
 						}
 
-						email_total = count(this.request.post['affiliate']);
+						email_total = this.request.post['affiliate'].length;
 					}
 					break;
 				case 'product':
 					if ((this.request.post['product'])) {
-						email_total await this.model_sale_order.getTotalEmailsByProductsOrdered(this.request.post['product']);
+						email_total = await this.model_sale_order.getTotalEmailsByProductsOrdered(this.request.post['product']);
 
-						const results = await this.model_sale_order.getEmailsByProductsOrdered(this.request.post['product'], (page - 1) * limit, limit);
+						results = await this.model_sale_order.getEmailsByProductsOrdered(this.request.post['product'], (page - 1) * limit, limit);
 
 						for (let result of results) {
-							emails[] = result['email'];
+							emails.push(result['email']);
 						}
 					}
 					break;
 			}
 
-			if (emails) {
-				start = (page - 1) * limit;
-				end = start + limit;
+			if (emails.length) {
+				let start = (page - 1) * limit;
+				let end = start + limit;
 
 				if (end < email_total) {
 					json['text'] = sprintf(this.language.get('text_sent'), start ? start : 1, email_total);
@@ -213,7 +205,7 @@ class ContactController extends Controller {
 					json['next'] = '';
 				}
 
-				message  = '<html dir="ltr" lang="' + this.language.get('code') + '">' + "\n";
+				let message = '<html dir="ltr" lang="' + this.language.get('code') + '">' + "\n";
 				message += '  <head>' + "\n";
 				message += '    <title>' + this.request.post['subject'] + '</title>' + "\n";
 				message += '    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">' + "\n";
@@ -222,25 +214,25 @@ class ContactController extends Controller {
 				message += '</html>' + "\n";
 
 				if (this.config.get('config_mail_engine')) {
-					mail_option = [
-						'parameter' : this.config.get('config_mail_parameter'),
-						'smtp_hostname' : this.config.get('config_mail_smtp_hostname'),
-						'smtp_username' : this.config.get('config_mail_smtp_username'),
-						'smtp_password' : html_entity_decode(this.config.get('config_mail_smtp_password')),
-						'smtp_port' : this.config.get('config_mail_smtp_port'),
-						'smtp_timeout' : this.config.get('config_mail_smtp_timeout')
-					];
+					let mail_option = {
+						'parameter': this.config.get('config_mail_parameter'),
+						'smtp_hostname': this.config.get('config_mail_smtp_hostname'),
+						'smtp_username': this.config.get('config_mail_smtp_username'),
+						'smtp_password': html_entity_decode(this.config.get('config_mail_smtp_password')),
+						'smtp_port': this.config.get('config_mail_smtp_port'),
+						'smtp_timeout': this.config.get('config_mail_smtp_timeout')
+					};
 
-					mail = new \Opencart\System\Library\Mail(this.config.get('config_mail_engine'), mail_option);
+					const mail = new MailLibrary(this.config.get('config_mail_engine'), mail_option);
 
-					for (emails of email) {
+					for (let email of emails) {
 						if (filter_var(email, FILTER_VALIDATE_EMAIL)) {
 							mail.setTo(trim(email));
 							mail.setFrom(store_email);
 							mail.setSender(html_entity_decode(store_name));
 							mail.setSubject(html_entity_decode(this.request.post['subject']));
 							mail.setHtml(message);
-							mail.send();
+							await mail.send();
 						}
 					}
 				}

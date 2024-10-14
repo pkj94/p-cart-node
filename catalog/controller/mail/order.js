@@ -146,7 +146,7 @@ class Order extends \Opencart\System\Engine\Controller {
 		}
 
 		$data['order_id'] = $order_info['order_id'];
-		$data['date_added'] = date($this->language->get('date_format_short'), strtotime($order_info['date_added']));
+		$data['date_added'] = date($this->language->get('date_format_short'), new Date($order_info['date_added']));
 		$data['payment_method'] = $order_info['payment_method']['name'];
 		$data['shipping_method'] = $order_info['shipping_method']['name'];
 		$data['email'] = $order_info['email'];
@@ -348,7 +348,7 @@ class Order extends \Opencart\System\Engine\Controller {
 				'smtp_timeout'  => $this->config->get('config_mail_smtp_timeout')
 			];
 
-			$mail = new \Opencart\System\Library\Mail($this->config->get('config_mail_engine'), $mail_option);
+			$mail = new MailLibrary($this->config->get('config_mail_engine'), $mail_option);
 			$mail->setTo($order_info['email']);
 			$mail->setFrom($from);
 			$mail->setSender($store_name);
@@ -409,7 +409,7 @@ class Order extends \Opencart\System\Engine\Controller {
 		$subject = sprintf($this->language->get('mail_text_subject'), $store_name, $order_info['order_id']);
 
 		$data['order_id'] = $order_info['order_id'];
-		$data['date_added'] = date($this->language->get('date_format_short'), strtotime($order_info['date_added']));
+		$data['date_added'] = date($this->language->get('date_format_short'), new Date($order_info['date_added']));
 
 		$order_status_query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "order_status` WHERE `order_status_id` = '" . (int)$order_status_id . "' AND `language_id` = '" . (int)$order_info['language_id'] . "'");
 
@@ -448,7 +448,7 @@ class Order extends \Opencart\System\Engine\Controller {
 				'smtp_timeout'  => $this->config->get('config_mail_smtp_timeout')
 			];
 
-			$mail = new \Opencart\System\Library\Mail($this->config->get('config_mail_engine'), $mail_option);
+			$mail = new MailLibrary($this->config->get('config_mail_engine'), $mail_option);
 			$mail->setTo($order_info['email']);
 			$mail->setFrom($from);
 			$mail->setSender($store_name);
@@ -500,7 +500,7 @@ class Order extends \Opencart\System\Engine\Controller {
 			$subject = html_entity_decode(sprintf($this->language->get('text_subject'), $this->config->get('config_name'), $order_info['order_id']));
 
 			$data['order_id'] = $order_info['order_id'];
-			$data['date_added'] = date($this->language->get('date_format_short'), strtotime($order_info['date_added']));
+			$data['date_added'] = date($this->language->get('date_format_short'), new Date($order_info['date_added']));
 
 			$order_status_query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "order_status` WHERE `order_status_id` = '" . (int)$order_status_id . "' AND `language_id` = '" . (int)$this->config->get('config_language_id') . "'");
 
@@ -615,7 +615,7 @@ class Order extends \Opencart\System\Engine\Controller {
 					'smtp_timeout'  => $this->config->get('config_mail_smtp_timeout')
 				];
 
-				$mail = new \Opencart\System\Library\Mail($this->config->get('config_mail_engine'), $mail_option);
+				$mail = new MailLibrary($this->config->get('config_mail_engine'), $mail_option);
 				$mail->setTo($this->config->get('config_email'));
 				$mail->setFrom($this->config->get('config_email'));
 				$mail->setSender(html_entity_decode($order_info['store_name']));

@@ -1,197 +1,191 @@
-<?php
-namespace Opencart\Admin\Model\User;
-/**
- * Class Api
- *
- * @package Opencart\Admin\Model\User
- */
-class Api extends \Opencart\System\Engine\Model {
+module.exports = class ApiModel extends Model {
 	/**
-	 * @param array $data
+	 * @param data
 	 *
 	 * @return int
 	 */
-	public function addApi(array $data): int {
-		$this->db->query("INSERT INTO `" . DB_PREFIX . "api` SET `username` = '" . $this->db->escape((string)$data['username']) . "', `key` = '" . $this->db->escape((string)$data['key']) . "', `status` = '" . (bool)(isset($data['status']) ? $data['status'] : 0) . "', `date_added` = NOW(), `date_modified` = NOW()");
+	async addApi(data) {
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "api` SET `username` = " + this.db.escape(data['username']) + ", `key` = " + this.db.escape(data['key']) + ", `status` = '" + ((data['status']) ? data['status'] : 0) + "', `date_added` = NOW(), `date_modified` = NOW()");
 
-		$api_id = $this->db->getLastId();
+		const api_id = this.db.getLastId();
 
-		if (isset($data['api_ip'])) {
-			foreach ($data['api_ip'] as $ip) {
-				if ($ip) {
-					$this->db->query("INSERT INTO `" . DB_PREFIX . "api_ip` SET `api_id` = '" . (int)$api_id . "', `ip` = '" . $this->db->escape($ip) . "'");
+		if ((data['api_ip'])) {
+			for (let ip of data['api_ip']) {
+				if (ip) {
+					await this.db.query("INSERT INTO `" + DB_PREFIX + "api_ip` SET `api_id` = '" + api_id + "', `ip` = " + this.db.escape(ip));
 				}
 			}
 		}
 
-		return $api_id;
+		return api_id;
 	}
 
 	/**
-	 * @param int   $api_id
-	 * @param array $data
+	 * @param int   api_id
+	 * @param data
 	 *
 	 * @return void
 	 */
-	public function editApi(int $api_id, array $data): void {
-		$this->db->query("UPDATE `" . DB_PREFIX . "api` SET `username` = '" . $this->db->escape((string)$data['username']) . "', `key` = '" . $this->db->escape((string)$data['key']) . "', `status` = '" . (bool)(isset($data['status']) ? $data['status'] : 0) . "', `date_modified` = NOW() WHERE `api_id` = '" . (int)$api_id . "'");
+	async editApi(api_id, data) {
+		await this.db.query("UPDATE `" + DB_PREFIX + "api` SET `username` = '" + this.db.escape(data['username']) + "', `key` = '" + this.db.escape(data['key']) + "', `status` = '" + ((data['status']) ? data['status'] : 0) + "', `date_modified` = NOW() WHERE `api_id` = '" + api_id + "'");
 
-		$this->db->query("DELETE FROM `" . DB_PREFIX . "api_ip` WHERE `api_id` = '" . (int)$api_id . "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "api_ip` WHERE `api_id` = '" + api_id + "'");
 
-		if (isset($data['api_ip'])) {
-			foreach ($data['api_ip'] as $ip) {
-				if ($ip) {
-					$this->db->query("INSERT INTO `" . DB_PREFIX . "api_ip` SET `api_id` = '" . (int)$api_id . "', `ip` = '" . $this->db->escape($ip) . "'");
+		if ((data['api_ip'])) {
+			for (let ip of data['api_ip']) {
+				if (ip) {
+					await this.db.query("INSERT INTO `" + DB_PREFIX + "api_ip` SET `api_id` = '" + api_id + "', `ip` = " + this.db.escape(ip));
 				}
 			}
 		}
 	}
 
 	/**
-	 * @param int $api_id
+	 * @param int api_id
 	 *
 	 * @return void
 	 */
-	public function deleteApi(int $api_id): void {
-		$this->db->query("DELETE FROM `" . DB_PREFIX . "api` WHERE `api_id` = '" . (int)$api_id . "'");
+	async deleteApi(api_id) {
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "api` WHERE `api_id` = '" + api_id + "'");
 	}
 
 	/**
-	 * @param int $api_id
+	 * @param int api_id
 	 *
 	 * @return array
 	 */
-	public function getApi(int $api_id): array {
-		$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "api` WHERE `api_id` = '" . (int)$api_id . "'");
+	async getApi(api_id) {
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "api` WHERE `api_id` = '" + api_id + "'");
 
-		return $query->row;
+		return query.row;
 	}
 
 	/**
-	 * @param array $data
+	 * @param data
 	 *
 	 * @return array
 	 */
-	public function getApis(array $data = []): array {
-		$sql = "SELECT * FROM `" . DB_PREFIX . "api`";
+	async getApis(data = {}) {
+		let sql = "SELECT * FROM `" + DB_PREFIX + "api`";
 
-		$sort_data = [
+		let sort_data = [
 			'username',
 			'status',
 			'date_added',
 			'date_modified'
 		];
 
-		if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
-			$sql .= " ORDER BY " . $data['sort'];
+		if ((data['sort']) && sort_data.includes(data['sort'])) {
+			sql += " ORDER BY " + data['sort'];
 		} else {
-			$sql .= " ORDER BY `username`";
+			sql += " ORDER BY `username`";
 		}
 
-		if (isset($data['order']) && ($data['order'] == 'DESC')) {
-			$sql .= " DESC";
+		if ((data['order']) && (data['order'] == 'DESC')) {
+			sql += " DESC";
 		} else {
-			$sql .= " ASC";
+			sql += " ASC";
 		}
 
-		if (isset($data['start']) || isset($data['limit'])) {
-			if ($data['start'] < 0) {
-				$data['start'] = 0;
+		if ((data['start']) || (data['limit'])) {
+			data['start'] = data['start'] || 0;
+			if (data['start'] < 0) {
+				data['start'] = 0;
+			}
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
+				data['limit'] = 20;
 			}
 
-			if ($data['limit'] < 1) {
-				$data['limit'] = 20;
-			}
-
-			$sql .= " LIMIT " . (int)$data['start'] . "," . (int)$data['limit'];
+			sql += " LIMIT " + data['start'] + "," + data['limit'];
 		}
 
-		$query = $this->db->query($sql);
+		const query = await this.db.query(sql);
 
-		return $query->rows;
+		return query.rows;
 	}
 
 	/**
 	 * @return int
 	 */
-	public function getTotalApis(): int {
-		$query = $this->db->query("SELECT COUNT(*) AS `total` FROM `" . DB_PREFIX . "api`");
+	async getTotalApis() {
+		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "api`");
 
-		return (int)$query->row['total'];
+		return query.row['total'];
 	}
 
 	/**
-	 * @param int    $api_id
-	 * @param string $ip
+	 * @param int    api_id
+	 * @param ip
 	 *
 	 * @return void
 	 */
-	public function addIp(int $api_id, string $ip): void {
-		$this->db->query("INSERT INTO `" . DB_PREFIX . "api_ip` SET `api_id` = '" . (int)$api_id . "', `ip` = '" . $this->db->escape($ip) . "'");
+	async addIp(api_id, ip) {
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "api_ip` SET `api_id` = '" + api_id + "', `ip` = " + this.db.escape(ip));
 	}
 
 	/**
-	 * @param int $api_id
+	 * @param int api_id
 	 *
 	 * @return array
 	 */
-	public function getIps(int $api_id): array {
-		$ip_data = [];
+	async getIps(api_id) {
+		let ip_data = [];
 
-		$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "api_ip` WHERE `api_id` = '" . (int)$api_id . "'");
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "api_ip` WHERE `api_id` = '" + api_id + "'");
 
-		foreach ($query->rows as $result) {
-			$ip_data[] = $result['ip'];
+		for (let result of query.rows) {
+			ip_data.push(result['ip']);
 		}
 
-		return $ip_data;
+		return ip_data;
 	}
 
 	/**
-	 * @param int    $api_id
-	 * @param string $session_id
-	 * @param string $ip
+	 * @param int    api_id
+	 * @param session_id
+	 * @param ip
 	 *
 	 * @return int
 	 */
-	public function addSession(int $api_id, string $session_id, string $ip): int {
-		$api_ip_query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "api_ip` WHERE `ip` = '" . $this->db->escape($ip) . "'");
+	async addSession(api_id, session_id, ip) {
+		const api_ip_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "api_ip` WHERE `ip` = " + this.db.escape(ip));
 
-		if (!$api_ip_query->num_rows) {
-			$this->db->query("INSERT INTO `" . DB_PREFIX . "api_ip` SET `api_id` = '" . (int)$api_id . "', `ip` = '" . $this->db->escape($ip) . "'");
+		if (!api_ip_query.num_rows) {
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "api_ip` SET `api_id` = '" + api_id + "', `ip` = " + this.db.escape(ip));
 		}
 
-		$this->db->query("INSERT INTO `" . DB_PREFIX . "api_session` SET `api_id` = '" . (int)$api_id . "', `session_id` = '" . $this->db->escape($session_id) . "', `ip` = '" . $this->db->escape($ip) . "', `date_added` = NOW(), `date_modified` = NOW()");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "api_session` SET `api_id` = '" + api_id + "', `session_id` = '" + this.db.escape(session_id) + "', `ip` = '" + this.db.escape(ip) + "', `date_added` = NOW(), `date_modified` = NOW()");
 
-		return $this->db->getLastId();
+		return this.db.getLastId();
 	}
 
 	/**
-	 * @param int $api_id
+	 * @param int api_id
 	 *
 	 * @return array
 	 */
-	public function getSessions(int $api_id): array {
-		$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "api_session` WHERE `api_id` = '" . (int)$api_id . "'");
+	async getSessions(api_id) {
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "api_session` WHERE `api_id` = '" + api_id + "'");
 
-		return $query->rows;
+		return query.rows;
 	}
 
 	/**
-	 * @param int $api_session_id
+	 * @param int api_session_id
 	 *
 	 * @return void
 	 */
-	public function deleteSession(int $api_session_id): void {
-		$this->db->query("DELETE FROM `" . DB_PREFIX . "api_session` WHERE `api_session_id` = '" . (int)$api_session_id . "'");
+	async deleteSession(api_session_id) {
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "api_session` WHERE `api_session_id` = '" + api_session_id + "'");
 	}
 
 	/**
-	 * @param string $session_id
+	 * @param session_id
 	 *
 	 * @return void
 	 */
-	public function deleteSessionBySessionId(string $session_id): void {
-		$this->db->query("DELETE FROM `" . DB_PREFIX . "api_session` WHERE `session_id` = '" . $this->db->escape($session_id) . "'");
+	async deleteSessionBySessionId(session_id) {
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "api_session` WHERE `session_id` = '" + this.db.escape(session_id) + "'");
 	}
 }

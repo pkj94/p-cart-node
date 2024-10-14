@@ -33,13 +33,13 @@ module.exports = class CustomerModel extends Model {
 	async getTotalCustomersByWeek() {
 		let customer_data = {};
 
-		date_start = strtotime('-' + date('w') + ' days');
+		date_start = new Date('-' + date('w') + ' days');
 
 		for (i = 0; i < 7; i++) {
 			date = date('Y-m-d', date_start + (i * 86400));
 
-			customer_data[date('w', strtotime(date))] = {
-				'day': date('D', strtotime(date)),
+			customer_data[date('w', new Date(date))] = {
+				'day': date('D', new Date(date)),
 				'total': 0
 			};
 		}
@@ -47,8 +47,8 @@ module.exports = class CustomerModel extends Model {
 		let query = await this.db.query("SELECT COUNT(*) AS `total`, `date_added` FROM `" + DB_PREFIX + "customer` WHERE DATE(`date_added`) >= DATE('" + this.db.escape(date('Y-m-d', date_start)) + "') GROUP BY DAYNAME(`date_added`)");
 
 		for (let result of query.rows) {
-			customer_data[date('w', strtotime(result['date_added']))] = {
-				'day': date('D', strtotime(result['date_added'])),
+			customer_data[date('w', new Date(result['date_added']))] = {
+				'day': date('D', new Date(result['date_added'])),
 				'total': result['total']
 			};
 		}
@@ -65,8 +65,8 @@ module.exports = class CustomerModel extends Model {
 		for (i = 1; i <= date('t'); i++) {
 			date = date('Y') + '-' + date('m') + '-' + i;
 
-			customer_data[date('j', strtotime(date))] = {
-				'day': date('d', strtotime(date)),
+			customer_data[date('j', new Date(date))] = {
+				'day': date('d', new Date(date)),
 				'total': 0
 			};
 		}
@@ -74,8 +74,8 @@ module.exports = class CustomerModel extends Model {
 		let query = await this.db.query("SELECT COUNT(*) AS `total`, `date_added` FROM `" + DB_PREFIX + "customer` WHERE DATE(`date_added`) >= DATE('" + this.db.escape(date('Y') + '-' + date('m') + '-1') + "') GROUP BY DATE(`date_added`)");
 
 		for (let result of query.rows) {
-			customer_data[date('j', strtotime(result['date_added']))] = {
-				'day': date('d', strtotime(result['date_added'])),
+			customer_data[date('j', new Date(result['date_added']))] = {
+				'day': date('d', new Date(result['date_added'])),
 				'total': result['total']
 			};
 		}
@@ -99,8 +99,8 @@ module.exports = class CustomerModel extends Model {
 		let query = await this.db.query("SELECT COUNT(*) AS `total`, `date_added` FROM `" + DB_PREFIX + "customer` WHERE YEAR(`date_added`) = YEAR(NOW()) GROUP BY MONTH(`date_added`)");
 
 		for (let result of query.rows) {
-			customer_data[date('n', strtotime(result['date_added']))] = {
-				'month': date('M', strtotime(result['date_added'])),
+			customer_data[date('n', new Date(result['date_added']))] = {
+				'month': date('M', new Date(result['date_added'])),
 				'total': result['total']
 			};
 		}

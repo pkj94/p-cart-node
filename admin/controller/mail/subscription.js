@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Admin\Controller\Mail;
-/**
- * 
- *
- * @package Opencart\Admin\Controller\Mail
- */
-class SubscriptionController extends Controller {
+module.exports=class SubscriptionController extends Controller {
     // admin/controller/sale/subscription/addHistory/after
 	/**
 	 * @param string route
@@ -60,7 +53,7 @@ class SubscriptionController extends Controller {
                 // controller from the catalog whereas an extension needs to return the active subscription status
                 if (history_total && subscription['subscription_status_id'] == subscription_status_id) {
                     // Subscription Statuses
-                    this.load.model('localisation/subscription_status');
+                    this.load.model('localisation/subscription_status',this);
 
                     subscription_status_info await this.model_localisation_subscription_status.getSubscriptionStatus(subscription_status_id);
 
@@ -133,7 +126,7 @@ class SubscriptionController extends Controller {
                                     data['text_subscription_status'] = this.language.get('mail_text_subscription_status');
 
                                     if (this.config.get('config_mail_engine')) {
-                                        mail = new \Opencart\System\Library\Mail(this.config.get('config_mail_engine'));
+                                        mail = new MailLibrary(this.config.get('config_mail_engine'));
                                         mail.parameter = this.config.get('config_mail_parameter');
                                         mail.smtp_hostname = this.config.get('config_mail_smtp_hostname');
                                         mail.smtp_username = this.config.get('config_mail_smtp_username');
@@ -259,7 +252,7 @@ class SubscriptionController extends Controller {
                                 data['date_added'] = date(this.language.get('date_format_short'), subscription['date_added']);
 
                                 if (this.config.get('config_mail_engine')) {
-                                    mail = new \Opencart\System\Library\Mail(this.config.get('config_mail_engine'));
+                                    mail = new MailLibrary(this.config.get('config_mail_engine'));
                                     mail.parameter = this.config.get('config_mail_parameter');
                                     mail.smtp_hostname = this.config.get('config_mail_smtp_hostname');
                                     mail.smtp_username = this.config.get('config_mail_smtp_username');

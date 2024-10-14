@@ -1,12 +1,5 @@
-<?php
-namespace Opencart\Admin\Model\Tool;
-/**
- * Class Upload
- *
- * @package Opencart\Admin\Model\Tool
- */
-class UploadModel  extends Model {
-	constructor(registry){
+module.exports = class UploadModel extends Model {
+	constructor(registry) {
 		super(registry)
 	}
 	/**
@@ -16,7 +9,7 @@ class UploadModel  extends Model {
 	 * @return string
 	 */
 	async addUpload(name, filename) {
-		code = oc_token(32);
+		let code = oc_token(32);
 
 		await this.db.query("INSERT INTO `" + DB_PREFIX + "upload` SET `name` = '" + this.db.escape(name) + "', `filename` = '" + this.db.escape(filename) + "', `code` = '" + this.db.escape(code) + "', `date_added` = NOW()");
 
@@ -65,19 +58,19 @@ class UploadModel  extends Model {
 		let implode = [];
 
 		if (data['filter_name']) {
-			implode.push("`name` LIKE '" + this.db.escape(data['filter_name'] + '%') + "'";
+			implode.push("`name` LIKE " + this.db.escape(data['filter_name'] + '%'));
 		}
 
 		if ((data['filter_code'])) {
-			implode.push("`code` LIKE '" + this.db.escape(data['filter_code'] + '%') + "'";
+			implode.push("`code` LIKE " + this.db.escape(data['filter_code'] + '%'));
 		}
 
 		if ((data['filter_date_from'])) {
-			implode.push("DATE(`date_added`) >= DATE(" + this.db.escape(data['filter_date_from']) + ")";
+			implode.push("DATE(`date_added`) >= DATE(" + this.db.escape(data['filter_date_from']) + ")");
 		}
 
 		if ((data['filter_date_to'])) {
-			implode.push("DATE(`date_added`) <= DATE(" + this.db.escape(data['filter_date_to']) + ")";
+			implode.push("DATE(`date_added`) <= DATE(" + this.db.escape(data['filter_date_to']) + ")");
 		}
 
 		if (implode.length) {
@@ -103,13 +96,13 @@ class UploadModel  extends Model {
 		}
 
 		if (data['start'] || data['limit']) {
-                        data['start'] = data['start']||0;
+			data['start'] = data['start'] || 0;
 			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
@@ -132,19 +125,19 @@ if (data['limit'] < 1) {
 		let implode = [];
 
 		if (data['filter_name']) {
-			implode.push("`name` LIKE '" + this.db.escape(data['filter_name'] + '%') + "'";
+			implode.push("`name` LIKE " + this.db.escape(data['filter_name'] + '%'));
 		}
 
 		if ((data['filter_code'])) {
-			implode.push("`code` LIKE '" + this.db.escape(data['filter_code'] + '%') + "'";
+			implode.push("`code` LIKE " + this.db.escape(data['filter_code'] + '%'));
 		}
 
 		if ((data['filter_date_from'])) {
-			implode.push("DATE(`date_added`) >= DATE(" + this.db.escape(data['filter_date_from']) + ")";
+			implode.push("DATE(`date_added`) >= DATE(" + this.db.escape(data['filter_date_from']) + ")");
 		}
 
 		if ((data['filter_date_to'])) {
-			implode.push("DATE(`date_added`) <= DATE(" + this.db.escape(data['filter_date_to']) + ")";
+			implode.push("DATE(`date_added`) <= DATE(" + this.db.escape(data['filter_date_to']) + ")");
 		}
 
 		if (implode.length) {

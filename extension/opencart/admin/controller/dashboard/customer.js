@@ -88,9 +88,9 @@ module.exports = class CustomerDashboardController extends Controller {
 		// Total Orders
 		this.load.model('customer/customer', this);
 
-		let today = await this.model_customer_customer.getTotalCustomers({ 'filter_date_added': date('Y-m-d', strtotime('-1 day')) });
+		let today = await this.model_customer_customer.getTotalCustomers({ 'filter_date_added': date('Y-m-d', new Date('-1 day')) });
 
-		let yesterday = await this.model_customer_customer.getTotalCustomers({ 'filter_date_added': date('Y-m-d', strtotime('-2 day')) });
+		let yesterday = await this.model_customer_customer.getTotalCustomers({ 'filter_date_added': date('Y-m-d', new Date('-2 day')) });
 
 		let difference = today - yesterday;
 

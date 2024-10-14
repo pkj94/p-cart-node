@@ -11,7 +11,7 @@ class Module extends \Opencart\System\Engine\Model {
 	 *
 	 * @return array
 	 */
-	public function getModule(int $module_id): array {
+	public function getModule($module_id): array {
 		$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "module` WHERE `module_id` = '" . (int)$module_id . "'");
 		
 		if ($query->row) {

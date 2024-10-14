@@ -152,7 +152,7 @@ module.exports = class CustomerActivityReportController extends Controller {
 			data['activities'].push({
 				'comment': str_replace(find, replace, comment),
 				'ip': result['ip'],
-				'date_added': date(this.language.get('datetime_format'), strtotime(result['date_added']))
+				'date_added': date(this.language.get('datetime_format'), new Date(result['date_added']))
 			});
 		}
 

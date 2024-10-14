@@ -72,16 +72,14 @@ if ((this.request.get['filter_name'])) {
 			filter_name = this.request.get['filter_name'];
 		}
 
-		if ((this.request.get['filter_date_from'])) {
+		let filter_date_from = '';
+if ((this.request.get['filter_date_from'])) {
 			filter_date_from = this.request.get['filter_date_from'];
-		} else {
-			filter_date_from = '';
 		}
 
-		if ((this.request.get['filter_date_to'])) {
-			filter_date_to = this.request.get['filter_date_to'];
-		} else {
-			filter_date_to = '';
+		let filter_date_to = '';
+if ((this.request.get['filter_date_to'])) {
+			filter_date_to= this.request.get['filter_date_to'];
 		}
 
 		if ((this.request.get['sort'])) {
@@ -152,7 +150,7 @@ if ((this.request.get['filter_name'])) {
 				'upload_id'  : result['upload_id'],
 				'name'       : result['name'],
 				'code'       : result['code'],
-				'date_added' : date(this.language.get('date_format_short'), strtotime(result['date_added'])),
+				'date_added' : date(this.language.get('date_format_short'), new Date(result['date_added'])),
 				'download'   : this.url.link('tool/upload.download', 'user_token=' + this.session.data['user_token'] + '&code=' + result['code'] + url)
 			];
 		}

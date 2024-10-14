@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Admin\Controller\Localisation;
-/**
- * 
- *
- * @package Opencart\Admin\Controller\Localisation
- */
-class ZoneController extends Controller {
+module.exports=class ZoneController extends Controller {
 	/**
 	 * @return void
 	 */
@@ -161,7 +154,7 @@ if ((this.request.get['filter_name'])) {
 			'limit'          : this.config.get('config_pagination_admin')
 		});
 
-		this.load.model('localisation/zone');
+		this.load.model('localisation/zone',this);
 
 		zone_total await this.model_localisation_zone.getTotalZones(filter_data);
 
@@ -291,7 +284,7 @@ if ((this.request.get['filter_name'])) {
 		data['back'] = this.url.link('localisation/zone', 'user_token=' + this.session.data['user_token'] + url);
 
 		if ((this.request.get['zone_id'])) {
-			this.load.model('localisation/zone');
+			this.load.model('localisation/zone',this);
 
 			zone_info await this.model_localisation_zone.getZone(this.request.get['zone_id']);
 		}
@@ -354,7 +347,7 @@ if ((this.request.get['filter_name'])) {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('localisation/zone');
+			this.load.model('localisation/zone',this);
 
 			if (!this.request.post['zone_id']) {
 				json['zone_id'] = await this.model_localisation_zone.addZone(this.request.post);
@@ -388,26 +381,26 @@ if ((this.request.get['filter_name'])) {
 
 		this.load.model('setting/store',this);
 		this.load.model('customer/customer',this);
-		this.load.model('localisation/geo_zone');
+		this.load.model('localisation/geo_zone',this);
 
 		for (selected of zone_id) {
 			if (this.config.get('config_zone_id') == zone_id) {
 				json['error'] = this.language.get('error_default');
 			}
 
-			store_total await this.model_setting_store.getTotalStoresByZoneId(zone_id);
+			const store_total = await this.model_setting_store.getTotalStoresByZoneId(zone_id);
 
 			if (store_total) {
 				json['error'] = sprintf(this.language.get('error_store'), store_total);
 			}
 
-			address_total await this.model_customer_customer.getTotalAddressesByZoneId(zone_id);
+			const address_total = await this.model_customer_customer.getTotalAddressesByZoneId(zone_id);
 
 			if (address_total) {
 				json['error'] = sprintf(this.language.get('error_address'), address_total);
 			}
 
-			zone_to_geo_zone_total await this.model_localisation_geo_zone.getTotalZoneToGeoZoneByZoneId(zone_id);
+			const zone_to_geo_zone_total = await this.model_localisation_geo_zone.getTotalZoneToGeoZoneByZoneId(zone_id);
 
 			if (zone_to_geo_zone_total) {
 				json['error'] = sprintf(this.language.get('error_zone_to_geo_zone'), zone_to_geo_zone_total);
@@ -415,7 +408,7 @@ if ((this.request.get['filter_name'])) {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('localisation/zone');
+			this.load.model('localisation/zone',this);
 
 			for (selected of zone_id) {
 				await this.model_localisation_zone.deleteZone(zone_id);

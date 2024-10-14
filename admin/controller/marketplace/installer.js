@@ -153,7 +153,7 @@ module.exports = class InstallerMarketplaceController extends Controller {
 				'author': result['author'],
 				'status': result['status'],
 				'link': link,
-				'date_added': date(this.language.get('date_format_short'), strtotime(result['date_added'])),
+				'date_added': date(this.language.get('date_format_short'), new Date(result['date_added'])),
 				'install': this.url.link('marketplace/installer.install', 'user_token=' + this.session.data['user_token'] + '&extension_install_id=' + result['extension_install_id']),
 				'uninstall': this.url.link('marketplace/installer.uninstall', 'user_token=' + this.session.data['user_token'] + '&extension_install_id=' + result['extension_install_id']),
 				'delete': this.url.link('marketplace/installer.delete', 'user_token=' + this.session.data['user_token'] + '&extension_install_id=' + result['extension_install_id'])

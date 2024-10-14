@@ -65,7 +65,7 @@ class Returns extends \Opencart\System\Engine\Controller {
 				'order_id'   => $result['order_id'],
 				'name'       => $result['firstname'] . ' ' . $result['lastname'],
 				'status'     => $result['status'],
-				'date_added' => date($this->language->get('date_format_short'), strtotime($result['date_added'])),
+				'date_added' => date($this->language->get('date_format_short'), new Date($result['date_added'])),
 				'href'       => $this->url->link('account/returns.info', 'language=' . $this->config->get('config_language') . '&customer_token=' . $this->session->data['customer_token'] . '&return_id=' . $result['return_id'] . $url)
 			];
 		}
@@ -146,8 +146,8 @@ class Returns extends \Opencart\System\Engine\Controller {
 
 			$data['return_id'] = $return_info['return_id'];
 			$data['order_id'] = $return_info['order_id'];
-			$data['date_ordered'] = date($this->language->get('date_format_short'), strtotime($return_info['date_ordered']));
-			$data['date_added'] = date($this->language->get('date_format_short'), strtotime($return_info['date_added']));
+			$data['date_ordered'] = date($this->language->get('date_format_short'), new Date($return_info['date_ordered']));
+			$data['date_added'] = date($this->language->get('date_format_short'), new Date($return_info['date_added']));
 			$data['firstname'] = $return_info['firstname'];
 			$data['lastname'] = $return_info['lastname'];
 			$data['email'] = $return_info['email'];
@@ -166,7 +166,7 @@ class Returns extends \Opencart\System\Engine\Controller {
 
 			foreach ($results as $result) {
 				$data['histories'][] = [
-					'date_added' => date($this->language->get('date_format_short'), strtotime($result['date_added'])),
+					'date_added' => date($this->language->get('date_format_short'), new Date($result['date_added'])),
 					'status'     => $result['status'],
 					'comment'    => nl2br($result['comment'])
 				];
@@ -243,7 +243,7 @@ class Returns extends \Opencart\System\Engine\Controller {
 		}
 
 		if (!empty($order_info)) {
-			$data['date_ordered'] = date('Y-m-d', strtotime($order_info['date_added']));
+			$data['date_ordered'] = date('Y-m-d', new Date($order_info['date_added']));
 		} else {
 			$data['date_ordered'] = '';
 		}

@@ -193,7 +193,7 @@ class StatisticsController extends Controller {
 
 		if (!Object.keys(json).length) {
 			this.load.model('report/statistics');
-			this.load.model('sale/returns');
+			this.load.model('sale/returns',this);
 
 			await this.model_report_statistics.editValue('return', this.model_sale_returns.getTotalReturns(['filter_return_status_id' : this.config.get('config_return_status_id')]));
 

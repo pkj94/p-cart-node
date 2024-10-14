@@ -93,8 +93,8 @@ module.exports = class CountryLocalisationModel extends Model {
 			implode.push("`iso_code_3` LIKE " + this.db.escape(data['filter_iso_code_3'] + '%'));
 		}
 
-		if (implode) {
-			sql += " WHERE " + implode.joint(" AND ");
+		if (implode.length) {
+			sql += " WHERE " + implode.join(" AND ");
 		}
 
 		let sort_data = [
@@ -130,7 +130,7 @@ module.exports = class CountryLocalisationModel extends Model {
 		}
 
 		let country_data = await this.cache.get('country+' + md5(sql));
-
+		console.log(sql)
 		if (!country_data) {
 			const query = await this.db.query(sql);
 
@@ -164,8 +164,8 @@ module.exports = class CountryLocalisationModel extends Model {
 			implode.push("`iso_code_3` LIKE " + this.db.escape(data['filter_iso_code_3'] + '%'));
 		}
 
-		if (implode) {
-			sql += " WHERE " + implode.joint(" AND ");
+		if (implode.length) {
+			sql += " WHERE " + implode.join(" AND ");
 		}
 
 		const query = await this.db.query(sql);

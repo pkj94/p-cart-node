@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Admin\Controller\Mail;
-/**
- * 
- *
- * @package Opencart\Admin\Controller\Mail
- */
-class AuthorizeController extends Controller {
+module.exports=class AuthorizeController extends Controller {
 	// admin/model/user/user/editCode/after
 	/**
 	 * @param route
@@ -51,7 +44,7 @@ class AuthorizeController extends Controller {
 					'smtp_timeout'  : this.config.get('config_mail_smtp_timeout')
 				];
 
-				mail = new \Opencart\System\Library\Mail(this.config.get('config_mail_engine'), mail_option);
+				mail = new MailLibrary(this.config.get('config_mail_engine'), mail_option);
 				mail.setTo(email);
 				mail.setFrom(this.config.get('config_email'));
 				mail.setSender(this.config.get('config_name'));
@@ -112,7 +105,7 @@ class AuthorizeController extends Controller {
 					'smtp_timeout'  : this.config.get('config_mail_smtp_timeout')
 				];
 
-				mail = new \Opencart\System\Library\Mail(this.config.get('config_mail_engine'), mail_option);
+				mail = new MailLibrary(this.config.get('config_mail_engine'), mail_option);
 				mail.setTo(email);
 				mail.setFrom(this.config.get('config_email'));
 				mail.setSender(this.config.get('config_name'));

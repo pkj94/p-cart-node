@@ -11,7 +11,7 @@ class Store extends \Opencart\System\Engine\Model {
 	 *
 	 * @return array
 	 */
-	public function getStore(int $store_id): array {
+	public function getStore($store_id): array {
 		$query = $this->db->query("SELECT DISTINCT * FROM `" . DB_PREFIX . "store` WHERE `store_id` = '" . (int)$store_id . "'");
 
 		return $query->row;
@@ -55,7 +55,7 @@ class Store extends \Opencart\System\Engine\Model {
 	 * @return \Opencart\System\Engine\Registry
 	 * @throws \Exception
 	 */
-	public function createStoreInstance(int $store_id = 0, string $language = '', string $session_id = ''): object {
+	public function createStoreInstance($store_id = 0, string $language = '', string $session_id = ''): object {
 		// Autoloader
 		$this->autoloader->register('Opencart\Catalog', DIR_CATALOG);
 

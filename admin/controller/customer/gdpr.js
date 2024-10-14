@@ -1,15 +1,12 @@
-<?php
-namespace Opencart\Admin\Controller\Customer;
-/**
- * 
- *
- * @package Opencart\Admin\Controller\Customer
- */
-class GdprController extends Controller {
+const strtotime = require("locutus/php/datetime/strtotime");
+const sprintf = require("locutus/php/strings/sprintf");
+
+module.exports = class GdprController extends Controller {
 	/**
 	 * @return void
 	 */
 	async index() {
+		const data = {};
 		await this.load.language('customer/gdpr');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -17,13 +14,13 @@ class GdprController extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('text_home'),
+			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('customer/gdpr', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('heading_title'),
+			'href': this.url.link('customer/gdpr', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['text_info'] = sprintf(this.language.get('text_info'), this.config.get('config_gdpr_limit'));
@@ -56,35 +53,28 @@ class GdprController extends Controller {
 	 * @return string
 	 */
 	async getList() {
+		const data = {};
 		await this.load.language('customer/gdpr');
-
+		let filter_email = '';
 		if ((this.request.get['filter_email'])) {
 			filter_email = this.request.get['filter_email'];
-		} else {
-			filter_email = '';
 		}
-
+		let filter_action = '';
 		if ((this.request.get['filter_action'])) {
 			filter_action = this.request.get['filter_action'];
-		} else {
-			filter_action = '';
 		}
 
 		let filter_status = '';
-if (typeof this.request.get['filter_status'] != 'undefined' && this.request.get['filter_status'] !== '') {
+		if (typeof this.request.get['filter_status'] != 'undefined' && this.request.get['filter_status'] !== '') {
 			filter_status = this.request.get['filter_status'];
 		}
-
+		let filter_date_from = '';
 		if ((this.request.get['filter_date_from'])) {
 			filter_date_from = this.request.get['filter_date_from'];
-		} else {
-			filter_date_from = '';
 		}
-
+		let filter_date_to = '';
 		if ((this.request.get['filter_date_to'])) {
 			filter_date_to = this.request.get['filter_date_to'];
-		} else {
-			filter_date_to = '';
 		}
 
 		let page = 1;
@@ -119,45 +109,43 @@ if (typeof this.request.get['filter_status'] != 'undefined' && this.request.get[
 		data['gdprs'] = [];
 
 		let filter_data = {
-			'filter_email'     : filter_email,
-			'filter_action'    : filter_action,
-			'filter_status'    : filter_status,
-			'filter_date_from' : filter_date_from,
-			'filter_date_to'   : filter_date_to,
-			'start'            : (page - 1) * Number(this.config.get('config_pagination_admin')),
-			'limit'            : this.config.get('config_pagination_admin')
-		});
+			'filter_email': filter_email,
+			'filter_action': filter_action,
+			'filter_status': filter_status,
+			'filter_date_from': filter_date_from,
+			'filter_date_to': filter_date_to,
+			'start': (page - 1) * Number(this.config.get('config_pagination_admin')),
+			'limit': this.config.get('config_pagination_admin')
+		};
 
-		this.load.model('customer/gdpr');
-		this.load.model('customer/customer',this);
+		this.load.model('customer/gdpr', this);
+		this.load.model('customer/customer', this);
 
-		gdpr_total await this.model_customer_gdpr.getTotalGdprs(filter_data);
+		const gdpr_total = await this.model_customer_gdpr.getTotalGdprs(filter_data);
 
 		const results = await this.model_customer_gdpr.getGdprs(filter_data);
 
 		for (let result of results) {
 			const customer_info = await this.model_customer_customer.getCustomerByEmail(result['email']);
-
-			if (customer_info) {
+			let edit = '';
+			if (customer_info.customer_id) {
 				edit = this.url.link('customer/customer.form', 'user_token=' + this.session.data['user_token'] + '&customer_id=' + customer_info['customer_id'], true);
-			} else {
-				edit = '';
 			}
 
 			data['gdprs'].push({
-				'gdpr_id'    : result['gdpr_id'],
-				'email'      : result['email'],
-				'action'     : this.language.get('text_' + result['action']),
-				'status'     : result['status'],
-				'date_added' : date(this.language.get('date_format_short'), strtotime(result['date_added'])),
-				'approve'    : this.url.link('customer/gdpr.approve', 'user_token=' + this.session.data['user_token'] + '&gdpr_id=' + result['gdpr_id'], true),
-				'deny'       : this.url.link('customer/gdpr.deny', 'user_token=' + this.session.data['user_token'] + '&gdpr_id=' + result['gdpr_id'], true),
-				'edit'       : edit,
-				'delete'     : this.url.link('customer/gdpr.delete', 'user_token=' + this.session.data['user_token'] + '&gdpr_id=' + result['gdpr_id'], true)
-			];
+				'gdpr_id': result['gdpr_id'],
+				'email': result['email'],
+				'action': this.language.get('text_' + result['action']),
+				'status': result['status'],
+				'date_added': date(this.language.get('date_format_short'), new Date(result['date_added'])),
+				'approve': this.url.link('customer/gdpr.approve', 'user_token=' + this.session.data['user_token'] + '&gdpr_id=' + result['gdpr_id'], true),
+				'deny': this.url.link('customer/gdpr.deny', 'user_token=' + this.session.data['user_token'] + '&gdpr_id=' + result['gdpr_id'], true),
+				'edit': edit,
+				'delete': this.url.link('customer/gdpr.delete', 'user_token=' + this.session.data['user_token'] + '&gdpr_id=' + result['gdpr_id'], true)
+			});
 		}
 
-		let url = '';
+		url = '';
 
 		if ((this.request.get['filter_email'])) {
 			url += '&filter_email=' + encodeURIComponent(html_entity_decode(this.request.get['filter_email']));
@@ -180,11 +168,11 @@ if (typeof this.request.get['filter_status'] != 'undefined' && this.request.get[
 		}
 
 		data['pagination'] = await this.load.controller('common/pagination', {
-			'total' : gdpr_total,
-			'page'  : page,
-			'limit' : this.config.get('config_pagination_admin'),
-			'url'   : this.url.link('customer/gdpr.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
-		]);
+			'total': gdpr_total,
+			'page': page,
+			'limit': this.config.get('config_pagination_admin'),
+			'url': this.url.link('customer/gdpr.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
+		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (gdpr_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (gdpr_total - this.config.get('config_pagination_admin'))) ? gdpr_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), gdpr_total, Math.ceil(gdpr_total / this.config.get('config_pagination_admin')));
 
@@ -227,22 +215,22 @@ if (typeof this.request.get['filter_status'] != 'undefined' && this.request.get[
 		}
 
 		if (!Object.keys(json).length) {
-			gdprs = [];
+			let gdprs = [];
 
 			if ((this.request.post['selected'])) {
 				gdprs = this.request.post['selected'];
 			}
 
 			if ((this.request.get['gdpr_id'])) {
-				gdprs[] = this.request.get['gdpr_id'];
+				gdprs.push(this.request.get['gdpr_id']);
 			}
 
-			this.load.model('customer/gdpr');
+			this.load.model('customer/gdpr', this);
+			gdprs = Array.isArray(gdprs) ? gdprs : [gdprs];
+			for (let gdpr_id of gdprs) {
+				const gdpr_info = await this.model_customer_gdpr.getGdpr(gdpr_id);
 
-			for (gdprs of gdpr_id) {
-				gdpr_info await this.model_customer_gdpr.getGdpr(gdpr_id);
-
-				if (gdpr_info) {
+				if (gdpr_info.gdpr_id) {
 					// If we remove we want to change the status to processing
 					// to give time for store owners to process orders and refunds.
 					if (gdpr_info['action'] == 'export') {
@@ -273,19 +261,19 @@ if (typeof this.request.get['filter_status'] != 'undefined' && this.request.get[
 		}
 
 		if (!Object.keys(json).length) {
-			gdprs = [];
+			let gdprs = [];
 
 			if ((this.request.post['selected'])) {
 				gdprs = this.request.post['selected'];
 			}
 
 			if ((this.request.get['gdpr_id'])) {
-				gdprs[] = this.request.get['gdpr_id'];
+				gdprs.push(this.request.get['gdpr_id']);
 			}
 
-			this.load.model('customer/gdpr');
-
-			for (gdprs of gdpr_id) {
+			this.load.model('customer/gdpr', this);
+			gdprs = Array.isArray(gdprs) ? gdprs : [gdprs];
+			for (let gdpr_id of gdprs) {
 				await this.model_customer_gdpr.editStatus(gdpr_id, -1);
 			}
 
@@ -309,19 +297,19 @@ if (typeof this.request.get['filter_status'] != 'undefined' && this.request.get[
 		}
 
 		if (!Object.keys(json).length) {
-			gdprs = [];
+			let gdprs = [];
 
 			if ((this.request.post['selected'])) {
 				gdprs = this.request.post['selected'];
 			}
 
 			if ((this.request.get['gdpr_id'])) {
-				gdprs[] = this.request.get['gdpr_id'];
+				gdprs.push(this.request.get['gdpr_id']);
 			}
 
-			this.load.model('customer/gdpr');
-
-			for (gdprs of gdpr_id) {
+			this.load.model('customer/gdpr', this);
+			gdprs = Array.isArray(gdprs) ? gdprs : [gdprs];
+			for (let gdpr_id of gdprs) {
 				await this.model_customer_gdpr.deleteGdpr(gdpr_id);
 			}
 

@@ -39,6 +39,7 @@ module.exports = class MailMailLibrary {
             let info = await this.transporter.sendMail(mailOptions);
             return info;
         } catch (error) {
+            console.log(error)
             throw new Error(`Error: Could not send mail! Message: ${error.message}`);
         }
     }

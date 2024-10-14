@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Admin\Controller\Localisation;
-/**
- * 
- *
- * @package Opencart\Admin\Controller\Localisation
- */
-class AddressFormatController extends Controller {
+module.exports=class AddressFormatController extends Controller {
 	/**
 	 * @return void
 	 */

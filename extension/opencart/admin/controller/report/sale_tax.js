@@ -167,8 +167,8 @@ module.exports = class SaleTaxReportController extends Controller {
 
 		for (let result of results) {
 			data['orders'].push({
-				'date_start': date(this.language.get('date_format_short'), strtotime(result['date_start'])),
-				'date_end': date(this.language.get('date_format_short'), strtotime(result['date_end'])),
+				'date_start': date(this.language.get('date_format_short'), new Date(result['date_start'])),
+				'date_end': date(this.language.get('date_format_short'), new Date(result['date_end'])),
 				'title': result['title'],
 				'orders': result['orders'],
 				'total': this.currency.format(result['total'], this.config.get('config_currency'))

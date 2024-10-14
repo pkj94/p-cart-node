@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Admin\Controller\Localisation;
-/**
- * 
- *
- * @package Opencart\Admin\Controller\Localisation
- */
-class StockStatusController extends Controller {
+module.exports=class StockStatusController extends Controller {
 	/**
 	 * @return void
 	 */

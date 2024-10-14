@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Admin\Controller\Mail;
-/**
- * 
- *
- * @package Opencart\Admin\Controller\Mail
- */
-class RewardController extends Controller {
+module.exports=class RewardController extends Controller {
 	/**
 	 * @param string route
 	 * @param array  args
@@ -60,7 +53,7 @@ class RewardController extends Controller {
 
 			this.load.model('localisation/language',this);
 
-			language_info await this.model_localisation_language.getLanguage(customer_info['language_id']);
+			const language_info = await this.model_localisation_language.getLanguage(customer_info['language_id']);
 
 			if (language_info) {
 				language_code = language_info['code'];
@@ -89,7 +82,7 @@ class RewardController extends Controller {
 					'smtp_timeout'  : this.config.get('config_mail_smtp_timeout')
 				];
 
-				mail = new \Opencart\System\Library\Mail(this.config.get('config_mail_engine'), mail_option);
+				mail = new MailLibrary(this.config.get('config_mail_engine'), mail_option);
 				mail.setTo(customer_info['email']);
 				mail.setFrom(this.config.get('config_email'));
 				mail.setSender(store_name);

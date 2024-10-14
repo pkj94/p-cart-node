@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Admin\Controller\Localisation;
-/**
- * 
- *
- * @package Opencart\Admin\Controller\Localisation
- */
-class TaxRateController extends Controller {
+module.exports=class TaxRateController extends Controller {
 	/**
 	 * @return void
 	 */
@@ -121,8 +114,8 @@ class TaxRateController extends Controller {
 				'rate'          : result['rate'],
 				'type'          : (result['type'] == 'F' ? this.language.get('text_amount') : this.language.get('text_percent')),
 				'geo_zone'      : result['geo_zone'],
-				'date_added'    : date(this.language.get('date_format_short'), strtotime(result['date_added'])),
-				'date_modified' : date(this.language.get('date_format_short'), strtotime(result['date_modified'])),
+				'date_added'    : date(this.language.get('date_format_short'), new Date(result['date_added'])),
+				'date_modified' : date(this.language.get('date_format_short'), new Date(result['date_modified'])),
 				'edit'          : this.url.link('localisation/tax_rate.form', 'user_token=' + this.session.data['user_token'] + '&tax_rate_id=' + result['tax_rate_id'] + url)
 			];
 		}
@@ -246,7 +239,7 @@ class TaxRateController extends Controller {
 			data['tax_rate_customer_group'] = [this.config.get('config_customer_group_id')];
 		}
 
-		this.load.model('localisation/geo_zone');
+		this.load.model('localisation/geo_zone',this);
 
 		data['geo_zones'] = await this.model_localisation_geo_zone.getGeoZones();
 

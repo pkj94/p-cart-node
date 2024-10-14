@@ -1,7 +1,4 @@
 module.exports = class LanguageController extends Controller {
-    constructor(registry) {
-        super(registry)
-    }
     index(route, args) {
         const languageData = this.language.all();
 
@@ -13,21 +10,25 @@ module.exports = class LanguageController extends Controller {
     }
 
     async before(route, args) {
-        const data = await this.language.all();
+        if (this.language) {
+            const data = this.language.all();
 
-        if (data) {
-            this.language.set('backup', JSON.stringify(data));
+            if (data) {
+                this.language.set('backup', JSON.stringify(data));
+            }
         }
     }
 
     after(route, args, output) {
-        const data = JSON.parse(this.language.get('backup'));
+        if (this.language) {
+            const data = JSON.parse(this.language.get('backup'));
 
-        if (Array.isArray(data)) {
-            this.language.clear();
+            if (Array.isArray(data)) {
+                this.language.clear();
 
-            for (const [key, value] of Object.entries(data)) {
-                this.language.set(key, value);
+                for (const [key, value] of Object.entries(data)) {
+                    this.language.set(key, value);
+                }
             }
         }
     }

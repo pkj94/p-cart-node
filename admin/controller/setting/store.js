@@ -1,15 +1,11 @@
-<?php
-namespace Opencart\Admin\Controller\Setting;
-/**
- * 
- *
- * @package Opencart\Admin\Controller\Setting
- */
-class StoreController extends Controller {
+const sprintf = require("locutus/php/strings/sprintf");
+const fs = require('fs');
+module.exports = class StoreController extends Controller {
 	/**
 	 * @return void
 	 */
 	async index() {
+		const data = {};
 		await this.load.language('setting/store');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -23,13 +19,13 @@ class StoreController extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('text_home'),
+			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('setting/store', 'user_token=' + this.session.data['user_token'] + url)
+			'text': this.language.get('heading_title'),
+			'href': this.url.link('setting/store', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
 		data['add'] = this.url.link('setting/store.form', 'user_token=' + this.session.data['user_token'] + url);
@@ -59,6 +55,7 @@ class StoreController extends Controller {
 	 * @return string
 	 */
 	async getList() {
+		const data = {};
 		let page = 1;
 		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
@@ -74,42 +71,42 @@ class StoreController extends Controller {
 
 		data['stores'] = [];
 
-		store_total = 0;
+		let store_total = 0;
 
 		if (page == 1) {
 			store_total = 1;
 
 			data['stores'].push({
-				'store_id' : 0,
-				'name'     : this.config.get('config_name') + this.language.get('text_default'),
-				'url'      : HTTP_CATALOG,
-				'edit'     : this.url.link('setting/setting', 'user_token=' + this.session.data['user_token'])
-			];
+				'store_id': 0,
+				'name': this.config.get('config_name') + this.language.get('text_default'),
+				'url': HTTP_CATALOG,
+				'edit': this.url.link('setting/setting', 'user_token=' + this.session.data['user_token'])
+			});
 		}
 
-		this.load.model('setting/store',this);
+		this.load.model('setting/store', this);
 
-		this.load.model('setting/setting',this);
+		this.load.model('setting/setting', this);
 
-		store_total +await this.model_setting_store.getTotalStores();
+		store_total + await this.model_setting_store.getTotalStores();
 
 		const results = await this.model_setting_store.getStores();
 
 		for (let result of results) {
 			data['stores'].push({
-				'store_id' : result['store_id'],
-				'name'     : result['name'],
-				'url'      : result['url'],
-				'edit'     : this.url.link('setting/store.form', 'user_token=' + this.session.data['user_token'] + '&store_id=' + result['store_id'])
-			];
+				'store_id': result['store_id'],
+				'name': result['name'],
+				'url': result['url'],
+				'edit': this.url.link('setting/store.form', 'user_token=' + this.session.data['user_token'] + '&store_id=' + result['store_id'])
+			});
 		}
 
 		data['pagination'] = await this.load.controller('common/pagination', {
-			'total' : store_total,
-			'page'  : page,
-			'limit' : this.config.get('config_pagination_admin'),
-			'url'   : this.url.link('setting/store.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
-		]);
+			'total': store_total,
+			'page': page,
+			'limit': this.config.get('config_pagination_admin'),
+			'url': this.url.link('setting/store.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
+		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (store_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (store_total - this.config.get('config_pagination_admin'))) ? store_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), store_total, Math.ceil(store_total / this.config.get('config_pagination_admin')));
 
@@ -135,27 +132,26 @@ class StoreController extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('text_home'),
+			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('setting/store', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('heading_title'),
+			'href': this.url.link('setting/store', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_settings'),
-			'href' : this.url.link('setting/store.form', 'user_token=' + this.session.data['user_token'] + ((this.request.post['store_id']) ? '&store_id=' + this.request.get['store_id'] : '') + url)
+			'text': this.language.get('text_settings'),
+			'href': this.url.link('setting/store.form', 'user_token=' + this.session.data['user_token'] + ((this.request.post['store_id']) ? '&store_id=' + this.request.get['store_id'] : '') + url)
 		});
 
 		data['save'] = this.url.link('setting/store.save', 'user_token=' + this.session.data['user_token']);
 		data['back'] = this.url.link('setting/store', 'user_token=' + this.session.data['user_token']);
-
+		let store_info;
 		if ((this.request.get['store_id'])) {
-			this.load.model('setting/setting',this);
-
-			const store_info = await this.model_setting_setting.getSetting('config', this.request.get['store_id']);
+			this.load.model('setting/setting', this);
+			store_info = await this.model_setting_setting.getSetting('config', this.request.get['store_id']);
 		}
 
 		if ((this.request.get['store_id'])) {
@@ -190,17 +186,17 @@ class StoreController extends Controller {
 
 		data['themes'] = [];
 
-		this.load.model('setting/extension',this);
+		this.load.model('setting/extension', this);
 
 		const extensions = await this.model_setting_extension.getExtensionsByType('theme');
 
-		for (extensions of extension) {
+		for (let extension of extensions) {
 			await this.load.language('extension/' + extension['extension'] + '/theme/' + extension['code'], 'extension');
 
 			data['themes'].push({
-				'text'  : this.language.get('extension_heading_title'),
-				'value' : extension['code']
-			];
+				'text': this.language.get('extension_heading_title'),
+				'value': extension['code']
+			});
 		}
 
 		if ((store_info['config_theme'])) {
@@ -209,7 +205,7 @@ class StoreController extends Controller {
 			data['config_theme'] = '';
 		}
 
-		this.load.model('design/layout',this);
+		this.load.model('design/layout', this);
 
 		data['layouts'] = await this.model_design_layout.getLayouts();
 
@@ -261,11 +257,11 @@ class StoreController extends Controller {
 			data['config_image'] = '';
 		}
 
-		this.load.model('tool/image',this);
+		this.load.model('tool/image', this);
 
 		data['placeholder'] = await this.model_tool_image.resize('no_image.png', 100, 100);
 
-		if (is_file(DIR_IMAGE + html_entity_decode(data['config_image']))) {
+		if (data['config_image'] && fs.existsSync(DIR_IMAGE + html_entity_decode(data['config_image']))) {
 			data['thumb'] = await this.model_tool_image.resize(html_entity_decode(data['config_image']), 750, 90);
 		} else {
 			data['thumb'] = data['placeholder'];
@@ -283,7 +279,7 @@ class StoreController extends Controller {
 			data['config_comment'] = '';
 		}
 
-		this.load.model('localisation/location');
+		this.load.model('localisation/location',this);
 
 		data['locations'] = await this.model_localisation_location.getLocations();
 
@@ -293,7 +289,7 @@ class StoreController extends Controller {
 			data['config_location'] = [];
 		}
 
-		this.load.model('localisation/country',this);
+		this.load.model('localisation/country', this);
 
 		data['countries'] = await this.model_localisation_country.getCountries();
 
@@ -309,7 +305,7 @@ class StoreController extends Controller {
 			data['config_zone_id'] = this.config.get('config_zone_id');
 		}
 
-		this.load.model('localisation/language',this);
+		this.load.model('localisation/language', this);
 
 		data['languages'] = await this.model_localisation_language.getLanguages();
 
@@ -319,7 +315,7 @@ class StoreController extends Controller {
 			data['config_language'] = this.config.get('config_language');
 		}
 
-		this.load.model('localisation/currency',this);
+		this.load.model('localisation/currency', this);
 
 		data['currencies'] = await this.model_localisation_currency.getCurrencies();
 
@@ -378,7 +374,7 @@ class StoreController extends Controller {
 			data['config_tax_customer'] = '';
 		}
 
-		this.load.model('customer/customer_group',this);
+		this.load.model('customer/customer_group', this);
 
 		data['customer_groups'] = await this.model_customer_customer_group.getCustomerGroups();
 
@@ -400,7 +396,7 @@ class StoreController extends Controller {
 			data['config_customer_price'] = '';
 		}
 
-		this.load.model('catalog/information',this);
+		this.load.model('catalog/information', this);
 
 		data['informations'] = await this.model_catalog_information.getInformations();
 
@@ -447,11 +443,11 @@ class StoreController extends Controller {
 			data['config_logo'] = '';
 		}
 
-		this.load.model('tool/image',this);
+		this.load.model('tool/image', this);
 
 		data['placeholder'] = await this.model_tool_image.resize('no_image.png', 100, 100);
 
-		if (is_file(DIR_IMAGE + html_entity_decode(data['config_logo']))) {
+		if (data['config_logo'] && fs.existsSync(DIR_IMAGE + html_entity_decode(data['config_logo']))) {
 			data['logo'] = await this.model_tool_image.resize(html_entity_decode(data['config_logo']), 100, 100);
 		} else {
 			data['logo'] = data['placeholder'];
@@ -604,7 +600,7 @@ class StoreController extends Controller {
 	async save() {
 		await this.load.language('setting/store');
 
-		const json = {};
+		const json = { error: {} };
 
 		if (!await this.user.hasPermission('modify', 'setting/store')) {
 			json['error']['warning'] = this.language.get('error_permission');
@@ -694,11 +690,11 @@ class StoreController extends Controller {
 			json['error']['warning'] = this.language.get('error_warning');
 		}
 
-		if (!Object.keys(json).length) {
-			this.load.model('setting/setting',this);
+		if (!Object.keys(json.error).length) {
+			this.load.model('setting/setting', this);
 
-			this.load.model('setting/store',this);
-
+			this.load.model('setting/store', this);
+			this.request.post['store_id'] = Number(this.request.post['store_id']);
 			if (!this.request.post['store_id']) {
 				json['store_id'] = await this.model_setting_store.addStore(this.request.post);
 
@@ -725,7 +721,7 @@ class StoreController extends Controller {
 		const json = {};
 
 		let selected = [];
-                 if ((this.request.post['selected'])) {
+		if ((this.request.post['selected'])) {
 			selected = this.request.post['selected'];
 		}
 
@@ -733,21 +729,21 @@ class StoreController extends Controller {
 			json['error'] = this.language.get('error_permission');
 		}
 
-		this.load.model('sale/order',this);
-		this.load.model('sale/subscription',this);
+		this.load.model('sale/order', this);
+		this.load.model('sale/subscription', this);
 
 		for (selected of store_id) {
 			if (!store_id) {
 				json['error'] = this.language.get('error_default');
 			}
 
-			order_total await this.model_sale_order.getTotalOrdersByStoreId(store_id);
+			const order_total = await this.model_sale_order.getTotalOrdersByStoreId(store_id);
 
 			if (order_total) {
 				json['error'] = sprintf(this.language.get('error_store'), order_total);
 			}
 
-			subscription_total await this.model_sale_subscription.getTotalSubscriptionsByStoreId(store_id);
+			const subscription_total = await this.model_sale_subscription.getTotalSubscriptionsByStoreId(store_id);
 
 			if (subscription_total) {
 				json['error'] = sprintf(this.language.get('error_store'), subscription_total);
@@ -755,11 +751,11 @@ class StoreController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('setting/store',this);
+			this.load.model('setting/store', this);
 
-			this.load.model('setting/setting',this);
+			this.load.model('setting/setting', this);
 
-			for (selected of store_id) {
+			for (let store_id of selected) {
 				await this.model_setting_store.deleteStore(store_id);
 
 				await this.model_setting_setting.deleteSetting('config', store_id);

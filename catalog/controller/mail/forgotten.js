@@ -46,7 +46,7 @@ class Forgotten extends \Opencart\System\Engine\Controller {
 						'smtp_timeout'  => $this->config->get('config_mail_smtp_timeout')
 					];
 
-					$mail = new \Opencart\System\Library\Mail($this->config->get('config_mail_engine'), $mail_option);
+					$mail = new MailLibrary($this->config->get('config_mail_engine'), $mail_option);
 					$mail->setTo($args[0]);
 					$mail->setFrom($this->config->get('config_email'));
 					$mail->setSender($store_name);

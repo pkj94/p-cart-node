@@ -168,7 +168,7 @@ class Upgrade7 extends \Opencart\System\Engine\Controller {
 	 *
 	 * @return void
 	 */
-	async repairCategories(int $parent_id = 0): void {
+	async repairCategories($parent_id = 0): void {
 		$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "category` WHERE `parent_id` = '" . (int)$parent_id . "'");
 
 		foreach ($query->rows as $category) {

@@ -1,12 +1,5 @@
-<?php
-namespace Opencart\Admin\Model\Marketing;
-/**
- * Class Affiliate
- *
- * @package Opencart\Admin\Model\Marketing
- */
-class AffiliateModel  extends Model {
-	constructor(registry){
+module.exports = class AffiliateModel extends Model {
+	constructor(registry) {
 		super(registry)
 	}
 	/**
@@ -15,7 +8,7 @@ class AffiliateModel  extends Model {
 	 * @return void
 	 */
 	async addAffiliate(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "customer_affiliate` SET `customer_id` = '" + data['customer_id'] + "', `company` = '" + this.db.escape(data['company']) + "', `website` = '" + this.db.escape(data['website']) + "', `tracking` = '" + this.db.escape(data['tracking']) + "', `commission` = '" + data['commission'] + "', `tax` = '" + this.db.escape(data['tax']) + "', `payment_method` = '" + this.db.escape(data['payment_method']) + "', `cheque` = '" + this.db.escape(data['cheque']) + "', `paypal` = '" + this.db.escape(data['paypal']) + "', `bank_name` = '" + this.db.escape(data['bank_name']) + "', `bank_branch_number` = '" + this.db.escape(data['bank_branch_number']) + "', `bank_swift_code` = '" + this.db.escape(data['bank_swift_code']) + "', `bank_account_name` = '" + this.db.escape(data['bank_account_name']) + "', `bank_account_number` = '" + this.db.escape(data['bank_account_number']) + "', `custom_field` = '" + this.db.escape(data['custom_field'] ? JSON.stringify(data['custom_field']) : JSON.stringify({})) + "', `status` = '" + (data['status'] ? data['status'] : 0) + "', `date_added` = NOW()");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "customer_affiliate` SET `customer_id` = '" + data['customer_id'] + "', `company` = " + this.db.escape(data['company']) + ", `website` = " + this.db.escape(data['website']) + ", `tracking` = " + this.db.escape(data['tracking']) + ", `commission` = '" + data['commission'] + "', `tax` = " + this.db.escape(data['tax']) + ", `payment_method` = " + this.db.escape(data['payment_method']) + ", `cheque` = " + this.db.escape(data['cheque']) + ", `paypal` = " + this.db.escape(data['paypal']) + ", `bank_name` = " + this.db.escape(data['bank_name']) + ", `bank_branch_number` = " + this.db.escape(data['bank_branch_number']) + ", `bank_swift_code` = " + this.db.escape(data['bank_swift_code']) + ", `bank_account_name` = " + this.db.escape(data['bank_account_name']) + ", `bank_account_number` = " + this.db.escape(data['bank_account_number']) + ", `custom_field` = " + this.db.escape(data['custom_field'] ? JSON.stringify(data['custom_field']) : JSON.stringify({})) + ", `status` = '" + (data['status'] ? data['status'] : 0) + "', `date_added` = NOW()");
 	}
 
 	/**
@@ -25,7 +18,7 @@ class AffiliateModel  extends Model {
 	 * @return void
 	 */
 	async editAffiliate(customer_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "customer_affiliate` SET `company` = '" + this.db.escape(data['company']) + "', `website` = '" + this.db.escape(data['website']) + "', `tracking` = '" + this.db.escape(data['tracking']) + "', `commission` = '" + data['commission'] + "', `tax` = '" + this.db.escape(data['tax']) + "', `payment_method` = '" + this.db.escape(data['payment_method']) + "', `cheque` = '" + this.db.escape(data['cheque']) + "', `paypal` = '" + this.db.escape(data['paypal']) + "', `bank_name` = '" + this.db.escape(data['bank_name']) + "', `bank_branch_number` = '" + this.db.escape(data['bank_branch_number']) + "', `bank_swift_code` = '" + this.db.escape(data['bank_swift_code']) + "', `bank_account_name` = '" + this.db.escape(data['bank_account_name']) + "', `bank_account_number` = '" + this.db.escape(data['bank_account_number']) + "', `custom_field` = '" + this.db.escape(data['custom_field'] ? JSON.stringify(data['custom_field']) : JSON.stringify({})) + "', `status` = '" + (data['status'] ? data['status'] : 0) + "' WHERE `customer_id` = '" + customer_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "customer_affiliate` SET `company` = " + this.db.escape(data['company']) + ", `website` = " + this.db.escape(data['website']) + ", `tracking` = " + this.db.escape(data['tracking']) + ", `commission` = '" + data['commission'] + "', `tax` = " + this.db.escape(data['tax']) + ", `payment_method` = " + this.db.escape(data['payment_method']) + ", `cheque` = " + this.db.escape(data['cheque']) + ", `paypal` = " + this.db.escape(data['paypal']) + ", `bank_name` = " + this.db.escape(data['bank_name']) + ", `bank_branch_number` = " + this.db.escape(data['bank_branch_number']) + ", `bank_swift_code` = " + this.db.escape(data['bank_swift_code']) + ", `bank_account_name` = " + this.db.escape(data['bank_account_name']) + ", `bank_account_number` = " + this.db.escape(data['bank_account_number']) + ", `custom_field` = " + this.db.escape(data['custom_field'] ? JSON.stringify(data['custom_field']) : JSON.stringify({})) + ", `status` = '" + (data['status'] ? data['status'] : 0) + "' WHERE `customer_id` = '" + customer_id + "'");
 	}
 
 	/**
@@ -65,7 +58,7 @@ class AffiliateModel  extends Model {
 	 * @return array
 	 */
 	async getAffiliateByTracking(tracking) {
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "customer_affiliate` WHERE `tracking` = '" + this.db.escape(tracking) + "'");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "customer_affiliate` WHERE `tracking` = " + this.db.escape(tracking));
 
 		return query.row;
 	}
@@ -81,31 +74,31 @@ class AffiliateModel  extends Model {
 		let implode = [];
 
 		if (data['filter_name']) {
-			implode.push("CONCAT(c.`firstname`, ' ', c.`lastname`) LIKE '" + this.db.escape(data['filter_name'] + '%') + "'";
+			implode.push("CONCAT(c.`firstname`, ' ', c.`lastname`) LIKE " + this.db.escape(data['filter_name'] + '%') );
 		}
 
 		if ((data['filter_tracking'])) {
-			implode.push("`ca`.`tracking` = '" + this.db.escape(data['filter_tracking']) + "'";
+			implode.push("`ca`.`tracking` = " + this.db.escape(data['filter_tracking']));
 		}
 
 		if ((data['filter_payment_method'])) {
-			implode.push("`ca`.`payment_method` = '" + this.db.escape(data['filter_payment_method']) + "'";
+			implode.push("`ca`.`payment_method` = " + this.db.escape(data['filter_payment_method']));
 		}
 
 		if ((data['filter_commission'])) {
-			implode.push("`ca`.`commission` = '" + data['filter_commission'] + "'";
+			implode.push("`ca`.`commission` = '" + data['filter_commission'] + "'");
 		}
 
 		if ((data['filter_date_from'])) {
-			implode.push("DATE(`ca`.`date_added`) >= DATE(" + this.db.escape(data['filter_date_from']) + ")";
+			implode.push("DATE(`ca`.`date_added`) >= DATE(" + this.db.escape(data['filter_date_from']) + ")");
 		}
 
 		if ((data['filter_date_to'])) {
-			implode.push("DATE(`ca.``date_added`) <= DATE(" + this.db.escape(data['filter_date_to']) + ")";
+			implode.push("DATE(`ca.``date_added`) <= DATE(" + this.db.escape(data['filter_date_to']) + ")");
 		}
 
 		if (typeof data['filter_status'] != 'undefined' && data['filter_status'] !== '') {
-			implode.push("`ca`.`status` = '" + data['filter_status'] + "'";
+			implode.push("`ca`.`status` = '" + data['filter_status'] + "'");
 		}
 
 		if (implode.length) {
@@ -133,13 +126,13 @@ class AffiliateModel  extends Model {
 		}
 
 		if (data['start'] || data['limit']) {
-                        data['start'] = data['start']||0;
+			data['start'] = data['start'] || 0;
 			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
@@ -162,31 +155,31 @@ if (data['limit'] < 1) {
 		let implode = [];
 
 		if (data['filter_name']) {
-			implode.push("CONCAT(`c`.`firstname`, ' ', `c`.`lastname`) LIKE '" + this.db.escape(data['filter_name'] + '%') + "'";
+			implode.push("CONCAT(`c`.`firstname`, ' ', `c`.`lastname`) LIKE " + this.db.escape(data['filter_name'] + '%') );
 		}
 
 		if ((data['filter_tracking'])) {
-			implode.push("`ca`.`tracking` = '" + this.db.escape(data['filter_tracking']) + "'";
+			implode.push("`ca`.`tracking` = " + this.db.escape(data['filter_tracking']));
 		}
 
 		if ((data['filter_payment_method'])) {
-			implode.push("`ca`.`payment_method` = '" + this.db.escape(data['filter_payment_method']) + "'";
+			implode.push("`ca`.`payment_method` = " + this.db.escape(data['filter_payment_method']));
 		}
 
 		if ((data['filter_commission'])) {
-			implode.push("`ca`.`commission` = '" + data['filter_commission'] + "'";
+			implode.push("`ca`.`commission` = '" + data['filter_commission'] + "'");
 		}
 
 		if ((data['filter_date_from'])) {
-			implode.push("DATE(`ca`.`date_added`) >= DATE(" + this.db.escape(data['filter_date_from']) + ")";
+			implode.push("DATE(`ca`.`date_added`) >= DATE(" + this.db.escape(data['filter_date_from']) + ")");
 		}
 
 		if ((data['filter_date_to'])) {
-			implode.push("DATE(`ca`.`date_added`) <= DATE(" + this.db.escape(data['filter_date_to']) + ")";
+			implode.push("DATE(`ca`.`date_added`) <= DATE(" + this.db.escape(data['filter_date_to']) + ")");
 		}
 
 		if (typeof data['filter_status'] != 'undefined' && data['filter_status'] !== '') {
-			implode.push("`ca`.`status` = '" + data['filter_status'] + "'";
+			implode.push("`ca`.`status` = '" + data['filter_status'] + "'");
 		}
 
 		if (implode.length) {

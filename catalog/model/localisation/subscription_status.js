@@ -11,7 +11,7 @@ class SubscriptionStatus extends \Opencart\System\Engine\Model {
 	 *
 	 * @return array
 	 */
-	public function getSubscriptionStatus(int $subscription_status_id): array {
+	public function getSubscriptionStatus($subscription_status_id): array {
 		$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "subscription_status` WHERE `subscription_status_id` = '" . (int)$subscription_status_id . "' AND `language_id` = '" . (int)$this->config->get('config_language_id') . "'");
 
 		return $query->row;

@@ -7,6 +7,7 @@ module.exports = class ResponseLibrary {
     this.outputData = '';
     this.redirect = '';
     this.file = '';
+    this.end = '';
   }
   addHeader(header) {
     this.headers.push(header);
@@ -25,6 +26,9 @@ module.exports = class ResponseLibrary {
   }
   setOutput(output) {
     this.outputData = output;
+  }
+  setEnd(output) {
+    this.end = output;
   }
   getOutput() {
     return this.outputData;

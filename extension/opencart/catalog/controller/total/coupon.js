@@ -50,7 +50,7 @@ class CouponController extends Controller {
 		}
 
 		if ($coupon) {
-			this.load.model('marketing/coupon');
+			this.load.model('marketing/coupon',this);
 
 			$coupon_info = this.model_marketing_coupon.getCoupon($coupon);
 

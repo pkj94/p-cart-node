@@ -11,7 +11,7 @@ class Setting extends \Opencart\System\Engine\Model {
 	 *
 	 * @return array
 	 */
-	public function getSettings(int $store_id = 0): array {
+	public function getSettings($store_id = 0): array {
 		$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "setting` WHERE `store_id` = '" . (int)$store_id . "' OR `store_id` = 0 ORDER BY `store_id` ASC");
 
 		return $query->rows;

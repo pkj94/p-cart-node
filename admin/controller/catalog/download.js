@@ -116,7 +116,7 @@ module.exports = class DownloadController extends Controller {
 			data['downloads'].push({
 				'download_id': result['download_id'],
 				'name': result['name'],
-				'date_added': date(this.language.get('date_format_short'), strtotime(result['date_added'])),
+				'date_added': date(this.language.get('date_format_short'), new Date(result['date_added'])),
 				'edit': this.url.link('catalog/download.form', 'user_token=' + this.session.data['user_token'] + '&download_id=' + result['download_id'] + url)
 			});
 		}
@@ -398,7 +398,7 @@ module.exports = class DownloadController extends Controller {
 				'account': await this.model_customer_customer.getTotalCustomersByIp(result['ip']),
 				'store': store,
 				'country': result['country'],
-				'date_added': date(this.language.get('datetime_format'), strtotime(result['date_added'])),
+				'date_added': date(this.language.get('datetime_format'), new Date(result['date_added'])),
 				'filter_ip': this.url.link('customer/customer', 'user_token=' + this.session.data['user_token'] + '&filter_ip=' + result['ip'])
 			});
 		}
@@ -562,7 +562,7 @@ module.exports = class DownloadController extends Controller {
 
 		let sort_order = [];
 
-		for (let [key, value] of json) {
+		for (let [key, value] of Object.entries(json)) {
 			sort_order[key] = value['name'];
 		}
 

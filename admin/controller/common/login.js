@@ -71,6 +71,7 @@ module.exports = class LoginController extends Controller {
                 this.request.post[key] = '';
             }
         }
+        this.request.post['redirect'] = decodeURIComponent(this.request.post['redirect']);
         // console.log(this.request.post)
         if (this.user.isLogged() && this.request.get['user_token'] && this.session.data['user_token'] && (this.request.get['user_token'] == this.session.data['user_token'])) {
             json['redirect'] = this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true);

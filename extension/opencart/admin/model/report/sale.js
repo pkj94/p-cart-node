@@ -68,13 +68,13 @@ module.exports = class SaleReportModel extends Model {
 
 		let order_data = {};
 
-		let date_start = strtotime('-' + date('w') + ' days');
+		let date_start = new Date('-' + date('w') + ' days');
 
 		for (i = 0; i < 7; i++) {
 			date = date('Y-m-d', date_start + (i * 86400));
 
-			order_data[date('w', strtotime(date))] = {
-				'day': date('D', strtotime(date)),
+			order_data[date('w', new Date(date))] = {
+				'day': date('D', new Date(date)),
 				'total': 0
 			};
 		}
@@ -82,8 +82,8 @@ module.exports = class SaleReportModel extends Model {
 		let query = await this.db.query("SELECT COUNT(*) AS total, `date_added` FROM `" + DB_PREFIX + "order` WHERE `order_status_id` IN(" + implode.join(",") + ") AND DATE(`date_added`) >= DATE(" + this.db.escape(date('Y-m-d', date_start)) + ") GROUP BY DAYNAME(`date_added`)");
 
 		for (let result of query.rows) {
-			order_data[date('w', strtotime(result['date_added']))] = {
-				'day': date('D', strtotime(result['date_added'])),
+			order_data[date('w', new Date(result['date_added']))] = {
+				'day': date('D', new Date(result['date_added'])),
 				'total': result['total']
 			};
 		}
@@ -106,8 +106,8 @@ module.exports = class SaleReportModel extends Model {
 		for (i = 1; i <= date('t'); i++) {
 			date = date('Y') + '-' + date('m') + '-' + i;
 
-			order_data[date('j', strtotime(date))] = {
-				'day': date('d', strtotime(date)),
+			order_data[date('j', new Date(date))] = {
+				'day': date('d', new Date(date)),
 				'total': 0
 			};
 		}
@@ -115,8 +115,8 @@ module.exports = class SaleReportModel extends Model {
 		let query = await this.db.query("SELECT COUNT(*) AS total, `date_added` FROM `" + DB_PREFIX + "order` WHERE `order_status_id` IN(" + implode.join(",") + ") AND DATE(`date_added`) >= DATE('" + this.db.escape(date('Y') + '-' + date('m') + '-1') + "') GROUP BY DATE(`date_added`)");
 
 		for (let result of query.rows) {
-			order_data[date('j', strtotime(result['date_added']))] = {
-				'day': date('d', strtotime(result['date_added'])),
+			order_data[date('j', new Date(result['date_added']))] = {
+				'day': date('d', new Date(result['date_added'])),
 				'total': result['total']
 			};
 		}
@@ -146,8 +146,8 @@ module.exports = class SaleReportModel extends Model {
 		let query = await this.db.query("SELECT COUNT(*) AS total, `date_added` FROM `" + DB_PREFIX + "order` WHERE `order_status_id` IN(" + implode.join(",") + ") AND YEAR(`date_added`) = YEAR(NOW()) GROUP BY MONTH(`date_added`)");
 
 		for (let result of query.rows) {
-			order_data[date('n', strtotime(result['date_added']))] = {
-				'month': date('M', strtotime(result['date_added'])),
+			order_data[date('n', new Date(result['date_added']))] = {
+				'month': date('M', new Date(result['date_added'])),
 				'total': result['total']
 			};
 		}

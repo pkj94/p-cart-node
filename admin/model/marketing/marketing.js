@@ -1,12 +1,5 @@
-<?php
-namespace Opencart\Admin\Model\Marketing;
-/**
- * Class Marketing
- *
- * @package Opencart\Admin\Model\Marketing
- */
-class MarketingModel  extends Model {
-	constructor(registry){
+module.exports = class MarketingModel extends Model {
+	constructor(registry) {
 		super(registry)
 	}
 	/**
@@ -15,7 +8,7 @@ class MarketingModel  extends Model {
 	 * @return int
 	 */
 	async addMarketing(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "marketing` SET `name` = '" + this.db.escape(data['name']) + "', `description` = " + this.db.escape(data['description']) + ", `code` = " + this.db.escape(data['code']) + ", `date_added` = NOW()");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "marketing` SET `name` = " + this.db.escape(data['name']) + ", `description` = " + this.db.escape(data['description']) + ", `code` = " + this.db.escape(data['code']) + ", `date_added` = NOW()");
 
 		return this.db.getLastId();
 	}
@@ -27,7 +20,7 @@ class MarketingModel  extends Model {
 	 * @return void
 	 */
 	async editMarketing(marketing_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "marketing` SET `name` = '" + this.db.escape(data['name']) + "', `description` = " + this.db.escape(data['description']) + ", `code` = " + this.db.escape(data['code']) + " WHERE `marketing_id` = '" + marketing_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "marketing` SET `name` = " + this.db.escape(data['name']) + ", `description` = " + this.db.escape(data['description']) + ", `code` = " + this.db.escape(data['code']) + " WHERE `marketing_id` = '" + marketing_id + "'");
 	}
 
 	/**
@@ -56,7 +49,7 @@ class MarketingModel  extends Model {
 	 * @return array
 	 */
 	async getMarketingByCode(code) {
-		let query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "marketing` WHERE `code` = '" + this.db.escape(code) + "'");
+		let query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "marketing` WHERE `code` = " + this.db.escape(code));
 
 		return query.row;
 	}
@@ -69,30 +62,30 @@ class MarketingModel  extends Model {
 	async getMarketings(data = {}) {
 		let implode = [];
 
-		order_statuses = this.config.get('config_complete_status');
+		const order_statuses = this.config.get('config_complete_status');
 
-		for (order_statuses of order_status_id) {
-			implode.push("o.`order_status_id` = '" + order_status_id + "'";
+		for (let order_status_id of order_statuses) {
+			implode.push("o.`order_status_id` = '" + order_status_id + "'");
 		}
 
 		let sql = "SELECT *, (SELECT COUNT(*) FROM `" + DB_PREFIX + "order` o WHERE (" + implode.join(" OR ") + ") AND o.`marketing_id` = m.`marketing_id`) AS `orders` FROM `" + DB_PREFIX + "marketing` m";
 
-		let implode = [];
+		implode = [];
 
 		if (data['filter_name']) {
-			implode.push("m.`name` LIKE '" + this.db.escape(data['filter_name'] + '%') + "'";
+			implode.push("m.`name` LIKE " + this.db.escape(data['filter_name'] + '%'));
 		}
 
 		if ((data['filter_code'])) {
-			implode.push("m.`code` = '" + this.db.escape(data['filter_code']) + "'";
+			implode.push("m.`code` = " + this.db.escape(data['filter_code']));
 		}
 
 		if ((data['filter_date_from'])) {
-			implode.push("DATE(m.`date_added`) >= DATE(" + this.db.escape(data['filter_date_from']) + ")";
+			implode.push("DATE(m.`date_added`) >= DATE(" + this.db.escape(data['filter_date_from']) + ")");
 		}
 
 		if ((data['filter_date_to'])) {
-			implode.push("DATE(m.`date_added`) <= DATE(" + this.db.escape(data['filter_date_to']) + ")";
+			implode.push("DATE(m.`date_added`) <= DATE(" + this.db.escape(data['filter_date_to']) + ")");
 		}
 
 		if (implode.length) {
@@ -118,13 +111,13 @@ class MarketingModel  extends Model {
 		}
 
 		if (data['start'] || data['limit']) {
-                        data['start'] = data['start']||0;
+			data['start'] = data['start'] || 0;
 			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
@@ -147,19 +140,19 @@ if (data['limit'] < 1) {
 		let implode = [];
 
 		if (data['filter_name']) {
-			implode.push("`name` LIKE " + this.db.escape(data['filter_name']) + "";
+			implode.push("`name` LIKE " + this.db.escape(data['filter_name']));
 		}
 
 		if ((data['filter_code'])) {
-			implode.push("`code` = '" + this.db.escape(data['filter_code']) + "'";
+			implode.push("`code` = " + this.db.escape(data['filter_code']));
 		}
 
 		if ((data['filter_date_from'])) {
-			implode.push("DATE(`date_added`) >= DATE(" + this.db.escape(data['filter_date_from']) + ")";
+			implode.push("DATE(`date_added`) >= DATE(" + this.db.escape(data['filter_date_from']) + ")");
 		}
 
 		if ((data['filter_date_to'])) {
-			implode.push("DATE(`date_added`) <= DATE(" + this.db.escape(data['filter_date_to']) + ")";
+			implode.push("DATE(`date_added`) <= DATE(" + this.db.escape(data['filter_date_to']) + ")");
 		}
 
 		if (implode.length) {

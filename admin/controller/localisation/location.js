@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Admin\Controller\Localisation;
-/**
- * 
- *
- * @package Opencart\Admin\Controller\Localisation
- */
-class LocationController extends Controller {
+module.exports=class LocationController extends Controller {
 	/**
 	 * @return void
 	 */
@@ -108,7 +101,7 @@ class LocationController extends Controller {
 			'limit' : this.config.get('config_pagination_admin')
 		});
 
-		this.load.model('localisation/location');
+		this.load.model('localisation/location',this);
 
 		location_total await this.model_localisation_location.getTotalLocations();
 
@@ -199,7 +192,7 @@ class LocationController extends Controller {
 		data['back'] = this.url.link('localisation/location', 'user_token=' + this.session.data['user_token'] + url);
 
 		if ((this.request.get['location_id'])) {
-			this.load.model('localisation/location');
+			this.load.model('localisation/location',this);
 
 			location_info await this.model_localisation_location.getLocation(this.request.get['location_id']);
 		}
@@ -298,7 +291,7 @@ class LocationController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('localisation/location');
+			this.load.model('localisation/location',this);
 
 			if (!this.request.post['location_id']) {
 				json['location_id'] = await this.model_localisation_location.addLocation(this.request.post);
@@ -331,7 +324,7 @@ class LocationController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('localisation/location');
+			this.load.model('localisation/location',this);
 
 			for (selected of location_id) {
 				await this.model_localisation_location.deleteLocation(location_id);

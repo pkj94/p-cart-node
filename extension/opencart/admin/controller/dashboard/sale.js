@@ -66,11 +66,11 @@ module.exports = class SaleDashboardController extends Controller {
 		this.load.model('extension/opencart/report/sale', this);
 
 		const today = await this.model_extension_opencart_report_sale.getTotalSales({
-			filter_date_added: date('Y-m-d', strtotime('-1 day'))
+			filter_date_added: date('Y-m-d', new Date('-1 day'))
 		});
 
 		const yesterday = await this.model_extension_opencart_report_sale.getTotalSales({
-			filter_date_added:date('Y-m-d', strtotime('-2 day'))
+			filter_date_added:date('Y-m-d', new Date('-2 day'))
 		});
 
 		const difference = today - yesterday;

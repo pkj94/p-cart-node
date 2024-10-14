@@ -304,8 +304,8 @@ module.exports = class OrderController extends Controller {
 				'customer': result['customer'],
 				'order_status': result['order_status'] ? result['order_status'] : this.language.get('text_missing'),
 				'total': this.currency.format(result['total'], result['currency_code'], result['currency_value']),
-				'date_added': date(this.language.get('date_format_short'), strtotime(result['date_added'])),
-				'date_modified': date(this.language.get('date_format_short'), strtotime(result['date_modified'])),
+				'date_added': date(this.language.get('date_format_short'), new Date(result['date_added'])),
+				'date_modified': date(this.language.get('date_format_short'), new Date(result['date_modified'])),
 				'shipping_method': result['shipping_method'],
 				'view': this.url.link('sale/order.info', 'user_token=' + this.session.data['user_token'] + '&order_id=' + result['order_id'] + url)
 			});
@@ -1164,8 +1164,8 @@ module.exports = class OrderController extends Controller {
 			data['forwarded_ip'] = order_info['forwarded_ip'];
 			data['user_agent'] = order_info['user_agent'];
 			data['accept_language'] = order_info['accept_language'];
-			data['date_added'] = date(this.language.get('date_format_short'), strtotime(order_info['date_added']));
-			data['date_modified'] = date(this.language.get('date_format_short'), strtotime(order_info['date_modified']));
+			data['date_added'] = date(this.language.get('date_format_short'), new Date(order_info['date_added']));
+			data['date_modified'] = date(this.language.get('date_format_short'), new Date(order_info['date_modified']));
 		} else {
 			data['ip'] = '';
 			data['forwarded_ip'] = '';
@@ -1461,7 +1461,7 @@ module.exports = class OrderController extends Controller {
 				data['orders'].push({
 					'order_id': order_id,
 					'invoice_no': invoice_no,
-					'date_added': date(this.language.get('date_format_short'), strtotime(order_info['date_added'])),
+					'date_added': date(this.language.get('date_format_short'), new Date(order_info['date_added'])),
 					'store_name': order_info['store_name'],
 					'store_url': rtrim(order_info['store_url'], '/'),
 					'store_address': nl2br(store_address),
@@ -1643,7 +1643,7 @@ module.exports = class OrderController extends Controller {
 				data['orders'].push({
 					'order_id': order_id,
 					'invoice_no': invoice_no,
-					'date_added': date(this.language.get('date_format_short'), strtotime(order_info['date_added'])),
+					'date_added': date(this.language.get('date_format_short'), new Date(order_info['date_added'])),
 					'store_name': order_info['store_name'],
 					'store_url': rtrim(order_info['store_url'], '/'),
 					'store_address': nl2br(store_address),
@@ -1668,7 +1668,7 @@ module.exports = class OrderController extends Controller {
 	async history() {
 		await this.load.language('sale/order');
 
-		this.response.setOutput(this.getHistory());
+		this.response.setOutput(await this.getHistory());
 	}
 
 	/**
@@ -1698,7 +1698,7 @@ module.exports = class OrderController extends Controller {
 				'status': result['status'],
 				'comment': nl2br(result['comment']),
 				'notify': result['notify'] ? this.language.get('text_yes') : this.language.get('text_no'),
-				'date_added': date(this.language.get('date_format_short'), strtotime(result['date_added']))
+				'date_added': date(this.language.get('date_format_short'), new Date(result['date_added']))
 			});
 		}
 

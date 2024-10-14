@@ -1,21 +1,14 @@
-<?php
-namespace Opencart\Admin\Model\Localisation;
-/**
- * Class ReturnAction
- *
- * @package Opencart\Admin\Model\Localisation
- */
-class ReturnActionLocalisationModel extends Model {
-constructor(registry){
-    super(registry);
-}
+module.exports = class ReturnActionLocalisationModel extends Model {
+	constructor(registry) {
+		super(registry);
+	}
 	/**
 	 * @param data
 	 *
 	 * @return int
 	 */
 	async addReturnAction(data) {
-		for (data['return_action'] of language_id : value) {
+		for (let [language_id, value] of Object.entries(data['return_action'])) {
 			if ((return_action_id)) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "return_action` SET `return_action_id` = '" + return_action_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + "");
 			} else {
@@ -39,7 +32,7 @@ constructor(registry){
 	async editReturnAction(return_action_id, data) {
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "return_action` WHERE `return_action_id` = '" + return_action_id + "'");
 
-		for (data['return_action'] of language_id : value) {
+		for (let [language_id, value] of Object.entries(data['return_action'])) {
 			await this.db.query("INSERT INTO `" + DB_PREFIX + "return_action` SET `return_action_id` = '" + return_action_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + "");
 		}
 
@@ -83,20 +76,20 @@ constructor(registry){
 		}
 
 		if ((data['start']) || (data['limit'])) {
-			data['start'] = data['start']||0;
-if (data['start'] < 0) {
+			data['start'] = data['start'] || 0;
+			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
 			sql += " LIMIT " + data['start'] + "," + data['limit'];
 		}
 
-		return_action_data = await this.cache.get('return_action+' + md5(sql));
+		let return_action_data = await this.cache.get('return_action+' + md5(sql));
 
 		if (!return_action_data) {
 			const query = await this.db.query(sql);
@@ -115,12 +108,12 @@ if (data['limit'] < 1) {
 	 * @return array
 	 */
 	async getDescriptions(return_action_id) {
-		return_action_data = [];
+		let return_action_data = {};
 
 		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "return_action` WHERE `return_action_id` = '" + return_action_id + "'");
 
 		for (let result of query.rows) {
-			return_action_data[result['language_id']] = ['name' : result['name']];
+			return_action_data[result['language_id']] = { 'name': result['name'] };
 		}
 
 		return return_action_data;

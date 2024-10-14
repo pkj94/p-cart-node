@@ -71,8 +71,8 @@ module.exports = class ZoneLocalisationModel extends Model {
 			implode.push("z.`code` LIKE " + this.db.escape(data['filter_code'] + '%'));
 		}
 
-		if (implode) {
-			sql += " WHERE " + implode.joint(" AND ");
+		if (implode.length) {
+			sql += " WHERE " + implode.join(" AND ");
 		}
 
 		let sort_data = [
@@ -120,7 +120,7 @@ module.exports = class ZoneLocalisationModel extends Model {
 	async getZonesByCountryId(country_id) {
 		let sql = "SELECT * FROM `" + DB_PREFIX + "zone` WHERE `country_id` = '" + country_id + "' AND `status` = '1' ORDER BY `name`";
 
-		zone_data = await this.cache.get('zone+' + md5(sql));
+		let zone_data = await this.cache.get('zone+' + md5(sql));
 
 		if (!zone_data) {
 			const query = await this.db.query(sql);
@@ -159,8 +159,8 @@ module.exports = class ZoneLocalisationModel extends Model {
 			implode.push("z.`code` LIKE " + this.db.escape(data['filter_code'] + '%'));
 		}
 
-		if (implode) {
-			sql += " WHERE " + implode.joint(" AND ");
+		if (implode.length) {
+			sql += " WHERE " + implode.join(" AND ");
 		}
 
 		const query = await this.db.query(sql);

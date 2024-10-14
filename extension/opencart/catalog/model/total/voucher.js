@@ -79,7 +79,7 @@ class Voucher extends \Opencart\System\Engine\Model {
 	 *
 	 * @return void
 	 */
-	async unconfirm(int $order_id) {
+	async unconfirm($order_id) {
 		$this->db->query("DELETE FROM `" . DB_PREFIX . "voucher_history` WHERE `order_id` = '" . $order_id . "'");
 	}
 }

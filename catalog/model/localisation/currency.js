@@ -13,7 +13,7 @@ class Currency extends \Opencart\System\Engine\Model {
 	 * @return void
 	 */
 	public function editValueByCode(string $code, float $value): void {
-		$this->db->query("UPDATE `" . DB_PREFIX . "currency` SET `value` = '" . (float)$value . "', `date_modified` = NOW() WHERE `code` = '" . $this->db->escape($code) . "'");
+		$this->db->query("UPDATE `" . DB_PREFIX . "currency` SET `value` = '" . $value . "', `date_modified` = NOW() WHERE `code` = '" . $this->db->escape($code) . "'");
 
 		$this->cache->delete('currency');
 	}
@@ -23,7 +23,7 @@ class Currency extends \Opencart\System\Engine\Model {
 	 *
 	 * @return array
 	 */
-	public function getCurrency(int $currency_id): array {
+	public function getCurrency($currency_id): array {
 		$query = $this->db->query("SELECT DISTINCT * FROM `" . DB_PREFIX . "currency` WHERE `currency_id` = '" . $this->db->escape($currency_id) . "'");
 
 		return $query->row;

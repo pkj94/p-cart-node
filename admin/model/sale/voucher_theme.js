@@ -1,5 +1,5 @@
-module.exports = class VoucherThemeSaleModel  extends Model {
-	constructor(registry){
+module.exports = class VoucherThemeSaleModel extends Model {
+	constructor(registry) {
 		super(registry)
 	}
 	/**
@@ -79,20 +79,20 @@ module.exports = class VoucherThemeSaleModel  extends Model {
 		}
 
 		if (data['start'] || data['limit']) {
-                        data['start'] = data['start']||0;
+			data['start'] = data['start'] || 0;
 			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
 			sql += " LIMIT " + data['start'] + "," + data['limit'];
 		}
 
-		voucher_theme_data = await this.cache.get('voucher_theme.' + md5(sql));
+		let voucher_theme_data = await this.cache.get('voucher_theme.' + md5(sql));
 
 		if (!voucher_theme_data) {
 			let query = await this.db.query(sql);
@@ -116,7 +116,7 @@ if (data['limit'] < 1) {
 		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "voucher_theme_description` WHERE `voucher_theme_id` = '" + voucher_theme_id + "'");
 
 		for (let result of query.rows) {
-			voucher_theme_data[result['language_id']] = {'name' : result['name']};
+			voucher_theme_data[result['language_id']] = { 'name': result['name'] };
 		}
 
 		return voucher_theme_data;

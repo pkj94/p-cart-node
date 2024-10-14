@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Admin\Controller\User;
-/**
- * 
- *
- * @package Opencart\Admin\Controller\User
- */
-class UserPermissionController extends Controller {
+module.exports=class UserPermissionController extends Controller {
 	/**
 	 * @return void
 	 */

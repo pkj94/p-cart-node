@@ -5,13 +5,13 @@ module.exports = class CustomerCustomerModel extends Model {
 	 * @return int
 	 */
 	async addCustomer(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "customer` SET `store_id` = '" + data['store_id'] + "', `customer_group_id` = '" + data['customer_group_id'] + "', `firstname` = " + this.db.escape(data['firstname']) + ", `lastname` = " + this.db.escape(data['lastname']) + ", `email` = " + this.db.escape(data['email']) + ", `telephone` = " + this.db.escape(data['telephone']) + ", `custom_field` = '" + this.db.escape(data['custom_field'] ? JSON.stringify(data['custom_field']) : JSON.stringify({})) + "', `newsletter` = '" + (data['newsletter'] ? data['newsletter'] : 0) + "', `password` = " + this.db.escape(password_hash(data['password'])) + ", `status` = '" + (data['status'] ? data['status'] : 0) + "', `safe` = '" + (data['safe'] ? data['safe'] : 0) + "', `date_added` = NOW()");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "customer` SET `store_id` = '" + data['store_id'] + "', `customer_group_id` = '" + data['customer_group_id'] + "', `firstname` = " + this.db.escape(data['firstname']) + ", `lastname` = " + this.db.escape(data['lastname']) + ", `email` = " + this.db.escape(data['email']) + ", `telephone` = " + this.db.escape(data['telephone']) + ", `custom_field` = " + this.db.escape(data['custom_field'] ? JSON.stringify(data['custom_field']) : JSON.stringify({})) + ", `newsletter` = '" + (data['newsletter'] ? data['newsletter'] : 0) + "', `password` = " + this.db.escape(await password_hash(data['password'])) + ", `status` = '" + (data['status'] ? data['status'] : 0) + "', `safe` = '" + (data['safe'] ? data['safe'] : 0) + "', `date_added` = NOW()");
 
 		let customer_id = this.db.getLastId();
 
 		if (data['address']) {
 			for (let address of data['address']) {
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "address` SET `customer_id` = '" + customer_id + "', `firstname` = '" + this.db.escape(address['firstname']) + "', `lastname` = '" + this.db.escape(address['lastname']) + "', `company` = '" + this.db.escape(address['company']) + "', `address_1` = '" + this.db.escape(address['address_1']) + "', `address_2` = '" + this.db.escape(address['address_2']) + "', `city` = '" + this.db.escape(address['city']) + "', `postcode` = '" + this.db.escape(address['postcode']) + "', `country_id` = '" + address['country_id'] + "', `zone_id` = '" + address['zone_id'] + "', `custom_field` = '" + this.db.escape(address['custom_field'] ? JSON.stringify(address['custom_field']) : JSON.stringify({})) + "', `default` = '" + (address['default'] ? address['default'] : 0) + "'");
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "address` SET `customer_id` = '" + customer_id + "', `firstname` = " + this.db.escape(address['firstname']) + ", `lastname` = " + this.db.escape(address['lastname']) + ", `company` = " + this.db.escape(address['company']) + ", `address_1` = " + this.db.escape(address['address_1']) + ", `address_2` = " + this.db.escape(address['address_2']) + ", `city` = " + this.db.escape(address['city']) + ", `postcode` = " + this.db.escape(address['postcode']) + ", `country_id` = '" + address['country_id'] + "', `zone_id` = '" + address['zone_id'] + "', `custom_field` = " + this.db.escape(address['custom_field'] ? JSON.stringify(address['custom_field']) : JSON.stringify({})) + ", `default` = '" + (address['default'] ? address['default'] : 0) + "'");
 			}
 		}
 
@@ -25,17 +25,17 @@ module.exports = class CustomerCustomerModel extends Model {
 	 * @return void
 	 */
 	async editCustomer(customer_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "customer` SET `store_id` = '" + data['store_id'] + "', `customer_group_id` = '" + data['customer_group_id'] + "', `firstname` = " + this.db.escape(data['firstname']) + ", `lastname` = " + this.db.escape(data['lastname']) + ", `email` = " + this.db.escape(data['email']) + ", `telephone` = " + this.db.escape(data['telephone']) + ", `custom_field` = '" + this.db.escape(data['custom_field'] ? JSON.stringify(data['custom_field']) : JSON.stringify({})) + "', `newsletter` = '" + (data['newsletter'] ? data['newsletter'] : 0) + "', `status` = '" + (data['status'] ? data['status'] : 0) + "', `safe` = '" + (data['safe'] ? data['safe'] : 0) + "' WHERE `customer_id` = '" + customer_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "customer` SET `store_id` = '" + data['store_id'] + "', `customer_group_id` = '" + data['customer_group_id'] + "', `firstname` = " + this.db.escape(data['firstname']) + ", `lastname` = " + this.db.escape(data['lastname']) + ", `email` = " + this.db.escape(data['email']) + ", `telephone` = " + this.db.escape(data['telephone']) + ", `custom_field` = " + this.db.escape(data['custom_field'] ? JSON.stringify(data['custom_field']) : JSON.stringify({})) + ", `newsletter` = '" + (data['newsletter'] ? data['newsletter'] : 0) + "', `status` = '" + (data['status'] ? data['status'] : 0) + "', `safe` = '" + (data['safe'] ? data['safe'] : 0) + "' WHERE `customer_id` = '" + customer_id + "'");
 
 		if (data['password']) {
-			await this.db.query("UPDATE `" + DB_PREFIX + "customer` SET `password` = " + this.db.escape(password_hash(data['password'])) + " WHERE `customer_id` = '" + customer_id + "'");
+			await this.db.query("UPDATE `" + DB_PREFIX + "customer` SET `password` = " + this.db.escape(await password_hash(data['password'])) + " WHERE `customer_id` = '" + customer_id + "'");
 		}
 
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "address` WHERE `customer_id` = '" + customer_id + "'");
 
 		if (data['address']) {
 			for (let address of data['address']) {
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "address` SET `address_id` = '" + address['address_id'] + "', `customer_id` = '" + customer_id + "', `firstname` = '" + this.db.escape(address['firstname']) + "', `lastname` = '" + this.db.escape(address['lastname']) + "', `company` = '" + this.db.escape(address['company']) + "', `address_1` = '" + this.db.escape(address['address_1']) + "', `address_2` = '" + this.db.escape(address['address_2']) + "', `city` = '" + this.db.escape(address['city']) + "', `postcode` = '" + this.db.escape(address['postcode']) + "', `country_id` = '" + address['country_id'] + "', `zone_id` = '" + address['zone_id'] + "', `custom_field` = '" + this.db.escape(address['custom_field'] ? JSON.stringify(address['custom_field']) : JSON.stringify({})) + "', `default` = '" + (address['default'] ? address['default'] : 0) + "'");
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "address` SET `address_id` = '" + address['address_id'] + "', `customer_id` = '" + customer_id + "', `firstname` = " + this.db.escape(address['firstname']) + ", `lastname` = " + this.db.escape(address['lastname']) + ", `company` = " + this.db.escape(address['company']) + ", `address_1` = " + this.db.escape(address['address_1']) + ", `address_2` = " + this.db.escape(address['address_2']) + ", `city` = " + this.db.escape(address['city']) + ", `postcode` = " + this.db.escape(address['postcode']) + ", `country_id` = '" + address['country_id'] + "', `zone_id` = '" + address['zone_id'] + "', `custom_field` = " + this.db.escape(address['custom_field'] ? JSON.stringify(address['custom_field']) : JSON.stringify({})) + ", `default` = '" + (address['default'] ? address['default'] : 0) + "'");
 			}
 		}
 	}
@@ -155,13 +155,13 @@ module.exports = class CustomerCustomerModel extends Model {
 		}
 
 		if (data['start'] || data['limit']) {
-                        data['start'] = data['start']||0;
+			data['start'] = data['start'] || 0;
 			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
@@ -234,27 +234,23 @@ if (data['limit'] < 1) {
 
 		if (address_query.num_rows) {
 			let country_query = await this.db.query("SELECT *, c.name FROM `" + DB_PREFIX + "country` c LEFT JOIN `" + DB_PREFIX + "address_format` af ON (c.`address_format_id` = af.`address_format_id`) WHERE `country_id` = '" + address_query.row['country_id'] + "'");
-
+			let country = '';
+			let iso_code_2 = '';
+			let iso_code_3 = '';
+			let address_format = '';
 			if (country_query.num_rows) {
 				country = country_query.row['name'];
 				iso_code_2 = country_query.row['iso_code_2'];
 				iso_code_3 = country_query.row['iso_code_3'];
 				address_format = country_query.row['address_format'];
-			} else {
-				country = '';
-				iso_code_2 = '';
-				iso_code_3 = '';
-				address_format = '';
 			}
 
 			let zone_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "zone` WHERE `zone_id` = '" + address_query.row['zone_id'] + "'");
-
+			let zone = '';
+			let zone_code = '';
 			if (zone_query.num_rows) {
 				zone = zone_query.row['name'];
 				zone_code = zone_query.row['code'];
-			} else {
-				zone = '';
-				zone_code = '';
 			}
 
 			return {
@@ -359,7 +355,7 @@ if (data['limit'] < 1) {
 	 * @return void
 	 */
 	async addHistory(customer_id, comment) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "customer_history` SET `customer_id` = '" + customer_id + "', `comment` = '" + this.db.escape(strip_tags(comment)) + "', `date_added` = NOW()");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "customer_history` SET `customer_id` = '" + customer_id + "', `comment` = " + this.db.escape(strip_tags(comment)) + ", `date_added` = NOW()");
 	}
 
 	/**
@@ -403,7 +399,7 @@ if (data['limit'] < 1) {
 	 * @return void
 	 */
 	async addTransaction(customer_id, description = '', amount = 0, order_id = 0) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "customer_transaction` SET `customer_id` = '" + customer_id + "', `order_id` = '" + order_id + "', `description` = '" + this.db.escape(description) + "', `amount` = '" + amount + "', `date_added` = NOW()");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "customer_transaction` SET `customer_id` = '" + customer_id + "', `order_id` = '" + order_id + "', `description` = " + this.db.escape(description) + ", `amount` = '" + amount + "', `date_added` = NOW()");
 	}
 
 	/**
@@ -478,7 +474,7 @@ if (data['limit'] < 1) {
 	 * @return void
 	 */
 	async addReward(customer_id, description = '', points = 0, order_id = 0) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "customer_reward` SET `customer_id` = '" + customer_id + "', `order_id` = '" + order_id + "', `points` = '" + points + "', `description` = '" + this.db.escape(description) + "', `date_added` = NOW()");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "customer_reward` SET `customer_id` = '" + customer_id + "', `order_id` = '" + order_id + "', `points` = '" + points + "', `description` = " + this.db.escape(description) + ", `date_added` = NOW()");
 	}
 
 	/**
@@ -581,7 +577,7 @@ if (data['limit'] < 1) {
 	 * @return int
 	 */
 	async getTotalCustomersByIp(ip) {
-		let query = await this.db.query("SELECT COUNT(DISTINCT `customer_id`) AS `total` FROM `" + DB_PREFIX + "customer_ip` WHERE `ip` = '" + this.db.escape(ip) + "'");
+		let query = await this.db.query("SELECT COUNT(DISTINCT `customer_id`) AS `total` FROM `" + DB_PREFIX + "customer_ip` WHERE `ip` = " + this.db.escape(ip));
 
 		return query.row['total'];
 	}
@@ -592,7 +588,7 @@ if (data['limit'] < 1) {
 	 * @return array
 	 */
 	async getTotalLoginAttempts(email) {
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "customer_login` WHERE `email` = '" + this.db.escape(oc_strtolower(email)) + "'");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "customer_login` WHERE `email` = " + this.db.escape(oc_strtolower(email)));
 
 		return query.row;
 	}

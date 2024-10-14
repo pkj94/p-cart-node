@@ -122,7 +122,7 @@ module.exports = class SaleOrderReportController extends Controller {
 	 * @return string
 	 */
 	async getReport() {
-		let filter_date_start = date('Y-m-d', strtotime(date('Y') + '-' + date('m') + '-01'));
+		let filter_date_start = date('Y-m-d', new Date(date('Y') + '-' + date('m') + '-01'));
 		if (this.request.get['filter_date_start']) {
 			filter_date_start = this.request.get['filter_date_start'];
 		}
@@ -164,8 +164,8 @@ module.exports = class SaleOrderReportController extends Controller {
 
 		for (let result of results) {
 			data['orders'].push({
-				'date_start': date(this.language.get('date_format_short'), strtotime(result['date_start'])),
-				'date_end': date(this.language.get('date_format_short'), strtotime(result['date_end'])),
+				'date_start': date(this.language.get('date_format_short'), new Date(result['date_start'])),
+				'date_end': date(this.language.get('date_format_short'), new Date(result['date_end'])),
 				'orders': result['orders'],
 				'products': result['products'],
 				'tax': this.currency.format(result['tax'], this.config.get('config_currency')),

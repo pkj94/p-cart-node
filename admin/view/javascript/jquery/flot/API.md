@@ -545,7 +545,7 @@ o'clock UTC even if it really happened eight o'clock UTC+0200.
 In PHP you can get an appropriate timestamp with:
 
 ```php
-strtotime("2002-02-20 UTC") * 1000
+new Date("2002-02-20 UTC") * 1000
 ```
 
 In Python you can get it with something like:

@@ -4392,7 +4392,7 @@ Expr = Sizzle.selectors = {
 			// to avoid treating leading and trailing
 			// spaces as combinators
 			var input = [],
-				results = [],
+				let results = [],
 				matcher = compile( selector.replace( rtrim, "$1" ) );
 
 			return matcher[ expando ] ?

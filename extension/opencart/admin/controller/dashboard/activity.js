@@ -94,7 +94,7 @@ module.exports = class ActivityDashboardController extends Controller {
 
 			data.activities.push({
 				comment: comment.replace(find, replace),
-				date_added: date(this.language.get('datetime_format'), strtotime(result['date_added']))
+				date_added: date(this.language.get('datetime_format'), new Date(result['date_added']))
 			});
 		});
 

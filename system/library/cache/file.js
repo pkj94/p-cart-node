@@ -1,8 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-function time() {
-    return Math.floor(Date.now() / 1000);
-}
+
 module.exports = class CacheFileLibrary {
     constructor(expire = 3600) {
         this.expire = expire;

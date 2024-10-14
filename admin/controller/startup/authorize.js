@@ -22,8 +22,8 @@ module.exports = class AuthorizeController extends Controller {
 		];
 
 		if (this.config.get('config_security') && !ignore.includes(route)) {
-			const modelUserUser = new ModelUserUser(this.registry);
-			const token_info = await modelUserUser.getAuthorizeByToken(this.user.getId(), token);
+			this.load.model('user/user', this);
+			const token_info = await this.model_user_user.getAuthorizeByToken(this.user.getId(), token);
 
 			if (!token_info || !token_info.status && token_info.attempts <= 2) {
 				return new Action('common/authorize');

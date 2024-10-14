@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Admin\Controller\Localisation;
-/**
- * 
- *
- * @package Opencart\Admin\Controller\Localisation
- */
-class SubscriptionStatusController extends Controller {
+module.exports=class SubscriptionStatusController extends Controller {
 	/**
 	 * @return void
 	 */
@@ -108,7 +101,7 @@ class SubscriptionStatusController extends Controller {
 			'limit' : this.config.get('config_pagination_admin')
 		});
 
-		this.load.model('localisation/subscription_status');
+		this.load.model('localisation/subscription_status',this);
 
 		subscription_status_total await this.model_localisation_subscription_status.getTotalSubscriptionStatuses();
 
@@ -207,7 +200,7 @@ class SubscriptionStatusController extends Controller {
 		data['languages'] = await this.model_localisation_language.getLanguages();
 
 		if ((this.request.get['subscription_status_id'])) {
-			this.load.model('localisation/subscription_status');
+			this.load.model('localisation/subscription_status',this);
 
 			data['subscription_status'] = await this.model_localisation_subscription_status.getDescriptions(this.request.get['subscription_status_id']);
 		} else {
@@ -242,7 +235,7 @@ class SubscriptionStatusController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('localisation/subscription_status');
+			this.load.model('localisation/subscription_status',this);
 
 			if (!this.request.post['subscription_status_id']) {
 				json['subscription_status_id'] = await this.model_localisation_subscription_status.addSubscriptionStatus(this.request.post);
@@ -296,7 +289,7 @@ class SubscriptionStatusController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('localisation/subscription_status');
+			this.load.model('localisation/subscription_status',this);
 
 			for (selected of subscription_status_id) {
 				await this.model_localisation_subscription_status.deleteSubscriptionStatus(subscription_status_id);

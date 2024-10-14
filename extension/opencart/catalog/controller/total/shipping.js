@@ -101,7 +101,7 @@ class ShippingController extends Controller {
 				$address_format = '';
 			}
 
-			this.load.model('localisation/zone');
+			this.load.model('localisation/zone',this);
 
 			$zone_info = this.model_localisation_zone.getZone(this.request.post['zone_id']);
 

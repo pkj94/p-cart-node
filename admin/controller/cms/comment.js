@@ -143,7 +143,7 @@ class CommentController extends Controller {
 				'customer'      : result['customer'],
 				'customer_edit' : this.url.link('customer/customer.edit', 'user_token=' + this.session.data['user_token'] + '&customer_id=' + result['customer_id']),
 				'comment'       : nl2br(result['comment']),
-				'date_added'    : date('d/m/Y', strtotime(result['date_added'])),
+				'date_added'    : date('d/m/Y', new Date(result['date_added'])),
 				'approve'       : approve,
 				'spam'          : this.url.link('cms/comment.spam', 'user_token=' + this.session.data['user_token'] + '&comment_id=' + result['comment_id'] + url),
 				'delete'        : this.url.link('cms/comment.delete', 'user_token=' + this.session.data['user_token'] + '&comment_id=' + result['comment_id'] + url)

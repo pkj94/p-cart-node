@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Admin\Controller\Mail;
-/**
- * 
- *
- * @package Opencart\Admin\Controller\Mail
- */
-class GdprController extends Controller {
+module.exports=class GdprController extends Controller {
 	// admin/model/customer/gdpr/editStatus
 	/**
 	 * @param string route
@@ -15,7 +8,7 @@ class GdprController extends Controller {
 	 * @return void
 	 */
 	async index(string &route, array &args, mixed &output) {
-		this.load.model('customer/gdpr');
+		this.load.model('customer/gdpr',this);
 
 		gdpr_info await this.model_customer_gdpr.getGdpr(args[0]);
 
@@ -70,7 +63,7 @@ class GdprController extends Controller {
 		// Send the email in the correct language
 		this.load.model('localisation/language',this);
 
-		language_info await this.model_localisation_language.getLanguage(gdpr_info['language_id']);
+		const language_info = await this.model_localisation_language.getLanguage(gdpr_info['language_id']);
 
 		if (language_info) {
 			language_code = language_info['code'];
@@ -85,7 +78,7 @@ class GdprController extends Controller {
 		// Add language vars to the template folder
 		results = this.language.all('mail');
 
-		for (results of key : value) {
+		for (let [key, value] of Object.entries(results)) {
 			data[key] = value;
 		}
 
@@ -192,7 +185,7 @@ class GdprController extends Controller {
 			for (let result of results) {
 				data['ips'].push({
 					'ip'         : result['ip'],
-					'date_added' : date(this.language.get('mail_datetime_format'), strtotime(result['date_added']))
+					'date_added' : date(this.language.get('mail_datetime_format'), new Date(result['date_added']))
 				];
 			}
 		}
@@ -210,7 +203,7 @@ class GdprController extends Controller {
 				'smtp_timeout'  : this.config.get('config_mail_smtp_timeout')
 			];
 
-			mail = new \Opencart\System\Library\Mail(this.config.get('config_mail_engine'), mail_option);
+			mail = new MailLibrary(this.config.get('config_mail_engine'), mail_option);
 			mail.setTo(gdpr_info['email']);
 			mail.setFrom(this.config.get('config_email'));
 			mail.setSender(store_name);
@@ -246,7 +239,7 @@ class GdprController extends Controller {
 		// Send the email in the correct language
 		this.load.model('localisation/language',this);
 
-		language_info await this.model_localisation_language.getLanguage(gdpr_info['language_id']);
+		const language_info = await this.model_localisation_language.getLanguage(gdpr_info['language_id']);
 
 		if (language_info) {
 			language_code = language_info['code'];
@@ -261,7 +254,7 @@ class GdprController extends Controller {
 		// Add language vars to the template folder
 		results = this.language.all('mail');
 
-		for (results of key : value) {
+		for (let [key, value] of Object.entries(results)) {
 			data[key] = value;
 		}
 
@@ -301,7 +294,7 @@ class GdprController extends Controller {
 				'smtp_timeout'  : this.config.get('config_mail_smtp_timeout')
 			];
 
-			mail = new \Opencart\System\Library\Mail(this.config.get('config_mail_engine'), mail_option);
+			mail = new MailLibrary(this.config.get('config_mail_engine'), mail_option);
 			mail.setTo(gdpr_info['email']);
 			mail.setFrom(this.config.get('config_email'));
 			mail.setSender(store_name);
@@ -337,7 +330,7 @@ class GdprController extends Controller {
 		// Send the email in the correct language
 		this.load.model('localisation/language',this);
 
-		language_info await this.model_localisation_language.getLanguage(gdpr_info['language_id']);
+		const language_info = await this.model_localisation_language.getLanguage(gdpr_info['language_id']);
 
 		if (language_info) {
 			language_code = language_info['code'];
@@ -352,7 +345,7 @@ class GdprController extends Controller {
 		// Add language vars to the template folder
 		results = this.language.all('mail');
 
-		for (results of key : value) {
+		for (let [key, value] of Object.entries(results)) {
 			data[key] = value;
 		}
 
@@ -392,7 +385,7 @@ class GdprController extends Controller {
 				'smtp_timeout'  : this.config.get('config_mail_smtp_timeout')
 			];
 
-			mail = new \Opencart\System\Library\Mail(this.config.get('config_mail_engine'), mail_option);
+			mail = new MailLibrary(this.config.get('config_mail_engine'), mail_option);
 			mail.setTo(gdpr_info['email']);
 			mail.setFrom(this.config.get('config_email'));
 			mail.setSender(store_name);
@@ -428,7 +421,7 @@ class GdprController extends Controller {
 		// Send the email in the correct language
 		this.load.model('localisation/language',this);
 
-		language_info await this.model_localisation_language.getLanguage(gdpr_info['language_id']);
+		const language_info = await this.model_localisation_language.getLanguage(gdpr_info['language_id']);
 
 		if (language_info) {
 			language_code = language_info['code'];
@@ -443,7 +436,7 @@ class GdprController extends Controller {
 		// Add language vars to the template folder
 		results = this.language.all('mail');
 
-		for (results of key : value) {
+		for (let [key, value] of Object.entries(results)) {
 			data[key] = value;
 		}
 
@@ -481,7 +474,7 @@ class GdprController extends Controller {
 				'smtp_timeout'  : this.config.get('config_mail_smtp_timeout')
 			];
 
-			mail = new \Opencart\System\Library\Mail(this.config.get('config_mail_engine'), mail_option);
+			mail = new MailLibrary(this.config.get('config_mail_engine'), mail_option);
 			mail.setTo(gdpr_info['email']);
 			mail.setFrom(this.config.get('config_email'));
 			mail.setSender(store_name);

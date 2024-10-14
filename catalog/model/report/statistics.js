@@ -37,7 +37,7 @@ class Statistics extends \Opencart\System\Engine\Model {
 	 * @return void
 	 */
 	public function addValue(string $code, float $value): void {
-		$this->db->query("UPDATE `" . DB_PREFIX . "statistics` SET `value` = (`value` + '" . (float)$value . "') WHERE `code` = '" . $this->db->escape($code) . "'");
+		$this->db->query("UPDATE `" . DB_PREFIX . "statistics` SET `value` = (`value` + '" . $value . "') WHERE `code` = '" . $this->db->escape($code) . "'");
 	}
 
 	/**
@@ -47,7 +47,7 @@ class Statistics extends \Opencart\System\Engine\Model {
 	 * @return void
 	 */
 	public function removeValue(string $code, float $value): void {
-		$this->db->query("UPDATE `" . DB_PREFIX . "statistics` SET `value` = (`value` - '" . (float)$value . "') WHERE `code` = '" . $this->db->escape($code) . "'");
+		$this->db->query("UPDATE `" . DB_PREFIX . "statistics` SET `value` = (`value` - '" . $value . "') WHERE `code` = '" . $this->db->escape($code) . "'");
 	}
 
 	/**
@@ -57,6 +57,6 @@ class Statistics extends \Opencart\System\Engine\Model {
 	 * @return void
 	 */
 	public function editValue(string $code, float $value): void {
-		$this->db->query("UPDATE `" . DB_PREFIX . "statistics` SET `value` = '" . (float)$value . "' WHERE `code` = '" . $this->db->escape($code) . "'");
+		$this->db->query("UPDATE `" . DB_PREFIX . "statistics` SET `value` = '" . $value . "' WHERE `code` = '" . $this->db->escape($code) . "'");
 	}	
 }

@@ -221,7 +221,7 @@ module.exports = class ProductController extends Controller {
 			const product_specials = await this.model_catalog_product.getSpecials(result['product_id']);
 
 			for (let product_special of product_specials) {
-				if ((product_special['date_start'] == '0000-00-00' || strtotime(product_special['date_start']) < time()) && (product_special['date_end'] == '0000-00-00' || strtotime(product_special['date_end']) > time())) {
+				if ((product_special['date_start'] == '0000-00-00' || new Date(product_special['date_start']) < time()) && (product_special['date_end'] == '0000-00-00' || new Date(product_special['date_end']) > time())) {
 					special = this.currency.format(product_special['price'], this.config.get('config_currency'));
 
 					break;
@@ -1228,7 +1228,7 @@ module.exports = class ProductController extends Controller {
 				'ip': result['ip'],
 				'store': store,
 				'country': result['country'],
-				'date_added': date(this.language.get('datetime_format'), strtotime(result['date_added']))
+				'date_added': date(this.language.get('datetime_format'), new Date(result['date_added']))
 			});
 		}
 

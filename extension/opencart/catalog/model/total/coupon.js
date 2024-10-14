@@ -17,7 +17,7 @@ class Coupon extends \Opencart\System\Engine\Model {
 		if ((this.session.data['coupon'])) {
 			this.load.language('extension/opencart/total/coupon', 'coupon');
 
-			this.load.model('marketing/coupon');
+			this.load.model('marketing/coupon',this);
 
 			$coupon_info = this.model_marketing_coupon.getCoupon(this.session.data['coupon']);
 
@@ -128,7 +128,7 @@ class Coupon extends \Opencart\System\Engine\Model {
 			$coupon_query = this.db.query("SELECT * FROM `" . DB_PREFIX . "coupon` WHERE `code` = '" . this.db.escape($code) . "' AND `status` = '1'");
 
 			if ($coupon_query.num_rows) {
-				this.load.model('marketing/coupon');
+				this.load.model('marketing/coupon',this);
 
 				$coupon_total = this.model_marketing_coupon.getTotalHistoriesByCoupon($code);
 
@@ -162,7 +162,7 @@ class Coupon extends \Opencart\System\Engine\Model {
 	 *
 	 * @return void
 	 */
-	async unconfirm(int $order_id) {
+	async unconfirm($order_id) {
 		this.db.query("DELETE FROM `" . DB_PREFIX . "coupon_history` WHERE `order_id` = '" . $order_id . "'");
 	}
 }

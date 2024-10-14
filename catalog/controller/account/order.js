@@ -76,7 +76,7 @@ class Order extends \Opencart\System\Engine\Controller {
 				'order_id'   => $result['order_id'],
 				'name'       => $result['firstname'] . ' ' . $result['lastname'],
 				'status'     => $order_status,
-				'date_added' => date($this->language->get('date_format_short'), strtotime($result['date_added'])),
+				'date_added' => date($this->language->get('date_format_short'), new Date($result['date_added'])),
 				'products'   => ($product_total + $voucher_total),
 				'total'      => $this->currency->format($result['total'], $result['currency_code'], $result['currency_value']),
 				'view'       => $this->url->link('account/order.info', 'language=' . $this->config->get('config_language') . '&customer_token=' . $this->session->data['customer_token'] . '&order_id=' . $result['order_id']),
@@ -179,7 +179,7 @@ class Order extends \Opencart\System\Engine\Controller {
 				$data['order_status'] = '';
 			}
 
-			$data['date_added'] = date($this->language->get('date_format_short'), strtotime($order_info['date_added']));
+			$data['date_added'] = date($this->language->get('date_format_short'), new Date($order_info['date_added']));
 
 			// Payment Address
 			if ($order_info['payment_address_format']) {
@@ -433,7 +433,7 @@ class Order extends \Opencart\System\Engine\Controller {
 			$data['histories'][] = [
 				'status'     => $result['status'],
 				'comment'    => nl2br($result['comment']),
-				'date_added' => date($this->language->get('date_format_short'), strtotime($result['date_added']))
+				'date_added' => date($this->language->get('date_format_short'), new Date($result['date_added']))
 			];
 		}
 

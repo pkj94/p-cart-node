@@ -1,5 +1,5 @@
-module.exports = class VoucherSaleModel  extends Model {
-	constructor(registry){
+module.exports = class VoucherSaleModel extends Model {
+	constructor(registry) {
 		super(registry)
 	}
 	/**
@@ -8,7 +8,7 @@ module.exports = class VoucherSaleModel  extends Model {
 	 * @return int
 	 */
 	async addVoucher(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "voucher` SET `code` = " + this.db.escape(data['code']) + ", `from_name` = '" + this.db.escape(data['from_name']) + "', `from_email` = '" + this.db.escape(data['from_email']) + "', `to_name` = '" + this.db.escape(data['to_name']) + "', `to_email` = '" + this.db.escape(data['to_email']) + "', `voucher_theme_id` = '" + data['voucher_theme_id'] + "', `message` = '" + this.db.escape(data['message']) + "', `amount` = '" + data['amount'] + "', `status` = '" + data['status'] + "', `date_added` = NOW()");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "voucher` SET `code` = " + this.db.escape(data['code']) + ", `from_name` = " + this.db.escape(data['from_name']) + ", `from_email` = " + this.db.escape(data['from_email']) + ", `to_name` = " + this.db.escape(data['to_name']) + ", `to_email` = " + this.db.escape(data['to_email']) + ", `voucher_theme_id` = '" + data['voucher_theme_id'] + "', `message` = " + this.db.escape(data['message']) + ", `amount` = '" + data['amount'] + "', `status` = '" + data['status'] + "', `date_added` = NOW()");
 
 		return this.db.getLastId();
 	}
@@ -20,7 +20,7 @@ module.exports = class VoucherSaleModel  extends Model {
 	 * @return void
 	 */
 	async editVoucher(voucher_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "voucher` SET `code` = " + this.db.escape(data['code']) + ", `from_name` = '" + this.db.escape(data['from_name']) + "', `from_email` = '" + this.db.escape(data['from_email']) + "', `to_name` = '" + this.db.escape(data['to_name']) + "', `to_email` = '" + this.db.escape(data['to_email']) + "', `voucher_theme_id` = '" + data['voucher_theme_id'] + "', `message` = '" + this.db.escape(data['message']) + "', `amount` = '" + data['amount'] + "', `status` = '" + data['status'] + "' WHERE `voucher_id` = '" + voucher_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "voucher` SET `code` = " + this.db.escape(data['code']) + ", `from_name` = " + this.db.escape(data['from_name']) + ", `from_email` = " + this.db.escape(data['from_email']) + ", `to_name` = " + this.db.escape(data['to_name']) + ", `to_email` = " + this.db.escape(data['to_email']) + ", `voucher_theme_id` = '" + data['voucher_theme_id'] + "', `message` = " + this.db.escape(data['message']) + ", `amount` = '" + data['amount'] + "', `status` = '" + data['status'] + "' WHERE `voucher_id` = '" + voucher_id + "'");
 	}
 
 	/**
@@ -50,7 +50,7 @@ module.exports = class VoucherSaleModel  extends Model {
 	 * @return array
 	 */
 	async getVoucherByCode(code) {
-		let query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "voucher` WHERE `code` = '" + this.db.escape(code) + "'");
+		let query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "voucher` WHERE `code` = " + this.db.escape(code));
 
 		return query.row;
 	}
@@ -86,13 +86,13 @@ module.exports = class VoucherSaleModel  extends Model {
 		}
 
 		if (data['start'] || data['limit']) {
-                        data['start'] = data['start']||0;
+			data['start'] = data['start'] || 0;
 			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 

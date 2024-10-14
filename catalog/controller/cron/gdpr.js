@@ -15,7 +15,7 @@ class Gdpr extends \Opencart\System\Engine\Controller {
 	 *
 	 * @return void
 	 */
-	public function index(int $cron_id, string $code, string $cycle, string $date_added, string $date_modified): void {
+	public function index($cron_id, string $code, string $cycle, string $date_added, string $date_modified): void {
 		$this->load->model('account/gdpr');
 		$this->load->model('account/customer');
 

@@ -17,7 +17,7 @@ class Subscription extends \Opencart\System\Engine\Controller {
 	 *
 	 * @return void
 	 */
-	public function index(int $cron_id, string $code, string $cycle, string $date_added, string $date_modified): void {
+	public function index($cron_id, string $code, string $cycle, string $date_added, string $date_modified): void {
         $this->load->language('cron/subscription');
 
 		// Check the there is an order and the order status is complete and subscription status is active
