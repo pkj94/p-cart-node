@@ -1,8 +1,11 @@
-module.exports=class ReturnReasonController extends Controller {
+const sprintf = require("locutus/php/strings/sprintf");
+
+module.exports = class ReturnReasonController extends Controller {
 	/**
 	 * @return void
 	 */
 	async index() {
+		const data = {};
 		await this.load.language('localisation/return_reason');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -24,13 +27,13 @@ module.exports=class ReturnReasonController extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('text_home'),
+			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('localisation/return_reason', 'user_token=' + this.session.data['user_token'] + url)
+			'text': this.language.get('heading_title'),
+			'href': this.url.link('localisation/return_reason', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
 		data['add'] = this.url.link('localisation/return_reason.form', 'user_token=' + this.session.data['user_token'] + url);
@@ -60,15 +63,15 @@ module.exports=class ReturnReasonController extends Controller {
 	 * @return string
 	 */
 	async getList() {
+		const data = {};
+		let sort = 'name';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
-		} else {
-			sort = 'name';
 		}
 
-		let order= 'ASC';
+		let order = 'ASC';
 		if ((this.request.get['order'])) {
-			order= this.request.get['order'];
+			order = this.request.get['order'];
 		}
 
 		let page = 1;
@@ -95,27 +98,27 @@ module.exports=class ReturnReasonController extends Controller {
 		data['return_reasons'] = [];
 
 		let filter_data = {
-			'sort'  : sort,
-			'order' : order,
-			'start' : (page - 1) * Number(this.config.get('config_pagination_admin')),
-			'limit' : this.config.get('config_pagination_admin')
-		});
+			'sort': sort,
+			'order': order,
+			'start': (page - 1) * Number(this.config.get('config_pagination_admin')),
+			'limit': this.config.get('config_pagination_admin')
+		};
 
-		this.load.model('localisation/return_reason',this);
+		this.load.model('localisation/return_reason', this);
 
-		return_reason_total await this.model_localisation_return_reason.getTotalReturnReasons();
+		const return_reason_total = await this.model_localisation_return_reason.getTotalReturnReasons();
 
 		const results = await this.model_localisation_return_reason.getReturnReasons(filter_data);
 
 		for (let result of results) {
 			data['return_reasons'].push({
-				'return_reason_id' : result['return_reason_id'],
-				'name'             : result['name'],
-				'edit'             : this.url.link('localisation/return_reason.form', 'user_token=' + this.session.data['user_token'] + '&return_reason_id=' + result['return_reason_id'] + url)
-			];
+				'return_reason_id': result['return_reason_id'],
+				'name': result['name'],
+				'edit': this.url.link('localisation/return_reason.form', 'user_token=' + this.session.data['user_token'] + '&return_reason_id=' + result['return_reason_id'] + url)
+			});
 		}
 
-		let url = '';
+		url = '';
 
 		if (order == 'ASC') {
 			url += '&order=DESC';
@@ -125,7 +128,7 @@ module.exports=class ReturnReasonController extends Controller {
 
 		data['sort_name'] = this.url.link('localisation/return_reason.list', 'user_token=' + this.session.data['user_token'] + '&sort=name' + url);
 
-		let url = '';
+		url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -136,11 +139,11 @@ module.exports=class ReturnReasonController extends Controller {
 		}
 
 		data['pagination'] = await this.load.controller('common/pagination', {
-			'total' : return_reason_total,
-			'page'  : page,
-			'limit' : this.config.get('config_pagination_admin'),
-			'url'   : this.url.link('localisation/return_reason.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
-		]);
+			'total': return_reason_total,
+			'page': page,
+			'limit': this.config.get('config_pagination_admin'),
+			'url': this.url.link('localisation/return_reason.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
+		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (return_reason_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (return_reason_total - this.config.get('config_pagination_admin'))) ? return_reason_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), return_reason_total, Math.ceil(return_reason_total / this.config.get('config_pagination_admin')));
 
@@ -154,6 +157,7 @@ module.exports=class ReturnReasonController extends Controller {
 	 * @return void
 	 */
 	async form() {
+		const data = {};
 		await this.load.language('localisation/return_reason');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -177,13 +181,13 @@ module.exports=class ReturnReasonController extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('text_home'),
+			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('localisation/return_reason', 'user_token=' + this.session.data['user_token'] + url)
+			'text': this.language.get('heading_title'),
+			'href': this.url.link('localisation/return_reason', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
 		data['save'] = this.url.link('localisation/return_reason.save', 'user_token=' + this.session.data['user_token']);
@@ -195,12 +199,12 @@ module.exports=class ReturnReasonController extends Controller {
 			data['return_reason_id'] = 0;
 		}
 
-		this.load.model('localisation/language',this);
+		this.load.model('localisation/language', this);
 
 		data['languages'] = await this.model_localisation_language.getLanguages();
 
 		if ((this.request.get['return_reason_id'])) {
-			this.load.model('localisation/return_reason',this);
+			this.load.model('localisation/return_reason', this);
 
 			data['return_reason'] = await this.model_localisation_return_reason.getDescriptions(this.request.get['return_reason_id']);
 		} else {
@@ -220,21 +224,22 @@ module.exports=class ReturnReasonController extends Controller {
 	async save() {
 		await this.load.language('localisation/return_reason');
 
-		const json = {};
+		const json = { error: {} };
 
 		if (!await this.user.hasPermission('modify', 'localisation/return_reason')) {
 			json['error']['warning'] = this.language.get('error_permission');
 		}
 
-		for (this.request.post['return_reason'] of language_id : value) {
+		for (let [language_id, value] of Object.entries(this.request.post['return_reason'])) {
+			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 			if ((oc_strlen(value['name']) < 3) || (oc_strlen(value['name']) > 128)) {
 				json['error']['name_' + language_id] = this.language.get('error_name');
 			}
 		}
 
-		if (!Object.keys(json).length) {
-			this.load.model('localisation/return_reason',this);
-
+		if (!Object.keys(json.error).length) {
+			this.load.model('localisation/return_reason', this);
+			this.request.post['return_reason_id'] = Number(this.request.post['return_reason_id']);
 			if (!this.request.post['return_reason_id']) {
 				json['return_reason_id'] = await this.model_localisation_return_reason.addReturnReason(this.request.post);
 			} else {
@@ -257,7 +262,7 @@ module.exports=class ReturnReasonController extends Controller {
 		const json = {};
 
 		let selected = [];
-                 if ((this.request.post['selected'])) {
+		if ((this.request.post['selected'])) {
 			selected = this.request.post['selected'];
 		}
 
@@ -265,9 +270,9 @@ module.exports=class ReturnReasonController extends Controller {
 			json['error'] = this.language.get('error_permission');
 		}
 
-		this.load.model('sale/returns',this);
+		this.load.model('sale/returns', this);
 
-		for (selected of return_reason_id) {
+		for (let return_reason_id of selected) {
 			let return_total = await this.model_sale_returns.getTotalReturnsByReturnReasonId(return_reason_id);
 
 			if (return_total) {
@@ -276,9 +281,9 @@ module.exports=class ReturnReasonController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('localisation/return_reason',this);
+			this.load.model('localisation/return_reason', this);
 
-			for (selected of return_reason_id) {
+			for (let return_reason_id of selected) {
 				await this.model_localisation_return_reason.deleteReturnReason(return_reason_id);
 			}
 

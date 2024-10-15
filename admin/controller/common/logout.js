@@ -3,7 +3,7 @@ module.exports = class LogoutController extends Controller {
 	 * @return void
 	 */
 	async index() {
-		this.user.logout();
+		await this.user.logout();
 
 		delete (this.session.data['user_token']);
 

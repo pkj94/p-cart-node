@@ -27,7 +27,7 @@ module.exports = class ApiModel extends Model {
 	 * @return void
 	 */
 	async editApi(api_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "api` SET `username` = " + this.db.escape(data['username']) + ", `key` = '" + this.db.escape(data['key']) + "', `status` = '" + ((data['status']) ? data['status'] : 0) + "', `date_modified` = NOW() WHERE `api_id` = '" + api_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "api` SET `username` = " + this.db.escape(data['username']) + ", `key` = " + this.db.escape(data['key']) + ", `status` = '" + ((data['status']) ? data['status'] : 0) + "', `date_modified` = NOW() WHERE `api_id` = '" + api_id + "'");
 
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "api_ip` WHERE `api_id` = '" + api_id + "'");
 
@@ -155,7 +155,7 @@ module.exports = class ApiModel extends Model {
 			await this.db.query("INSERT INTO `" + DB_PREFIX + "api_ip` SET `api_id` = '" + api_id + "', `ip` = " + this.db.escape(ip));
 		}
 
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "api_session` SET `api_id` = '" + api_id + "', `session_id` = '" + this.db.escape(session_id) + "', `ip` = '" + this.db.escape(ip) + "', `date_added` = NOW(), `date_modified` = NOW()");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "api_session` SET `api_id` = '" + api_id + "', `session_id` = " + this.db.escape(session_id) + ", `ip` = " + this.db.escape(ip) + ", `date_added` = NOW(), `date_modified` = NOW()");
 
 		return this.db.getLastId();
 	}
@@ -186,6 +186,6 @@ module.exports = class ApiModel extends Model {
 	 * @return void
 	 */
 	async deleteSessionBySessionId(session_id) {
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "api_session` WHERE `session_id` = '" + this.db.escape(session_id) + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "api_session` WHERE `session_id` = " + this.db.escape(session_id) );
 	}
 }

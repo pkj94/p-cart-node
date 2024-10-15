@@ -40,7 +40,6 @@ module.exports = class ImageToolModel extends Model {
 				height = image.height;
 				image_type = image.format;
 			}
-			console.log(image_type)
 			if (!['png', 'jpeg', 'gif', 'webp', 'jpg'].includes(image_type)) {
 				return HTTP_CATALOG + 'image/' + image_old;
 			}

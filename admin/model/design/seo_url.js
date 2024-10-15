@@ -54,15 +54,15 @@ module.exports = class SeoUrlDesignModel extends Model {
 		let implode = [];
 
 		if ((data['filter_keyword'])) {
-			implode.push("`keyword` LIKE '" + this.db.escape(data['filter_keyword']) + "'");
+			implode.push("`keyword` LIKE " + this.db.escape(data['filter_keyword']) );
 		}
 
 		if ((data['filter_key'])) {
-			implode.push("`key` = '" + this.db.escape(data['filter_key']) + "'");
+			implode.push("`key` = " + this.db.escape(data['filter_key']));
 		}
 
 		if ((data['filter_value'])) {
-			implode.push("`value` LIKE '" + this.db.escape(data['filter_value']) + "'");
+			implode.push("`value` LIKE " + this.db.escape(data['filter_value']));
 		}
 
 		if ((data['filter_store_id']) && data['filter_store_id'] !== '') {
@@ -128,15 +128,15 @@ module.exports = class SeoUrlDesignModel extends Model {
 		let implode = [];
 
 		if ((data['filter_keyword'])) {
-			implode.push("`keyword` LIKE '" + this.db.escape(data['filter_keyword']) + "'");
+			implode.push("`keyword` LIKE " + this.db.escape(data['filter_keyword']));
 		}
 
 		if ((data['filter_key'])) {
-			implode.push("`key` = '" + this.db.escape(data['filter_key']) + "'");
+			implode.push("`key` = " + this.db.escape(data['filter_key']));
 		}
 
 		if ((data['filter_value'])) {
-			implode.push("`value` LIKE '" + this.db.escape(data['filter_value']) + "'");
+			implode.push("`value` LIKE " + this.db.escape(data['filter_value']) );
 		}
 
 		if ((data['filter_store_id']) && data['filter_store_id'] !== '') {

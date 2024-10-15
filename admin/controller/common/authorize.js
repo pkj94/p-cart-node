@@ -30,7 +30,7 @@ module.exports = class AuthorizeCommontController extends Controller {
 
 		this.load.model('user/user', this);
 
-		const login_info = await this.model_user_user.getAuthorizeByToken(this.user.getId(), token);
+		const login_info = await this.model_user_user.getAuthorizeByToken(await this.user.getId(), token);
 
 		if (!login_info) {
 			// Create a token that can be stored of a cookie and will be used to identify device is safe.
@@ -47,7 +47,7 @@ module.exports = class AuthorizeCommontController extends Controller {
 
 			this.load.model('user/user', this);
 
-			await this.model_user_user.addAuthorize(this.user.getId(), authorize_data);
+			await this.model_user_user.addAuthorize(await this.user.getId(), authorize_data);
 
 			this.response.response.cookie('authorize', token);
 		}
@@ -112,7 +112,7 @@ module.exports = class AuthorizeCommontController extends Controller {
 
 		this.load.model('user/user', this);
 
-		const authorize_info = await this.model_user_user.getAuthorizeByToken(this.user.getId(), token);
+		const authorize_info = await this.model_user_user.getAuthorizeByToken(await this.user.getId(), token);
 
 		if (authorize_info) {
 			if ((authorize_info['attempts'] <= 2) && (!(this.request.post['code']) || !(this.session.data['code']) || (this.request.post['code'] != this.session.data['code']))) {
@@ -155,7 +155,7 @@ module.exports = class AuthorizeCommontController extends Controller {
 		} 
 		this.load.model('user/user', this);
 
-		const authorize_info = await this.model_user_user.getAuthorizeByToken(this.user.getId(), token);
+		const authorize_info = await this.model_user_user.getAuthorizeByToken(await this.user.getId(), token);
 
 		if (authorize_info && authorize_info['status']) {
 			// Redirect if already have a valid token.
@@ -183,7 +183,7 @@ module.exports = class AuthorizeCommontController extends Controller {
 		// Create reset code
 		this.load.model('user/user', this);
 
-		await this.model_user_user.editCode(this.user.getEmail(), oc_token(32));
+		await this.model_user_user.editCode(await this.user.getEmail(), oc_token(32));
 
 		this.response.addHeader('Content-Type: application/json');
 		this.response.setOutput(json);

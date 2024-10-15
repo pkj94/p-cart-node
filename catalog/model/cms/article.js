@@ -171,7 +171,7 @@ class Article extends \Opencart\System\Engine\Model {
 	 * @return int
 	 */
 	public function addComment($article_id, array $data): int {
-		$this->db->query("INSERT INTO `" . DB_PREFIX . "article_comment` SET `article_id` = '" . (int)$article_id . "', `customer_id` = '" . (int)$this->customer->getId() . "', `author` = '" . $this->db->escape((string)$data['author']) . "', `comment` = '" . $this->db->escape((string)$data['comment']) . "', `status` = '" . (bool)!empty($data['status']) . "', `date_added` = NOW()");
+		$this->db->query("INSERT INTO `" . DB_PREFIX . "article_comment` SET `article_id` = '" . (int)$article_id . "', `customer_id` = '" . (int)$this->customer->getId() . "', `author` = '" . $this->db->escape((string)$data['author']) . "', `comment` = '" . $this->db->escape((string)$data['comment']) . "', `status` = '" . !empty($data['status']) . "', `date_added` = NOW()");
 
 		return $this->db->getLastId();
 	}

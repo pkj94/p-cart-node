@@ -34,7 +34,7 @@ class ShippingController extends Controller {
 
 			this.load.model('localisation/country',this);
 
-			data['countries'] = this.model_localisation_country.getCountries();
+			data['countries'] = await this.model_localisation_country.getCountries();
 
 			data['language'] = this.config.get('config_language');
 
@@ -74,7 +74,7 @@ class ShippingController extends Controller {
 
 		this.load.model('localisation/country',this);
 
-		$country_info = this.model_localisation_country.getCountry(this.request.post['country_id']);
+		$country_info = await this.model_localisation_country.getCountry(this.request.post['country_id']);
 
 		if ($country_info && $country_info['postcode_required'] && (oc_strlen(this.request.post['postcode']) < 2 || oc_strlen(this.request.post['postcode']) > 10)) {
 			$json['error']['postcode'] = this.language.get('error_postcode');
@@ -103,7 +103,7 @@ class ShippingController extends Controller {
 
 			this.load.model('localisation/zone',this);
 
-			$zone_info = this.model_localisation_zone.getZone(this.request.post['zone_id']);
+			$zone_info = await this.model_localisation_zone.getZone(this.request.post['zone_id']);
 
 			if ($zone_info) {
 				$zone = $zone_info['name'];
@@ -129,7 +129,7 @@ class ShippingController extends Controller {
 			// Shipping Methods
 			this.load.model('checkout/shipping_method');
 
-			$shipping_methods = this.model_checkout_shipping_method.getMethods(this.session.data['shipping_address']);
+			$shipping_methods = await this.model_checkout_shipping_method.getMethods(this.session.data['shipping_address']);
 
 			if ($shipping_methods) {
 				$json['shipping_methods'] = this.session.data['shipping_methods'] = $shipping_methods;

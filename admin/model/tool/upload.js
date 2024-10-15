@@ -11,7 +11,7 @@ module.exports = class UploadModel extends Model {
 	async addUpload(name, filename) {
 		let code = oc_token(32);
 
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "upload` SET `name` = '" + this.db.escape(name) + "', `filename` = '" + this.db.escape(filename) + "', `code` = '" + this.db.escape(code) + "', `date_added` = NOW()");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "upload` SET `name` = " + this.db.escape(name) + ", `filename` = " + this.db.escape(filename) + ", `code` = " + this.db.escape(code) + ", `date_added` = NOW()");
 
 		return code;
 	}
@@ -42,7 +42,7 @@ module.exports = class UploadModel extends Model {
 	 * @return array
 	 */
 	async getUploadByCode(code) {
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "upload` WHERE `code` = '" + this.db.escape(code) + "'");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "upload` WHERE `code` = " + this.db.escape(code));
 
 		return query.row;
 	}

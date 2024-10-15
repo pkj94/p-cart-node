@@ -102,7 +102,6 @@ module.exports = class MarketplaceMarketplaceController extends Controller {
 		string += time + "\n";
 
 		let signature = hash_hmac('sha1', string, this.config.get('opencart_secret')).toString('base64');
-		console.log(signature);
 		url = '&username=' + encodeURIComponent(this.config.get('opencart_username') || '');
 		url += '&domain=' + this.request.server.headers.host;
 		url += '&version=' + VERSION;
@@ -140,7 +139,6 @@ module.exports = class MarketplaceMarketplaceController extends Controller {
 		if ((this.request.get['page'])) {
 			url += '&page=' + this.request.get['page'];
 		}
-		console.log(OPENCART_SERVER + 'index.php?route=api/marketplace' + url);
 		let curl = await axios.get(OPENCART_SERVER + 'index.php?route=api/marketplace' + url);
 
 		let response = curl.data;

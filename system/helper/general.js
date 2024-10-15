@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const htmlEntity = require('html-entities');
 // Import required libraries
 const crypto = require('crypto');
+const fs = require('fs');
 // String
 global.oc_strlen = (string) => {
     return string.length;
@@ -63,7 +64,7 @@ global.trim = (string) => {
 global.preg_match = (patern, keyword) => {
     return new RegExp(patern).test(keyword);
 }
-global.str_replace = (find, replace, string) => {
+global.str_replace = (find, replace, string='') => {
     if (Array.isArray(find)) {
         for (let f of find)
             string = string.replace(f, replace || '');
@@ -172,4 +173,21 @@ global.isEmailValid = (email) => {
 }
 global.time = () => {
     return Math.floor(Date.now() / 1000);
+}
+global.createStream = (file, position) => {
+    return new Promise((resolve, reject) => {
+        const handle = fs.createReadStream(file, { start: position });
+        let chunk = ''
+        handle.on('data', (chunk) => {
+            chunk = chunk.toString();
+            handle.close();
+        });
+
+        handle.on('end', () => {
+            resolve(chunk)
+        });
+        handle.on('error', (err) => {
+            reject(err);
+        });
+    })
 }

@@ -1,25 +1,18 @@
-<?php
-namespace Opencart\Admin\Model\Tool;
-/**
- * Class Backup
- *
- * @package Opencart\Admin\Model\Tool
- */
-class BackupModel  extends Model {
-	constructor(registry){
+module.exports = class BackupModel extends Model {
+	constructor(registry) {
 		super(registry)
 	}
 	/**
 	 * @return array
 	 */
 	async getTables() {
-		table_data = [];
+		let table_data = [];
 
 		let query = await this.db.query("SHOW TABLES FROM `" + DB_DATABASE + "`");
 
 		for (let result of query.rows) {
-			if ((result['Tables_in_' + DB_DATABASE]) && substr(result['Tables_in_' + DB_DATABASE], 0, strlen(DB_PREFIX)) == DB_PREFIX) {
-				table_data[] = result['Tables_in_' + DB_DATABASE];
+			if ((result['Tables_in_' + DB_DATABASE]) && result['Tables_in_' + DB_DATABASE].substring(0, DB_PREFIX.length) == DB_PREFIX) {
+				table_data.push(result['Tables_in_' + DB_DATABASE]);
 			}
 		}
 

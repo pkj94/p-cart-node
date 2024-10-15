@@ -5,7 +5,7 @@ module.exports = class ForgottenController extends Controller {
 	async index() {
 		await this.load.language('common/forgotten');
 
-		if (this.user.isLogged() || !this.config.get('config_mail_engine')) {
+		if (await this.user.isLogged() || !this.config.get('config_mail_engine')) {
 			this.response.setRedirect(this.url.link('common/login', '', true));
 		}
 
@@ -41,7 +41,7 @@ module.exports = class ForgottenController extends Controller {
 		const json = {};
 
 		// Stop any undefined index messages.
-		if (this.user.isLogged() || !this.config.get('config_mail_engine')) {
+		if (await this.user.isLogged() || !this.config.get('config_mail_engine')) {
 			json['redirect'] = this.url.link('common/login', '', true);
 		}
 
@@ -91,7 +91,7 @@ module.exports = class ForgottenController extends Controller {
 			code = '';
 		}
 
-		if (this.user.isLogged() || !this.config.get('config_mail_engine')) {
+		if (await this.user.isLogged() || !this.config.get('config_mail_engine')) {
 			this.response.setRedirect(this.url.link('common/login', '', true));
 		}
 

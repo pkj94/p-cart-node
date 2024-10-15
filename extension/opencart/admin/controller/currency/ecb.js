@@ -55,39 +55,34 @@ module.exports = class ECBCurrencyController extends Controller {
     this.response.setOutput(JSON.stringify(json));
   }
 
-  async currency(default_ = '') {
+  async currencyConvert(default_ = '') {
     if (this.config.get('currency_ecb_status')) {
       try {
-        const response = await fetch('https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml', {
-          method: 'GET',
+        const response = await axios.get('https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml', {
           timeout: 30000
         });
-
         if (response.status === 200) {
-          const xmlText = await response.text();
-          const parser = new DOMParser();
-          const dom = parser.parseFromString(xmlText, 'text/xml');
-
-          const cube = dom.getElementsByTagName('Cube')[0];
+          const xmlText = JSON.parse(xmlParser.toJson(response.data));
+          // console.log('xmlText----', xmlText['gesmes:Envelope'])
+          const cube = xmlText['gesmes:Envelope']['Cube']['Cube']['Cube'];
 
           const currencies = {
             EUR: 1.0000
           };
 
-          for (const currency of cube.getElementsByTagName('Cube')) {
-            if (currency.getAttribute('currency')) {
-              currencies[currency.getAttribute('currency')] = parseFloat(currency.getAttribute('rate'));
+          for (const currency of cube) {
+            if (currency.currency) {
+              currencies[currency.currency] = parseFloat(currency.rate);
             }
           }
 
           const value = currencies[default_] || currencies.EUR;
 
           if (Object.keys(currencies).length) {
-            this.load.model('localisation/currency',this);
+            this.load.model('localisation/currency', this);
+            const results = await this.model_localisation_currency.getCurrencies();
 
-            const results = this.model_localisation_currency.getCurrencies();
-
-            for (const result of results) {
+            for (const [code, result] of Object.entries(results)) {
               if (currencies[result.code]) {
                 await this.model_localisation_currency.editValueByCode(result.code, 1 / (value * (value / currencies[result.code])));
               }
@@ -97,10 +92,11 @@ module.exports = class ECBCurrencyController extends Controller {
           }
         }
       } catch (error) {
+        console.log(error)
         console.error('Error fetching currency data:', error);
       }
     }
 
-    this.cache.delete('currency');
+    await this.cache.delete('currency');
   }
 }

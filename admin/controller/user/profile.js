@@ -1,8 +1,10 @@
-module.exports=class ProfileController extends Controller {
+const fs = require('fs');
+module.exports = class ProfileController extends Controller {
 	/**
 	 * @return void
 	 */
 	async index() {
+		const data = {};
 		await this.load.language('user/profile');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -10,21 +12,21 @@ module.exports=class ProfileController extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('text_home'),
+			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('user/profile', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('heading_title'),
+			'href': this.url.link('user/profile', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['save'] = this.url.link('user/profile.save', 'user_token=' + this.session.data['user_token']);
 		data['back'] = this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token']);
 
-		this.load.model('user/user',this);
+		this.load.model('user/user', this);
 
-		const user_info = await this.model_user_user.getUser(this.user.getId());
+		const user_info = await this.model_user_user.getUser(await this.user.getId());
 
 		if ((user_info)) {
 			data['username'] = user_info['username'];
@@ -56,11 +58,11 @@ module.exports=class ProfileController extends Controller {
 			data['image'] = '';
 		}
 
-		this.load.model('tool/image',this);
+		this.load.model('tool/image', this);
 
 		data['placeholder'] = await this.model_tool_image.resize('no_image.png', 100, 100);
 
-		if (is_file(DIR_IMAGE + html_entity_decode(data['image']))) {
+		if (data['image'] && fs.existsSync(DIR_IMAGE + html_entity_decode(data['image']))) {
 			data['thumb'] = await this.model_tool_image.resize(html_entity_decode(data['image']), 100, 100);
 		} else {
 			data['thumb'] = data['placeholder'];
@@ -79,7 +81,7 @@ module.exports=class ProfileController extends Controller {
 	async save() {
 		await this.load.language('user/profile');
 
-		const json = {};
+		const json = { error: {} };
 
 		if (!await this.user.hasPermission('modify', 'user/profile')) {
 			json['error']['warning'] = this.language.get('error_permission');
@@ -89,11 +91,11 @@ module.exports=class ProfileController extends Controller {
 			json['error']['username'] = this.language.get('error_username');
 		}
 
-		this.load.model('user/user',this);
+		this.load.model('user/user', this);
 
-		const user_info = await this.model_user_user.getUserByUsername(this.request.post['username']);
+		let user_info = await this.model_user_user.getUserByUsername(this.request.post['username']);
 
-		if (user_info && (this.user.getId() != user_info['user_id'])) {
+		if (user_info.user_id && (await this.user.getId() != user_info['user_id'])) {
 			json['error']['warning'] = this.language.get('error_username_exists');
 		}
 
@@ -105,13 +107,13 @@ module.exports=class ProfileController extends Controller {
 			json['error']['lastname'] = this.language.get('error_lastname');
 		}
 
-		if ((oc_strlen(this.request.post['email']) > 96) || !filter_var(this.request.post['email'], FILTER_VALIDATE_EMAIL)) {
+		if ((oc_strlen(this.request.post['email']) > 96) || !isEmailValid(this.request.post['email'])) {
 			json['error']['email'] = this.language.get('error_email');
 		}
 
-		const user_info = await this.model_user_user.getUserByEmail(this.request.post['email']);
+		user_info = await this.model_user_user.getUserByEmail(this.request.post['email']);
 
-		if (user_info && (this.user.getId() != user_info['user_id'])) {
+		if (user_info.user_id && (await this.user.getId() != user_info['user_id'])) {
 			json['error']['warning'] = this.language.get('error_email_exists');
 		}
 
@@ -125,13 +127,14 @@ module.exports=class ProfileController extends Controller {
 			}
 		}
 
-		if (!Object.keys(json).length) {
-			user_data = array_merge(this.request.post, [
-				'user_group_id' : this.user.getGroupId(),
-				'status'        : 1,
-			]);
-
-			await this.model_user_user.editUser(this.user.getId(), user_data);
+		if (!Object.keys(json.error).length) {
+			let user_data = {
+				...this.request.post, ...{
+					'user_group_id': await this.user.getGroupId(),
+					'status': 1,
+				}
+			};
+			await this.model_user_user.editUser(await this.user.getId(), user_data);
 
 			json['success'] = this.language.get('text_success');
 		}

@@ -1,15 +1,12 @@
-<?php
-namespace Opencart\Admin\Controller\Tool;
-/**
- * 
- *
- * @package Opencart\Admin\Controller\Tool
- */
-class UploadController extends Controller {
+const sprintf = require("locutus/php/strings/sprintf");
+const fs = require('fs');
+const expressPath = require('path');
+module.exports = class UploadController extends Controller {
 	/**
 	 * @return void
 	 */
 	async index() {
+		const data = {};
 		await this.load.language('tool/upload');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -31,13 +28,13 @@ class UploadController extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('text_home'),
+			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('tool/upload', 'user_token=' + this.session.data['user_token'] + url)
+			'text': this.language.get('heading_title'),
+			'href': this.url.link('tool/upload', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
 		data['add'] = this.url.link('tool/upload.form', 'user_token=' + this.session.data['user_token'] + url);
@@ -67,31 +64,28 @@ class UploadController extends Controller {
 	 * @return string
 	 */
 	async getList() {
+		const data = {};
 		let filter_name = '';
-if ((this.request.get['filter_name'])) {
+		if ((this.request.get['filter_name'])) {
 			filter_name = this.request.get['filter_name'];
 		}
 
 		let filter_date_from = '';
-if ((this.request.get['filter_date_from'])) {
+		if ((this.request.get['filter_date_from'])) {
 			filter_date_from = this.request.get['filter_date_from'];
 		}
 
 		let filter_date_to = '';
-if ((this.request.get['filter_date_to'])) {
-			filter_date_to= this.request.get['filter_date_to'];
+		if ((this.request.get['filter_date_to'])) {
+			filter_date_to = this.request.get['filter_date_to'];
 		}
-
+		let sort = 'date_added';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
-		} else {
-			sort = 'date_added';
 		}
-
+		let order = 'DESC';
 		if ((this.request.get['order'])) {
 			order = this.request.get['order'];
-		} else {
-			order = 'DESC';
 		}
 
 		let page = 1;
@@ -130,32 +124,32 @@ if ((this.request.get['filter_date_to'])) {
 		data['uploads'] = [];
 
 		let filter_data = {
-			'filter_name'      : filter_name,
-			'filter_date_from' : filter_date_from,
-			'filter_date_to'   : filter_date_to,
-			'sort'             : sort,
-			'order'            : order,
-			'start'            : (page - 1) * Number(this.config.get('config_pagination_admin')),
-			'limit'            : this.config.get('config_pagination_admin')
-		});
+			'filter_name': filter_name,
+			'filter_date_from': filter_date_from,
+			'filter_date_to': filter_date_to,
+			'sort': sort,
+			'order': order,
+			'start': (page - 1) * Number(this.config.get('config_pagination_admin')),
+			'limit': this.config.get('config_pagination_admin')
+		};
 
-		this.load.model('tool/upload',this);
+		this.load.model('tool/upload', this);
 
-		upload_total await this.model_tool_upload.getTotalUploads(filter_data);
+		const upload_total = await this.model_tool_upload.getTotalUploads(filter_data);
 
 		const results = await this.model_tool_upload.getUploads(filter_data);
 
 		for (let result of results) {
 			data['uploads'].push({
-				'upload_id'  : result['upload_id'],
-				'name'       : result['name'],
-				'code'       : result['code'],
-				'date_added' : date(this.language.get('date_format_short'), new Date(result['date_added'])),
-				'download'   : this.url.link('tool/upload.download', 'user_token=' + this.session.data['user_token'] + '&code=' + result['code'] + url)
-			];
+				'upload_id': result['upload_id'],
+				'name': result['name'],
+				'code': result['code'],
+				'date_added': date(this.language.get('date_format_short'), new Date(result['date_added'])),
+				'download': this.url.link('tool/upload.download', 'user_token=' + this.session.data['user_token'] + '&code=' + result['code'] + url)
+			});
 		}
 
-		let url = '';
+		url = '';
 
 		if ((this.request.get['filter_name'])) {
 			url += '&filter_name=' + encodeURIComponent(html_entity_decode(this.request.get['filter_name']));
@@ -183,7 +177,7 @@ if ((this.request.get['filter_date_to'])) {
 		data['sort_code'] = this.url.link('tool/upload.list', 'user_token=' + this.session.data['user_token'] + '&sort=code' + url);
 		data['sort_date_added'] = this.url.link('tool/upload.list', 'user_token=' + this.session.data['user_token'] + '&sort=date_added' + url);
 
-		let url = '';
+		url = '';
 
 		if ((this.request.get['filter_name'])) {
 			url += '&filter_name=' + encodeURIComponent(html_entity_decode(this.request.get['filter_name']));
@@ -206,11 +200,11 @@ if ((this.request.get['filter_date_to'])) {
 		}
 
 		data['pagination'] = await this.load.controller('common/pagination', {
-			'total' : upload_total,
-			'page'  : page,
-			'limit' : this.config.get('config_pagination_admin'),
-			'url'   : this.url.link('tool/upload.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
-		]);
+			'total': upload_total,
+			'page': page,
+			'limit': this.config.get('config_pagination_admin'),
+			'url': this.url.link('tool/upload.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
+		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (upload_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (upload_total - this.config.get('config_pagination_admin'))) ? upload_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), upload_total, Math.ceil(upload_total / this.config.get('config_pagination_admin')));
 
@@ -233,7 +227,7 @@ if ((this.request.get['filter_date_to'])) {
 		const json = {};
 
 		let selected = [];
-                 if ((this.request.post['selected'])) {
+		if ((this.request.post['selected'])) {
 			selected = this.request.post['selected'];
 		}
 
@@ -242,13 +236,13 @@ if ((this.request.get['filter_date_to'])) {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('tool/upload',this);
+			this.load.model('tool/upload', this);
 
-			for (selected of upload_id) {
+			for (let upload_id of selected) {
 				// Remove file before deleting DB record.
 				const upload_info = await this.model_tool_upload.getUpload(upload_id);
 
-				if (upload_info && is_file(DIR_UPLOAD + upload_info['filename'])) {
+				if (upload_info.upload_id && fs.existsSync(DIR_UPLOAD + upload_info['filename'])) {
 					fs.unlinkSync(DIR_UPLOAD + upload_info['filename']);
 				}
 
@@ -267,40 +261,32 @@ if ((this.request.get['filter_date_to'])) {
 	 */
 	async download() {
 		await this.load.language('tool/upload');
-
+		let code = '';
 		if ((this.request.get['code'])) {
 			code = this.request.get['code'];
-		} else {
-			code = '';
 		}
 
-		this.load.model('tool/upload',this);
+		this.load.model('tool/upload', this);
 
 		const upload_info = await this.model_tool_upload.getUploadByCode(code);
 
-		if (upload_info) {
-			file = DIR_UPLOAD + upload_info['filename'];
-			mask = basename(upload_info['name']);
+		if (upload_info.upload_id) {
+			let file = DIR_UPLOAD + upload_info['filename'];
+			let mask = expressPath.basename(upload_info['name']);
 
-			if (!headers_sent()) {
-				if (fs.lstatSync(file).isFile()) {
-					header('Content-Type: application/octet-stream');
-					header('Content-Description: File Transfer');
-					header('Content-Disposition: attachment; filename="' + (mask ? mask : basename(file)) + '"');
-					header('Content-Transfer-Encoding: binary');
-					header('Expires: 0');
-					header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-					header('Pragma: public');
-					header('Content-Length: ' + filesize(file));
-
-					readfile(file, 'rb');
-					exit;
-				} else {
-					exit(sprintf(this.language.get('error_not_found'), basename(file)));
-				}
+			// if (!headers_sent()) {
+			if (fs.lstatSync(file).isFile()) {
+				this.response.headers = [];
+				this.response.addHeader('Content-Disposition: attachment; filename=' + (mask ? mask : expressPath.basename(file)));
+				this.response.addHeader('Content-Transfer-Encoding :binary');
+				this.response.addHeader('Content-Type :application/octet-stream');
+				this.response.setFile(file)
 			} else {
-				exit(this.language.get('error_headers_sent'));
+				exit(sprintf(this.language.get('error_not_found'), basename(file)));
 			}
+			// } else {
+			// 	exit(this.language.get('error_headers_sent'));
+			// }
 		} else {
 			await this.load.language('error/not_found');
 
@@ -309,14 +295,14 @@ if ((this.request.get['filter_date_to'])) {
 			data['breadcrumbs'] = [];
 
 			data['breadcrumbs'].push({
-				'text' : this.language.get('text_home'),
-				'href' : this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
-			];
+				'text': this.language.get('text_home'),
+				'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			});
 
 			data['breadcrumbs'].push({
-				'text' : this.language.get('heading_title'),
-				'href' : this.url.link('error/not_found', 'user_token=' + this.session.data['user_token'])
-			];
+				'text': this.language.get('heading_title'),
+				'href': this.url.link('error/not_found', 'user_token=' + this.session.data['user_token'])
+			});
 
 			data['header'] = await this.load.controller('common/header');
 			data['column_left'] = await this.load.controller('common/column_left');
@@ -339,13 +325,13 @@ if ((this.request.get['filter_date_to'])) {
 			json['error'] = this.language.get('error_permission');
 		}
 
-		if (!(this.request.files['file']['name']) || !is_file(this.request.files['file']['tmp_name'])) {
+		if (!(this.request.files['file']['name'])) {
 			json['error'] = this.language.get('error_upload');
 		}
 
 		if (!Object.keys(json).length) {
 			// Sanitize the filename
-			filename = basename(html_entity_decode(this.request.files['file']['name']));
+			let filename = expressPath.basename(html_entity_decode(this.request.files['file']['name']));
 
 			// Validate the filename length
 			if ((oc_strlen(filename) < 3) || (oc_strlen(filename) > 128)) {
@@ -353,52 +339,50 @@ if ((this.request.get['filter_date_to'])) {
 			}
 
 			// Allowed file extension types
-			allowed = [];
+			let allowed = [];
 
-			extension_allowed = preg_replace('~\r?\n~', "\n", this.config.get('config_file_ext_allowed'));
+			let extension_allowed = this.config.get('config_file_ext_allowed').replace(/\r?\n/g, '\n');
 
-			filetypes = explode("\n", extension_allowed);
+			let filetypes = extension_allowed.split("\n");
 
-			for (filetypes of filetype) {
-				allowed[] = trim(filetype);
+			for (let filetype of filetypes) {
+				allowed.push(filetype.trim());
 			}
 
-			if (!in_array(strtolower(substr(strrchr(filename, '.'), 1)), allowed)) {
+			if (!allowed.includes(filename.split('.').pop().toLowerCase())) {
 				json['error'] = this.language.get('error_file_type');
 			}
 
 			// Allowed file mime types
 			allowed = [];
 
-			mime_allowed = preg_replace('~\r?\n~', "\n", this.config.get('config_file_mime_allowed'));
+			let mime_allowed = this.config.get('config_file_mime_allowed').replace(/\r?\n/g, '\n');
 
-			filetypes = explode("\n", mime_allowed);
+			filetypes = mime_allowed.split("\n");
 
-			for (filetypes of filetype) {
-				allowed[] = trim(filetype);
+			for (let filetype of filetypes) {
+				allowed.push(filetype.trim());
 			}
 
-			if (!in_array(this.request.files['file']['type'], allowed)) {
+			if (!allowed.includes(this.request.files['file']['mimetype'])) {
 				json['error'] = this.language.get('error_file_type');
-			}
-
-			// Return any upload error
-			if (this.request.files['file']['error'] != UPLOAD_ERR_OK) {
-				json['error'] = this.language.get('error_upload_' + this.request.files['file']['error']);
 			}
 		}
 
 		if (!Object.keys(json).length) {
-			file = filename + '.' + oc_token(32);
+			let file = filename + '.' + oc_token(32);
+			try {
+				await uploadFile(this.request.files['file'], DIR_UPLOAD + file);
+				// Hide the uploaded file name so people cannot link to it directly.
+				this.load.model('tool/upload', this);
 
-			move_uploaded_file(this.request.files['file']['tmp_name'], DIR_UPLOAD + file);
+				json['code'] = await this.model_tool_upload.addUpload(filename, file);
 
-			// Hide the uploaded file name so people cannot link to it directly.
-			this.load.model('tool/upload',this);
+				json['success'] = this.language.get('text_success');
+			} catch (e) {
+				json['error'] = this.language.get('error_upload_' + this.request.files['file']['error']);
+			}
 
-			json['code'] = await this.model_tool_upload.addUpload(filename, file);
-
-			json['success'] = this.language.get('text_success');
 		}
 
 		this.response.addHeader('Content-Type: application/json');

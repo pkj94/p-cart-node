@@ -8,7 +8,7 @@ module.exports = class TranslationDesignModel extends Model {
 	 * @return void
 	 */
 	async addTranslation(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "translation` SET `store_id` = '" + data['store_id'] + "', `language_id` = '" + data['language_id'] + "', `route` = '" + this.db.escape(data['route']) + "', `key` = " + this.db.escape(data['key']) + ", `value` = " + this.db.escape(data['value']) + ", `date_added` = NOW()");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "translation` SET `store_id` = '" + data['store_id'] + "', `language_id` = '" + data['language_id'] + "', `route` = " + this.db.escape(data['route']) + ", `key` = " + this.db.escape(data['key']) + ", `value` = " + this.db.escape(data['value']) + ", `date_added` = NOW()");
 	}
 
 	/**
@@ -18,7 +18,7 @@ module.exports = class TranslationDesignModel extends Model {
 	 * @return void
 	 */
 	async editTranslation(translation_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "translation` SET `store_id` = '" + data['store_id'] + "', `language_id` = '" + data['language_id'] + "', `route` = '" + this.db.escape(data['route']) + "', `key` = " + this.db.escape(data['key']) + ", `value` = " + this.db.escape(data['value']) + " WHERE `translation_id` = '" + translation_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "translation` SET `store_id` = '" + data['store_id'] + "', `language_id` = '" + data['language_id'] + "', `route` = " + this.db.escape(data['route']) + ", `key` = " + this.db.escape(data['key']) + ", `value` = " + this.db.escape(data['value']) + " WHERE `translation_id` = '" + translation_id + "'");
 	}
 
 	/**

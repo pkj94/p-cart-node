@@ -132,9 +132,9 @@ module.exports = class CustomerActivityReportController extends Controller {
 
 		this.load.model('extension/opencart/report/customer', this);
 
-		const activity_total = this.model_extension_opencart_report_customer.getTotalCustomerActivities(filter_data);
+		const activity_total = await this.model_extension_opencart_report_customer.getTotalCustomerActivities(filter_data);
 
-		const results = this.model_extension_opencart_report_customer.getCustomerActivities(filter_data);
+		const results = await this.model_extension_opencart_report_customer.getCustomerActivities(filter_data);
 
 		for (let result of results) {
 			const comment = vsprintf(this.language.get('text_activity_' + result['key']), result['data']);

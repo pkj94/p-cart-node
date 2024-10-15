@@ -111,13 +111,13 @@ module.exports = class ReturnsSaleModel extends Model {
 		}
 
 		if (data['start'] || data['limit']) {
-                        data['start'] = data['start']||0;
+			data['start'] = data['start'] || 0;
 			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
@@ -144,23 +144,23 @@ if (data['limit'] < 1) {
 		}
 
 		if ((data['filter_customer'])) {
-			implode.push("CONCAT(r.`firstname`, ' ', r.`lastname`) LIKE " + this.db.escape(data['filter_customer'] + '%') );
+			implode.push("CONCAT(r.`firstname`, ' ', r.`lastname`) LIKE " + this.db.escape(data['filter_customer'] + '%'));
 		}
 
 		if ((data['filter_order_id'])) {
-			implode.push("r.`order_id` = " + this.db.escape(data['filter_order_id']) );
+			implode.push("r.`order_id` = " + this.db.escape(data['filter_order_id']));
 		}
 
 		if ((data['filter_product'])) {
-			implode.push("r.`product` = " + this.db.escape(data['filter_product']) );
+			implode.push("r.`product` = " + this.db.escape(data['filter_product']));
 		}
 
 		if ((data['filter_model'])) {
-			implode.push("r.`model` = " + this.db.escape(data['filter_model']) );
+			implode.push("r.`model` = " + this.db.escape(data['filter_model']));
 		}
 
 		if ((data['filter_return_status_id'])) {
-			implode.push("r.`return_status_id` = '" + data['filter_return_status_id'] );
+			implode.push("r.`return_status_id` = '" + data['filter_return_status_id'] + "'");
 		}
 
 		if ((data['filter_date_from'])) {
@@ -223,7 +223,7 @@ if (data['limit'] < 1) {
 	 */
 	async addHistory(return_id, return_status_id, comment, notify) {
 		await this.db.query("UPDATE `" + DB_PREFIX + "return` SET `return_status_id` = '" + return_status_id + "', `date_modified` = NOW() WHERE `return_id` = '" + return_id + "'");
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "return_history` SET `return_id` = '" + return_id + "', `return_status_id` = '" + return_status_id + "', `notify` = '" + notify + "', `comment` = '" + this.db.escape(strip_tags(comment)) + "', `date_added` = NOW()");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "return_history` SET `return_id` = '" + return_id + "', `return_status_id` = '" + return_status_id + "', `notify` = '" + notify + "', `comment` = " + this.db.escape(strip_tags(comment)) + ", `date_added` = NOW()");
 	}
 
 	/**

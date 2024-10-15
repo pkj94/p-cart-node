@@ -39,7 +39,7 @@ module.exports = class BasicThemeController extends Controller {
 		if (this.request.get['store_id']) {
 			this.load.model('setting/setting', this);
 
-			setting_info = this.model_setting_setting.getSetting('theme_basic', this.request.get['store_id']);
+			setting_info = await this.model_setting_setting.getSetting('theme_basic', this.request.get['store_id']);
 		}
 
 		if ((setting_info['theme_basic_status'])) {

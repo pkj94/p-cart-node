@@ -26,8 +26,8 @@ module.exports = class CustomerSubscriptionReportModel extends Model {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
@@ -45,7 +45,7 @@ if (data['limit'] < 1) {
 	 * @return int
 	 */
 	async getTotalTransactions(data = {}) {
-		sql = "SELECT COUNT(DISTINCT `s`.`customer_id`) AS `total` FROM `" + DB_PREFIX + "subscription_transaction` st LEFT JOIN `" + DB_PREFIX + "subscription` s ON (st.`subscription_id` = `s`.`subscription_id`) LEFT JOIN `" + DB_PREFIX + "customer` c ON (`s`.`customer_id` = c.`customer_id`)";
+		let sql = "SELECT COUNT(DISTINCT `s`.`customer_id`) AS `total` FROM `" + DB_PREFIX + "subscription_transaction` st LEFT JOIN `" + DB_PREFIX + "subscription` s ON (st.`subscription_id` = `s`.`subscription_id`) LEFT JOIN `" + DB_PREFIX + "customer` c ON (`s`.`customer_id` = c.`customer_id`)";
 
 		const implode = [];
 

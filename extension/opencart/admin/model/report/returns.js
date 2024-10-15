@@ -20,11 +20,9 @@ module.exports = class ReturnsReportModel extends Model {
 		if (data['filter_date_end']) {
 			sql += " AND DATE(r.`date_added`) <= DATE(" + this.db.escape(data['filter_date_end']) + ")";
 		}
-
+		let group = 'week';
 		if ((data['filter_group'])) {
 			group = data['filter_group'];
-		} else {
-			group = 'week';
 		}
 
 		switch (group) {
@@ -48,8 +46,8 @@ module.exports = class ReturnsReportModel extends Model {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
@@ -71,6 +69,7 @@ if (data['limit'] < 1) {
 		if (data['filter_group']) {
 			group = data['filter_group'];
 		}
+		let sql = '';
 		switch (group) {
 			case 'day':
 				sql = "SELECT COUNT(DISTINCT YEAR(`date_added`), MONTH(`date_added`), DAY(`date_added`)) AS `total` FROM `" + DB_PREFIX + "return`";

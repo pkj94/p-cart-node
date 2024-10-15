@@ -1,8 +1,11 @@
+const sprintf = require("locutus/php/strings/sprintf");
+
 module.exports = class ApiController extends Controller {
 	/**
 	 * @return void
 	 */
 	async index() {
+		const data = {};
 		await this.load.language('user/api');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -60,10 +63,10 @@ module.exports = class ApiController extends Controller {
 	 * @return string
 	 */
 	async getList() {
+		const data = {};
+		let sort = 'username';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
-		} else {
-			sort = 'username';
 		}
 
 		let order = 'ASC';
@@ -99,11 +102,11 @@ module.exports = class ApiController extends Controller {
 			'order': order,
 			'start': (page - 1) * Number(this.config.get('config_pagination_admin')),
 			'limit': this.config.get('config_pagination_admin')
-		});
+		};
 
-		this.load.model('user/api',this);
+		this.load.model('user/api', this);
 
-		user_total await this.model_user_api.getTotalApis();
+		const user_total = await this.model_user_api.getTotalApis();
 
 		const results = await this.model_user_api.getApis(filter_data);
 
@@ -115,10 +118,10 @@ module.exports = class ApiController extends Controller {
 				'date_added': date(this.language.get('date_format_short'), new Date(result['date_added'])),
 				'date_modified': date(this.language.get('date_format_short'), new Date(result['date_modified'])),
 				'edit': this.url.link('user/api.form', 'user_token=' + this.session.data['user_token'] + '&api_id=' + result['api_id'] + url)
-			];
+			});
 		}
 
-		let url = '';
+		url = '';
 
 		if (order == 'ASC') {
 			url += '&order=DESC';
@@ -131,7 +134,7 @@ module.exports = class ApiController extends Controller {
 		data['sort_date_added'] = this.url.link('user/api.list', 'user_token=' + this.session.data['user_token'] + '&sort=date_added' + url);
 		data['sort_date_modified'] = this.url.link('user/api.list', 'user_token=' + this.session.data['user_token'] + '&sort=date_modified' + url);
 
-		let url = '';
+		url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -146,7 +149,7 @@ module.exports = class ApiController extends Controller {
 			'page': page,
 			'limit': this.config.get('config_pagination_admin'),
 			'url': this.url.link('user/api.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
-		]);
+		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (user_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (user_total - this.config.get('config_pagination_admin'))) ? user_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), user_total, Math.ceil(user_total / this.config.get('config_pagination_admin')));
 
@@ -160,6 +163,7 @@ module.exports = class ApiController extends Controller {
 	 * @return void
 	 */
 	async form() {
+		const data = {};
 		await this.load.language('user/api');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -204,11 +208,11 @@ module.exports = class ApiController extends Controller {
 
 		data['save'] = this.url.link('user/api.save', 'user_token=' + this.session.data['user_token']);
 		data['back'] = this.url.link('user/api', 'user_token=' + this.session.data['user_token'] + url);
-
+		let api_info;
 		if ((this.request.get['api_id'])) {
-			this.load.model('user/api',this);
+			this.load.model('user/api', this);
 
-			api_info await this.model_user_api.getApi(this.request.get['api_id']);
+			api_info = await this.model_user_api.getApi(this.request.get['api_id']);
 		}
 
 		if ((this.request.get['api_id'])) {
@@ -255,7 +259,7 @@ module.exports = class ApiController extends Controller {
 					'ip': result['ip'],
 					'date_added': date(this.language.get('datetime_format'), new Date(result['date_added'])),
 					'date_modified': date(this.language.get('datetime_format'), new Date(result['date_modified']))
-				];
+				});
 			}
 		}
 
@@ -274,7 +278,7 @@ module.exports = class ApiController extends Controller {
 	async save() {
 		await this.load.language('user/api');
 
-		const json = {};
+		const json = { error: {} };
 
 		if (!await this.user.hasPermission('modify', 'user/api')) {
 			json['error']['warning'] = this.language.get('error_permission');
@@ -292,9 +296,9 @@ module.exports = class ApiController extends Controller {
 			json['error']['warning'] = this.language.get('error_ip');
 		}
 
-		if (!Object.keys(json).length) {
-			this.load.model('user/api',this);
-
+		if (!Object.keys(json.error).length) {
+			this.load.model('user/api', this);
+			this.request.post['api_id'] = Number(this.request.post['api_id']);
 			if (!this.request.post['api_id']) {
 				json['api_id'] = await this.model_user_api.addApi(this.request.post);
 			} else {
@@ -326,9 +330,9 @@ module.exports = class ApiController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('user/api',this);
+			this.load.model('user/api', this);
 
-			for (selected of api_id) {
+			for (let api_id of selected) {
 				await this.model_user_api.deleteApi(api_id);
 			}
 
@@ -352,7 +356,7 @@ module.exports = class ApiController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('user/api',this);
+			this.load.model('user/api', this);
 
 			await this.model_user_api.deleteSession(this.request.get['api_session_id']);
 

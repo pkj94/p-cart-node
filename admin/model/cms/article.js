@@ -1,12 +1,5 @@
-<?php
-namespace Opencart\Admin\Model\Cms;
-/**
- * Class Article
- *
- * @package Opencart\Admin\Model\Cms
- */
-class ArticleModel  extends Model {
-	constructor(registry){
+module.exports = class ArticleModel extends Model {
+	constructor(registry) {
 		super(registry)
 	}
 	/**
@@ -15,30 +8,33 @@ class ArticleModel  extends Model {
 	 * @return int
 	 */
 	async addArticle(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "article` SET `topic_id` = '" + data['topic_id'] + "', `author` = '" + this.db.escape(data['author']) + "', `status` = '" + (data['status'] ? data['status'] : 0) + "', `date_added` = NOW(), `date_modified` = NOW()");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "article` SET `topic_id` = '" + data['topic_id'] + "', `author` = " + this.db.escape(data['author']) + ", `status` = '" + (data['status'] ? data['status'] : 0) + "', `date_added` = NOW(), `date_modified` = NOW()");
 
-		article_id = this.db.getLastId();
+		const article_id = this.db.getLastId();
 
-		for (data['article_description'] of language_id : value) {
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "article_description` SET `article_id` = '" + article_id + "', `language_id` = '" + language_id + "', `image` = '" + this.db.escape(value['image']) + "', `name` = " + this.db.escape(value['name']) + ", `description` = " + this.db.escape(value['description']) + ", `tag` = " + this.db.escape(value['tag']) + ", `meta_title` = " + this.db.escape(value['meta_title']) + ", `meta_description` = " + this.db.escape(value['meta_description']) + ", `meta_keyword` = " + this.db.escape(value['meta_keyword']) + "");
+		for (let [language_id, value] of Object.entries(data['article_description'])) {
+			language_id = language_id.indexOf('language-') >= 0 ? language_id.split('-')[1] : language_id;
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "article_description` SET `article_id` = '" + article_id + "', `language_id` = '" + language_id + "', `image` = " + this.db.escape(value['image']) + ", `name` = " + this.db.escape(value['name']) + ", `description` = " + this.db.escape(value['description']) + ", `tag` = " + this.db.escape(value['tag']) + ", `meta_title` = " + this.db.escape(value['meta_title']) + ", `meta_description` = " + this.db.escape(value['meta_description']) + ", `meta_keyword` = " + this.db.escape(value['meta_keyword']) + "");
 		}
 
 		if ((data['article_store'])) {
-			for (data['article_store'] of store_id) {
+			for (let store_id of data['article_store']) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "article_to_store` SET `article_id` = '" + article_id + "', `store_id` = '" + store_id + "'");
 			}
 		}
 
-		for (data['article_seo_url'] of store_id : language) {
-			for (let [language_id , keyword] of language ) {
-				language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
+		for (let [store_id, language] of Object.entries(data['article_seo_url'])) {
+			store_id = store_id.indexOf('store-') >= 0 ? store_id.split('-')[1] : store_id;
+			for (let [language_id, keyword] of Object.entries(language)) {
+				language_id = language_id.indexOf('language-') >= 0 ? language_id.split('-')[1] : language_id;
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "seo_url` SET `store_id` = '" + store_id + "', `language_id` = '" + language_id + "', `key` = 'article_id', `value`= '" + article_id + "', `keyword` = " + this.db.escape(keyword) + "");
 			}
 		}
 
 		// Set which layout to use with this article
 		if ((data['article_layout'])) {
-			for (data['article_layout'] of store_id : layout_id) {
+			for (let [store_id, layout_id] of Object.entries(data['article_layout'])) {
+				store_id = store_id.indexOf('store-') >= 0 ? store_id.split('-')[1] : store_id;
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "article_to_layout` SET `article_id` = '" + article_id + "', `store_id` = '" + store_id + "', `layout_id` = '" + layout_id + "'");
 			}
 		}
@@ -55,27 +51,29 @@ class ArticleModel  extends Model {
 	 * @return void
 	 */
 	async editArticle(article_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "article` SET `topic_id` = '" + data['topic_id'] + "', `author` = '" + this.db.escape(data['author']) + "', `status` = '" + (data['status'] ? data['status'] : 0) + "', `date_modified` = NOW() WHERE `article_id` = '" + article_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "article` SET `topic_id` = '" + data['topic_id'] + "', `author` = " + this.db.escape(data['author']) + ", `status` = '" + (data['status'] ? data['status'] : 0) + "', `date_modified` = NOW() WHERE `article_id` = '" + article_id + "'");
 
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "article_description` WHERE `article_id` = '" + article_id + "'");
 
-		for (data['article_description'] of language_id : value) {
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "article_description` SET `article_id` = '" + article_id + "', `language_id` = '" + language_id + "', `image` = '" + this.db.escape(value['image']) + "', `name` = " + this.db.escape(value['name']) + ", `description` = " + this.db.escape(value['description']) + ", `tag` = " + this.db.escape(value['tag']) + ", `meta_title` = " + this.db.escape(value['meta_title']) + ", `meta_description` = " + this.db.escape(value['meta_description']) + ", `meta_keyword` = " + this.db.escape(value['meta_keyword']) + "");
+		for (let [language_id, value] of Object.entries(data['article_description'])) {
+			language_id = language_id.indexOf('language-') >= 0 ? language_id.split('-')[1] : language_id;
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "article_description` SET `article_id` = '" + article_id + "', `language_id` = '" + language_id + "', `image` = " + this.db.escape(value['image']) + ", `name` = " + this.db.escape(value['name']) + ", `description` = " + this.db.escape(value['description']) + ", `tag` = " + this.db.escape(value['tag']) + ", `meta_title` = " + this.db.escape(value['meta_title']) + ", `meta_description` = " + this.db.escape(value['meta_description']) + ", `meta_keyword` = " + this.db.escape(value['meta_keyword']) + "");
 		}
 
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "article_to_store` WHERE `article_id` = '" + article_id + "'");
 
 		if ((data['article_store'])) {
-			for (data['article_store'] of store_id) {
+			for (let store_id of data['article_store']) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "article_to_store` SET `article_id` = '" + article_id + "', `store_id` = '" + store_id + "'");
 			}
 		}
 
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "seo_url` WHERE `key` = 'article_id' AND `value` = '" + article_id + "'");
 
-		for (data['article_seo_url'] of store_id : language) {
-			for (let [language_id , keyword] of language ) {
-				language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
+		for (let [store_id, language] of Object.entries(data['article_seo_url'])) {
+			store_id = store_id.indexOf('store-') >= 0 ? store_id.split('-')[1] : store_id;
+			for (let [language_id, keyword] of Object.entries(language)) {
+				language_id = language_id.indexOf('language-') >= 0 ? language_id.split('-')[1] : language_id;
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "seo_url` SET `store_id` = '" + store_id + "', `language_id` = '" + language_id + "', `key` = 'article_id', `value` = '" + article_id + "', `keyword` = " + this.db.escape(keyword) + "");
 			}
 		}
@@ -84,7 +82,8 @@ class ArticleModel  extends Model {
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "article_to_layout` WHERE `article_id` = '" + article_id + "'");
 
 		if ((data['article_layout'])) {
-			for (data['article_layout'] of store_id : layout_id) {
+			for (let [store_id, layout_id] of Object.entries(data['article_layout'])) {
+				store_id = store_id.indexOf('store-') >= 0 ? store_id.split('-')[1] : store_id;
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "article_to_layout` SET `article_id` = '" + article_id + "', `store_id` = '" + store_id + "', `layout_id` = '" + layout_id + "'");
 			}
 		}
@@ -116,14 +115,14 @@ class ArticleModel  extends Model {
 	async getArticle(article_id) {
 		let sql = "SELECT DISTINCT * FROM `" + DB_PREFIX + "article` `a` LEFT JOIN `" + DB_PREFIX + "article_description` `ad` ON (`a`.`article_id` = `ad`.`article_id`) WHERE `a`.`article_id` = '" + article_id + "' AND `ad`.`language_id` = '" + this.config.get('config_language_id') + "'";
 
-		article_data = await this.cache.get('article.'. md5(sql));
+		let article_data = await this.cache.get('article.'.md5(sql));
 
 		if (!article_data) {
 			let query = await this.db.query(sql);
 
 			article_data = query.row;
 
-			await this.cache.set('article.'. md5(sql), article_data);
+			await this.cache.set('article.'.md5(sql), article_data);
 		}
 
 		return article_data;
@@ -159,27 +158,27 @@ class ArticleModel  extends Model {
 		}
 
 		if (data['start'] || data['limit']) {
-                        data['start'] = data['start']||0;
+			data['start'] = data['start'] || 0;
 			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
 			sql += " LIMIT " + data['start'] + "," + data['limit'];
 		}
 
-		article_data = await this.cache.get('article.'. md5(sql));
+		let article_data = await this.cache.get('article.'.md5(sql));
 
 		if (!article_data) {
 			let query = await this.db.query(sql);
 
 			article_data = query.rows;
 
-			await this.cache.set('article.'. md5(sql), article_data);
+			await this.cache.set('article.'.md5(sql), article_data);
 		}
 
 		return article_data;
@@ -191,20 +190,20 @@ if (data['limit'] < 1) {
 	 * @return array
 	 */
 	async getDescriptions(article_id) {
-		article_description_data = [];
+		let article_description_data = {};
 
 		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "article_description` WHERE `article_id` = '" + article_id + "'");
 
 		for (let result of query.rows) {
-			article_description_data[result['language_id']] = [
-				'image'            : result['image'],
-				'name'             : result['name'],
-				'description'      : result['description'],
-				'tag'              : result['tag'],
-				'meta_title'       : result['meta_title'],
-				'meta_description' : result['meta_description'],
-				'meta_keyword'     : result['meta_keyword']
-			];
+			article_description_data[result['language_id']] = {
+				'image': result['image'],
+				'name': result['name'],
+				'description': result['description'],
+				'tag': result['tag'],
+				'meta_title': result['meta_title'],
+				'meta_description': result['meta_description'],
+				'meta_keyword': result['meta_keyword']
+			};
 		}
 
 		return article_description_data;
@@ -216,11 +215,12 @@ if (data['limit'] < 1) {
 	 * @return array
 	 */
 	async getSeoUrls(article_id) {
-		article_seo_url_data = [];
+		let article_seo_url_data = {};
 
 		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "seo_url` WHERE `key` = 'article_id' AND `value` = '" + article_id + "'");
 
 		for (let result of query.rows) {
+			article_seo_url_data[result['store_id']] = article_seo_url_data[result['store_id']] || {};
 			article_seo_url_data[result['store_id']][result['language_id']] = result['keyword'];
 		}
 
@@ -233,12 +233,12 @@ if (data['limit'] < 1) {
 	 * @return array
 	 */
 	async getStores(article_id) {
-		article_store_data = [];
+		let article_store_data = [];
 
 		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "article_to_store` WHERE `article_id` = '" + article_id + "'");
 
 		for (let result of query.rows) {
-			article_store_data[] = result['store_id'];
+			article_store_data.push(result['store_id']);
 		}
 
 		return article_store_data;
@@ -250,7 +250,7 @@ if (data['limit'] < 1) {
 	 * @return array
 	 */
 	async getLayouts(article_id) {
-		article_layout_data = [];
+		let article_layout_data = {};
 
 		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "article_to_layout` WHERE `article_id` = '" + article_id + "'");
 
@@ -321,7 +321,7 @@ if (data['limit'] < 1) {
 		let implode = [];
 
 		if ((data['filter_keyword'])) {
-			implode.push("LCASE(`comment`) LIKE '" + this.db.escape('%' + data['filter_keyword'] + '%') + "'";
+			implode.push("LCASE(`comment`) LIKE " + this.db.escape('%' + data['filter_keyword'] + '%'));
 		}
 
 		if (implode.length) {
@@ -331,13 +331,13 @@ if (data['limit'] < 1) {
 		sql += " ORDER BY `date_added` DESC";
 
 		if (data['start'] || data['limit']) {
-                        data['start'] = data['start']||0;
+			data['start'] = data['start'] || 0;
 			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
@@ -360,7 +360,7 @@ if (data['limit'] < 1) {
 		let implode = [];
 
 		if ((data['filter_keyword'])) {
-			implode.push("LCASE(`comment`) LIKE '" + this.db.escape('%' + data['filter_keyword'] + '%') + "'";
+			implode.push("LCASE(`comment`) LIKE " + this.db.escape('%' + data['filter_keyword'] + '%'));
 		}
 
 		if (implode.length) {

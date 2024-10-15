@@ -1,12 +1,5 @@
-<?php
-namespace Opencart\Admin\Model\Cms;
-/**
- * Class Country
- *
- * @package Opencart\Admin\Model\Cms
- */
-class AntispamModel  extends Model {
-	constructor(registry){
+module.exports = class AntispamModel extends Model {
+	constructor(registry) {
 		super(registry)
 	}
 	/**
@@ -60,7 +53,7 @@ class AntispamModel  extends Model {
 		let implode = [];
 
 		if ((data['filter_keyword'])) {
-			implode.push("`keyword` LIKE '" + this.db.escape(data['filter_keyword']) + "'";
+			implode.push("`keyword` LIKE " + this.db.escape(data['filter_keyword']));
 		}
 
 		if (implode.length) {
@@ -82,13 +75,13 @@ class AntispamModel  extends Model {
 		}
 
 		if (data['start'] || data['limit']) {
-                        data['start'] = data['start']||0;
+			data['start'] = data['start'] || 0;
 			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
@@ -111,7 +104,7 @@ if (data['limit'] < 1) {
 		let implode = [];
 
 		if ((data['filter_keyword'])) {
-			implode.push("`keyword` LIKE '" + this.db.escape(data['filter_keyword']) + "'";
+			implode.push("`keyword` LIKE " + this.db.escape(data['filter_keyword']));
 		}
 
 		if (implode.length) {

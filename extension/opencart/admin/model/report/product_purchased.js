@@ -28,8 +28,8 @@ module.exports = class ProductPurchasedReportModel extends Model {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
@@ -47,7 +47,7 @@ if (data['limit'] < 1) {
 	 * @return int
 	 */
 	async getTotalPurchased(data = {}) {
-		sql = "SELECT COUNT(DISTINCT op.`product_id`) AS `total` FROM `" + DB_PREFIX + "order_product` op LEFT JOIN `" + DB_PREFIX + "order` o ON (op.`order_id` = o.`order_id`)";
+		let sql = "SELECT COUNT(DISTINCT op.`product_id`) AS `total` FROM `" + DB_PREFIX + "order_product` op LEFT JOIN `" + DB_PREFIX + "order` o ON (op.`order_id` = o.`order_id`)";
 
 		if (data['filter_order_status_id']) {
 			sql += " WHERE o.`order_status_id` = '" + data['filter_order_status_id'] + "'";

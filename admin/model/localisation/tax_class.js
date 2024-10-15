@@ -13,7 +13,7 @@ module.exports = class TaxClassLocalisationModel extends Model {
 		const tax_class_id = this.db.getLastId();
 
 		if ((data['tax_rule'])) {
-			for (data['tax_rule'] of tax_rule) {
+			for (let tax_rule of data['tax_rule']) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "tax_rule` SET `tax_class_id` = '" + tax_class_id + "', `tax_rate_id` = '" + tax_rule['tax_rate_id'] + "', `based` = " + this.db.escape(tax_rule['based']) + ", `priority` = '" + tax_rule['priority'] + "'");
 			}
 		}
@@ -35,7 +35,7 @@ module.exports = class TaxClassLocalisationModel extends Model {
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "tax_rule` WHERE `tax_class_id` = '" + tax_class_id + "'");
 
 		if ((data['tax_rule'])) {
-			for (data['tax_rule'] of tax_rule) {
+			for (let tax_rule of data['tax_rule']) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "tax_rule` SET `tax_class_id` = '" + tax_class_id + "', `tax_rate_id` = '" + tax_rule['tax_rate_id'] + "', `based` = " + this.db.escape(tax_rule['based']) + ", `priority` = '" + tax_rule['priority'] + "'");
 			}
 		}

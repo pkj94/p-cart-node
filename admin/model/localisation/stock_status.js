@@ -9,7 +9,7 @@ module.exports = class StockStatusLocalisationModel extends Model {
 	 */
 	async addStockStatus(data) {
 		let stock_status_id = 0;
-		for (let [language_id, value] of Object.keys(data['stock_status'])) {
+		for (let [language_id, value] of Object.entries(data['stock_status'])) {
 			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 			if ((stock_status_id)) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "stock_status` SET `stock_status_id` = '" + stock_status_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + "");
@@ -34,7 +34,7 @@ module.exports = class StockStatusLocalisationModel extends Model {
 	async editStockStatus(stock_status_id, data) {
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "stock_status` WHERE `stock_status_id` = '" + stock_status_id + "'");
 
-		for (let [language_id, value] of Object.keys(data['stock_status'])) {
+		for (let [language_id, value] of Object.entries(data['stock_status'])) {
 			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 			await this.db.query("INSERT INTO `" + DB_PREFIX + "stock_status` SET `stock_status_id` = '" + stock_status_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + "");
 		}
@@ -111,7 +111,7 @@ module.exports = class StockStatusLocalisationModel extends Model {
 	 * @return array
 	 */
 	async getDescriptions(stock_status_id) {
-		stock_status_data = [];
+		let stock_status_data = {};
 
 		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "stock_status` WHERE `stock_status_id` = '" + stock_status_id + "'");
 

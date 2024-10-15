@@ -1,5 +1,5 @@
-module.exports = class OnlineReportModel  extends Model {
-	constructor(registry){
+module.exports = class OnlineReportModel extends Model {
+	constructor(registry) {
 		super(registry)
 	}
 	/**
@@ -17,7 +17,7 @@ module.exports = class OnlineReportModel  extends Model {
 		}
 
 		if ((data['filter_customer'])) {
-			implode.push("`co`.`customer_id` > '0' AND CONCAT(`c`.`firstname`, ' ', `c`.`lastname`) LIKE '" + this.db.escape(data['filter_customer']) + "'");
+			implode.push("`co`.`customer_id` > '0' AND CONCAT(`c`.`firstname`, ' ', `c`.`lastname`) LIKE " + this.db.escape(data['filter_customer']));
 		}
 
 		if (implode.length) {
@@ -27,13 +27,13 @@ module.exports = class OnlineReportModel  extends Model {
 		sql += " ORDER BY `co`.`date_added` DESC";
 
 		if (data['start'] || data['limit']) {
-                        data['start'] = data['start']||0;
+			data['start'] = data['start'] || 0;
 			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
@@ -60,7 +60,7 @@ if (data['limit'] < 1) {
 		}
 
 		if ((data['filter_customer'])) {
-			implode.push("`co`.`customer_id` > '0' AND CONCAT(`c`.`firstname`, ' ', `c`.`lastname`) LIKE '" + this.db.escape(data['filter_customer']) + "'");
+			implode.push("`co`.`customer_id` > '0' AND CONCAT(`c`.`firstname`, ' ', `c`.`lastname`) LIKE " + this.db.escape(data['filter_customer']));
 		}
 
 		if (implode.length) {

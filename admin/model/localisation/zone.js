@@ -8,7 +8,7 @@ module.exports = class ZoneLocalisationModel extends Model {
 	 * @return int
 	 */
 	async addZone(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "zone` SET `name` = " + this.db.escape(data['name']) + ", `code` = " + this.db.escape(data['code']) + ", `country_id` = '" + data['country_id'] + "', `status` = '" + (bool)((data['status']) ? data['status'] : 0) + "'");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "zone` SET `name` = " + this.db.escape(data['name']) + ", `code` = " + this.db.escape(data['code']) + ", `country_id` = '" + data['country_id'] + "', `status` = '" + ((data['status']) ? data['status'] : 0) + "'");
 
 		await this.cache.delete('zone');
 
@@ -22,7 +22,7 @@ module.exports = class ZoneLocalisationModel extends Model {
 	 * @return void
 	 */
 	async editZone(zone_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "zone` SET `name` = " + this.db.escape(data['name']) + ", `code` = " + this.db.escape(data['code']) + ", `country_id` = '" + data['country_id'] + "', `status` = '" + (bool)((data['status']) ? data['status'] : 0) + "' WHERE `zone_id` = '" + zone_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "zone` SET `name` = " + this.db.escape(data['name']) + ", `code` = " + this.db.escape(data['code']) + ", `country_id` = '" + data['country_id'] + "', `status` = '" + ((data['status']) ? data['status'] : 0) + "' WHERE `zone_id` = '" + zone_id + "'");
 
 		await this.cache.delete('zone');
 	}

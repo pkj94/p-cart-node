@@ -361,7 +361,7 @@ module.exports = class UserController extends Controller {
 		}
 
 		for (let user_id of selected) {
-			if (this.user.getId() == user_id) {
+			if (await this.user.getId() == user_id) {
 				json['error'] = json['error'] || {};
 				json['error']['warning'] = this.language.get('error_account');
 			}

@@ -1,8 +1,11 @@
-module.exports=class GeoZoneController extends Controller {
+const sprintf = require("locutus/php/strings/sprintf");
+
+module.exports = class GeoZoneController extends Controller {
 	/**
 	 * @return void
 	 */
 	async index() {
+		const data = {};
 		await this.load.language('localisation/geo_zone');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -24,13 +27,13 @@ module.exports=class GeoZoneController extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('text_home'),
+			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('localisation/geo_zone', 'user_token=' + this.session.data['user_token'] + url)
+			'text': this.language.get('heading_title'),
+			'href': this.url.link('localisation/geo_zone', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
 		data['add'] = this.url.link('localisation/geo_zone.form', 'user_token=' + this.session.data['user_token'] + url);
@@ -60,15 +63,15 @@ module.exports=class GeoZoneController extends Controller {
 	 * @return string
 	 */
 	async getList() {
+		const data = {};
+		let sort = 'name';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
-		} else {
-			sort = 'name';
 		}
 
-		let order= 'ASC';
+		let order = 'ASC';
 		if ((this.request.get['order'])) {
-			order= this.request.get['order'];
+			order = this.request.get['order'];
 		}
 
 		let page = 1;
@@ -95,28 +98,28 @@ module.exports=class GeoZoneController extends Controller {
 		data['geo_zones'] = [];
 
 		let filter_data = {
-			'sort'  : sort,
-			'order' : order,
-			'start' : (page - 1) * Number(this.config.get('config_pagination_admin')),
-			'limit' : this.config.get('config_pagination_admin')
-		});
+			'sort': sort,
+			'order': order,
+			'start': (page - 1) * Number(this.config.get('config_pagination_admin')),
+			'limit': this.config.get('config_pagination_admin')
+		};
 
-		this.load.model('localisation/geo_zone',this);
+		this.load.model('localisation/geo_zone', this);
 
-		geo_zone_total await this.model_localisation_geo_zone.getTotalGeoZones();
+		const geo_zone_total = await this.model_localisation_geo_zone.getTotalGeoZones();
 
 		const results = await this.model_localisation_geo_zone.getGeoZones(filter_data);
 
 		for (let result of results) {
 			data['geo_zones'].push({
-				'geo_zone_id' : result['geo_zone_id'],
-				'name'        : result['name'],
-				'description' : result['description'],
-				'edit'        : this.url.link('localisation/geo_zone.form', 'user_token=' + this.session.data['user_token'] + '&geo_zone_id=' + result['geo_zone_id'] + url)
-			];
+				'geo_zone_id': result['geo_zone_id'],
+				'name': result['name'],
+				'description': result['description'],
+				'edit': this.url.link('localisation/geo_zone.form', 'user_token=' + this.session.data['user_token'] + '&geo_zone_id=' + result['geo_zone_id'] + url)
+			});
 		}
 
-		let url = '';
+		url = '';
 
 		if (order == 'ASC') {
 			url += '&order=DESC';
@@ -127,7 +130,7 @@ module.exports=class GeoZoneController extends Controller {
 		data['sort_name'] = this.url.link('localisation/geo_zone.list', 'user_token=' + this.session.data['user_token'] + '&sort=name' + url);
 		data['sort_description'] = this.url.link('localisation/geo_zone.list', 'user_token=' + this.session.data['user_token'] + '&sort=description' + url);
 
-		let url = '';
+		url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -138,11 +141,11 @@ module.exports=class GeoZoneController extends Controller {
 		}
 
 		data['pagination'] = await this.load.controller('common/pagination', {
-			'total' : geo_zone_total,
-			'page'  : page,
-			'limit' : this.config.get('config_pagination_admin'),
-			'url'   : this.url.link('localisation/geo_zone.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
-		]);
+			'total': geo_zone_total,
+			'page': page,
+			'limit': this.config.get('config_pagination_admin'),
+			'url': this.url.link('localisation/geo_zone.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
+		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (geo_zone_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (geo_zone_total - this.config.get('config_pagination_admin'))) ? geo_zone_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), geo_zone_total, Math.ceil(geo_zone_total / this.config.get('config_pagination_admin')));
 
@@ -156,6 +159,7 @@ module.exports=class GeoZoneController extends Controller {
 	 * @return void
 	 */
 	async form() {
+		const data = {};
 		await this.load.language('localisation/geo_zone');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -179,22 +183,22 @@ module.exports=class GeoZoneController extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('text_home'),
+			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('localisation/geo_zone', 'user_token=' + this.session.data['user_token'] + url)
+			'text': this.language.get('heading_title'),
+			'href': this.url.link('localisation/geo_zone', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
 		data['save'] = this.url.link('localisation/geo_zone.save', 'user_token=' + this.session.data['user_token']);
 		data['back'] = this.url.link('localisation/geo_zone', 'user_token=' + this.session.data['user_token'] + url);
-
+		let geo_zone_info;
 		if ((this.request.get['geo_zone_id'])) {
-			this.load.model('localisation/geo_zone',this);
+			this.load.model('localisation/geo_zone', this);
 
-			geo_zone_info await this.model_localisation_geo_zone.getGeoZone(this.request.get['geo_zone_id']);
+			geo_zone_info = await this.model_localisation_geo_zone.getGeoZone(this.request.get['geo_zone_id']);
 		}
 
 		if ((this.request.get['geo_zone_id'])) {
@@ -215,7 +219,7 @@ module.exports=class GeoZoneController extends Controller {
 			data['description'] = '';
 		}
 
-		this.load.model('localisation/country',this);
+		this.load.model('localisation/country', this);
 
 		data['countries'] = await this.model_localisation_country.getCountries();
 
@@ -240,7 +244,7 @@ module.exports=class GeoZoneController extends Controller {
 	async save() {
 		await this.load.language('localisation/geo_zone');
 
-		const json = {};
+		const json = { error: {} };
 
 		if (!await this.user.hasPermission('modify', 'localisation/geo_zone')) {
 			json['error']['warning'] = this.language.get('error_permission');
@@ -254,9 +258,9 @@ module.exports=class GeoZoneController extends Controller {
 			json['error']['description'] = this.language.get('error_description');
 		}
 
-		if (!Object.keys(json).length) {
-			this.load.model('localisation/geo_zone',this);
-
+		if (!Object.keys(json.error).length) {
+			this.load.model('localisation/geo_zone', this);
+			this.request.post['geo_zone_id'] = Number(this.request.post['geo_zone_id']);
 			if (!this.request.post['geo_zone_id']) {
 				json['geo_zone_id'] = await this.model_localisation_geo_zone.addGeoZone(this.request.post);
 			} else {
@@ -279,7 +283,7 @@ module.exports=class GeoZoneController extends Controller {
 		const json = {};
 
 		let selected = [];
-                 if ((this.request.post['selected'])) {
+		if ((this.request.post['selected'])) {
 			selected = this.request.post['selected'];
 		}
 
@@ -287,10 +291,10 @@ module.exports=class GeoZoneController extends Controller {
 			json['error'] = this.language.get('error_permission');
 		}
 
-		this.load.model('localisation/tax_rate');
+		this.load.model('localisation/tax_rate', this);
 
-		for (selected of geo_zone_id) {
-			tax_rate_total await this.model_localisation_tax_rate.getTotalTaxRatesByGeoZoneId(geo_zone_id);
+		for (let geo_zone_id of selected) {
+			const tax_rate_total = await this.model_localisation_tax_rate.getTotalTaxRatesByGeoZoneId(geo_zone_id);
 
 			if (tax_rate_total) {
 				json['error'] = sprintf(this.language.get('error_tax_rate'), tax_rate_total);
@@ -298,9 +302,9 @@ module.exports=class GeoZoneController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('localisation/geo_zone',this);
+			this.load.model('localisation/geo_zone', this);
 
-			for (selected of geo_zone_id) {
+			for (let geo_zone_id of selected) {
 				await this.model_localisation_geo_zone.deleteGeoZone(geo_zone_id);
 			}
 

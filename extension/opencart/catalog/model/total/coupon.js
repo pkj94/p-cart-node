@@ -19,7 +19,7 @@ class Coupon extends \Opencart\System\Engine\Model {
 
 			this.load.model('marketing/coupon',this);
 
-			$coupon_info = this.model_marketing_coupon.getCoupon(this.session.data['coupon']);
+			$coupon_info = await this.model_marketing_coupon.getCoupon(this.session.data['coupon']);
 
 			if ($coupon_info) {
 				$discount_total = 0;
@@ -130,7 +130,7 @@ class Coupon extends \Opencart\System\Engine\Model {
 			if ($coupon_query.num_rows) {
 				this.load.model('marketing/coupon',this);
 
-				$coupon_total = this.model_marketing_coupon.getTotalHistoriesByCoupon($code);
+				$coupon_total = await this.model_marketing_coupon.getTotalHistoriesByCoupon($code);
 
 				if ($coupon_query.row['uses_total'] > 0 && ($coupon_total >= $coupon_query.row['uses_total'])) {
 					$status = false;

@@ -33,7 +33,7 @@ module.exports = class ChequePaymentController extends Controller {
 
 		this.load.model('localisation/order_status',this);
 
-		data.order_statuses = this.model_localisation_order_status.getOrderStatuses();
+		data.order_statuses = await this.model_localisation_order_status.getOrderStatuses();
 
 		data.payment_cheque_geo_zone_id = this.config.get('payment_cheque_geo_zone_id');
 

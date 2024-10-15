@@ -242,7 +242,7 @@ module.exports = class StoreSettingModel extends Model {
 	 * @return int
 	 */
 	async getTotalStoresByLanguage(language){
-		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "setting` WHERE `key` = 'config_language' AND `value` = '" + this.db.escape(language) + "' AND `store_id` != '0'");
+		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "setting` WHERE `key` = 'config_language' AND `value` = " + this.db.escape(language) + " AND `store_id` != '0'");
 
 		return query.row['total'];
 	}
@@ -253,7 +253,7 @@ module.exports = class StoreSettingModel extends Model {
 	 * @return int
 	 */
 	async getTotalStoresByCurrency(currency){
-		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "setting` WHERE `key` = 'config_currency' AND `value` = '" + this.db.escape(currency) + "' AND `store_id` != '0'");
+		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "setting` WHERE `key` = 'config_currency' AND `value` = " + this.db.escape(currency) + " AND `store_id` != '0'");
 
 		return query.row['total'];
 	}

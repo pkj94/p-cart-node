@@ -158,6 +158,7 @@ module.exports = class Framework {
         }
         // Output
         // console.log('outputData', response.level)
+        await registry.get('db').close();
         return response.output();
     }
 }

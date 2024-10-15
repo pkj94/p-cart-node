@@ -8,7 +8,7 @@ module.exports = class CountryLocalisationModel extends Model {
 	 * @return int
 	 */
 	async addCountry(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "country` SET `name` = " + this.db.escape(data['name']) + ", `iso_code_2` = " + this.db.escape(data['iso_code_2']) + ", `iso_code_3` = " + this.db.escape(data['iso_code_3']) + ", `address_format_id` = '" + data['address_format_id'] + "', `postcode_required` = '" + data['postcode_required'] + "', `status` = '" + (bool)((data['status']) ? data['status'] : 0) + "'");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "country` SET `name` = " + this.db.escape(data['name']) + ", `iso_code_2` = " + this.db.escape(data['iso_code_2']) + ", `iso_code_3` = " + this.db.escape(data['iso_code_3']) + ", `address_format_id` = '" + data['address_format_id'] + "', `postcode_required` = '" + data['postcode_required'] + "', `status` = '" + ((data['status']) ? data['status'] : 0) + "'");
 
 		await this.cache.delete('country');
 
@@ -22,7 +22,7 @@ module.exports = class CountryLocalisationModel extends Model {
 	 * @return void
 	 */
 	async editCountry(country_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "country` SET `name` = " + this.db.escape(data['name']) + ", `iso_code_2` = " + this.db.escape(data['iso_code_2']) + ", `iso_code_3` = " + this.db.escape(data['iso_code_3']) + ", `address_format_id` = '" + data['address_format_id'] + "', `postcode_required` = '" + data['postcode_required'] + "', `status` = '" + (bool)((data['status']) ? data['status'] : 0) + "' WHERE `country_id` = '" + country_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "country` SET `name` = " + this.db.escape(data['name']) + ", `iso_code_2` = " + this.db.escape(data['iso_code_2']) + ", `iso_code_3` = " + this.db.escape(data['iso_code_3']) + ", `address_format_id` = '" + data['address_format_id'] + "', `postcode_required` = '" + data['postcode_required'] + "', `status` = '" + ((data['status']) ? data['status'] : 0) + "' WHERE `country_id` = '" + country_id + "'");
 
 		await this.cache.delete('country');
 	}
@@ -130,7 +130,6 @@ module.exports = class CountryLocalisationModel extends Model {
 		}
 
 		let country_data = await this.cache.get('country+' + md5(sql));
-		console.log(sql)
 		if (!country_data) {
 			const query = await this.db.query(sql);
 

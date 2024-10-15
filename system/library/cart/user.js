@@ -39,7 +39,7 @@ module.exports = class UserLibrary {
     login(username, password) {
         return new Promise(async (resolve, reject) => {
             const user_query = await this.db.query(`SELECT * FROM ${DB_PREFIX}user WHERE username = '${username}' AND status = '1'`);
-            console.log(user_query,`SELECT * FROM ${DB_PREFIX}user WHERE username = '${username}' AND status = '1'`)
+            // console.log(user_query,`SELECT * FROM ${DB_PREFIX}user WHERE username = '${username}' AND status = '1'`)
             if (user_query.num_rows) {
                 let rehash = false;
                 if (await bcrypt.compare(password, user_query.row.password)) {

@@ -18,7 +18,9 @@ module.exports = class DBLibrary {
     escape(value) {
         return this.adaptor.escape(value);
     }
-
+    escapeId(value) {
+        return this.adaptor.escapeId(value);
+    }
     countAffected() {
         return this.adaptor.countAffected();
     }
@@ -29,6 +31,9 @@ module.exports = class DBLibrary {
 
     isConnected() {
         return this.adaptor.isConnected();
+    }
+    close() {
+        return this.adaptor.close();
     }
 }
 

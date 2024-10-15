@@ -1,7 +1,7 @@
 const fs = require('fs');
 const expressPath = require('path');
 const sprintf = require('locutus/php/strings/sprintf');
-const strtotime = require('locutus/php/datetime/strtotime');
+
 module.exports = class DownloadController extends Controller {
 	/**
 	 * @return void

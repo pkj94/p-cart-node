@@ -1,15 +1,9 @@
-<?php
-namespace Opencart\Admin\Controller\Report;
-/**
- * 
- *
- * @package Opencart\Admin\Controller\Report
- */
-class StatisticsController extends Controller {
+module.exports = class StatisticsController extends Controller {
 	/**
 	 * @return void
 	 */
 	async index() {
+		const data = {};
 		await this.load.language('report/statistics');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -17,13 +11,13 @@ class StatisticsController extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('text_home'),
+			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('report/statistics', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('heading_title'),
+			'href': this.url.link('report/statistics', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['list'] = await this.getList();
@@ -50,18 +44,20 @@ class StatisticsController extends Controller {
 	 * @return string
 	 */
 	async getList() {
+		const data = {};
 		data['statistics'] = [];
-		
-		this.load.model('report/statistics');
-		
+
+		this.load.model('report/statistics', this);
+
 		const results = await this.model_report_statistics.getStatistics();
-		
+
 		for (let result of results) {
+			let code = result['code'].split('_').map((a, i) => i != 0 ? ucfirst(a) : a);
 			data['statistics'].push({
-				'name'  : this.language.get('text_' + result['code']),
-				'value' : result['value'],
-				'href'  : this.url.link('report/statistics.' + str_replace('_', '', result['code']), 'user_token=' + this.session.data['user_token'])
-			];
+				'name': this.language.get('text_' + result['code']),
+				'value': result['value'],
+				'href': this.url.link('report/statistics.' + code.join(''), 'user_token=' + this.session.data['user_token'])
+			});
 		}
 
 		return await this.load.view('report/statistics_list', data);
@@ -80,10 +76,10 @@ class StatisticsController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('report/statistics');
-			this.load.model('sale/order',this);
+			this.load.model('report/statistics', this);
+			this.load.model('sale/order', this);
 
-			await this.model_report_statistics.editValue('order_sale', this.model_sale_order.getTotalSales(['filter_order_status' : implode(',', array_merge(this.config.get('config_complete_status'), this.config.get('config_processing_status')))]));
+			await this.model_report_statistics.editValue('order_sale', await this.model_sale_order.getTotalSales({ 'filter_order_status': [...this.config.get('config_complete_status'), ...this.config.get('config_processing_status')].join(',') }));
 
 			json['success'] = this.language.get('text_success');
 		}
@@ -105,10 +101,10 @@ class StatisticsController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('report/statistics');
-			this.load.model('sale/order',this);
+			this.load.model('report/statistics', this);
+			this.load.model('sale/order', this);
 
-			await this.model_report_statistics.editValue('order_processing', this.model_sale_order.getTotalOrders(['filter_order_status' : implode(',', this.config.get('config_processing_status'))]));
+			await this.model_report_statistics.editValue('order_processing', await this.model_sale_order.getTotalOrders({ 'filter_order_status': this.config.get('config_processing_status').join(',') }));
 
 			json['success'] = this.language.get('text_success');
 		}
@@ -130,10 +126,10 @@ class StatisticsController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('report/statistics');
-			this.load.model('sale/order',this);
+			this.load.model('report/statistics', this);
+			this.load.model('sale/order', this);
 
-			await this.model_report_statistics.editValue('order_complete', this.model_sale_order.getTotalOrders(['filter_order_status' : implode(',', this.config.get('config_complete_status'))]));
+			await this.model_report_statistics.editValue('order_complete', await this.model_sale_order.getTotalOrders({ 'filter_order_status': this.config.get('config_complete_status').join(',') }));
 
 			json['success'] = this.language.get('text_success');
 		}
@@ -155,22 +151,22 @@ class StatisticsController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('report/statistics');
-			this.load.model('localisation/order_status',this);
+			this.load.model('report/statistics', this);
+			this.load.model('localisation/order_status', this);
 
-			order_status_data = [];
+			let order_status_data = [];
 
 			const results = await this.model_localisation_order_status.getOrderStatuses();
 
 			for (let result of results) {
-				if (!in_array(result['order_status_id'], array_merge(this.config.get('config_complete_status'), this.config.get('config_processing_status')))) {
-					order_status_data[] = result['order_status_id'];
+				if (![...this.config.get('config_complete_status'), ...this.config.get('config_processing_status')].includes(result['order_status_id'])) {
+					order_status_data.push(result['order_status_id']);
 				}
 			}
 
-			this.load.model('sale/order',this);
+			this.load.model('sale/order', this);
 
-			await this.model_report_statistics.editValue('order_other', this.model_sale_order.getTotalOrders(['filter_order_status' : implode(',', order_status_data)]));
+			await this.model_report_statistics.editValue('order_other', await this.model_sale_order.getTotalOrders({ 'filter_order_status': order_status_data.join(',') }));
 
 			json['success'] = this.language.get('text_success');
 		}
@@ -192,10 +188,10 @@ class StatisticsController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('report/statistics');
-			this.load.model('sale/returns',this);
+			this.load.model('report/statistics', this);
+			this.load.model('sale/returns', this);
 
-			await this.model_report_statistics.editValue('return', this.model_sale_returns.getTotalReturns(['filter_return_status_id' : this.config.get('config_return_status_id')]));
+			await this.model_report_statistics.editValue('return', await this.model_sale_returns.getTotalReturns({ 'filter_return_status_id': this.config.get('config_return_status_id') }));
 
 			json['success'] = this.language.get('text_success');
 		}
@@ -217,10 +213,10 @@ class StatisticsController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('report/statistics');
-			this.load.model('catalog/product',this);
+			this.load.model('report/statistics', this);
+			this.load.model('catalog/product', this);
 
-			await this.model_report_statistics.editValue('product', this.model_catalog_product.getTotalProducts(['filter_quantity' : 0]));
+			await this.model_report_statistics.editValue('product', await this.model_catalog_product.getTotalProducts({ 'filter_quantity': 0 }));
 
 			json['success'] = this.language.get('text_success');
 		}
@@ -242,10 +238,10 @@ class StatisticsController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('report/statistics');
-			this.load.model('catalog/review');
+			this.load.model('report/statistics', this);
+			this.load.model('catalog/review',this);
 
-			await this.model_report_statistics.editValue('review', this.model_catalog_review.getTotalReviewsAwaitingApproval());
+			await this.model_report_statistics.editValue('review', await this.model_catalog_review.getTotalReviewsAwaitingApproval());
 
 			json['success'] = this.language.get('text_success');
 		}

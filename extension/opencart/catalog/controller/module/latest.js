@@ -29,9 +29,9 @@ class LatestController extends Controller {
 		if (results) {
 			for(let result of results) {
 				if (result['image']) {
-					$image = this.model_tool_image.resize(html_entity_decode(result['image']), $setting['width'], $setting['height']);
+					$image = await this.model_tool_image.resize(html_entity_decode(result['image']), $setting['width'], $setting['height']);
 				} else {
-					$image = this.model_tool_image.resize('placeholder.png', $setting['width'], $setting['height']);
+					$image = await this.model_tool_image.resize('placeholder.png', $setting['width'], $setting['height']);
 				}
 
 				if (this.customer.isLogged() || !this.config.get('config_customer_price')) {

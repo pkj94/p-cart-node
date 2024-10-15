@@ -136,3 +136,5 @@ system/storage/download/*
 !system/storage/download/index.html
 system/storage/marketplace/*
 !system/storage/marketplace/index.html
+system/storage/backup/*
+!system/storage/backup/index.html

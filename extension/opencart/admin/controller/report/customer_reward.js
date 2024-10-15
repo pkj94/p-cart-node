@@ -113,7 +113,7 @@ module.exports = class CustomerRewardReportController extends Controller {
 			customers: []
 		};
 
-		constfilter_data = {
+		const filter_data = {
 			'filter_date_start': filter_date_start,
 			'filter_date_end': filter_date_end,
 			'filter_customer': filter_customer,

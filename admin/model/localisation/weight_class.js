@@ -12,7 +12,7 @@ module.exports = class WeightClassLocalisationModel extends Model {
 
 		const weight_class_id = this.db.getLastId();
 
-		for (let [language_id, value] of Object.keys(data['weight_class_description'])) {
+		for (let [language_id, value] of Object.entries(data['weight_class_description'])) {
 			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 			await this.db.query("INSERT INTO `" + DB_PREFIX + "weight_class_description` SET `weight_class_id` = '" + weight_class_id + "', `language_id` = '" + language_id + "', `title` = " + this.db.escape(value['title']) + ", `unit` = " + this.db.escape(value['unit']) + "");
 		}
@@ -33,7 +33,7 @@ module.exports = class WeightClassLocalisationModel extends Model {
 
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "weight_class_description` WHERE `weight_class_id` = '" + weight_class_id + "'");
 
-		for (let [language_id, value] of Object.keys(data['weight_class_description'])) {
+		for (let [language_id, value] of Object.entries(data['weight_class_description'])) {
 			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 			await this.db.query("INSERT INTO `" + DB_PREFIX + "weight_class_description` SET `weight_class_id` = '" + weight_class_id + "', `language_id` = '" + language_id + "', `title` = " + this.db.escape(value['title']) + ", `unit` = " + this.db.escape(value['unit']) + "");
 		}

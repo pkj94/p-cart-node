@@ -1,29 +1,26 @@
-<?php
-namespace Opencart\Admin\Controller\Tool;
-/**
- * 
- *
- * @package Opencart\Admin\Controller\Tool
- */
-class LogController extends Controller {
+const fs = require('fs');
+const sprintf = require('locutus/php/strings/sprintf');
+const expressPath = require('path');
+module.exports = class LogController extends Controller {
 	/**
 	 * @return void
 	 */
 	async index() {
+		const data = {};
 		await this.load.language('tool/log');
-		
+
 		this.document.setTitle(this.language.get('heading_title'));
 
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('text_home'),
+			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('tool/log', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('heading_title'),
+			'href': this.url.link('tool/log', 'user_token=' + this.session.data['user_token'])
 		});
 
 		if ((this.session.data['error'])) {
@@ -34,26 +31,26 @@ class LogController extends Controller {
 			data['error_warning'] = '';
 		}
 
-		file = DIR_LOGS + this.config.get('config_error_filename');
+		let file = DIR_LOGS + this.config.get('config_error_filename');
 
 		if (!fs.lstatSync(file).isFile()) {
-			file_put_contents(file, '', FILE_APPEND);
+			fs.appendFileSync(file, '');
 		}
 
 
-		data['log'] = [];
+		data['logs'] = [];
 
-		files = glob(DIR_LOGS + '*.log');
+		let files = fs.globSync(DIR_LOGS + '*.log');
 
-		for (files of file) {
-			error = '';
+		for (let file of files) {
+			let error = '';
 
-			filename = basename(file);
+			let filename = expressPath.basename(file);
 
-			size = filesize(file);
+			let size = fs.lstatSync(file).size;
 
 			if (size >= 3145728) {
-				suffix = [
+				let suffix = [
 					'B',
 					'KB',
 					'MB',
@@ -71,21 +68,18 @@ class LogController extends Controller {
 					size = size / 1024;
 					i++;
 				}
-
-				error = sprintf(this.language.get('error_size'), filename, round(substr(size, 0, strpos(size, '.') + 4), 2) + suffix[i]);
+				const roundedSize = Math.round(parseFloat(size.toString().substring(0, size.toString().indexOf('.') + 4)) * 100);
+				error = sprintf(this.language.get('error_size'), filename, roundedSize.toString() + suffix[i]);
 			}
-
-			handle = fopen(file, 'r+');
-
+			const handle = fs.openSync(file, 'r+');
 			data['logs'].push({
-				'name'     : filename,
-				'output'   : fread(handle, 3145728),
-				'download' : this.url.link('tool/log.download', 'user_token=' + this.session.data['user_token'] + '&filename=' + filename),
-				'clear'    : this.url.link('tool/log.clear', 'user_token=' + this.session.data['user_token'] + '&filename=' + filename),
-				'error'    : error
-			];
-
-			fclose(handle);
+				'name': filename,
+				'output': fs.readFileSync(handle, { encoding: 'utf8', length: 3145728 }),
+				'download': this.url.link('tool/log.download', 'user_token=' + this.session.data['user_token'] + '&filename=' + filename),
+				'clear': this.url.link('tool/log.clear', 'user_token=' + this.session.data['user_token'] + '&filename=' + filename),
+				'error': error
+			});
+			fs.closeSync(handle);
 		}
 
 		data['user_token'] = this.session.data['user_token'];
@@ -102,14 +96,12 @@ class LogController extends Controller {
 	 */
 	async download() {
 		await this.load.language('tool/log');
-
+		let filename = '';
 		if ((this.request.get['filename'])) {
-			filename = basename(this.request.get['filename']);
-		} else {
-			filename = '';
+			filename = expressPath.basename(this.request.get['filename']);
 		}
 
-		file = DIR_LOGS + filename;
+		let file = DIR_LOGS + filename;
 
 		if (!fs.lstatSync(file).isFile()) {
 			this.session.data['error'] = sprintf(this.language.get('error_file'), filename);
@@ -117,20 +109,20 @@ class LogController extends Controller {
 			this.response.setRedirect(this.url.link('tool/log', 'user_token=' + this.session.data['user_token'], true));
 		}
 
-		if (!filesize(file)) {
+		if (!fs.lstatSync(file).size) {
 			this.session.data['error'] = sprintf(this.language.get('error_!'), filename);
 
 			this.response.setRedirect(this.url.link('tool/log', 'user_token=' + this.session.data['user_token'], true));
 		}
+		this.response.headers = [];
+		this.response.addHeader('Pragma: public');
+		this.response.addHeader('Expires: 0');
+		this.response.addHeader('Content-Description: File Transfer');
+		this.response.addHeader('Content-Type: application/octet-stream');
+		this.response.addHeader('Content-Disposition: attachment; filename="' + this.config.get('config_name') + '_' + date('Y-m-d_H-i-s', time()) + '_error.log"');
+		this.response.addHeader('Content-Transfer-Encoding: binary');
 
-		this.response.addheader('Pragma: public');
-		this.response.addheader('Expires: 0');
-		this.response.addheader('Content-Description: File Transfer');
-		this.response.addheader('Content-Type: application/octet-stream');
-		this.response.addheader('Content-Disposition: attachment; filename="' + this.config.get('config_name') + '_' + date('Y-m-d_H-i-s', time()) + '_error.log"');
-		this.response.addheader('Content-Transfer-Encoding: binary');
-
-		this.response.setOutput(file_get_contents(file, FILE_USE_INCLUDE_PATH, null));
+		this.response.setFile(file);
 	}
 
 	/**
@@ -138,11 +130,9 @@ class LogController extends Controller {
 	 */
 	async clear() {
 		await this.load.language('tool/log');
-
+		let filename = '';
 		if ((this.request.get['filename'])) {
 			filename = this.request.get['filename'];
-		} else {
-			filename = '';
 		}
 
 		const json = {};
@@ -151,16 +141,16 @@ class LogController extends Controller {
 			json['error'] = this.language.get('error_permission');
 		}
 
-		file = DIR_LOGS + filename;
+		let file = DIR_LOGS + filename;
 
 		if (!fs.lstatSync(file).isFile()) {
 			json['error'] = sprintf(this.language.get('error_file'), filename);
 		}
 
 		if (!Object.keys(json).length) {
-			handle = fopen(file, 'w+');
+			let handle = fs.openSync(file, 'w+');
 
-			fclose(handle);
+			fs.closeSync(handle);
 
 			json['success'] = this.language.get('text_success');
 		}

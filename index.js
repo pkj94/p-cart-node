@@ -63,7 +63,7 @@ global.APP = async () => {
             if (typeof value == 'object') {
                 if (Array.isArray(value)) {
                     // console.log('value----', value)
-                    if (value.filter(a => a == '0' || a == '1').length == value.length) {
+                    if (value.filter(a => a == '0' || a == '1').length == value.length && value.length==2) {
                         obj[key] = decodeURIComponent(value[1]);
                     } else
                         for (let i = 0; i < value.length; i++) {
@@ -85,7 +85,6 @@ global.APP = async () => {
     app.all('*', (req, res, next) => {
         // console.log('decoded before---', req.body)
         req.body = decodeObject(req.body);
-
         // console.log('decoded---', req.body)
         next();
     });

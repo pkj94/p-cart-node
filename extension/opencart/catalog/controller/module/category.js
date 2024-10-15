@@ -39,13 +39,13 @@ class CategoryController extends Controller {
 
 		data['categories'] = [];
 
-		$categories = this.model_catalog_category.getCategories(0);
+		$categories = await this.model_catalog_category.getCategories(0);
 
 		foreach ($categories as $category) {
 			$children_data = [];
 
 			if ($category['category_id'] == data['category_id']) {
-				$children = this.model_catalog_category.getCategories($category['category_id']);
+				$children = await this.model_catalog_category.getCategories($category['category_id']);
 
 				foreach ($children as $child) {
 					const filter_data = {

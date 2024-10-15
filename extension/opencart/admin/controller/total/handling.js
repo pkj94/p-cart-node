@@ -38,7 +38,7 @@ module.exports = class HandlingTotalController extends Controller {
 
 		this.load.model('localisation/tax_class');
 
-		data['tax_classes'] = this.model_localisation_tax_class.getTaxClasses();
+		data['tax_classes'] = await this.model_localisation_tax_class.getTaxClasses();
 
 		data['total_handling_status'] = this.config.get('total_handling_status');
 		data['total_handling_sort_order'] = this.config.get('total_handling_sort_order');

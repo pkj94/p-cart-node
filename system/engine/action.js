@@ -29,7 +29,7 @@ module.exports = class Action {
                 if (global[classT + 'Controller']) {
                     try {
                         let controller = new (global[classT + 'Controller'])(registry);
-                        // console.log(classT);
+                        // console.log(classT, this, typeof controller, JSON.stringify(Object.keys(global)));
                         if (typeof controller[this.method] == 'function') {
                             resolve(await controller[this.method](...args));
                         } else {

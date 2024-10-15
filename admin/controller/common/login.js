@@ -10,7 +10,7 @@ module.exports = class LoginController extends Controller {
         await  this.load.language('common/login');
         this.document.setTitle(this.language.get('heading_title'));
         // Check to see if user is already logged
-        if (this.user.isLogged() && this.request.get['user_token'] && this.session.data['user_token'] && (this.request.get['user_token'] == this.session.data['user_token'])) {
+        if (await this.user.isLogged() && this.request.get['user_token'] && this.session.data['user_token'] && (this.request.get['user_token'] == this.session.data['user_token'])) {
             this.response.setRedirect(this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true));
         }
         // Check to see if user is using incorrect token
@@ -73,7 +73,7 @@ module.exports = class LoginController extends Controller {
         }
         this.request.post['redirect'] = decodeURIComponent(this.request.post['redirect']);
         // console.log(this.request.post)
-        if (this.user.isLogged() && this.request.get['user_token'] && this.session.data['user_token'] && (this.request.get['user_token'] == this.session.data['user_token'])) {
+        if (await this.user.isLogged() && this.request.get['user_token'] && this.session.data['user_token'] && (this.request.get['user_token'] == this.session.data['user_token'])) {
             json['redirect'] = this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true);
             // console.log(1)
         }
@@ -98,7 +98,7 @@ module.exports = class LoginController extends Controller {
                 user_agent: useragent.parse(this.request.server.headers['user-agent'], this.request.server.query.jsuseragent).source,
             };
             this.load.model('user/user', this);
-            await this.model_user_user.addLogin(this.user.getId(), login_data);
+            await this.model_user_user.addLogin(await this.user.getId(), login_data);
             if (this.request.post['redirect'] && (this.request.post['redirect'].indexOf(HTTP_SERVER) === 0)) {
                 json['redirect'] = this.request.post['redirect'] + '&user_token=' + this.session.data['user_token'].replace('&amp;', '&');
                 // console.log(3)

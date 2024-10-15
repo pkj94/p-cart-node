@@ -104,8 +104,8 @@ module.exports = class PaymentController extends Controller {
 
 			this.load.model('user/user_group', this);
 
-			await this.model_user_user_group.addPermission(this.user.getGroupId(), 'access', 'extension/' + extension + '/payment/' + code);
-			await this.model_user_user_group.addPermission(this.user.getGroupId(), 'modify', 'extension/' + extension + '/payment/' + code);
+			await this.model_user_user_group.addPermission(await this.user.getGroupId(), 'access', 'extension/' + extension + '/payment/' + code);
+			await this.model_user_user_group.addPermission(await this.user.getGroupId(), 'modify', 'extension/' + extension + '/payment/' + code);
 
 			
 

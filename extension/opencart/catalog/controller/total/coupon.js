@@ -52,7 +52,7 @@ class CouponController extends Controller {
 		if ($coupon) {
 			this.load.model('marketing/coupon',this);
 
-			$coupon_info = this.model_marketing_coupon.getCoupon($coupon);
+			$coupon_info = await this.model_marketing_coupon.getCoupon($coupon);
 
 			if (!$coupon_info) {
 				$json['error'] = this.language.get('error_coupon');

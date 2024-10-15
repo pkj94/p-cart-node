@@ -526,7 +526,6 @@ module.exports = class ReviewController extends Controller {
 				'start': (page - 1) * limit,
 				'limit': limit
 			};
-			console.log(total, start, end, page, product_data);
 			const results = await this.model_catalog_product.getProducts(product_data);
 
 			for (let result of results) {

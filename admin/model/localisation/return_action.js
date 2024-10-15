@@ -8,7 +8,9 @@ module.exports = class ReturnActionLocalisationModel extends Model {
 	 * @return int
 	 */
 	async addReturnAction(data) {
+		let return_action_id = 0;
 		for (let [language_id, value] of Object.entries(data['return_action'])) {
+			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 			if ((return_action_id)) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "return_action` SET `return_action_id` = '" + return_action_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + "");
 			} else {
@@ -33,6 +35,7 @@ module.exports = class ReturnActionLocalisationModel extends Model {
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "return_action` WHERE `return_action_id` = '" + return_action_id + "'");
 
 		for (let [language_id, value] of Object.entries(data['return_action'])) {
+			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 			await this.db.query("INSERT INTO `" + DB_PREFIX + "return_action` SET `return_action_id` = '" + return_action_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + "");
 		}
 

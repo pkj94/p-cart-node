@@ -8,7 +8,7 @@ module.exports = class CustomerModel extends Model {
 	async getTotalCustomersByDay() {
 		let customer_data = {};
 
-		for (i = 0; i < 24; i++) {
+		for (let i = 0; i < 24; i++) {
 			customer_data[i] = {
 				'hour': i,
 				'total': 0
@@ -35,7 +35,7 @@ module.exports = class CustomerModel extends Model {
 
 		date_start = new Date('-' + date('w') + ' days');
 
-		for (i = 0; i < 7; i++) {
+		for (let i = 0; i < 7; i++) {
 			date = date('Y-m-d', date_start + (i * 86400));
 
 			customer_data[date('w', new Date(date))] = {
@@ -62,7 +62,7 @@ module.exports = class CustomerModel extends Model {
 	async getTotalCustomersByMonth() {
 		let customer_data = {};
 
-		for (i = 1; i <= date('t'); i++) {
+		for (let i = 1; i <= date('t'); i++) {
 			date = date('Y') + '-' + date('m') + '-' + i;
 
 			customer_data[date('j', new Date(date))] = {
@@ -89,7 +89,7 @@ module.exports = class CustomerModel extends Model {
 	async getTotalCustomersByYear() {
 		let customer_data = {};
 
-		for (i = 1; i <= 12; i++) {
+		for (let i = 1; i <= 12; i++) {
 			customer_data[i] = {
 				'month': date('M', mktime(0, 0, 0, i, 1)),
 				'total': 0
@@ -155,8 +155,8 @@ module.exports = class CustomerModel extends Model {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
@@ -178,7 +178,7 @@ if (data['limit'] < 1) {
 		if (data['filter_group']) {
 			group = data['filter_group'];
 		}
-
+		let sql = '';
 		switch (group) {
 			case 'day':
 				sql = "SELECT COUNT(DISTINCT YEAR(`date_added`), MONTH(`date_added`), DAY(`date_added`)) AS `total` FROM `" + DB_PREFIX + "customer`";
@@ -249,8 +249,8 @@ if (data['limit'] < 1) {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
@@ -320,8 +320,8 @@ if (data['limit'] < 1) {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
@@ -401,8 +401,8 @@ if (data['limit'] < 1) {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
@@ -491,8 +491,8 @@ if (data['limit'] < 1) {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 

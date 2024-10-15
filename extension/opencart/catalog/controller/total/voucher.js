@@ -52,7 +52,7 @@ class VoucherController extends Controller {
 		if ($voucher) {
 			this.load.model('checkout/voucher');
 
-			$voucher_info = this.model_checkout_voucher.getVoucher($voucher);
+			$voucher_info = await this.model_checkout_voucher.getVoucher($voucher);
 
 			if (!$voucher_info) {
 				$json['error'] = this.language.get('error_voucher');

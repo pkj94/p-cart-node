@@ -8,7 +8,7 @@ module.exports = class NotificationToolModel  extends Model {
 	 * @return int
 	 */
 	async addNotification(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "notification` SET `title` = '" + this.db.escape(data['title']) + "', `text` = '" + this.db.escape(data['text']) + "', `status` = '" + data['status'] + "', `date_added` = NOW()");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "notification` SET `title` = " + this.db.escape(data['title']) + ", `text` = " + this.db.escape(data['text']) + ", `status` = '" + data['status'] + "', `date_added` = NOW()");
 
 		return this.db.getLastId();
 	}

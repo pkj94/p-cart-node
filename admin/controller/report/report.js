@@ -1,15 +1,9 @@
-<?php
-namespace Opencart\Admin\Controller\Report;
-/**
- * 
- *
- * @package Opencart\Admin\Controller\Report
- */
-class ReportController extends Controller {
+module.exports = class ReportController extends Controller {
 	/**
 	 * @return void
 	 */
 	async index() {
+		const data = {};
 		await this.load.language('report/report');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -17,13 +11,13 @@ class ReportController extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('text_home'),
+			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('report/report', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('heading_title'),
+			'href': this.url.link('report/report', 'user_token=' + this.session.data['user_token'])
 		});
 
 		if ((this.request.get['code'])) {
@@ -35,7 +29,7 @@ class ReportController extends Controller {
 		// Reports
 		data['reports'] = [];
 
-		this.load.model('setting/extension',this);
+		this.load.model('setting/extension', this);
 
 		// Get a list of installed modules
 		const results = await this.model_setting_extension.getExtensionsByType('report');
@@ -46,21 +40,22 @@ class ReportController extends Controller {
 				await this.load.language('extension/' + result['extension'] + '/report/' + result['code'], result['code']);
 
 				data['reports'].push({
-					'text' : this.language.get(result['code'] + '_heading_title'),
-					'code' : result['code'],
-					'sort_order' : this.config.get('report_' + result['code'] + '_sort_order'),
-					'href' : this.url.link('extension/' + result['extension'] + '/report/' + result['code'] + '.report', 'user_token=' + this.session.data['user_token'])
-				];
+					'text': this.language.get(result['code'] + '_heading_title'),
+					'code': result['code'],
+					'sort_order': this.config.get('report_' + result['code'] + '_sort_order'),
+					'href': this.url.link('extension/' + result['extension'] + '/report/' + result['code'] + '.report', 'user_token=' + this.session.data['user_token'])
+				});
 			}
 		}
 
-		let sort_order = [];
+		let sort_order = {};
 
-		for (data['reports'] of key : value) {
+		for (let [key, value] of Object.entries(data['reports'])) {
 			sort_order[key] = value['sort_order'];
 		}
 
-		data['extensions']= multiSort(data['reports'],sort_order,'ASC');
+		// data['extensions'] = multiSort(data['reports'], sort_order, 'ASC');
+		data['extensions'] = data['reports'].sort((a, b) => a.sort_order - b.sort_order);
 
 		data['user_token'] = this.session.data['user_token'];
 

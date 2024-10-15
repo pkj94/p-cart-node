@@ -1,8 +1,11 @@
-module.exports=class TaxRateController extends Controller {
+const sprintf = require("locutus/php/strings/sprintf");
+
+module.exports = class TaxRateController extends Controller {
 	/**
 	 * @return void
 	 */
 	async index() {
+		const data = {};
 		await this.load.language('localisation/tax_rate');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -24,13 +27,13 @@ module.exports=class TaxRateController extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('text_home'),
+			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('localisation/tax_rate', 'user_token=' + this.session.data['user_token'] + url)
+			'text': this.language.get('heading_title'),
+			'href': this.url.link('localisation/tax_rate', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
 		data['add'] = this.url.link('localisation/tax_rate.form', 'user_token=' + this.session.data['user_token'] + url);
@@ -60,15 +63,15 @@ module.exports=class TaxRateController extends Controller {
 	 * @return string
 	 */
 	async getList() {
+		const data = {};
+		let sort = 'tr.name';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
-		} else {
-			sort = 'tr.name';
 		}
 
-		let order= 'ASC';
+		let order = 'ASC';
 		if ((this.request.get['order'])) {
-			order= this.request.get['order'];
+			order = this.request.get['order'];
 		}
 
 		let page = 1;
@@ -95,32 +98,32 @@ module.exports=class TaxRateController extends Controller {
 		data['tax_rates'] = [];
 
 		let filter_data = {
-			'sort'  : sort,
-			'order' : order,
-			'start' : (page - 1) * Number(this.config.get('config_pagination_admin')),
-			'limit' : this.config.get('config_pagination_admin')
-		});
+			'sort': sort,
+			'order': order,
+			'start': (page - 1) * Number(this.config.get('config_pagination_admin')),
+			'limit': this.config.get('config_pagination_admin')
+		};
 
-		this.load.model('localisation/tax_rate');
+		this.load.model('localisation/tax_rate', this);
 
-		tax_rate_total await this.model_localisation_tax_rate.getTotalTaxRates();
+		const tax_rate_total = await this.model_localisation_tax_rate.getTotalTaxRates();
 
 		const results = await this.model_localisation_tax_rate.getTaxRates(filter_data);
 
 		for (let result of results) {
 			data['tax_rates'].push({
-				'tax_rate_id'   : result['tax_rate_id'],
-				'name'          : result['name'],
-				'rate'          : result['rate'],
-				'type'          : (result['type'] == 'F' ? this.language.get('text_amount') : this.language.get('text_percent')),
-				'geo_zone'      : result['geo_zone'],
-				'date_added'    : date(this.language.get('date_format_short'), new Date(result['date_added'])),
-				'date_modified' : date(this.language.get('date_format_short'), new Date(result['date_modified'])),
-				'edit'          : this.url.link('localisation/tax_rate.form', 'user_token=' + this.session.data['user_token'] + '&tax_rate_id=' + result['tax_rate_id'] + url)
-			];
+				'tax_rate_id': result['tax_rate_id'],
+				'name': result['name'],
+				'rate': result['rate'],
+				'type': (result['type'] == 'F' ? this.language.get('text_amount') : this.language.get('text_percent')),
+				'geo_zone': result['geo_zone'],
+				'date_added': date(this.language.get('date_format_short'), new Date(result['date_added'])),
+				'date_modified': date(this.language.get('date_format_short'), new Date(result['date_modified'])),
+				'edit': this.url.link('localisation/tax_rate.form', 'user_token=' + this.session.data['user_token'] + '&tax_rate_id=' + result['tax_rate_id'] + url)
+			});
 		}
 
-		let url = '';
+		url = '';
 
 		if (order == 'ASC') {
 			url += '&order=DESC';
@@ -135,7 +138,7 @@ module.exports=class TaxRateController extends Controller {
 		data['sort_date_added'] = this.url.link('localisation/tax_rate.list', 'user_token=' + this.session.data['user_token'] + '&sort=tr.date_added' + url);
 		data['sort_date_modified'] = this.url.link('localisation/tax_rate.list', 'user_token=' + this.session.data['user_token'] + '&sort=tr.date_modified' + url);
 
-		let url = '';
+		url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -146,11 +149,11 @@ module.exports=class TaxRateController extends Controller {
 		}
 
 		data['pagination'] = await this.load.controller('common/pagination', {
-			'total' : tax_rate_total,
-			'page'  : page,
-			'limit' : this.config.get('config_pagination_admin'),
-			'url'   : this.url.link('localisation/tax_rate.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
-		]);
+			'total': tax_rate_total,
+			'page': page,
+			'limit': this.config.get('config_pagination_admin'),
+			'url': this.url.link('localisation/tax_rate.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
+		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (tax_rate_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (tax_rate_total - this.config.get('config_pagination_admin'))) ? tax_rate_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), tax_rate_total, Math.ceil(tax_rate_total / this.config.get('config_pagination_admin')));
 
@@ -164,6 +167,7 @@ module.exports=class TaxRateController extends Controller {
 	 * @return void
 	 */
 	async form() {
+		const data = {};
 		await this.load.language('localisation/tax_rate');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -187,22 +191,22 @@ module.exports=class TaxRateController extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('text_home'),
+			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('localisation/tax_rate', 'user_token=' + this.session.data['user_token'] + url)
+			'text': this.language.get('heading_title'),
+			'href': this.url.link('localisation/tax_rate', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
 		data['save'] = this.url.link('localisation/tax_rate.save', 'user_token=' + this.session.data['user_token']);
 		data['back'] = this.url.link('localisation/tax_rate', 'user_token=' + this.session.data['user_token'] + url);
-
+		let tax_rate_info;
 		if ((this.request.get['tax_rate_id'])) {
-			this.load.model('localisation/tax_rate');
+			this.load.model('localisation/tax_rate', this);
 
-			tax_rate_info await this.model_localisation_tax_rate.getTaxRate(this.request.get['tax_rate_id']);
+			tax_rate_info = await this.model_localisation_tax_rate.getTaxRate(this.request.get['tax_rate_id']);
 		}
 
 		if ((this.request.get['tax_rate_id'])) {
@@ -211,7 +215,7 @@ module.exports=class TaxRateController extends Controller {
 			data['tax_rate_id'] = 0;
 		}
 
-	    if ((tax_rate_info)) {
+		if ((tax_rate_info)) {
 			data['name'] = tax_rate_info['name'];
 		} else {
 			data['name'] = '';
@@ -229,7 +233,7 @@ module.exports=class TaxRateController extends Controller {
 			data['type'] = '';
 		}
 
-		this.load.model('customer/customer_group',this);
+		this.load.model('customer/customer_group', this);
 
 		data['customer_groups'] = await this.model_customer_customer_group.getCustomerGroups();
 
@@ -239,7 +243,7 @@ module.exports=class TaxRateController extends Controller {
 			data['tax_rate_customer_group'] = [this.config.get('config_customer_group_id')];
 		}
 
-		this.load.model('localisation/geo_zone',this);
+		this.load.model('localisation/geo_zone', this);
 
 		data['geo_zones'] = await this.model_localisation_geo_zone.getGeoZones();
 
@@ -262,7 +266,7 @@ module.exports=class TaxRateController extends Controller {
 	async save() {
 		await this.load.language('localisation/tax_rate');
 
-		const json = {};
+		const json = { error: {} };
 
 		if (!await this.user.hasPermission('modify', 'localisation/tax_rate')) {
 			json['error']['warning'] = this.language.get('error_permission');
@@ -276,9 +280,9 @@ module.exports=class TaxRateController extends Controller {
 			json['error']['rate'] = this.language.get('error_rate');
 		}
 
-		if (!Object.keys(json).length) {
-			this.load.model('localisation/tax_rate');
-
+		if (!Object.keys(json.error).length) {
+			this.load.model('localisation/tax_rate', this);
+			this.request.post['tax_rate_id'] = Number(this.request.post['tax_rate_id']);
 			if (!this.request.post['tax_rate_id']) {
 				json['tax_rate_id'] = await this.model_localisation_tax_rate.addTaxRate(this.request.post);
 			} else {
@@ -301,7 +305,7 @@ module.exports=class TaxRateController extends Controller {
 		const json = {};
 
 		let selected = [];
-                 if ((this.request.post['selected'])) {
+		if ((this.request.post['selected'])) {
 			selected = this.request.post['selected'];
 		}
 
@@ -309,10 +313,10 @@ module.exports=class TaxRateController extends Controller {
 			json['error'] = this.language.get('error_permission');
 		}
 
-		this.load.model('localisation/tax_class',this);
+		this.load.model('localisation/tax_class', this);
 
-		for (this.request.post['selected'] of tax_rate_id) {
-			tax_rule_total await this.model_localisation_tax_class.getTotalTaxRulesByTaxRateId(tax_rate_id);
+		for (let tax_rate_id of selected) {
+			const tax_rule_total = await this.model_localisation_tax_class.getTotalTaxRulesByTaxRateId(tax_rate_id);
 
 			if (tax_rule_total) {
 				json['error'] = sprintf(this.language.get('error_tax_rule'), tax_rule_total);
@@ -320,9 +324,9 @@ module.exports=class TaxRateController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('localisation/tax_rate');
+			this.load.model('localisation/tax_rate', this);
 
-			for (selected of tax_rate_id) {
+			for (let tax_rate_id of selected) {
 				await this.model_localisation_tax_rate.deleteTaxRate(tax_rate_id);
 			}
 

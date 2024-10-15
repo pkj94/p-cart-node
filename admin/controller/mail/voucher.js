@@ -13,6 +13,7 @@ module.exports = class VoucherController extends Controller {
 		this.load.model('sale/order', this);
 
 		const voucher_info = await this.model_sale_voucher.getVoucher(voucher_id);
+		// console.log('voucher_info',voucher_info,voucher_id)
 		if (voucher_info.voucher_id) {
 			// If voucher does not belong to an order
 			await this.load.language('mail/voucher');
@@ -99,7 +100,7 @@ module.exports = class VoucherController extends Controller {
 				data['store_name'] = store_name;
 				data['store_url'] = HTTP_CATALOG;
 			}
-			
+			// console.log('config_mail_engine----',this.config.get('config_mail_engine'));
 			if (this.config.get('config_mail_engine')) {
 				let mail_option = {
 					'parameter': this.config.get('config_mail_parameter'),
@@ -109,7 +110,7 @@ module.exports = class VoucherController extends Controller {
 					'smtp_port': this.config.get('config_mail_smtp_port'),
 					'smtp_timeout': this.config.get('config_mail_smtp_timeout')
 				};
-				console.log(this.config.get('config_mail_engine'), mail_option);
+				// console.log(this.config.get('config_mail_engine'), mail_option);
 				const mail = new MailLibrary(this.config.get('config_mail_engine'), mail_option);
 				mail.setTo(voucher_info['to_email']);
 				mail.setFrom(this.config.get('config_email'));

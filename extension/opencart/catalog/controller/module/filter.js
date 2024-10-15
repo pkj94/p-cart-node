@@ -23,7 +23,7 @@ class FilterController extends Controller {
 
 		this.load.model('catalog/category');
 
-		$category_info = this.model_catalog_category.getCategory($category_id);
+		$category_info = await this.model_catalog_category.getCategory($category_id);
 
 		if ($category_info) {
 			this.load.language('extension/opencart/module/filter');
@@ -54,7 +54,7 @@ class FilterController extends Controller {
 
 			data['filter_groups'] = [];
 
-			filter_groups = this.model_catalog_category.getFilters($category_id);
+			filter_groups = await this.model_catalog_category.getFilters($category_id);
 
 			if (filter_groups) {
 				foreach (filter_groups as filter_group) {

@@ -52,7 +52,7 @@ module.exports = class CurrencyController extends Controller {
 
 				data['extensions'].push({
 					'name': this.language.get(code + '_heading_title') + (code == this.config.get('config_currency') ? this.language.get('text_default') : ''),
-					'status': this.config.get('currency_' + code + '_status') ? this.language.get('text_enabled') : this.language.get('text_disabled'),
+					'status': Number(this.config.get('currency_' + code + '_status')) ? this.language.get('text_enabled') : this.language.get('text_disabled'),
 					'install': this.url.link('extension/currency.install', 'user_token=' + this.session.data['user_token'] + '&extension=' + extension + '&code=' + code),
 					'uninstall': this.url.link('extension/currency.uninstall', 'user_token=' + this.session.data['user_token'] + '&extension=' + extension + '&code=' + code),
 					'installed': installed.includes(code),
@@ -99,8 +99,8 @@ module.exports = class CurrencyController extends Controller {
 
 			this.load.model('user/user_group', this);
 
-			await this.model_user_user_group.addPermission(this.user.getGroupId(), 'access', 'extension/' + extension + '/currency/' + code);
-			await this.model_user_user_group.addPermission(this.user.getGroupId(), 'modify', 'extension/' + extension + '/currency/' + code);
+			await this.model_user_user_group.addPermission(await this.user.getGroupId(), 'access', 'extension/' + extension + '/currency/' + code);
+			await this.model_user_user_group.addPermission(await this.user.getGroupId(), 'modify', 'extension/' + extension + '/currency/' + code);
 
 
 

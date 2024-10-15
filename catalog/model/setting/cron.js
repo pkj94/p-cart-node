@@ -22,7 +22,7 @@ class Cron extends \Opencart\System\Engine\Model {
 	 * @return void
 	 */
 	public function editStatus($cron_id, bool $status): void {
-		$this->db->query("UPDATE `" . DB_PREFIX . "cron` SET `status` = '" . (bool)$status . "' WHERE `cron_id` = '" . (int)$cron_id . "'");
+		$this->db->query("UPDATE `" . DB_PREFIX . "cron` SET `status` = '" . $status . "' WHERE `cron_id` = '" . (int)$cron_id . "'");
 	}
 
 	/**

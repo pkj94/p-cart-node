@@ -59,7 +59,7 @@ module.exports = class SubscriptionSaleModel  extends Model {
 	 * @return void
 	 */
 	async editDateNext(subscription_id, date_next) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "subscription` SET `date_next` = '" + this.db.escape(date_next) + "' WHERE `subscription_id` = '" + subscription_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "subscription` SET `date_next` = " + this.db.escape(date_next) + " WHERE `subscription_id` = '" + subscription_id + "'");
 	}
 
 	/**
@@ -254,7 +254,7 @@ if (data['limit'] < 1) {
 	 * @return void
 	 */
 	async addHistory(subscription_id, subscription_status_id, comment = '', notify = false) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "subscription_history` SET `subscription_id` = '" + subscription_id + "', `subscription_status_id` = '" + subscription_status_id + "', `comment` = '" + this.db.escape(comment) + "', `notify` = '" + notify + "', `date_added` = NOW()");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "subscription_history` SET `subscription_id` = '" + subscription_id + "', `subscription_status_id` = '" + subscription_status_id + "', `comment` = " + this.db.escape(comment) + ", `notify` = '" + notify + "', `date_added` = NOW()");
 
 		await this.db.query("UPDATE `" + DB_PREFIX + "subscription` SET `subscription_status_id` = '" + subscription_status_id + "' WHERE `subscription_id` = '" + subscription_id + "'");
 	}

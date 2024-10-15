@@ -1,3 +1,5 @@
+const mktime = require("locutus/php/datetime/mktime");
+
 module.exports = class SaleReportModel extends Model {
 	/**
 	 * @param array data
@@ -70,7 +72,7 @@ module.exports = class SaleReportModel extends Model {
 
 		let date_start = new Date('-' + date('w') + ' days');
 
-		for (i = 0; i < 7; i++) {
+		for (let i = 0; i < 7; i++) {
 			date = date('Y-m-d', date_start + (i * 86400));
 
 			order_data[date('w', new Date(date))] = {
@@ -130,7 +132,7 @@ module.exports = class SaleReportModel extends Model {
 	async getTotalOrdersByYear() {
 		const implode = [];
 
-		for (this.config.get('config_complete_status') of order_status_id) {
+		for (let order_status_id of this.config.get('config_complete_status')) {
 			implode.push("'" + order_status_id + "'");
 		}
 
@@ -392,11 +394,9 @@ module.exports = class SaleReportModel extends Model {
 		if (data['filter_date_end']) {
 			sql += " AND DATE(`o`.`date_added`) <= DATE(" + this.db.escape(data['filter_date_end']) + ")";
 		}
-
+		let group = 'week';
 		if (data['filter_group']) {
 			group = data['filter_group'];
-		} else {
-			group = 'week';
 		}
 
 		switch (group) {

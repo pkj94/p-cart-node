@@ -31,7 +31,7 @@ module.exports = class HeaderController extends Controller {
             data.home = this.url.link('common/dashboard', { user_token: this.session.data.user_token });
 
             data.language = await this.load.controller('common/language');
-            
+
             // Notifications
             const filter_data = {
                 start: 0,
@@ -39,10 +39,10 @@ module.exports = class HeaderController extends Controller {
             };
 
             data.notifications = [];
-            this.load.model('tool/notification',this);
+            this.load.model('tool/notification', this);
 
             let results = await this.model_tool_notification.getNotifications(filter_data);
-            
+
             for (const result of results) {
                 data.notifications.push({
                     title: result.title,
@@ -55,10 +55,10 @@ module.exports = class HeaderController extends Controller {
 
             data.profile = this.url.link('user/profile', { user_token: this.session.data.user_token });
 
-            this.load.model('tool/image',this);
+            this.load.model('tool/image', this);
             data.image = await this.model_tool_image.resize('profile.png', 45, 45);
-            this.load.model('user/user',this);
-            const user_info = await this.model_user_user.getUser(this.user.getId());
+            this.load.model('user/user', this);
+            const user_info = await this.model_user_user.getUser(await this.user.getId());
 
             if (user_info) {
                 data.firstname = user_info.firstname;
@@ -66,7 +66,7 @@ module.exports = class HeaderController extends Controller {
                 data.username = user_info.username;
                 data.user_group = user_info.user_group;
 
-                if (fs.existsSync(DIR_IMAGE+ user_info.image)) {
+                if (user_info.image && fs.existsSync(DIR_IMAGE + user_info.image)) {
                     data.image = await this.model_tool_image.resize(user_info.image, 45, 45);
                 }
             } else {
@@ -80,7 +80,7 @@ module.exports = class HeaderController extends Controller {
                 href: HTTP_CATALOG
             }];
 
-            this.load.model('setting/store',this);
+            this.load.model('setting/store', this);
             const storeResults = await this.model_setting_store.getStores();
             for (const result of storeResults) {
                 data.stores.push({

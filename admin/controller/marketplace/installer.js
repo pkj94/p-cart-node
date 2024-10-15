@@ -2,7 +2,7 @@ const fs = require('fs');
 const expressPath = require('path');
 const AdmZip = require('adm-zip');
 const sprintf = require('locutus/php/strings/sprintf');
-const strtotime = require('locutus/php/datetime/strtotime');
+
 
 module.exports = class InstallerMarketplaceController extends Controller {
 	/**
@@ -88,7 +88,6 @@ module.exports = class InstallerMarketplaceController extends Controller {
 
 		// Look for any new extensions
 		let files = fs.readdirSync(DIR_STORAGE + 'marketplace/').filter(a => a.indexOf('.ocmod.zip') >= 0);
-		console.log(files);
 		for (let file of files) {
 			let code = expressPath.basename(file, '.ocmod.zip');
 

@@ -28,7 +28,7 @@ class FeaturedController extends Controller {
 			$products = [];
 
 			foreach ($setting['product'] as $product_id) {
-				$product_info = this.model_catalog_product.getProduct($product_id);
+				$product_info = await this.model_catalog_product.getProduct($product_id);
 
 				if ($product_info) {
 					$products[] = $product_info;
@@ -37,9 +37,9 @@ class FeaturedController extends Controller {
 
 			for(let product of products) {
 				if ($product['image']) {
-					$image = this.model_tool_image.resize(html_entity_decode($product['image']), $setting['width'], $setting['height']);
+					$image = await this.model_tool_image.resize(html_entity_decode($product['image']), $setting['width'], $setting['height']);
 				} else {
-					$image = this.model_tool_image.resize('placeholder.png', $setting['width'], $setting['height']);
+					$image = await this.model_tool_image.resize('placeholder.png', $setting['width'], $setting['height']);
 				}
 
 				if (this.customer.isLogged() || !this.config.get('config_customer_price')) {

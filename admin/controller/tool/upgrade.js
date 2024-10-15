@@ -1,26 +1,12 @@
-<?php
-/*
-Upgrade Process
+const axios = require("axios");
+const nl2br = require("locutus/php/strings/nl2br");
 
-1. Check for latest version
-
-2. Download a copy of the latest version
-
-3. Add and replace the files with the ones from latest version
-
-4. Redirect to upgrade page
-*/
-namespace Opencart\Admin\Controller\Tool;
-/**
- * 
- *
- * @package Opencart\Admin\Controller\Tool
- */
-class UpgradeController extends Controller {
+module.exports = class UpgradeController extends Controller {
 	/**
 	 * @return void
 	 */
 	async index() {
+		const data = {};
 		await this.load.language('tool/upgrade');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -28,37 +14,30 @@ class UpgradeController extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('text_home'),
+			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('tool/upgrade', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('heading_title'),
+			'href': this.url.link('tool/upgrade', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['current_version'] = VERSION;
 		data['upgrade'] = false;
+		let response_info = {}
+		try {
+			const curl = await axios.get(OPENCART_SERVER + 'index.php?route=api/upgrade');
+			response_info = curl.data;
+		} catch (e) {
 
-		curl = curl_init(OPENCART_SERVER + 'index.php?route=api/upgrade');
-
-		curl_setopt(curl, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt(curl, CURLOPT_FORBID_REUSE, 1);
-		curl_setopt(curl, CURLOPT_FRESH_CONNECT, 1);
-		curl_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
-
-		response = curl_exec(curl);
-
-		curl_close(curl);
-
-		response_info = JSON.parse(response, true);
-
+		}
 		if (response_info) {
 			data['latest_version'] = response_info['version'];
 			data['date_added'] = date(this.language.get('date_format_short'), new Date(response_info['date_added']));
 			data['log'] = nl2br(response_info['log']);
 
-			if (!version_compare(VERSION, response_info['version'], '>=')) {
+			if (VERSION < response_info['version']) {
 				data['upgrade'] = true;
 			}
 		} else {
@@ -66,7 +45,6 @@ class UpgradeController extends Controller {
 			data['date_added'] = '';
 			data['log'] = '';
 		}
-
 		// For testing
 		//data['latest_version'] = 'master';
 
@@ -86,11 +64,9 @@ class UpgradeController extends Controller {
 		await this.load.language('tool/upgrade');
 
 		const json = {};
-
+		let version = '';
 		if ((this.request.get['version'])) {
 			version = this.request.get['version'];
-		} else {
-			version = '';
 		}
 
 		if (!await this.user.hasPermission('modify', 'tool/upgrade')) {
@@ -101,11 +77,7 @@ class UpgradeController extends Controller {
 			json['error'] = this.language.get('error_version');
 		}
 
-		file = DIR_DOWNLOAD + 'opencart-' + version + '.zip';
-
-		handle = fopen(file, 'w');
-
-		set_time_limit(0);
+		let file = DIR_DOWNLOAD + 'opencart-' + version + '.zip';
 
 		curl = curl_init('https://github.com/opencart/opencart/archive/' + version + '.zip');
 
@@ -164,13 +136,13 @@ class UpgradeController extends Controller {
 
 		if (!Object.keys(json).length) {
 			// Unzip the files
-			zip = new \ZipArchive();
+			zip = new ZipArchive();
 
-			if (zip.open(file, \ZipArchive::RDONLY)) {
+			if (zip.open(file, ZipArchive)) {
 				remove = 'opencart-' + version + '/upload/';
 
 				// Check if any of the files already exist.
-				for (i = 0; i < zip.numFiles; i++) {
+				for (let i = 0; i < zip.numFiles; i++) {
 					source = zip.getNameIndex(i);
 
 					if (substr(source, 0, strlen(remove)) == remove) {
@@ -191,7 +163,7 @@ class UpgradeController extends Controller {
 									path = path + '/' + directory;
 								}
 
-								if (!is_dir(DIR_OPENCART + path) && !@mkdir(DIR_OPENCART + path, 0777)) {
+								if (!is_dir(DIR_OPENCART + path) && !mkdir(DIR_OPENCART + path)) {
 									json['error'] = sprintf(this.language.get('error_directory'), path);
 								}
 							}

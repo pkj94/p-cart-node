@@ -36,7 +36,7 @@ module.exports = class MapDashboardController extends Controller {
 
 		data['columns'] = [];
 
-		for (i = 3; i <= 12; i++) {
+		for (let i = 3; i <= 12; i++) {
 			data['columns'].push(i);
 		}
 

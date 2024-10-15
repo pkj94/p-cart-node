@@ -10,9 +10,9 @@ module.exports = class ThemeDesignModel  extends Model {
 	 * @return void
 	 */
 	async editTheme(store_id, route, code) {
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "theme` WHERE `store_id` = '" + store_id + "' AND `route` = '" + this.db.escape(route) + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "theme` WHERE `store_id` = '" + store_id + "' AND `route` = " + this.db.escape(route) );
 		
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "theme` SET `store_id` = '" + store_id + "', `route` = '" + this.db.escape(route) + "', `code` = '" + this.db.escape(code) + "', `date_added` = NOW()");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "theme` SET `store_id` = '" + store_id + "', `route` = " + this.db.escape(route) + ", `code` = " + this.db.escape(code) + ", `date_added` = NOW()");
 	}
 
 	/**
@@ -31,7 +31,7 @@ module.exports = class ThemeDesignModel  extends Model {
 	 * @return array
 	 */
 	async getTheme(store_id, route) {
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "theme` WHERE `store_id` = '" + store_id + "' AND `route` = '" + this.db.escape(route) + "'");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "theme` WHERE `store_id` = '" + store_id + "' AND `route` = " + this.db.escape(route) );
 
 		return query.row;
 	}

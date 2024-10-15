@@ -82,7 +82,7 @@ module.exports = class ChartDashboardController extends Controller {
 
 		json['order'] = {};
 		json['customer'] = {};
-		json['xaxis'] = {};
+		json['xaxis'] = [];
 
 		json['order']['label'] = this.language.get('text_order');
 		json['customer']['label'] = this.language.get('text_customer');
@@ -109,7 +109,7 @@ module.exports = class ChartDashboardController extends Controller {
 				}
 
 
-				for (i = 0; i < 24; i++) {
+				for (let i = 0; i < 24; i++) {
 					json['xaxis'].push([i, i]);
 				}
 				break;
@@ -130,7 +130,7 @@ module.exports = class ChartDashboardController extends Controller {
 
 				date_start = new Date('-' + date('w') + ' days');
 
-				for (i = 0; i < 7; i++) {
+				for (let i = 0; i < 7; i++) {
 					date = date('Y-m-d', date_start + (i * 86400));
 
 					json['xaxis'].push([date('w', new Date(date)), date('D', new Date(date))]);
@@ -149,7 +149,7 @@ module.exports = class ChartDashboardController extends Controller {
 					json['customer']['data'].push([key, value['total']]);
 				}
 
-				for (i = 1; i <= date('t'); i++) {
+				for (let i = 1; i <= date('t'); i++) {
 					date = date('Y') + '-' + date('m') + '-' + i;
 
 					json['xaxis'].push([date('j', new Date(date)), date('d', new Date(date))]);
@@ -168,7 +168,7 @@ module.exports = class ChartDashboardController extends Controller {
 					json['customer']['data'].push([key, value['total']]);
 				}
 
-				for (i = 1; i <= 12; i++) {
+				for (let i = 1; i <= 12; i++) {
 					json['xaxis'].push([i, date('M', mktime(0, 0, 0, i, 1))]);
 				}
 				break;

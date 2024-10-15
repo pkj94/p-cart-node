@@ -59,7 +59,7 @@ module.exports = class FixerCurrencyController extends Controller {
 		this.response.setOutput(JSON.stringify(json));
 	}
 
-	async currency(default_ = '') {
+	async currencyConvert(default_ = '') {
 		if (this.config.get('currency_fixer_status')) {
 			try {
 				const response = await axios.get(`http://data.fixer.io/api/latest?access_key=${this.config.get('currency_fixer_api')}`, {
@@ -86,7 +86,7 @@ module.exports = class FixerCurrencyController extends Controller {
 
 					await this.model_localisation_currency.editValueByCode(default_, 1);
 
-					this.cache.delete('currency');
+					await this.cache.delete('currency');
 				}
 			} catch (error) {
 				console.error('Error fetching currency data:', error);
