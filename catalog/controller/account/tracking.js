@@ -1,16 +1,16 @@
 <?php
 namespace Opencart\Catalog\Controller\Account;
 /**
- * Class Tracking
+ *
  *
  * @package Opencart\Catalog\Controller\Account
  */
-class Tracking extends \Opencart\System\Engine\Controller {
+class TrackingController extends Controller {
 	/**
 	 * @return void
 	 */
 	public function index(): void {
-		if (!$this->customer->isLogged() || (!isset($this->request->get['customer_token']) || !isset($this->session->data['customer_token']) || ($this->request->get['customer_token'] != $this->session->data['customer_token']))) {
+		if (!$this->customer->isLogged() || (!($this->request->get['customer_token']) || !($this->session->data['customer_token']) || ($this->request->get['customer_token'] != $this->session->data['customer_token']))) {
 			$this->session->data['redirect'] = $this->url->link('account/tracking', 'language=' . $this->config->get('config_language'));
 
 			$this->response->redirect($this->url->link('account/login', 'language=' . $this->config->get('config_language')));
@@ -75,19 +75,19 @@ class Tracking extends \Opencart\System\Engine\Controller {
 	public function autocomplete(): void {
 		$json = [];
 
-		if (isset($this->request->get['search'])) {
+		if (($this->request->get['search'])) {
 			$search = $this->request->get['search'];
 		} else {
 			$search = '';
 		}
 
-		if (isset($this->request->get['tracking'])) {
+		if (($this->request->get['tracking'])) {
 			$tracking = $this->request->get['tracking'];
 		} else {
 			$tracking = '';
 		}
 
-		if (!$this->customer->isLogged() || (!isset($this->request->get['customer_token']) || !isset($this->session->data['customer_token']) || ($this->request->get['customer_token'] != $this->session->data['customer_token']))) {
+		if (!$this->customer->isLogged() || (!($this->request->get['customer_token']) || !($this->session->data['customer_token']) || ($this->request->get['customer_token'] != $this->session->data['customer_token']))) {
 			$this->session->data['redirect'] = $this->url->link('account/password', 'language=' . $this->config->get('config_language'));
 
 			$json['redirect'] = $this->url->link('account/login', 'language=' . $this->config->get('config_language'), true);

@@ -8,13 +8,13 @@ module.exports = class ApplicationController extends Controller {
 		this.registry.set('url', new UrlLibrary(this.config.get('site_url')));
 
 		// Customer
-		this.registry.set('customer', new (require(DIR_SYSTEM+'library/cart/customer'))(this.registry));
+		this.registry.set('customer', new (require(DIR_SYSTEM + 'library/cart/customer'))(this.registry));
 
 		// Currency
-		this.registry.set('currency', new (require(DIR_SYSTEM+'library/cart/currency'))(this.registry));
+		this.registry.set('currency', new (require(DIR_SYSTEM + 'library/cart/currency'))(this.registry));
 
 		// Tax
-		this.registry.set('tax', new (require(DIR_SYSTEM+'library/cart/tax'))(this.registry));
+		this.registry.set('tax', new (require(DIR_SYSTEM + 'library/cart/tax'))(this.registry));
 
 		if (this.config.get('config_tax_default') === 'shipping') {
 			this.registry.get('tax').setShippingAddress(this.config.get('config_country_id'), this.config.get('config_zone_id'));
@@ -27,13 +27,13 @@ module.exports = class ApplicationController extends Controller {
 		this.registry.get('tax').setStoreAddress(this.config.get('config_country_id'), this.config.get('config_zone_id'));
 
 		// Weight
-		this.registry.set('weight', new (require(DIR_SYSTEM+'library/cart/weight'))(this.registry));
+		this.registry.set('weight', new (require(DIR_SYSTEM + 'library/cart/weight'))(this.registry));
 
 		// Length
-		this.registry.set('length', new (require(DIR_SYSTEM+'library/cart/length'))(this.registry));
+		this.registry.set('length', new (require(DIR_SYSTEM + 'library/cart/length'))(this.registry));
 
 		// Cart
-		this.registry.set('cart', new (require(DIR_SYSTEM+'library/cart/cart'))(this.registry));
+		this.registry.set('cart', new (require(DIR_SYSTEM + 'library/cart/cart'))(this.registry));
 	}
 }
 

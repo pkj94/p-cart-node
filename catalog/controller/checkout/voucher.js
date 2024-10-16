@@ -1,20 +1,20 @@
 <?php
 namespace Opencart\Catalog\Controller\Checkout;
 /**
- * Class Voucher
+ *
  *
  * @package Opencart\Catalog\Controller\Checkout
  */
-class Voucher extends \Opencart\System\Engine\Controller {
+class VoucherController extends Controller {
 	/**
 	 * @return void
 	 */
-	public function index(): void {
+	async index(): void {
 		$this->load->language('checkout/voucher');
 
 		$this->document->setTitle($this->language->get('heading_title'));
 
-		if (!isset($this->session->data['vouchers'])) {
+		if (!($this->session->data['vouchers'])) {
 			$this->session->data['vouchers'] = [];
 		}
 
@@ -72,7 +72,7 @@ class Voucher extends \Opencart\System\Engine\Controller {
 	/**
 	 * @return void
 	 */
-	public function add(): void {
+	async add(): void {
 		$this->load->language('checkout/voucher');
 
 		$json = [];
@@ -88,12 +88,12 @@ class Voucher extends \Opencart\System\Engine\Controller {
 		];
 
 		foreach ($keys as $key) {
-			if (!isset($this->request->post[$key])) {
+			if (!($this->request->post[$key])) {
 				$this->request->post[$key] = '';
 			}
 		}
 
-		if (!isset($this->request->get['voucher_token']) || !isset($this->session->data['voucher_token']) || ($this->session->data['voucher_token'] != $this->request->get['voucher_token'])) {
+		if (!($this->request->get['voucher_token']) || !($this->session->data['voucher_token']) || ($this->session->data['voucher_token'] != $this->request->get['voucher_token'])) {
 			$json['redirect'] = $this->url->link('checkout/voucher', 'language=' . $this->config->get('config_language'), true);
 		}
 
@@ -121,7 +121,7 @@ class Voucher extends \Opencart\System\Engine\Controller {
 			$json['error']['amount'] = sprintf($this->language->get('error_amount'), $this->currency->format($this->config->get('config_voucher_min'), $this->session->data['currency']), $this->currency->format($this->config->get('config_voucher_max'), $this->session->data['currency']));
 		}
 
-		if (!isset($this->request->post['agree'])) {
+		if (!($this->request->post['agree'])) {
 			$json['error']['warning'] = $this->language->get('error_agree');
 		}
 
@@ -156,18 +156,18 @@ class Voucher extends \Opencart\System\Engine\Controller {
 	/**
 	 * @return void
 	 */
-	public function remove(): void {
+	async remove(): void {
 		$this->load->language('checkout/voucher');
 
 		$json = [];
 
-		if (isset($this->request->get['key'])) {
+		if (($this->request->get['key'])) {
 			$key = $this->request->get['key'];
 		} else {
 			$key = '';
 		}
 
-		if (!isset($this->session->data['vouchers'][$key])) {
+		if (!($this->session->data['vouchers'][$key])) {
 			$json['error'] = $this->language->get('error_voucher');
 		}
 
@@ -193,7 +193,7 @@ class Voucher extends \Opencart\System\Engine\Controller {
 	/**
 	 * @return void
 	 */
-	public function success(): void {
+	async success(): void {
 		$this->load->language('checkout/voucher');
 
 		$this->document->setTitle($this->language->get('heading_title'));

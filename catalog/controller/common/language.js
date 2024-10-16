@@ -1,20 +1,20 @@
 <?php
 namespace Opencart\Catalog\Controller\Common;
 /**
- * Class Language
+ *
  *
  * @package Opencart\Catalog\Controller\Common
  */
-class Language extends \Opencart\System\Engine\Controller {
+class LanguageController extends Controller {
 	/**
 	 * @return string
 	 */
-	public function index(): string {
+	async index(): string {
 		$this->load->language('common/language');
 
 		$url_data = $this->request->get;
 
-		if (isset($url_data['route'])) {
+		if (($url_data['route'])) {
 			$route = $url_data['route'];
 		} else {
 			$route = $this->config->get('action_default');

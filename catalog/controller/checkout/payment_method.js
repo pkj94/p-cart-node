@@ -1,18 +1,18 @@
 <?php
 namespace Opencart\Catalog\Controller\Checkout;
 /**
- * Class PaymentMethod
+ *
  *
  * @package Opencart\Catalog\Controller\Checkout
  */
-class PaymentMethod extends \Opencart\System\Engine\Controller {
+class PaymentMethodController extends Controller {
 	/**
 	 * @return string
 	 */
-	public function index(): string {
+	async index(): string {
 		$this->load->language('checkout/payment_method');
 
-		if (isset($this->session->data['payment_method'])) {
+		if (($this->session->data['payment_method'])) {
 			$data['payment_method'] = $this->session->data['payment_method']['name'];
 			$data['code'] = $this->session->data['payment_method']['code'];
 		} else {
@@ -20,7 +20,7 @@ class PaymentMethod extends \Opencart\System\Engine\Controller {
 			$data['code'] = '';
 		}
 
-		if (isset($this->session->data['comment'])) {
+		if (($this->session->data['comment'])) {
 			$data['comment'] = $this->session->data['comment'];
 		} else {
 			$data['comment'] = '';
@@ -44,7 +44,7 @@ class PaymentMethod extends \Opencart\System\Engine\Controller {
 	/**
 	 * @return void
 	 */
-	public function getMethods(): void {
+	async getMethods(): void {
 		$this->load->language('checkout/payment_method');
 
 		$json = [];
@@ -67,23 +67,23 @@ class PaymentMethod extends \Opencart\System\Engine\Controller {
 
 		if (!$json) {
 			// Validate if customer session data is set
-			if (!isset($this->session->data['customer'])) {
+			if (!($this->session->data['customer'])) {
 				$json['error'] = $this->language->get('error_customer');
 			}
 
-			if ($this->config->get('config_checkout_payment_address') && !isset($this->session->data['payment_address'])) {
+			if ($this->config->get('config_checkout_payment_address') && !($this->session->data['payment_address'])) {
 				$json['error'] = $this->language->get('error_payment_address');
 			}
 
 			// Validate shipping
 			if ($this->cart->hasShipping()) {
 				// Validate shipping address
-				if (!isset($this->session->data['shipping_address']['address_id'])) {
+				if (!($this->session->data['shipping_address']['address_id'])) {
 					$json['error'] = $this->language->get('error_shipping_address');
 				}
 
 				// Validate shipping method
-				if (!isset($this->session->data['shipping_method'])) {
+				if (!($this->session->data['shipping_method'])) {
 					$json['error'] = $this->language->get('error_shipping_method');
 				}
 			}
@@ -92,9 +92,9 @@ class PaymentMethod extends \Opencart\System\Engine\Controller {
 		if (!$json) {
 			$payment_address = [];
 
-			if ($this->config->get('config_checkout_payment_address') && isset($this->session->data['payment_address'])) {
+			if ($this->config->get('config_checkout_payment_address') && ($this->session->data['payment_address'])) {
 				$payment_address = $this->session->data['payment_address'];
-			} elseif ($this->config->get('config_checkout_shipping_address') && isset($this->session->data['shipping_address']['address_id'])) {
+			} elseif ($this->config->get('config_checkout_shipping_address') && ($this->session->data['shipping_address']['address_id'])) {
 				$payment_address = $this->session->data['shipping_address'];
 			}
 
@@ -117,7 +117,7 @@ class PaymentMethod extends \Opencart\System\Engine\Controller {
 	/**
 	 * @return void
 	 */
-	public function save(): void {
+	async save(): void {
 		$this->load->language('checkout/payment_method');
 
 		$json = [];
@@ -140,28 +140,28 @@ class PaymentMethod extends \Opencart\System\Engine\Controller {
 
 		if (!$json) {
 			// Validate has payment address if required
-			if ($this->config->get('config_checkout_payment_address') && !isset($this->session->data['payment_address'])) {
+			if ($this->config->get('config_checkout_payment_address') && !($this->session->data['payment_address'])) {
 				$json['error'] = $this->language->get('error_payment_address');
 			}
 
 			// Validate shipping
 			if ($this->cart->hasShipping()) {
 				// Validate shipping address
-				if (!isset($this->session->data['shipping_address']['address_id'])) {
+				if (!($this->session->data['shipping_address']['address_id'])) {
 					$json['error'] = $this->language->get('error_shipping_address');
 				}
 
 				// Validate shipping method
-				if (!isset($this->session->data['shipping_method'])) {
+				if (!($this->session->data['shipping_method'])) {
 					$json['error'] = $this->language->get('error_shipping_method');
 				}
 			}
 
 			// Validate payment methods
-			if (isset($this->request->post['payment_method']) && isset($this->session->data['payment_methods'])) {
+			if (($this->request->post['payment_method']) && ($this->session->data['payment_methods'])) {
 				$payment = explode('.', $this->request->post['payment_method']);
 
-				if (!isset($payment[0]) || !isset($payment[1]) || !isset($this->session->data['payment_methods'][$payment[0]]['option'][$payment[1]])) {
+				if (!($payment[0]) || !($payment[1]) || !($this->session->data['payment_methods'][$payment[0]]['option'][$payment[1]])) {
 					$json['error'] = $this->language->get('error_payment_method');
 				}
 			} else {
@@ -182,12 +182,12 @@ class PaymentMethod extends \Opencart\System\Engine\Controller {
 	/**
 	 * @return void
 	 */
-	public function comment(): void {
+	async comment(): void {
 		$this->load->language('checkout/payment_method');
 
 		$json = [];
 
-		if (isset($this->session->data['order_id'])) {
+		if (($this->session->data['order_id'])) {
 			$order_id = (int)$this->session->data['order_id'];
 		} else {
 			$order_id = 0;
@@ -214,12 +214,12 @@ class PaymentMethod extends \Opencart\System\Engine\Controller {
 	/**
 	 * @return void
 	 */
-	public function agree(): void {
+	async agree(): void {
 		$this->load->language('checkout/payment_method');
 
 		$json = [];
 
-		if (isset($this->request->post['agree'])) {
+		if (($this->request->post['agree'])) {
 			$this->session->data['agree'] = $this->request->post['agree'];
 		} else {
 			unset($this->session->data['agree']);

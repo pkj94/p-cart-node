@@ -1,11 +1,11 @@
 <?php
 namespace Opencart\Catalog\Controller\Api\Account;
 /**
- * Class Login
+ *
  *
  * @package Opencart\Catalog\Controller\Api\Account
  */
-class Login extends \Opencart\System\Engine\Controller {
+class LoginController extends Controller {
 	/*
 	 * Opencart\Catalog\Controller\Api\Account\Login.Index
 	 *
@@ -38,7 +38,7 @@ class Login extends \Opencart\System\Engine\Controller {
 	 * if ($status == 200) {
 	 *		$api_token = JSON.parse($response, true);
 	 *
-	 * 		if (isset($api_token['api_token'])) {
+	 * 		if (($api_token['api_token'])) {
 	 *
 	 * 			// You can now store the session cookie as a var in the your current session or some of persistent storage
 	 * 			$session_id = $api_token['api_token'];
@@ -66,7 +66,7 @@ class Login extends \Opencart\System\Engine\Controller {
 	 * curl_close($curl);
 	 *
 	 */
-	public function index(): void {
+	async index(): void {
 		$this->load->language('api/account/login');
 
 		$json = [];

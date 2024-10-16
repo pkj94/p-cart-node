@@ -1,15 +1,8 @@
-<?php
-namespace Opencart\Catalog\Controller\Startup;
-/**
- * Class Startup
- *
- * @package Opencart\Catalog\Controller\Startup
- */
-class Startup extends \Opencart\System\Engine\Controller {
+module.exports=class StartupController extends Controller {
 	/**
 	 * @return void
 	 */
-	public function index(): void {
+	async index(): void {
 		// Load startup actions
 		$this->load->model('setting/startup');
 

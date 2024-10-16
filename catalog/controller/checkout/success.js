@@ -1,18 +1,18 @@
 <?php
 namespace Opencart\Catalog\Controller\Checkout;
 /**
- * Class Success
+ *
  *
  * @package Opencart\Catalog\Controller\Checkout
  */
-class Success extends \Opencart\System\Engine\Controller {
+class SuccessController extends Controller {
 	/**
 	 * @return void
 	 */
-	public function index(): void {
+	async index(): void {
 		$this->load->language('checkout/success');
 
-		if (isset($this->session->data['order_id'])) {
+		if (($this->session->data['order_id'])) {
 			$this->cart->clear();
 
 			unset($this->session->data['order_id']);

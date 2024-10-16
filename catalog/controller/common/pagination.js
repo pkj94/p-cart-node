@@ -1,36 +1,36 @@
 <?php
 namespace Opencart\Catalog\Controller\Common;
 /**
- * Class Pagination
+ *
  *
  * @package Opencart\Catalog\Controller\Common
  */
-class Pagination extends \Opencart\System\Engine\Controller {
+class PaginationController extends Controller {
 	/**
 	 * @param array $setting
 	 *
 	 * @return string
 	 */
-	public function index(array $setting): string {
-		if (isset($setting['total'])) {
+	async index(array $setting): string {
+		if (($setting['total'])) {
 			$total = $setting['total'];
 		} else {
 			$total = 0;
 		}
 
-		if (isset($setting['page']) && $setting['page'] > 0) {
+		if (($setting['page']) && $setting['page'] > 0) {
 			$page = (int)$setting['page'];
 		} else {
 			$page = 1;
 		}
 
-		if (isset($setting['limit']) && (int)$setting['limit']) {
+		if (($setting['limit']) && (int)$setting['limit']) {
 			$limit = (int)$setting['limit'];
 		} else {
 			$limit = 10;
 		}
 
-		if (isset($setting['url'])) {
+		if (($setting['url'])) {
 			$url = str_replace('%7Bpage%7D', '{page}', (string)$setting['url']);
 		} else {
 			$url = '';

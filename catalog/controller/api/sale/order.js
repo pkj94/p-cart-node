@@ -1,23 +1,23 @@
 <?php
 namespace Opencart\Catalog\Controller\Api\Sale;
 /**
- * Class Order
+ *
  *
  * @package Opencart\Catalog\Controller\Api\Sale
  */
-class Order extends \Opencart\System\Engine\Controller {
+class OrderController extends Controller {
 	/*
 	 * Loads order info
 	 */
 	/**
 	 * @return void
 	 */
-	public function load(): void {
+	async load(): void {
 		$this->load->language('api/sale/order');
 
 		$json = [];
 
-		if (isset($this->request->get['order_id'])) {
+		if (($this->request->get['order_id'])) {
 			$order_id = (int)$this->request->get['order_id'];
 		} else {
 			$order_id = 0;
@@ -179,12 +179,12 @@ class Order extends \Opencart\System\Engine\Controller {
 	/**
 	 * @return void
 	 */
-	public function comment(): void {
+	async comment(): void {
 		$this->load->language('api/sale/order');
 
 		$json = [];
 
-		if (!isset($this->request->post['comment'])) {
+		if (!($this->request->post['comment'])) {
 			$json['error'] = $this->language->get('error_comment');
 		}
 
@@ -201,7 +201,7 @@ class Order extends \Opencart\System\Engine\Controller {
 	/**
 	 * @return void
 	 */
-	public function confirm(): void {
+	async confirm(): void {
 		$this->load->language('api/sale/order');
 
 		$json = [];
@@ -227,24 +227,24 @@ class Order extends \Opencart\System\Engine\Controller {
 		}
 
 		// Customer
-		if (!isset($this->session->data['customer'])) {
+		if (!($this->session->data['customer'])) {
 			$json['error']['customer'] = $this->language->get('error_customer');
 		}
 
 		// Payment Address
-		if ($this->config->get('config_checkout_payment_address') && !isset($this->session->data['payment_address'])) {
+		if ($this->config->get('config_checkout_payment_address') && !($this->session->data['payment_address'])) {
 			$json['error']['payment_address'] = $this->language->get('error_payment_address');
 		}
 
 		// Shipping
 		if ($this->cart->hasShipping()) {
 			// Shipping Address
-			if (!isset($this->session->data['shipping_address'])) {
+			if (!($this->session->data['shipping_address'])) {
 				$json['error']['shipping_address'] = $this->language->get('error_shipping_address');
 			}
 
 			// Validate shipping method
-			if (!isset($this->session->data['shipping_method'])) {
+			if (!($this->session->data['shipping_method'])) {
 				$json['error']['shipping_method'] = $this->language->get('error_shipping_method');
 			}
 		} else {
@@ -291,7 +291,7 @@ class Order extends \Opencart\System\Engine\Controller {
 				$order_data['payment_country'] = $this->session->data['payment_address']['country'];
 				$order_data['payment_country_id'] = $this->session->data['payment_address']['country_id'];
 				$order_data['payment_address_format'] = $this->session->data['payment_address']['address_format'];
-				$order_data['payment_custom_field'] = isset($this->session->data['payment_address']['custom_field']) ? $this->session->data['payment_address']['custom_field'] : [];
+				$order_data['payment_custom_field'] = ($this->session->data['payment_address']['custom_field']) ? $this->session->data['payment_address']['custom_field'] : [];
 			} else {
 				$order_data['payment_address_id'] = 0;
 				$order_data['payment_firstname'] = '';
@@ -326,7 +326,7 @@ class Order extends \Opencart\System\Engine\Controller {
 				$order_data['shipping_country'] = $this->session->data['shipping_address']['country'];
 				$order_data['shipping_country_id'] = $this->session->data['shipping_address']['country_id'];
 				$order_data['shipping_address_format'] = $this->session->data['shipping_address']['address_format'];
-				$order_data['shipping_custom_field'] = isset($this->session->data['shipping_address']['custom_field']) ? $this->session->data['shipping_address']['custom_field'] : [];
+				$order_data['shipping_custom_field'] = ($this->session->data['shipping_address']['custom_field']) ? $this->session->data['shipping_address']['custom_field'] : [];
 
 				$order_data['shipping_method'] = $this->session->data['shipping_method'];
 			} else {
@@ -423,7 +423,7 @@ class Order extends \Opencart\System\Engine\Controller {
 				}
 			}
 
-			if (isset($this->session->data['comment'])) {
+			if (($this->session->data['comment'])) {
 				$order_data['comment'] = $this->session->data['comment'];
 			} else {
 				$order_data['comment'] = '';
@@ -451,7 +451,7 @@ class Order extends \Opencart\System\Engine\Controller {
 			$order_data['marketing_id'] = 0;
 			$order_data['tracking'] = '';
 
-			if (isset($this->session->data['affiliate_id'])) {
+			if (($this->session->data['affiliate_id'])) {
 				$subtotal = $this->cart->getSubTotal();
 
 				// Affiliate
@@ -484,13 +484,13 @@ class Order extends \Opencart\System\Engine\Controller {
 				$order_data['forwarded_ip'] = '';
 			}
 
-			if (isset($this->request->server['HTTP_USER_AGENT'])) {
+			if (($this->request->server['HTTP_USER_AGENT'])) {
 				$order_data['user_agent'] = $this->request->server['HTTP_USER_AGENT'];
 			} else {
 				$order_data['user_agent'] = '';
 			}
 
-			if (isset($this->request->server['HTTP_ACCEPT_LANGUAGE'])) {
+			if (($this->request->server['HTTP_ACCEPT_LANGUAGE'])) {
 				$order_data['accept_language'] = $this->request->server['HTTP_ACCEPT_LANGUAGE'];
 			} else {
 				$order_data['accept_language'] = '';
@@ -498,7 +498,7 @@ class Order extends \Opencart\System\Engine\Controller {
 
 			$this->load->model('checkout/order');
 
-			if (!isset($this->session->data['order_id'])) {
+			if (!($this->session->data['order_id'])) {
 				$this->session->data['order_id'] = $this->model_checkout_order->addOrder($order_data);
 			} else {
 				$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
@@ -511,7 +511,7 @@ class Order extends \Opencart\System\Engine\Controller {
 			$json['order_id'] = $this->session->data['order_id'];
 
 			// Set the order history
-			if (isset($this->request->post['order_status_id'])) {
+			if (($this->request->post['order_status_id'])) {
 				$order_status_id = (int)$this->request->post['order_status_id'];
 			} else {
 				$order_status_id = $this->config->get('config_order_status_id');
@@ -523,7 +523,7 @@ class Order extends \Opencart\System\Engine\Controller {
 
 			$json['points'] = $points;
 
-			if (isset($order_data['affiliate_id'])) {
+			if (($order_data['affiliate_id'])) {
 				$json['commission'] = $this->currency->format($order_data['commission'], $this->config->get('config_currency'));
 			}
 		}
@@ -535,18 +535,18 @@ class Order extends \Opencart\System\Engine\Controller {
 	/**
 	 * @return void
 	 */
-	public function delete(): void {
+	async delete(): void {
 		$this->load->language('api/sale/order');
 
 		$json = [];
 
 		$selected = [];
 
-		if (isset($this->request->post['selected'])) {
+		if (($this->request->post['selected'])) {
 			$selected = $this->request->post['selected'];
 		}
 
-		if (isset($this->request->get['order_id'])) {
+		if (($this->request->get['order_id'])) {
 			$selected[] = (int)$this->request->get['order_id'];
 		}
 
@@ -569,7 +569,7 @@ class Order extends \Opencart\System\Engine\Controller {
 	/**
 	 * @return void
 	 */
-	public function addHistory(): void {
+	async addHistory(): void {
 		$this->load->language('api/sale/order');
 
 		$json = [];
@@ -584,7 +584,7 @@ class Order extends \Opencart\System\Engine\Controller {
 		];
 
 		foreach ($keys as $key) {
-			if (!isset($this->request->post[$key])) {
+			if (!($this->request->post[$key])) {
 				$this->request->post[$key] = '';
 			}
 		}

@@ -1,15 +1,15 @@
 <?php
 namespace Opencart\Catalog\Controller\Checkout;
 /**
- * Class Failure
+ *
  *
  * @package Opencart\Catalog\Controller\Checkout
  */
-class Failure extends \Opencart\System\Engine\Controller {
+class FailureController extends Controller {
 	/**
 	 * @return void
 	 */
-	public function index(): void {
+	async index(): void {
 		$this->load->language('checkout/failure');
 
 		$this->document->setTitle($this->language->get('heading_title'));

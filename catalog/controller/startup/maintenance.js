@@ -1,18 +1,11 @@
-<?php
-namespace Opencart\Catalog\Controller\Startup;
-/**
- * Class Maintenance
- *
- * @package Opencart\Catalog\Controller\Startup
- */
-class Maintenance extends \Opencart\System\Engine\Controller {
+module.exports=class MaintenanceController extends Controller {
 	/**
 	 * @return object|\Opencart\System\Engine\Action|null
 	 */
-	public function index(): object|null {
+	async index() {
 		if ($this->config->get('config_maintenance')) {
 			// Route
-			if (isset($this->request->get['route'])) {
+			if (($this->request->get['route'])) {
 				$route = $this->request->get['route'];
 			} else {
 				$route = $this->config->get('action_default');

@@ -1,18 +1,18 @@
 <?php
 namespace Opencart\Catalog\Controller\Account;
 /**
- * Class Address
+ *
  *
  * @package Opencart\Catalog\Controller\Account
  */
-class Address extends \Opencart\System\Engine\Controller {
+class AddressController extends Controller {
 	/**
 	 * @return void
 	 */
-	public function index(): void {
+	async index(): void {
 		$this->load->language('account/address');
 
-		if (!$this->customer->isLogged() || (!isset($this->request->get['customer_token']) || !isset($this->session->data['customer_token']) || ($this->request->get['customer_token'] != $this->session->data['customer_token']))) {
+		if (!$this->customer->isLogged() || (!($this->request->get['customer_token']) || !($this->session->data['customer_token']) || ($this->request->get['customer_token'] != $this->session->data['customer_token']))) {
 			$this->session->data['redirect'] = $this->url->link('account/address', 'language=' . $this->config->get('config_language'));
 
 			$this->response->redirect($this->url->link('account/login', 'language=' . $this->config->get('config_language')));
@@ -35,7 +35,7 @@ class Address extends \Opencart\System\Engine\Controller {
 			'href' => $this->url->link('account/address', 'language=' . $this->config->get('config_language') . '&customer_token=' . $this->session->data['customer_token'])
 		];
 
-		if (isset($this->session->data['success'])) {
+		if (($this->session->data['success'])) {
 			$data['success'] = $this->session->data['success'];
 
 			unset($this->session->data['success']);
@@ -65,10 +65,10 @@ class Address extends \Opencart\System\Engine\Controller {
 	/**
 	 * @return void
 	 */
-	public function list(): void {
+	async list(): void {
 		$this->load->language('account/address');
 
-		if (!$this->customer->isLogged() || (!isset($this->request->get['customer_token']) || !isset($this->session->data['customer_token']) || ($this->request->get['customer_token'] != $this->session->data['customer_token']))) {
+		if (!$this->customer->isLogged() || (!($this->request->get['customer_token']) || !($this->session->data['customer_token']) || ($this->request->get['customer_token'] != $this->session->data['customer_token']))) {
 			$this->session->data['redirect'] = $this->url->link('account/address', 'language=' . $this->config->get('config_language'));
 
 			$this->response->redirect($this->url->link('account/login', 'language=' . $this->config->get('config_language')));
@@ -128,10 +128,10 @@ class Address extends \Opencart\System\Engine\Controller {
 	/**
 	 * @return void
 	 */
-	public function form(): void {
+	async form(): void {
 		$this->load->language('account/address');
 
-		if (!$this->customer->isLogged() || (!isset($this->request->get['customer_token']) || !isset($this->session->data['customer_token']) || ($this->request->get['customer_token'] != $this->session->data['customer_token']))) {
+		if (!$this->customer->isLogged() || (!($this->request->get['customer_token']) || !($this->session->data['customer_token']) || ($this->request->get['customer_token'] != $this->session->data['customer_token']))) {
 			$this->session->data['redirect'] = $this->url->link('account/address', 'language=' . $this->config->get('config_language'));
 
 			$this->response->redirect($this->url->link('account/login', 'language=' . $this->config->get('config_language')));
@@ -139,7 +139,7 @@ class Address extends \Opencart\System\Engine\Controller {
 
 		$this->document->setTitle($this->language->get('heading_title'));
 
-		$data['text_address'] = !isset($this->request->get['address_id']) ? $this->language->get('text_address_add') : $this->language->get('text_address_edit');
+		$data['text_address'] = !($this->request->get['address_id']) ? $this->language->get('text_address_add') : $this->language->get('text_address_edit');
 
 		$data['error_upload_size'] = sprintf($this->language->get('error_upload_size'), $this->config->get('config_file_max_size'));
 
@@ -162,7 +162,7 @@ class Address extends \Opencart\System\Engine\Controller {
 			'href' => $this->url->link('account/address', 'language=' . $this->config->get('config_language') . '&customer_token=' . $this->session->data['customer_token'])
 		];
 
-		if (!isset($this->request->get['address_id'])) {
+		if (!($this->request->get['address_id'])) {
 			$data['breadcrumbs'][] = [
 				'text' => $this->language->get('text_address_add'),
 				'href' => $this->url->link('account/address.form', 'language=' . $this->config->get('config_language') . '&customer_token=' . $this->session->data['customer_token'])
@@ -174,7 +174,7 @@ class Address extends \Opencart\System\Engine\Controller {
 			];
 		}
 
-		if (!isset($this->request->get['address_id'])) {
+		if (!($this->request->get['address_id'])) {
 			$data['save'] = $this->url->link('account/address.save', 'language=' . $this->config->get('config_language') . '&customer_token=' . $this->session->data['customer_token']);
 		} else {
 			$data['save'] = $this->url->link('account/address.save', 'language=' . $this->config->get('config_language') . '&customer_token=' . $this->session->data['customer_token'] . '&address_id=' . $this->request->get['address_id']);
@@ -182,7 +182,7 @@ class Address extends \Opencart\System\Engine\Controller {
 
 		$data['upload'] = $this->url->link('tool/upload', 'language=' . $this->config->get('config_language'));
 
-		if (isset($this->request->get['address_id'])) {
+		if (($this->request->get['address_id'])) {
 			$this->load->model('account/address');
 
 			$address_info = $this->model_account_address->getAddress($this->customer->getId(), $this->request->get['address_id']);
@@ -265,7 +265,7 @@ class Address extends \Opencart\System\Engine\Controller {
 			$data['address_custom_field'] = [];
 		}
 
-		if (isset($this->request->get['address_id'])) {
+		if (($this->request->get['address_id'])) {
 			$data['default'] = $address_info['default'];
 		} else {
 			$data['default'] = false;
@@ -288,12 +288,12 @@ class Address extends \Opencart\System\Engine\Controller {
 	/**
 	 * @return void
 	 */
-	public function save(): void {
+	async save(): void {
 		$this->load->language('account/address');
 
 		$json = [];
 
-		if (!$this->customer->isLogged() || (!isset($this->request->get['customer_token']) || !isset($this->session->data['customer_token']) || ($this->request->get['customer_token'] != $this->session->data['customer_token']))) {
+		if (!$this->customer->isLogged() || (!($this->request->get['customer_token']) || !($this->session->data['customer_token']) || ($this->request->get['customer_token'] != $this->session->data['customer_token']))) {
 			$this->session->data['redirect'] = $this->url->link('account/address', 'language=' . $this->config->get('config_language'));
 
 			$json['redirect'] = $this->url->link('account/login', 'language=' . $this->config->get('config_language'), true);
@@ -312,7 +312,7 @@ class Address extends \Opencart\System\Engine\Controller {
 			];
 
 			foreach ($keys as $key) {
-				if (!isset($this->request->post[$key])) {
+				if (!($this->request->post[$key])) {
 					$this->request->post[$key] = '';
 				}
 			}
@@ -364,7 +364,7 @@ class Address extends \Opencart\System\Engine\Controller {
 				}
 			}
 
-			if (isset($this->request->get['address_id']) && ($this->customer->getAddressId() == $this->request->get['address_id']) && !$this->request->post['default']) {
+			if (($this->request->get['address_id']) && ($this->customer->getAddressId() == $this->request->get['address_id']) && !$this->request->post['default']) {
 				$json['error'] = $this->language->get('error_default');
 			}
 		}
@@ -373,18 +373,18 @@ class Address extends \Opencart\System\Engine\Controller {
 			$this->load->model('account/address');
 
 			// Add Address
-			if (!isset($this->request->get['address_id'])) {
+			if (!($this->request->get['address_id'])) {
 				$this->model_account_address->addAddress($this->customer->getId(), $this->request->post);
 
 				$this->session->data['success'] = $this->language->get('text_add');
 			}
 
 			// Edit Address
-			if (isset($this->request->get['address_id'])) {
+			if (($this->request->get['address_id'])) {
 				$this->model_account_address->editAddress($this->request->get['address_id'], $this->request->post);
 
 				// If address is in session update it.
-				if (isset($this->session->data['shipping_address']) && ($this->session->data['shipping_address']['address_id'] == $this->request->get['address_id'])) {
+				if (($this->session->data['shipping_address']) && ($this->session->data['shipping_address']['address_id'] == $this->request->get['address_id'])) {
 					$this->session->data['shipping_address'] = $this->model_account_address->getAddress($this->customer->getId(), $this->request->get['address_id']);
 
 					unset($this->session->data['shipping_method']);
@@ -394,7 +394,7 @@ class Address extends \Opencart\System\Engine\Controller {
 				}
 
 				// If address is in session update it.
-				if (isset($this->session->data['payment_address']) && ($this->session->data['payment_address']['address_id'] == $this->request->get['address_id'])) {
+				if (($this->session->data['payment_address']) && ($this->session->data['payment_address']['address_id'] == $this->request->get['address_id'])) {
 					$this->session->data['payment_address'] = $this->model_account_address->getAddress($this->customer->getId(), $this->request->get['address_id']);
 
 					unset($this->session->data['shipping_method']);
@@ -416,18 +416,18 @@ class Address extends \Opencart\System\Engine\Controller {
 	/**
 	 * @return void
 	 */
-	public function delete(): void {
+	async delete(): void {
 		$this->load->language('account/address');
 
 		$json = [];
 
-		if (isset($this->request->get['address_id'])) {
+		if (($this->request->get['address_id'])) {
 			$address_id = $this->request->get['address_id'];
 		} else {
 			$address_id = 0;
 		}
 
-		if (!$this->customer->isLogged() || (!isset($this->request->get['customer_token']) || !isset($this->session->data['customer_token']) || ($this->request->get['customer_token'] != $this->session->data['customer_token']))) {
+		if (!$this->customer->isLogged() || (!($this->request->get['customer_token']) || !($this->session->data['customer_token']) || ($this->request->get['customer_token'] != $this->session->data['customer_token']))) {
 			$this->session->data['redirect'] = $this->url->link('account/address', 'language=' . $this->config->get('config_language'));
 
 			$json['redirect'] = $this->url->link('account/login', 'language=' . $this->config->get('config_language'), true);
@@ -464,7 +464,7 @@ class Address extends \Opencart\System\Engine\Controller {
 			$this->model_account_address->deleteAddress($address_id);
 
 			// Delete address from session.
-			if (isset($this->session->data['shipping_address']['address_id']) && ($this->session->data['shipping_address']['address_id'] == $address_id)) {
+			if (($this->session->data['shipping_address']['address_id']) && ($this->session->data['shipping_address']['address_id'] == $address_id)) {
 				unset($this->session->data['shipping_address']);
 				unset($this->session->data['shipping_method']);
 				unset($this->session->data['shipping_methods']);
@@ -473,7 +473,7 @@ class Address extends \Opencart\System\Engine\Controller {
 			}
 
 			// Delete address from session.
-			if (isset($this->session->data['payment_address']['address_id']) && ($this->session->data['payment_address']['address_id'] == $address_id)) {
+			if (($this->session->data['payment_address']['address_id']) && ($this->session->data['payment_address']['address_id'] == $address_id)) {
 				unset($this->session->data['payment_address']);
 				unset($this->session->data['shipping_method']);
 				unset($this->session->data['shipping_methods']);

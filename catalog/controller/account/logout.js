@@ -1,15 +1,15 @@
 <?php
 namespace Opencart\Catalog\Controller\Account;
 /**
- * Class Logout
+ *
  *
  * @package Opencart\Catalog\Controller\Account
  */
-class Logout extends \Opencart\System\Engine\Controller {
+class LogoutController extends Controller {
 	/**
 	 * @return void
 	 */
-	public function index(): void {
+	async index(): void {
 		if ($this->customer->isLogged()) {
 			$this->customer->logout();
 

@@ -1,18 +1,18 @@
 <?php
 namespace Opencart\Catalog\Controller\Account;
 /**
- * Class Password
+ *
  *
  * @package Opencart\Catalog\Controller\Account
  */
-class Password extends \Opencart\System\Engine\Controller {
+class PasswordController extends Controller {
 	/**
 	 * @return void
 	 */
-	public function index(): void {
+	async index(): void {
 		$this->load->language('account/password');
 
-		if (!$this->customer->isLogged() || (!isset($this->request->get['customer_token']) || !isset($this->session->data['customer_token']) || ($this->request->get['customer_token'] != $this->session->data['customer_token']))) {
+		if (!$this->customer->isLogged() || (!($this->request->get['customer_token']) || !($this->session->data['customer_token']) || ($this->request->get['customer_token'] != $this->session->data['customer_token']))) {
 			$this->session->data['redirect'] = $this->url->link('account/order', 'language=' . $this->config->get('config_language'));
 
 			$this->response->redirect($this->url->link('account/login', 'language=' . $this->config->get('config_language')));
@@ -53,12 +53,12 @@ class Password extends \Opencart\System\Engine\Controller {
 	/**
 	 * @return void
 	 */
-	public function save(): void {
+	async save(): void {
 		$this->load->language('account/password');
 
 		$json = [];
 
-		if (!$this->customer->isLogged() || (!isset($this->request->get['customer_token']) || !isset($this->session->data['customer_token']) || ($this->request->get['customer_token'] != $this->session->data['customer_token']))) {
+		if (!$this->customer->isLogged() || (!($this->request->get['customer_token']) || !($this->session->data['customer_token']) || ($this->request->get['customer_token'] != $this->session->data['customer_token']))) {
 			$this->session->data['redirect'] = $this->url->link('account/password', 'language=' . $this->config->get('config_language'));
 
 			$json['redirect'] = $this->url->link('account/login', 'language=' . $this->config->get('config_language'), true);
@@ -71,7 +71,7 @@ class Password extends \Opencart\System\Engine\Controller {
 			];
 
 			foreach ($keys as $key) {
-				if (!isset($this->request->post[$key])) {
+				if (!($this->request->post[$key])) {
 					$this->request->post[$key] = '';
 				}
 			}

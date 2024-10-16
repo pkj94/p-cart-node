@@ -1,40 +1,40 @@
 <?php
 namespace Opencart\Catalog\Controller\Product;
 /**
- * Class Special
+ *
  *
  * @package Opencart\Catalog\Controller\Product
  */
-class Special extends \Opencart\System\Engine\Controller {
+class SpecialController extends Controller {
 	/**
 	 * @return void
 	 */
-	public function index(): void {
+	async index(): void {
 		$this->load->language('product/special');
 
 		$this->load->model('catalog/product');
 
 		$this->load->model('tool/image');
 
-		if (isset($this->request->get['sort'])) {
+		if (($this->request->get['sort'])) {
 			$sort = $this->request->get['sort'];
 		} else {
 			$sort = 'p.sort_order';
 		}
 
-		if (isset($this->request->get['order'])) {
+		if (($this->request->get['order'])) {
 			$order = $this->request->get['order'];
 		} else {
 			$order = 'ASC';
 		}
 
-		if (isset($this->request->get['page'])) {
+		if (($this->request->get['page'])) {
 			$page = (int)$this->request->get['page'];
 		} else {
 			$page = 1;
 		}
 
-		if (isset($this->request->get['limit']) && (int)$this->request->get['limit']) {
+		if (($this->request->get['limit']) && (int)$this->request->get['limit']) {
 			$limit = (int)$this->request->get['limit'];
 		} else {
 			$limit = $this->config->get('config_pagination');
@@ -51,19 +51,19 @@ class Special extends \Opencart\System\Engine\Controller {
 
 		$url = '';
 
-		if (isset($this->request->get['sort'])) {
+		if (($this->request->get['sort'])) {
 			$url .= '&sort=' . $this->request->get['sort'];
 		}
 
-		if (isset($this->request->get['order'])) {
+		if (($this->request->get['order'])) {
 			$url .= '&order=' . $this->request->get['order'];
 		}
 
-		if (isset($this->request->get['page'])) {
+		if (($this->request->get['page'])) {
 			$url .= '&page=' . $this->request->get['page'];
 		}
 
-		if (isset($this->request->get['limit'])) {
+		if (($this->request->get['limit'])) {
 			$url .= '&limit=' . $this->request->get['limit'];
 		}
 
@@ -72,7 +72,7 @@ class Special extends \Opencart\System\Engine\Controller {
 			'href' => $this->url->link('product/special', 'language=' . $this->config->get('config_language') . $url)
 		];
 
-		$data['text_compare'] = sprintf($this->language->get('text_compare'), (isset($this->session->data['compare']) ? count($this->session->data['compare']) : 0));
+		$data['text_compare'] = sprintf($this->language->get('text_compare'), (($this->session->data['compare']) ? count($this->session->data['compare']) : 0));
 
 		$data['compare'] = $this->url->link('product/compare', 'language=' . $this->config->get('config_language'));
 
@@ -132,7 +132,7 @@ class Special extends \Opencart\System\Engine\Controller {
 
 		$url = '';
 
-		if (isset($this->request->get['limit'])) {
+		if (($this->request->get['limit'])) {
 			$url .= '&limit=' . $this->request->get['limit'];
 		}
 
@@ -196,11 +196,11 @@ class Special extends \Opencart\System\Engine\Controller {
 
 		$url = '';
 
-		if (isset($this->request->get['sort'])) {
+		if (($this->request->get['sort'])) {
 			$url .= '&sort=' . $this->request->get['sort'];
 		}
 
-		if (isset($this->request->get['order'])) {
+		if (($this->request->get['order'])) {
 			$url .= '&order=' . $this->request->get['order'];
 		}
 
@@ -220,15 +220,15 @@ class Special extends \Opencart\System\Engine\Controller {
 
 		$url = '';
 
-		if (isset($this->request->get['sort'])) {
+		if (($this->request->get['sort'])) {
 			$url .= '&sort=' . $this->request->get['sort'];
 		}
 
-		if (isset($this->request->get['order'])) {
+		if (($this->request->get['order'])) {
 			$url .= '&order=' . $this->request->get['order'];
 		}
 
-		if (isset($this->request->get['limit'])) {
+		if (($this->request->get['limit'])) {
 			$url .= '&limit=' . $this->request->get['limit'];
 		}
 

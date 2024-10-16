@@ -1,18 +1,18 @@
 <?php
 namespace Opencart\Catalog\Controller\Account;
 /**
- * Class Edit
+ *
  *
  * @package Opencart\Catalog\Controller\Account
  */
-class Edit extends \Opencart\System\Engine\Controller {
+class EditController extends Controller {
 	/**
 	 * @return void
 	 */
-	public function index(): void {
+	async index(): void {
 		$this->load->language('account/edit');
 
-		if (!$this->customer->isLogged() || (!isset($this->request->get['customer_token']) || !isset($this->session->data['customer_token']) || ($this->request->get['customer_token'] != $this->session->data['customer_token']))) {
+		if (!$this->customer->isLogged() || (!($this->request->get['customer_token']) || !($this->session->data['customer_token']) || ($this->request->get['customer_token'] != $this->session->data['customer_token']))) {
 			$this->session->data['redirect'] = $this->url->link('account/edit', 'language=' . $this->config->get('config_language'));
 
 			$this->response->redirect($this->url->link('account/login', 'language=' . $this->config->get('config_language')));
@@ -68,7 +68,7 @@ class Edit extends \Opencart\System\Engine\Controller {
 			}
 		}
 
-		if (isset($customer_info)) {
+		if (($customer_info)) {
 			$data['account_custom_field'] = JSON.parse($customer_info['custom_field'], true);
 		} else {
 			$data['account_custom_field'] = [];
@@ -91,12 +91,12 @@ class Edit extends \Opencart\System\Engine\Controller {
 	/**
 	 * @return void
 	 */
-	public function save(): void {
+	async save(): void {
 		$this->load->language('account/edit');
 
 		$json = [];
 
-		if (!$this->customer->isLogged() || (!isset($this->request->get['customer_token']) || !isset($this->session->data['customer_token']) || ($this->request->get['customer_token'] != $this->session->data['customer_token']))) {
+		if (!$this->customer->isLogged() || (!($this->request->get['customer_token']) || !($this->session->data['customer_token']) || ($this->request->get['customer_token'] != $this->session->data['customer_token']))) {
 			$this->session->data['redirect'] = $this->url->link('account/edit', 'language=' . $this->config->get('config_language'));
 
 			$json['redirect'] = $this->url->link('account/login', 'language=' . $this->config->get('config_language'), true);
@@ -111,7 +111,7 @@ class Edit extends \Opencart\System\Engine\Controller {
 			];
 
 			foreach ($keys as $key) {
-				if (!isset($this->request->post[$key])) {
+				if (!($this->request->post[$key])) {
 					$this->request->post[$key] = '';
 				}
 			}
@@ -168,7 +168,7 @@ class Edit extends \Opencart\System\Engine\Controller {
 				'lastname'          => $this->request->post['lastname'],
 				'email'             => $this->request->post['email'],
 				'telephone'         => $this->request->post['telephone'],
-				'custom_field'      => isset($this->request->post['custom_field']) ? $this->request->post['custom_field'] : []
+				'custom_field'      => ($this->request->post['custom_field']) ? $this->request->post['custom_field'] : []
 			];
 
 			unset($this->session->data['shipping_method']);

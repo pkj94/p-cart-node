@@ -1,15 +1,15 @@
 <?php
 namespace Opencart\Catalog\Controller\Checkout;
 /**
- * Class PaymentAddress
+ *
  *
  * @package Opencart\Catalog\Controller\Checkout
  */
-class PaymentAddress extends \Opencart\System\Engine\Controller {
+class PaymentAddressController extends Controller {
 	/**
 	 * @return string
 	 */
-	public function index(): string {
+	async index(): string {
 		$this->load->language('checkout/payment_address');
 
 		$data['error_upload_size'] = sprintf($this->language->get('error_upload_size'), $this->config->get('config_file_max_size'));
@@ -21,7 +21,7 @@ class PaymentAddress extends \Opencart\System\Engine\Controller {
 
 		$data['addresses'] = $this->model_account_address->getAddresses($this->customer->getId());
 
-		if (isset($this->session->data['payment_address']['address_id'])) {
+		if (($this->session->data['payment_address']['address_id'])) {
 			$data['address_id'] = $this->session->data['payment_address']['address_id'];
 		} else {
 			$data['address_id'] = 0;
@@ -52,7 +52,7 @@ class PaymentAddress extends \Opencart\System\Engine\Controller {
 	/**
 	 * @return void
 	 */
-	public function save(): void {
+	async save(): void {
 		$this->load->language('checkout/payment_address');
 
 		$json = [];
@@ -74,7 +74,7 @@ class PaymentAddress extends \Opencart\System\Engine\Controller {
 		}
 
 		// Validate if customer is logged in or customer session data is not set
-		if (!$this->customer->isLogged() || !isset($this->session->data['customer'])) {
+		if (!$this->customer->isLogged() || !($this->session->data['customer'])) {
 			$json['redirect'] = $this->url->link('account/login', 'language=' . $this->config->get('config_language'), true);
 		}
 
@@ -98,7 +98,7 @@ class PaymentAddress extends \Opencart\System\Engine\Controller {
 			];
 
 			foreach ($keys as $key) {
-				if (!isset($this->request->post[$key])) {
+				if (!($this->request->post[$key])) {
 					$this->request->post[$key] = '';
 				}
 			}
@@ -183,18 +183,18 @@ class PaymentAddress extends \Opencart\System\Engine\Controller {
 	/**
 	 * @return void
 	 */
-	public function address(): void {
+	async address(): void {
 		$this->load->language('checkout/payment_address');
 
 		$json = [];
 
-		if (isset($this->request->get['address_id'])) {
+		if (($this->request->get['address_id'])) {
 			$address_id = (int)$this->request->get['address_id'];
 		} else {
 			$address_id = 0;
 		}
 
-		if (!isset($this->session->data['customer'])) {
+		if (!($this->session->data['customer'])) {
 			$json['redirect'] = $this->url->link('checkout/cart', 'language=' . $this->config->get('config_language'), true);
 		}
 
@@ -215,7 +215,7 @@ class PaymentAddress extends \Opencart\System\Engine\Controller {
 		}
 
 		// Validate if customer is logged in or customer session data is not set
-		if (!$this->customer->isLogged() || !isset($this->session->data['customer'])) {
+		if (!$this->customer->isLogged() || !($this->session->data['customer'])) {
 			$json['redirect'] = $this->url->link('account/login', 'language=' . $this->config->get('config_language'), true);
 		}
 

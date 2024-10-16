@@ -1,80 +1,80 @@
 <?php
 namespace Opencart\Catalog\Controller\Tool;
 /**
- * Class Upload
+ *
  *
  * @package Opencart\Catalog\Controller\Tool
  */
-class Upload extends \Opencart\System\Engine\Controller {
+class UploadController extends Controller {
 	/**
 	 * @return void
 	 */
-	public function index(): void {
-		$this->load->language('tool/upload');
+	async index(): void {
+		this->load->language('tool/upload');
 
-		$json = [];
+		json = [];
 
-		if (!empty($this->request->files['file']['name']) && is_file($this->request->files['file']['tmp_name'])) {
+		if (!empty(this->request->files['file']['name']) && is_file(this->request->files['file']['tmp_name'])) {
 			// Sanitize the filename
-			$filename = basename(preg_replace('/[^a-zA-Z0-9\.\-\s+]/', '', html_entity_decode($this->request->files['file']['name'])));
+			filename = basename(preg_replace('/[^a-zA-Z0-9\.\-\s+]/', '', html_entity_decode(this->request->files['file']['name'])));
 
 			// Validate the filename length
-			if ((oc_strlen($filename) < 3) || (oc_strlen($filename) > 64)) {
-				$json['error'] = $this->language->get('error_filename');
+			if ((oc_strlen(filename) < 3) || (oc_strlen(filename) > 64)) {
+				json['error'] = this->language->get('error_filename');
 			}
 
 			// Allowed file extension types
-			$allowed = [];
+			allowed = [];
 
-			$extension_allowed = preg_replace('~\r?\n~', "\n", $this->config->get('config_file_ext_allowed'));
+			extension_allowed = preg_replace('~\r?\n~', "\n", this->config->get('config_file_ext_allowed'));
 
-			$filetypes = explode("\n", $extension_allowed);
+			filetypes = explode("\n", extension_allowed);
 
-			foreach ($filetypes as $filetype) {
-				$allowed[] = trim($filetype);
+			foreach (filetypes as filetype) {
+				allowed[] = trim(filetype);
 			}
 
-			if (!in_array(strtolower(substr(strrchr($filename, '.'), 1)), $allowed)) {
-				$json['error'] = $this->language->get('error_file_type');
+			if (!in_array(strtolower(substr(strrchr(filename, '.'), 1)), allowed)) {
+				json['error'] = this->language->get('error_file_type');
 			}
 
 			// Allowed file mime types
-			$allowed = [];
+			allowed = [];
 
-			$mime_allowed = preg_replace('~\r?\n~', "\n", $this->config->get('config_file_mime_allowed'));
+			mime_allowed = preg_replace('~\r?\n~', "\n", this->config->get('config_file_mime_allowed'));
 
-			$filetypes = explode("\n", $mime_allowed);
+			filetypes = explode("\n", mime_allowed);
 
-			foreach ($filetypes as $filetype) {
-				$allowed[] = trim($filetype);
+			foreach (filetypes as filetype) {
+				allowed[] = trim(filetype);
 			}
 
-			if (!in_array($this->request->files['file']['type'], $allowed)) {
-				$json['error'] = $this->language->get('error_file_type');
+			if (!in_array(this->request->files['file']['type'], allowed)) {
+				json['error'] = this->language->get('error_file_type');
 			}
 
 			// Return any upload error
-			if ($this->request->files['file']['error'] != UPLOAD_ERR_OK) {
-				$json['error'] = $this->language->get('error_upload_' . $this->request->files['file']['error']);
+			if (this->request->files['file']['error'] != UPLOAD_ERR_OK) {
+				json['error'] = this->language->get('error_upload_' . this->request->files['file']['error']);
 			}
 		} else {
-			$json['error'] = $this->language->get('error_upload');
+			json['error'] = this->language->get('error_upload');
 		}
 
-		if (!$json) {
-			$file = $filename . '.' . oc_token(32);
+		if (!json) {
+			file = filename . '.' . oc_token(32);
 
-			move_uploaded_file($this->request->files['file']['tmp_name'], DIR_UPLOAD . $file);
+			move_uploaded_file(this->request->files['file']['tmp_name'], DIR_UPLOAD . file);
 
 			// Hide the uploaded file name so people cannot link to it directly.
-			$this->load->model('tool/upload');
+			this->load->model('tool/upload');
 
-			$json['code'] = $this->model_tool_upload->addUpload($filename, $file);
+			json['code'] = this->model_tool_upload->addUpload(filename, file);
 
-			$json['success'] = $this->language->get('text_upload');
+			json['success'] = this->language->get('text_upload');
 		}
 
-		$this->response->addHeader('Content-Type: application/json');
-		$this->response->setOutput(json_encode($json));
+		this->response->addHeader('Content-Type: application/json');
+		this->response->setOutput(json_encode(json));
 	}
 }

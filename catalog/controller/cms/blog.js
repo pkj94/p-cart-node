@@ -1,310 +1,310 @@
 <?php
 namespace Opencart\Catalog\Controller\Cms;
 /**
- * Class Blog
+ *
  *
  * @package Opencart\Catalog\Controller\Cms
  */
-class Blog extends \Opencart\System\Engine\Controller {
+class BlogController extends Controller {
 	/**
 	 * @return void
 	 */
-	public function index(): void {
-		$this->load->language('cms/blog');
+	async index(): void {
+		this->load->language('cms/blog');
 
-		if (isset($this->request->get['search'])) {
-			$search = (string)$this->request->get['search'];
+		if ((this->request->get['search'])) {
+			search = (string)this->request->get['search'];
 		} else {
-			$search = '';
+			search = '';
 		}
 
-		if (isset($this->request->get['topic_id'])) {
-			$topic_id = (int)$this->request->get['topic_id'];
+		if ((this->request->get['topic_id'])) {
+			topic_id = (int)this->request->get['topic_id'];
 		} else {
-			$topic_id = 0;
+			topic_id = 0;
 		}
 
-		if (isset($this->request->get['author'])) {
-			$author = (string)$this->request->get['author'];
+		if ((this->request->get['author'])) {
+			author = (string)this->request->get['author'];
 		} else {
-			$author = '';
+			author = '';
 		}
 
-		if (isset($this->request->get['page'])) {
-			$page = (int)$this->request->get['page'];
+		if ((this->request->get['page'])) {
+			page = (int)this->request->get['page'];
 		} else {
-			$page = 1;
+			page = 1;
 		}
 
-		$data['breadcrumbs'] = [];
+		data['breadcrumbs'] = [];
 
-		$data['breadcrumbs'][] = [
-			'text' => $this->language->get('text_home'),
-			'href' => $this->url->link('common/home', 'language=' . $this->config->get('config_language'))
+		data['breadcrumbs'][] = [
+			'text' => this->language->get('text_home'),
+			'href' => this->url->link('common/home', 'language=' . this->config->get('config_language'))
 		];
 
-		$url = '';
+		url = '';
 
-		if (isset($this->request->get['search'])) {
-			$url .= '&search=' . (string)$this->request->get['search'];
+		if ((this->request->get['search'])) {
+			url .= '&search=' . (string)this->request->get['search'];
 		}
 
-		if (isset($this->request->get['author'])) {
-			$url .= '&author=' . (string)$this->request->get['author'];
+		if ((this->request->get['author'])) {
+			url .= '&author=' . (string)this->request->get['author'];
 		}
 
-		if (isset($this->request->get['page'])) {
-			$url .= '&page=' . $this->request->get['page'];
+		if ((this->request->get['page'])) {
+			url .= '&page=' . this->request->get['page'];
 		}
 
-		$data['breadcrumbs'][] = [
-			'text' => $this->language->get('text_blog'),
-			'href' => $this->url->link('cms/blog', 'language=' . $this->config->get('config_language') . $url)
+		data['breadcrumbs'][] = [
+			'text' => this->language->get('text_blog'),
+			'href' => this->url->link('cms/blog', 'language=' . this->config->get('config_language') . url)
 		];
 
-		$this->load->model('cms/topic');
+		this->load->model('cms/topic');
 
-		$topic_info = $this->model_cms_topic->getTopic($topic_id);
+		topic_info = this->model_cms_topic->getTopic(topic_id);
 
-		if ($topic_info) {
-			$url = '';
+		if (topic_info) {
+			url = '';
 
-			if (isset($this->request->get['search'])) {
-				$url .= '&search=' . (string)$this->request->get['search'];
+			if ((this->request->get['search'])) {
+				url .= '&search=' . (string)this->request->get['search'];
 			}
 
-			if (isset($this->request->get['topic_id'])) {
-				$url .= '&topic_id=' . (int)$this->request->get['topic_id'];
+			if ((this->request->get['topic_id'])) {
+				url .= '&topic_id=' . (int)this->request->get['topic_id'];
 			}
 
-			if (isset($this->request->get['author'])) {
-				$url .= '&author=' . (string)$this->request->get['author'];
+			if ((this->request->get['author'])) {
+				url .= '&author=' . (string)this->request->get['author'];
 			}
 
-			if (isset($this->request->get['page'])) {
-				$url .= '&page=' . $this->request->get['page'];
+			if ((this->request->get['page'])) {
+				url .= '&page=' . this->request->get['page'];
 			}
 
-			$data['breadcrumbs'][] = [
-				'text' => $topic_info['name'],
-				'href' => $this->url->link('cms/blog', 'language=' . $this->config->get('config_language') . $url)
+			data['breadcrumbs'][] = [
+				'text' => topic_info['name'],
+				'href' => this->url->link('cms/blog', 'language=' . this->config->get('config_language') . url)
 			];
 		}
 
-		$this->load->model('tool/image');
+		this->load->model('tool/image');
 
-		if ($topic_info && is_file(DIR_IMAGE . html_entity_decode($topic_info['image']))) {
-			$data['thumb'] = $this->model_tool_image->resize(html_entity_decode($topic_info['image']), $this->config->get('config_image_blog_width'), $this->config->get('config_image_blog_height'));
+		if (topic_info && is_file(DIR_IMAGE . html_entity_decode(topic_info['image']))) {
+			data['thumb'] = this->model_tool_image->resize(html_entity_decode(topic_info['image']), this->config->get('config_image_blog_width'), this->config->get('config_image_blog_height'));
 		} else {
-			$data['thumb'] = '';
+			data['thumb'] = '';
 		}
 
-		if ($topic_info) {
-			$this->document->setTitle($topic_info['meta_title']);
-			$this->document->setDescription($topic_info['meta_description']);
-			$this->document->setKeywords($topic_info['meta_keyword']);
+		if (topic_info) {
+			this->document->setTitle(topic_info['meta_title']);
+			this->document->setDescription(topic_info['meta_description']);
+			this->document->setKeywords(topic_info['meta_keyword']);
 
-			$data['heading_title'] = $topic_info['name'];
+			data['heading_title'] = topic_info['name'];
 		} else {
-			$this->document->setTitle($this->language->get('heading_title'));
+			this->document->setTitle(this->language->get('heading_title'));
 
-			$data['heading_title'] = $this->language->get('heading_title');
+			data['heading_title'] = this->language->get('heading_title');
 		}
 
-		if ($topic_info) {
-			$data['description'] = html_entity_decode($topic_info['description']);
+		if (topic_info) {
+			data['description'] = html_entity_decode(topic_info['description']);
 		} else {
-			$data['description'] = '';
+			data['description'] = '';
 		}
 
-		$limit = 20;
+		limit = 20;
 
-		$data['articles'] = [];
+		data['articles'] = [];
 
-		$filter_data = [
-			'filter_search'   => $search,
-			'filter_topic_id' => $topic_id,
-			'filter_author'   => $author,
-			'start'           => ($page - 1) * $limit,
-			'limit'           => $limit
+		filter_data = [
+			'filter_search'   => search,
+			'filter_topic_id' => topic_id,
+			'filter_author'   => author,
+			'start'           => (page - 1) * limit,
+			'limit'           => limit
 		];
 
-		$this->load->model('cms/article');
+		this->load->model('cms/article');
 
-		$article_total = $this->model_cms_article->getTotalArticles($filter_data);
+		article_total = this->model_cms_article->getTotalArticles(filter_data);
 
-		$results = $this->model_cms_article->getArticles($filter_data);
+		results = this->model_cms_article->getArticles(filter_data);
 
-		foreach ($results as $result) {
-			if (is_file(DIR_IMAGE . html_entity_decode($result['image']))) {
-				$image = $this->model_tool_image->resize(html_entity_decode($result['image']), $this->config->get('config_image_blog_width'), $this->config->get('config_image_blog_height'));
+		foreach (results as result) {
+			if (is_file(DIR_IMAGE . html_entity_decode(result['image']))) {
+				image = this->model_tool_image->resize(html_entity_decode(result['image']), this->config->get('config_image_blog_width'), this->config->get('config_image_blog_height'));
 			} else {
-				$image = '';
+				image = '';
 			}
 
-			$data['articles'][] = [
-				'article_id'    => $result['article_id'],
-				'image'         => $image,
-				'name'          => $result['name'],
-				'description'   => oc_substr(trim(strip_tags(html_entity_decode($result['description']))), 0, $this->config->get('config_article_description_length')) . '..',
-				'author'        => $result['author'],
-				'comment_total' => $this->model_cms_article->getTotalComments($result['article_id']),
-				'date_added'    => date($this->language->get('date_format_short'), new Date($result['date_added'])),
-				'href'          => $this->url->link('cms/blog.info', 'language=' . $this->config->get('config_language') . '&article_id=' . $result['article_id'] . $url)
+			data['articles'][] = [
+				'article_id'    => result['article_id'],
+				'image'         => image,
+				'name'          => result['name'],
+				'description'   => oc_substr(trim(strip_tags(html_entity_decode(result['description']))), 0, this->config->get('config_article_description_length')) . '..',
+				'author'        => result['author'],
+				'comment_total' => this->model_cms_article->getTotalComments(result['article_id']),
+				'date_added'    => date(this->language->get('date_format_short'), new Date(result['date_added'])),
+				'href'          => this->url->link('cms/blog.info', 'language=' . this->config->get('config_language') . '&article_id=' . result['article_id'] . url)
 			];
 		}
 
-		$url = '';
+		url = '';
 
-		if (isset($this->request->get['search'])) {
-			$url .= '&search=' . $this->request->get['search'];
+		if ((this->request->get['search'])) {
+			url .= '&search=' . this->request->get['search'];
 		}
 
-		if (isset($this->request->get['topic_id'])) {
-			$url .= '&topic_id=' . $this->request->get['topic_id'];
+		if ((this->request->get['topic_id'])) {
+			url .= '&topic_id=' . this->request->get['topic_id'];
 		}
 
-		if (isset($this->request->get['author'])) {
-			$url .= '&author=' . (string)$this->request->get['author'];
+		if ((this->request->get['author'])) {
+			url .= '&author=' . (string)this->request->get['author'];
 		}
 
-		$data['pagination'] = $this->load->controller('common/pagination', [
-			'total' => $article_total,
-			'page'  => $page,
-			'limit' => $limit,
-			'url'   => $this->url->link('cms/blog', 'language=' . $this->config->get('config_language') . $url . '&page={page}')
+		data['pagination'] = this->load->controller('common/pagination', [
+			'total' => article_total,
+			'page'  => page,
+			'limit' => limit,
+			'url'   => this->url->link('cms/blog', 'language=' . this->config->get('config_language') . url . '&page={page}')
 		]);
 
-		$data['results'] = sprintf($this->language->get('text_pagination'), ($article_total) ? (($page - 1) * $limit) + 1 : 0, ((($page - 1) * $limit) > ($article_total - $limit)) ? $article_total : ((($page - 1) * $limit) + $limit), $article_total, ceil($article_total / $limit));
+		data['results'] = sprintf(this->language->get('text_pagination'), (article_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (article_total - limit)) ? article_total : (((page - 1) * limit) + limit), article_total, ceil(article_total / limit));
 
 		// http://googlewebmastercentral.articlespot.com/2011/09/pagination-with-relnext-and-relprev.html
-		if ($page == 1) {
-			$this->document->addLink($this->url->link('cms/blog', 'language=' . $this->config->get('config_language')), 'canonical');
+		if (page == 1) {
+			this->document->addLink(this->url->link('cms/blog', 'language=' . this->config->get('config_language')), 'canonical');
 		} else {
-			$this->document->addLink($this->url->link('cms/blog', 'language=' . $this->config->get('config_language') . '&page='. $page), 'canonical');
+			this->document->addLink(this->url->link('cms/blog', 'language=' . this->config->get('config_language') . '&page='. page), 'canonical');
 		}
 
-		if ($page > 1) {
-			$this->document->addLink($this->url->link('cms/blog', 'language=' . $this->config->get('config_language') . (($page - 2) ? '&page='. ($page - 1) : '')), 'prev');
+		if (page > 1) {
+			this->document->addLink(this->url->link('cms/blog', 'language=' . this->config->get('config_language') . ((page - 2) ? '&page='. (page - 1) : '')), 'prev');
 		}
 
-		if (ceil($article_total / $limit) > $page) {
-			$this->document->addLink($this->url->link('cms/blog', 'language=' . $this->config->get('config_language') . '&page='. ($page + 1)), 'next');
+		if (ceil(article_total / limit) > page) {
+			this->document->addLink(this->url->link('cms/blog', 'language=' . this->config->get('config_language') . '&page='. (page + 1)), 'next');
 		}
 
-		$data['search'] = $search;
-		$data['topic_id'] = $topic_id;
+		data['search'] = search;
+		data['topic_id'] = topic_id;
 
-		$data['topics'] = [];
+		data['topics'] = [];
 
-		$data['topics'][] = [
-			'name' => $this->language->get('text_all'),
-			'href' => $this->url->link('cms/blog', 'language=' . $this->config->get('config_language'))
+		data['topics'][] = [
+			'name' => this->language->get('text_all'),
+			'href' => this->url->link('cms/blog', 'language=' . this->config->get('config_language'))
 		];
 
-		$results = $this->model_cms_topic->getTopics();
+		results = this->model_cms_topic->getTopics();
 
-		foreach ($results as $result) {
-			$data['topics'][] = [
-				'name' => $result['name'],
-				'href' => $this->url->link('cms/blog', 'language=' . $this->config->get('config_language') . '&topic_id='. $result['topic_id'])
+		foreach (results as result) {
+			data['topics'][] = [
+				'name' => result['name'],
+				'href' => this->url->link('cms/blog', 'language=' . this->config->get('config_language') . '&topic_id='. result['topic_id'])
 			];
 		}
 
-		$data['column_left'] = $this->load->controller('common/column_left');
-		$data['column_right'] = $this->load->controller('common/column_right');
-		$data['content_top'] = $this->load->controller('common/content_top');
-		$data['content_bottom'] = $this->load->controller('common/content_bottom');
-		$data['footer'] = $this->load->controller('common/footer');
-		$data['header'] = $this->load->controller('common/header');
+		data['column_left'] = this->load->controller('common/column_left');
+		data['column_right'] = this->load->controller('common/column_right');
+		data['content_top'] = this->load->controller('common/content_top');
+		data['content_bottom'] = this->load->controller('common/content_bottom');
+		data['footer'] = this->load->controller('common/footer');
+		data['header'] = this->load->controller('common/header');
 
-		$this->response->setOutput($this->load->view('cms/blog_list', $data));
+		this->response->setOutput(this->load->view('cms/blog_list', data));
 	}
 
-	public function info(): object|null {
-		$this->load->language('cms/blog');
+	async info() {
+		this->load->language('cms/blog');
 
-		if (isset($this->request->get['article_id'])) {
-			$article_id = (int)$this->request->get['article_id'];
+		if ((this->request->get['article_id'])) {
+			article_id = (int)this->request->get['article_id'];
 		} else {
-			$article_id = 0;
+			article_id = 0;
 		}
 
-		if (isset($this->request->get['topic_id'])) {
-			$topic_id = (int)$this->request->get['topic_id'];
+		if ((this->request->get['topic_id'])) {
+			topic_id = (int)this->request->get['topic_id'];
 		} else {
-			$topic_id = 0;
+			topic_id = 0;
 		}
 
-		$this->load->model('cms/article');
+		this->load->model('cms/article');
 
-		$article_info = $this->model_cms_article->getArticle($article_id);
+		article_info = this->model_cms_article->getArticle(article_id);
 
-		if ($article_info) {
-			$this->document->setTitle($article_info['meta_title']);
-			$this->document->setDescription($article_info['meta_description']);
-			$this->document->setKeywords($article_info['meta_keyword']);
+		if (article_info) {
+			this->document->setTitle(article_info['meta_title']);
+			this->document->setDescription(article_info['meta_description']);
+			this->document->setKeywords(article_info['meta_keyword']);
 
-			$data['breadcrumbs'] = [];
+			data['breadcrumbs'] = [];
 
-			$data['breadcrumbs'][] = [
-				'text' => $this->language->get('text_home'),
-				'href' => $this->url->link('common/home', 'language=' . $this->config->get('config_language'))
+			data['breadcrumbs'][] = [
+				'text' => this->language->get('text_home'),
+				'href' => this->url->link('common/home', 'language=' . this->config->get('config_language'))
 			];
 
-			$data['breadcrumbs'][] = [
-				'text' => $this->language->get('text_blog'),
-				'href' => $this->url->link('cms/blog', 'language=' . $this->config->get('config_language'))
+			data['breadcrumbs'][] = [
+				'text' => this->language->get('text_blog'),
+				'href' => this->url->link('cms/blog', 'language=' . this->config->get('config_language'))
 			];
 
-			$url = '';
+			url = '';
 
-			if (isset($this->request->get['topic_id'])) {
-				$url .= '&topic_id=' . $this->request->get['topic_id'];
+			if ((this->request->get['topic_id'])) {
+				url .= '&topic_id=' . this->request->get['topic_id'];
 			}
 
-			if (isset($this->request->get['author'])) {
-				$url .= '&author=' . (string)$this->request->get['author'];
+			if ((this->request->get['author'])) {
+				url .= '&author=' . (string)this->request->get['author'];
 			}
 
-			if (isset($this->request->get['page'])) {
-				$url .= '&page=' . $this->request->get['page'];
+			if ((this->request->get['page'])) {
+				url .= '&page=' . this->request->get['page'];
 			}
 
-			$this->load->model('cms/topic');
+			this->load->model('cms/topic');
 
-			$topic_info = $this->model_cms_topic->getTopic($topic_id);
+			topic_info = this->model_cms_topic->getTopic(topic_id);
 
-			if ($topic_info) {
-				$data['breadcrumbs'][] = [
-					'text' => $topic_info['name'],
-					'href' => $this->url->link('cms/article', 'language=' . $this->config->get('config_language') . $url)
+			if (topic_info) {
+				data['breadcrumbs'][] = [
+					'text' => topic_info['name'],
+					'href' => this->url->link('cms/article', 'language=' . this->config->get('config_language') . url)
 				];
 			}
 
-			$data['breadcrumbs'][] = [
-				'text' => $article_info['name'],
-				'href' => $this->url->link('cms/article.info', 'language=' . $this->config->get('config_language') . '&article_id=' .  $article_id . $url)
+			data['breadcrumbs'][] = [
+				'text' => article_info['name'],
+				'href' => this->url->link('cms/article.info', 'language=' . this->config->get('config_language') . '&article_id=' .  article_id . url)
 			];
 
-			$data['heading_title'] = $article_info['name'];
+			data['heading_title'] = article_info['name'];
 
-			$data['description'] = html_entity_decode($article_info['description']);
-			$data['author'] = $article_info['author'];
-			$data['date_added'] = $article_info['date_added'];
+			data['description'] = html_entity_decode(article_info['description']);
+			data['author'] = article_info['author'];
+			data['date_added'] = article_info['date_added'];
 
-			$data['comment'] = $this->getComments();
+			data['comment'] = this->getComments();
 
-			$data['continue'] = $this->url->link('cms/article', 'language=' . $this->config->get('config_language') . $url);
+			data['continue'] = this->url->link('cms/article', 'language=' . this->config->get('config_language') . url);
 
-			$data['column_left'] = $this->load->controller('common/column_left');
-			$data['column_right'] = $this->load->controller('common/column_right');
-			$data['content_top'] = $this->load->controller('common/content_top');
-			$data['content_bottom'] = $this->load->controller('common/content_bottom');
-			$data['footer'] = $this->load->controller('common/footer');
-			$data['header'] = $this->load->controller('common/header');
+			data['column_left'] = this->load->controller('common/column_left');
+			data['column_right'] = this->load->controller('common/column_right');
+			data['content_top'] = this->load->controller('common/content_top');
+			data['content_bottom'] = this->load->controller('common/content_bottom');
+			data['footer'] = this->load->controller('common/footer');
+			data['header'] = this->load->controller('common/header');
 
-			$this->response->setOutput($this->load->view('cms/blog_info', $data));
+			this->response->setOutput(this->load->view('cms/blog_info', data));
 		} else {
 			return new \Opencart\System\Engine\Action('error/not_found');
 		}
@@ -315,139 +315,139 @@ class Blog extends \Opencart\System\Engine\Controller {
 	/**
 	 * @return void
 	 */
-	public function comment() {
-		$this->load->language('cms/blog');
+	async comment() {
+		this->load->language('cms/blog');
 
-		$this->response->setOutput($this->getComments());
+		this->response->setOutput(this->getComments());
 	}
 
 	/**
 	 * @return string
 	 */
-	public function getComments(): string {
-		if (isset($this->request->get['article_id'])) {
-			$article_id = $this->request->get['article_id'];
+	async getComments(): string {
+		if ((this->request->get['article_id'])) {
+			article_id = this->request->get['article_id'];
 		} else {
-			$article_id = 0;
+			article_id = 0;
 		}
 
-		if (isset($this->request->get['page'])) {
-			$page = (int)$this->request->get['page'];
+		if ((this->request->get['page'])) {
+			page = (int)this->request->get['page'];
 		} else {
-			$page = 1;
+			page = 1;
 		}
 
-		$data['articles'] = [];
+		data['articles'] = [];
 
-		$this->load->model('cms/article');
+		this->load->model('cms/article');
 
-		$comment_total = $this->model_cms_article->getTotalComments($article_id);
+		comment_total = this->model_cms_article->getTotalComments(article_id);
 
-		$results = $this->model_cms_article->getComments($article_id, ($page - 1) * (int)$this->config->get('config_pagination_admin'), (int)$this->config->get('config_pagination_admin'));
+		results = this->model_cms_article->getComments(article_id, (page - 1) * (int)this->config->get('config_pagination_admin'), (int)this->config->get('config_pagination_admin'));
 
-		foreach ($results as $result) {
-			$data['articles'][] = [
-				'text'       => nl2br($result['text']),
-				'author'     => $result['author'],
-				'date_added' => date($this->language->get('date_format_short'), new Date($result['date_added']))
+		foreach (results as result) {
+			data['articles'][] = [
+				'text'       => nl2br(result['text']),
+				'author'     => result['author'],
+				'date_added' => date(this->language->get('date_format_short'), new Date(result['date_added']))
 			];
 		}
 
-		$data['pagination'] = $this->load->controller('common/pagination', [
-			'total' => $comment_total,
-			'page'  => $page,
+		data['pagination'] = this->load->controller('common/pagination', [
+			'total' => comment_total,
+			'page'  => page,
 			'limit' => 5,
-			'url'   => $this->url->link('cms/blog.comment', 'language=' . $this->config->get('config_language') . '&article_id=' . $article_id . '&page={page}')
+			'url'   => this->url->link('cms/blog.comment', 'language=' . this->config->get('config_language') . '&article_id=' . article_id . '&page={page}')
 		]);
 
-		$data['results'] = sprintf($this->language->get('text_pagination'), ($comment_total) ? (($page - 1) * 5) + 1 : 0, ((($page - 1) * 5) > ($comment_total - 5)) ? $comment_total : ((($page - 1) * 5) + 5), $comment_total, ceil($comment_total / 5));
+		data['results'] = sprintf(this->language->get('text_pagination'), (comment_total) ? ((page - 1) * 5) + 1 : 0, (((page - 1) * 5) > (comment_total - 5)) ? comment_total : (((page - 1) * 5) + 5), comment_total, ceil(comment_total / 5));
 
-		return $this->load->view('cms/comment', $data);
+		return this->load->view('cms/comment', data);
 	}
 
-	public function addComment(): void {
-		$this->load->language('cms/article');
+	async addComment(): void {
+		this->load->language('cms/article');
 
-		$json = array();
+		json = array();
 
-		if (isset($this->request->get['article_id'])) {
-			$article_id = $this->request->get['article_id'];
+		if ((this->request->get['article_id'])) {
+			article_id = this->request->get['article_id'];
 		} else {
-			$article_id = 0;
+			article_id = 0;
 		}
 
-		if (!isset($this->request->get['comment_token']) || !isset($this->session->data['comment_token']) || $this->request->get['comment_token'] != $this->session->data['comment_token']) {
-			$json['error']['warning'] = $this->language->get('error_token');
+		if (!(this->request->get['comment_token']) || !(this->session->data['comment_token']) || this->request->get['comment_token'] != this->session->data['comment_token']) {
+			json['error']['warning'] = this->language->get('error_token');
 		}
 
-		$keys = [
+		keys = [
 			'comment',
 			'author'
 		];
 
-		foreach ($keys as $key) {
-			if (!isset($this->request->post[$key])) {
-				$this->request->post[$key] = '';
+		foreach (keys as key) {
+			if (!(this->request->post[key])) {
+				this->request->post[key] = '';
 			}
 		}
 
-		$this->load->model('cms/article');
+		this->load->model('cms/article');
 
-		$article_info = $this->model_cms_article->getArticle($article_id);
+		article_info = this->model_cms_article->getArticle(article_id);
 
-		if (!$article_info) {
-			$json['error']['warning'] = $this->language->get('error_article');
+		if (!article_info) {
+			json['error']['warning'] = this->language->get('error_article');
 		}
 
-		if (!$this->customer->isLogged() && !$this->config->get('config_comment_guest')) {
-			$json['error']['warning'] = $this->language->get('error_guest');
+		if (!this->customer->isLogged() && !this->config->get('config_comment_guest')) {
+			json['error']['warning'] = this->language->get('error_guest');
 		}
 
-		if ((oc_strlen($this->request->post['author']) < 3) || (oc_strlen($this->request->post['author']) > 25)) {
-			$json['error']['author'] = $this->language->get('error_author');
+		if ((oc_strlen(this->request->post['author']) < 3) || (oc_strlen(this->request->post['author']) > 25)) {
+			json['error']['author'] = this->language->get('error_author');
 		}
 
-		if ((utf8_strlen($this->request->post['comment']) < 2) || (utf8_strlen($this->request->post['comment']) > 1000)) {
-			$json['error']['comment'] = $this->language->get('error_comment');
+		if ((utf8_strlen(this->request->post['comment']) < 2) || (utf8_strlen(this->request->post['comment']) > 1000)) {
+			json['error']['comment'] = this->language->get('error_comment');
 		}
 
 		// Captcha
-		$this->load->model('setting/extension');
+		this->load->model('setting/extension');
 
-		$extension_info = $this->model_setting_extension->getExtensionByCode('captcha', $this->config->get('config_captcha'));
+		extension_info = this->model_setting_extension->getExtensionByCode('captcha', this->config->get('config_captcha'));
 
-		if ($extension_info && $this->config->get('captcha_' . $this->config->get('config_captcha') . '_status') && in_array('comment', (array)$this->config->get('config_captcha_page'))) {
-			$captcha = $this->load->controller('extension/'  . $extension_info['extension'] . '/captcha/' . $extension_info['code'] . '.validate');
+		if (extension_info && this->config->get('captcha_' . this->config->get('config_captcha') . '_status') && in_array('comment', (array)this->config->get('config_captcha_page'))) {
+			captcha = this->load->controller('extension/'  . extension_info['extension'] . '/captcha/' . extension_info['code'] . '.validate');
 
-			if ($captcha) {
-				$json['error']['captcha'] = $captcha;
+			if (captcha) {
+				json['error']['captcha'] = captcha;
 			}
 		}
 
-		if (!$json) {
+		if (!json) {
 			// Anti-Spam
-			$comment = str_replace(' ', '', $this->request->post['comment']);
+			comment = str_replace(' ', '', this->request->post['comment']);
 
-			$this->load->model('cms/antispam');
+			this->load->model('cms/antispam');
 
-			$spam = $this->model_cms_antispam->getSpam($comment);
+			spam = this->model_cms_antispam->getSpam(comment);
 
-			if (!$this->customer->isCommentor() || $spam) {
-				$status = 0;
+			if (!this->customer->isCommentor() || spam) {
+				status = 0;
 			} else {
-				$status = 1;
+				status = 1;
 			}
 
-			$this->model_cms_article->addComment($article_id, $this->request->post + ['status' => $status]);
+			this->model_cms_article->addComment(article_id, this->request->post + ['status' => status]);
 
-			if (!$status) {
-				$json['success'] = $this->language->get('text_queue');
+			if (!status) {
+				json['success'] = this->language->get('text_queue');
 			} else {
-				$json['success'] = $this->language->get('text_success');
+				json['success'] = this->language->get('text_success');
 			}
 		}
 
-		$this->response->addHeader('Content-Type: application/json');
-		$this->response->setOutput(json_encode($json));
+		this->response->addHeader('Content-Type: application/json');
+		this->response->setOutput(json_encode(json));
 	}
 }

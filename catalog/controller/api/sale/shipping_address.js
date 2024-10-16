@@ -1,15 +1,15 @@
 <?php
 namespace Opencart\Catalog\Controller\Api\Sale;
 /**
- * Class Shipping Address
+ *
  *
  * @package Opencart\Catalog\Controller\Api\Sale
  */
-class ShippingAddress extends \Opencart\System\Engine\Controller {
+class ShippingAddressController extends Controller {
 	/**
 	 * @return void
 	 */
-	public function index(): void {
+	async index(): void {
 		$this->load->language('api/sale/shipping_address');
 
 		$json = [];
@@ -29,7 +29,7 @@ class ShippingAddress extends \Opencart\System\Engine\Controller {
 			];
 
 			foreach ($keys as $key) {
-				if (!isset($this->request->post[$key])) {
+				if (!($this->request->post[$key])) {
 					$this->request->post[$key] = '';
 				}
 			}
@@ -126,7 +126,7 @@ class ShippingAddress extends \Opencart\System\Engine\Controller {
 				'iso_code_2'     => $iso_code_2,
 				'iso_code_3'     => $iso_code_3,
 				'address_format' => $address_format,
-				'custom_field'   => isset($this->request->post['custom_field']) ? $this->request->post['custom_field'] : []
+				'custom_field'   => ($this->request->post['custom_field']) ? $this->request->post['custom_field'] : []
 			];
 
 			$json['success'] = $this->language->get('text_success');

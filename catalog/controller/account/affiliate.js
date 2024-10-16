@@ -1,18 +1,18 @@
 <?php
 namespace Opencart\Catalog\Controller\Account;
 /**
- * Class Affiliate
+ *
  *
  * @package Opencart\Catalog\Controller\Account
  */
-class Affiliate extends \Opencart\System\Engine\Controller {
+class AffiliateController extends Controller {
 	/**
 	 * @return void
 	 */
-	public function index(): void {
+	async index(): void {
 		$this->load->language('account/affiliate');
 
-		if (!$this->customer->isLogged() || (!isset($this->request->get['customer_token']) || !isset($this->session->data['customer_token']) || ($this->request->get['customer_token'] != $this->session->data['customer_token']))) {
+		if (!$this->customer->isLogged() || (!($this->request->get['customer_token']) || !($this->session->data['customer_token']) || ($this->request->get['customer_token'] != $this->session->data['customer_token']))) {
 			$this->customer->logout();
 
 			$this->session->data['redirect'] = $this->url->link('account/affiliate', 'language=' . $this->config->get('config_language'));
@@ -166,12 +166,12 @@ class Affiliate extends \Opencart\System\Engine\Controller {
 	/**
 	 * @return void
 	 */
-	public function save(): void {
+	async save(): void {
 		$this->load->language('account/affiliate');
 
 		$json = [];
 
-		if (!$this->customer->isLogged() || (!isset($this->request->get['customer_token']) || !isset($this->session->data['customer_token']) || ($this->request->get['customer_token'] != $this->session->data['customer_token']))) {
+		if (!$this->customer->isLogged() || (!($this->request->get['customer_token']) || !($this->session->data['customer_token']) || ($this->request->get['customer_token'] != $this->session->data['customer_token']))) {
 			$this->session->data['redirect'] = $this->url->link('account/affiliate', 'language=' . $this->config->get('config_language'));
 
 			$json['redirect'] = $this->url->link('account/login', 'language=' . $this->config->get('config_language'), true);
@@ -191,7 +191,7 @@ class Affiliate extends \Opencart\System\Engine\Controller {
 		];
 
 		foreach ($keys as $key) {
-			if (!isset($this->request->post[$key])) {
+			if (!($this->request->post[$key])) {
 				$this->request->post[$key] = '';
 			}
 		}

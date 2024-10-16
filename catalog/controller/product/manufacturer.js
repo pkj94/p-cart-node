@@ -1,15 +1,15 @@
 <?php
 namespace Opencart\Catalog\Controller\Product;
 /**
- * Class Manufacturer
+ *
  *
  * @package Opencart\Catalog\Controller\Product
  */
-class Manufacturer extends \Opencart\System\Engine\Controller {
+class ManufacturerController extends Controller {
 	/**
 	 * @return void
 	 */
-	public function index(): void {
+	async index(): void {
 		$this->load->language('product/manufacturer');
 
 		$this->load->model('catalog/manufacturer');
@@ -39,7 +39,7 @@ class Manufacturer extends \Opencart\System\Engine\Controller {
 				$key = oc_substr(oc_strtoupper($result['name']), 0, 1);
 			}
 
-			if (!isset($data['categories'][$key])) {
+			if (!($data['categories'][$key])) {
 				$data['categories'][$key]['name'] = $key;
 				$data['categories'][$key]['href'] = $this->url->link('product/manufacturer', 'language=' . $this->config->get('config_language'));
 			}
@@ -65,34 +65,34 @@ class Manufacturer extends \Opencart\System\Engine\Controller {
 	/**
 	 * @return void
 	 */
-	public function info(): \Opencart\System\Engine\Action|null {
+	async info(): \Opencart\System\Engine\Action|null {
 		$this->load->language('product/manufacturer');
 
-		if (isset($this->request->get['manufacturer_id'])) {
+		if (($this->request->get['manufacturer_id'])) {
 			$manufacturer_id = (int)$this->request->get['manufacturer_id'];
 		} else {
 			$manufacturer_id = 0;
 		}
 
-		if (isset($this->request->get['sort'])) {
+		if (($this->request->get['sort'])) {
 			$sort = $this->request->get['sort'];
 		} else {
 			$sort = 'p.sort_order';
 		}
 
-		if (isset($this->request->get['order'])) {
+		if (($this->request->get['order'])) {
 			$order = $this->request->get['order'];
 		} else {
 			$order = 'ASC';
 		}
 
-		if (isset($this->request->get['page'])) {
+		if (($this->request->get['page'])) {
 			$page = (int)$this->request->get['page'];
 		} else {
 			$page = 1;
 		}
 
-		if (isset($this->request->get['limit']) && (int)$this->request->get['limit']) {
+		if (($this->request->get['limit']) && (int)$this->request->get['limit']) {
 			$limit = (int)$this->request->get['limit'];
 		} else {
 			$limit = (int)$this->config->get('config_pagination');
@@ -119,19 +119,19 @@ class Manufacturer extends \Opencart\System\Engine\Controller {
 
 			$url = '';
 
-			if (isset($this->request->get['sort'])) {
+			if (($this->request->get['sort'])) {
 				$url .= '&sort=' . $this->request->get['sort'];
 			}
 
-			if (isset($this->request->get['order'])) {
+			if (($this->request->get['order'])) {
 				$url .= '&order=' . $this->request->get['order'];
 			}
 
-			if (isset($this->request->get['page'])) {
+			if (($this->request->get['page'])) {
 				$url .= '&page=' . $this->request->get['page'];
 			}
 
-			if (isset($this->request->get['limit'])) {
+			if (($this->request->get['limit'])) {
 				$url .= '&limit=' . $this->request->get['limit'];
 			}
 
@@ -142,7 +142,7 @@ class Manufacturer extends \Opencart\System\Engine\Controller {
 
 			$data['heading_title'] = $manufacturer_info['name'];
 
-			$data['text_compare'] = sprintf($this->language->get('text_compare'), (isset($this->session->data['compare']) ? count($this->session->data['compare']) : 0));
+			$data['text_compare'] = sprintf($this->language->get('text_compare'), (($this->session->data['compare']) ? count($this->session->data['compare']) : 0));
 
 			$data['compare'] = $this->url->link('product/compare', 'language=' . $this->config->get('config_language'));
 
@@ -206,7 +206,7 @@ class Manufacturer extends \Opencart\System\Engine\Controller {
 
 			$url = '';
 
-			if (isset($this->request->get['limit'])) {
+			if (($this->request->get['limit'])) {
 				$url .= '&limit=' . $this->request->get['limit'];
 			}
 
@@ -270,11 +270,11 @@ class Manufacturer extends \Opencart\System\Engine\Controller {
 
 			$url = '';
 
-			if (isset($this->request->get['sort'])) {
+			if (($this->request->get['sort'])) {
 				$url .= '&sort=' . $this->request->get['sort'];
 			}
 
-			if (isset($this->request->get['order'])) {
+			if (($this->request->get['order'])) {
 				$url .= '&order=' . $this->request->get['order'];
 			}
 
@@ -294,15 +294,15 @@ class Manufacturer extends \Opencart\System\Engine\Controller {
 
 			$url = '';
 
-			if (isset($this->request->get['sort'])) {
+			if (($this->request->get['sort'])) {
 				$url .= '&sort=' . $this->request->get['sort'];
 			}
 
-			if (isset($this->request->get['order'])) {
+			if (($this->request->get['order'])) {
 				$url .= '&order=' . $this->request->get['order'];
 			}
 
-			if (isset($this->request->get['limit'])) {
+			if (($this->request->get['limit'])) {
 				$url .= '&limit=' . $this->request->get['limit'];
 			}
 

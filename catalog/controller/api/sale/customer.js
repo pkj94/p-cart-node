@@ -1,15 +1,15 @@
 <?php
 namespace Opencart\Catalog\Controller\Api\Sale;
 /**
- * Class Customer
+ *
  *
  * @package Opencart\Catalog\Controller\Api\Sale
  */
-class Customer extends \Opencart\System\Engine\Controller {
+class CustomerController extends Controller {
 	/**
 	 * @return void
 	 */
-	public function index(): void {
+	async index(): void {
 		$this->load->language('api/sale/customer');
 
 		$json = [];
@@ -25,7 +25,7 @@ class Customer extends \Opencart\System\Engine\Controller {
 		];
 
 		foreach ($keys as $key) {
-			if (!isset($this->request->post[$key])) {
+			if (!($this->request->post[$key])) {
 				$this->request->post[$key] = '';
 			}
 		}

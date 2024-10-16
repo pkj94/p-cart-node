@@ -1,18 +1,18 @@
 <?php
 namespace Opencart\Catalog\Controller\Account;
 /**
- * Class Account
+ *
  *
  * @package Opencart\Catalog\Controller\Account
  */
-class Account extends \Opencart\System\Engine\Controller {
+class AccountController extends Controller {
 	/**
 	 * @return void
 	 */
-	public function index(): void {
+	async index(): void {
 		$this->load->language('account/account');
 
-		if (!$this->customer->isLogged() || (!isset($this->request->get['customer_token']) || !isset($this->session->data['customer_token']) || ($this->request->get['customer_token'] != $this->session->data['customer_token']))) {
+		if (!$this->customer->isLogged() || (!($this->request->get['customer_token']) || !($this->session->data['customer_token']) || ($this->request->get['customer_token'] != $this->session->data['customer_token']))) {
 			$this->session->data['redirect'] = $this->url->link('account/account', 'language=' . $this->config->get('config_language'));
 
 			$this->response->redirect($this->url->link('account/login', 'language=' . $this->config->get('config_language')));
@@ -32,7 +32,7 @@ class Account extends \Opencart\System\Engine\Controller {
 			'href' => $this->url->link('account/account', 'language=' . $this->config->get('config_language') . '&customer_token=' . $this->session->data['customer_token'])
 		];
 
-		if (isset($this->session->data['success'])) {
+		if (($this->session->data['success'])) {
 			$data['success'] = $this->session->data['success'];
 
 			unset($this->session->data['success']);

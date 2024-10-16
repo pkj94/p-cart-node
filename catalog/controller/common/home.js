@@ -1,15 +1,15 @@
 <?php
 namespace Opencart\Catalog\Controller\Common;
 /**
- * Class Home
+ *
  *
  * @package Opencart\Catalog\Controller\Common
  */
-class Home extends \Opencart\System\Engine\Controller {
+class HomeController extends Controller {
 	/**
 	 * @return void
 	 */
-	public function index(): void {
+	async index(): void {
 		$this->document->setTitle($this->config->get('config_meta_title'));
 		$this->document->setDescription($this->config->get('config_meta_description'));
 		$this->document->setKeywords($this->config->get('config_meta_keyword'));

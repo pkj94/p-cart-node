@@ -1,15 +1,15 @@
 <?php
 namespace Opencart\Catalog\Controller\Account;
 /**
- * Class Register
+ *
  *
  * @package Opencart\Catalog\Controller\Account
  */
-class Register extends \Opencart\System\Engine\Controller {
+class RegisterController extends Controller {
 	/**
 	 * @return void
 	 */
-	public function index(): void {
+	async index(): void {
 		if ($this->customer->isLogged()) {
 			$this->response->redirect($this->url->link('account/account', 'language=' . $this->config->get('config_language') . '&customer_token=' . $this->session->data['customer_token']));
 		}
@@ -113,7 +113,7 @@ class Register extends \Opencart\System\Engine\Controller {
 	/**
 	 * @return void
 	 */
-	public function register(): void {
+	async register(): void {
 		$this->load->language('account/register');
 
 		$json = [];
@@ -131,12 +131,12 @@ class Register extends \Opencart\System\Engine\Controller {
 		];
 
 		foreach ($keys as $key) {
-			if (!isset($this->request->post[$key])) {
+			if (!($this->request->post[$key])) {
 				$this->request->post[$key] = '';
 			}
 		}
 
-		if (!isset($this->request->get['register_token']) || !isset($this->session->data['register_token']) || ($this->session->data['register_token'] != $this->request->get['register_token'])) {
+		if (!($this->request->get['register_token']) || !($this->session->data['register_token']) || ($this->session->data['register_token'] != $this->request->get['register_token'])) {
 			$json['redirect'] = $this->url->link('account/register', 'language=' . $this->config->get('config_language'), true);
 		}
 
@@ -255,7 +255,7 @@ class Register extends \Opencart\System\Engine\Controller {
 			unset($this->session->data['payment_method']);
 			unset($this->session->data['payment_methods']);
 
-			$json['redirect'] = $this->url->link('account/success', 'language=' . $this->config->get('config_language') . (isset($this->session->data['customer_token']) ? '&customer_token=' . $this->session->data['customer_token'] : ''), true);
+			$json['redirect'] = $this->url->link('account/success', 'language=' . $this->config->get('config_language') . (($this->session->data['customer_token']) ? '&customer_token=' . $this->session->data['customer_token'] : ''), true);
 		}
 
 		$this->response->addHeader('Content-Type: application/json');

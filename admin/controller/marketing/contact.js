@@ -88,6 +88,7 @@ module.exports = class ContactController extends Controller {
 			let results;
 			let customer_data;
 			let affiliate_data;
+			let customers;
 			switch (this.request.post['to']) {
 				case 'newsletter':
 					customer_data = {
@@ -139,7 +140,7 @@ module.exports = class ContactController extends Controller {
 
 						customers = array_slice(this.request.post['customer'], (page - 1) * limit, limit);
 
-						for (customers of customer_id) {
+						for (let customer_id of customers) {
 							const customer_info = await this.model_customer_customer.getCustomer(customer_id);
 
 							if (customer_info) {

@@ -1,20 +1,13 @@
-<?php
-namespace Opencart\Catalog\Controller\Startup;
-/**
- * Class Session
- *
- * @package Opencart\Catalog\Controller\Startup
- */
-class Session extends \Opencart\System\Engine\Controller {
+module.exports=class SessionController extends Controller {
 	/**
 	 * @return void
 	 * @throws \Exception
 	 */
-	public function index(): void {
+	async index(): void {
 		$session = new \Opencart\System\Library\Session($this->config->get('session_engine'), $this->registry);
 		$this->registry->set('session', $session);
 
-		if (isset($this->request->get['route']) && substr((string)$this->request->get['route'], 0, 4) == 'api/' && isset($this->request->get['api_token'])) {
+		if (($this->request->get['route']) && substr((string)$this->request->get['route'], 0, 4) == 'api/' && ($this->request->get['api_token'])) {
 			$this->load->model('setting/api');
 
 			$this->model_setting_api->cleanSessions();
@@ -48,7 +41,7 @@ class Session extends \Opencart\System\Engine\Controller {
 		// Update the session SameSite
 		$this->config->set('session_samesite', $this->config->get('config_session_samesite'));
 
-		if (isset($this->request->cookie[$this->config->get('session_name')])) {
+		if (($this->request->cookie[$this->config->get('session_name')])) {
 			$session_id = $this->request->cookie[$this->config->get('session_name')];
 		} else {
 			$session_id = '';

@@ -1,18 +1,18 @@
 <?php
 namespace Opencart\Catalog\Controller\Account;
 /**
- * Class Reward
+ *
  *
  * @package Opencart\Catalog\Controller\Account
  */
-class Reward extends \Opencart\System\Engine\Controller {
+class RewardController extends Controller {
 	/**
 	 * @return void
 	 */
 	public function index(): void {
 		$this->load->language('account/reward');
 
-		if (!$this->customer->isLogged() || (!isset($this->request->get['customer_token']) || !isset($this->session->data['customer_token']) || ($this->request->get['customer_token'] != $this->session->data['customer_token']))) {
+		if (!$this->customer->isLogged() || (!($this->request->get['customer_token']) || !($this->session->data['customer_token']) || ($this->request->get['customer_token'] != $this->session->data['customer_token']))) {
 			$this->session->data['redirect'] = $this->url->link('account/reward', 'language=' . $this->config->get('config_language'));
 
 			$this->response->redirect($this->url->link('account/login', 'language=' . $this->config->get('config_language')));
@@ -39,7 +39,7 @@ class Reward extends \Opencart\System\Engine\Controller {
 
 		$this->load->model('account/reward');
 
-		if (isset($this->request->get['page'])) {
+		if (($this->request->get['page'])) {
 			$page = (int)$this->request->get['page'];
 		} else {
 			$page = 1;

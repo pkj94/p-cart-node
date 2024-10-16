@@ -1,15 +1,15 @@
 <?php
 namespace Opencart\Catalog\Controller\Common;
 /**
- * Class Currency
+ *
  *
  * @package Opencart\Catalog\Controller\Common
  */
-class Currency extends \Opencart\System\Engine\Controller {
+class CurrencyController extends Controller {
 	/**
 	 * @return string
 	 */
-	public function index(): string {
+	async index(): string {
 		$this->load->language('common/currency');
 
 		$data['action'] = $this->url->link('common/currency.save', 'language=' . $this->config->get('config_language'));
@@ -18,7 +18,7 @@ class Currency extends \Opencart\System\Engine\Controller {
 
 		$url_data = $this->request->get;
 
-		if (isset($url_data['route'])) {
+		if (($url_data['route'])) {
 			$route = $url_data['route'];
 		} else {
 			$route = $this->config->get('action_default');
@@ -58,8 +58,8 @@ class Currency extends \Opencart\System\Engine\Controller {
 	/**
 	 * @return void
 	 */
-	public function save(): void {
-		if (isset($this->request->post['code'])) {
+	async save(): void {
+		if (($this->request->post['code'])) {
 			$this->session->data['currency'] = $this->request->post['code'];
 
 			unset($this->session->data['shipping_method']);
@@ -74,7 +74,7 @@ class Currency extends \Opencart\System\Engine\Controller {
 
 		setcookie('currency', $this->session->data['currency'], $option);
 
-		if (isset($this->request->post['redirect']) && substr($this->request->post['redirect'], 0, strlen($this->config->get('config_url'))) == $this->config->get('config_url')) {
+		if (($this->request->post['redirect']) && substr($this->request->post['redirect'], 0, strlen($this->config->get('config_url'))) == $this->config->get('config_url')) {
 			$this->response->redirect(str_replace('&amp;', '&', $this->request->post['redirect']));
 		} else {
 			$this->response->redirect($this->url->link($this->config->get('action_default')));

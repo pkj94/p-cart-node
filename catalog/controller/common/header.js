@@ -1,19 +1,19 @@
 <?php
 namespace Opencart\Catalog\Controller\Common;
 /**
- * Class Header
+ *
  *
  * @package Opencart\Catalog\Controller\Common
  */
-class Header extends \Opencart\System\Engine\Controller {
+class HeaderController extends Controller {
 	/**
 	 * @return string
 	 */
-	public function index(): string {
+	async index(): string {
 		// Analytics
 		$data['analytics'] = [];
 
-		if (!$this->config->get('config_cookie_id') || (isset($this->request->cookie['policy']) && $this->request->cookie['policy'])) {
+		if (!$this->config->get('config_cookie_id') || (($this->request->cookie['policy']) && $this->request->cookie['policy'])) {
 			$this->load->model('setting/extension');
 
 			$analytics = $this->model_setting_extension->getExtensionsByType('analytics');
@@ -61,11 +61,11 @@ class Header extends \Opencart\System\Engine\Controller {
 
 			$data['text_wishlist'] = sprintf($this->language->get('text_wishlist'), $this->model_account_wishlist->getTotalWishlist());
 		} else {
-			$data['text_wishlist'] = sprintf($this->language->get('text_wishlist'), (isset($this->session->data['wishlist']) ? count($this->session->data['wishlist']) : 0));
+			$data['text_wishlist'] = sprintf($this->language->get('text_wishlist'), (($this->session->data['wishlist']) ? count($this->session->data['wishlist']) : 0));
 		}
 
 		$data['home'] = $this->url->link('common/home', 'language=' . $this->config->get('config_language'));
-		$data['wishlist'] = $this->url->link('account/wishlist', 'language=' . $this->config->get('config_language') . (isset($this->session->data['customer_token']) ? '&customer_token=' . $this->session->data['customer_token'] : ''));
+		$data['wishlist'] = $this->url->link('account/wishlist', 'language=' . $this->config->get('config_language') . (($this->session->data['customer_token']) ? '&customer_token=' . $this->session->data['customer_token'] : ''));
 		$data['logged'] = $this->customer->isLogged();
 
 		if (!$this->customer->isLogged()) {

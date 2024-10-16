@@ -1,17 +1,17 @@
 <?php
 namespace Opencart\Catalog\Controller\Product;
 /**
- * Class Thumb
+ *
  *
  * @package Opencart\Catalog\Controller\Product
  */
-class Thumb extends \Opencart\System\Engine\Controller {
+class ThumbController extends Controller {
 	/**
 	 * @param array $data
 	 *
 	 * @return string
 	 */
-	public function index(array $data): string {
+	async index(array $data): string {
 		$this->load->language('product/thumb');
 
 		$data['cart'] = $this->url->link('common/cart.info', 'language=' . $this->config->get('config_language'));

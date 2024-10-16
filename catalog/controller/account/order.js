@@ -1,18 +1,18 @@
 <?php
 namespace Opencart\Catalog\Controller\Account;
 /**
- * Class Order
+ *
  *
  * @package Opencart\Catalog\Controller\Account
  */
-class Order extends \Opencart\System\Engine\Controller {
+class OrderController extends Controller {
 	/**
 	 * @return void
 	 */
-	public function index(): void {
+	async index(): void {
 		$this->load->language('account/order');
 
-		if (!$this->customer->isLogged() || (!isset($this->request->get['customer_token']) || !isset($this->session->data['customer_token']) || ($this->request->get['customer_token'] != $this->session->data['customer_token']))) {
+		if (!$this->customer->isLogged() || (!($this->request->get['customer_token']) || !($this->session->data['customer_token']) || ($this->request->get['customer_token'] != $this->session->data['customer_token']))) {
 			$this->session->data['redirect'] = $this->url->link('account/order', 'language=' . $this->config->get('config_language'));
 
 			$this->response->redirect($this->url->link('account/login', 'language=' . $this->config->get('config_language')));
@@ -22,7 +22,7 @@ class Order extends \Opencart\System\Engine\Controller {
 		
 		$url = '';
 
-		if (isset($this->request->get['page'])) {
+		if (($this->request->get['page'])) {
 			$url .= '&page=' . $this->request->get['page'];
 		}
 		
@@ -43,7 +43,7 @@ class Order extends \Opencart\System\Engine\Controller {
 			'href' => $this->url->link('account/order', 'language=' . $this->config->get('config_language') . '&customer_token=' . $this->session->data['customer_token'] . $url)
 		];
 
-		if (isset($this->request->get['page'])) {
+		if (($this->request->get['page'])) {
 			$page = (int)$this->request->get['page'];
 		} else {
 			$page = 1;
@@ -107,16 +107,16 @@ class Order extends \Opencart\System\Engine\Controller {
 	/**
 	 * @return object|\Opencart\System\Engine\Action|null
 	 */
-	public function info(): object|null {
+	async info(): object|null {
 		$this->load->language('account/order');
 
-		if (!$this->customer->isLogged() || (!isset($this->request->get['customer_token']) || !isset($this->session->data['customer_token']) || ($this->request->get['customer_token'] != $this->session->data['customer_token']))) {
+		if (!$this->customer->isLogged() || (!($this->request->get['customer_token']) || !($this->session->data['customer_token']) || ($this->request->get['customer_token'] != $this->session->data['customer_token']))) {
 			$this->session->data['redirect'] = $this->url->link('account/order', 'language=' . $this->config->get('config_language'));
 
 			$this->response->redirect($this->url->link('account/login', 'language=' . $this->config->get('config_language')));
 		}
 
-		if (isset($this->request->get['order_id'])) {
+		if (($this->request->get['order_id'])) {
 			$order_id = (int)$this->request->get['order_id'];
 		} else {
 			$order_id = 0;
@@ -135,7 +135,7 @@ class Order extends \Opencart\System\Engine\Controller {
 
 			$url = '';
 
-			if (isset($this->request->get['page'])) {
+			if (($this->request->get['page'])) {
 				$url .= '&page=' . $this->request->get['page'];
 			}
 
@@ -399,7 +399,7 @@ class Order extends \Opencart\System\Engine\Controller {
 	/**
 	 * @return void
 	 */
-	public function history(): void {
+	async history(): void {
 		$this->load->language('account/order');
 
 		$this->response->setOutput($this->getHistory());
@@ -408,14 +408,14 @@ class Order extends \Opencart\System\Engine\Controller {
 	/**
 	 * @return string
 	 */
-	public function getHistory(): string {
-		if (isset($this->request->get['order_id'])) {
+	async getHistory(): string {
+		if (($this->request->get['order_id'])) {
 			$order_id = (int)$this->request->get['order_id'];
 		} else {
 			$order_id = 0;
 		}
 
-		if (isset($this->request->get['page']) && $this->request->get['route'] == 'account/order.history') {
+		if (($this->request->get['page']) && $this->request->get['route'] == 'account/order.history') {
 			$page = (int)$this->request->get['page'];
 		} else {
 			$page = 1;
@@ -454,16 +454,16 @@ class Order extends \Opencart\System\Engine\Controller {
 	/**
 	 * @return void
 	 */
-	public function reorder(): void {
+	async reorder(): void {
 		$this->load->language('account/order');
 
-		if (!$this->customer->isLogged() || (!isset($this->request->get['customer_token']) || !isset($this->session->data['customer_token']) || ($this->request->get['customer_token'] != $this->session->data['customer_token']))) {
+		if (!$this->customer->isLogged() || (!($this->request->get['customer_token']) || !($this->session->data['customer_token']) || ($this->request->get['customer_token'] != $this->session->data['customer_token']))) {
 			$this->session->data['redirect'] = $this->url->link('account/order', 'language=' . $this->config->get('config_language'));
 
 			$this->response->redirect($this->url->link('account/login', 'language=' . $this->config->get('config_language')));
 		}
 
-		if (isset($this->request->get['order_id'])) {
+		if (($this->request->get['order_id'])) {
 			$order_id = (int)$this->request->get['order_id'];
 		} else {
 			$order_id = 0;
@@ -474,7 +474,7 @@ class Order extends \Opencart\System\Engine\Controller {
 		$order_info = $this->model_account_order->getOrder($order_id);
 
 		if ($order_info) {
-			if (isset($this->request->get['order_product_id'])) {
+			if (($this->request->get['order_product_id'])) {
 				$order_product_id = (int)$this->request->get['order_product_id'];
 			} else {
 				$order_product_id = 0;

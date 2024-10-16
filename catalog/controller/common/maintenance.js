@@ -1,15 +1,15 @@
 <?php
 namespace Opencart\Catalog\Controller\Common;
 /**
- * Class Maintenance
+ *
  *
  * @package Opencart\Catalog\Controller\Common
  */
-class Maintenance extends \Opencart\System\Engine\Controller {
+class MaintenanceController extends Controller {
 	/**
 	 * @return void
 	 */
-	public function index(): void {
+	async index(): void {
 		$this->load->language('common/maintenance');
 
 		$this->document->setTitle($this->language->get('heading_title'));

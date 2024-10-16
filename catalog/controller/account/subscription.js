@@ -1,18 +1,18 @@
 <?php
 namespace Opencart\Catalog\Controller\Account;
 /**
- * Class Subscription
+ *
  *
  * @package Opencart\Catalog\Controller\Account
  */
-class Subscription extends \Opencart\System\Engine\Controller {
+class SubscriptionController extends Controller {
 	/**
 	 * @return void
 	 */
 	public function index(): void {
 		$this->load->language('account/subscription');
 
-		if (!$this->customer->isLogged() || (!isset($this->request->get['customer_token']) || !isset($this->session->data['customer_token']) || ($this->request->get['customer_token'] != $this->session->data['customer_token']))) {
+		if (!$this->customer->isLogged() || (!($this->request->get['customer_token']) || !($this->session->data['customer_token']) || ($this->request->get['customer_token'] != $this->session->data['customer_token']))) {
 			$this->session->data['redirect'] = $this->url->link('account/subscription', 'language=' . $this->config->get('config_language'));
 
 			$this->response->redirect($this->url->link('account/login', 'language=' . $this->config->get('config_language')));
@@ -22,7 +22,7 @@ class Subscription extends \Opencart\System\Engine\Controller {
 
 		$url = '';
 
-		if (isset($this->request->get['page'])) {
+		if (($this->request->get['page'])) {
 			$url .= '&page=' . $this->request->get['page'];
 		}
 
@@ -43,7 +43,7 @@ class Subscription extends \Opencart\System\Engine\Controller {
 			'href' => $this->url->link('account/subscription', 'language=' . $this->config->get('config_language') . '&customer_token=' . $this->session->data['customer_token'] . $url)
 		];
 
-		if (isset($this->request->get['page'])) {
+		if (($this->request->get['page'])) {
 			$page = (int)$this->request->get['page'];
 		} else {
 			$page = 1;
@@ -145,13 +145,13 @@ class Subscription extends \Opencart\System\Engine\Controller {
 	public function info(): object|null {
 		$this->load->language('account/subscription');
 
-		if (!$this->customer->isLogged() || (!isset($this->request->get['customer_token']) || !isset($this->session->data['customer_token']) || ($this->request->get['customer_token'] != $this->session->data['customer_token']))) {
+		if (!$this->customer->isLogged() || (!($this->request->get['customer_token']) || !($this->session->data['customer_token']) || ($this->request->get['customer_token'] != $this->session->data['customer_token']))) {
 			$this->session->data['redirect'] = $this->url->link('account/subscription', 'language=' . $this->config->get('config_language'));
 
 			$this->response->redirect($this->url->link('account/login', 'language=' . $this->config->get('config_language')));
 		}
 
-		if (isset($this->request->get['subscription_id'])) {
+		if (($this->request->get['subscription_id'])) {
 			$subscription_id = (int)$this->request->get['subscription_id'];
 		} else {
 			$subscription_id = 0;
@@ -170,7 +170,7 @@ class Subscription extends \Opencart\System\Engine\Controller {
 
 			$url = '';
 
-			if (isset($this->request->get['page'])) {
+			if (($this->request->get['page'])) {
 				$url .= '&page=' . $this->request->get['page'];
 			}
 
@@ -408,13 +408,13 @@ class Subscription extends \Opencart\System\Engine\Controller {
 	 * @return string
 	 */
 	public function getHistory(): string {
-		if (isset($this->request->get['subscription_id'])) {
+		if (($this->request->get['subscription_id'])) {
 			$subscription_id = (int)$this->request->get['subscription_id'];
 		} else {
 			$subscription_id = 0;
 		}
 
-		if (isset($this->request->get['page']) && $this->request->get['route'] == 'account/subscription.history') {
+		if (($this->request->get['page']) && $this->request->get['route'] == 'account/subscription.history') {
 			$page = (int)$this->request->get['page'];
 		} else {
 			$page = 1;
@@ -463,13 +463,13 @@ class Subscription extends \Opencart\System\Engine\Controller {
 	 * @return string
 	 */
 	public function getOrder(): string {
-		if (isset($this->request->get['subscription_id'])) {
+		if (($this->request->get['subscription_id'])) {
 			$subscription_id = (int)$this->request->get['subscription_id'];
 		} else {
 			$subscription_id = 0;
 		}
 
-		if (isset($this->request->get['page']) && $this->request->get['route'] == 'account/subscription.order') {
+		if (($this->request->get['page']) && $this->request->get['route'] == 'account/subscription.order') {
 			$page = (int)$this->request->get['page'];
 		} else {
 			$page = 1;

@@ -312,7 +312,7 @@ module.exports = class CountryController extends Controller {
 			data['iso_code_3'] = '';
 		}
 
-		this.load.model('localisation/address_format',this);
+		this.load.model('localisation/address_format', this);
 
 		data['address_formats'] = await this.model_localisation_address_format.getAddressFormats();
 
@@ -450,12 +450,10 @@ module.exports = class CountryController extends Controller {
 		}
 
 		this.load.model('localisation/country', this);
-
+		this.load.model('localisation/zone', this);
 		const country_info = await this.model_localisation_country.getCountry(country_id);
 
 		if (country_info.country_id) {
-			this.load.model('localisation/zone', this);
-
 			json = {
 				'country_id': country_info['country_id'],
 				'name': country_info['name'],

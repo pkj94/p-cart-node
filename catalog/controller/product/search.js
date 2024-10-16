@@ -1,80 +1,80 @@
 <?php
 namespace Opencart\Catalog\Controller\Product;
 /**
- * Class Search
+ *
  *
  * @package Opencart\Catalog\Controller\Product
  */
-class Search extends \Opencart\System\Engine\Controller {
+class SearchController extends Controller {
 	/**
 	 * @return void
 	 */
-	public function index(): void {
+	async index(): void {
 		$this->load->language('product/search');
 
 		$this->load->model('catalog/category');
 		$this->load->model('catalog/product');
 		$this->load->model('tool/image');
 
-		if (isset($this->request->get['search'])) {
+		if (($this->request->get['search'])) {
 			$search = $this->request->get['search'];
 		} else {
 			$search = '';
 		}
 
-		if (isset($this->request->get['tag'])) {
+		if (($this->request->get['tag'])) {
 			$tag = $this->request->get['tag'];
-		} elseif (isset($this->request->get['search'])) {
+		} elseif (($this->request->get['search'])) {
 			$tag = $this->request->get['search'];
 		} else {
 			$tag = '';
 		}
 
-		if (isset($this->request->get['description'])) {
+		if (($this->request->get['description'])) {
 			$description = $this->request->get['description'];
 		} else {
 			$description = '';
 		}
 
-		if (isset($this->request->get['category_id'])) {
+		if (($this->request->get['category_id'])) {
 			$category_id = (int)$this->request->get['category_id'];
 		} else {
 			$category_id = 0;
 		}
 
-		if (isset($this->request->get['sub_category'])) {
+		if (($this->request->get['sub_category'])) {
 			$sub_category = $this->request->get['sub_category'];
 		} else {
 			$sub_category = 0;
 		}
 
-		if (isset($this->request->get['sort'])) {
+		if (($this->request->get['sort'])) {
 			$sort = $this->request->get['sort'];
 		} else {
 			$sort = 'p.sort_order';
 		}
 
-		if (isset($this->request->get['order'])) {
+		if (($this->request->get['order'])) {
 			$order = $this->request->get['order'];
 		} else {
 			$order = 'ASC';
 		}
 
-		if (isset($this->request->get['page'])) {
+		if (($this->request->get['page'])) {
 			$page = (int)$this->request->get['page'];
 		} else {
 			$page = 1;
 		}
 
-		if (isset($this->request->get['limit']) && (int)$this->request->get['limit']) {
+		if (($this->request->get['limit']) && (int)$this->request->get['limit']) {
 			$limit = (int)$this->request->get['limit'];
 		} else {
 			$limit = $this->config->get('config_pagination');
 		}
 
-		if (isset($this->request->get['search'])) {
+		if (($this->request->get['search'])) {
 			$this->document->setTitle($this->language->get('heading_title') .  ' - ' . $this->request->get['search']);
-		} elseif (isset($this->request->get['tag'])) {
+		} elseif (($this->request->get['tag'])) {
 			$this->document->setTitle($this->language->get('heading_title') .  ' - ' . $this->language->get('heading_tag') . $this->request->get['tag']);
 		} else {
 			$this->document->setTitle($this->language->get('heading_title'));
@@ -89,39 +89,39 @@ class Search extends \Opencart\System\Engine\Controller {
 
 		$url = '';
 
-		if (isset($this->request->get['search'])) {
+		if (($this->request->get['search'])) {
 			$url .= '&search=' . encodeURIComponent(html_entity_decode($this->request->get['search']));
 		}
 
-		if (isset($this->request->get['tag'])) {
+		if (($this->request->get['tag'])) {
 			$url .= '&tag=' . encodeURIComponent(html_entity_decode($this->request->get['tag']));
 		}
 
-		if (isset($this->request->get['description'])) {
+		if (($this->request->get['description'])) {
 			$url .= '&description=' . $this->request->get['description'];
 		}
 
-		if (isset($this->request->get['category_id'])) {
+		if (($this->request->get['category_id'])) {
 			$url .= '&category_id=' . $this->request->get['category_id'];
 		}
 
-		if (isset($this->request->get['sub_category'])) {
+		if (($this->request->get['sub_category'])) {
 			$url .= '&sub_category=' . $this->request->get['sub_category'];
 		}
 
-		if (isset($this->request->get['sort'])) {
+		if (($this->request->get['sort'])) {
 			$url .= '&sort=' . $this->request->get['sort'];
 		}
 
-		if (isset($this->request->get['order'])) {
+		if (($this->request->get['order'])) {
 			$url .= '&order=' . $this->request->get['order'];
 		}
 
-		if (isset($this->request->get['page'])) {
+		if (($this->request->get['page'])) {
 			$url .= '&page=' . $this->request->get['page'];
 		}
 
-		if (isset($this->request->get['limit'])) {
+		if (($this->request->get['limit'])) {
 			$url .= '&limit=' . $this->request->get['limit'];
 		}
 
@@ -130,13 +130,13 @@ class Search extends \Opencart\System\Engine\Controller {
 			'href' => $this->url->link('product/search', 'language=' . $this->config->get('config_language') . $url)
 		];
 
-		if (isset($this->request->get['search'])) {
+		if (($this->request->get['search'])) {
 			$data['heading_title'] = $this->language->get('heading_title') .  ' - ' . $this->request->get['search'];
 		} else {
 			$data['heading_title'] = $this->language->get('heading_title');
 		}
 
-		$data['text_compare'] = sprintf($this->language->get('text_compare'), (isset($this->session->data['compare']) ? count($this->session->data['compare']) : 0));
+		$data['text_compare'] = sprintf($this->language->get('text_compare'), (($this->session->data['compare']) ? count($this->session->data['compare']) : 0));
 
 		$data['compare'] = $this->url->link('product/compare', 'language=' . $this->config->get('config_language'));
 
@@ -240,27 +240,27 @@ class Search extends \Opencart\System\Engine\Controller {
 
 			$url = '';
 
-			if (isset($this->request->get['search'])) {
+			if (($this->request->get['search'])) {
 				$url .= '&search=' . encodeURIComponent(html_entity_decode($this->request->get['search']));
 			}
 
-			if (isset($this->request->get['tag'])) {
+			if (($this->request->get['tag'])) {
 				$url .= '&tag=' . encodeURIComponent(html_entity_decode($this->request->get['tag']));
 			}
 
-			if (isset($this->request->get['description'])) {
+			if (($this->request->get['description'])) {
 				$url .= '&description=' . $this->request->get['description'];
 			}
 
-			if (isset($this->request->get['category_id'])) {
+			if (($this->request->get['category_id'])) {
 				$url .= '&category_id=' . $this->request->get['category_id'];
 			}
 
-			if (isset($this->request->get['sub_category'])) {
+			if (($this->request->get['sub_category'])) {
 				$url .= '&sub_category=' . $this->request->get['sub_category'];
 			}
 
-			if (isset($this->request->get['limit'])) {
+			if (($this->request->get['limit'])) {
 				$url .= '&limit=' . $this->request->get['limit'];
 			}
 
@@ -324,31 +324,31 @@ class Search extends \Opencart\System\Engine\Controller {
 
 			$url = '';
 
-			if (isset($this->request->get['search'])) {
+			if (($this->request->get['search'])) {
 				$url .= '&search=' . encodeURIComponent(html_entity_decode($this->request->get['search']));
 			}
 
-			if (isset($this->request->get['tag'])) {
+			if (($this->request->get['tag'])) {
 				$url .= '&tag=' . encodeURIComponent(html_entity_decode($this->request->get['tag']));
 			}
 
-			if (isset($this->request->get['description'])) {
+			if (($this->request->get['description'])) {
 				$url .= '&description=' . $this->request->get['description'];
 			}
 
-			if (isset($this->request->get['category_id'])) {
+			if (($this->request->get['category_id'])) {
 				$url .= '&category_id=' . $this->request->get['category_id'];
 			}
 
-			if (isset($this->request->get['sub_category'])) {
+			if (($this->request->get['sub_category'])) {
 				$url .= '&sub_category=' . $this->request->get['sub_category'];
 			}
 
-			if (isset($this->request->get['sort'])) {
+			if (($this->request->get['sort'])) {
 				$url .= '&sort=' . $this->request->get['sort'];
 			}
 
-			if (isset($this->request->get['order'])) {
+			if (($this->request->get['order'])) {
 				$url .= '&order=' . $this->request->get['order'];
 			}
 
@@ -368,35 +368,35 @@ class Search extends \Opencart\System\Engine\Controller {
 
 			$url = '';
 
-			if (isset($this->request->get['search'])) {
+			if (($this->request->get['search'])) {
 				$url .= '&search=' . encodeURIComponent(html_entity_decode($this->request->get['search']));
 			}
 
-			if (isset($this->request->get['tag'])) {
+			if (($this->request->get['tag'])) {
 				$url .= '&tag=' . encodeURIComponent(html_entity_decode($this->request->get['tag']));
 			}
 
-			if (isset($this->request->get['description'])) {
+			if (($this->request->get['description'])) {
 				$url .= '&description=' . $this->request->get['description'];
 			}
 
-			if (isset($this->request->get['category_id'])) {
+			if (($this->request->get['category_id'])) {
 				$url .= '&category_id=' . $this->request->get['category_id'];
 			}
 
-			if (isset($this->request->get['sub_category'])) {
+			if (($this->request->get['sub_category'])) {
 				$url .= '&sub_category=' . $this->request->get['sub_category'];
 			}
 
-			if (isset($this->request->get['sort'])) {
+			if (($this->request->get['sort'])) {
 				$url .= '&sort=' . $this->request->get['sort'];
 			}
 
-			if (isset($this->request->get['order'])) {
+			if (($this->request->get['order'])) {
 				$url .= '&order=' . $this->request->get['order'];
 			}
 
-			if (isset($this->request->get['limit'])) {
+			if (($this->request->get['limit'])) {
 				$url .= '&limit=' . $this->request->get['limit'];
 			}
 
@@ -409,7 +409,7 @@ class Search extends \Opencart\System\Engine\Controller {
 
 			$data['results'] = sprintf($this->language->get('text_pagination'), ($product_total) ? (($page - 1) * $limit) + 1 : 0, ((($page - 1) * $limit) > ($product_total - $limit)) ? $product_total : ((($page - 1) * $limit) + $limit), $product_total, ceil($product_total / $limit));
 
-			if (isset($this->request->get['search']) && $this->config->get('config_customer_search')) {
+			if (($this->request->get['search']) && $this->config->get('config_customer_search')) {
 				$this->load->model('account/search');
 
 				if ($this->customer->isLogged()) {
@@ -418,7 +418,7 @@ class Search extends \Opencart\System\Engine\Controller {
 					$customer_id = 0;
 				}
 
-				if (isset($this->request->server['REMOTE_ADDR'])) {
+				if (($this->request->server['REMOTE_ADDR'])) {
 					$ip = $this->request->server['REMOTE_ADDR'];
 				} else {
 					$ip = '';

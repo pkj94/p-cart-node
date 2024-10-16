@@ -1,15 +1,15 @@
 <?php
 namespace Opencart\Catalog\Controller\Checkout;
 /**
- * Class Register
+ *
  *
  * @package Opencart\Catalog\Controller\Checkout
  */
-class Register extends \Opencart\System\Engine\Controller {
+class RegisterController extends Controller {
 	/**
 	 * @return string
 	 */
-	public function index(): string {
+	async index(): string {
 		$this->load->language('checkout/register');
 
 		$data['text_login'] = sprintf($this->language->get('text_login'), $this->url->link('account/login', 'language=' . $this->config->get('config_language') . '&redirect=' . encodeURIComponent($this->url->link('checkout/checkout', 'language=' . $this->config->get('config_language'), true))));
@@ -42,13 +42,13 @@ class Register extends \Opencart\System\Engine\Controller {
 			}
 		}
 
-		if (isset($this->session->data['customer']['customer_id'])) {
+		if (($this->session->data['customer']['customer_id'])) {
 			$data['account'] = $this->session->data['customer']['customer_id'];
 		} else {
 			$data['account'] = 1;
 		}
 
-		if (isset($this->session->data['customer'])) {
+		if (($this->session->data['customer'])) {
 			$data['customer_group_id'] = $this->session->data['customer']['customer_group_id'];
 			$data['firstname'] = $this->session->data['customer']['firstname'];
 			$data['lastname'] = $this->session->data['customer']['lastname'];
@@ -64,7 +64,7 @@ class Register extends \Opencart\System\Engine\Controller {
 			$data['account_custom_field'] = [];
 		}
 
-		if (isset($this->session->data['payment_address'])) {
+		if (($this->session->data['payment_address'])) {
 			$data['payment_firstname'] = $this->session->data['payment_address']['firstname'];
 			$data['payment_lastname'] = $this->session->data['payment_address']['lastname'];
 			$data['payment_company'] = $this->session->data['payment_address']['company'];
@@ -88,7 +88,7 @@ class Register extends \Opencart\System\Engine\Controller {
 			$data['payment_custom_field'] = [];
 		}
 
-		if (isset($this->session->data['shipping_address']['address_id'])) {
+		if (($this->session->data['shipping_address']['address_id'])) {
 			$data['shipping_firstname'] = $this->session->data['shipping_address']['firstname'];
 			$data['shipping_lastname'] = $this->session->data['shipping_address']['lastname'];
 			$data['shipping_company'] = $this->session->data['shipping_address']['company'];
@@ -106,7 +106,7 @@ class Register extends \Opencart\System\Engine\Controller {
 			$data['shipping_address_1'] = '';
 			$data['shipping_address_2'] = '';
 
-			if (isset($this->session->data['shipping_address']['postcode'])) {
+			if (($this->session->data['shipping_address']['postcode'])) {
 				$data['shipping_postcode'] = $this->session->data['shipping_address']['postcode'];
 			} else {
 				$data['shipping_postcode'] = '';
@@ -114,13 +114,13 @@ class Register extends \Opencart\System\Engine\Controller {
 
 			$data['shipping_city'] = '';
 
-			if (isset($this->session->data['shipping_address']['country_id'])) {
+			if (($this->session->data['shipping_address']['country_id'])) {
 				$data['shipping_country_id'] = $this->session->data['shipping_address']['country_id'];
 			} else {
 				$data['shipping_country_id'] = $this->config->get('config_country_id');
 			}
 
-			if (isset($this->session->data['shipping_address']['zone_id'])) {
+			if (($this->session->data['shipping_address']['zone_id'])) {
 				$data['shipping_zone_id'] = $this->session->data['shipping_address']['zone_id'];
 			} else {
 				$data['shipping_zone_id'] = '';
@@ -167,7 +167,7 @@ class Register extends \Opencart\System\Engine\Controller {
 	/**
 	 * @return void
 	 */
-	public function save(): void {
+	async save(): void {
 		$this->load->language('checkout/register');
 
 		$json = [];
@@ -203,7 +203,7 @@ class Register extends \Opencart\System\Engine\Controller {
 		];
 
 		foreach ($keys as $key) {
-			if (!isset($this->request->post[$key])) {
+			if (!($this->request->post[$key])) {
 				$this->request->post[$key] = '';
 			}
 		}
@@ -421,7 +421,7 @@ class Register extends \Opencart\System\Engine\Controller {
 				'lastname'          => $this->request->post['lastname'],
 				'email'             => $this->request->post['email'],
 				'telephone'         => $this->request->post['telephone'],
-				'custom_field'      => isset($this->request->post['custom_field']) ? $this->request->post['custom_field'] : []
+				'custom_field'      => ($this->request->post['custom_field']) ? $this->request->post['custom_field'] : []
 			];
 
 			// Register
@@ -443,7 +443,7 @@ class Register extends \Opencart\System\Engine\Controller {
 
 			// Payment Address
 			if ($this->config->get('config_checkout_payment_address')) {
-				if (isset($this->session->data['payment_address']['address_id'])) {
+				if (($this->session->data['payment_address']['address_id'])) {
 					$address_id = $this->session->data['payment_address']['address_id'];
 				} else {
 					$address_id = 0;
@@ -490,7 +490,7 @@ class Register extends \Opencart\System\Engine\Controller {
 					'iso_code_2'     => $iso_code_2,
 					'iso_code_3'     => $iso_code_3,
 					'address_format' => $address_format,
-					'custom_field'   => isset($this->request->post['payment_custom_field']) ? $this->request->post['payment_custom_field'] : []
+					'custom_field'   => ($this->request->post['payment_custom_field']) ? $this->request->post['payment_custom_field'] : []
 				];
 
 				// Add
@@ -514,7 +514,7 @@ class Register extends \Opencart\System\Engine\Controller {
 			// Shipping Address
 			if ($this->cart->hasShipping()) {
 				if (!$this->request->post['address_match']) {
-					if (isset($this->session->data['shipping_address']['address_id'])) {
+					if (($this->session->data['shipping_address']['address_id'])) {
 						$address_id = $this->session->data['shipping_address']['address_id'];
 					} else {
 						$address_id = 0;
@@ -569,7 +569,7 @@ class Register extends \Opencart\System\Engine\Controller {
 						'iso_code_2'     => $iso_code_2,
 						'iso_code_3'     => $iso_code_3,
 						'address_format' => $address_format,
-						'custom_field'   => isset($this->request->post['shipping_custom_field']) ? $this->request->post['shipping_custom_field'] : []
+						'custom_field'   => ($this->request->post['shipping_custom_field']) ? $this->request->post['shipping_custom_field'] : []
 					];
 
 					// Add

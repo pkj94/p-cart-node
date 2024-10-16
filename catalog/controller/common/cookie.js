@@ -1,16 +1,16 @@
 <?php
 namespace Opencart\Catalog\Controller\Common;
 /**
- * Class Cookie
+ *
  *
  * @package Opencart\Catalog\Controller\Common
  */
-class Cookie extends \Opencart\System\Engine\Controller {
+class CookieController extends Controller {
 	/**
 	 * @return string
 	 */
-	public function index(): string {
-		if ($this->config->get('config_cookie_id') && !isset($this->request->cookie['policy'])) {
+	async index(): string {
+		if ($this->config->get('config_cookie_id') && !($this->request->cookie['policy'])) {
 			$this->load->model('catalog/information');
 
 			$information_info = $this->model_catalog_information->getInformation($this->config->get('config_cookie_id'));
@@ -33,13 +33,13 @@ class Cookie extends \Opencart\System\Engine\Controller {
 	/**
 	 * @return void
 	 */
-	public function confirm(): void {
+	async confirm(): void {
 		$json = [];
 
-		if ($this->config->get('config_cookie_id') && !isset($this->request->cookie['policy'])) {
+		if ($this->config->get('config_cookie_id') && !($this->request->cookie['policy'])) {
 			$this->load->language('common/cookie');
 
-			if (isset($this->request->get['agree'])) {
+			if (($this->request->get['agree'])) {
 				$agree = (int)$this->request->get['agree'];
 			} else {
 				$agree = 0;

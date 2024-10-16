@@ -1,15 +1,15 @@
 <?php
 namespace Opencart\Catalog\Controller\Common;
 /**
- * Class Menu
+ *
  *
  * @package Opencart\Catalog\Controller\Common
  */
-class Menu extends \Opencart\System\Engine\Controller {
+class MenuController extends Controller {
 	/**
 	 * @return string
 	 */
-	public function index(): string {
+	async index(): string {
 		$this->load->language('common/menu');
 
 		// Menu

@@ -1,21 +1,21 @@
 <?php
 namespace Opencart\Catalog\Controller\Api\Sale;
 /**
- * Class Voucher
+ *
  *
  * @package Opencart\Catalog\Controller\Api\Sale
  */
-class Voucher extends \Opencart\System\Engine\Controller {
+class VoucherController extends Controller {
 	// Apply voucher
 	/**
 	 * @return void
 	 */
-	public function index(): void {
+	async index(): void {
 		$this->load->language('api/sale/voucher');
 
 		$json = [];
 
-		if (isset($this->request->post['voucher'])) {
+		if (($this->request->post['voucher'])) {
 			$voucher = (string)$this->request->post['voucher'];
 		} else {
 			$voucher = '';
@@ -50,7 +50,7 @@ class Voucher extends \Opencart\System\Engine\Controller {
 	/**
 	 * @return void
 	 */
-	public function add(): void {
+	async add(): void {
 		$this->load->language('api/sale/voucher');
 
 		$json = [];
@@ -67,7 +67,7 @@ class Voucher extends \Opencart\System\Engine\Controller {
 		];
 
 		foreach ($keys as $key) {
-			if (!isset($this->request->post[$key])) {
+			if (!($this->request->post[$key])) {
 				$this->request->post[$key] = '';
 			}
 		}
@@ -118,18 +118,18 @@ class Voucher extends \Opencart\System\Engine\Controller {
 	/**
 	 * @return void
 	 */
-	public function remove(): void {
+	async remove(): void {
 		$this->load->language('api/sale/cart');
 
 		$json = [];
 
-		if (isset($this->request->post['key'])) {
+		if (($this->request->post['key'])) {
 			$key = (int)$this->request->post['key'];
 		} else {
 			$key = '';
 		}
 
-		if (!isset($this->session->data['vouchers'][$key])) {
+		if (!($this->session->data['vouchers'][$key])) {
 			$json['error'] = $this->language->get('error_voucher');
 		}
 

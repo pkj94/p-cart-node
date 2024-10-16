@@ -129,13 +129,13 @@ module.exports = class CountryLocalisationModel extends Model {
 			sql += " LIMIT " + data['start'] + "," + data['limit'];
 		}
 
-		let country_data = await this.cache.get('country+' + md5(sql));
+		let country_data = await this.cache.get('country.' + md5(sql));
 		if (!country_data) {
 			const query = await this.db.query(sql);
 
 			country_data = query.rows;
 
-			await this.cache.set('country+' + md5(sql), country_data);
+			await this.cache.set('country.' + md5(sql), country_data);
 		}
 
 		return country_data;

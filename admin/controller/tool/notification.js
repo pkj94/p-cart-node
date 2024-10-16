@@ -1,15 +1,11 @@
-<?php
-namespace Opencart\Admin\Controller\Tool;
-/**
- * 
- *
- * @package Opencart\Admin\Controller\Tool
- */
-class NotificationController extends Controller {
+const sprintf = require("locutus/php/strings/sprintf");
+
+module.exports = class NotificationController extends Controller {
 	/**
 	 * @return void
 	 */
 	async index() {
+		const data = {};
 		await this.load.language('tool/notification');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -17,13 +13,13 @@ class NotificationController extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('text_home'),
+			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('tool/notification', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('heading_title'),
+			'href': this.url.link('tool/notification', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['list'] = await this.getList();
@@ -50,6 +46,7 @@ class NotificationController extends Controller {
 	 * @return string
 	 */
 	async getList() {
+		const data = {};
 		let page = 1;
 		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
@@ -63,31 +60,31 @@ class NotificationController extends Controller {
 
 		data['notifications'] = [];
 
-		this.load.model('tool/notification');
+		this.load.model('tool/notification', this);
 
-		notification_total await this.model_tool_notification.getTotalNotifications();
+		const notification_total = await this.model_tool_notification.getTotalNotifications();
 
 		let filter_data = {
-			'start' : (page - 1) * Number(this.config.get('config_pagination_admin')),
-			'limit' : this.config.get('config_pagination_admin')
-		});
+			'start': (page - 1) * Number(this.config.get('config_pagination_admin')),
+			'limit': this.config.get('config_pagination_admin')
+		};
 
 		const results = await this.model_tool_notification.getNotifications(filter_data);
 
 		for (let result of results) {
-			second = time() - new Date(result['date_added']);
-			
-			ranges = [
-				'second'	: second,
-				'minute'	: floor(second / 60),
-				'hour'		: floor(second / 3600),
-				'day'		: floor(second / 86400),
-				'week'		: floor(second / 604800),
-				'month'		: floor(second / 2629743),
-				'year'		: floor(second / 31556926)
-			];
+			let second = (new Date().getTime() - new Date(result['date_added']).getTime()) / 1000;
 
-			for (ranges of range : value) {
+			let ranges = {
+				'second': second,
+				'minute': Math.floor(second / 60),
+				'hour': Math.floor(second / 3600),
+				'day': Math.floor(second / 86400),
+				'week': Math.floor(second / 604800),
+				'month': Math.floor(second / 2629743),
+				'year': Math.floor(second / 31556926)
+			};
+			let date_added, code;
+			for (let [range, value] of Object.entries(ranges)) {
 				if (value) {
 					date_added = value;
 					code = range + (value > 1) ? 's' : '';
@@ -95,21 +92,21 @@ class NotificationController extends Controller {
 			}
 
 			data['notifications'].push({
-				'notification_id' : result['notification_id'],
-				'title'           : result['title'],
-				'status'          : result['status'],
-				'date_added'      : sprintf(this.language.get('text_' + code + '_ago'), date_added),
-				'view'            : this.url.link('tool/notification.info', 'user_token=' + this.session.data['user_token'] + '&notification_id=' + result['notification_id'] + url),
-				'delete'          : this.url.link('tool/notification.delete', 'user_token=' + this.session.data['user_token'] + '&notification_id=' + result['notification_id'] + url)
-			];
+				'notification_id': result['notification_id'],
+				'title': result['title'],
+				'status': result['status'],
+				'date_added': sprintf(this.language.get('text_' + code + '_ago'), date_added),
+				'view': this.url.link('tool/notification.info', 'user_token=' + this.session.data['user_token'] + '&notification_id=' + result['notification_id'] + url),
+				'delete': this.url.link('tool/notification.delete', 'user_token=' + this.session.data['user_token'] + '&notification_id=' + result['notification_id'] + url)
+			});
 		}
 
 		data['pagination'] = await this.load.controller('common/pagination', {
-			'total' : notification_total,
-			'page'  : page,
-			'limit' : this.config.get('config_pagination_admin'),
-			'url'   : this.url.link('tool/notification.list', 'user_token=' + this.session.data['user_token'] + '&page={page}')
-		]);
+			'total': notification_total,
+			'page': page,
+			'limit': this.config.get('config_pagination_admin'),
+			'url': this.url.link('tool/notification.list', 'user_token=' + this.session.data['user_token'] + '&page={page}')
+		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (notification_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (notification_total - this.config.get('config_pagination_admin'))) ? notification_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), notification_total, Math.ceil(notification_total / this.config.get('config_pagination_admin')));
 
@@ -120,17 +117,17 @@ class NotificationController extends Controller {
 	 * @return void
 	 */
 	async info() {
+		const data = {};
+		let notification_id = 0;
 		if ((this.request.get['notification_id'])) {
 			notification_id = this.request.get['notification_id'];
-		} else {
-			notification_id = 0;
 		}
 
-		this.load.model('tool/notification');
+		this.load.model('tool/notification', this);
 
-		notification_info await this.model_tool_notification.getNotification(notification_id);
+		const notification_info = await this.model_tool_notification.getNotification(notification_id);
 
-		if (notification_info) {
+		if (notification_info.notification_id) {
 			await this.load.language('tool/notification');
 
 			data['title'] = notification_info['title'];
@@ -152,7 +149,7 @@ class NotificationController extends Controller {
 		const json = {};
 
 		let selected = [];
-                 if ((this.request.post['selected'])) {
+		if ((this.request.post['selected'])) {
 			selected = this.request.post['selected'];
 		}
 
@@ -161,9 +158,9 @@ class NotificationController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('tool/notification');
+			this.load.model('tool/notification', this);
 
-			for (selected of notification_id) {
+			for (let notification_id of selected) {
 				await this.model_tool_notification.deleteNotification(notification_id);
 			}
 

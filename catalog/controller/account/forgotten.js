@@ -1,15 +1,15 @@
 <?php
 namespace Opencart\Catalog\Controller\Account;
 /**
- * Class Forgotten
+ *
  *
  * @package Opencart\Catalog\Controller\Account
  */
-class Forgotten extends \Opencart\System\Engine\Controller {
+class ForgottenController extends Controller {
 	/**
 	 * @return void
 	 */
-	public function index(): void {
+	async index(): void {
 		$this->load->language('account/forgotten');
 
 		if ($this->customer->isLogged()) {
@@ -52,7 +52,7 @@ class Forgotten extends \Opencart\System\Engine\Controller {
 	/**
 	 * @return void
 	 */
-	public function confirm(): void {
+	async confirm(): void {
 		$this->load->language('account/forgotten');
 
 		$json = [];
@@ -65,7 +65,7 @@ class Forgotten extends \Opencart\System\Engine\Controller {
 			$keys = ['email'];
 
 			foreach ($keys as $key) {
-				if (!isset($this->request->post[$key])) {
+				if (!($this->request->post[$key])) {
 					$this->request->post[$key] = '';
 				}
 			}
@@ -94,16 +94,16 @@ class Forgotten extends \Opencart\System\Engine\Controller {
 	/**
 	 * @return void
 	 */
-	public function reset(): void {
+	async reset(): void {
 		$this->load->language('account/forgotten');
 
-		if (isset($this->request->get['email'])) {
+		if (($this->request->get['email'])) {
 			$email = (string)$this->request->get['email'];
 		} else {
 			$email = '';
 		}
 
-		if (isset($this->request->get['code'])) {
+		if (($this->request->get['code'])) {
 			$code = (string)$this->request->get['code'];
 		} else {
 			$code = '';
@@ -162,18 +162,18 @@ class Forgotten extends \Opencart\System\Engine\Controller {
 	/**
 	 * @return void
 	 */
-	public function password(): void {
+	async password(): void {
 		$this->load->language('account/forgotten');
 
 		$json = [];
 
-		if (isset($this->request->get['email'])) {
+		if (($this->request->get['email'])) {
 			$email = (string)$this->request->get['email'];
 		} else {
 			$email = '';
 		}
 
-		if (isset($this->request->get['code'])) {
+		if (($this->request->get['code'])) {
 			$code = (string)$this->request->get['code'];
 		} else {
 			$code = '';
@@ -183,7 +183,7 @@ class Forgotten extends \Opencart\System\Engine\Controller {
 			$json['redirect'] = $this->url->link('account/account', 'language=' . $this->config->get('config_language') . '&customer_token=' . $this->session->data['customer_token'], true);
 		}
 
-		if (!isset($this->request->get['reset_token']) || !isset($this->session->data['reset_token']) || ($this->request->get['reset_token'] != $this->session->data['reset_token'])) {
+		if (!($this->request->get['reset_token']) || !($this->session->data['reset_token']) || ($this->request->get['reset_token'] != $this->session->data['reset_token'])) {
 			$this->session->data['error'] = $this->language->get('error_session');
 
 			$json['redirect'] = $this->url->link('account/forgotten', 'language=' . $this->config->get('config_language'), true);
@@ -209,7 +209,7 @@ class Forgotten extends \Opencart\System\Engine\Controller {
 			];
 
 			foreach ($keys as $key) {
-				if (!isset($this->request->post[$key])) {
+				if (!($this->request->post[$key])) {
 					$this->request->post[$key] = '';
 				}
 			}

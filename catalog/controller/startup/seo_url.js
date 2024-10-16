@@ -1,15 +1,8 @@
-<?php
-namespace Opencart\Catalog\Controller\Startup;
-/**
- * Class SeoUrl
- *
- * @package Opencart\Catalog\Controller\Startup
- */
-class SeoUrl extends \Opencart\System\Engine\Controller {
+module.exports=class SeoUrlController extends Controller {
 	/**
 	 * @return void
 	 */
-	public function index(): void {
+	async index(): void {
 		// Add rewrite to URL class
 		if ($this->config->get('config_seo_url')) {
 			$this->url->addRewrite($this);
@@ -17,7 +10,7 @@ class SeoUrl extends \Opencart\System\Engine\Controller {
 			$this->load->model('design/seo_url');
 
 			// Decode URL
-			if (isset($this->request->get['_route_'])) {
+			if (($this->request->get['_route_'])) {
 				$parts = explode('/', $this->request->get['_route_']);
 
 				// remove any empty arrays from trailing
@@ -41,7 +34,7 @@ class SeoUrl extends \Opencart\System\Engine\Controller {
 	 *
 	 * @return string
 	 */
-	public function rewrite(string $link): string {
+	async rewrite(string $link): string {
 		$url_info = parse_url(str_replace('&amp;', '&', $link));
 
 		// Build the url
@@ -57,7 +50,7 @@ class SeoUrl extends \Opencart\System\Engine\Controller {
 			$url .= $url_info['host'];
 		}
 
-		if (isset($url_info['port'])) {
+		if (($url_info['port'])) {
 			$url .= ':' . $url_info['port'];
 		}
 

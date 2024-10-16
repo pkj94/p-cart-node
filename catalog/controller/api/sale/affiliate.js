@@ -1,20 +1,20 @@
 <?php
 namespace Opencart\Catalog\Controller\Api\Sale;
 /**
- * Class Affiliate
+ *
  *
  * @package Opencart\Catalog\Controller\Api\Sale
  */
-class Affiliate extends \Opencart\System\Engine\Controller {
+class AffiliateController extends Controller {
 	/**
 	 * @return void
 	 */
-	public function index(): void {
+	async index(): void {
 		$this->load->language('api/sale/affiliate');
 
 		$json = [];
 
-		if (isset($this->request->post['affiliate_id'])) {
+		if (($this->request->post['affiliate_id'])) {
 			$affiliate_id = (int)$this->request->post['affiliate_id'];
 		} else {
 			$affiliate_id = 0;
