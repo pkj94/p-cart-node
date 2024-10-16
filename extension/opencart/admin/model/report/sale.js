@@ -73,10 +73,10 @@ module.exports = class SaleReportModel extends Model {
 		let date_start = new Date('-' + date('w') + ' days');
 
 		for (let i = 0; i < 7; i++) {
-			date = date('Y-m-d', date_start + (i * 86400));
+			let dt = date('Y-m-d', date_start + (i * 86400));
 
-			order_data[date('w', new Date(date))] = {
-				'day': date('D', new Date(date)),
+			order_data[date('w', new Date(dt))] = {
+				'day': date('D', new Date(dt)),
 				'total': 0
 			};
 		}
@@ -99,22 +99,22 @@ module.exports = class SaleReportModel extends Model {
 	async getTotalOrdersByMonth() {
 		const implode = [];
 
-		for (this.config.get('config_complete_status') of order_status_id) {
+		for (let order_status_id of this.config.get('config_complete_status')) {
 			implode.push("'" + order_status_id + "'");
 		}
 
 		let order_data = {};
 
 		for (let i = 1; i <= date('t'); i++) {
-			date = date('Y') + '-' + date('m') + '-' + i;
+			let dt = date('Y') + '-' + date('m') + '-' + i;
 
-			order_data[date('j', new Date(date))] = {
-				'day': date('d', new Date(date)),
+			order_data[date('j', new Date(dt))] = {
+				'day': date('d', new Date(dt)),
 				'total': 0
 			};
 		}
 
-		let query = await this.db.query("SELECT COUNT(*) AS total, `date_added` FROM `" + DB_PREFIX + "order` WHERE `order_status_id` IN(" + implode.join(",") + ") AND DATE(`date_added`) >= DATE('" + this.db.escape(date('Y') + '-' + date('m') + '-1') + "') GROUP BY DATE(`date_added`)");
+		let query = await this.db.query("SELECT COUNT(*) AS total, `date_added` FROM `" + DB_PREFIX + "order` WHERE `order_status_id` IN(" + implode.join(",") + ") AND DATE(`date_added`) >= DATE(" + this.db.escape(date('Y') + '-' + date('m') + '-1') + ") GROUP BY DATE(`date_added`)");
 
 		for (let result of query.rows) {
 			order_data[date('j', new Date(result['date_added']))] = {

@@ -56,6 +56,7 @@ global.APP = async () => {
     app.use('/catalog/view/javascript', express.static('catalog/view/javascript'));
     app.use('/catalog/view/image', express.static('catalog/view/image'));
     app.use('/catalog/language', express.static('catalog/language'));
+    app.use('/extension', express.static('extension'));
     app.use(morgan('dev'));
     const decodeObject = (obj) => {
         for (let [key, value] of Object.entries(obj)) {
@@ -63,7 +64,7 @@ global.APP = async () => {
             if (typeof value == 'object') {
                 if (Array.isArray(value)) {
                     // console.log('value----', value)
-                    if (value.filter(a => a == '0' || a == '1').length == value.length && value.length==2) {
+                    if (value.filter(a => a == '0' || a == '1').length == value.length && value.length == 2) {
                         obj[key] = decodeURIComponent(value[1]);
                     } else
                         for (let i = 0; i < value.length; i++) {

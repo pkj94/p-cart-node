@@ -36,15 +36,15 @@ module.exports = class CustomerModel extends Model {
 		date_start = new Date('-' + date('w') + ' days');
 
 		for (let i = 0; i < 7; i++) {
-			date = date('Y-m-d', date_start + (i * 86400));
+			let dt = date('Y-m-d', date_start + (i * 86400));
 
-			customer_data[date('w', new Date(date))] = {
-				'day': date('D', new Date(date)),
+			customer_data[date('w', new Date(dt))] = {
+				'day': date('D', new Date(dt)),
 				'total': 0
 			};
 		}
 
-		let query = await this.db.query("SELECT COUNT(*) AS `total`, `date_added` FROM `" + DB_PREFIX + "customer` WHERE DATE(`date_added`) >= DATE('" + this.db.escape(date('Y-m-d', date_start)) + "') GROUP BY DAYNAME(`date_added`)");
+		let query = await this.db.query("SELECT COUNT(*) AS `total`, `date_added` FROM `" + DB_PREFIX + "customer` WHERE DATE(`date_added`) >= DATE(" + this.db.escape(date('Y-m-d', date_start)) + ") GROUP BY DAYNAME(`date_added`)");
 
 		for (let result of query.rows) {
 			customer_data[date('w', new Date(result['date_added']))] = {
@@ -63,15 +63,15 @@ module.exports = class CustomerModel extends Model {
 		let customer_data = {};
 
 		for (let i = 1; i <= date('t'); i++) {
-			date = date('Y') + '-' + date('m') + '-' + i;
+			let dt = date('Y') + '-' + date('m') + '-' + i;
 
-			customer_data[date('j', new Date(date))] = {
-				'day': date('d', new Date(date)),
+			customer_data[date('j', new Date(dt))] = {
+				'day': date('d', new Date(dt)),
 				'total': 0
 			};
 		}
 
-		let query = await this.db.query("SELECT COUNT(*) AS `total`, `date_added` FROM `" + DB_PREFIX + "customer` WHERE DATE(`date_added`) >= DATE('" + this.db.escape(date('Y') + '-' + date('m') + '-1') + "') GROUP BY DATE(`date_added`)");
+		let query = await this.db.query("SELECT COUNT(*) AS `total`, `date_added` FROM `" + DB_PREFIX + "customer` WHERE DATE(`date_added`) >= DATE(" + this.db.escape(date('Y') + '-' + date('m') + '-1') + ") GROUP BY DATE(`date_added`)");
 
 		for (let result of query.rows) {
 			customer_data[date('j', new Date(result['date_added']))] = {
@@ -477,7 +477,7 @@ module.exports = class CustomerModel extends Model {
 		}
 
 		if (data['filter_ip']) {
-			implode.push("cs.`ip` LIKE '" + this.db.escape(data['filter_ip']) + "'");
+			implode.push("cs.`ip` LIKE " + this.db.escape(data['filter_ip']));
 		}
 
 		if (implode.length) {
@@ -531,7 +531,7 @@ module.exports = class CustomerModel extends Model {
 		}
 
 		if (data['filter_ip']) {
-			implode.push("cs.`ip` LIKE '" + this.db.escape(data['filter_ip']) + "'");
+			implode.push("cs.`ip` LIKE " + this.db.escape(data['filter_ip']));
 		}
 
 		if (implode.length) {

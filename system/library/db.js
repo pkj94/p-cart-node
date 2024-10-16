@@ -8,8 +8,8 @@ module.exports = class DBLibrary {
             throw new Error(`Error: Could not load database adaptor ${adaptor}!`);
         }
     }
-    connect() {
-        return this.adaptor.connect()
+    async connect() {
+        return await this.adaptor.connect()
     }
     query(sql) {
         return this.adaptor.query(sql);

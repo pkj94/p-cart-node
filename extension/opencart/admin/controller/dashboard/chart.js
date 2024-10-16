@@ -92,7 +92,8 @@ module.exports = class ChartDashboardController extends Controller {
 		if ((this.request.get['range'])) {
 			range = this.request.get['range'];
 		}
-		let results = [];
+		let results = {};
+		// console.log('hi-----------',range);
 		switch (range) {
 			default:
 			case 'day':
@@ -131,9 +132,9 @@ module.exports = class ChartDashboardController extends Controller {
 				date_start = new Date('-' + date('w') + ' days');
 
 				for (let i = 0; i < 7; i++) {
-					date = date('Y-m-d', date_start + (i * 86400));
+					let dt = date('Y-m-d', date_start + (i * 86400));
 
-					json['xaxis'].push([date('w', new Date(date)), date('D', new Date(date))]);
+					json['xaxis'].push([date('w', new Date(dt)), date('D', new Date(dt))]);
 				}
 				break;
 			case 'month':
@@ -150,9 +151,9 @@ module.exports = class ChartDashboardController extends Controller {
 				}
 
 				for (let i = 1; i <= date('t'); i++) {
-					date = date('Y') + '-' + date('m') + '-' + i;
+					let dt = date('Y') + '-' + date('m') + '-' + i;
 
-					json['xaxis'].push([date('j', new Date(date)), date('d', new Date(date))]);
+					json['xaxis'].push([date('j', new Date(dt)), date('d', new Date(dt))]);
 				}
 				break;
 			case 'year':

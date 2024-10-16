@@ -66,7 +66,7 @@ module.exports = class IpFraudModel extends Model {
 	 * @return int
 	 */
 	async getTotalIpsByIp(ip) {
-		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "fraud_ip` WHERE `ip` = '" + this.db.escape(ip) + "'");
+		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "fraud_ip` WHERE `ip` = " + this.db.escape(ip));
 
 		return query.row['total'];
 	}

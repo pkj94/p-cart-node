@@ -71,6 +71,7 @@ module.exports = class Framework {
         if (global.config.get('db_autostart')) {
             let db = new DbLibrary(config.get('db_engine'), config.get('db_hostname'), config.get('db_username'), config.get('db_password'), config.get('db_database'), config.get('db_port'), config.get('db_debug'));
             await db.connect();
+            // console.log('db=--=', db)
             registry.set('db', db);
         }
         // Session

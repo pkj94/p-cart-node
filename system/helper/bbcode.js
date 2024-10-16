@@ -3,7 +3,7 @@
  * @param {string} string - The input string containing BBCode
  * @returns {string} The decoded string with HTML tags
  */
-global.ocBbcodeDecode = (string) => {
+global.oc_bbcode_decode = (string) => {
     const patterns = [
         // Bold
         { pattern: /\[b\](.*?)\[\/b\]/is, replace: '<strong>$1</strong>' },
