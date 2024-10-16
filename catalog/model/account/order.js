@@ -1,17 +1,17 @@
 <?php
 namespace Opencart\Catalog\Model\Account;
 /**
- * Class Order
+ *
  *
  * @package Opencart\Catalog\Model\Account
  */
-class Order extends \Opencart\System\Engine\Model {
+class OrderController extends Model {
 	/**
 	 * @param int $order_id
 	 *
 	 * @return array
 	 */
-	public function getOrder($order_id): array {
+	async getOrder($order_id): array {
 		$order_query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "order` WHERE `order_id` = '" . (int)$order_id . "' AND `customer_id` = '" . (int)$this->customer->getId() . "' AND `customer_id` != '0' AND `order_status_id` > '0'");
 
 		if ($order_query->num_rows) {
@@ -117,7 +117,7 @@ class Order extends \Opencart\System\Engine\Model {
 	 *
 	 * @return array
 	 */
-	public function getOrders($start = 0, int $limit = 20): array {
+	async getOrders($start = 0, int $limit = 20): array {
 		if ($start < 0) {
 			$start = 0;
 		}
@@ -138,7 +138,7 @@ class Order extends \Opencart\System\Engine\Model {
 	 *
 	 * @return array
 	 */
-	public function getOrdersBySubscriptionId($subscription_id, int $start = 0, int $limit = 20): array {
+	async getOrdersBySubscriptionId($subscription_id, int $start = 0, int $limit = 20): array {
 		if ($start < 0) {
 			$start = 0;
 		}
@@ -157,7 +157,7 @@ class Order extends \Opencart\System\Engine\Model {
 	 *
 	 * @return int
 	 */
-	public function getTotalOrdersBySubscriptionId($subscription_id): int {
+	async getTotalOrdersBySubscriptionId($subscription_id): int {
 		$query = $this->db->query("SELECT COUNT(*) AS `total` FROM `" . DB_PREFIX . "order` WHERE `subscription_id` = '" . (int)$subscription_id . "' AND `customer_id` = '" . (int)$this->customer->getId() . "'");
 
 		return (int)$query->row['total'];
@@ -169,7 +169,7 @@ class Order extends \Opencart\System\Engine\Model {
 	 *
 	 * @return array
 	 */
-	public function getProduct($order_id, int $order_product_id): array {
+	async getProduct($order_id, int $order_product_id): array {
 		$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "order_product` WHERE `order_id` = '" . (int)$order_id . "' AND `order_product_id` = '" . (int)$order_product_id . "'");
 
 		return $query->row;
@@ -180,7 +180,7 @@ class Order extends \Opencart\System\Engine\Model {
 	 *
 	 * @return array
 	 */
-	public function getProducts($order_id): array {
+	async getProducts($order_id): array {
 		$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "order_product` WHERE `order_id` = '" . (int)$order_id . "'");
 
 		return $query->rows;
@@ -192,7 +192,7 @@ class Order extends \Opencart\System\Engine\Model {
 	 *
 	 * @return array
 	 */
-	public function getOptions($order_id, int $order_product_id): array {
+	async getOptions($order_id, int $order_product_id): array {
 		$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "order_option` WHERE `order_id` = '" . (int)$order_id . "' AND `order_product_id` = '" . (int)$order_product_id . "'");
 
 		return $query->rows;
@@ -204,7 +204,7 @@ class Order extends \Opencart\System\Engine\Model {
 	 *
 	 * @return array
 	 */
-	public function getSubscription($order_id, int $order_product_id): array {
+	async getSubscription($order_id, int $order_product_id): array {
 		$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "order_subscription` WHERE `order_id` = '" . (int)$order_id . "' AND `order_product_id` = '" . (int)$order_product_id . "'");
 
 		return $query->row;
@@ -215,7 +215,7 @@ class Order extends \Opencart\System\Engine\Model {
 	 *
 	 * @return array
 	 */
-	public function getVouchers($order_id): array {
+	async getVouchers($order_id): array {
 		$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "order_voucher` WHERE `order_id` = '" . (int)$order_id . "'");
 
 		return $query->rows;
@@ -226,7 +226,7 @@ class Order extends \Opencart\System\Engine\Model {
 	 *
 	 * @return array
 	 */
-	public function getTotals($order_id): array {
+	async getTotals($order_id): array {
 		$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "order_total` WHERE `order_id` = '" . (int)$order_id . "' ORDER BY `sort_order`");
 
 		return $query->rows;
@@ -237,7 +237,7 @@ class Order extends \Opencart\System\Engine\Model {
 	 *
 	 * @return array
 	 */
-	public function getHistories($order_id): array {
+	async getHistories($order_id): array {
 		$query = $this->db->query("SELECT `date_added`, os.`name` AS status, oh.`comment`, oh.`notify` FROM `" . DB_PREFIX . "order_history` oh LEFT JOIN `" . DB_PREFIX . "order_status` os ON oh.`order_status_id` = os.`order_status_id` WHERE oh.`order_id` = '" . (int)$order_id . "' AND os.`language_id` = '" . (int)$this->config->get('config_language_id') . "' ORDER BY oh.`date_added`");
 
 		return $query->rows;
@@ -248,7 +248,7 @@ class Order extends \Opencart\System\Engine\Model {
 	 *
 	 * @return int
 	 */
-	public function getTotalHistories($order_id): int {
+	async getTotalHistories($order_id): int {
 		$query = $this->db->query("SELECT COUNT(*) AS `total` FROM `" . DB_PREFIX . "order_history` WHERE `order_id` = '" . (int)$order_id . "'");
 
 		if ($query->num_rows) {
@@ -261,7 +261,7 @@ class Order extends \Opencart\System\Engine\Model {
 	/**
 	 * @return int
 	 */
-	public function getTotalOrders(): int {
+	async getTotalOrders(): int {
 		$query = $this->db->query("SELECT COUNT(*) AS `total` FROM `" . DB_PREFIX . "order` o WHERE `customer_id` = '" . (int)$this->customer->getId() . "' AND o.`order_status_id` > '0' AND o.`store_id` = '" . (int)$this->config->get('config_store_id') . "'");
 
 		if ($query->num_rows) {
@@ -276,7 +276,7 @@ class Order extends \Opencart\System\Engine\Model {
 	 *
 	 * @return int
 	 */
-	public function getTotalOrdersByProductId($product_id): int {
+	async getTotalOrdersByProductId($product_id): int {
 		$query = $this->db->query("SELECT COUNT(*) AS `total` FROM `" . DB_PREFIX . "order_product` op LEFT JOIN `" . DB_PREFIX . "order` o ON (op.`order_id` = o.`order_id`) WHERE o.`customer_id` = '" . (int)$this->customer->getId() . "' AND op.`product_id` = '" . (int)$product_id . "'");
 
 		if ($query->num_rows) {
@@ -291,7 +291,7 @@ class Order extends \Opencart\System\Engine\Model {
 	 *
 	 * @return int
 	 */
-	public function getTotalProductsByOrderId($order_id): int {
+	async getTotalProductsByOrderId($order_id): int {
 		$query = $this->db->query("SELECT COUNT(*) AS `total` FROM `" . DB_PREFIX . "order_product` WHERE `order_id` = '" . (int)$order_id . "'");
 
 		if ($query->num_rows) {
@@ -306,7 +306,7 @@ class Order extends \Opencart\System\Engine\Model {
 	 *
 	 * @return int
 	 */
-	public function getTotalVouchersByOrderId($order_id): int {
+	async getTotalVouchersByOrderId($order_id): int {
 		$query = $this->db->query("SELECT COUNT(*) AS `total` FROM `" . DB_PREFIX . "order_voucher` WHERE `order_id` = '" . (int)$order_id . "'");
 
 		if ($query->num_rows) {

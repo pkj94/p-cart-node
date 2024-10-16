@@ -1,11 +1,12 @@
-<?php
-// Heading
-$_['heading_title']    = 'Newsletter Subscription';
+module.exports = {
+    // Heading
+    heading_title: 'Newsletter Subscription',
 
-// Text
-$_['text_account']     = 'Account';
-$_['text_newsletter']  = 'Newsletter';
-$_['text_success']     = 'Success: Your newsletter subscription has been successfully updated!';
+    // Text
+    text_account: 'Account',
+    text_newsletter: 'Newsletter',
+    text_success: 'Success: Your newsletter subscription has been successfully updated!',
 
-// Entry
-$_['entry_newsletter'] = 'Subscribe';
+    // Entry
+    entry_newsletter: 'Subscribe',
+}

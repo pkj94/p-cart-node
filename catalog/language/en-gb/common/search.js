@@ -1,3 +1,4 @@
-<?php
-// Text
-$_['text_search'] = 'Search';
+module.exports = {
+    // Text
+    text_search: 'Search',
+}

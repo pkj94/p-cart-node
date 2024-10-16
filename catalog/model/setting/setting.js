@@ -1,55 +1,55 @@
 <?php
 namespace Opencart\Catalog\Model\Setting;
 /**
- * Class Setting
+ *
  *
  * @package Opencart\Catalog\Model\Setting
  */
-class Setting extends \Opencart\System\Engine\Model {
+class SettingController extends Model {
 	/**
-	 * @param int $store_id
+	 * @param int store_id
 	 *
 	 * @return array
 	 */
-	public function getSettings($store_id = 0): array {
-		$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "setting` WHERE `store_id` = '" . (int)$store_id . "' OR `store_id` = 0 ORDER BY `store_id` ASC");
+	async getSettings(store_id = 0): array {
+		query = this->db->query("SELECT * FROM `" . DB_PREFIX . "setting` WHERE `store_id` = '" . (int)store_id . "' OR `store_id` = 0 ORDER BY `store_id` ASC");
 
-		return $query->rows;
+		return query->rows;
 	}
 
 	/**
-	 * @param string $code
-	 * @param int    $store_id
+	 * @param string code
+	 * @param int    store_id
 	 *
 	 * @return array
 	 */
-	public function getSetting(string $code, int $store_id = 0): array {
-		$setting_data = [];
+	async getSetting(string code, int store_id = 0): array {
+		setting_data = [];
 
-		$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "setting` WHERE `store_id` = '" . (int)$store_id . "' AND `code` = '" . $this->db->escape($code) . "'");
+		query = this->db->query("SELECT * FROM `" . DB_PREFIX . "setting` WHERE `store_id` = '" . (int)store_id . "' AND `code` = '" . this->db->escape(code) . "'");
 
-		foreach ($query->rows as $result) {
-			if (!$result['serialized']) {
-				$setting_data[$result['key']] = $result['value'];
+		foreach (query->rows as result) {
+			if (!result['serialized']) {
+				setting_data[result['key']] = result['value'];
 			} else {
-				$setting_data[$result['key']] = JSON.parse($result['value'], true);
+				setting_data[result['key']] = JSON.parse(result['value'], true);
 			}
 		}
 
-		return $setting_data;
+		return setting_data;
 	}
 
 	/**
-	 * @param string $key
-	 * @param int    $store_id
+	 * @param string key
+	 * @param int    store_id
 	 *
 	 * @return string
 	 */
-	public function getValue(string $key, int $store_id = 0): string {
-		$query = $this->db->query("SELECT `value` FROM `" . DB_PREFIX . "setting` WHERE `store_id` = '" . (int)$store_id . "' AND `key` = '" . $this->db->escape($key) . "'");
+	async getValue(string key, int store_id = 0): string {
+		query = this->db->query("SELECT `value` FROM `" . DB_PREFIX . "setting` WHERE `store_id` = '" . (int)store_id . "' AND `key` = '" . this->db->escape(key) . "'");
 
-		if ($query->num_rows) {
-			return $query->row['value'];
+		if (query->num_rows) {
+			return query->row['value'];
 		} else {
 			return '';
 		}

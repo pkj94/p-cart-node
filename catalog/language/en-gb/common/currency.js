@@ -1,3 +1,4 @@
-<?php
-// Text
-$_['text_currency'] = 'Currency';
+module.exports = {
+    // Text
+    text_currency: 'Currency',
+}

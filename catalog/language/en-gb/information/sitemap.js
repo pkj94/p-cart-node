@@ -1,17 +1,18 @@
-<?php
-// Heading
-$_['heading_title']    = 'Site Map';
+module.exports = {
+    // Heading
+    heading_title: 'Site Map',
 
-// Text
-$_['text_special']     = 'Special Offers';
-$_['text_account']     = 'My Account';
-$_['text_edit']        = 'Account Information';
-$_['text_password']    = 'Password';
-$_['text_address']     = 'Address Book';
-$_['text_history']     = 'Order History';
-$_['text_download']    = 'Downloads';
-$_['text_cart']        = 'Shopping Cart';
-$_['text_checkout']    = 'Checkout';
-$_['text_search']      = 'Search';
-$_['text_information'] = 'Information';
-$_['text_contact']     = 'Contact Us';
+    // Text
+    text_special: 'Special Offers',
+    text_account: 'My Account',
+    text_edit: 'Account Information',
+    text_password: 'Password',
+    text_address: 'Address Book',
+    text_history: 'Order History',
+    text_download: 'Downloads',
+    text_cart: 'Shopping Cart',
+    text_checkout: 'Checkout',
+    text_search: 'Search',
+    text_information: 'Information',
+    text_contact: 'Contact Us',
+}

@@ -1,14 +1,15 @@
-<?php
-// Heading
-$_['heading_title']      = 'Your Transactions';
+module.exports = {
+    // Heading
+    heading_title: 'Your Transactions',
 
-// Column
-$_['column_date_added']  = 'Date Added';
-$_['column_description'] = 'Description';
-$_['column_amount']      = 'Amount (%s)';
+    // Column
+    column_date_added: 'Date Added',
+    column_description: 'Description',
+    column_amount: 'Amount (%s)',
 
-// Text
-$_['text_account']       = 'Account';
-$_['text_transaction']   = 'Your Transactions';
-$_['text_total']         = 'Your current balance is:';
-$_['text_no_results']    = 'You do not have any transactions!';
+    // Text
+    text_account: 'Account',
+    text_transaction: 'Your Transactions',
+    text_total: 'Your current balance is:',
+    text_no_results: 'You do not have any transactions!',
+}

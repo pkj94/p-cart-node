@@ -1,14 +1,15 @@
-<?php
-// Heading
-$_['heading_title']      = 'Your Reward Points';
+module.exports = {
+    // Heading
+    heading_title: 'Your Reward Points',
 
-// Column
-$_['column_date_added']  = 'Date Added';
-$_['column_description'] = 'Description';
-$_['column_points']      = 'Points';
+    // Column
+    column_date_added: 'Date Added',
+    column_description: 'Description',
+    column_points: 'Points',
 
-// Text
-$_['text_account']       = 'Account';
-$_['text_reward']        = 'Reward Points';
-$_['text_total']         = 'Your total number of reward points is:';
-$_['text_no_results']    = 'You do not have any reward points!';
+    // Text
+    text_account: 'Account',
+    text_reward: 'Reward Points',
+    text_total: 'Your total number of reward points is:',
+    text_no_results: 'You do not have any reward points!',
+}

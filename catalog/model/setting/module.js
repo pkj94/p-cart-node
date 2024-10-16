@@ -1,21 +1,21 @@
 <?php
 namespace Opencart\Catalog\Model\Setting;
 /**
- * Class Module
+ *
  *
  * @package Opencart\Catalog\Model\Setting
  */
-class Module extends \Opencart\System\Engine\Model {
+class ModuleController extends Model {
 	/**
-	 * @param int $module_id
+	 * @param int module_id
 	 *
 	 * @return array
 	 */
-	public function getModule($module_id): array {
-		$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "module` WHERE `module_id` = '" . (int)$module_id . "'");
+	async getModule(module_id): array {
+		query = this->db->query("SELECT * FROM `" . DB_PREFIX . "module` WHERE `module_id` = '" . (int)module_id . "'");
 		
-		if ($query->row) {
-			return JSON.parse($query->row['setting'], true);
+		if (query->row) {
+			return JSON.parse(query->row['setting'], true);
 		} else {
 			return [];
 		}

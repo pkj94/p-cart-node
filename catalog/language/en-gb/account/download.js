@@ -1,18 +1,19 @@
-<?php
-// Heading
-$_['heading_title']     = 'Downloads';
+module.exports = {
+    // Heading
+    heading_title: 'Downloads',
 
-// Text
-$_['text_account']      = 'Account';
-$_['text_downloads']    = 'Downloads';
-$_['text_no_results']   = 'You have not made any previous downloadable orders!';
+    // Text
+    text_account: 'Account',
+    text_downloads: 'Downloads',
+    text_no_results: 'You have not made any previous downloadable orders!',
 
-// Column
-$_['column_order_id']   = 'Order ID';
-$_['column_name']       = 'Name';
-$_['column_size']       = 'Size';
-$_['column_date_added'] = 'Date Added';
+    // Column
+    column_order_id: 'Order ID',
+    column_name: 'Name',
+    column_size: 'Size',
+    column_date_added: 'Date Added',
 
-// Error
-$_['error_not_found']    = 'Error: Could not find file %s !';
-$_['error_headers_sent'] = 'Error: Headers already sent out!';
+    // Error
+    error_not_found: 'Error: Could not find file %s !',
+    error_headers_sent: 'Error: Headers already sent out!',
+}

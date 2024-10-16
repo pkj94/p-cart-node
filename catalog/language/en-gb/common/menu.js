@@ -1,4 +1,5 @@
-<?php
-// Text
-$_['text_category']  = 'Categories';
-$_['text_all']       = 'Show All';
+module.exports = {
+    // Text
+    text_category: 'Categories',
+    text_all: 'Show All',
+}

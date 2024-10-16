@@ -1,3 +1,4 @@
-<?php
-// Text
-$_['text_error'] = 'Information Page Not Found!';
+module.exports = {
+    // Text
+    text_error: 'Information Page Not Found!',
+}

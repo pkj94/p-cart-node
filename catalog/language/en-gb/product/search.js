@@ -1,27 +1,28 @@
-<?php
-// Heading
-$_['heading_title']     = 'Search';
-$_['heading_tag']       = 'Tag - ';
+module.exports = {
+    // Heading
+    heading_title: 'Search',
+    heading_tag: 'Tag - ',
 
-// Text
-$_['text_search']       = 'Products meeting the search criteria';
-$_['text_keyword']      = 'Keywords';
-$_['text_category']     = 'All Categories';
-$_['text_sub_category'] = 'Search in subcategories';
-$_['text_no_results']   = 'There is no product that matches the search criteria.';
-$_['text_compare']      = 'Product Compare (%s)';
-$_['text_sort']         = 'Sort By';
-$_['text_default']      = 'Default';
-$_['text_name_asc']     = 'Name (A - Z)';
-$_['text_name_desc']    = 'Name (Z - A)';
-$_['text_price_asc']    = 'Price (Low &gt; High)';
-$_['text_price_desc']   = 'Price (High &gt; Low)';
-$_['text_rating_asc']   = 'Rating (Lowest)';
-$_['text_rating_desc']  = 'Rating (Highest)';
-$_['text_model_asc']    = 'Model (A - Z)';
-$_['text_model_desc']   = 'Model (Z - A)';
-$_['text_limit']        = 'Show';
+    // Text
+    text_search: 'Products meeting the search criteria',
+    text_keyword: 'Keywords',
+    text_category: 'All Categories',
+    text_sub_category: 'Search in subcategories',
+    text_no_results: 'There is no product that matches the search criteria.',
+    text_compare: 'Product Compare (%s)',
+    text_sort: 'Sort By',
+    text_default: 'Default',
+    text_name_asc: 'Name (A - Z)',
+    text_name_desc: 'Name (Z - A)',
+    text_price_asc: 'Price (Low &gt; High)',
+    text_price_desc: 'Price (High &gt; Low)',
+    text_rating_asc: 'Rating (Lowest)',
+    text_rating_desc: 'Rating (Highest)',
+    text_model_asc: 'Model (A - Z)',
+    text_model_desc: 'Model (Z - A)',
+    text_limit: 'Show',
 
-// Entry
-$_['entry_search']      = 'Search Criteria';
-$_['entry_description'] = 'Search in product descriptions';
+    // Entry
+    entry_search: 'Search Criteria',
+    entry_description: 'Search in product descriptions',
+}

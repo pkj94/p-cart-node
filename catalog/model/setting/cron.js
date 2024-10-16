@@ -1,67 +1,67 @@
 <?php
 namespace Opencart\Catalog\Model\Setting;
 /**
- * Class Cron
+ *
  *
  * @package Opencart\Catalog\Model\Setting
  */
-class Cron extends \Opencart\System\Engine\Model {
+class CronController extends Model {
 	/**
-	 * @param int $cron_id
+	 * @param int cron_id
 	 *
 	 * @return void
 	 */
-	public function editCron($cron_id): void {
-		$this->db->query("UPDATE `" . DB_PREFIX . "cron` SET `date_modified` = NOW() WHERE `cron_id` = '" . (int)$cron_id . "'");
+	async editCron(cron_id): void {
+		this->db->query("UPDATE `" . DB_PREFIX . "cron` SET `date_modified` = NOW() WHERE `cron_id` = '" . (int)cron_id . "'");
 	}
 
 	/**
-	 * @param int  $cron_id
-	 * @param bool $status
+	 * @param int  cron_id
+	 * @param bool status
 	 *
 	 * @return void
 	 */
-	public function editStatus($cron_id, bool $status): void {
-		$this->db->query("UPDATE `" . DB_PREFIX . "cron` SET `status` = '" . $status . "' WHERE `cron_id` = '" . (int)$cron_id . "'");
+	async editStatus(cron_id, bool status): void {
+		this->db->query("UPDATE `" . DB_PREFIX . "cron` SET `status` = '" . status . "' WHERE `cron_id` = '" . (int)cron_id . "'");
 	}
 
 	/**
-	 * @param int $cron_id
+	 * @param int cron_id
 	 *
 	 * @return array
 	 */
-	public function getCron($cron_id): array {
-		$query = $this->db->query("SELECT DISTINCT * FROM `" . DB_PREFIX . "cron` WHERE `cron_id` = '" . (int)$cron_id . "'");
+	async getCron(cron_id): array {
+		query = this->db->query("SELECT DISTINCT * FROM `" . DB_PREFIX . "cron` WHERE `cron_id` = '" . (int)cron_id . "'");
 
-		return $query->row;
+		return query->row;
 	}
 
 	/**
-	 * @param string $code
+	 * @param string code
 	 *
 	 * @return array
 	 */
-	public function getCronByCode(string $code): array {
-		$query = $this->db->query("SELECT DISTINCT * FROM `" . DB_PREFIX . "cron` WHERE `code` = '" . $this->db->escape($code) . "' LIMIT 1");
+	async getCronByCode(string code): array {
+		query = this->db->query("SELECT DISTINCT * FROM `" . DB_PREFIX . "cron` WHERE `code` = '" . this->db->escape(code) . "' LIMIT 1");
 
-		return $query->row;
+		return query->row;
 	}
 
 	/**
 	 * @return array
 	 */
-	public function getCrons(): array {
-		$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "cron` ORDER BY `date_modified` DESC");
+	async getCrons(): array {
+		query = this->db->query("SELECT * FROM `" . DB_PREFIX . "cron` ORDER BY `date_modified` DESC");
 
-		return $query->rows;
+		return query->rows;
 	}
 
 	/**
 	 * @return int
 	 */
-	public function getTotalCrons(): int {
-		$query = $this->db->query("SELECT COUNT(*) AS `total` FROM `" . DB_PREFIX . "cron`");
+	async getTotalCrons(): int {
+		query = this->db->query("SELECT COUNT(*) AS `total` FROM `" . DB_PREFIX . "cron`");
 
-		return (int)$query->row['total'];
+		return (int)query->row['total'];
 	}
 }

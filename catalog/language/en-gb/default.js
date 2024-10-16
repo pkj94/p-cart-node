@@ -1,206 +1,207 @@
-<?php
-// Locale
-$_['code']                  = 'en';
-$_['direction']             = 'ltr';
-$_['date_format_short']     = 'd/m/Y';
-$_['date_format_long']      = 'l jS F Y';
-$_['time_format']           = 'h:i:s A';
-$_['datetime_format']       = 'd/m/Y H:i:s';
-$_['decimal_point']         = '.';
-$_['thousand_point']        = ',';
+module.exports = {
+    // Locale
+    code: 'en',
+    direction: 'ltr',
+    date_format_short: 'd/m/Y',
+    date_format_long: 'l jS F Y',
+    time_format: 'h:i:s A',
+    datetime_format: 'd/m/Y H:i:s',
+    decimal_point: '.',
+    thousand_point: ',',
 
-// Text
-$_['text_home']             = '<i class="fas fa-home"></i>';
-$_['text_yes']              = 'Yes';
-$_['text_no']               = 'No';
-$_['text_none']             = ' --- None --- ';
-$_['text_select']           = ' --- Please Select --- ';
-$_['text_all_zones']        = 'All Zones';
-$_['text_pagination']       = 'Showing %d to %d of %d (%d Pages)';
-$_['text_loading']          = 'Loading...';
-$_['text_no_results']       = 'No results!';
-$_['text_just_now']         = 'just now';
-$_['text_seconds_ago']      = '%s seconds ago';
-$_['text_minute_ago']       = '%s minute ago';
-$_['text_minutes_ago']      = '%s minutes ago';
-$_['text_hour_ago']         = '%s hour ago';
-$_['text_hours_ago']        = '%s hours ago';
-$_['text_day_ago']          = '%s day ago';
-$_['text_days_ago']         = '%s days ago';
-$_['text_week_ago']         = '%s week ago';
-$_['text_weeks_ago']        = '%s weeks ago';
-$_['text_month_ago']        = '%s month ago';
-$_['text_months_ago']       = '%s months ago';
-$_['text_year_ago']         = '%s year ago';
-$_['text_years_ago']        = '%s years ago';
+    // Text
+    text_home: '<i class="fas fa-home"></i>',
+    text_yes: 'Yes',
+    text_no: 'No',
+    text_none: ' --- None --- ',
+    text_select: ' --- Please Select --- ',
+    text_all_zones: 'All Zones',
+    text_pagination: 'Showing %d to %d of %d (%d Pages)',
+    text_loading: 'Loading...',
+    text_no_results: 'No results!',
+    text_just_now: 'just now',
+    text_seconds_ago: '%s seconds ago',
+    text_minute_ago: '%s minute ago',
+    text_minutes_ago: '%s minutes ago',
+    text_hour_ago: '%s hour ago',
+    text_hours_ago: '%s hours ago',
+    text_day_ago: '%s day ago',
+    text_days_ago: '%s days ago',
+    text_week_ago: '%s week ago',
+    text_weeks_ago: '%s weeks ago',
+    text_month_ago: '%s month ago',
+    text_months_ago: '%s months ago',
+    text_year_ago: '%s year ago',
+    text_years_ago: '%s years ago',
 
-// Buttons
-$_['button_address_add']    = 'Add Address';
-$_['button_back']           = 'Back';
-$_['button_continue']       = 'Continue';
-$_['button_cart']           = 'Add to Cart';
-$_['button_cancel']         = 'Cancel';
-$_['button_compare']        = 'Compare this Product';
-$_['button_wishlist']       = 'Add to Wish List';
-$_['button_checkout']       = 'Checkout';
-$_['button_confirm']        = 'Confirm Order';
-$_['button_coupon']         = 'Apply Coupon';
-$_['button_delete']         = 'Delete';
-$_['button_download']       = 'Download';
-$_['button_edit']           = 'Edit';
-$_['button_filter']         = 'Refine';
-$_['button_new_address']    = 'New Address';
-$_['button_change_address'] = 'Change Address';
-$_['button_reviews']        = 'Reviews';
-$_['button_write']          = 'Write Review';
-$_['button_login']          = 'Login';
-$_['button_update']         = 'Update';
-$_['button_remove']         = 'Remove';
-$_['button_reorder']        = 'Reorder';
-$_['button_return']         = 'Return';
-$_['button_shopping']       = 'Continue Shopping';
-$_['button_search']         = 'Search';
-$_['button_submit']         = 'Submit';
-$_['button_guest']          = 'Guest Checkout';
-$_['button_view']           = 'View';
-$_['button_voucher']        = 'Apply Gift Certificate';
-$_['button_upload']         = 'Upload File';
-$_['button_reward']         = 'Apply Points';
-$_['button_choose']         = 'Choose';
-$_['button_shipping']       = 'Apply Shipping';
-$_['button_quote']          = 'Get Quotes';
-$_['button_list']           = 'List';
-$_['button_grid']           = 'Grid';
-$_['button_map']            = 'View Google Map';
+    // Buttons
+    button_address_add: 'Add Address',
+    button_back: 'Back',
+    button_continue: 'Continue',
+    button_cart: 'Add to Cart',
+    button_cancel: 'Cancel',
+    button_compare: 'Compare this Product',
+    button_wishlist: 'Add to Wish List',
+    button_checkout: 'Checkout',
+    button_confirm: 'Confirm Order',
+    button_coupon: 'Apply Coupon',
+    button_delete: 'Delete',
+    button_download: 'Download',
+    button_edit: 'Edit',
+    button_filter: 'Refine',
+    button_new_address: 'New Address',
+    button_change_address: 'Change Address',
+    button_reviews: 'Reviews',
+    button_write: 'Write Review',
+    button_login: 'Login',
+    button_update: 'Update',
+    button_remove: 'Remove',
+    button_reorder: 'Reorder',
+    button_return: 'Return',
+    button_shopping: 'Continue Shopping',
+    button_search: 'Search',
+    button_submit: 'Submit',
+    button_guest: 'Guest Checkout',
+    button_view: 'View',
+    button_voucher: 'Apply Gift Certificate',
+    button_upload: 'Upload File',
+    button_reward: 'Apply Points',
+    button_choose: 'Choose',
+    button_shipping: 'Apply Shipping',
+    button_quote: 'Get Quotes',
+    button_list: 'List',
+    button_grid: 'Grid',
+    button_map: 'View Google Map',
 
-// Error
-$_['error_exception']       = 'Error Code(%s): %s in %s on line %s';
-$_['error_upload_1']        = 'Warning: The uploaded file exceeds the upload_max_filesize directive in php.ini!';
-$_['error_upload_2']        = 'Warning: The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form!';
-$_['error_upload_3']        = 'Warning: The uploaded file was only partially uploaded!';
-$_['error_upload_4']        = 'Warning: No file was uploaded!';
-$_['error_upload_6']        = 'Warning: Missing a temporary folder!';
-$_['error_upload_7']        = 'Warning: Failed to write file to disk!';
-$_['error_upload_8']        = 'Warning: File upload stopped by extension!';
-$_['error_upload_999']      = 'Warning: No error code available!';
-$_['error_upload_size']     = 'Warning: The uploaded file exceeds the %smb max file size!';
-$_['error_curl']            = 'CURL: Error Code(%s): %s';
-$_['error_session']         = 'Warning: Session has expired please submit the form again!';
+    // Error
+    error_exception: 'Error Code(%s): %s in %s on line %s',
+    error_upload_1: 'Warning: The uploaded file exceeds the upload_max_filesize directive in php.ini!',
+    error_upload_2: 'Warning: The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form!',
+    error_upload_3: 'Warning: The uploaded file was only partially uploaded!',
+    error_upload_4: 'Warning: No file was uploaded!',
+    error_upload_6: 'Warning: Missing a temporary folder!',
+    error_upload_7: 'Warning: Failed to write file to disk!',
+    error_upload_8: 'Warning: File upload stopped by extension!',
+    error_upload_999: 'Warning: No error code available!',
+    error_upload_size: 'Warning: The uploaded file exceeds the %smb max file size!',
+    error_curl: 'CURL: Error Code(%s): %s',
+    error_session: 'Warning: Session has expired please submit the form again!',
 
-/* When doing translations only include the matching language code */
-// Datepicker
-//$_['datepicker']            = 'af';
-//$_['datepicker']            = 'ar-dz';
-//$_['datepicker']            = 'ar-kw';
-//$_['datepicker']            = 'ar-ly';
-//$_['datepicker']            = 'ar-ma';
-//$_['datepicker']            = 'ar-sa';
-//$_['datepicker']            = 'ar-tn';
-//$_['datepicker']            = 'ar';
-//$_['datepicker']            = 'az';
-//$_['datepicker']            = 'be';
-//$_['datepicker']            = 'bg';
-//$_['datepicker']            = 'bn';
-//$_['datepicker']            = 'bo';
-//$_['datepicker']            = 'br';
-//$_['datepicker']            = 'bs';
-//$_['datepicker']            = 'ca';
-//$_['datepicker']            = 'cs';
-//$_['datepicker']            = 'cv';
-//$_['datepicker']            = 'cy';
-//$_['datepicker']            = 'da';
-//$_['datepicker']            = 'de-at';
-//$_['datepicker']            = 'de-ch';
-//$_['datepicker']            = 'de';
-//$_['datepicker']            = 'dv';
-//$_['datepicker']            = 'el';
-//$_['datepicker']            = 'en-au';
-//$_['datepicker']            = 'en-ca';
-$_['datepicker']            = 'en-gb';
-//$_['datepicker']            = 'en-ie';
-//$_['datepicker']            = 'en-nz';
-//$_['datepicker']            = 'eo';
-//$_['datepicker']            = 'es-do';
-//$_['datepicker']            = 'es';
-//$_['datepicker']            = 'et';
-//$_['datepicker']            = 'eu';
-//$_['datepicker']            = 'fa';
-//$_['datepicker']            = 'fi';
-//$_['datepicker']            = 'fo';
-//$_['datepicker']            = 'fr-ca';
-//$_['datepicker']            = 'fr-ch';
-//$_['datepicker']            = 'fr';
-//$_['datepicker']            = 'fy';
-//$_['datepicker']            = 'gd';
-//$_['datepicker']            = 'gl';
-//$_['datepicker']            = 'gom-latn';
-//$_['datepicker']            = 'he';
-//$_['datepicker']            = 'hi';
-//$_['datepicker']            = 'hr';
-//$_['datepicker']            = 'hu';
-//$_['datepicker']            = 'hy-am';
-//$_['datepicker']            = 'id';
-//$_['datepicker']            = 'is';
-//$_['datepicker']            = 'it';
-//$_['datepicker']            = 'ja';
-//$_['datepicker']            = 'jv';
-//$_['datepicker']            = 'ka';
-//$_['datepicker']            = 'kk';
-//$_['datepicker']            = 'km';
-//$_['datepicker']            = 'kn';
-//$_['datepicker']            = 'ko';
-//$_['datepicker']            = 'ky';
-//$_['datepicker']            = 'lb';
-//$_['datepicker']            = 'lo';
-//$_['datepicker']            = 'lt';
-//$_['datepicker']            = 'lv';
-//$_['datepicker']            = 'me';
-//$_['datepicker']            = 'mi';
-//$_['datepicker']            = 'mk';
-//$_['datepicker']            = 'ml';
-//$_['datepicker']            = 'mr';
-//$_['datepicker']            = 'ms-my';
-//$_['datepicker']            = 'ms';
-//$_['datepicker']            = 'my';
-//$_['datepicker']            = 'nb';
-//$_['datepicker']            = 'ne';
-//$_['datepicker']            = 'nl-be';
-//$_['datepicker']            = 'nl';
-//$_['datepicker']            = 'nn';
-//$_['datepicker']            = 'pa-in';
-//$_['datepicker']            = 'pl';
-//$_['datepicker']            = 'pt-br';
-//$_['datepicker']            = 'pt';
-//$_['datepicker']            = 'ro';
-//$_['datepicker']            = 'ru';
-//$_['datepicker']            = 'sd';
-//$_['datepicker']            = 'se';
-//$_['datepicker']            = 'si';
-//$_['datepicker']            = 'sk';
-//$_['datepicker']            = 'sl';
-//$_['datepicker']            = 'sq';
-//$_['datepicker']            = 'sr-cyrl';
-//$_['datepicker']            = 'sr';
-//$_['datepicker']            = 'ss';
-//$_['datepicker']            = 'sv';
-//$_['datepicker']            = 'sw';
-//$_['datepicker']            = 'ta';
-//$_['datepicker']            = 'te';
-//$_['datepicker']            = 'tet';
-//$_['datepicker']            = 'th';
-//$_['datepicker']            = 'tl-ph';
-//$_['datepicker']            = 'tlh';
-//$_['datepicker']            = 'tr';
-//$_['datepicker']            = 'tzl';
-//$_['datepicker']            = 'tzm-latn';
-//$_['datepicker']            = 'tzm';
-//$_['datepicker']            = 'uk';
-//$_['datepicker']            = 'ur';
-//$_['datepicker']            = 'uz-latn';
-//$_['datepicker']            = 'uz';
-//$_['datepicker']            = 'vi';
-//$_['datepicker']            = 'x-pseudo';
-//$_['datepicker']            = 'yo';
-//$_['datepicker']            = 'zh-cn';
-//$_['datepicker']            = 'zh-hk';
-//$_['datepicker']            = 'zh-tw';
+    /* When doing translations only include the matching language code */
+    // Datepicker
+    //datepicker:'af',
+    //datepicker:'ar-dz',
+    //datepicker:'ar-kw',
+    //datepicker:'ar-ly',
+    //datepicker:'ar-ma',
+    //datepicker:'ar-sa',
+    //datepicker:'ar-tn',
+    //datepicker:'ar',
+    //datepicker:'az',
+    //datepicker:'be',
+    //datepicker:'bg',
+    //datepicker:'bn',
+    //datepicker:'bo',
+    //datepicker:'br',
+    //datepicker:'bs',
+    //datepicker:'ca',
+    //datepicker:'cs',
+    //datepicker:'cv',
+    //datepicker:'cy',
+    //datepicker:'da',
+    //datepicker:'de-at',
+    //datepicker:'de-ch',
+    //datepicker:'de',
+    //datepicker:'dv',
+    //datepicker:'el',
+    //datepicker:'en-au',
+    //datepicker:'en-ca',
+    datepicker: 'en-gb',
+    //datepicker:'en-ie',
+    //datepicker:'en-nz',
+    //datepicker:'eo',
+    //datepicker:'es-do',
+    //datepicker:'es',
+    //datepicker:'et',
+    //datepicker:'eu',
+    //datepicker:'fa',
+    //datepicker:'fi',
+    //datepicker:'fo',
+    //datepicker:'fr-ca',
+    //datepicker:'fr-ch',
+    //datepicker:'fr',
+    //datepicker:'fy',
+    //datepicker:'gd',
+    //datepicker:'gl',
+    //datepicker:'gom-latn',
+    //datepicker:'he',
+    //datepicker:'hi',
+    //datepicker:'hr',
+    //datepicker:'hu',
+    //datepicker:'hy-am',
+    //datepicker:'id',
+    //datepicker:'is',
+    //datepicker:'it',
+    //datepicker:'ja',
+    //datepicker:'jv',
+    //datepicker:'ka',
+    //datepicker:'kk',
+    //datepicker:'km',
+    //datepicker:'kn',
+    //datepicker:'ko',
+    //datepicker:'ky',
+    //datepicker:'lb',
+    //datepicker:'lo',
+    //datepicker:'lt',
+    //datepicker:'lv',
+    //datepicker:'me',
+    //datepicker:'mi',
+    //datepicker:'mk',
+    //datepicker:'ml',
+    //datepicker:'mr',
+    //datepicker:'ms-my',
+    //datepicker:'ms',
+    //datepicker:'my',
+    //datepicker:'nb',
+    //datepicker:'ne',
+    //datepicker:'nl-be',
+    //datepicker:'nl',
+    //datepicker:'nn',
+    //datepicker:'pa-in',
+    //datepicker:'pl',
+    //datepicker:'pt-br',
+    //datepicker:'pt',
+    //datepicker:'ro',
+    //datepicker:'ru',
+    //datepicker:'sd',
+    //datepicker:'se',
+    //datepicker:'si',
+    //datepicker:'sk',
+    //datepicker:'sl',
+    //datepicker:'sq',
+    //datepicker:'sr-cyrl',
+    //datepicker:'sr',
+    //datepicker:'ss',
+    //datepicker:'sv',
+    //datepicker:'sw',
+    //datepicker:'ta',
+    //datepicker:'te',
+    //datepicker:'tet',
+    //datepicker:'th',
+    //datepicker:'tl-ph',
+    //datepicker:'tlh',
+    //datepicker:'tr',
+    //datepicker:'tzl',
+    //datepicker:'tzm-latn',
+    //datepicker:'tzm',
+    //datepicker:'uk',
+    //datepicker:'ur',
+    //datepicker:'uz-latn',
+    //datepicker:'uz',
+    //datepicker:'vi',
+    //datepicker:'x-pseudo',
+    //datepicker:'yo',
+    //datepicker:'zh-cn',
+    //datepicker:'zh-hk',
+    //datepicker:'zh-tw',
+}

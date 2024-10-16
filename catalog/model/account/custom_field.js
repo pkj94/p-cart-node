@@ -1,17 +1,17 @@
 <?php
 namespace Opencart\Catalog\Model\Account;
 /**
- * Class CustomField
+ *
  *
  * @package Opencart\Catalog\Model\Account
  */
-class CustomField extends \Opencart\System\Engine\Model {
+class CustomFieldController extends Model {
 	/**
 	 * @param int $custom_field_id
 	 *
 	 * @return array
 	 */
-	public function getCustomField($custom_field_id): array {
+	async getCustomField($custom_field_id): array {
 		$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "custom_field` cf LEFT JOIN `" . DB_PREFIX . "custom_field_description` cfd ON (cf.`custom_field_id` = cfd.`custom_field_id`) WHERE cf.`status` = '1' AND cf.`custom_field_id` = '" . (int)$custom_field_id . "' AND cfd.`language_id` = '" . (int)$this->config->get('config_language_id') . "'");
 
 		return $query->row;
@@ -22,7 +22,7 @@ class CustomField extends \Opencart\System\Engine\Model {
 	 *
 	 * @return array
 	 */
-	public function getCustomFields($customer_group_id = 0): array {
+	async getCustomFields($customer_group_id = 0): array {
 		$custom_field_data = [];
 
 		if (!$customer_group_id) {

@@ -1,6 +1,7 @@
-<?php
-// Heading
-$_['heading_title'] = 'Checkout';
+module.exports = {
+    // Heading
+    heading_title: 'Checkout',
 
-// Text
-$_['text_cart']     = 'Shopping Cart';
+    // Text
+    text_cart: 'Shopping Cart',
+}
