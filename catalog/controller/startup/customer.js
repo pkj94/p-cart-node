@@ -1,16 +1,16 @@
-module.exports=class CustomerController extends Controller {
+module.exports = class CustomerController extends Controller {
 	/**
 	 * @return void
 	 */
-	async index(): void {
-		this->registry->set('customer', new \Opencart\System\Library\Cart\Customer(this->registry));
+	async index() {
+		this.registry.set('customer', new (require(DIR_SYSTEM + 'library/cart/customer'))(this.registry));
 
 		// Customer Group
-		if ((this->session->data['customer'])) {
-			this->config->set('config_customer_group_id', this->session->data['customer']['customer_group_id']);
-		} elseif (this->customer->isLogged()) {
+		if ((this.session.data['customer'])) {
+			this.config.set('config_customer_group_id', this.session.data['customer']['customer_group_id']);
+		} else if (await this.registry.get('customer').isLogged()) {
 			// Logged in customers
-			this->config->set('config_customer_group_id', this->customer->getGroupId());
+			this.config.set('config_customer_group_id', await this.registry.get('customer').getGroupId());
 		}
 	}
 }

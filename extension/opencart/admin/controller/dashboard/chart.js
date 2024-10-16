@@ -14,19 +14,19 @@ module.exports = class ChartDashboardController extends Controller {
 			breadcrumbs: [
 				{
 					text: this.language.get('text_home'),
-					href: this.url.link('common/dashboard', `user_token=${this.session.data['user_token']}`)
+					href: await this.url.link('common/dashboard', `user_token=${this.session.data['user_token']}`)
 				},
 				{
 					text: this.language.get('text_extension'),
-					href: this.url.link('marketplace/extension', `user_token=${this.session.data['user_token']}&type=dashboard`)
+					href: await this.url.link('marketplace/extension', `user_token=${this.session.data['user_token']}&type=dashboard`)
 				},
 				{
 					text: this.language.get('heading_title'),
-					href: this.url.link('extension/opencart/dashboard/chart', `user_token=${this.session.data['user_token']}`)
+					href: await this.url.link('extension/opencart/dashboard/chart', `user_token=${this.session.data['user_token']}`)
 				}
 			],
-			save: this.url.link('extension/opencart/dashboard/chart.save', `user_token=${this.session.data['user_token']}`),
-			back: this.url.link('marketplace/extension', `user_token=${this.session.data['user_token']}&type=dashboard`),
+			save: await this.url.link('extension/opencart/dashboard/chart.save', `user_token=${this.session.data['user_token']}`),
+			back: await this.url.link('marketplace/extension', `user_token=${this.session.data['user_token']}&type=dashboard`),
 			dashboard_chart_width: this.config.get('dashboard_chart_width'),
 			columns: [],
 			dashboard_chart_status: this.config.get('dashboard_chart_status'),

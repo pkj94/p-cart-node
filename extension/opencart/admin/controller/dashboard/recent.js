@@ -14,21 +14,21 @@ module.exports = class RecentDashboardController extends Controller {
 
         data.breadcrumbs.push({
             text: this.language.get('text_home'),
-            href: this.url.link('common/dashboard', 'user_token=' + this.session.data.user_token)
+            href: await this.url.link('common/dashboard', 'user_token=' + this.session.data.user_token)
         });
 
         data.breadcrumbs.push({
             text: this.language.get('text_extension'),
-            href: this.url.link('marketplace/extension', 'user_token=' + this.session.data.user_token + '&type=dashboard')
+            href: await this.url.link('marketplace/extension', 'user_token=' + this.session.data.user_token + '&type=dashboard')
         });
 
         data.breadcrumbs.push({
             text: this.language.get('heading_title'),
-            href: this.url.link('extension/opencart/dashboard/recent', 'user_token=' + this.session.data.user_token)
+            href: await this.url.link('extension/opencart/dashboard/recent', 'user_token=' + this.session.data.user_token)
         });
 
-        data.save = this.url.link('extension/opencart/dashboard/recent.save', 'user_token=' + this.session.data.user_token);
-        data.back = this.url.link('marketplace/extension', 'user_token=' + this.session.data.user_token + '&type=dashboard');
+        data.save = await this.url.link('extension/opencart/dashboard/recent.save', 'user_token=' + this.session.data.user_token);
+        data.back = await this.url.link('marketplace/extension', 'user_token=' + this.session.data.user_token + '&type=dashboard');
 
         data.dashboard_recent_width = this.config.get('dashboard_recent_width');
 
@@ -85,14 +85,14 @@ module.exports = class RecentDashboardController extends Controller {
 
         const results = await this.model_sale_order.getOrders(filter_data);
 
-        results.forEach(result => {
+        results.forEach(async result => {
             data.orders.push({
                 order_id: result.order_id,
                 customer: result.customer,
                 status: result.order_status,
                 date_added: date(this.language.get('date_format_short'), new Date(result['date_added'])), // Adjust date format as needed
                 total: this.currency.format(result.total, result.currency_code, result.currency_value),
-                view: this.url.link('sale/order.info', 'user_token=' + this.session.data.user_token + '&order_id=' + result.order_id)
+                view: await this.url.link('sale/order.info', 'user_token=' + this.session.data.user_token + '&order_id=' + result.order_id)
             });
         });
 

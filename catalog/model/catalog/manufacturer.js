@@ -1,20 +1,13 @@
-<?php
-namespace Opencart\Catalog\Model\Catalog;
-/**
- *
- *
- * @package Opencart\Catalog\Model\Catalog
- */
-class ManufacturerController extends Model {
+module.exports=class ManufacturerController extends Model {
 	/**
-	 * @param int manufacturer_id
+	 * @param manufacturer_id
 	 *
 	 * @return array
 	 */
-	async getManufacturer(manufacturer_id): array {
-		query = this->db->query("SELECT * FROM `" . DB_PREFIX . "manufacturer` m LEFT JOIN `" . DB_PREFIX . "manufacturer_to_store` m2s ON (m.`manufacturer_id` = m2s.`manufacturer_id`) WHERE m.`manufacturer_id` = '" . (int)manufacturer_id . "' AND m2s.`store_id` = '" . (int)this->config->get('config_store_id') . "'");
+	async getManufacturer(manufacturer_id) {
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "manufacturer` m LEFT JOIN `" + DB_PREFIX + "manufacturer_to_store` m2s ON (m.`manufacturer_id` = m2s.`manufacturer_id`) WHERE m.`manufacturer_id` = '" + manufacturer_id + "' AND m2s.`store_id` = '" + this.config.get('config_store_id') + "'");
 
-		return query->row;
+		return query.row;
 	}
 
 	/**
@@ -22,24 +15,24 @@ class ManufacturerController extends Model {
 	 *
 	 * @return array
 	 */
-	async getManufacturers(array data = []): array {
-		sql = "SELECT * FROM `" . DB_PREFIX . "manufacturer` m LEFT JOIN `" . DB_PREFIX . "manufacturer_to_store` m2s ON (m.`manufacturer_id` = m2s.`manufacturer_id`) WHERE m2s.`store_id` = '" . (int)this->config->get('config_store_id') . "'";
+	async getManufacturers(data = {}) {
+		const sql = "SELECT * FROM `" + DB_PREFIX + "manufacturer` m LEFT JOIN `" + DB_PREFIX + "manufacturer_to_store` m2s ON (m.`manufacturer_id` = m2s.`manufacturer_id`) WHERE m2s.`store_id` = '" + this.config.get('config_store_id') + "'";
 
 		sort_data = [
 			'name',
 			'sort_order'
 		];
 
-		if ((data['sort']) && in_array(data['sort'], sort_data)) {
-			sql .= " ORDER BY `" . data['sort'] . "`";
+		if ((data['sort']) && sort_data.includes(data['sort'])) {
+			sql += " ORDER BY `" + data['sort'] + "`";
 		} else {
-			sql .= " ORDER BY `name`";
+			sql += " ORDER BY `name`";
 		}
 
 		if ((data['order']) && (data['order'] == 'DESC')) {
-			sql .= " DESC";
+			sql += " DESC";
 		} else {
-			sql .= " ASC";
+			sql += " ASC";
 		}
 
 		if ((data['start']) || (data['limit'])) {
@@ -51,32 +44,32 @@ class ManufacturerController extends Model {
 				data['limit'] = 20;
 			}
 
-			sql .= " LIMIT " . (int)data['start'] . "," . (int)data['limit'];
+			sql += " LIMIT " + data['start'] + "," + data['limit'];
 		}
 
-		manufacturer_data = this->cache->get('manufacturer.' . md5(sql));
+		manufacturer_data = await this.cache.get('manufacturer+' + md5(sql));
 
 		if (!manufacturer_data) {
-			query = this->db->query(sql);
+			const query = await this.db.query(sql);
 
-			manufacturer_data = query->rows;
+			manufacturer_data = query.rows;
 
-			this->cache->set('manufacturer.' . md5(sql), manufacturer_data);
+			await this.cache.set('manufacturer+' + md5(sql), manufacturer_data);
 		}
 
 		return manufacturer_data;
 	}
 
 	/**
-	 * @param int manufacturer_id
+	 * @param manufacturer_id
 	 *
 	 * @return int
 	 */
-	async getLayoutId(manufacturer_id): int {
-		query = this->db->query("SELECT * FROM `" . DB_PREFIX . "manufacturer_to_layout` WHERE `manufacturer_id` = '" . (int)manufacturer_id . "' AND `store_id` = '" . (int)this->config->get('config_store_id') . "'");
+	async getLayoutId(manufacturer_id) {
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "manufacturer_to_layout` WHERE `manufacturer_id` = '" + manufacturer_id + "' AND `store_id` = '" + this.config.get('config_store_id') + "'");
 
-		if (query->num_rows) {
-			return (int)query->row['layout_id'];
+		if (query.num_rows) {
+			return query.row['layout_id'];
 		} else {
 			return 0;
 		}

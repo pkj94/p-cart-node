@@ -28,16 +28,16 @@ module.exports = class ReturnReasonController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('localisation/return_reason', 'user_token=' + this.session.data['user_token'] + url)
+			'href': await this.url.link('localisation/return_reason', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
-		data['add'] = this.url.link('localisation/return_reason.form', 'user_token=' + this.session.data['user_token'] + url);
-		data['delete'] = this.url.link('localisation/return_reason.delete', 'user_token=' + this.session.data['user_token']);
+		data['add'] = await this.url.link('localisation/return_reason.form', 'user_token=' + this.session.data['user_token'] + url);
+		data['delete'] = await this.url.link('localisation/return_reason.delete', 'user_token=' + this.session.data['user_token']);
 
 		data['list'] = await this.getList();
 
@@ -93,7 +93,7 @@ module.exports = class ReturnReasonController extends Controller {
 			url += '&page=' + this.request.get['page'];
 		}
 
-		data['action'] = this.url.link('localisation/return_reason.list', 'user_token=' + this.session.data['user_token'] + url);
+		data['action'] = await this.url.link('localisation/return_reason.list', 'user_token=' + this.session.data['user_token'] + url);
 
 		data['return_reasons'] = [];
 
@@ -114,7 +114,7 @@ module.exports = class ReturnReasonController extends Controller {
 			data['return_reasons'].push({
 				'return_reason_id': result['return_reason_id'],
 				'name': result['name'],
-				'edit': this.url.link('localisation/return_reason.form', 'user_token=' + this.session.data['user_token'] + '&return_reason_id=' + result['return_reason_id'] + url)
+				'edit': await this.url.link('localisation/return_reason.form', 'user_token=' + this.session.data['user_token'] + '&return_reason_id=' + result['return_reason_id'] + url)
 			});
 		}
 
@@ -126,7 +126,7 @@ module.exports = class ReturnReasonController extends Controller {
 			url += '&order=ASC';
 		}
 
-		data['sort_name'] = this.url.link('localisation/return_reason.list', 'user_token=' + this.session.data['user_token'] + '&sort=name' + url);
+		data['sort_name'] = await this.url.link('localisation/return_reason.list', 'user_token=' + this.session.data['user_token'] + '&sort=name' + url);
 
 		url = '';
 
@@ -142,7 +142,7 @@ module.exports = class ReturnReasonController extends Controller {
 			'total': return_reason_total,
 			'page': page,
 			'limit': this.config.get('config_pagination_admin'),
-			'url': this.url.link('localisation/return_reason.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
+			'url': await this.url.link('localisation/return_reason.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (return_reason_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (return_reason_total - this.config.get('config_pagination_admin'))) ? return_reason_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), return_reason_total, Math.ceil(return_reason_total / this.config.get('config_pagination_admin')));
@@ -182,16 +182,16 @@ module.exports = class ReturnReasonController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('localisation/return_reason', 'user_token=' + this.session.data['user_token'] + url)
+			'href': await this.url.link('localisation/return_reason', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
-		data['save'] = this.url.link('localisation/return_reason.save', 'user_token=' + this.session.data['user_token']);
-		data['back'] = this.url.link('localisation/return_reason', 'user_token=' + this.session.data['user_token'] + url);
+		data['save'] = await this.url.link('localisation/return_reason.save', 'user_token=' + this.session.data['user_token']);
+		data['back'] = await this.url.link('localisation/return_reason', 'user_token=' + this.session.data['user_token'] + url);
 
 		if ((this.request.get['return_reason_id'])) {
 			data['return_reason_id'] = this.request.get['return_reason_id'];

@@ -1,34 +1,27 @@
-<?php
-namespace Opencart\Catalog\Model\Setting;
-/**
- *
- *
- * @package Opencart\Catalog\Model\Setting
- */
-class SettingController extends Model {
+module.exports = class SettingController extends Model {
 	/**
-	 * @param int store_id
+	 * @param store_id
 	 *
 	 * @return array
 	 */
-	async getSettings(store_id = 0): array {
-		query = this->db->query("SELECT * FROM `" . DB_PREFIX . "setting` WHERE `store_id` = '" . (int)store_id . "' OR `store_id` = 0 ORDER BY `store_id` ASC");
+	async getSettings(store_id = 0) {
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "setting` WHERE `store_id` = '" + store_id + "' OR `store_id` = 0 ORDER BY `store_id` ASC");
 
-		return query->rows;
+		return query.rows;
 	}
 
 	/**
 	 * @param string code
-	 * @param int    store_id
+	 * @param    store_id
 	 *
 	 * @return array
 	 */
-	async getSetting(string code, int store_id = 0): array {
-		setting_data = [];
+	async getSetting(code, store_id = 0) {
+		let setting_data = {};
 
-		query = this->db->query("SELECT * FROM `" . DB_PREFIX . "setting` WHERE `store_id` = '" . (int)store_id . "' AND `code` = '" . this->db->escape(code) . "'");
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "setting` WHERE `store_id` = '" + store_id + "' AND `code` = '" + this.db.escape(code) + "'");
 
-		foreach (query->rows as result) {
+		for (let result of query.rows) {
 			if (!result['serialized']) {
 				setting_data[result['key']] = result['value'];
 			} else {
@@ -41,17 +34,17 @@ class SettingController extends Model {
 
 	/**
 	 * @param string key
-	 * @param int    store_id
+	 * @param    store_id
 	 *
 	 * @return string
 	 */
-	async getValue(string key, int store_id = 0): string {
-		query = this->db->query("SELECT `value` FROM `" . DB_PREFIX . "setting` WHERE `store_id` = '" . (int)store_id . "' AND `key` = '" . this->db->escape(key) . "'");
+	async getValue(key, store_id = 0) {
+		const query = await this.db.query("SELECT `value` FROM `" + DB_PREFIX + "setting` WHERE `store_id` = '" + store_id + "' AND `key` = '" + this.db.escape(key) + "'");
 
-		if (query->num_rows) {
-			return query->row['value'];
+		if (query.num_rows) {
+			return query.row['value'];
 		} else {
 			return '';
 		}
-	}	
+	}
 }

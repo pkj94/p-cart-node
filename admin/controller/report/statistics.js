@@ -12,12 +12,12 @@ module.exports = class StatisticsController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('report/statistics', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('report/statistics', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['list'] = await this.getList();
@@ -56,7 +56,7 @@ module.exports = class StatisticsController extends Controller {
 			data['statistics'].push({
 				'name': this.language.get('text_' + result['code']),
 				'value': result['value'],
-				'href': this.url.link('report/statistics.' + code.join(''), 'user_token=' + this.session.data['user_token'])
+				'href': await this.url.link('report/statistics.' + code.join(''), 'user_token=' + this.session.data['user_token'])
 			});
 		}
 

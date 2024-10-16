@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Catalog\Controller\Event;
-/**
- *
- *
- * @package Opencart\Catalog\Controller\Event
- */
-class ActivityController extends Controller {
+module.exports=class ActivityController extends Controller {
 	// catalog/model/account/customer/addCustomer/after
 	/**
 	 * @param string route
@@ -14,16 +7,16 @@ class ActivityController extends Controller {
 	 *
 	 * @return void
 	 */
-	async addCustomer(string &route, array &args, mixed &output): void {
-		if (this->config->get('config_customer_activity')) {
-			this->load->model('account/activity');
+	async addCustomer(&route, args, mixed &output) {
+		if (this.config.get('config_customer_activity')) {
+			this.load.model('account/activity');
 
 			activity_data = [
-				'customer_id' => output,
-				'name'        => args[0]['firstname'] . ' ' . args[0]['lastname']
+				'customer_id' : output,
+				'name'        : args[0]['firstname'] + ' ' + args[0]['lastname']
 			];
 
-			this->model_account_activity->addActivity('register', activity_data);
+			await this.model_account_activity.addActivity('register', activity_data);
 		}
 	}
 	
@@ -36,16 +29,16 @@ class ActivityController extends Controller {
 	 *
 	 * @return void
 	 */
-	async editCustomer(string &route, array &args, mixed &output): void {
-		if (this->config->get('config_customer_activity')) {
-			this->load->model('account/activity');
+	async editCustomer(&route, args, mixed &output) {
+		if (this.config.get('config_customer_activity')) {
+			this.load.model('account/activity');
 
 			activity_data = [
-				'customer_id' => this->customer->getId(),
-				'name'        => this->customer->getFirstName() . ' ' . this->customer->getLastName()
+				'customer_id' : await this.customer.getId(),
+				'name'        : await this.customer.getFirstName() + ' ' + await this.customer.getLastName()
 			];
 
-			this->model_account_activity->addActivity('edit', activity_data);
+			await this.model_account_activity.addActivity('edit', activity_data);
 		}
 	}
 	
@@ -58,27 +51,27 @@ class ActivityController extends Controller {
 	 *
 	 * @return void
 	 */
-	async editPassword(string &route, array &args, mixed &output): void {
-		if (this->config->get('config_customer_activity')) {
-			this->load->model('account/activity');
+	async editPassword(&route, args, mixed &output) {
+		if (this.config.get('config_customer_activity')) {
+			this.load.model('account/activity');
 			
-			if (this->customer->isLogged()) {
+			if (await this.customer.isLogged()) {
 				activity_data = [
-					'customer_id' => this->customer->getId(),
-					'name'        => this->customer->getFirstName() . ' ' . this->customer->getLastName()
+					'customer_id' : await this.customer.getId(),
+					'name'        : await this.customer.getFirstName() + ' ' + await this.customer.getLastName()
 				];
 	
-				this->model_account_activity->addActivity('password', activity_data);
+				await this.model_account_activity.addActivity('password', activity_data);
 			} else {
-				customer_info = this->model_account_customer->getCustomerByEmail(args[0]);
+				customer_info = await this.model_account_customer.getCustomerByEmail(args[0]);
 		
 				if (customer_info) {
 					activity_data = [
-						'customer_id' => customer_info['customer_id'],
-						'name'        => customer_info['firstname'] . ' ' . customer_info['lastname']
+						'customer_id' : customer_info['customer_id'],
+						'name'        : customer_info['firstname'] + ' ' + customer_info['lastname']
 					];
 	
-					this->model_account_activity->addActivity('reset', activity_data);
+					await this.model_account_activity.addActivity('reset', activity_data);
 				}
 			}	
 		}
@@ -93,19 +86,19 @@ class ActivityController extends Controller {
 	 *
 	 * @return void
 	 */
-	async login(string &route, array &args, mixed &output): void {
-		if ((this->request->get['route']) && (this->request->get['route'] == 'account/login' || this->request->get['route'] == 'checkout/login.save') && this->config->get('config_customer_activity')) {
-			customer_info = this->model_account_customer->getCustomerByEmail(args[0]);
+	async login(&route, args, mixed &output) {
+		if ((this.request.get['route']) && (this.request.get['route'] == 'account/login' || this.request.get['route'] == 'checkout/login+save') && this.config.get('config_customer_activity')) {
+			customer_info = await this.model_account_customer.getCustomerByEmail(args[0]);
 
 			if (customer_info) {
-				this->load->model('account/activity');
+				this.load.model('account/activity');
 	
 				activity_data = [
-					'customer_id' => customer_info['customer_id'],
-					'name'        => customer_info['firstname'] . ' ' . customer_info['lastname']
+					'customer_id' : customer_info['customer_id'],
+					'name'        : customer_info['firstname'] + ' ' + customer_info['lastname']
 				];
 	
-				this->model_account_activity->addActivity('login', activity_data);
+				await this.model_account_activity.addActivity('login', activity_data);
 			}
 		}	
 	}
@@ -119,21 +112,21 @@ class ActivityController extends Controller {
 	 *
 	 * @return void
 	 */
-	async forgotten(string &route, array &args, mixed &output): void {
-		if ((this->request->get['route']) && this->request->get['route'] == 'account/forgotten' && this->config->get('config_customer_activity')) {
-			this->load->model('account/customer');
+	async forgotten(&route, args, mixed &output) {
+		if ((this.request.get['route']) && this.request.get['route'] == 'account/forgotten' && this.config.get('config_customer_activity')) {
+			this.load.model('account/customer');
 			
-			customer_info = this->model_account_customer->getCustomerByEmail(args[0]);
+			customer_info = await this.model_account_customer.getCustomerByEmail(args[0]);
 
 			if (customer_info) {
-				this->load->model('account/activity');
+				this.load.model('account/activity');
 
 				activity_data = [
-					'customer_id' => customer_info['customer_id'],
-					'name'        => customer_info['firstname'] . ' ' . customer_info['lastname']
+					'customer_id' : customer_info['customer_id'],
+					'name'        : customer_info['firstname'] + ' ' + customer_info['lastname']
 				];
 
-				this->model_account_activity->addActivity('forgotten', activity_data);
+				await this.model_account_activity.addActivity('forgotten', activity_data);
 			}
 		}	
 	}
@@ -147,22 +140,22 @@ class ActivityController extends Controller {
 	 *
 	 * @return void
 	 */
-	async addTransaction(string &route, array &args, mixed &output): void {
-		if (this->config->get('config_customer_activity')) {
-			this->load->model('account/customer');
+	async addTransaction(&route, args, mixed &output) {
+		if (this.config.get('config_customer_activity')) {
+			this.load.model('account/customer');
 			
-			customer_info = this->model_account_customer->getCustomer(args[0]);
+			customer_info = await this.model_account_customer.getCustomer(args[0]);
 
 			if (customer_info) {
-				this->load->model('account/activity');
+				this.load.model('account/activity');
 	
 				activity_data = [
-					'customer_id' => customer_info['customer_id'],
-					'name'        => customer_info['firstname'] . ' ' . customer_info['lastname'],
-					'order_id'    => args[3]
+					'customer_id' : customer_info['customer_id'],
+					'name'        : customer_info['firstname'] + ' ' + customer_info['lastname'],
+					'order_id'    : args[3]
 				];
 	
-				this->model_account_activity->addActivity('transaction', activity_data);
+				await this.model_account_activity.addActivity('transaction', activity_data);
 			}
 		}
 	}	
@@ -176,16 +169,16 @@ class ActivityController extends Controller {
 	 *
 	 * @return void
 	 */
-	async addAffiliate(string &route, array &args, mixed &output): void {
-		if (this->config->get('config_customer_activity')) {
-			this->load->model('account/activity');
+	async addAffiliate(&route, args, mixed &output) {
+		if (this.config.get('config_customer_activity')) {
+			this.load.model('account/activity');
 
 			activity_data = [
-				'customer_id' => args[0],
-				'name'        => args[1]['firstname'] . ' ' . args[1]['lastname']
+				'customer_id' : args[0],
+				'name'        : args[1]['firstname'] + ' ' + args[1]['lastname']
 			];
 
-			this->model_account_activity->addActivity('affiliate_add', activity_data);
+			await this.model_account_activity.addActivity('affiliate_add', activity_data);
 		}
 	}	
 	
@@ -198,16 +191,16 @@ class ActivityController extends Controller {
 	 *
 	 * @return void
 	 */
-	async editAffiliate(string &route, array &args, mixed &output): void {
-		if (this->config->get('config_customer_activity')) {
-			this->load->model('account/activity');
+	async editAffiliate(&route, args, mixed &output) {
+		if (this.config.get('config_customer_activity')) {
+			this.load.model('account/activity');
 
 			activity_data = [
-				'customer_id' => this->customer->getId(),
-				'name'        => this->customer->getFirstName() . ' ' . this->customer->getLastName()
+				'customer_id' : await this.customer.getId(),
+				'name'        : await this.customer.getFirstName() + ' ' + await this.customer.getLastName()
 			];
 
-			this->model_account_activity->addActivity('affiliate_edit', activity_data);
+			await this.model_account_activity.addActivity('affiliate_edit', activity_data);
 		}
 	}
 	
@@ -220,16 +213,16 @@ class ActivityController extends Controller {
 	 *
 	 * @return void
 	 */
-	async addAddress(string &route, array &args, mixed &output): void {
-		if (this->config->get('config_customer_activity')) {
-			this->load->model('account/activity');
+	async addAddress(&route, args, mixed &output) {
+		if (this.config.get('config_customer_activity')) {
+			this.load.model('account/activity');
 
 			activity_data = [
-				'customer_id' => this->customer->getId(),
-				'name'        => this->customer->getFirstName() . ' ' . this->customer->getLastName()
+				'customer_id' : await this.customer.getId(),
+				'name'        : await this.customer.getFirstName() + ' ' + await this.customer.getLastName()
 			];
 
-			this->model_account_activity->addActivity('address_add', activity_data);
+			await this.model_account_activity.addActivity('address_add', activity_data);
 		}	
 	}
 	
@@ -242,16 +235,16 @@ class ActivityController extends Controller {
 	 *
 	 * @return void
 	 */
-	async editAddress(string &route, array &args, mixed &output): void {
-		if (this->config->get('config_customer_activity')) {
-			this->load->model('account/activity');
+	async editAddress(&route, args, mixed &output) {
+		if (this.config.get('config_customer_activity')) {
+			this.load.model('account/activity');
 
 			activity_data = [
-				'customer_id' => this->customer->getId(),
-				'name'        => this->customer->getFirstName() . ' ' . this->customer->getLastName()
+				'customer_id' : await this.customer.getId(),
+				'name'        : await this.customer.getFirstName() + ' ' + await this.customer.getLastName()
 			];
 
-			this->model_account_activity->addActivity('address_edit', activity_data);
+			await this.model_account_activity.addActivity('address_edit', activity_data);
 		}	
 	}
 	
@@ -264,16 +257,16 @@ class ActivityController extends Controller {
 	 *
 	 * @return void
 	 */
-	async deleteAddress(string &route, array &args, mixed &output): void {
-		if (this->config->get('config_customer_activity')) {
-			this->load->model('account/activity');
+	async deleteAddress(&route, args, mixed &output) {
+		if (this.config.get('config_customer_activity')) {
+			this.load.model('account/activity');
 
 			activity_data = [
-				'customer_id' => this->customer->getId(),
-				'name'        => this->customer->getFirstName() . ' ' . this->customer->getLastName()
+				'customer_id' : await this.customer.getId(),
+				'name'        : await this.customer.getFirstName() + ' ' + await this.customer.getLastName()
 			];
 			
-			this->model_account_activity->addActivity('address_delete', activity_data);
+			await this.model_account_activity.addActivity('address_delete', activity_data);
 		}
 	}
 	
@@ -286,25 +279,25 @@ class ActivityController extends Controller {
 	 *
 	 * @return void
 	 */
-	async addReturn(string &route, array &args, mixed &output): void {
-		if (this->config->get('config_customer_activity') && output) {
-			this->load->model('account/activity');
+	async addReturn(&route, args, mixed &output) {
+		if (this.config.get('config_customer_activity') && output) {
+			this.load.model('account/activity');
 
-			if (this->customer->isLogged()) {
+			if (await this.customer.isLogged()) {
 				activity_data = [
-					'customer_id' => this->customer->getId(),
-					'name'        => this->customer->getFirstName() . ' ' . this->customer->getLastName(),
-					'return_id'   => output
+					'customer_id' : await this.customer.getId(),
+					'name'        : await this.customer.getFirstName() + ' ' + await this.customer.getLastName(),
+					'return_id'   : output
 				];
 
-				this->model_account_activity->addActivity('return_account', activity_data);
+				await this.model_account_activity.addActivity('return_account', activity_data);
 			} else {
 				activity_data = [
-					'name'      => args[0]['firstname'] . ' ' . args[0]['lastname'],
-					'return_id' => output
+					'name'      : args[0]['firstname'] + ' ' + args[0]['lastname'],
+					'return_id' : output
 				];
 
-				this->model_account_activity->addActivity('return_guest', activity_data);
+				await this.model_account_activity.addActivity('return_guest', activity_data);
 			}
 		}
 	}	
@@ -317,31 +310,31 @@ class ActivityController extends Controller {
 	 *
 	 * @return void
 	 */
-	async addHistory(string &route, array &args): void {
-		if (this->config->get('config_customer_activity')) {
+	async addHistory(&route, args) {
+		if (this.config.get('config_customer_activity')) {
 			// If the last order status id returns 0, and the new order status is not, then we record it as new order
-			this->load->model('checkout/order');
+			this.load.model('checkout/order');
 			
-			order_info = this->model_checkout_order->getOrder(args[0]);
+			order_info = await this.model_checkout_order.getOrder(args[0]);
 
 			if (order_info && !order_info['order_status_id'] && args[1]) {
-				this->load->model('account/activity');
+				this.load.model('account/activity');
 	
 				if (order_info['customer_id']) {
 					activity_data = [
-						'customer_id' => order_info['customer_id'],
-						'name'        => order_info['firstname'] . ' ' . order_info['lastname'],
-						'order_id'    => args[0]
+						'customer_id' : order_info['customer_id'],
+						'name'        : order_info['firstname'] + ' ' + order_info['lastname'],
+						'order_id'    : args[0]
 					];
 	
-					this->model_account_activity->addActivity('order_account', activity_data);
+					await this.model_account_activity.addActivity('order_account', activity_data);
 				} else {
 					activity_data = [
-						'name'     => order_info['firstname'] . ' ' . order_info['lastname'],
-						'order_id' => args[0]
+						'name'     : order_info['firstname'] + ' ' + order_info['lastname'],
+						'order_id' : args[0]
 					];
 	
-					this->model_account_activity->addActivity('order_guest', activity_data);
+					await this.model_account_activity.addActivity('order_guest', activity_data);
 				}
 			}
 		}

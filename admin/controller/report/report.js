@@ -12,12 +12,12 @@ module.exports = class ReportController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('report/report', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('report/report', 'user_token=' + this.session.data['user_token'])
 		});
 
 		if ((this.request.get['code'])) {
@@ -43,7 +43,7 @@ module.exports = class ReportController extends Controller {
 					'text': this.language.get(result['code'] + '_heading_title'),
 					'code': result['code'],
 					'sort_order': this.config.get('report_' + result['code'] + '_sort_order'),
-					'href': this.url.link('extension/' + result['extension'] + '/report/' + result['code'] + '.report', 'user_token=' + this.session.data['user_token'])
+					'href': await this.url.link('extension/' + result['extension'] + '/report/' + result['code'] + '.report', 'user_token=' + this.session.data['user_token'])
 				});
 			}
 		}

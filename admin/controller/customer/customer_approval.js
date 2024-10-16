@@ -15,16 +15,16 @@ module.exports = class CustomerApprovalController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('customer/customer_approval', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('customer/customer_approval', 'user_token=' + this.session.data['user_token'])
 		});
 
-		data['approve'] = this.url.link('customer/customer_approval.approve', 'user_token=' + this.session.data['user_token'], true);
-		data['deny'] = this.url.link('customer/customer_approval.deny', 'user_token=' + this.session.data['user_token'], true);
+		data['approve'] = await this.url.link('customer/customer_approval.approve', 'user_token=' + this.session.data['user_token'], true);
+		data['deny'] = await this.url.link('customer/customer_approval.deny', 'user_token=' + this.session.data['user_token'], true);
 
 		this.load.model('customer/customer_group', this);
 
@@ -115,7 +115,7 @@ module.exports = class CustomerApprovalController extends Controller {
 			url += '&page=' + this.request.get['page'];
 		}
 
-		data['action'] = this.url.link('customer/customer_approval.list', 'user_token=' + this.session.data['user_token'] + url, true);
+		data['action'] = await this.url.link('customer/customer_approval.list', 'user_token=' + this.session.data['user_token'] + url, true);
 
 		data['customer_approvals'] = [];
 
@@ -145,9 +145,9 @@ module.exports = class CustomerApprovalController extends Controller {
 				'customer_group': result['customer_group'],
 				'type': this.language.get('text_' + result['type']),
 				'date_added': date(this.language.get('date_format_short'), new Date(result['date_added'])),
-				'approve': this.url.link('customer/customer_approval.approve', 'user_token=' + this.session.data['user_token'] + '&customer_approval_id=' + result['customer_approval_id'], true),
-				'deny': this.url.link('customer/customer_approval.deny', 'user_token=' + this.session.data['user_token'] + '&customer_approval_id=' + result['customer_approval_id'], true),
-				'edit': this.url.link('customer/customer.form', 'user_token=' + this.session.data['user_token'] + '&customer_id=' + result['customer_id'], true)
+				'approve': await this.url.link('customer/customer_approval.approve', 'user_token=' + this.session.data['user_token'] + '&customer_approval_id=' + result['customer_approval_id'], true),
+				'deny': await this.url.link('customer/customer_approval.deny', 'user_token=' + this.session.data['user_token'] + '&customer_approval_id=' + result['customer_approval_id'], true),
+				'edit': await this.url.link('customer/customer.form', 'user_token=' + this.session.data['user_token'] + '&customer_id=' + result['customer_id'], true)
 			});
 		}
 
@@ -181,7 +181,7 @@ module.exports = class CustomerApprovalController extends Controller {
 			'total': customer_approval_total,
 			'page': page,
 			'limit': this.config.get('config_pagination_admin'),
-			'url': this.url.link('customer/customer_approval.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
+			'url': await this.url.link('customer/customer_approval.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (customer_approval_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (customer_approval_total - this.config.get('config_pagination_admin'))) ? customer_approval_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), customer_approval_total, Math.ceil(customer_approval_total / this.config.get('config_pagination_admin')));

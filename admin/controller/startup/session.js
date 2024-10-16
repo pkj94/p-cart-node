@@ -4,6 +4,7 @@ module.exports = class SessionController extends Controller {
 	}
 	async index() {
 		const session = new SessionLibrary(this.registry);
+		session.start(this.request.server.sessionID)
 		this.registry.set('session', session);
 
 		// Update the session lifetime

@@ -1,20 +1,13 @@
-<?php
-namespace Opencart\Catalog\Model\Setting;
-/**
- *
- *
- * @package Opencart\Catalog\Model\Setting
- */
-class StoreController extends Model {
+module.exports = class StoreController extends Model {
 	/**
-	 * @param int store_id
+	 * @param store_id
 	 *
 	 * @return array
 	 */
-	async getStore(store_id): array {
-		query = this->db->query("SELECT DISTINCT * FROM `" . DB_PREFIX . "store` WHERE `store_id` = '" . (int)store_id . "'");
+	async getStore(store_id) {
+		const query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "store` WHERE `store_id` = '" + store_id + "'");
 
-		return query->row;
+		return query.row;
 	}
 
 	/**
@@ -22,144 +15,141 @@ class StoreController extends Model {
 	 *
 	 * @return array
 	 */
-	async getStoreByHostname(string url): array {
-		query = this->db->query("SELECT * FROM `" . DB_PREFIX . "store` WHERE REPLACE(`url`, 'www.', '') = '" . this->db->escape(url) . "'");
+	async getStoreByHostname(url) {
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "store` WHERE REPLACE(`url`, 'www+', '') = " + this.db.escape(url));
 
-		return query->row;
+		return query.row;
 	}
 
 	/**
 	 * @return array
 	 */
-	async getStores(): array {
-		sql = "SELECT * FROM `" . DB_PREFIX . "store` ORDER BY `url`";
+	async getStores() {
+		const sql = "SELECT * FROM `" + DB_PREFIX + "store` ORDER BY `url`";
 
-		store_data = this->cache->get('store.' . md5(sql));
+		let store_data = await this.cache.get('store+' + md5(sql));
 
 		if (!store_data) {
-			query = this->db->query(sql);
+			const query = await this.db.query(sql);
 
-			store_data = query->rows;
+			store_data = query.rows;
 
-			this->cache->set('store.' . md5(sql), store_data);
+			await this.cache.set('store+' + md5(sql), store_data);
 		}
 
 		return store_data;
 	}
 
 	/**
-	 * @param int    store_id
+	 * @param    store_id
 	 * @param string language
 	 * @param string session_id
 	 *
 	 * @return \Opencart\System\Engine\Registry
 	 * @throws \Exception
 	 */
-	async createStoreInstance(store_id = 0, string language = '', string session_id = ''): object {
+	async createStoreInstance(store_id = 0, language = '', session_id = '') {
 		// Autoloader
-		this->autoloader->register('Opencart\Catalog', DIR_CATALOG);
+		// this.autoloader.register('Opencart\Catalog', DIR_CATALOG);
 
 		// Registry
-		registry = new \Opencart\System\Engine\Registry();
-		registry->set('autoloader', this->autoloader);
+		let registry = new Registry();
+		// registry.set('autoloader', this.autoloader);
 
 		// Config
-		config = new \Opencart\System\Engine\Config();
-		registry->set('config', config);
+		let config = new Config();
+		registry.set('config', config);
 
 		// Load the default config
-		config->addPath(DIR_CONFIG);
-		config->load('default');
-		config->set('application', 'Catalog');
+		config.addPath(DIR_CONFIG);
+		config.load('default');
+		config.set('application', 'Catalog');
 
 		// Store
-		config->set('config_store_id', store_id);
+		config.set('config_store_id', store_id);
 
 		// Logging
-		registry->set('log', this->log);
+		registry.set('log', this.log);
 
 		// Event
-		event = new \Opencart\System\Engine\Event(registry);
-		registry->set('event', event);
+		let event = new Event(registry);
+		registry.set('event', event);
 
 		// Event Register
-		if (config->has('action_event')) {
-			foreach (config->get('action_event') as key => value) {
-				foreach (value as priority => action) {
-					event->register(key, new \Opencart\System\Engine\Action(action), priority);
+		if (config.has('action_event')) {
+			for (let [key, value] of Object.entries(config.get('action_event'))) {
+				for (let [priority, action] of Object.entries(value)) {
+					event.register(key, new Action(action), priority);
 				}
 			}
 		}
 
 		// Loader
-		loader = new \Opencart\System\Engine\Loader(registry);
-		registry->set('load', loader);
+		let loader = new Loader(registry);
+		registry.set('load', loader);
 
 		// Create a dummy request class so we can feed the data to the order editor
-		request = new \stdClass();
-		request->get = [];
-		request->post = [];
-		request->server = this->request->server;
-		request->cookie = [];
+		let request = new RequestLibrary(this.request.server);
 
 		// Request
-		registry->set('request', request);
+		registry.set('request', request);
 
 		// Response
-		response = new \Opencart\System\Library\Response();
-		registry->set('response', response);
+		let response = new ResponseLibrary(this.response.response, this.request.server);
+		registry.set('response', response);
 
 		// Database
-		registry->set('db', this->db);
+		registry.set('db', this.db);
 
 		// Cache
-		registry->set('cache', this->cache);
+		registry.set('cache', this.cache);
 
 		// Session
-		session = new \Opencart\System\Library\Session(config->get('session_engine'), registry);
-		registry->set('session', session);
+		session = new SessionLibrary(registry);
+		session.start(this.request.server.sessionID)
+		registry.set('session', session);
 
 		// Start session
-		session->start(session_id);
+		session.start(session_id);
 
 		// Template
-		template = new \Opencart\System\Library\Template(config->get('template_engine'));
-		template->addPath(DIR_TEMPLATE);
-		registry->set('template', template);
+		let template = new TemplateLibrary(config.get('template_engine'));
+		template.addPath(DIR_TEMPLATE);
+		registry.set('template', template);
 
 		// Language
-		this->load->model('localisation/language');
+		this.load.model('localisation/language', this);
 
-		language_info = this->model_localisation_language->getLanguageByCode(language);
+		const language_info = await this.registry.get('model_localisation_language').getLanguageByCode(language);
 
-		if (language_info) {
-			config->set('config_language_id', language_info['language_id']);
-			config->set('config_language', language_info['code']);
+		if (language_info.language_id) {
+			config.set('config_language_id', language_info['language_id']);
+			config.set('config_language', language_info['code']);
 		} else {
-			config->set('config_language_id', this->config->get('config_language_id'));
-			config->set('config_language', this->config->get('config_language'));
+			config.set('config_language_id', this.config.get('config_language_id'));
+			config.set('config_language', this.config.get('config_language'));
 		}
 
-		language = new \Opencart\System\Library\Language(this->config->get('config_language'));
-		registry->set('language', language);
+		let languageLib = new LanguageLibrary(this.config.get('config_language'));
+		registry.set('language', languageLib);
 
 		if (!language_info['extension']) {
-			language->addPath(DIR_LANGUAGE);
+			languageLib.addPath(DIR_LANGUAGE);
 		} else {
-			language->addPath(DIR_EXTENSION . language_info['extension'] . '/catalog/language/');
+			languageLib.addPath(DIR_EXTENSION + language_info['extension'] + '/catalog/language/');
 		}
 
 		// Load default language file
-		language->load('default');
+		languageLib.load('default');
 
 		// Url
-		registry->set('url', new \Opencart\System\Library\Url(config->get('site_url')));
+		registry.set('url', new UrlLibrary(config.get('site_url')));
 
 		// Document
-		registry->set('document', new \Opencart\System\Library\Document());
+		registry.set('document', new DocumentLibrary());
 
-		// Run pre actions to load key settings and classes.
-		pre_actions = [
+		// Run pre actions to load key settings and classes+
+		let pre_actions = [
 			'startup/setting',
 			'startup/extension',
 			'startup/customer',
@@ -171,8 +161,8 @@ class StoreController extends Model {
 		];
 
 		// Pre Actions
-		foreach (pre_actions as pre_action) {
-			loader->controller(pre_action);
+		for (let pre_action of pre_actions) {
+			await loader.controller(pre_action);
 		}
 
 		return registry;

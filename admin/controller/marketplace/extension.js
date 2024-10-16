@@ -14,12 +14,12 @@ module.exports = class ExtensionController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'])
 		});
 
 		if ((this.request.get['type'])) {
@@ -43,7 +43,7 @@ module.exports = class ExtensionController extends Controller {
 				data['categories'].push({
 					'code': extension,
 					'text': this.language.get(extension + '_heading_title') + ' (' + extensions.length + ')',
-					'href': this.url.link('extension/' + extension, 'user_token=' + this.session.data['user_token'])
+					'href': await this.url.link('extension/' + extension, 'user_token=' + this.session.data['user_token'])
 				});
 			}
 		}

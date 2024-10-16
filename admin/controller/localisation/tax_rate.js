@@ -28,16 +28,16 @@ module.exports = class TaxRateController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('localisation/tax_rate', 'user_token=' + this.session.data['user_token'] + url)
+			'href': await this.url.link('localisation/tax_rate', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
-		data['add'] = this.url.link('localisation/tax_rate.form', 'user_token=' + this.session.data['user_token'] + url);
-		data['delete'] = this.url.link('localisation/tax_rate.delete', 'user_token=' + this.session.data['user_token']);
+		data['add'] = await this.url.link('localisation/tax_rate.form', 'user_token=' + this.session.data['user_token'] + url);
+		data['delete'] = await this.url.link('localisation/tax_rate.delete', 'user_token=' + this.session.data['user_token']);
 
 		data['list'] = await this.getList();
 
@@ -93,7 +93,7 @@ module.exports = class TaxRateController extends Controller {
 			url += '&page=' + this.request.get['page'];
 		}
 
-		data['action'] = this.url.link('localisation/tax_rate.list', 'user_token=' + this.session.data['user_token'] + url);
+		data['action'] = await this.url.link('localisation/tax_rate.list', 'user_token=' + this.session.data['user_token'] + url);
 
 		data['tax_rates'] = [];
 
@@ -119,7 +119,7 @@ module.exports = class TaxRateController extends Controller {
 				'geo_zone': result['geo_zone'],
 				'date_added': date(this.language.get('date_format_short'), new Date(result['date_added'])),
 				'date_modified': date(this.language.get('date_format_short'), new Date(result['date_modified'])),
-				'edit': this.url.link('localisation/tax_rate.form', 'user_token=' + this.session.data['user_token'] + '&tax_rate_id=' + result['tax_rate_id'] + url)
+				'edit': await this.url.link('localisation/tax_rate.form', 'user_token=' + this.session.data['user_token'] + '&tax_rate_id=' + result['tax_rate_id'] + url)
 			});
 		}
 
@@ -131,12 +131,12 @@ module.exports = class TaxRateController extends Controller {
 			url += '&order=ASC';
 		}
 
-		data['sort_name'] = this.url.link('localisation/tax_rate.list', 'user_token=' + this.session.data['user_token'] + '&sort=tr.name' + url);
-		data['sort_rate'] = this.url.link('localisation/tax_rate.list', 'user_token=' + this.session.data['user_token'] + '&sort=tr.rate' + url);
-		data['sort_type'] = this.url.link('localisation/tax_rate.list', 'user_token=' + this.session.data['user_token'] + '&sort=tr.type' + url);
-		data['sort_geo_zone'] = this.url.link('localisation/tax_rate.list', 'user_token=' + this.session.data['user_token'] + '&sort=gz.name' + url);
-		data['sort_date_added'] = this.url.link('localisation/tax_rate.list', 'user_token=' + this.session.data['user_token'] + '&sort=tr.date_added' + url);
-		data['sort_date_modified'] = this.url.link('localisation/tax_rate.list', 'user_token=' + this.session.data['user_token'] + '&sort=tr.date_modified' + url);
+		data['sort_name'] = await this.url.link('localisation/tax_rate.list', 'user_token=' + this.session.data['user_token'] + '&sort=tr.name' + url);
+		data['sort_rate'] = await this.url.link('localisation/tax_rate.list', 'user_token=' + this.session.data['user_token'] + '&sort=tr.rate' + url);
+		data['sort_type'] = await this.url.link('localisation/tax_rate.list', 'user_token=' + this.session.data['user_token'] + '&sort=tr.type' + url);
+		data['sort_geo_zone'] = await this.url.link('localisation/tax_rate.list', 'user_token=' + this.session.data['user_token'] + '&sort=gz.name' + url);
+		data['sort_date_added'] = await this.url.link('localisation/tax_rate.list', 'user_token=' + this.session.data['user_token'] + '&sort=tr.date_added' + url);
+		data['sort_date_modified'] = await this.url.link('localisation/tax_rate.list', 'user_token=' + this.session.data['user_token'] + '&sort=tr.date_modified' + url);
 
 		url = '';
 
@@ -152,7 +152,7 @@ module.exports = class TaxRateController extends Controller {
 			'total': tax_rate_total,
 			'page': page,
 			'limit': this.config.get('config_pagination_admin'),
-			'url': this.url.link('localisation/tax_rate.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
+			'url': await this.url.link('localisation/tax_rate.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (tax_rate_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (tax_rate_total - this.config.get('config_pagination_admin'))) ? tax_rate_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), tax_rate_total, Math.ceil(tax_rate_total / this.config.get('config_pagination_admin')));
@@ -192,16 +192,16 @@ module.exports = class TaxRateController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('localisation/tax_rate', 'user_token=' + this.session.data['user_token'] + url)
+			'href': await this.url.link('localisation/tax_rate', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
-		data['save'] = this.url.link('localisation/tax_rate.save', 'user_token=' + this.session.data['user_token']);
-		data['back'] = this.url.link('localisation/tax_rate', 'user_token=' + this.session.data['user_token'] + url);
+		data['save'] = await this.url.link('localisation/tax_rate.save', 'user_token=' + this.session.data['user_token']);
+		data['back'] = await this.url.link('localisation/tax_rate', 'user_token=' + this.session.data['user_token'] + url);
 		let tax_rate_info;
 		if ((this.request.get['tax_rate_id'])) {
 			this.load.model('localisation/tax_rate', this);

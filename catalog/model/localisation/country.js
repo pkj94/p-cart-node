@@ -1,20 +1,13 @@
-<?php
-namespace Opencart\Catalog\Model\Localisation;
-/**
- *
- *
- * @package Opencart\Catalog\Model\Localisation
- */
-class CountryController extends Model {
+module.exports =class CountryController extends Model {
 	/**
-	 * @param int country_id
+	 * @param country_id
 	 *
 	 * @return array
 	 */
-	async getCountry(country_id): array {
-		query = this->db->query("SELECT *, `c`.`name` FROM `" . DB_PREFIX . "country` `c` LEFT JOIN `" . DB_PREFIX . "address_format` af ON (`c`.`address_format_id` = `af`.`address_format_id`) WHERE `c`.`country_id` = '" . (int)country_id . "' AND `c`.`status` = '1'");
+	async getCountry(country_id) {
+		const query = await this.db.query("SELECT *, `c`.`name` FROM `" + DB_PREFIX + "country` `c` LEFT JOIN `" + DB_PREFIX + "address_format` af ON (`c`.`address_format_id` = `af`.`address_format_id`) WHERE `c`.`country_id` = '" + country_id + "' AND `c`.`status` = '1'");
 
-		return query->row;
+		return query.row;
 	}
 
 	/**
@@ -22,17 +15,17 @@ class CountryController extends Model {
 	 *
 	 * @return array
 	 */
-	async getCountryByIsoCode2(iso_code_2): array {
-		sql = "SELECT * FROM `" . DB_PREFIX . "country` WHERE `iso_code_2` = '" . this->db->escape(iso_code_2) . "' AND `status` = '1'";
+	async getCountryByIsoCode2(iso_code_2) {
+		const sql = "SELECT * FROM `" + DB_PREFIX + "country` WHERE `iso_code_2` = '" + this.db.escape(iso_code_2) + "' AND `status` = '1'";
 
-		country_data = this->cache->get('country.'. md5(sql));
+		country_data = await this.cache.get('country+'+ md5(sql));
 
 		if (!country_data) {
-			query = this->db->query(sql);
+			const query = await this.db.query(sql);
 
-			country_data = query->rows;
+			country_data = query.rows;
 
-			this->cache->set('country.'. md5(sql), country_data);
+			await this.cache.set('country+'+ md5(sql), country_data);
 		}
 
 		return country_data;
@@ -43,17 +36,17 @@ class CountryController extends Model {
 	 *
 	 * @return array
 	 */
-	async getCountryByIsoCode3(iso_code_3): array {
-		sql = "SELECT * FROM `" . DB_PREFIX . "country` WHERE `iso_code_3` = '" . this->db->escape(iso_code_3) . "' AND `status` = '1'";
+	async getCountryByIsoCode3(iso_code_3) {
+		const sql = "SELECT * FROM `" + DB_PREFIX + "country` WHERE `iso_code_3` = '" + this.db.escape(iso_code_3) + "' AND `status` = '1'";
 
-		country_data = this->cache->get('country.'. md5(sql));
+		country_data = await this.cache.get('country+'+ md5(sql));
 
 		if (!country_data) {
-			query = this->db->query(sql);
+			const query = await this.db.query(sql);
 
-			country_data = query->rows;
+			country_data = query.rows;
 
-			this->cache->set('country.'. md5(sql), country_data);
+			await this.cache.set('country+'+ md5(sql), country_data);
 		}
 
 		return country_data;
@@ -62,17 +55,17 @@ class CountryController extends Model {
 	/**
 	 * @return array
 	 */
-	async getCountries(): array {
-		sql = "SELECT *, c.`name` FROM `" . DB_PREFIX . "country` c LEFT JOIN `" . DB_PREFIX . "address_format` `af` ON (c.`address_format_id` = af.`address_format_id`) WHERE `c`.`status` = '1' ORDER BY `c`.`name` ASC";
+	async getCountries() {
+		const sql = "SELECT *, c.`name` FROM `" + DB_PREFIX + "country` c LEFT JOIN `" + DB_PREFIX + "address_format` `af` ON (c.`address_format_id` = af.`address_format_id`) WHERE `c`.`status` = '1' ORDER BY `c`.`name` ASC";
 
-		country_data = this->cache->get('country.'. md5(sql));
+		country_data = await this.cache.get('country+'+ md5(sql));
 
 		if (!country_data) {
-			query = this->db->query(sql);
+			const query = await this.db.query(sql);
 
-			country_data = query->rows;
+			country_data = query.rows;
 
-			this->cache->set('country.'. md5(sql), country_data);
+			await this.cache.set('country+'+ md5(sql), country_data);
 		}
 
 		return country_data;

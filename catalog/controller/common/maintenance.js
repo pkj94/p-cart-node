@@ -1,39 +1,33 @@
-<?php
-namespace Opencart\Catalog\Controller\Common;
-/**
- *
- *
- * @package Opencart\Catalog\Controller\Common
- */
-class MaintenanceController extends Controller {
+module.exports = class MaintenanceController extends Controller {
 	/**
 	 * @return void
 	 */
-	async index(): void {
-		$this->load->language('common/maintenance');
+	async index() {
+		const data = {};
+		await this.load.language('common/maintenance');
 
-		$this->document->setTitle($this->language->get('heading_title'));
+		this.document.setTitle(this.language.get('heading_title'));
 
-		if ($this->request->server['SERVER_PROTOCOL'] == 'HTTP/1.1') {
-			$this->response->addHeader('HTTP/1.1 503 Service Unavailable');
+		if (this.request.server['protocol'].toLowerCase() == 'http') {
+			this.response.setStatus(503);
 		} else {
-			$this->response->addHeader('HTTP/1.0 503 Service Unavailable');
+			this.response.setStatus(503);
 		}
 
-		$this->response->addHeader('Retry-After: 3600');
+		this.response.addHeader('Retry-After: 3600');
 
-		$data['breadcrumbs'] = [];
+		data['breadcrumbs'] = [];
 
-		$data['breadcrumbs'][] = [
-			'text' => $this->language->get('text_maintenance'),
-			'href' => $this->url->link('common/maintenance', 'language=' . $this->config->get('config_language'))
-		];
+		data['breadcrumbs'].push({
+			'text': this.language.get('text_maintenance'),
+			'href': await this.url.link('common/maintenance', 'language=' + this.config.get('config_language'))
+		});
 
-		$data['message'] = $this->language->get('text_message');
+		data['message'] = this.language.get('text_message');
 
-		$data['header'] = $this->load->controller('common/header');
-		$data['footer'] = $this->load->controller('common/footer');
+		data['header'] = await this.load.controller('common/header');
+		data['footer'] = await this.load.controller('common/footer');
 
-		$this->response->setOutput($this->load->view('common/maintenance', $data));
+		this.response.setOutput(await this.load.view('common/maintenance', data));
 	}
 }

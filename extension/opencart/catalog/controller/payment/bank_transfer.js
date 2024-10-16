@@ -47,7 +47,7 @@ class BankTransferController extends Controller {
 
 			await this.model_checkout_order.addHistory(this.session.data['order_id'], this.config.get('payment_bank_transfer_order_status_id'), $comment, true);
 
-			$json['redirect'] = this.url.link('checkout/success', 'language=' . this.config.get('config_language'), true);
+			$json['redirect'] = await this.url.link('checkout/success', 'language=' . this.config.get('config_language'), true);
 		}
 
 		this.response.addHeader('Content-Type: application/json');

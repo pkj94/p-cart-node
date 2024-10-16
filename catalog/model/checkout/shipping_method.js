@@ -1,28 +1,21 @@
-<?php
-namespace Opencart\Catalog\Model\Checkout;
-/**
- *
- *
- * @package Opencart\Catalog\Model\Checkout
- */
-class ShippingMethodController extends Controller {
+module.exports=class ShippingMethodController extends Controller {
 	/**
 	 * @param array shipping_address
 	 *
 	 * @return array
 	 */
-	async getMethods(array shipping_address): array {
+	async getMethods(array shipping_address) {
 		method_data = [];
 
-		this->load->model('setting/extension');
+		this.load.model('setting/extension',this);
 
-		results = this->model_setting_extension->getExtensionsByType('shipping');
+		const results = await this.model_setting_extension.getExtensionsByType('shipping');
 
-		foreach (results as result) {
-			if (this->config->get('shipping_' . result['code'] . '_status')) {
-				this->load->model('extension/' . result['extension'] . '/shipping/' . result['code']);
+		for (let result of results) {
+			if (this.config.get('shipping_' + result['code'] + '_status')) {
+				this.load.model('extension/' + result['extension'] + '/shipping/' + result['code']);
 
-				quote = this->{'model_extension_' . result['extension'] . '_shipping_' . result['code']}->getQuote(shipping_address);
+				quote = this.{'model_extension_' + result['extension'] + '_shipping_' + result['code']}.getQuote(shipping_address);
 
 				if (quote) {
 					method_data[result['code']] = quote;
@@ -32,7 +25,7 @@ class ShippingMethodController extends Controller {
 
 		sort_order = [];
 
-		foreach (method_data as key => value) {
+		for (method_data as key : value) {
 			sort_order[key] = value['sort_order'];
 		}
 

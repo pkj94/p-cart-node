@@ -14,12 +14,12 @@ module.exports = class ContactController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('marketing/contact', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('marketing/contact', 'user_token=' + this.session.data['user_token'])
 		});
 
 		this.load.model('setting/store', this);
@@ -199,7 +199,7 @@ module.exports = class ContactController extends Controller {
 				if (end < email_total) {
 					json['text'] = sprintf(this.language.get('text_sent'), start ? start : 1, email_total);
 
-					json['next'] = this.url.link('marketing/contact.send', 'user_token=' + this.session.data['user_token'] + '&page=' + (page + 1), true);
+					json['next'] = await this.url.link('marketing/contact.send', 'user_token=' + this.session.data['user_token'] + '&page=' + (page + 1), true);
 				} else {
 					json['success'] = this.language.get('text_success');
 

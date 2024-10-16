@@ -70,16 +70,16 @@ module.exports = class ReviewController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('catalog/review', 'user_token=' + this.session.data['user_token'] + url)
+			'href': await this.url.link('catalog/review', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
-		data['add'] = this.url.link('catalog/review.form', 'user_token=' + this.session.data['user_token'] + url);
-		data['delete'] = this.url.link('catalog/review.delete', 'user_token=' + this.session.data['user_token']);
+		data['add'] = await this.url.link('catalog/review.form', 'user_token=' + this.session.data['user_token'] + url);
+		data['delete'] = await this.url.link('catalog/review.delete', 'user_token=' + this.session.data['user_token']);
 
 		data['list'] = await this.getList();
 
@@ -175,7 +175,7 @@ module.exports = class ReviewController extends Controller {
 			url += '&page=' + this.request.get['page'];
 		}
 
-		data['action'] = this.url.link('catalog/review.list', 'user_token=' + this.session.data['user_token'] + url);
+		data['action'] = await this.url.link('catalog/review.list', 'user_token=' + this.session.data['user_token'] + url);
 
 		data['reviews'] = [];
 
@@ -205,7 +205,7 @@ module.exports = class ReviewController extends Controller {
 				'rating': result['rating'],
 				'status': result['status'],
 				'date_added': date(this.language.get('date_format_short'), new Date(result['date_added'])),
-				'edit': this.url.link('catalog/review.form', 'user_token=' + this.session.data['user_token'] + '&review_id=' + result['review_id'] + url)
+				'edit': await this.url.link('catalog/review.form', 'user_token=' + this.session.data['user_token'] + '&review_id=' + result['review_id'] + url)
 			});
 		}
 
@@ -237,10 +237,10 @@ module.exports = class ReviewController extends Controller {
 			url += '&order=ASC';
 		}
 
-		data['sort_product'] = this.url.link('catalog/review.list', 'user_token=' + this.session.data['user_token'] + '&sort=pd.name' + url);
-		data['sort_author'] = this.url.link('catalog/review.list', 'user_token=' + this.session.data['user_token'] + '&sort=r.author' + url);
-		data['sort_rating'] = this.url.link('catalog/review.list', 'user_token=' + this.session.data['user_token'] + '&sort=r.rating' + url);
-		data['sort_date_added'] = this.url.link('catalog/review.list', 'user_token=' + this.session.data['user_token'] + '&sort=r.date_added' + url);
+		data['sort_product'] = await this.url.link('catalog/review.list', 'user_token=' + this.session.data['user_token'] + '&sort=pd.name' + url);
+		data['sort_author'] = await this.url.link('catalog/review.list', 'user_token=' + this.session.data['user_token'] + '&sort=r.author' + url);
+		data['sort_rating'] = await this.url.link('catalog/review.list', 'user_token=' + this.session.data['user_token'] + '&sort=r.rating' + url);
+		data['sort_date_added'] = await this.url.link('catalog/review.list', 'user_token=' + this.session.data['user_token'] + '&sort=r.date_added' + url);
 
 		url = '';
 
@@ -276,7 +276,7 @@ module.exports = class ReviewController extends Controller {
 			'total': review_total,
 			'page': page,
 			'limit': this.config.get('config_pagination_admin'),
-			'url': this.url.link('catalog/review.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
+			'url': await this.url.link('catalog/review.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (review_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (review_total - this.config.get('config_pagination_admin'))) ? review_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), review_total, Math.ceil(review_total / this.config.get('config_pagination_admin')));
@@ -342,16 +342,16 @@ module.exports = class ReviewController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('catalog/review', 'user_token=' + this.session.data['user_token'] + url)
+			'href': await this.url.link('catalog/review', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
-		data['save'] = this.url.link('catalog/review.save', 'user_token=' + this.session.data['user_token']);
-		data['back'] = this.url.link('catalog/review', 'user_token=' + this.session.data['user_token'] + url);
+		data['save'] = await this.url.link('catalog/review.save', 'user_token=' + this.session.data['user_token']);
+		data['back'] = await this.url.link('catalog/review', 'user_token=' + this.session.data['user_token'] + url);
 		let review_info;
 		if ((this.request.get['review_id'])) {
 			this.load.model('catalog/review', this);
@@ -535,7 +535,7 @@ module.exports = class ReviewController extends Controller {
 			if (total && end < total) {
 				json['text'] = sprintf(this.language.get('text_next'), end, total);
 
-				json['next'] = this.url.link('catalog/review.sync', 'user_token=' + this.session.data['user_token'] + '&page=' + (page + 1), true);
+				json['next'] = await this.url.link('catalog/review.sync', 'user_token=' + this.session.data['user_token'] + '&page=' + (page + 1), true);
 			} else {
 				json['success'] = sprintf(this.language.get('text_next'), end, total);
 

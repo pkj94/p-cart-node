@@ -18,12 +18,12 @@ module.exports = class InstallerMarketplaceController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('marketplace/installer', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('marketplace/installer', 'user_token=' + this.session.data['user_token'])
 		});
 
 		// Use the  for the max file size
@@ -31,7 +31,7 @@ module.exports = class InstallerMarketplaceController extends Controller {
 
 		data['config_file_max_size'] = ((process.env.UPLOAD_MAX_FILESIZE || '2M').replace(/[^0-9]/g, '') * 1024 * 1024);
 
-		data['upload'] = this.url.link('tool/installer.upload', 'user_token=' + this.session.data['user_token']);
+		data['upload'] = await this.url.link('tool/installer.upload', 'user_token=' + this.session.data['user_token']);
 
 		data['list'] = await this.getList();
 
@@ -141,7 +141,7 @@ module.exports = class InstallerMarketplaceController extends Controller {
 		for (let result of results) {
 			let link = '';
 			if (result['extension_id']) {
-				link = this.url.link('marketplace/marketplace.info', 'user_token=' + this.session.data['user_token'] + '&extension_id=' + result['extension_id']);
+				link = await this.url.link('marketplace/marketplace.info', 'user_token=' + this.session.data['user_token'] + '&extension_id=' + result['extension_id']);
 			} else if (result['link']) {
 				link = result['link'];
 			}
@@ -153,9 +153,9 @@ module.exports = class InstallerMarketplaceController extends Controller {
 				'status': result['status'],
 				'link': link,
 				'date_added': date(this.language.get('date_format_short'), new Date(result['date_added'])),
-				'install': this.url.link('marketplace/installer.install', 'user_token=' + this.session.data['user_token'] + '&extension_install_id=' + result['extension_install_id']),
-				'uninstall': this.url.link('marketplace/installer.uninstall', 'user_token=' + this.session.data['user_token'] + '&extension_install_id=' + result['extension_install_id']),
-				'delete': this.url.link('marketplace/installer.delete', 'user_token=' + this.session.data['user_token'] + '&extension_install_id=' + result['extension_install_id'])
+				'install': await this.url.link('marketplace/installer.install', 'user_token=' + this.session.data['user_token'] + '&extension_install_id=' + result['extension_install_id']),
+				'uninstall': await this.url.link('marketplace/installer.uninstall', 'user_token=' + this.session.data['user_token'] + '&extension_install_id=' + result['extension_install_id']),
+				'delete': await this.url.link('marketplace/installer.delete', 'user_token=' + this.session.data['user_token'] + '&extension_install_id=' + result['extension_install_id'])
 			});
 		}
 
@@ -173,15 +173,15 @@ module.exports = class InstallerMarketplaceController extends Controller {
 			url += '&order=ASC';
 		}
 
-		data['sort_name'] = this.url.link('marketplace/installer.list', 'user_token=' + this.session.data['user_token'] + '&sort=name' + url);
-		data['sort_version'] = this.url.link('marketplace/installer.list', 'user_token=' + this.session.data['user_token'] + '&sort=version' + url);
-		data['sort_date_added'] = this.url.link('marketplace/installer.list', 'user_token=' + this.session.data['user_token'] + '&sort=date_added' + url);
+		data['sort_name'] = await this.url.link('marketplace/installer.list', 'user_token=' + this.session.data['user_token'] + '&sort=name' + url);
+		data['sort_version'] = await this.url.link('marketplace/installer.list', 'user_token=' + this.session.data['user_token'] + '&sort=version' + url);
+		data['sort_date_added'] = await this.url.link('marketplace/installer.list', 'user_token=' + this.session.data['user_token'] + '&sort=date_added' + url);
 
 		data['pagination'] = await this.load.controller('common/pagination', {
 			'total': extension_total,
 			'page': page,
 			'limit': this.config.get('config_pagination_admin'),
-			'url': this.url.link('marketplace/installer.list', 'user_token=' + this.session.data['user_token'] + '&page={page}')
+			'url': await this.url.link('marketplace/installer.list', 'user_token=' + this.session.data['user_token'] + '&page={page}')
 		});
 
 		data['sort'] = sort;
@@ -419,9 +419,9 @@ module.exports = class InstallerMarketplaceController extends Controller {
 			}
 
 			if (end < total) {
-				json['next'] = this.url.link('marketplace/installer.install', 'user_token=' + this.session.data['user_token'] + url + '&page=' + (page + 1), true);
+				json['next'] = await this.url.link('marketplace/installer.install', 'user_token=' + this.session.data['user_token'] + url + '&page=' + (page + 1), true);
 			} else {
-				json['next'] = this.url.link('marketplace/installer.vendor', 'user_token=' + this.session.data['user_token'] + url, true);
+				json['next'] = await this.url.link('marketplace/installer.vendor', 'user_token=' + this.session.data['user_token'] + url, true);
 			}
 		}
 
@@ -543,7 +543,7 @@ module.exports = class InstallerMarketplaceController extends Controller {
 				url += '&extension_install_id=' + this.request.get['extension_install_id'];
 			}
 
-			json['next'] = this.url.link('marketplace/installer.vendor', 'user_token=' + this.session.data['user_token'] + url, true);
+			json['next'] = await this.url.link('marketplace/installer.vendor', 'user_token=' + this.session.data['user_token'] + url, true);
 		}
 
 		this.response.addHeader('Content-Type: application/json');

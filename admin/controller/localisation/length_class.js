@@ -28,16 +28,16 @@ module.exports = class LengthController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('localisation/length_class', 'user_token=' + this.session.data['user_token'] + url)
+			'href': await this.url.link('localisation/length_class', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
-		data['add'] = this.url.link('localisation/length_class.form', 'user_token=' + this.session.data['user_token'] + url);
-		data['delete'] = this.url.link('localisation/length_class.delete', 'user_token=' + this.session.data['user_token']);
+		data['add'] = await this.url.link('localisation/length_class.form', 'user_token=' + this.session.data['user_token'] + url);
+		data['delete'] = await this.url.link('localisation/length_class.delete', 'user_token=' + this.session.data['user_token']);
 
 		data['list'] = await this.getList();
 
@@ -93,7 +93,7 @@ module.exports = class LengthController extends Controller {
 			url += '&page=' + this.request.get['page'];
 		}
 
-		data['action'] = this.url.link('localisation/length_class.list', 'user_token=' + this.session.data['user_token'] + url);
+		data['action'] = await this.url.link('localisation/length_class.list', 'user_token=' + this.session.data['user_token'] + url);
 
 		data['length_classes'] = [];
 
@@ -116,7 +116,7 @@ module.exports = class LengthController extends Controller {
 				'title': result['title'] + ((result['length_class_id'] == this.config.get('config_length_class_id')) ? this.language.get('text_default') : ''),
 				'unit': result['unit'],
 				'value': result['value'],
-				'edit': this.url.link('localisation/length_class.form', 'user_token=' + this.session.data['user_token'] + '&length_class_id=' + result['length_class_id'] + url)
+				'edit': await this.url.link('localisation/length_class.form', 'user_token=' + this.session.data['user_token'] + '&length_class_id=' + result['length_class_id'] + url)
 			});
 		}
 
@@ -128,9 +128,9 @@ module.exports = class LengthController extends Controller {
 			url += '&order=ASC';
 		}
 
-		data['sort_title'] = this.url.link('localisation/length_class.list', 'user_token=' + this.session.data['user_token'] + '&sort=title' + url);
-		data['sort_unit'] = this.url.link('localisation/length_class.list', 'user_token=' + this.session.data['user_token'] + '&sort=unit' + url);
-		data['sort_value'] = this.url.link('localisation/length_class.list', 'user_token=' + this.session.data['user_token'] + '&sort=value' + url);
+		data['sort_title'] = await this.url.link('localisation/length_class.list', 'user_token=' + this.session.data['user_token'] + '&sort=title' + url);
+		data['sort_unit'] = await this.url.link('localisation/length_class.list', 'user_token=' + this.session.data['user_token'] + '&sort=unit' + url);
+		data['sort_value'] = await this.url.link('localisation/length_class.list', 'user_token=' + this.session.data['user_token'] + '&sort=value' + url);
 
 		url = '';
 
@@ -146,7 +146,7 @@ module.exports = class LengthController extends Controller {
 			'total': length_class_total,
 			'page': page,
 			'limit': this.config.get('config_pagination_admin'),
-			'url': this.url.link('localisation/length_class.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
+			'url': await this.url.link('localisation/length_class.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (length_class_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (length_class_total - this.config.get('config_pagination_admin'))) ? length_class_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), length_class_total, Math.ceil(length_class_total / this.config.get('config_pagination_admin')));
@@ -186,16 +186,16 @@ module.exports = class LengthController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('localisation/length_class', 'user_token=' + this.session.data['user_token'] + url)
+			'href': await this.url.link('localisation/length_class', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
-		data['save'] = this.url.link('localisation/length_class.save', 'user_token=' + this.session.data['user_token']);
-		data['back'] = this.url.link('localisation/length_class', 'user_token=' + this.session.data['user_token'] + url);
+		data['save'] = await this.url.link('localisation/length_class.save', 'user_token=' + this.session.data['user_token']);
+		data['back'] = await this.url.link('localisation/length_class', 'user_token=' + this.session.data['user_token'] + url);
 		let length_class_info;
 		if ((this.request.get['length_class_id'])) {
 			this.load.model('localisation/length_class', this);

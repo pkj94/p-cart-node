@@ -1,59 +1,50 @@
-<?php
-namespace Opencart\Catalog\Controller\Common;
-/**
- *
- *
- * @package Opencart\Catalog\Controller\Common
- */
-class LanguageController extends Controller {
+module.exports = class LanguageController extends Controller {
 	/**
 	 * @return string
 	 */
-	async index(): string {
-		$this->load->language('common/language');
+	async index() {
+		const data = {};
+		await this.load.language('common/language');
 
-		$url_data = $this->request->get;
-
-		if (($url_data['route'])) {
-			$route = $url_data['route'];
-		} else {
-			$route = $this->config->get('action_default');
+		let url_data = this.request.get;
+		let route = this.config.get('action_default');
+		if ((url_data['route'])) {
+			route = url_data['route'];
 		}
 
-		unset($url_data['route']);
-		unset($url_data['_route_']);
-		unset($url_data['language']);
+		delete url_data['route'];
+		delete url_data['_route_'];
+		delete url_data['language'];
 
-		$url = '';
+		let url = '';
 
-		if ($url_data) {
-			$url .= '&' . decodeURIComponent(http_build_query($url_data));
+		if (url_data) {
+			url += '&' + decodeURIComponent(http_build_query(url_data));
 		}
 
-		// Added so the correct SEO language URL is used.
-		$language_id = $this->config->get('config_language_id');
+		// Added so the correct SEO language URL is used+
+		let language_id = this.config.get('config_language_id');
 
-		$data['languages'] = [];
+		data['languages'] = [];
 
-		$this->load->model('localisation/language');
+		this.load.model('localisation/language', this);
 
-		$results = $this->model_localisation_language->getLanguages();
+		const results = await this.model_localisation_language.getLanguages();
+		for (let [code, result] of Object.entries(results)) {
+			this.config.set('config_language_id', result['language_id']);
 
-		foreach ($results as $result) {
-			$this->config->set('config_language_id', $result['language_id']);
-
-			$data['languages'][] = [
-				'name'  => $result['name'],
-				'code'  => $result['code'],
-				'image' => $result['image'],
-				'href'  => $this->url->link($route, 'language=' . $result['code'] . $url, true)
-			];
+			data['languages'].push({
+				'name': result['name'],
+				'code': result['code'],
+				'image': result['image'],
+				'href': await this.url.link(route, 'language=' + result['code'] + url, true)
+			});
 		}
 
-		$this->config->set('config_language_id', $language_id);
+		this.config.set('config_language_id', language_id);
 
-		$data['code'] = $this->config->get('config_language');
+		data['code'] = this.config.get('config_language');
 
-		return $this->load->view('common/language', $data);
+		return await this.load.view('common/language', data);
 	}
 }

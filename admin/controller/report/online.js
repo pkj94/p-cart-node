@@ -28,12 +28,12 @@ module.exports = class OnlineController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('report/online', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('report/online', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['list'] = await this.getList();
@@ -105,7 +105,7 @@ module.exports = class OnlineController extends Controller {
 				'url': result['url'],
 				'referer': result['referer'],
 				'date_added': date(this.language.get('datetime_format'), new Date(result['date_added'])),
-				'edit': this.url.link('customer/customer.form', 'user_token=' + this.session.data['user_token'] + '&customer_id=' + result['customer_id'])
+				'edit': await this.url.link('customer/customer.form', 'user_token=' + this.session.data['user_token'] + '&customer_id=' + result['customer_id'])
 			});
 		}
 
@@ -123,7 +123,7 @@ module.exports = class OnlineController extends Controller {
 			'total': customer_total,
 			'page': page,
 			'limit': this.config.get('config_pagination_admin'),
-			'url': this.url.link('report/online.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
+			'url': await this.url.link('report/online.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (customer_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (customer_total - this.config.get('config_pagination_admin'))) ? customer_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), customer_total, Math.ceil(customer_total / this.config.get('config_pagination_admin')));

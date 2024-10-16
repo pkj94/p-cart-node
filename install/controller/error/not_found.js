@@ -9,7 +9,7 @@ module.exports = class NotFound extends Controller {
             heading_title: this.language.get('heading_title'),
             text_error: this.language.get('text_error'),
             button_continue: this.language.get('button_continue'),
-            continue: this.url.link('common/home', { language: this.config.get('language_code') }),
+            continue: await this.url.link('common/home', { language: this.config.get('language_code') }),
             footer: this.load.controller('common/footer'),
             header: this.load.controller('common/header')
         };

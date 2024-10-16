@@ -1,26 +1,27 @@
-module.exports=class MaintenanceController extends Controller {
+module.exports = class MaintenanceController extends Controller {
 	/**
 	 * @return object|\Opencart\System\Engine\Action|null
 	 */
 	async index() {
-		if ($this->config->get('config_maintenance')) {
+		if (this.config.get('config_maintenance')) {
 			// Route
-			if (($this->request->get['route'])) {
-				$route = $this->request->get['route'];
+			let route = this.config.get('action_default');
+			if ((this.request.get['route'])) {
+				route = this.request.get['route'];
 			} else {
-				$route = $this->config->get('action_default');
+				route = this.config.get('action_default');
 			}
 
-			$ignore = [
+			let ignore = [
 				'common/language/language',
 				'common/currency/currency'
 			];
 
 			// Show site if logged in as admin
-			$user = new \Opencart\System\Library\Cart\User($this->registry);
+			const user = new (require(DIR_SYSTEM + 'library/cart/user'))(this.registry);
 
-			if (substr($route, 0, 3) != 'api' && !in_array($route, $ignore) && !$user->isLogged()) {
-				return new \Opencart\System\Engine\Action('common/maintenance');
+			if (route.substring(0, 3) != 'api' && !ignore.includes(route) && !await user.isLogged()) {
+				return new Action('common/maintenance');
 			}
 		}
 

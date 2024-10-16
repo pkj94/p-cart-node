@@ -47,7 +47,7 @@ module.exports = class BestsellerModuleModel extends Model {
 			limit = 10;
 		}
 
-		let query = await await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_bestseller` ORDER BY `total` DESC LIMIT " + start + "," + limit);
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_bestseller` ORDER BY `total` DESC LIMIT " + start + "," + limit);
 
 		return query.rows;
 	}
@@ -56,7 +56,7 @@ module.exports = class BestsellerModuleModel extends Model {
 	 * @return int
 	 */
 	async getTotalReports() {
-		let query = await await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "product_bestseller`");
+		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "product_bestseller`");
 
 		return query.row['total'];
 	}

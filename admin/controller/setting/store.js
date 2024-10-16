@@ -20,16 +20,16 @@ module.exports = class StoreController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('setting/store', 'user_token=' + this.session.data['user_token'] + url)
+			'href': await this.url.link('setting/store', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
-		data['add'] = this.url.link('setting/store.form', 'user_token=' + this.session.data['user_token'] + url);
-		data['delete'] = this.url.link('setting/store.delete', 'user_token=' + this.session.data['user_token']);
+		data['add'] = await this.url.link('setting/store.form', 'user_token=' + this.session.data['user_token'] + url);
+		data['delete'] = await this.url.link('setting/store.delete', 'user_token=' + this.session.data['user_token']);
 
 		data['list'] = await this.getList();
 
@@ -67,7 +67,7 @@ module.exports = class StoreController extends Controller {
 			url += '&page=' + this.request.get['page'];
 		}
 
-		data['action'] = this.url.link('setting/store.list', 'user_token=' + this.session.data['user_token'] + url);
+		data['action'] = await this.url.link('setting/store.list', 'user_token=' + this.session.data['user_token'] + url);
 
 		data['stores'] = [];
 
@@ -80,7 +80,7 @@ module.exports = class StoreController extends Controller {
 				'store_id': 0,
 				'name': this.config.get('config_name') + this.language.get('text_default'),
 				'url': HTTP_CATALOG,
-				'edit': this.url.link('setting/setting', 'user_token=' + this.session.data['user_token'])
+				'edit': await this.url.link('setting/setting', 'user_token=' + this.session.data['user_token'])
 			});
 		}
 
@@ -97,7 +97,7 @@ module.exports = class StoreController extends Controller {
 				'store_id': result['store_id'],
 				'name': result['name'],
 				'url': result['url'],
-				'edit': this.url.link('setting/store.form', 'user_token=' + this.session.data['user_token'] + '&store_id=' + result['store_id'])
+				'edit': await this.url.link('setting/store.form', 'user_token=' + this.session.data['user_token'] + '&store_id=' + result['store_id'])
 			});
 		}
 
@@ -105,7 +105,7 @@ module.exports = class StoreController extends Controller {
 			'total': store_total,
 			'page': page,
 			'limit': this.config.get('config_pagination_admin'),
-			'url': this.url.link('setting/store.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
+			'url': await this.url.link('setting/store.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (store_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (store_total - this.config.get('config_pagination_admin'))) ? store_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), store_total, Math.ceil(store_total / this.config.get('config_pagination_admin')));
@@ -134,21 +134,21 @@ module.exports = class StoreController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('setting/store', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('setting/store', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_settings'),
-			'href': this.url.link('setting/store.form', 'user_token=' + this.session.data['user_token'] + ((this.request.post['store_id']) ? '&store_id=' + this.request.get['store_id'] : '') + url)
+			'href': await this.url.link('setting/store.form', 'user_token=' + this.session.data['user_token'] + ((this.request.post['store_id']) ? '&store_id=' + this.request.get['store_id'] : '') + url)
 		});
 
-		data['save'] = this.url.link('setting/store.save', 'user_token=' + this.session.data['user_token']);
-		data['back'] = this.url.link('setting/store', 'user_token=' + this.session.data['user_token']);
+		data['save'] = await this.url.link('setting/store.save', 'user_token=' + this.session.data['user_token']);
+		data['back'] = await this.url.link('setting/store', 'user_token=' + this.session.data['user_token']);
 		let store_info = {};
 		if ((this.request.get['store_id'])) {
 			this.load.model('setting/setting', this);

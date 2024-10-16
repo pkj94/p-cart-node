@@ -13,21 +13,21 @@ module.exports = class CodPaymentController extends Controller {
 
 		data.breadcrumbs.push({
 			text: this.language.get('text_home'),
-			href: this.url.link('common/dashboard', 'user_token=' + this.session.data.user_token)
+			href: await this.url.link('common/dashboard', 'user_token=' + this.session.data.user_token)
 		});
 
 		data.breadcrumbs.push({
 			text: this.language.get('text_extension'),
-			href: this.url.link('marketplace/extension', 'user_token=' + this.session.data.user_token + '&type=payment')
+			href: await this.url.link('marketplace/extension', 'user_token=' + this.session.data.user_token + '&type=payment')
 		});
 
 		data.breadcrumbs.push({
 			text: this.language.get('heading_title'),
-			href: this.url.link('extension/opencart/payment/cod', 'user_token=' + this.session.data.user_token)
+			href: await this.url.link('extension/opencart/payment/cod', 'user_token=' + this.session.data.user_token)
 		});
 
-		data.save = this.url.link('extension/opencart/payment/cod.save', 'user_token=' + this.session.data.user_token);
-		data.back = this.url.link('marketplace/extension', 'user_token=' + this.session.data.user_token + '&type=payment');
+		data.save = await this.url.link('extension/opencart/payment/cod.save', 'user_token=' + this.session.data.user_token);
+		data.back = await this.url.link('marketplace/extension', 'user_token=' + this.session.data.user_token + '&type=payment');
 
 		data.payment_cod_order_status_id = this.config.get('payment_cod_order_status_id');
 

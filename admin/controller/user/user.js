@@ -28,16 +28,16 @@ module.exports = class UserController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('user/user', 'user_token=' + this.session.data['user_token'] + url)
+			'href': await this.url.link('user/user', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
-		data['add'] = this.url.link('user/user.form', 'user_token=' + this.session.data['user_token'] + url);
-		data['delete'] = this.url.link('user/user.delete', 'user_token=' + this.session.data['user_token']);
+		data['add'] = await this.url.link('user/user.form', 'user_token=' + this.session.data['user_token'] + url);
+		data['delete'] = await this.url.link('user/user.delete', 'user_token=' + this.session.data['user_token']);
 
 		data['list'] = await this.getList();
 
@@ -93,7 +93,7 @@ module.exports = class UserController extends Controller {
 			url += '&page=' + this.request.get['page'];
 		}
 
-		data['action'] = this.url.link('user/user.list', 'user_token=' + this.session.data['user_token'] + url);
+		data['action'] = await this.url.link('user/user.list', 'user_token=' + this.session.data['user_token'] + url);
 
 		data['users'] = [];
 
@@ -116,7 +116,7 @@ module.exports = class UserController extends Controller {
 				'username': result['username'],
 				'status': (result['status'] ? this.language.get('text_enabled') : this.language.get('text_disabled')),
 				'date_added': date(this.language.get('date_format_short'), new Date(result['date_added'])),
-				'edit': this.url.link('user/user.form', 'user_token=' + this.session.data['user_token'] + '&user_id=' + result['user_id'] + url)
+				'edit': await this.url.link('user/user.form', 'user_token=' + this.session.data['user_token'] + '&user_id=' + result['user_id'] + url)
 			});
 		}
 
@@ -128,9 +128,9 @@ module.exports = class UserController extends Controller {
 			url += '&order=ASC';
 		}
 
-		data['sort_username'] = this.url.link('user/user.list', 'user_token=' + this.session.data['user_token'] + '&sort=username' + url);
-		data['sort_status'] = this.url.link('user/user.list', 'user_token=' + this.session.data['user_token'] + '&sort=status' + url);
-		data['sort_date_added'] = this.url.link('user/user.list', 'user_token=' + this.session.data['user_token'] + '&sort=date_added' + url);
+		data['sort_username'] = await this.url.link('user/user.list', 'user_token=' + this.session.data['user_token'] + '&sort=username' + url);
+		data['sort_status'] = await this.url.link('user/user.list', 'user_token=' + this.session.data['user_token'] + '&sort=status' + url);
+		data['sort_date_added'] = await this.url.link('user/user.list', 'user_token=' + this.session.data['user_token'] + '&sort=date_added' + url);
 
 		url = '';
 
@@ -146,7 +146,7 @@ module.exports = class UserController extends Controller {
 			'total': user_total,
 			'page': page,
 			'limit': this.config.get('config_pagination_admin'),
-			'url': this.url.link('user/user.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
+			'url': await this.url.link('user/user.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (user_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (user_total - this.config.get('config_pagination_admin'))) ? user_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), user_total, Math.ceil(user_total / this.config.get('config_pagination_admin')));
@@ -182,8 +182,8 @@ module.exports = class UserController extends Controller {
 			url += '&page=' + this.request.get['page'];
 		}
 
-		data['save'] = this.url.link('user/user.save', 'user_token=' + this.session.data['user_token']);
-		data['back'] = this.url.link('user/user', 'user_token=' + this.session.data['user_token'] + url);
+		data['save'] = await this.url.link('user/user.save', 'user_token=' + this.session.data['user_token']);
+		data['back'] = await this.url.link('user/user', 'user_token=' + this.session.data['user_token'] + url);
 		let user_info
 		if ((this.request.get['user_id'])) {
 			this.load.model('user/user', this);
@@ -420,7 +420,7 @@ module.exports = class UserController extends Controller {
 				'status': result['status'] ? this.language.get('text_enabled') : this.language.get('text_disabled'),
 				'total': result['total'],
 				'date_added': date(this.language.get('datetime_format'), new Date(result['date_added'])),
-				'delete': this.url.link('user/user.deleteAuthorize', 'user_token=' + this.session.data['user_token'] + '&user_authorize_id=' + result['user_authorize_id'])
+				'delete': await this.url.link('user/user.deleteAuthorize', 'user_token=' + this.session.data['user_token'] + '&user_authorize_id=' + result['user_authorize_id'])
 			});
 		}
 
@@ -430,7 +430,7 @@ module.exports = class UserController extends Controller {
 			'total': authorize_total,
 			'page': page,
 			'limit': limit,
-			'url': this.url.link('user/user.authorize', 'user_token=' + this.session.data['user_token'] + '&user_id=' + user_id + '&page={page}')
+			'url': await this.url.link('user/user.authorize', 'user_token=' + this.session.data['user_token'] + '&user_id=' + user_id + '&page={page}')
 		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (authorize_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (authorize_total - limit)) ? authorize_total : (((page - 1) * limit) + limit), authorize_total, Math.ceil(authorize_total / limit));
@@ -473,7 +473,7 @@ module.exports = class UserController extends Controller {
 			if (login_info['token'] == token) {
 				this.session.data['success'] = this.language.get('text_success');
 
-				json['redirect'] = this.url.link('common/login', '', true);
+				json['redirect'] = await this.url.link('common/login', '', true);
 			} else {
 				json['success'] = this.language.get('text_success');
 			}
@@ -528,7 +528,7 @@ module.exports = class UserController extends Controller {
 			'total': login_total,
 			'page': page,
 			'limit': limit,
-			'url': this.url.link('user/user.login', 'user_token=' + this.session.data['user_token'] + '&user_id=' + user_id + '&page={page}')
+			'url': await this.url.link('user/user.login', 'user_token=' + this.session.data['user_token'] + '&user_id=' + user_id + '&page={page}')
 		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (login_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (login_total - limit)) ? login_total : (((page - 1) * limit) + limit), login_total, Math.ceil(login_total / limit));

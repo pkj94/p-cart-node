@@ -32,16 +32,16 @@ class TopicController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('cms/topic', 'user_token=' + this.session.data['user_token'] + url)
+			'href' : await this.url.link('cms/topic', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
-		data['add'] = this.url.link('cms/topic.form', 'user_token=' + this.session.data['user_token'] + url);
-		data['delete'] = this.url.link('cms/topic.delete', 'user_token=' + this.session.data['user_token']);
+		data['add'] = await this.url.link('cms/topic.form', 'user_token=' + this.session.data['user_token'] + url);
+		data['delete'] = await this.url.link('cms/topic.delete', 'user_token=' + this.session.data['user_token']);
 
 		data['list'] = await this.getList();
 
@@ -97,7 +97,7 @@ class TopicController extends Controller {
 			url += '&page=' + this.request.get['page'];
 		}
 
-		data['action'] = this.url.link('cms/topic.list', 'user_token=' + this.session.data['user_token'] + url);
+		data['action'] = await this.url.link('cms/topic.list', 'user_token=' + this.session.data['user_token'] + url);
 
 		data['topics'] = [];
 
@@ -120,7 +120,7 @@ class TopicController extends Controller {
 				'name'       : result['name'],
 				'status'     : result['status'],
 				'sort_order' : result['sort_order'],
-				'edit'       : this.url.link('cms/topic.form', 'user_token=' + this.session.data['user_token'] + '&topic_id=' + result['topic_id'] + url)
+				'edit'       : await this.url.link('cms/topic.form', 'user_token=' + this.session.data['user_token'] + '&topic_id=' + result['topic_id'] + url)
 			];
 		}
 
@@ -132,8 +132,8 @@ class TopicController extends Controller {
 			url += '&order=ASC';
 		}
 
-		data['sort_name'] = this.url.link('cms/topic.list', 'user_token=' + this.session.data['user_token'] + '&sort=bcd.name' + url);
-		data['sort_sort_order'] = this.url.link('cms/topic.list', 'user_token=' + this.session.data['user_token'] + '&sort=bc.sort_order' + url);
+		data['sort_name'] = await this.url.link('cms/topic.list', 'user_token=' + this.session.data['user_token'] + '&sort=bcd.name' + url);
+		data['sort_sort_order'] = await this.url.link('cms/topic.list', 'user_token=' + this.session.data['user_token'] + '&sort=bc.sort_order' + url);
 
 		let url = '';
 
@@ -149,7 +149,7 @@ class TopicController extends Controller {
 			'total' : topic_total,
 			'page'  : page,
 			'limit' : this.config.get('config_pagination_admin'),
-			'url'   : this.url.link('cms/topic.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
+			'url'   : await this.url.link('cms/topic.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		]);
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (topic_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (topic_total - this.config.get('config_pagination_admin'))) ? topic_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), topic_total, Math.ceil(topic_total / this.config.get('config_pagination_admin')));
@@ -190,16 +190,16 @@ class TopicController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('cms/topic', 'user_token=' + this.session.data['user_token'] + url)
+			'href' : await this.url.link('cms/topic', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
-		data['save'] = this.url.link('cms/topic.save', 'user_token=' + this.session.data['user_token']);
-		data['back'] = this.url.link('cms/topic', 'user_token=' + this.session.data['user_token'] + url);
+		data['save'] = await this.url.link('cms/topic.save', 'user_token=' + this.session.data['user_token']);
+		data['back'] = await this.url.link('cms/topic', 'user_token=' + this.session.data['user_token'] + url);
 
 		if ((this.request.get['topic_id'])) {
 			this.load.model('cms/topic');

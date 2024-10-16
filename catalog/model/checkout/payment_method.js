@@ -1,28 +1,21 @@
-<?php
-namespace Opencart\Catalog\Model\Checkout;
-/**
- *
- *
- * @package Opencart\Catalog\Model\Checkout
- */
-class PaymentMethodController extends Controller {
+module.exports=class PaymentMethodController extends Controller {
 	/**
 	 * @param array payment_address
 	 *
 	 * @return array
 	 */
-	async getMethods(array payment_address = []): array {
+	async getMethods(array payment_address = []) {
 		method_data = [];
 
-		this->load->model('setting/extension');
+		this.load.model('setting/extension',this);
 
-		results = this->model_setting_extension->getExtensionsByType('payment');
+		const results = await this.model_setting_extension.getExtensionsByType('payment');
 
-		foreach (results as result) {
-			if (this->config->get('payment_' . result['code'] . '_status')) {
-				this->load->model('extension/' . result['extension'] . '/payment/' . result['code']);
+		for (let result of results) {
+			if (this.config.get('payment_' + result['code'] + '_status')) {
+				this.load.model('extension/' + result['extension'] + '/payment/' + result['code']);
 
-				payment_methods = this->{'model_extension_' . result['extension'] . '_payment_' . result['code']}->getMethods(payment_address);
+				payment_methods = this.{'model_extension_' + result['extension'] + '_payment_' + result['code']}.getMethods(payment_address);
 
 				if (payment_methods) {
 					method_data[result['code']] = payment_methods;
@@ -32,7 +25,7 @@ class PaymentMethodController extends Controller {
 
 		sort_order = [];
 
-		foreach (method_data as key => value) {
+		for (method_data as key : value) {
 			sort_order[key] = value['sort_order'];
 		}
 

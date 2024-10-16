@@ -15,22 +15,22 @@ module.exports = class CustomerOrderReportController extends Controller {
 
 		data.breadcrumbs.push({
 			text: this.language.get('text_home'),
-			href: this.url.link('common/dashboard', 'user_token=' + this.session.data.user_token)
+			href: await this.url.link('common/dashboard', 'user_token=' + this.session.data.user_token)
 		});
 
 		data.breadcrumbs.push({
 			text: this.language.get('text_extension'),
-			href: this.url.link('marketplace/extension', 'user_token=' + this.session.data.user_token + '&type=payment')
+			href: await this.url.link('marketplace/extension', 'user_token=' + this.session.data.user_token + '&type=payment')
 		});
 
 		data.breadcrumbs.push({
 			text: this.language.get('heading_title'),
-			href: this.url.link('extension/opencart/payment/customer_order', 'user_token=' + this.session.data.user_token)
+			href: await this.url.link('extension/opencart/payment/customer_order', 'user_token=' + this.session.data.user_token)
 		});
 
 
-		data['save'] = this.url.link('extension/opencart/report/customer_order+save', 'user_token=' + this.session.data['user_token']);
-		data['back'] = this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=report');
+		data['save'] = await this.url.link('extension/opencart/report/customer_order+save', 'user_token=' + this.session.data['user_token']);
+		data['back'] = await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=report');
 
 		data['report_customer_order_status'] = this.config.get('report_customer_order_status');
 		data['report_customer_order_sort_order'] = this.config.get('report_customer_order_sort_order');
@@ -148,7 +148,7 @@ module.exports = class CustomerOrderReportController extends Controller {
 				'orders': result['orders'],
 				'products': result['products'],
 				'total': this.currency.format(result['total'], this.config.get('config_currency')),
-				'edit': this.url.link('customer/customer+form', 'user_token=' + this.session.data['user_token'] + '&customer_id=' + result['customer_id'])
+				'edit': await this.url.link('customer/customer+form', 'user_token=' + this.session.data['user_token'] + '&customer_id=' + result['customer_id'])
 			});
 		}
 
@@ -174,7 +174,7 @@ module.exports = class CustomerOrderReportController extends Controller {
 			'total': customer_total,
 			'page': page,
 			'limit': this.config.get('config_pagination'),
-			'url': this.url.link('extension/opencart/report/customer_order+report', 'user_token=' + this.session.data['user_token'] + '&code=customer_order' + url + '&page={page}')
+			'url': await this.url.link('extension/opencart/report/customer_order+report', 'user_token=' + this.session.data['user_token'] + '&code=customer_order' + url + '&page={page}')
 		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (customer_total) ? ((page - 1) * this.config.get('config_pagination')) + 1 : 0, (((page - 1) * this.config.get('config_pagination')) > (customer_total - this.config.get('config_pagination'))) ? customer_total : (((page - 1) * this.config.get('config_pagination')) + this.config.get('config_pagination')), customer_total, Math.ceil(customer_total / this.config.get('config_pagination')));

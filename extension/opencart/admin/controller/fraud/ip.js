@@ -18,21 +18,21 @@ module.exports = class IpFaudController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_extension'),
-			'href': this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=fraud')
+			'href': await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=fraud')
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('extension/opencart/fraud/ip', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('extension/opencart/fraud/ip', 'user_token=' + this.session.data['user_token'])
 		});
 
-		data['save'] = this.url.link('extension/opencart/fraud/ip+save', 'user_token=' + this.session.data['user_token']);
-		data['back'] = this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=fraud');
+		data['save'] = await this.url.link('extension/opencart/fraud/ip+save', 'user_token=' + this.session.data['user_token']);
+		data['back'] = await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=fraud');
 
 		data['fraud_ip_order_status_id'] = this.config.get('fraud_ip_order_status_id');
 
@@ -122,7 +122,7 @@ module.exports = class IpFaudController extends Controller {
 				'ip': result['ip'],
 				'total': await this.model_customer_customer.getTotalCustomersByIp(result['ip']),
 				'date_added': date('d/m/y', new Date(result['date_added'])),
-				'filter_ip': this.url.link('customer/customer', 'user_token=' + this.session.data['user_token'] + '&filter_ip=' + result['ip'])
+				'filter_ip': await this.url.link('customer/customer', 'user_token=' + this.session.data['user_token'] + '&filter_ip=' + result['ip'])
 			});
 		}
 
@@ -132,7 +132,7 @@ module.exports = class IpFaudController extends Controller {
 			'total': ip_total,
 			'page': page,
 			'limit': limit,
-			'url': this.url.link('extension/opencart/fraud/ip+ip', 'user_token=' + this.session.data['user_token'] + '&page={page}')
+			'url': await this.url.link('extension/opencart/fraud/ip+ip', 'user_token=' + this.session.data['user_token'] + '&page={page}')
 		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (ip_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (ip_total - limit)) ? ip_total : (((page - 1) * limit) + limit), ip_total, Math.ceil(ip_total / limit));

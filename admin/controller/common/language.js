@@ -39,7 +39,7 @@ module.exports = class LanguageController extends Controller {
 			url += '&' + decodeURIComponent(url_data);
 		}
 
-		data['redirect'] = this.url.link(route, url);
+		data['redirect'] = await this.url.link(route, url);
 
 		data['user_token'] = this.session.data['user_token'];
 
@@ -77,7 +77,7 @@ module.exports = class LanguageController extends Controller {
 			if (redirect && substr(redirect, 0, strlen(this.config.get('config_url'))) == this.config.get('config_url')) {
 				json['redirect'] = redirect;
 			} else {
-				json['redirect'] = this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true);
+				json['redirect'] = await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true);
 			}
 		}
 

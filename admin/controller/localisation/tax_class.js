@@ -28,16 +28,16 @@ module.exports = class TaxController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('localisation/tax_class', 'user_token=' + this.session.data['user_token'] + url)
+			'href': await this.url.link('localisation/tax_class', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
-		data['add'] = this.url.link('localisation/tax_class.form', 'user_token=' + this.session.data['user_token'] + url);
-		data['delete'] = this.url.link('localisation/tax_class.delete', 'user_token=' + this.session.data['user_token']);
+		data['add'] = await this.url.link('localisation/tax_class.form', 'user_token=' + this.session.data['user_token'] + url);
+		data['delete'] = await this.url.link('localisation/tax_class.delete', 'user_token=' + this.session.data['user_token']);
 
 		data['list'] = await this.getList();
 
@@ -93,7 +93,7 @@ module.exports = class TaxController extends Controller {
 			url += '&page=' + this.request.get['page'];
 		}
 
-		data['action'] = this.url.link('localisation/tax_class.list', 'user_token=' + this.session.data['user_token'] + url);
+		data['action'] = await this.url.link('localisation/tax_class.list', 'user_token=' + this.session.data['user_token'] + url);
 
 		data['tax_classes'] = [];
 
@@ -114,7 +114,7 @@ module.exports = class TaxController extends Controller {
 			data['tax_classes'].push({
 				'tax_class_id': result['tax_class_id'],
 				'title': result['title'],
-				'edit': this.url.link('localisation/tax_class.form', 'user_token=' + this.session.data['user_token'] + '&tax_class_id=' + result['tax_class_id'] + url)
+				'edit': await this.url.link('localisation/tax_class.form', 'user_token=' + this.session.data['user_token'] + '&tax_class_id=' + result['tax_class_id'] + url)
 			});
 		}
 
@@ -126,7 +126,7 @@ module.exports = class TaxController extends Controller {
 			url += '&order=ASC';
 		}
 
-		data['sort_title'] = this.url.link('localisation/tax_class.list', 'user_token=' + this.session.data['user_token'] + '&sort=title' + url);
+		data['sort_title'] = await this.url.link('localisation/tax_class.list', 'user_token=' + this.session.data['user_token'] + '&sort=title' + url);
 
 		url = '';
 
@@ -142,7 +142,7 @@ module.exports = class TaxController extends Controller {
 			'total': tax_class_total,
 			'page': page,
 			'limit': this.config.get('config_pagination_admin'),
-			'url': this.url.link('localisation/tax_class.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
+			'url': await this.url.link('localisation/tax_class.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (tax_class_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (tax_class_total - this.config.get('config_pagination_admin'))) ? tax_class_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), tax_class_total, Math.ceil(tax_class_total / this.config.get('config_pagination_admin')));
@@ -182,16 +182,16 @@ module.exports = class TaxController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('localisation/tax_class', 'user_token=' + this.session.data['user_token'] + url)
+			'href': await this.url.link('localisation/tax_class', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
-		data['save'] = this.url.link('localisation/tax_class.save', 'user_token=' + this.session.data['user_token']);
-		data['back'] = this.url.link('localisation/tax_class', 'user_token=' + this.session.data['user_token'] + url);
+		data['save'] = await this.url.link('localisation/tax_class.save', 'user_token=' + this.session.data['user_token']);
+		data['back'] = await this.url.link('localisation/tax_class', 'user_token=' + this.session.data['user_token'] + url);
 		let tax_class_info;
 		if ((this.request.get['tax_class_id'])) {
 			this.load.model('localisation/tax_class', this);

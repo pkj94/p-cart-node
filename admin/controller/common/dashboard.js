@@ -10,11 +10,11 @@ module.exports = class DashboardController extends Controller {
         data['breadcrumbs'] = [];
         data['breadcrumbs'].push({
             'text': this.language.get('text_home'),
-            'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+            'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
         });
         data['breadcrumbs'].push({
             'text': this.language.get('heading_title'),
-            'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+            'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
         });
         // Dashboard Extensions
         let dashboards = [];

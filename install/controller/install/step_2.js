@@ -10,7 +10,7 @@ module.exports = class Step2 extends Controller {
         await this.load.language('install/step_2');
 
         if (this.request.server['method'] === 'POST' && this.validate()) {
-            this.response.setRedirect(this.url.link('install/step_3', `language=${this.config.get('language_code')}`));
+            this.response.setRedirect(await this.url.link('install/step_3', `language=${this.config.get('language_code')}`));
         }
 
         this.document.setTitle(this.language.get('heading_title'));
@@ -49,14 +49,14 @@ module.exports = class Step2 extends Controller {
             button_continue: this.language.get('button_continue'),
             button_back: this.language.get('button_back'),
             error_warning: this.error['warning'] || '',
-            action: this.url.link('install/step_2', `language=${this.config.get('language_code')}`),
+            action: await this.url.link('install/step_2', `language=${this.config.get('language_code')}`),
             node_version: process.version,
             db: true,
             catalog_config: DIR_OPENCART + 'config.json',
             admin_config: DIR_OPENCART + 'admin/config.json',
             error_catalog_config: '',
             error_admin_config: '',
-            back: this.url.link('install/step_1', `language=${this.config.get('language_code')}`)
+            back: await this.url.link('install/step_1', `language=${this.config.get('language_code')}`)
         };
         if (data.node_version < '18') {
             data['version'] = false;

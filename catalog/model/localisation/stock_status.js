@@ -1,20 +1,13 @@
-<?php
-namespace Opencart\Catalog\Model\Localisation;
-/**
- *
- *
- * @package Opencart\Catalog\Model\Localisation
- */
-class StockStatusController extends Model {
+module.exports =class StockStatusController extends Model {
 	/**
-	 * @param int stock_status_id
+	 * @param stock_status_id
 	 *
 	 * @return array
 	 */
-	async getStockStatus(stock_status_id): array {
-		query = this->db->query("SELECT * FROM `" . DB_PREFIX . "stock_status` WHERE `stock_status_id` = '" . (int)stock_status_id . "' AND `language_id` = '" . (int)this->config->get('config_language_id') . "'");
+	async getStockStatus(stock_status_id) {
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "stock_status` WHERE `stock_status_id` = '" + stock_status_id + "' AND `language_id` = '" + this.config.get('config_language_id') + "'");
 
-		return query->row;
+		return query.row;
 	}
 
 	/**
@@ -22,13 +15,13 @@ class StockStatusController extends Model {
 	 *
 	 * @return array
 	 */
-	async getStockStatuses(array data = []): array {
-		sql = "SELECT * FROM `" . DB_PREFIX . "stock_status` WHERE `language_id` = '" . (int)this->config->get('config_language_id') . "' ORDER BY `name`";
+	async getStockStatuses(data = {}) {
+		const sql = "SELECT * FROM `" + DB_PREFIX + "stock_status` WHERE `language_id` = '" + this.config.get('config_language_id') + "' ORDER BY `name`";
 
 		if ((data['order']) && (data['order'] == 'DESC')) {
-			sql .= " DESC";
+			sql += " DESC";
 		} else {
-			sql .= " ASC";
+			sql += " ASC";
 		}
 
 		if ((data['start']) || (data['limit'])) {
@@ -40,17 +33,17 @@ class StockStatusController extends Model {
 				data['limit'] = 20;
 			}
 
-			sql .= " LIMIT " . (int)data['start'] . "," . (int)data['limit'];
+			sql += " LIMIT " + data['start'] + "," + data['limit'];
 		}
 
-		stock_status_data = this->cache->get('stock_status.'. md5(sql));
+		stock_status_data = await this.cache.get('stock_status+'+ md5(sql));
 
 		if (!stock_status_data) {
-			query = this->db->query(sql);
+			const query = await this.db.query(sql);
 
-			stock_status_data = query->rows;
+			stock_status_data = query.rows;
 
-			this->cache->set('stock_status.'. md5(sql), stock_status_data);
+			await this.cache.set('stock_status+'+ md5(sql), stock_status_data);
 		}
 
 		return stock_status_data;

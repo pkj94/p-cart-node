@@ -17,7 +17,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
                 'id': 'menu-dashboard',
                 'icon': 'fas fa-home',
                 'name': this.language.get('text_dashboard'),
-                'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token']),
+                'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token']),
                 'children': []
             });
 
@@ -27,7 +27,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'catalog/category')) {
                 catalog.push({
                     'name': this.language.get('text_category'),
-                    'href': this.url.link('catalog/category', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('catalog/category', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -35,7 +35,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'catalog/product')) {
                 catalog.push({
                     'name': this.language.get('text_product'),
-                    'href': this.url.link('catalog/product', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('catalog/product', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -43,7 +43,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'catalog/subscription_plan')) {
                 catalog.push({
                     'name': this.language.get('text_subscription_plan'),
-                    'href': this.url.link('catalog/subscription_plan', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('catalog/subscription_plan', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -51,7 +51,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'catalog/filter')) {
                 catalog.push({
                     'name': this.language.get('text_filter'),
-                    'href': this.url.link('catalog/filter', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('catalog/filter', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -62,7 +62,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'catalog/attribute')) {
                 attribute.push({
                     'name': this.language.get('text_attribute'),
-                    'href': this.url.link('catalog/attribute', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('catalog/attribute', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -70,7 +70,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'catalog/attribute_group')) {
                 attribute.push({
                     'name': this.language.get('text_attribute_group'),
-                    'href': this.url.link('catalog/attribute_group', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('catalog/attribute_group', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -86,7 +86,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'catalog/option')) {
                 catalog.push({
                     'name': this.language.get('text_option'),
-                    'href': this.url.link('catalog/option', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('catalog/option', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -94,7 +94,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'catalog/manufacturer')) {
                 catalog.push({
                     'name': this.language.get('text_manufacturer'),
-                    'href': this.url.link('catalog/manufacturer', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('catalog/manufacturer', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -102,7 +102,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'catalog/download')) {
                 catalog.push({
                     'name': this.language.get('text_download'),
-                    'href': this.url.link('catalog/download', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('catalog/download', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -110,7 +110,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'catalog/review')) {
                 catalog.push({
                     'name': this.language.get('text_review'),
-                    'href': this.url.link('catalog/review', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('catalog/review', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -118,7 +118,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'catalog/information')) {
                 catalog.push({
                     'name': this.language.get('text_information'),
-                    'href': this.url.link('catalog/information', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('catalog/information', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -138,7 +138,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'cms/topic')) {
                 cms.push({
                     'name': this.language.get('text_topic'),
-                    'href': this.url.link('cms/topic', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('cms/topic', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -146,7 +146,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'cms/article')) {
                 cms.push({
                     'name': this.language.get('text_article'),
-                    'href': this.url.link('cms/article', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('cms/article', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -154,7 +154,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'cms/comment')) {
                 cms.push({
                     'name': this.language.get('text_comment'),
-                    'href': this.url.link('cms/comment', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('cms/comment', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -162,7 +162,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'cms/antispam')) {
                 cms.push({
                     'name': this.language.get('text_antispam'),
-                    'href': this.url.link('cms/antispam', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('cms/antispam', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -183,7 +183,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'marketplace/marketplace')) {
                 marketplace.push({
                     'name': this.language.get('text_marketplace'),
-                    'href': this.url.link('marketplace/marketplace', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('marketplace/marketplace', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -191,7 +191,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'marketplace/installer')) {
                 marketplace.push({
                     'name': this.language.get('text_installer'),
-                    'href': this.url.link('marketplace/installer', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('marketplace/installer', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -199,7 +199,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'marketplace/extension')) {
                 marketplace.push({
                     'name': this.language.get('text_extension'),
-                    'href': this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -207,7 +207,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'marketplace/startup')) {
                 marketplace.push({
                     'name': this.language.get('text_startup'),
-                    'href': this.url.link('marketplace/startup', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('marketplace/startup', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -215,7 +215,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'marketplace/event')) {
                 marketplace.push({
                     'name': this.language.get('text_event'),
-                    'href': this.url.link('marketplace/event', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('marketplace/event', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -223,7 +223,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'marketplace/cron')) {
                 marketplace.push({
                     'name': this.language.get('text_cron'),
-                    'href': this.url.link('marketplace/cron', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('marketplace/cron', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -244,7 +244,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'design/layout')) {
                 design.push({
                     'name': this.language.get('text_layout'),
-                    'href': this.url.link('design/layout', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('design/layout', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -252,7 +252,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'design/theme')) {
                 design.push({
                     'name': this.language.get('text_theme'),
-                    'href': this.url.link('design/theme', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('design/theme', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -260,7 +260,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'design/translation')) {
                 design.push({
                     'name': this.language.get('text_language_editor'),
-                    'href': this.url.link('design/translation', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('design/translation', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -268,7 +268,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'design/banner')) {
                 design.push({
                     'name': this.language.get('text_banner'),
-                    'href': this.url.link('design/banner', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('design/banner', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -278,7 +278,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'design/seo_url')) {
                 design.push({
                     'name': this.language.get('text_seo_url'),
-                    'href': this.url.link('design/seo_url', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('design/seo_url', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -299,7 +299,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'sale/order')) {
                 sale.push({
                     'name': this.language.get('text_order'),
-                    'href': this.url.link('sale/order', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('sale/order', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -307,7 +307,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'sale/subscription')) {
                 sale.push({
                     'name': this.language.get('text_subscription'),
-                    'href': this.url.link('sale/subscription', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('sale/subscription', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -315,7 +315,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'sale/returns')) {
                 sale.push({
                     'name': this.language.get('text_return'),
-                    'href': this.url.link('sale/returns', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('sale/returns', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -326,7 +326,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'sale/voucher')) {
                 voucher.push({
                     'name': this.language.get('text_voucher'),
-                    'href': this.url.link('sale/voucher', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('sale/voucher', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -334,7 +334,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'sale/voucher_theme')) {
                 voucher.push({
                     'name': this.language.get('text_voucher_theme'),
-                    'href': this.url.link('sale/voucher_theme', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('sale/voucher_theme', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -363,7 +363,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'customer/customer')) {
                 customer.push({
                     'name': this.language.get('text_customer'),
-                    'href': this.url.link('customer/customer', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('customer/customer', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -371,7 +371,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'customer/customer_group')) {
                 customer.push({
                     'name': this.language.get('text_customer_group'),
-                    'href': this.url.link('customer/customer_group', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('customer/customer_group', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -379,7 +379,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'customer/customer_approval')) {
                 customer.push({
                     'name': this.language.get('text_customer_approval'),
-                    'href': this.url.link('customer/customer_approval', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('customer/customer_approval', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -387,7 +387,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'customer/gdpr')) {
                 customer.push({
                     'name': this.language.get('text_gdpr'),
-                    'href': this.url.link('customer/gdpr', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('customer/gdpr', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -395,7 +395,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'customer/custom_field')) {
                 customer.push({
                     'name': this.language.get('text_custom_field'),
-                    'href': this.url.link('customer/custom_field', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('customer/custom_field', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -416,7 +416,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'marketing/affiliate')) {
                 marketing.push({
                     'name': this.language.get('text_affiliate'),
-                    'href': this.url.link('marketing/affiliate', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('marketing/affiliate', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -424,7 +424,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'marketing/marketing')) {
                 marketing.push({
                     'name': this.language.get('text_marketing'),
-                    'href': this.url.link('marketing/marketing', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('marketing/marketing', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -432,7 +432,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'marketing/coupon')) {
                 marketing.push({
                     'name': this.language.get('text_coupon'),
-                    'href': this.url.link('marketing/coupon', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('marketing/coupon', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -440,7 +440,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'marketing/contact')) {
                 marketing.push({
                     'name': this.language.get('text_contact'),
-                    'href': this.url.link('marketing/contact', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('marketing/contact', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -461,7 +461,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'setting/setting')) {
                 system.push({
                     'name': this.language.get('text_setting'),
-                    'href': this.url.link('setting/store', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('setting/store', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -472,7 +472,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'user/user')) {
                 user.push({
                     'name': this.language.get('text_users'),
-                    'href': this.url.link('user/user', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('user/user', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -480,7 +480,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'user/user_permission')) {
                 user.push({
                     'name': this.language.get('text_user_group'),
-                    'href': this.url.link('user/user_permission', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('user/user_permission', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -488,7 +488,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'user/api')) {
                 user.push({
                     'name': this.language.get('text_api'),
-                    'href': this.url.link('user/api', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('user/api', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -507,7 +507,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'localisation/location')) {
                 localisation.push({
                     'name': this.language.get('text_location'),
-                    'href': this.url.link('localisation/location', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('localisation/location', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -515,7 +515,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'localisation/language')) {
                 localisation.push({
                     'name': this.language.get('text_language'),
-                    'href': this.url.link('localisation/language', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('localisation/language', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -523,7 +523,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'localisation/currency')) {
                 localisation.push({
                     'name': this.language.get('text_currency'),
-                    'href': this.url.link('localisation/currency', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('localisation/currency', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -531,7 +531,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'localisation/stock_status')) {
                 localisation.push({
                     'name': this.language.get('text_stock_status'),
-                    'href': this.url.link('localisation/stock_status', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('localisation/stock_status', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -539,7 +539,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'localisation/order_status')) {
                 localisation.push({
                     'name': this.language.get('text_order_status'),
-                    'href': this.url.link('localisation/order_status', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('localisation/order_status', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -547,7 +547,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'localisation/subscription_status')) {
                 localisation.push({
                     'name': this.language.get('text_subscription_status'),
-                    'href': this.url.link('localisation/subscription_status', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('localisation/subscription_status', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -558,7 +558,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'localisation/return_status')) {
                 returns.push({
                     'name': this.language.get('text_return_status'),
-                    'href': this.url.link('localisation/return_status', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('localisation/return_status', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -566,7 +566,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'localisation/return_action')) {
                 returns.push({
                     'name': this.language.get('text_return_action'),
-                    'href': this.url.link('localisation/return_action', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('localisation/return_action', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -574,7 +574,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'localisation/return_reason')) {
                 returns.push({
                     'name': this.language.get('text_return_reason'),
-                    'href': this.url.link('localisation/return_reason', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('localisation/return_reason', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -590,7 +590,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'localisation/country')) {
                 localisation.push({
                     'name': this.language.get('text_country'),
-                    'href': this.url.link('localisation/country', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('localisation/country', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -598,7 +598,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'localisation/zone')) {
                 localisation.push({
                     'name': this.language.get('text_zone'),
-                    'href': this.url.link('localisation/zone', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('localisation/zone', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -606,7 +606,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'localisation/geo_zone')) {
                 localisation.push({
                     'name': this.language.get('text_geo_zone'),
-                    'href': this.url.link('localisation/geo_zone', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('localisation/geo_zone', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -617,7 +617,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'localisation/tax_class')) {
                 tax.push({
                     'name': this.language.get('text_tax_class'),
-                    'href': this.url.link('localisation/tax_class', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('localisation/tax_class', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -625,7 +625,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'localisation/tax_rate')) {
                 tax.push({
                     'name': this.language.get('text_tax_rate'),
-                    'href': this.url.link('localisation/tax_rate', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('localisation/tax_rate', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -641,7 +641,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'localisation/length_class')) {
                 localisation.push({
                     'name': this.language.get('text_length_class'),
-                    'href': this.url.link('localisation/length_class', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('localisation/length_class', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -649,7 +649,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'localisation/weight_class')) {
                 localisation.push({
                     'name': this.language.get('text_weight_class'),
-                    'href': this.url.link('localisation/weight_class', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('localisation/weight_class', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -657,7 +657,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'localisation/address_format')) {
                 localisation.push({
                     'name': this.language.get('text_address_format'),
-                    'href': this.url.link('localisation/address_format', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('localisation/address_format', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -676,7 +676,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'tool/upgrade')) {
                 maintenance.push({
                     'name': this.language.get('text_upgrade'),
-                    'href': this.url.link('tool/upgrade', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('tool/upgrade', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -684,7 +684,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'tool/backup')) {
                 maintenance.push({
                     'name': this.language.get('text_backup'),
-                    'href': this.url.link('tool/backup', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('tool/backup', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -692,7 +692,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'tool/upload')) {
                 maintenance.push({
                     'name': this.language.get('text_upload'),
-                    'href': this.url.link('tool/upload', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('tool/upload', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -700,7 +700,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'tool/log')) {
                 maintenance.push({
                     'name': this.language.get('text_log'),
-                    'href': this.url.link('tool/log', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('tool/log', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -728,7 +728,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'report/report')) {
                 report.push({
                     'name': this.language.get('text_reports'),
-                    'href': this.url.link('report/report', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('report/report', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -736,7 +736,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'report/online')) {
                 report.push({
                     'name': this.language.get('text_online'),
-                    'href': this.url.link('report/online', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('report/online', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }
@@ -744,7 +744,7 @@ module.exports = class ColumnLeftCommonController extends Controller {
             if (await  this.user.hasPermission('access', 'report/statistics')) {
                 report.push({
                     'name': this.language.get('text_statistics'),
-                    'href': this.url.link('report/statistics', 'user_token=' + this.session.data['user_token']),
+                    'href': await this.url.link('report/statistics', 'user_token=' + this.session.data['user_token']),
                     'children': []
                 });
             }

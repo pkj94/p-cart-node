@@ -29,16 +29,16 @@ module.exports = class OptionController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('catalog/option', 'user_token=' + this.session.data['user_token'] + url)
+			'href': await this.url.link('catalog/option', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
-		data['add'] = this.url.link('catalog/option.form', 'user_token=' + this.session.data['user_token'] + url);
-		data['delete'] = this.url.link('catalog/option.delete', 'user_token=' + this.session.data['user_token']);
+		data['add'] = await this.url.link('catalog/option.form', 'user_token=' + this.session.data['user_token'] + url);
+		data['delete'] = await this.url.link('catalog/option.delete', 'user_token=' + this.session.data['user_token']);
 
 		data['list'] = await this.getList();
 
@@ -94,7 +94,7 @@ module.exports = class OptionController extends Controller {
 			url += '&page=' + this.request.get['page'];
 		}
 
-		data['action'] = this.url.link('catalog/option.list', 'user_token=' + this.session.data['user_token'] + url);
+		data['action'] = await this.url.link('catalog/option.list', 'user_token=' + this.session.data['user_token'] + url);
 
 		data['options'] = [];
 
@@ -116,7 +116,7 @@ module.exports = class OptionController extends Controller {
 				'option_id': result['option_id'],
 				'name': result['name'],
 				'sort_order': result['sort_order'],
-				'edit': this.url.link('catalog/option.form', 'user_token=' + this.session.data['user_token'] + '&option_id=' + result['option_id'] + url)
+				'edit': await this.url.link('catalog/option.form', 'user_token=' + this.session.data['user_token'] + '&option_id=' + result['option_id'] + url)
 			});
 		}
 
@@ -128,8 +128,8 @@ module.exports = class OptionController extends Controller {
 			url += '&order=ASC';
 		}
 
-		data['sort_name'] = this.url.link('catalog/option.list', 'user_token=' + this.session.data['user_token'] + '&sort=od.name' + url);
-		data['sort_sort_order'] = this.url.link('catalog/option.list', 'user_token=' + this.session.data['user_token'] + '&sort=o.sort_order' + url);
+		data['sort_name'] = await this.url.link('catalog/option.list', 'user_token=' + this.session.data['user_token'] + '&sort=od.name' + url);
+		data['sort_sort_order'] = await this.url.link('catalog/option.list', 'user_token=' + this.session.data['user_token'] + '&sort=o.sort_order' + url);
 
 		url = '';
 
@@ -145,7 +145,7 @@ module.exports = class OptionController extends Controller {
 			'total': option_total,
 			'page': page,
 			'limit': this.config.get('config_pagination_admin'),
-			'url': this.url.link('catalog/option.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
+			'url': await this.url.link('catalog/option.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (option_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (option_total - this.config.get('config_pagination_admin'))) ? option_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), option_total, Math.ceil(option_total / this.config.get('config_pagination_admin')));
@@ -185,16 +185,16 @@ module.exports = class OptionController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('catalog/option', 'user_token=' + this.session.data['user_token'] + url)
+			'href': await this.url.link('catalog/option', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
-		data['save'] = this.url.link('catalog/option.save', 'user_token=' + this.session.data['user_token']);
-		data['back'] = this.url.link('catalog/option', 'user_token=' + this.session.data['user_token'] + url);
+		data['save'] = await this.url.link('catalog/option.save', 'user_token=' + this.session.data['user_token']);
+		data['back'] = await this.url.link('catalog/option', 'user_token=' + this.session.data['user_token'] + url);
 		let option_info;
 		if ((this.request.get['option_id'])) {
 			this.load.model('catalog/option', this);

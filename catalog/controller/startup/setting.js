@@ -1,59 +1,59 @@
-module.exports=class SettingController extends Controller {
+module.exports = class SettingController extends Controller {
 	/**
 	 * @return void
 	 */
-	async index(): void {
-		$this->load->model('setting/store');
+	async index() {
+		this.load.model('setting/store', this);
 
-		$hostname = ($this->request->server['HTTPS'] ? 'https://' : 'http://') . str_replace('www.', '', $this->request->server['HTTP_HOST']) . rtrim(dirname($this->request->server['PHP_SELF']), '/.\\') . '/';
+		const hostname = `${this.request.server.protocol}://${this.request.server.hostname.replace('www.', '')}${this.request.server.originalUrl.substring(0, this.request.server.originalUrl.lastIndexOf('/'))}/`;
 
-		$store_info = $this->model_setting_store->getStoreByHostname($hostname);
+		const store_info = await this.model_setting_store.getStoreByHostname(hostname);
 
 		// Store
-		if (($this->request->get['store_id'])) {
-			$this->config->set('config_store_id', (int)$this->request->get['store_id']);
-		} elseif ($store_info) {
-			$this->config->set('config_store_id', $store_info['store_id']);
+		if ((this.request.get['store_id'])) {
+			this.config.set('config_store_id', this.request.get['store_id']);
+		} else if (store_info.store_id) {
+			this.config.set('config_store_id', store_info['store_id']);
 		} else {
-			$this->config->set('config_store_id', 0);
+			this.config.set('config_store_id', 0);
 		}
 
-		if (!$store_info) {
+		if (!store_info.store_id) {
 			// If catalog constant is defined
-			if (defined('HTTP_CATALOG')) {
-				$this->config->set('config_url', HTTP_CATALOG);
-			} else{
-				$this->config->set('config_url', HTTP_SERVER);
+			if (typeof HTTP_CATALOG != 'undefined') {
+				this.config.set('config_url', HTTP_CATALOG);
+			} else {
+				this.config.set('config_url', HTTP_SERVER);
 			}
 		}
 
 		// Settings
-		$this->load->model('setting/setting');
+		this.load.model('setting/setting', this);
 
-		$results = $this->model_setting_setting->getSettings($this->config->get('config_store_id'));
+		const results = await this.model_setting_setting.getSettings(this.config.get('config_store_id'));
 
-		foreach ($results as $result) {
-			if (!$result['serialized']) {
-				$this->config->set($result['key'], $result['value']);
+		for (let result of results) {
+			if (!result['serialized']) {
+				this.config.set(result['key'], result['value']);
 			} else {
-				$this->config->set($result['key'], JSON.parse($result['value'], true));
+				this.config.set(result['key'], JSON.parse(result['value']));
 			}
 		}
 
 		// Url
-		$this->registry->set('url', new \Opencart\System\Library\Url($this->config->get('config_url')));
+		this.registry.set('url', new UrlLibrary(this.config.get('config_url')));
 
 		// Set time zone
-		if ($this->config->get('config_timezone')) {
-			date_default_timezone_set($this->config->get('config_timezone'));
+		if (this.config.get('config_timezone')) {
+			process.env.TZ = this.config.get('config_timezone');
 
-			// Sync PHP and DB time zones.
-			$this->db->query("SET time_zone = '" . $this->db->escape(date('P')) . "'");
+			// Sync PHP and DB time zones+
+			await this.db.query("SET time_zone = " + this.db.escape(date('P')));
 		}
 
 		// Response output compression level
-		if ($this->config->get('config_compression')) {
-			$this->response->setCompression((int)$this->config->get('config_compression'));
+		if (this.config.get('config_compression')) {
+			this.response.setCompression(this.config.get('config_compression'));
 		}
 	}
 }

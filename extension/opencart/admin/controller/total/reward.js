@@ -16,21 +16,21 @@ module.exports = class RewardTotalController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_extension'),
-			'href' : this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=total')
+			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=total')
 		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('extension/opencart/total/reward', 'user_token=' + this.session.data['user_token'])
+			'href' : await this.url.link('extension/opencart/total/reward', 'user_token=' + this.session.data['user_token'])
 		});
 
-		data['save'] = this.url.link('extension/opencart/total/reward.save', 'user_token=' + this.session.data['user_token']);
-		data['back'] = this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=total');
+		data['save'] = await this.url.link('extension/opencart/total/reward.save', 'user_token=' + this.session.data['user_token']);
+		data['back'] = await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=total');
 
 		data['total_reward_status'] = this.config.get('total_reward_status');
 		data['total_reward_sort_order'] = this.config.get('total_reward_sort_order');

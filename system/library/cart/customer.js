@@ -16,7 +16,6 @@ module.exports = class CustomerLibrary {
     async init() {
         if (this.session.customer_id) {
             const customer_query = await this.db.query(`SELECT * FROM ${DB_PREFIX}customer WHERE customer_id = ${this.session.customer_id} AND status = '1'`);
-
             if (customer_query.length) {
                 this.customer_id = customer_query[0].customer_id;
                 this.firstname = customer_query[0].firstname;
@@ -90,50 +89,61 @@ module.exports = class CustomerLibrary {
         this.newsletter = false;
     }
 
-    isLogged() {
+    async isLogged() {
+        await this.init();
         return this.customer_id !== 0;
     }
 
-    getId() {
+    async getId() {
+        await this.init();
         return this.customer_id;
     }
 
-    getFirstName() {
+    async getFirstName() {
+        await this.init();
         return this.firstname;
     }
 
-    getLastName() {
+    async getLastName() {
+        await this.init();
         return this.lastname;
     }
 
-    getGroupId() {
+    async getGroupId() {
+        await this.init();
         return this.customer_group_id;
     }
 
-    getEmail() {
+    async getEmail() {
+        await this.init();
         return this.email;
     }
 
-    getTelephone() {
+    async getTelephone() {
+        await this.init();
         return this.telephone;
     }
 
-    getNewsletter() {
+    async getNewsletter() {
+        await this.init();
         return this.newsletter;
     }
 
     async getAddressId() {
+        await this.init();
         const query = await this.db.query(`SELECT * FROM ${DB_PREFIX}address WHERE customer_id = ${this.customer_id} AND default = '1'`);
 
         return query.length ? query[0].address_id : 0;
     }
 
     async getBalance() {
+        await this.init();
         const query = await this.db.query(`SELECT SUM(amount) AS total FROM ${DB_PREFIX}customer_transaction WHERE customer_id = ${this.customer_id}`);
         return query.length ? query[0].total : 0;
     }
 
     async getRewardPoints() {
+        await this.init();
         const query = await this.db.query(`SELECT SUM(points) AS total FROM ${DB_PREFIX}customer_reward WHERE customer_id = ${this.customer_id}`);
         return query.length ? query[0].total : 0;
     }

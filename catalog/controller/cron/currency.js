@@ -7,7 +7,7 @@ namespace Opencart\Catalog\Controller\Cron;
  */
 class CurrencyController extends Controller {
 	/**
-	 * @param int    cron_id
+	 * @param    cron_id
 	 * @param string code
 	 * @param string cycle
 	 * @param string date_added
@@ -15,13 +15,13 @@ class CurrencyController extends Controller {
 	 *
 	 * @return void
 	 */
-	async index(cron_id, string code, string cycle, string date_added, string date_modified): void {
-		this->load->model('setting/extension');
+	async index(cron_id, code, cycle, date_added, date_modified) {
+		this.load.model('setting/extension',this);
 
-		extension_info = this->model_setting_extension->getExtensionByCode('currency', this->config->get('config_currency_engine'));
+		extension_info = await this.model_setting_extension.getExtensionByCode('currency', this.config.get('config_currency_engine'));
 
 		if (extension_info) {
-			this->load->controller('extension/' . extension_info['extension'] . '/currency/' . extension_info['code'] . '.currency', this->config->get('config_currency'));
+			this.load.controller('extension/' + extension_info['extension'] + '/currency/' + extension_info['code'] + '+currency', this.config.get('config_currency'));
 		}
 	}
 }

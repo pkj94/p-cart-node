@@ -22,6 +22,9 @@ module.exports = class SessionLibrary {
             });
         });
     }
+    start(id) {
+        this.session_id = id;
+    }
     async destroy() {
 
         this.data = {};

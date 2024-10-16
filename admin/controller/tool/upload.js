@@ -29,16 +29,16 @@ module.exports = class UploadController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('tool/upload', 'user_token=' + this.session.data['user_token'] + url)
+			'href': await this.url.link('tool/upload', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
-		data['add'] = this.url.link('tool/upload.form', 'user_token=' + this.session.data['user_token'] + url);
-		data['delete'] = this.url.link('tool/upload.delete', 'user_token=' + this.session.data['user_token']);
+		data['add'] = await this.url.link('tool/upload.form', 'user_token=' + this.session.data['user_token'] + url);
+		data['delete'] = await this.url.link('tool/upload.delete', 'user_token=' + this.session.data['user_token']);
 
 		data['list'] = await this.getList();
 
@@ -119,7 +119,7 @@ module.exports = class UploadController extends Controller {
 			url += '&page=' + this.request.get['page'];
 		}
 
-		data['action'] = this.url.link('tool/upload.list', 'user_token=' + this.session.data['user_token'] + url);
+		data['action'] = await this.url.link('tool/upload.list', 'user_token=' + this.session.data['user_token'] + url);
 
 		data['uploads'] = [];
 
@@ -145,7 +145,7 @@ module.exports = class UploadController extends Controller {
 				'name': result['name'],
 				'code': result['code'],
 				'date_added': date(this.language.get('date_format_short'), new Date(result['date_added'])),
-				'download': this.url.link('tool/upload.download', 'user_token=' + this.session.data['user_token'] + '&code=' + result['code'] + url)
+				'download': await this.url.link('tool/upload.download', 'user_token=' + this.session.data['user_token'] + '&code=' + result['code'] + url)
 			});
 		}
 
@@ -173,9 +173,9 @@ module.exports = class UploadController extends Controller {
 			url += '&page=' + this.request.get['page'];
 		}
 
-		data['sort_name'] = this.url.link('tool/upload.list', 'user_token=' + this.session.data['user_token'] + '&sort=name' + url);
-		data['sort_code'] = this.url.link('tool/upload.list', 'user_token=' + this.session.data['user_token'] + '&sort=code' + url);
-		data['sort_date_added'] = this.url.link('tool/upload.list', 'user_token=' + this.session.data['user_token'] + '&sort=date_added' + url);
+		data['sort_name'] = await this.url.link('tool/upload.list', 'user_token=' + this.session.data['user_token'] + '&sort=name' + url);
+		data['sort_code'] = await this.url.link('tool/upload.list', 'user_token=' + this.session.data['user_token'] + '&sort=code' + url);
+		data['sort_date_added'] = await this.url.link('tool/upload.list', 'user_token=' + this.session.data['user_token'] + '&sort=date_added' + url);
 
 		url = '';
 
@@ -203,7 +203,7 @@ module.exports = class UploadController extends Controller {
 			'total': upload_total,
 			'page': page,
 			'limit': this.config.get('config_pagination_admin'),
-			'url': this.url.link('tool/upload.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
+			'url': await this.url.link('tool/upload.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (upload_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (upload_total - this.config.get('config_pagination_admin'))) ? upload_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), upload_total, Math.ceil(upload_total / this.config.get('config_pagination_admin')));
@@ -296,12 +296,12 @@ module.exports = class UploadController extends Controller {
 
 			data['breadcrumbs'].push({
 				'text': this.language.get('text_home'),
-				'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+				'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 			});
 
 			data['breadcrumbs'].push({
 				'text': this.language.get('heading_title'),
-				'href': this.url.link('error/not_found', 'user_token=' + this.session.data['user_token'])
+				'href': await this.url.link('error/not_found', 'user_token=' + this.session.data['user_token'])
 			});
 
 			data['header'] = await this.load.controller('common/header');

@@ -59,25 +59,25 @@ module.exports = class PromotionController extends Controller {
 				// Download
 				let download = '';
 				if (!extension_install_info.extension_install_id) {
-					download = this.url.link('marketplace/marketplace.download', 'user_token=' + this.session.data['user_token'] + '&extension_id=' + result['extension_id'] + '&extension_download_id=' + result['extension_download_id']);
+					download = await this.url.link('marketplace/marketplace.download', 'user_token=' + this.session.data['user_token'] + '&extension_id=' + result['extension_id'] + '&extension_download_id=' + result['extension_download_id']);
 				}
 
 				// Install
 				let install = '';
 				if (extension_install_info.extension_install_id && !extension_install_info['status']) {
-					install = this.url.link('marketplace/installer.install', 'user_token=' + this.session.data['user_token'] + '&extension_install_id=' + extension_install_info['extension_install_id']);
+					install = await this.url.link('marketplace/installer.install', 'user_token=' + this.session.data['user_token'] + '&extension_install_id=' + extension_install_info['extension_install_id']);
 				}
 
 				// Delete
 				let remove = '';
 				if (extension_install_info.extension_install_id && !extension_install_info['status']) {
-					remove = this.url.link('marketplace/installer.delete', 'user_token=' + this.session.data['user_token'] + '&extension_install_id=' + extension_install_info['extension_install_id']);
+					remove = await this.url.link('marketplace/installer.delete', 'user_token=' + this.session.data['user_token'] + '&extension_install_id=' + extension_install_info['extension_install_id']);
 				}
 
 				if (!extension_install_info.extension_install_id || !extension_install_info['status']) {
 					data['extensions'].push({
 						'name': result['name'],
-						'href': this.url.link('marketplace/marketplace.info', 'user_token=' + this.session.data['user_token'] + '&extension_id=' + result['extension_id']),
+						'href': await this.url.link('marketplace/marketplace.info', 'user_token=' + this.session.data['user_token'] + '&extension_id=' + result['extension_id']),
 						'download': download,
 						'install': install,
 						'delete': remove

@@ -11,20 +11,20 @@ class MarketingController extends Model {
 	 *
 	 * @return array
 	 */
-	async getMarketingByCode(string code): array {
-		query = this->db->query("SELECT DISTINCT * FROM `" . DB_PREFIX . "marketing` WHERE `code` = '" . this->db->escape(code) . "'");
+	async getMarketingByCode(code) {
+		const query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "marketing` WHERE `code` = '" + this.db.escape(code) + "'");
 
-		return query->row;
+		return query.row;
 	}
 
 	/**
-	 * @param int    marketing_id
+	 * @param    marketing_id
 	 * @param string ip
 	 * @param string country
 	 *
 	 * @return void
 	 */
-	async addReport(marketing_id, string ip, string country = ''): void {
-		this->db->query("INSERT INTO `" . DB_PREFIX . "marketing_report` SET `marketing_id` = '" . (int)marketing_id . "', `store_id` = '" . (int)this->config->get('config_store_id') . "', `ip` = '" . this->db->escape(ip) . "', `country` = '" . this->db->escape(country) . "', `date_added` = NOW()");
+	async addReport(marketing_id, ip, country = '') {
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "marketing_report` SET `marketing_id` = '" + marketing_id + "', `store_id` = '" + this.config.get('config_store_id') + "', `ip` = '" + this.db.escape(ip) + "', `country` = '" + this.db.escape(country) + "', `date_added` = NOW()");
 	}
 }

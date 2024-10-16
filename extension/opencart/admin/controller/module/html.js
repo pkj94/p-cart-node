@@ -11,33 +11,33 @@ module.exports = class HTMLModuleController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_extension'),
-			'href': this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=module')
+			'href': await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=module')
 		});
 
 		if (!(this.request.get['module_id'])) {
 			data['breadcrumbs'].push({
 				'text': this.language.get('heading_title'),
-				'href': this.url.link('extension/opencart/module/html', 'user_token=' + this.session.data['user_token'])
+				'href': await this.url.link('extension/opencart/module/html', 'user_token=' + this.session.data['user_token'])
 			});
 		} else {
 			data['breadcrumbs'].push({
 				'text': this.language.get('heading_title'),
-				'href': this.url.link('extension/opencart/module/html', 'user_token=' + this.session.data['user_token'] + '&module_id=' + this.request.get['module_id'])
+				'href': await this.url.link('extension/opencart/module/html', 'user_token=' + this.session.data['user_token'] + '&module_id=' + this.request.get['module_id'])
 			});
 		}
 
 		if (!(this.request.get['module_id'])) {
-			data['save'] = this.url.link('extension/opencart/module/html.save', 'user_token=' + this.session.data['user_token']);
+			data['save'] = await this.url.link('extension/opencart/module/html.save', 'user_token=' + this.session.data['user_token']);
 		} else {
-			data['save'] = this.url.link('extension/opencart/module/html.save', 'user_token=' + this.session.data['user_token'] + '&module_id=' + this.request.get['module_id']);
+			data['save'] = await this.url.link('extension/opencart/module/html.save', 'user_token=' + this.session.data['user_token'] + '&module_id=' + this.request.get['module_id']);
 		}
 
-		data['back'] = this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=module');
+		data['back'] = await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=module');
 		let module_info = {};
 		if ((this.request.get['module_id']) && (this.request.server['mrthod'] != 'POST')) {
 			this.load.model('setting/module', this);

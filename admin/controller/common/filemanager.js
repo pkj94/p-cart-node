@@ -113,7 +113,7 @@ module.exports = class FileManagerController extends Controller {
 						data['directories'].push({
 							'name': name,
 							'path': oc_substr(path, oc_strlen(base)) + '/',
-							'href': this.url.link('common/filemanager.list', 'user_token=' + this.session.data['user_token'] + '&directory=' + encodeURIComponent(oc_substr(path, oc_strlen(base))) + url)
+							'href': await this.url.link('common/filemanager.list', 'user_token=' + this.session.data['user_token'] + '&directory=' + encodeURIComponent(oc_substr(path, oc_strlen(base))) + url)
 						});
 					}
 
@@ -164,7 +164,7 @@ module.exports = class FileManagerController extends Controller {
 			url += '&ckeditor=' + this.request.get['ckeditor'];
 		}
 
-		data['parent'] = this.url.link('common/filemanager.list', 'user_token=' + this.session.data['user_token'] + url);
+		data['parent'] = await this.url.link('common/filemanager.list', 'user_token=' + this.session.data['user_token'] + url);
 
 		// Refresh
 		url = '';
@@ -193,7 +193,7 @@ module.exports = class FileManagerController extends Controller {
 			url += '&page=' + this.request.get['page'];
 		}
 
-		data['refresh'] = this.url.link('common/filemanager.list', 'user_token=' + this.session.data['user_token'] + url);
+		data['refresh'] = await this.url.link('common/filemanager.list', 'user_token=' + this.session.data['user_token'] + url);
 
 		url = '';
 
@@ -222,7 +222,7 @@ module.exports = class FileManagerController extends Controller {
 			'total': total,
 			'page': page,
 			'limit': limit,
-			'url': this.url.link('common/filemanager.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
+			'url': await this.url.link('common/filemanager.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		});
 
 		this.response.setOutput(await this.load.view('common/filemanager_list', data));

@@ -6,14 +6,15 @@ module.exports = class CartLibrary {
         this.session = registry.get('session');
         this.tax = registry.get('tax');
         this.weight = registry.get('weight');
+        this.request = registry.get('request');
         this.data = [];
         this.init();
     }
     async init() {
         await this.db.query(`DELETE FROM ${DB_PREFIX}cart WHERE (api_id > '0' OR customer_id = '0') AND date_added < DATE_SUB(NOW(), INTERVAL 1 HOUR)`);
 
-        if (this.customer.isLogged()) {
-            await this.db.query(`UPDATE cart SET session_id = '${this.session.getId()}' WHERE api_id = '0' AND customer_id = ${this.customer.getId()}`);
+        if (await this.customer.isLogged()) {
+            await this.db.query(`UPDATE ${DB_PREFIX}cart SET session_id = '${this.session.getId()}' WHERE api_id = '0' AND customer_id = ${await this.customer.getId()}`);
             const cart_query = this.db.query(`SELECT * FROM ${DB_PREFIX}cart WHERE api_id = '0' AND customer_id = '0' AND session_id = '${this.session.getId()}'`);
 
             for (let cart of cart_query.rows) {
@@ -175,10 +176,10 @@ module.exports = class CartLibrary {
     }
     async add(product_id, quantity = 1, option = [], subscription_plan_id = 0, override = false, price = 0) {
         const query = await this.db.query(
-            "SELECT COUNT(*) AS `total` FROM "+DB_PREFIX+"`cart` WHERE `api_id` = ? AND `customer_id` = ? AND `session_id` = ? AND `product_id` = ? AND `subscription_plan_id` = ? AND `option` = ?",
+            "SELECT COUNT(*) AS `total` FROM " + DB_PREFIX + "`cart` WHERE `api_id` = ? AND `customer_id` = ? AND `session_id` = ? AND `product_id` = ? AND `subscription_plan_id` = ? AND `option` = ?",
             [
                 this.session.data.api_id || 0,
-                this.customer.getId(),
+                await this.customer.getId(),
                 this.session.getId(),
                 product_id,
                 subscription_plan_id,
@@ -191,7 +192,7 @@ module.exports = class CartLibrary {
                 "INSERT INTO `cart` SET `api_id` = ?, `customer_id` = ?, `session_id` = ?, `product_id` = ?, `subscription_plan_id` = ?, `option` = ?, `quantity` = ?, `override` = ?, `price` = ?, `date_added` = NOW()",
                 [
                     this.session.data.api_id || 0,
-                    this.customer.getId(),
+                    await this.customer.getId(),
                     this.session.getId(),
                     product_id,
                     subscription_plan_id,
@@ -207,7 +208,7 @@ module.exports = class CartLibrary {
                 [
                     quantity,
                     this.session.data.api_id || 0,
-                    this.customer.getId(),
+                    await this.customer.getId(),
                     this.session.getId(),
                     product_id,
                     subscription_plan_id,
@@ -222,7 +223,7 @@ module.exports = class CartLibrary {
     async update(cart_id, quantity) {
         await this.db.query(
             "UPDATE `cart` SET `quantity` = ? WHERE `cart_id` = ? AND `api_id` = ? AND `customer_id` = ? AND `session_id` = ?",
-            [quantity, cart_id, this.session.data.api_id || 0, this.customer.getId(), this.session.getId()]
+            [quantity, cart_id, this.session.data.api_id || 0, await this.customer.getId(), this.session.getId()]
         );
         this.data = await this.getProducts();
     }
@@ -232,12 +233,12 @@ module.exports = class CartLibrary {
     }
 
     async remove(cart_id) {
-        await this.db.query("DELETE FROM "+DB_PREFIX+"`cart` WHERE `cart_id` = ? AND `api_id` = ? AND `customer_id` = ? AND `session_id` = ?", [cart_id, this.session.data.api_id || 0, this.customer.getId(), this.session.getId()]);
+        await this.db.query("DELETE FROM " + DB_PREFIX + "`cart` WHERE `cart_id` = ? AND `api_id` = ? AND `customer_id` = ? AND `session_id` = ?", [cart_id, this.session.data.api_id || 0, await this.customer.getId(), this.session.getId()]);
         delete this.data[cart_id];
     }
 
     async clear() {
-        await this.db.query("DELETE FROM ${DB_PREFIX}`cart` WHERE `api_id` = ? AND `customer_id` = ? AND `session_id` = ?", [this.session.data.api_id || 0, this.customer.getId(), this.session.getId()]);
+        await this.db.query("DELETE FROM ${DB_PREFIX}`cart` WHERE `api_id` = ? AND `customer_id` = ? AND `session_id` = ?", [this.session.data.api_id || 0, await this.customer.getId(), this.session.getId()]);
         this.data = [];
     }
 

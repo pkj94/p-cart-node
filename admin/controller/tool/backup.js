@@ -21,15 +21,15 @@ module.exports = class BackupController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('tool/backup', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('tool/backup', 'user_token=' + this.session.data['user_token'])
 		});
 
-		data['upload'] = this.url.link('tool/backup.upload', 'user_token=' + this.session.data['user_token']);
+		data['upload'] = await this.url.link('tool/backup.upload', 'user_token=' + this.session.data['user_token']);
 
 		this.load.model('tool/backup', this);
 
@@ -106,7 +106,7 @@ module.exports = class BackupController extends Controller {
 				'filename': expressPath.basename(file),
 				'size': Math.round(size.toString().substring(0, size.toString().indexOf('.') + 4), 2) + suffix[i],
 				'date_added': date(this.language.get('datetime_format'), fs.lstatSync(file).mtime),
-				'download': this.url.link('tool/backup.download', 'user_token=' + this.session.data['user_token'] + '&filename=' + encodeURIComponent(expressPath.basename(file))),
+				'download': await this.url.link('tool/backup.download', 'user_token=' + this.session.data['user_token'] + '&filename=' + encodeURIComponent(expressPath.basename(file))),
 			});
 		}
 
@@ -195,11 +195,11 @@ module.exports = class BackupController extends Controller {
 			} else if ((page * 200) >= record_total) {
 				json['text'] = sprintf(this.language.get('text_backup'), table, (page - 1) * 200, record_total);
 
-				json['next'] = this.url.link('tool/backup.backup', 'user_token=' + this.session.data['user_token'] + '&filename=' + encodeURIComponent(filename) + '&table=' + table + '&page=1', true);
+				json['next'] = await this.url.link('tool/backup.backup', 'user_token=' + this.session.data['user_token'] + '&filename=' + encodeURIComponent(filename) + '&table=' + table + '&page=1', true);
 			} else {
 				json['text'] = sprintf(this.language.get('text_backup'), table, (page - 1) * 200, page * 200);
 
-				json['next'] = this.url.link('tool/backup.backup', 'user_token=' + this.session.data['user_token'] + '&filename=' + encodeURIComponent(filename) + '&table=' + table + '&page=' + (page + 1), true);
+				json['next'] = await this.url.link('tool/backup.backup', 'user_token=' + this.session.data['user_token'] + '&filename=' + encodeURIComponent(filename) + '&table=' + table + '&page=' + (page + 1), true);
 			}
 		}
 
@@ -270,7 +270,7 @@ module.exports = class BackupController extends Controller {
 			if (position < handle.split('\n').length) {
 				json['text'] = sprintf(this.language.get('text_restore'), position, handle.split('\n').length);
 
-				json['next'] = this.url.link('tool/backup.restore', 'user_token=' + this.session.data['user_token'] + '&filename=' + encodeURIComponent(filename) + '&position=' + position, true);
+				json['next'] = await this.url.link('tool/backup.restore', 'user_token=' + this.session.data['user_token'] + '&filename=' + encodeURIComponent(filename) + '&position=' + position, true);
 			} else {
 				json['success'] = this.language.get('text_success');
 
@@ -342,13 +342,13 @@ module.exports = class BackupController extends Controller {
 		}
 		// Check user has permission
 		if (!await this.user.hasPermission('modify', 'tool/backup')) {
-			this.response.setRedirect(this.url.link('error/permission', 'user_token=' + this.session.data['user_token'], true));
+			this.response.setRedirect(await this.url.link('error/permission', 'user_token=' + this.session.data['user_token'], true));
 		} else {
 
 			let file = DIR_STORAGE + 'backup/' + filename;
 
 			if (!fs.lstatSync(file).isFile()) {
-				this.response.setRedirect(this.url.link('error/not_found', 'user_token=' + this.session.data['user_token'], true));
+				this.response.setRedirect(await this.url.link('error/not_found', 'user_token=' + this.session.data['user_token'], true));
 			} else {
 
 				// if (!headers_sent()) {

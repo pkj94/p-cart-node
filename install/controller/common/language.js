@@ -22,7 +22,7 @@ module.exports = class LanguageController extends Controller {
             data.languages.push({
                 text: language.get('text_name'),
                 code: code,
-                href: this.url.link(route, { language: code })
+                href: await this.url.link(route, { language: code })
             });
         }
         return await this.load.view('common/language', data);

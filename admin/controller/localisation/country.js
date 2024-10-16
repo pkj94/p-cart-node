@@ -43,16 +43,16 @@ module.exports = class CountryController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('localisation/country', 'user_token=' + this.session.data['user_token'] + url)
+			'href': await this.url.link('localisation/country', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
-		data['add'] = this.url.link('localisation/country.form', 'user_token=' + this.session.data['user_token'] + url);
-		data['delete'] = this.url.link('localisation/country.delete', 'user_token=' + this.session.data['user_token']);
+		data['add'] = await this.url.link('localisation/country.form', 'user_token=' + this.session.data['user_token'] + url);
+		data['delete'] = await this.url.link('localisation/country.delete', 'user_token=' + this.session.data['user_token']);
 
 		data['list'] = await this.getList();
 
@@ -138,7 +138,7 @@ module.exports = class CountryController extends Controller {
 			url += '&page=' + this.request.get['page'];
 		}
 
-		data['action'] = this.url.link('localisation/country.list', 'user_token=' + this.session.data['user_token'] + url);
+		data['action'] = await this.url.link('localisation/country.list', 'user_token=' + this.session.data['user_token'] + url);
 
 		data['countries'] = [];
 
@@ -165,7 +165,7 @@ module.exports = class CountryController extends Controller {
 				'status': result['status'],
 				'iso_code_2': result['iso_code_2'],
 				'iso_code_3': result['iso_code_3'],
-				'edit': this.url.link('localisation/country.form', 'user_token=' + this.session.data['user_token'] + '&country_id=' + result['country_id'] + url)
+				'edit': await this.url.link('localisation/country.form', 'user_token=' + this.session.data['user_token'] + '&country_id=' + result['country_id'] + url)
 			});
 		}
 
@@ -189,9 +189,9 @@ module.exports = class CountryController extends Controller {
 			url += '&order=ASC';
 		}
 
-		data['sort_name'] = this.url.link('localisation/country.list', 'user_token=' + this.session.data['user_token'] + '&sort=name' + url);
-		data['sort_iso_code_2'] = this.url.link('localisation/country.list', 'user_token=' + this.session.data['user_token'] + '&sort=iso_code_2' + url);
-		data['sort_iso_code_3'] = this.url.link('localisation/country.list', 'user_token=' + this.session.data['user_token'] + '&sort=iso_code_3' + url);
+		data['sort_name'] = await this.url.link('localisation/country.list', 'user_token=' + this.session.data['user_token'] + '&sort=name' + url);
+		data['sort_iso_code_2'] = await this.url.link('localisation/country.list', 'user_token=' + this.session.data['user_token'] + '&sort=iso_code_2' + url);
+		data['sort_iso_code_3'] = await this.url.link('localisation/country.list', 'user_token=' + this.session.data['user_token'] + '&sort=iso_code_3' + url);
 
 		url = '';
 
@@ -219,7 +219,7 @@ module.exports = class CountryController extends Controller {
 			'total': country_total,
 			'page': page,
 			'limit': this.config.get('config_pagination_admin'),
-			'url': this.url.link('localisation/country.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
+			'url': await this.url.link('localisation/country.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (country_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (country_total - this.config.get('config_pagination_admin'))) ? country_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), country_total, Math.ceil(country_total / this.config.get('config_pagination_admin')));
@@ -271,16 +271,16 @@ module.exports = class CountryController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('localisation/country', 'user_token=' + this.session.data['user_token'] + url)
+			'href': await this.url.link('localisation/country', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
-		data['save'] = this.url.link('localisation/country.save', 'user_token=' + this.session.data['user_token']);
-		data['back'] = this.url.link('localisation/country', 'user_token=' + this.session.data['user_token'] + url);
+		data['save'] = await this.url.link('localisation/country.save', 'user_token=' + this.session.data['user_token']);
+		data['back'] = await this.url.link('localisation/country', 'user_token=' + this.session.data['user_token'] + url);
 		let country_info;
 		if ((this.request.get['country_id'])) {
 			this.load.model('localisation/country', this);

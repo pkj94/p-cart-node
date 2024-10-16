@@ -9,40 +9,41 @@ class AffiliateController extends Controller {
 	/**
 	 * @return void
 	 */
-	async index(): void {
-		$this->load->language('api/sale/affiliate');
+	async index() {
+const data ={};
+		await this.load.language('api/sale/affiliate');
 
-		$json = [];
+		const json = {};
 
-		if (($this->request->post['affiliate_id'])) {
-			$affiliate_id = (int)$this->request->post['affiliate_id'];
+		if ((this.request.post['affiliate_id'])) {
+			affiliate_id = this.request.post['affiliate_id'];
 		} else {
-			$affiliate_id = 0;
+			affiliate_id = 0;
 		}
 
-		if ($affiliate_id) {
-			$this->load->model('account/affiliate');
+		if (affiliate_id) {
+			this.load.model('account/affiliate',this);
 
-			$affiliate_info = $this->model_account_affiliate->getAffiliate($affiliate_id);
+			affiliate_info = await this.model_account_affiliate.getAffiliate(affiliate_id);
 
-			if (!$affiliate_info) {
-				$json['error'] = $this->language->get('error_affiliate');
+			if (!affiliate_info) {
+				json['error'] = this.language.get('error_affiliate');
 			}
 		}
 
-		if (!$json) {
-			if ($affiliate_id) {
-				$json['success'] = $this->language->get('text_success');
+		if (!Object.keys(json).length) {
+			if (affiliate_id) {
+				json['success'] = this.language.get('text_success');
 
-				$this->session->data['affiliate_id'] = $affiliate_id;
+				this.session.data['affiliate_id'] = affiliate_id;
 			} else {
-				$json['success'] = $this->language->get('text_remove');
+				json['success'] = this.language.get('text_remove');
 
-				unset($this->session->data['affiliate_id']);
+				delete (this.session.data['affiliate_id']);
 			}
 		}
 
-		$this->response->addHeader('Content-Type: application/json');
-		$this->response->setOutput(json_encode($json));
+		this.response.addHeader('Content-Type: application/json');
+		this.response.setOutput(json);
 	}
 }

@@ -1,27 +1,21 @@
-<?php
-namespace Opencart\Catalog\Controller\Common;
-/**
- *
- *
- * @package Opencart\Catalog\Controller\Common
- */
-class SearchController extends Controller {
+module.exports=class SearchController extends Controller {
 	/**
 	 * @return string
 	 */
-	async index(): string {
-		$this->load->language('common/search');
+	async index() {
+const data ={};
+		await this.load.language('common/search');
 
-		$data['text_search'] = $this->language->get('text_search');
+		data['text_search'] = this.language.get('text_search');
 
-		if (($this->request->get['search'])) {
-			$data['search'] = $this->request->get['search'];
+		if ((this.request.get['search'])) {
+			data['search'] = this.request.get['search'];
 		} else {
-			$data['search'] = '';
+			data['search'] = '';
 		}
 
-		$data['language'] = $this->config->get('config_language');
+		data['language'] = this.config.get('config_language');
 
-		return $this->load->view('common/search', $data);
+		return await this.load.view('common/search', data);
 	}
 }

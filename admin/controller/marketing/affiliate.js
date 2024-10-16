@@ -94,18 +94,18 @@ module.exports = class AffiliateController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('marketing/affiliate', 'user_token=' + this.session.data['user_token'] + url)
+			'href': await this.url.link('marketing/affiliate', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
-		data['csv'] = this.url.link('marketing/affiliate.csv', 'user_token=' + this.session.data['user_token']);
-		data['complete'] = this.url.link('marketing/affiliate.complete', 'user_token=' + this.session.data['user_token']);
-		data['add'] = this.url.link('marketing/affiliate.form', 'user_token=' + this.session.data['user_token'] + url);
-		data['delete'] = this.url.link('marketing/affiliate.delete', 'user_token=' + this.session.data['user_token']);
+		data['csv'] = await this.url.link('marketing/affiliate.csv', 'user_token=' + this.session.data['user_token']);
+		data['complete'] = await this.url.link('marketing/affiliate.complete', 'user_token=' + this.session.data['user_token']);
+		data['add'] = await this.url.link('marketing/affiliate.form', 'user_token=' + this.session.data['user_token'] + url);
+		data['delete'] = await this.url.link('marketing/affiliate.delete', 'user_token=' + this.session.data['user_token']);
 
 		data['list'] = await this.getList();
 
@@ -282,7 +282,7 @@ module.exports = class AffiliateController extends Controller {
 			url += '&limit=' + this.request.get['limit'];
 		}
 
-		data['action'] = this.url.link('marketing/affiliate.list', 'user_token=' + this.session.data['user_token'] + url);
+		data['action'] = await this.url.link('marketing/affiliate.list', 'user_token=' + this.session.data['user_token'] + url);
 
 		data['affiliates'] = [];
 
@@ -316,8 +316,8 @@ module.exports = class AffiliateController extends Controller {
 				'balance': this.currency.format(result['balance'], this.config.get('config_currency')),
 				'status': result['status'],
 				'date_added': date(this.language.get('date_format_short'), new Date(result['date_added'])),
-				'customer': this.url.link('customer/customer.form', 'user_token=' + this.session.data['user_token'] + '&customer_id=' + result['customer_id']),
-				'edit': this.url.link('marketing/affiliate.form', 'user_token=' + this.session.data['user_token'] + '&customer_id=' + result['customer_id'] + url)
+				'customer': await this.url.link('customer/customer.form', 'user_token=' + this.session.data['user_token'] + '&customer_id=' + result['customer_id']),
+				'edit': await this.url.link('marketing/affiliate.form', 'user_token=' + this.session.data['user_token'] + '&customer_id=' + result['customer_id'] + url)
 			});
 		}
 
@@ -361,10 +361,10 @@ module.exports = class AffiliateController extends Controller {
 			url += '&limit=' + this.request.get['limit'];
 		}
 
-		data['sort_name'] = this.url.link('marketing/affiliate.list', 'user_token=' + this.session.data['user_token'] + '&sort=name' + url);
-		data['sort_tracking'] = this.url.link('marketing/affiliate.list', 'user_token=' + this.session.data['user_token'] + '&sort=ca.tracking' + url);
-		data['sort_commission'] = this.url.link('marketing/affiliate.list', 'user_token=' + this.session.data['user_token'] + '&sort=ca.commission' + url);
-		data['sort_date_added'] = this.url.link('marketing/affiliate.list', 'user_token=' + this.session.data['user_token'] + '&sort=ca.date_added' + url);
+		data['sort_name'] = await this.url.link('marketing/affiliate.list', 'user_token=' + this.session.data['user_token'] + '&sort=name' + url);
+		data['sort_tracking'] = await this.url.link('marketing/affiliate.list', 'user_token=' + this.session.data['user_token'] + '&sort=ca.tracking' + url);
+		data['sort_commission'] = await this.url.link('marketing/affiliate.list', 'user_token=' + this.session.data['user_token'] + '&sort=ca.commission' + url);
+		data['sort_date_added'] = await this.url.link('marketing/affiliate.list', 'user_token=' + this.session.data['user_token'] + '&sort=ca.date_added' + url);
 
 		url = '';
 
@@ -412,7 +412,7 @@ module.exports = class AffiliateController extends Controller {
 			'total': affiliate_total,
 			'page': page,
 			'limit': this.config.get('config_pagination_admin'),
-			'url': this.url.link('marketing/affiliate.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
+			'url': await this.url.link('marketing/affiliate.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (affiliate_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (affiliate_total - limit)) ? affiliate_total : (((page - 1) * limit) + limit), affiliate_total, Math.ceil(affiliate_total / limit));
@@ -489,17 +489,17 @@ module.exports = class AffiliateController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('marketing/affiliate', 'user_token=' + this.session.data['user_token'] + url)
+			'href': await this.url.link('marketing/affiliate', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
-		data['save'] = this.url.link('marketing/affiliate.save', 'user_token=' + this.session.data['user_token']);
-		data['back'] = this.url.link('marketing/affiliate', 'user_token=' + this.session.data['user_token'] + url);
-		data['upload'] = this.url.link('tool/upload.upload', 'user_token=' + this.session.data['user_token']);
+		data['save'] = await this.url.link('marketing/affiliate.save', 'user_token=' + this.session.data['user_token']);
+		data['back'] = await this.url.link('marketing/affiliate', 'user_token=' + this.session.data['user_token'] + url);
+		data['upload'] = await this.url.link('tool/upload.upload', 'user_token=' + this.session.data['user_token']);
 
 		// Affiliate
 		let affiliate_info;
@@ -945,7 +945,7 @@ module.exports = class AffiliateController extends Controller {
 				'store': store,
 				'country': result['country'],
 				'date_added': date(this.language.get('datetime_format'), new Date(result['date_added'])),
-				'filter_ip': this.url.link('customer/customer', 'user_token=' + this.session.data['user_token'] + '&filter_ip=' + result['ip'])
+				'filter_ip': await this.url.link('customer/customer', 'user_token=' + this.session.data['user_token'] + '&filter_ip=' + result['ip'])
 			});
 		}
 
@@ -955,7 +955,7 @@ module.exports = class AffiliateController extends Controller {
 			'total': report_total,
 			'page': page,
 			'limit': limit,
-			'url': this.url.link('marketing/affiliate.report', 'user_token=' + this.session.data['user_token'] + '&customer_id=' + customer_id + '&page={page}')
+			'url': await this.url.link('marketing/affiliate.report', 'user_token=' + this.session.data['user_token'] + '&customer_id=' + customer_id + '&page={page}')
 		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (report_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (report_total - limit)) ? report_total : (((page - 1) * limit) + limit), report_total, Math.ceil(report_total / limit));

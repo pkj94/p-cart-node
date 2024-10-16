@@ -1,48 +1,48 @@
-module.exports=class MarketingController extends Controller {
+module.exports = class MarketingController extends Controller {
 	/**
 	 * @return void
 	 */
-	async index(): void {
-		tracking = '';
+	async index() {
+		let tracking = '';
 
-		if ((this->request->get['tracking'])) {
-			tracking = (string)this->request->get['tracking'];
+		if ((this.request.get['tracking'])) {
+			tracking = this.request.get['tracking'];
 		}
 
-		if ((this->request->cookie['tracking'])) {
-			tracking = (string)this->request->cookie['tracking'];
+		if ((this.request.cookie['tracking'])) {
+			tracking = this.request.cookie['tracking'];
 		}
 
 		// Tracking Code
 		if (tracking) {
-			this->load->model('marketing/marketing');
+			this.load.model('marketing/marketing', this);
 
-			marketing_info = this->model_marketing_marketing->getMarketingByCode(tracking);
+			const marketing_info = await this.model_marketing_marketing.getMarketingByCode(tracking);
 
-			if (marketing_info) {
-				this->model_marketing_marketing->addReport(marketing_info['marketing_id'], this->request->server['REMOTE_ADDR']);
+			if (marketing_info.marketing_id) {
+				await this.model_marketing_marketing.addReport(marketing_info['marketing_id'], this.request.server['REMOTE_ADDR']);
 			}
 
-			if (this->config->get('config_affiliate_status')) {
-				this->load->model('account/affiliate');
+			if (this.config.get('config_affiliate_status')) {
+				this.load.model('account/affiliate', this);
 
-				affiliate_info = this->model_account_affiliate->getAffiliateByTracking(tracking);
+				const affiliate_info = await this.model_account_affiliate.getAffiliateByTracking(tracking);
 
-				if (affiliate_info && affiliate_info['status']) {
-					this->model_account_affiliate->addReport(affiliate_info['customer_id'], this->request->server['REMOTE_ADDR']);
+				if (affiliate_info.affiliate_id && affiliate_info['status']) {
+					await this.model_account_affiliate.addReport(affiliate_info['customer_id'], this.request.server['REMOTE_ADDR']);
 				}
 
-				if (marketing_info || (affiliate_info && affiliate_info['status'])) {
-					this->session->data['tracking'] = tracking;
+				if (marketing_info.marketing_id || (affiliate_info && affiliate_info['status'])) {
+					this.session.data['tracking'] = tracking;
 
-					if (!(this->request->cookie['tracking'])) {
-						option = [
-							'expires'  => this->config->get('config_affiliate_expire') ? time() + (int)this->config->get('config_affiliate_expire') : 0,
-							'path'     => this->config->get('session_path'),
-							'SameSite' => this->config->get('config_session_samesite')
-						];
+					if (!(this.request.cookie['tracking'])) {
+						let option = {
+							'expires': this.config.get('config_affiliate_expire') ? new Date(Date.now() + parseInt(thsi.config.get('config_affiliate_expire')) * 1000) : 0,
+							'path': this.config.get('session_path'),
+							'SameSite': this.config.get('config_session_samesite')
+						};
 
-						setcookie('tracking', tracking, option);
+						this.response.response.cookie('tracking', tracking, option);
 					}
 				}
 			}

@@ -28,16 +28,16 @@ module.exports = class LayoutDesignController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('design/layout', 'user_token=' + this.session.data['user_token'] + url)
+			'href': await this.url.link('design/layout', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
-		data['add'] = this.url.link('design/layout.form', 'user_token=' + this.session.data['user_token'] + url);
-		data['delete'] = this.url.link('design/layout.delete', 'user_token=' + this.session.data['user_token']);
+		data['add'] = await this.url.link('design/layout.form', 'user_token=' + this.session.data['user_token'] + url);
+		data['delete'] = await this.url.link('design/layout.delete', 'user_token=' + this.session.data['user_token']);
 
 		data['list'] = await this.getList();
 
@@ -93,7 +93,7 @@ module.exports = class LayoutDesignController extends Controller {
 			url += '&page=' + this.request.get['page'];
 		}
 
-		data['action'] = this.url.link('design/layout.list', 'user_token=' + this.session.data['user_token'] + url);
+		data['action'] = await this.url.link('design/layout.list', 'user_token=' + this.session.data['user_token'] + url);
 
 		data['layouts'] = [];
 
@@ -114,7 +114,7 @@ module.exports = class LayoutDesignController extends Controller {
 			data['layouts'].push({
 				'layout_id': result['layout_id'],
 				'name': result['name'],
-				'edit': this.url.link('design/layout.form', 'user_token=' + this.session.data['user_token'] + '&layout_id=' + result['layout_id'] + url)
+				'edit': await this.url.link('design/layout.form', 'user_token=' + this.session.data['user_token'] + '&layout_id=' + result['layout_id'] + url)
 			});
 		}
 
@@ -126,7 +126,7 @@ module.exports = class LayoutDesignController extends Controller {
 			url += '&order=ASC';
 		}
 
-		data['sort_name'] = this.url.link('design/layout.list', 'user_token=' + this.session.data['user_token'] + '&sort=name' + url);
+		data['sort_name'] = await this.url.link('design/layout.list', 'user_token=' + this.session.data['user_token'] + '&sort=name' + url);
 
 		url = '';
 
@@ -142,7 +142,7 @@ module.exports = class LayoutDesignController extends Controller {
 			'total': layout_total,
 			'page': page,
 			'limit': this.config.get('config_pagination_admin'),
-			'url': this.url.link('design/layout.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
+			'url': await this.url.link('design/layout.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (layout_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (layout_total - this.config.get('config_pagination_admin'))) ? layout_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), layout_total, Math.ceil(layout_total / this.config.get('config_pagination_admin')));
@@ -182,16 +182,16 @@ module.exports = class LayoutDesignController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('design/layout', 'user_token=' + this.session.data['user_token'] + url)
+			'href': await this.url.link('design/layout', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
-		data['save'] = this.url.link('design/layout.save', 'user_token=' + this.session.data['user_token']);
-		data['back'] = this.url.link('design/layout', 'user_token=' + this.session.data['user_token'] + url);
+		data['save'] = await this.url.link('design/layout.save', 'user_token=' + this.session.data['user_token']);
+		data['back'] = await this.url.link('design/layout', 'user_token=' + this.session.data['user_token'] + url);
 		let layout_info;
 		if ((this.request.get['layout_id'])) {
 			this.load.model('design/layout', this);
@@ -271,7 +271,7 @@ module.exports = class LayoutDesignController extends Controller {
 					'code': layout_module['code'],
 					'position': layout_module['position'],
 					'sort_order': layout_module['sort_order'],
-					'edit': this.url.link('extension/' + part[0] + '/module/' + part[1], 'user_token=' + this.session.data['user_token'])
+					'edit': await this.url.link('extension/' + part[0] + '/module/' + part[1], 'user_token=' + this.session.data['user_token'])
 				});
 			} else {
 				const module_info = await this.model_setting_module.getModule(part[2]);
@@ -281,7 +281,7 @@ module.exports = class LayoutDesignController extends Controller {
 						'code': layout_module['code'],
 						'position': layout_module['position'],
 						'sort_order': layout_module['sort_order'],
-						'edit': this.url.link('extension/' + part[0] + '/module/' + part[1], 'user_token=' + this.session.data['user_token'] + '&module_id=' + part[2])
+						'edit': await this.url.link('extension/' + part[0] + '/module/' + part[1], 'user_token=' + this.session.data['user_token'] + '&module_id=' + part[2])
 					});
 				}
 			}

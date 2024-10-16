@@ -11,8 +11,8 @@ class RewardController extends Model {
 	 *
 	 * @return array
 	 */
-	async getRewards(array data = []): array {
-		sql = "SELECT * FROM `" . DB_PREFIX . "customer_reward` WHERE `customer_id` = '" . (int)this->customer->getId() . "'";
+	async getRewards(data = {}) {
+		const sql = "SELECT * FROM `" + DB_PREFIX + "customer_reward` WHERE `customer_id` = '" + await this.customer.getId() + "'";
 
 		sort_data = [
 			'points',
@@ -20,16 +20,16 @@ class RewardController extends Model {
 			'date_added'
 		];
 
-		if ((data['sort']) && in_array(data['sort'], sort_data)) {
-			sql .= " ORDER BY `" . data['sort'] . "`";
+		if ((data['sort']) && sort_data.includes(data['sort'])) {
+			sql += " ORDER BY `" + data['sort'] + "`";
 		} else {
-			sql .= " ORDER BY `date_added`";
+			sql += " ORDER BY `date_added`";
 		}
 
 		if ((data['order']) && (data['order'] == 'DESC')) {
-			sql .= " DESC";
+			sql += " DESC";
 		} else {
-			sql .= " ASC";
+			sql += " ASC";
 		}
 
 		if ((data['start']) || (data['limit'])) {
@@ -41,31 +41,31 @@ class RewardController extends Model {
 				data['limit'] = 20;
 			}
 
-			sql .= " LIMIT " . (int)data['start'] . "," . (int)data['limit'];
+			sql += " LIMIT " + data['start'] + "," + data['limit'];
 		}
 
-		query = this->db->query(sql);
+		const query = await this.db.query(sql);
 
-		return query->rows;
+		return query.rows;
 	}
 
 	/**
 	 * @return int
 	 */
-	async getTotalRewards(): int {
-		query = this->db->query("SELECT COUNT(*) AS `total` FROM `" . DB_PREFIX . "customer_reward` WHERE `customer_id` = '" . (int)this->customer->getId() . "'");
+	async getTotalRewards() {
+		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "customer_reward` WHERE `customer_id` = '" + await this.customer.getId() + "'");
 
-		return (int)query->row['total'];
+		return query.row['total'];
 	}
 
 	/**
 	 * @return int
 	 */
-	async getTotalPoints(): int {
-		query = this->db->query("SELECT SUM(`points`) AS `total` FROM `" . DB_PREFIX . "customer_reward` WHERE `customer_id` = '" . (int)this->customer->getId() . "' GROUP BY `customer_id`");
+	async getTotalPoints() {
+		const query = await this.db.query("SELECT SUM(`points`) AS `total` FROM `" + DB_PREFIX + "customer_reward` WHERE `customer_id` = '" + await this.customer.getId() + "' GROUP BY `customer_id`");
 
-		if (query->num_rows) {
-			return (int)query->row['total'];
+		if (query.num_rows) {
+			return query.row['total'];
 		} else {
 			return 0;
 		}

@@ -28,17 +28,17 @@ module.exports = class CurrencyController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('localisation/currency', 'user_token=' + this.session.data['user_token'] + url)
+			'href': await this.url.link('localisation/currency', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
-		data['refresh'] = this.url.link('localisation/currency.refresh', 'user_token=' + this.session.data['user_token'] + url);
-		data['add'] = this.url.link('localisation/currency.form', 'user_token=' + this.session.data['user_token'] + url);
-		data['delete'] = this.url.link('localisation/currency.delete', 'user_token=' + this.session.data['user_token']);
+		data['refresh'] = await this.url.link('localisation/currency.refresh', 'user_token=' + this.session.data['user_token'] + url);
+		data['add'] = await this.url.link('localisation/currency.form', 'user_token=' + this.session.data['user_token'] + url);
+		data['delete'] = await this.url.link('localisation/currency.delete', 'user_token=' + this.session.data['user_token']);
 
 		data['list'] = await this.getList();
 
@@ -98,15 +98,15 @@ module.exports = class CurrencyController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('localisation/currency', 'user_token=' + this.session.data['user_token'] + url)
+			'href': await this.url.link('localisation/currency', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
-		data['action'] = this.url.link('localisation/currency.list', 'user_token=' + this.session.data['user_token'] + url);
+		data['action'] = await this.url.link('localisation/currency.list', 'user_token=' + this.session.data['user_token'] + url);
 
 		data['currencies'] = [];
 
@@ -131,7 +131,7 @@ module.exports = class CurrencyController extends Controller {
 				'value': result['value'],
 				'status': result['status'],
 				'date_modified': date(this.language.get('date_format_short'), new Date(result['date_modified'])),
-				'edit': this.url.link('localisation/currency.form', 'user_token=' + this.session.data['user_token'] + '&currency_id=' + result['currency_id'] + url)
+				'edit': await this.url.link('localisation/currency.form', 'user_token=' + this.session.data['user_token'] + '&currency_id=' + result['currency_id'] + url)
 			});
 		}
 
@@ -143,11 +143,11 @@ module.exports = class CurrencyController extends Controller {
 			url += '&order=ASC';
 		}
 
-		data['sort_title'] = this.url.link('localisation/currency.list', 'user_token=' + this.session.data['user_token'] + '&sort=title' + url);
-		data['sort_code'] = this.url.link('localisation/currency.list', 'user_token=' + this.session.data['user_token'] + '&sort=code' + url);
-		data['sort_value'] = this.url.link('localisation/currency.list', 'user_token=' + this.session.data['user_token'] + '&sort=value' + url);
-		data['sort_status'] = this.url.link('localisation/currency.list', 'user_token=' + this.session.data['user_token'] + '&sort=status' + url);
-		data['sort_date_modified'] = this.url.link('localisation/currency.list', 'user_token=' + this.session.data['user_token'] + '&sort=date_modified' + url);
+		data['sort_title'] = await this.url.link('localisation/currency.list', 'user_token=' + this.session.data['user_token'] + '&sort=title' + url);
+		data['sort_code'] = await this.url.link('localisation/currency.list', 'user_token=' + this.session.data['user_token'] + '&sort=code' + url);
+		data['sort_value'] = await this.url.link('localisation/currency.list', 'user_token=' + this.session.data['user_token'] + '&sort=value' + url);
+		data['sort_status'] = await this.url.link('localisation/currency.list', 'user_token=' + this.session.data['user_token'] + '&sort=status' + url);
+		data['sort_date_modified'] = await this.url.link('localisation/currency.list', 'user_token=' + this.session.data['user_token'] + '&sort=date_modified' + url);
 
 		url = '';
 
@@ -163,7 +163,7 @@ module.exports = class CurrencyController extends Controller {
 			'total': currency_total,
 			'page': page,
 			'limit': this.config.get('config_pagination_admin'),
-			'url': this.url.link('localisation/currency.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
+			'url': await this.url.link('localisation/currency.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (currency_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (currency_total - this.config.get('config_pagination_admin'))) ? currency_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), currency_total, Math.ceil(currency_total / this.config.get('config_pagination_admin')));
@@ -203,16 +203,16 @@ module.exports = class CurrencyController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('localisation/currency', 'user_token=' + this.session.data['user_token'] + url)
+			'href': await this.url.link('localisation/currency', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
-		data['save'] = this.url.link('localisation/currency.save', 'user_token=' + this.session.data['user_token']);
-		data['back'] = this.url.link('localisation/currency', 'user_token=' + this.session.data['user_token'] + url);
+		data['save'] = await this.url.link('localisation/currency.save', 'user_token=' + this.session.data['user_token']);
+		data['back'] = await this.url.link('localisation/currency', 'user_token=' + this.session.data['user_token'] + url);
 		let currency_info;
 		if ((this.request.get['currency_id'])) {
 			this.load.model('localisation/currency', this);

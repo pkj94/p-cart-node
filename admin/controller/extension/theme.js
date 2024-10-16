@@ -56,22 +56,22 @@ module.exports = class ThemeController extends Controller {
 
 				store_data.push({
 					'name': this.config.get('config_name'),
-					'edit': this.url.link('extension/' + extension + '/theme/' + code, 'user_token=' + this.session.data['user_token'] + '&store_id=0'),
+					'edit': await this.url.link('extension/' + extension + '/theme/' + code, 'user_token=' + this.session.data['user_token'] + '&store_id=0'),
 					'status': this.config.get('theme_' + code + '_status') ? this.language.get('text_enabled') : this.language.get('text_disabled')
 				});
 
 				for (let store of stores) {
 					store_data.push({
 						'name': store['name'],
-						'edit': this.url.link('extension/' + extension + '/theme/' + code, 'user_token=' + this.session.data['user_token'] + '&store_id=' + store['store_id']),
+						'edit': await this.url.link('extension/' + extension + '/theme/' + code, 'user_token=' + this.session.data['user_token'] + '&store_id=' + store['store_id']),
 						'status': this.model_setting_setting.getValue('theme_' + code + '_status', store['store_id']) ? this.language.get('text_enabled') : this.language.get('text_disabled')
 					});
 				}
 
 				data['extensions'].push({
 					'name': this.language.get(code + '_heading_title'),
-					'install': this.url.link('extension/theme.install', 'user_token=' + this.session.data['user_token'] + '&extension=' + extension + '&code=' + code),
-					'uninstall': this.url.link('extension/theme.uninstall', 'user_token=' + this.session.data['user_token'] + '&extension=' + extension + '&code=' + code),
+					'install': await this.url.link('extension/theme.install', 'user_token=' + this.session.data['user_token'] + '&extension=' + extension + '&code=' + code),
+					'uninstall': await this.url.link('extension/theme.uninstall', 'user_token=' + this.session.data['user_token'] + '&extension=' + extension + '&code=' + code),
 					'installed': installed.includes(code),
 					'store': store_data
 				});

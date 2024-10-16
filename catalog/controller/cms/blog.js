@@ -9,106 +9,106 @@ class BlogController extends Controller {
 	/**
 	 * @return void
 	 */
-	async index(): void {
-		this->load->language('cms/blog');
+	async index() {
+const data ={};
+		await this.load.language('cms/blog');
 
-		if ((this->request->get['search'])) {
-			search = (string)this->request->get['search'];
+		if ((this.request.get['search'])) {
+			search = this.request.get['search'];
 		} else {
 			search = '';
 		}
 
-		if ((this->request->get['topic_id'])) {
-			topic_id = (int)this->request->get['topic_id'];
+		if ((this.request.get['topic_id'])) {
+			topic_id = this.request.get['topic_id'];
 		} else {
 			topic_id = 0;
 		}
 
-		if ((this->request->get['author'])) {
-			author = (string)this->request->get['author'];
+		if ((this.request.get['author'])) {
+			author = this.request.get['author'];
 		} else {
 			author = '';
 		}
 
-		if ((this->request->get['page'])) {
-			page = (int)this->request->get['page'];
-		} else {
-			page = 1;
-		}
+		let page = 1;
+if ((this.request.get['page'])) {
+			page = Number(this.request.get['page']);
+		} 
 
 		data['breadcrumbs'] = [];
 
-		data['breadcrumbs'][] = [
-			'text' => this->language->get('text_home'),
-			'href' => this->url->link('common/home', 'language=' . this->config->get('config_language'))
+		data['breadcrumbs'].push({
+			'text' : this.language.get('text_home'),
+			'href' : await this.url.link('common/home', 'language=' + this.config.get('config_language'))
 		];
 
-		url = '';
+		let url = '';
 
-		if ((this->request->get['search'])) {
-			url .= '&search=' . (string)this->request->get['search'];
+		if ((this.request.get['search'])) {
+			url += '&search=' + this.request.get['search'];
 		}
 
-		if ((this->request->get['author'])) {
-			url .= '&author=' . (string)this->request->get['author'];
+		if ((this.request.get['author'])) {
+			url += '&author=' + this.request.get['author'];
 		}
 
-		if ((this->request->get['page'])) {
-			url .= '&page=' . this->request->get['page'];
+		if ((this.request.get['page'])) {
+			url += '&page=' + this.request.get['page'];
 		}
 
-		data['breadcrumbs'][] = [
-			'text' => this->language->get('text_blog'),
-			'href' => this->url->link('cms/blog', 'language=' . this->config->get('config_language') . url)
+		data['breadcrumbs'].push({
+			'text' : this.language.get('text_blog'),
+			'href' : await this.url.link('cms/blog', 'language=' + this.config.get('config_language') + url)
 		];
 
-		this->load->model('cms/topic');
+		this.load.model('cms/topic');
 
-		topic_info = this->model_cms_topic->getTopic(topic_id);
+		topic_info = await this.model_cms_topic.getTopic(topic_id);
 
 		if (topic_info) {
-			url = '';
+			let url = '';
 
-			if ((this->request->get['search'])) {
-				url .= '&search=' . (string)this->request->get['search'];
+			if ((this.request.get['search'])) {
+				url += '&search=' + this.request.get['search'];
 			}
 
-			if ((this->request->get['topic_id'])) {
-				url .= '&topic_id=' . (int)this->request->get['topic_id'];
+			if ((this.request.get['topic_id'])) {
+				url += '&topic_id=' + this.request.get['topic_id'];
 			}
 
-			if ((this->request->get['author'])) {
-				url .= '&author=' . (string)this->request->get['author'];
+			if ((this.request.get['author'])) {
+				url += '&author=' + this.request.get['author'];
 			}
 
-			if ((this->request->get['page'])) {
-				url .= '&page=' . this->request->get['page'];
+			if ((this.request.get['page'])) {
+				url += '&page=' + this.request.get['page'];
 			}
 
-			data['breadcrumbs'][] = [
-				'text' => topic_info['name'],
-				'href' => this->url->link('cms/blog', 'language=' . this->config->get('config_language') . url)
+			data['breadcrumbs'].push({
+				'text' : topic_info['name'],
+				'href' : await this.url.link('cms/blog', 'language=' + this.config.get('config_language') + url)
 			];
 		}
 
-		this->load->model('tool/image');
+		this.load.model('tool/image',this);
 
-		if (topic_info && is_file(DIR_IMAGE . html_entity_decode(topic_info['image']))) {
-			data['thumb'] = this->model_tool_image->resize(html_entity_decode(topic_info['image']), this->config->get('config_image_blog_width'), this->config->get('config_image_blog_height'));
+		if (topic_info && is_file(DIR_IMAGE + html_entity_decode(topic_info['image']))) {
+			data['thumb'] = await this.model_tool_image.resize(html_entity_decode(topic_info['image']), this.config.get('config_image_blog_width'), this.config.get('config_image_blog_height'));
 		} else {
 			data['thumb'] = '';
 		}
 
 		if (topic_info) {
-			this->document->setTitle(topic_info['meta_title']);
-			this->document->setDescription(topic_info['meta_description']);
-			this->document->setKeywords(topic_info['meta_keyword']);
+			this.document.setTitle(topic_info['meta_title']);
+			this.document.setDescription(topic_info['meta_description']);
+			this.document.setKeywords(topic_info['meta_keyword']);
 
 			data['heading_title'] = topic_info['name'];
 		} else {
-			this->document->setTitle(this->language->get('heading_title'));
+			this.document.setTitle(this.language.get('heading_title'));
 
-			data['heading_title'] = this->language->get('heading_title');
+			data['heading_title'] = this.language.get('heading_title');
 		}
 
 		if (topic_info) {
@@ -122,74 +122,74 @@ class BlogController extends Controller {
 		data['articles'] = [];
 
 		filter_data = [
-			'filter_search'   => search,
-			'filter_topic_id' => topic_id,
-			'filter_author'   => author,
-			'start'           => (page - 1) * limit,
-			'limit'           => limit
+			'filter_search'   : search,
+			'filter_topic_id' : topic_id,
+			'filter_author'   : author,
+			'start'           : (page - 1) * limit,
+			'limit'           : limit
 		];
 
-		this->load->model('cms/article');
+		this.load.model('cms/article');
 
-		article_total = this->model_cms_article->getTotalArticles(filter_data);
+		article_total = await this.model_cms_article.getTotalArticles(filter_data);
 
-		results = this->model_cms_article->getArticles(filter_data);
+		const results = await this.model_cms_article.getArticles(filter_data);
 
-		foreach (results as result) {
-			if (is_file(DIR_IMAGE . html_entity_decode(result['image']))) {
-				image = this->model_tool_image->resize(html_entity_decode(result['image']), this->config->get('config_image_blog_width'), this->config->get('config_image_blog_height'));
+		for (let result of results) {
+			if (is_file(DIR_IMAGE + html_entity_decode(result['image']))) {
+				image = await this.model_tool_image.resize(html_entity_decode(result['image']), this.config.get('config_image_blog_width'), this.config.get('config_image_blog_height'));
 			} else {
 				image = '';
 			}
 
-			data['articles'][] = [
-				'article_id'    => result['article_id'],
-				'image'         => image,
-				'name'          => result['name'],
-				'description'   => oc_substr(trim(strip_tags(html_entity_decode(result['description']))), 0, this->config->get('config_article_description_length')) . '..',
-				'author'        => result['author'],
-				'comment_total' => this->model_cms_article->getTotalComments(result['article_id']),
-				'date_added'    => date(this->language->get('date_format_short'), new Date(result['date_added'])),
-				'href'          => this->url->link('cms/blog.info', 'language=' . this->config->get('config_language') . '&article_id=' . result['article_id'] . url)
+			data['articles'].push({
+				'article_id'    : result['article_id'],
+				'image'         : image,
+				'name'          : result['name'],
+				'description'   : oc_substr(trim(strip_tags(html_entity_decode(result['description']))), 0, this.config.get('config_article_description_length')) + '++',
+				'author'        : result['author'],
+				'comment_total' : this.model_cms_article.getTotalComments(result['article_id']),
+				'date_added'    : date(this.language.get('date_format_short'), new Date(result['date_added'])),
+				'href'          : await this.url.link('cms/blog+info', 'language=' + this.config.get('config_language') + '&article_id=' + result['article_id'] + url)
 			];
 		}
 
-		url = '';
+		let url = '';
 
-		if ((this->request->get['search'])) {
-			url .= '&search=' . this->request->get['search'];
+		if ((this.request.get['search'])) {
+			url += '&search=' + this.request.get['search'];
 		}
 
-		if ((this->request->get['topic_id'])) {
-			url .= '&topic_id=' . this->request->get['topic_id'];
+		if ((this.request.get['topic_id'])) {
+			url += '&topic_id=' + this.request.get['topic_id'];
 		}
 
-		if ((this->request->get['author'])) {
-			url .= '&author=' . (string)this->request->get['author'];
+		if ((this.request.get['author'])) {
+			url += '&author=' + this.request.get['author'];
 		}
 
-		data['pagination'] = this->load->controller('common/pagination', [
-			'total' => article_total,
-			'page'  => page,
-			'limit' => limit,
-			'url'   => this->url->link('cms/blog', 'language=' . this->config->get('config_language') . url . '&page={page}')
+		data['pagination'] = await this.load.controller('common/pagination', {
+			'total' : article_total,
+			'page'  : page,
+			'limit' : limit,
+			'url'   : await this.url.link('cms/blog', 'language=' + this.config.get('config_language') + url + '&page={page}')
 		]);
 
-		data['results'] = sprintf(this->language->get('text_pagination'), (article_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (article_total - limit)) ? article_total : (((page - 1) * limit) + limit), article_total, ceil(article_total / limit));
+		data['results'] = sprintf(this.language.get('text_pagination'), (article_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (article_total - limit)) ? article_total : (((page - 1) * limit) + limit), article_total, ceil(article_total / limit));
 
-		// http://googlewebmastercentral.articlespot.com/2011/09/pagination-with-relnext-and-relprev.html
+		// http://googlewebmastercentral+articlespot+com/2011/09/pagination-with-relnext-and-relprev+html
 		if (page == 1) {
-			this->document->addLink(this->url->link('cms/blog', 'language=' . this->config->get('config_language')), 'canonical');
+			this.document.addLink(await this.url.link('cms/blog', 'language=' + this.config.get('config_language')), 'canonical');
 		} else {
-			this->document->addLink(this->url->link('cms/blog', 'language=' . this->config->get('config_language') . '&page='. page), 'canonical');
+			this.document.addLink(await this.url.link('cms/blog', 'language=' + this.config.get('config_language') + '&page='+ page), 'canonical');
 		}
 
 		if (page > 1) {
-			this->document->addLink(this->url->link('cms/blog', 'language=' . this->config->get('config_language') . ((page - 2) ? '&page='. (page - 1) : '')), 'prev');
+			this.document.addLink(await this.url.link('cms/blog', 'language=' + this.config.get('config_language') + ((page - 2) ? '&page='+ (page - 1) : '')), 'prev');
 		}
 
 		if (ceil(article_total / limit) > page) {
-			this->document->addLink(this->url->link('cms/blog', 'language=' . this->config->get('config_language') . '&page='. (page + 1)), 'next');
+			this.document.addLink(await this.url.link('cms/blog', 'language=' + this.config.get('config_language') + '&page='+ (page + 1)), 'next');
 		}
 
 		data['search'] = search;
@@ -197,94 +197,94 @@ class BlogController extends Controller {
 
 		data['topics'] = [];
 
-		data['topics'][] = [
-			'name' => this->language->get('text_all'),
-			'href' => this->url->link('cms/blog', 'language=' . this->config->get('config_language'))
+		data['topics'].push({
+			'name' : this.language.get('text_all'),
+			'href' : await this.url.link('cms/blog', 'language=' + this.config.get('config_language'))
 		];
 
-		results = this->model_cms_topic->getTopics();
+		const results = await this.model_cms_topic.getTopics();
 
-		foreach (results as result) {
-			data['topics'][] = [
-				'name' => result['name'],
-				'href' => this->url->link('cms/blog', 'language=' . this->config->get('config_language') . '&topic_id='. result['topic_id'])
+		for (let result of results) {
+			data['topics'].push({
+				'name' : result['name'],
+				'href' : await this.url.link('cms/blog', 'language=' + this.config.get('config_language') + '&topic_id='+ result['topic_id'])
 			];
 		}
 
-		data['column_left'] = this->load->controller('common/column_left');
-		data['column_right'] = this->load->controller('common/column_right');
-		data['content_top'] = this->load->controller('common/content_top');
-		data['content_bottom'] = this->load->controller('common/content_bottom');
-		data['footer'] = this->load->controller('common/footer');
-		data['header'] = this->load->controller('common/header');
+		data['column_left'] = await this.load.controller('common/column_left');
+		data['column_right'] = await this.load.controller('common/column_right');
+		data['content_top'] = await this.load.controller('common/content_top');
+		data['content_bottom'] = await this.load.controller('common/content_bottom');
+		data['footer'] = await this.load.controller('common/footer');
+		data['header'] = await this.load.controller('common/header');
 
-		this->response->setOutput(this->load->view('cms/blog_list', data));
+		this.response.setOutput(await this.load.view('cms/blog_list', data));
 	}
 
 	async info() {
-		this->load->language('cms/blog');
+		await this.load.language('cms/blog');
 
-		if ((this->request->get['article_id'])) {
-			article_id = (int)this->request->get['article_id'];
+		if ((this.request.get['article_id'])) {
+			article_id = this.request.get['article_id'];
 		} else {
 			article_id = 0;
 		}
 
-		if ((this->request->get['topic_id'])) {
-			topic_id = (int)this->request->get['topic_id'];
+		if ((this.request.get['topic_id'])) {
+			topic_id = this.request.get['topic_id'];
 		} else {
 			topic_id = 0;
 		}
 
-		this->load->model('cms/article');
+		this.load.model('cms/article');
 
-		article_info = this->model_cms_article->getArticle(article_id);
+		article_info = await this.model_cms_article.getArticle(article_id);
 
 		if (article_info) {
-			this->document->setTitle(article_info['meta_title']);
-			this->document->setDescription(article_info['meta_description']);
-			this->document->setKeywords(article_info['meta_keyword']);
+			this.document.setTitle(article_info['meta_title']);
+			this.document.setDescription(article_info['meta_description']);
+			this.document.setKeywords(article_info['meta_keyword']);
 
 			data['breadcrumbs'] = [];
 
-			data['breadcrumbs'][] = [
-				'text' => this->language->get('text_home'),
-				'href' => this->url->link('common/home', 'language=' . this->config->get('config_language'))
+			data['breadcrumbs'].push({
+				'text' : this.language.get('text_home'),
+				'href' : await this.url.link('common/home', 'language=' + this.config.get('config_language'))
 			];
 
-			data['breadcrumbs'][] = [
-				'text' => this->language->get('text_blog'),
-				'href' => this->url->link('cms/blog', 'language=' . this->config->get('config_language'))
+			data['breadcrumbs'].push({
+				'text' : this.language.get('text_blog'),
+				'href' : await this.url.link('cms/blog', 'language=' + this.config.get('config_language'))
 			];
 
-			url = '';
+			let url = '';
 
-			if ((this->request->get['topic_id'])) {
-				url .= '&topic_id=' . this->request->get['topic_id'];
+			if ((this.request.get['topic_id'])) {
+				url += '&topic_id=' + this.request.get['topic_id'];
 			}
 
-			if ((this->request->get['author'])) {
-				url .= '&author=' . (string)this->request->get['author'];
+			if ((this.request.get['author'])) {
+				url += '&author=' + this.request.get['author'];
 			}
 
-			if ((this->request->get['page'])) {
-				url .= '&page=' . this->request->get['page'];
+			if ((this.request.get['page'])) {
+				url += '&page=' + this.request.get['page'];
 			}
 
-			this->load->model('cms/topic');
+			this.load.model('cms/topic');
 
-			topic_info = this->model_cms_topic->getTopic(topic_id);
+			topic_info = await this.model_cms_topic.getTopic(topic_id);
 
 			if (topic_info) {
-				data['breadcrumbs'][] = [
-					'text' => topic_info['name'],
-					'href' => this->url->link('cms/article', 'language=' . this->config->get('config_language') . url)
+				data['breadcrumbs'].push({
+					'text' : topic_info['name'],
+					'href' : await this.url.link('cms/article', 'language=' + this.config.get('config_language') + url)
 				];
 			}
 
-			data['breadcrumbs'][] = [
-				'text' => article_info['name'],
-				'href' => this->url->link('cms/article.info', 'language=' . this->config->get('config_language') . '&article_id=' .  article_id . url)
+			data['breadcrumbs'].push({
+				'text' : article_info['name'],
+				'href' : await this.url.link('cms/article+info', 'language=' + this.config.get('config_language') + '&article_id=' +  article_id + url)
 			];
 
 			data['heading_title'] = article_info['name'];
@@ -293,18 +293,18 @@ class BlogController extends Controller {
 			data['author'] = article_info['author'];
 			data['date_added'] = article_info['date_added'];
 
-			data['comment'] = this->getComments();
+			data['comment'] = this.getComments();
 
-			data['continue'] = this->url->link('cms/article', 'language=' . this->config->get('config_language') . url);
+			data['continue'] = await this.url.link('cms/article', 'language=' + this.config.get('config_language') + url);
 
-			data['column_left'] = this->load->controller('common/column_left');
-			data['column_right'] = this->load->controller('common/column_right');
-			data['content_top'] = this->load->controller('common/content_top');
-			data['content_bottom'] = this->load->controller('common/content_bottom');
-			data['footer'] = this->load->controller('common/footer');
-			data['header'] = this->load->controller('common/header');
+			data['column_left'] = await this.load.controller('common/column_left');
+			data['column_right'] = await this.load.controller('common/column_right');
+			data['content_top'] = await this.load.controller('common/content_top');
+			data['content_bottom'] = await this.load.controller('common/content_bottom');
+			data['footer'] = await this.load.controller('common/footer');
+			data['header'] = await this.load.controller('common/header');
 
-			this->response->setOutput(this->load->view('cms/blog_info', data));
+			this.response.setOutput(await this.load.view('cms/blog_info', data));
 		} else {
 			return new \Opencart\System\Engine\Action('error/not_found');
 		}
@@ -316,68 +316,67 @@ class BlogController extends Controller {
 	 * @return void
 	 */
 	async comment() {
-		this->load->language('cms/blog');
+		await this.load.language('cms/blog');
 
-		this->response->setOutput(this->getComments());
+		this.response.setOutput(this.getComments());
 	}
 
 	/**
 	 * @return string
 	 */
-	async getComments(): string {
-		if ((this->request->get['article_id'])) {
-			article_id = this->request->get['article_id'];
+	async getComments() {
+		if ((this.request.get['article_id'])) {
+			article_id = this.request.get['article_id'];
 		} else {
 			article_id = 0;
 		}
 
-		if ((this->request->get['page'])) {
-			page = (int)this->request->get['page'];
-		} else {
-			page = 1;
-		}
+		let page = 1;
+if ((this.request.get['page'])) {
+			page = Number(this.request.get['page']);
+		} 
 
 		data['articles'] = [];
 
-		this->load->model('cms/article');
+		this.load.model('cms/article');
 
-		comment_total = this->model_cms_article->getTotalComments(article_id);
+		comment_total = await this.model_cms_article.getTotalComments(article_id);
 
-		results = this->model_cms_article->getComments(article_id, (page - 1) * (int)this->config->get('config_pagination_admin'), (int)this->config->get('config_pagination_admin'));
+		const results = await this.model_cms_article.getComments(article_id, (page - 1) * this.config.get('config_pagination_admin'), this.config.get('config_pagination_admin'));
 
-		foreach (results as result) {
-			data['articles'][] = [
-				'text'       => nl2br(result['text']),
-				'author'     => result['author'],
-				'date_added' => date(this->language->get('date_format_short'), new Date(result['date_added']))
+		for (let result of results) {
+			data['articles'].push({
+				'text'       : nl2br(result['text']),
+				'author'     : result['author'],
+				'date_added' : date(this.language.get('date_format_short'), new Date(result['date_added']))
 			];
 		}
 
-		data['pagination'] = this->load->controller('common/pagination', [
-			'total' => comment_total,
-			'page'  => page,
-			'limit' => 5,
-			'url'   => this->url->link('cms/blog.comment', 'language=' . this->config->get('config_language') . '&article_id=' . article_id . '&page={page}')
+		data['pagination'] = await this.load.controller('common/pagination', {
+			'total' : comment_total,
+			'page'  : page,
+			'limit' : 5,
+			'url'   : await this.url.link('cms/blog+comment', 'language=' + this.config.get('config_language') + '&article_id=' + article_id + '&page={page}')
 		]);
 
-		data['results'] = sprintf(this->language->get('text_pagination'), (comment_total) ? ((page - 1) * 5) + 1 : 0, (((page - 1) * 5) > (comment_total - 5)) ? comment_total : (((page - 1) * 5) + 5), comment_total, ceil(comment_total / 5));
+		data['results'] = sprintf(this.language.get('text_pagination'), (comment_total) ? ((page - 1) * 5) + 1 : 0, (((page - 1) * 5) > (comment_total - 5)) ? comment_total : (((page - 1) * 5) + 5), comment_total, ceil(comment_total / 5));
 
-		return this->load->view('cms/comment', data);
+		return await this.load.view('cms/comment', data);
 	}
 
-	async addComment(): void {
-		this->load->language('cms/article');
+	async addComment() {
+		await this.load.language('cms/article');
 
-		json = array();
+		const json = array();
 
-		if ((this->request->get['article_id'])) {
-			article_id = this->request->get['article_id'];
+		if ((this.request.get['article_id'])) {
+			article_id = this.request.get['article_id'];
 		} else {
 			article_id = 0;
 		}
 
-		if (!(this->request->get['comment_token']) || !(this->session->data['comment_token']) || this->request->get['comment_token'] != this->session->data['comment_token']) {
-			json['error']['warning'] = this->language->get('error_token');
+		if (!(this.request.get['comment_token']) || !(this.session.data['comment_token']) || this.request.get['comment_token'] != this.session.data['comment_token']) {
+			json['error']['warning'] = this.language.get('error_token');
 		}
 
 		keys = [
@@ -385,69 +384,69 @@ class BlogController extends Controller {
 			'author'
 		];
 
-		foreach (keys as key) {
-			if (!(this->request->post[key])) {
-				this->request->post[key] = '';
+		for (keys as key) {
+			if (!(this.request.post[key])) {
+				this.request.post[key] = '';
 			}
 		}
 
-		this->load->model('cms/article');
+		this.load.model('cms/article');
 
-		article_info = this->model_cms_article->getArticle(article_id);
+		article_info = await this.model_cms_article.getArticle(article_id);
 
 		if (!article_info) {
-			json['error']['warning'] = this->language->get('error_article');
+			json['error']['warning'] = this.language.get('error_article');
 		}
 
-		if (!this->customer->isLogged() && !this->config->get('config_comment_guest')) {
-			json['error']['warning'] = this->language->get('error_guest');
+		if (!await this.customer.isLogged() && !this.config.get('config_comment_guest')) {
+			json['error']['warning'] = this.language.get('error_guest');
 		}
 
-		if ((oc_strlen(this->request->post['author']) < 3) || (oc_strlen(this->request->post['author']) > 25)) {
-			json['error']['author'] = this->language->get('error_author');
+		if ((oc_strlen(this.request.post['author']) < 3) || (oc_strlen(this.request.post['author']) > 25)) {
+			json['error']['author'] = this.language.get('error_author');
 		}
 
-		if ((utf8_strlen(this->request->post['comment']) < 2) || (utf8_strlen(this->request->post['comment']) > 1000)) {
-			json['error']['comment'] = this->language->get('error_comment');
+		if ((utf8_strlen(this.request.post['comment']) < 2) || (utf8_strlen(this.request.post['comment']) > 1000)) {
+			json['error']['comment'] = this.language.get('error_comment');
 		}
 
 		// Captcha
-		this->load->model('setting/extension');
+		this.load.model('setting/extension',this);
 
-		extension_info = this->model_setting_extension->getExtensionByCode('captcha', this->config->get('config_captcha'));
+		extension_info = await this.model_setting_extension.getExtensionByCode('captcha', this.config.get('config_captcha'));
 
-		if (extension_info && this->config->get('captcha_' . this->config->get('config_captcha') . '_status') && in_array('comment', (array)this->config->get('config_captcha_page'))) {
-			captcha = this->load->controller('extension/'  . extension_info['extension'] . '/captcha/' . extension_info['code'] . '.validate');
+		if (extension_info && this.config.get('captcha_' + this.config.get('config_captcha') + '_status') && in_array('comment', this.config.get('config_captcha_page'))) {
+			captcha = await this.load.controller('extension/'  + extension_info['extension'] + '/captcha/' + extension_info['code'] + '+validate');
 
 			if (captcha) {
 				json['error']['captcha'] = captcha;
 			}
 		}
 
-		if (!json) {
+		if (!Object.keys(json).length) {
 			// Anti-Spam
-			comment = str_replace(' ', '', this->request->post['comment']);
+			comment = str_replace(' ', '', this.request.post['comment']);
 
-			this->load->model('cms/antispam');
+			this.load.model('cms/antispam');
 
-			spam = this->model_cms_antispam->getSpam(comment);
+			spam = await this.model_cms_antispam.getSpam(comment);
 
-			if (!this->customer->isCommentor() || spam) {
+			if (!await this.customer.isCommentor() || spam) {
 				status = 0;
 			} else {
 				status = 1;
 			}
 
-			this->model_cms_article->addComment(article_id, this->request->post + ['status' => status]);
+			await this.model_cms_article.addComment(article_id, this.request.post + ['status' : status]);
 
 			if (!status) {
-				json['success'] = this->language->get('text_queue');
+				json['success'] = this.language.get('text_queue');
 			} else {
-				json['success'] = this->language->get('text_success');
+				json['success'] = this.language.get('text_success');
 			}
 		}
 
-		this->response->addHeader('Content-Type: application/json');
-		this->response->setOutput(json_encode(json));
+		this.response.addHeader('Content-Type: application/json');
+		this.response.setOutput(json);
 	}
 }

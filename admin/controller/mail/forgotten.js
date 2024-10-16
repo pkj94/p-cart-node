@@ -38,7 +38,7 @@ module.exports=class ForgottenController extends Controller {
 
 			data['text_greeting'] = sprintf(this.language.get('text_greeting'), store_name);
 
-			data['reset'] = this.url.link('common/forgotten.reset', 'email=' + email + '&code=' + code, true);
+			data['reset'] = await this.url.link('common/forgotten.reset', 'email=' + email + '&code=' + code, true);
 			data['ip'] = this.request.server.headers['x-forwarded-for'] || (
                     this.request.server.connection ? (this.request.server.connection.remoteAddress ||
                         this.request.server.socket.remoteAddress ||

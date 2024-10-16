@@ -1,70 +1,67 @@
-module.exports=class ErrorController extends Controller {
-	/**
-	 * @return void
-	 */
-	async index(): void {
-		this->registry->set('log', new \Opencart\System\Library\Log(this->config->get('config_error_filename')));
-
-		set_error_handler([this, 'error']);
-		set_exception_handler([this, 'exception']);
+module.exports = class ErrorController extends Controller {
+	constructor(registry) {
+		super(registry)
 	}
 
-	/**
-	 * @param string code
-	 * @param string message
-	 * @param string file
-	 * @param string line
-	 *
-	 * @return bool
-	 */
-	async error(string code, string message, string file, string line): bool {
+	async index() {
+		this.registry.set('log', new LogLibrary(this.config.get('config_error_filename') || this.config.get('error_filename')));
+
+		process.on('uncaughtException', this.exception.bind(this));
+		process.on('unhandledRejection', this.exception.bind(this));
+		process.on('warning', (warning) => {
+			this.error('Warning', warning.message, warning.fileName, warning.lineNumber);
+		});
+	}
+
+	error(code, message, file, line) {
+		let errorType;
+
 		switch (code) {
-			case E_NOTICE:
-			case E_USER_NOTICE:
-				error = 'Notice';
+			case 'Notice':
+			case 'UserNotice':
+				errorType = 'Notice';
 				break;
-			case E_WARNING:
-			case E_USER_WARNING:
-				error = 'Warning';
+			case 'Warning':
+			case 'UserWarning':
+				errorType = 'Warning';
 				break;
-			case E_ERROR:
-			case E_USER_ERROR:
-				error = 'Fatal Error';
+			case 'Error':
+			case 'UserError':
+				errorType = 'Fatal Error';
 				break;
 			default:
-				error = 'Unknown';
+				errorType = 'Unknown';
 				break;
 		}
 
-		if (this->config->get('config_error_log')) {
-			this->log->write('PHP ' . error . ':  ' . message . ' in ' . file . ' on line ' . line);
+		if (this.config.get('config_error_log')) {
+			const logMessage = `Node.js ${errorType}: ${message}\nFile: ${file}\nLine: ${line}\n`;
+			this.registry.get('log').write(logMessage);
 		}
 
-		if (this->config->get('config_error_display')) {
-			echo '<b>' . error . '</b>: ' . message . ' in <b>' . file . '</b> on line <b>' . line . '</b>';
+		if (this.config.get('config_error_display')) {
+			console.error(`${errorType}: ${message} in ${file} on line ${line}`);
 		} else {
-			header('Location: ' . this->config->get('error_page'));
-			exit();
+			// Redirect to error page
+			console.error('Redirecting to error page');
 		}
-	
+
 		return true;
 	}
 
-	/**
-	 * @param \Throwable e
-	 *
-	 * @return void
-	 */
-	async exception(\Throwable e): void {
-		if (this->config->get('config_error_log')) {
-			this->log->write(e->getMessage() . ' in ' . e->getFile() . ' on line ' . e->getLine());
+	exception(error) {
+		if (this.config.get('config_error_log')) {
+			const logMessage = `${error.code}: ${error.message}\nFile: ${error.fileName}\nLine: ${error.lineNumber}\n`;
+			this.registry.get('log').write(logMessage);
 		}
 
-		if (this->config->get('config_error_display')) {
-			echo '<b>' . e->getMessage() . '</b>: in <b>' . e->getFile() . '</b> on line <b>' . e->getLine() . '</b>';
+		if (this.config.get('config_error_display')) {
+			console.error(`${error.message} in ${error.fileName} on line ${error.lineNumber}`);
 		} else {
-			header('Location: ' . this->config->get('error_page'));
-			exit();
+			// Redirect to error page
+			console.error('Redirecting to error page');
+			this.response.setRedirect(this.config.get('error_page'));
 		}
 	}
-} 
+}
+

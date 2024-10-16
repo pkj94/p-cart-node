@@ -23,12 +23,12 @@ class ExceptionController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('error/exception', 'user_token=' + this.session.data['user_token'])
+			'href' : await this.url.link('error/exception', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['header'] = await this.load.controller('common/header');

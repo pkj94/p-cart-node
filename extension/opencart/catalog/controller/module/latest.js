@@ -62,7 +62,7 @@ class LatestController extends Controller {
 					'tax'         : $tax,
 					'minimum'     : result['minimum'] > 0 ? result['minimum'] : 1,
 					'rating'      : result['rating'],
-					'href'        : this.url.link('product/product', 'language=' . this.config.get('config_language') . '&product_id=' . result['product_id'])
+					'href'        : await this.url.link('product/product', 'language=' . this.config.get('config_language') . '&product_id=' . result['product_id'])
 				];
 
 				data['products'][] = await this.load.controller('product/thumb', $product_data);

@@ -14,21 +14,21 @@ module.exports = class ActivityDashboardController extends Controller {
 
 		data.breadcrumbs.push({
 			text: this.language.get('text_home'),
-			href: this.url.link('common/dashboard', 'user_token=' + this.session.data.user_token)
+			href: await this.url.link('common/dashboard', 'user_token=' + this.session.data.user_token)
 		});
 
 		data.breadcrumbs.push({
 			text: this.language.get('text_extension'),
-			href: this.url.link('marketplace/extension', 'user_token=' + this.session.data.user_token + '&type=dashboard')
+			href: await this.url.link('marketplace/extension', 'user_token=' + this.session.data.user_token + '&type=dashboard')
 		});
 
 		data.breadcrumbs.push({
 			text: this.language.get('heading_title'),
-			href: this.url.link('extension/opencart/dashboard/activity', 'user_token=' + this.session.data.user_token)
+			href: await this.url.link('extension/opencart/dashboard/activity', 'user_token=' + this.session.data.user_token)
 		});
 
-		data.save = this.url.link('extension/opencart/dashboard/activity.save', 'user_token=' + this.session.data.user_token);
-		data.back = this.url.link('marketplace/extension', 'user_token=' + this.session.data.user_token + '&type=dashboard');
+		data.save = await this.url.link('extension/opencart/dashboard/activity.save', 'user_token=' + this.session.data.user_token);
+		data.back = await this.url.link('marketplace/extension', 'user_token=' + this.session.data.user_token + '&type=dashboard');
 
 		data.dashboard_activity_width = this.config.get('dashboard_activity_width');
 
@@ -77,7 +77,7 @@ module.exports = class ActivityDashboardController extends Controller {
 		this.load.model('extension/opencart/report/activity', this);
 
 		const results = await this.model_extension_opencart_report_activity.getActivities();
-		results.forEach((result) => {
+		results.forEach(async (result) => {
 			const comment = vsprintf(this.language.get('text_activity_' + result.key), JSON.parse(result.data));
 
 			const find = [
@@ -87,9 +87,9 @@ module.exports = class ActivityDashboardController extends Controller {
 			];
 
 			const replace = [
-				this.url.link('customer/customer.form', 'user_token=' + this.session.data.user_token + '&customer_id='),
-				this.url.link('sale/order.info', 'user_token=' + this.session.data.user_token + '&order_id='),
-				this.url.link('sale/return.form', 'user_token=' + this.session.data.user_token + '&return_id=')
+				await this.url.link('customer/customer.form', 'user_token=' + this.session.data.user_token + '&customer_id='),
+				await this.url.link('sale/order.info', 'user_token=' + this.session.data.user_token + '&order_id='),
+				await this.url.link('sale/return.form', 'user_token=' + this.session.data.user_token + '&return_id=')
 			];
 
 			data.activities.push({

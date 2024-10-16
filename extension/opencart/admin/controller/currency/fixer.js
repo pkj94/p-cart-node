@@ -11,19 +11,19 @@ module.exports = class FixerCurrencyController extends Controller {
 			breadcrumbs: [
 				{
 					text: this.language.get('text_home'),
-					href: this.url.link('common/dashboard', `user_token=${this.session.data['user_token']}`)
+					href: await this.url.link('common/dashboard', `user_token=${this.session.data['user_token']}`)
 				},
 				{
 					text: this.language.get('text_extension'),
-					href: this.url.link('marketplace/extension', `user_token=${this.session.data['user_token']}&type=currency`)
+					href: await this.url.link('marketplace/extension', `user_token=${this.session.data['user_token']}&type=currency`)
 				},
 				{
 					text: this.language.get('heading_title'),
-					href: this.url.link('extension/opencart/currency/fixer', `user_token=${this.session.data['user_token']}`)
+					href: await this.url.link('extension/opencart/currency/fixer', `user_token=${this.session.data['user_token']}`)
 				}
 			],
-			save: this.url.link('extension/opencart/currency/fixer.save', `user_token=${this.session.data['user_token']}`),
-			back: this.url.link('marketplace/extension', `user_token=${this.session.data['user_token']}&type=currency`),
+			save: await this.url.link('extension/opencart/currency/fixer.save', `user_token=${this.session.data['user_token']}`),
+			back: await this.url.link('marketplace/extension', `user_token=${this.session.data['user_token']}&type=currency`),
 			currency_fixer_api: this.config.get('currency_fixer_api'),
 			currency_fixer_status: this.config.get('currency_fixer_status'),
 			header: await this.load.controller('common/header'),

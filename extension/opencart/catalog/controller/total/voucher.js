@@ -16,8 +16,8 @@ class VoucherController extends Controller {
 		if (this.config.get('total_voucher_status')) {
 			this.load.language('extension/opencart/total/voucher');
 
-			data['save'] = this.url.link('extension/opencart/total/voucher.save', 'language=' . this.config.get('config_language'), true);
-			data['list'] = this.url.link('checkout/cart.list', 'language=' . this.config.get('config_language'), true);
+			data['save'] = await this.url.link('extension/opencart/total/voucher.save', 'language=' . this.config.get('config_language'), true);
+			data['list'] = await this.url.link('checkout/cart.list', 'language=' . this.config.get('config_language'), true);
 
 			if ((this.session.data['voucher'])) {
 				data['voucher'] = this.session.data['voucher'];

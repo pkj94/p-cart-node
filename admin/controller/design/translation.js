@@ -29,16 +29,16 @@ module.exports = class TranslationController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('design/translation', 'user_token=' + this.session.data['user_token'] + url)
+			'href': await this.url.link('design/translation', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
-		data['add'] = this.url.link('design/translation.form', 'user_token=' + this.session.data['user_token'] + url);
-		data['delete'] = this.url.link('design/translation.delete', 'user_token=' + this.session.data['user_token']);
+		data['add'] = await this.url.link('design/translation.form', 'user_token=' + this.session.data['user_token'] + url);
+		data['delete'] = await this.url.link('design/translation.delete', 'user_token=' + this.session.data['user_token']);
 
 		data['list'] = await this.getList();
 
@@ -94,7 +94,7 @@ module.exports = class TranslationController extends Controller {
 			url += '&page=' + this.request.get['page'];
 		}
 
-		data['action'] = this.url.link('design/translation.list', 'user_token=' + this.session.data['user_token'] + url);
+		data['action'] = await this.url.link('design/translation.list', 'user_token=' + this.session.data['user_token'] + url);
 
 		this.load.model('localisation/language', this);
 
@@ -130,7 +130,7 @@ module.exports = class TranslationController extends Controller {
 				'language': code,
 				'key': result['key'],
 				'value': result['value'],
-				'edit': this.url.link('design/translation.form', 'user_token=' + this.session.data['user_token'] + '&translation_id=' + result['translation_id'])
+				'edit': await this.url.link('design/translation.form', 'user_token=' + this.session.data['user_token'] + '&translation_id=' + result['translation_id'])
 			});
 		}
 
@@ -142,17 +142,17 @@ module.exports = class TranslationController extends Controller {
 			url += '&order=ASC';
 		}
 
-		data['sort_store'] = this.url.link('design/translation.list', 'user_token=' + this.session.data['user_token'] + '&sort=store' + url);
-		data['sort_language'] = this.url.link('design/translation.list', 'user_token=' + this.session.data['user_token'] + '&sort=language' + url);
-		data['sort_route'] = this.url.link('design/translation.list', 'user_token=' + this.session.data['user_token'] + '&sort=route' + url);
-		data['sort_key'] = this.url.link('design/translation.list', 'user_token=' + this.session.data['user_token'] + '&sort=key' + url);
-		data['sort_value'] = this.url.link('design/translation.list', 'user_token=' + this.session.data['user_token'] + '&sort=value' + url);
+		data['sort_store'] = await this.url.link('design/translation.list', 'user_token=' + this.session.data['user_token'] + '&sort=store' + url);
+		data['sort_language'] = await this.url.link('design/translation.list', 'user_token=' + this.session.data['user_token'] + '&sort=language' + url);
+		data['sort_route'] = await this.url.link('design/translation.list', 'user_token=' + this.session.data['user_token'] + '&sort=route' + url);
+		data['sort_key'] = await this.url.link('design/translation.list', 'user_token=' + this.session.data['user_token'] + '&sort=key' + url);
+		data['sort_value'] = await this.url.link('design/translation.list', 'user_token=' + this.session.data['user_token'] + '&sort=value' + url);
 
 		data['pagination'] = await this.load.controller('common/pagination', {
 			'total': translation_total,
 			'page': page,
 			'limit': this.config.get('config_pagination_admin'),
-			'url': this.url.link('design/translation.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
+			'url': await this.url.link('design/translation.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (translation_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (translation_total - this.config.get('config_pagination_admin'))) ? translation_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), translation_total, Math.ceil(translation_total / this.config.get('config_pagination_admin')));
@@ -192,16 +192,16 @@ module.exports = class TranslationController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('design/translation', 'user_token=' + this.session.data['user_token'] + url)
+			'href': await this.url.link('design/translation', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
-		data['save'] = this.url.link('design/translation.save', 'user_token=' + this.session.data['user_token']);
-		data['back'] = this.url.link('design/translation', 'user_token=' + this.session.data['user_token'] + url);
+		data['save'] = await this.url.link('design/translation.save', 'user_token=' + this.session.data['user_token']);
+		data['back'] = await this.url.link('design/translation', 'user_token=' + this.session.data['user_token'] + url);
 		let translation_info
 		if ((this.request.get['translation_id'])) {
 			this.load.model('design/translation', this);

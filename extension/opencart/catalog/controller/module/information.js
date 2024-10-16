@@ -22,12 +22,12 @@ class InformationController extends Controller {
 		foreach (this.model_catalog_information.getInformations() as result) {
 			data['informations'].push({
 				'title' : result['title'],
-				'href'  : this.url.link('information/information', 'language=' . this.config.get('config_language') . '&information_id=' . result['information_id'])
+				'href'  : await this.url.link('information/information', 'language=' . this.config.get('config_language') . '&information_id=' . result['information_id'])
 			];
 		}
 
-		data['contact'] = this.url.link('information/contact', 'language=' . this.config.get('config_language'));
-		data['sitemap'] = this.url.link('information/sitemap', 'language=' . this.config.get('config_language'));
+		data['contact'] = await this.url.link('information/contact', 'language=' . this.config.get('config_language'));
+		data['sitemap'] = await this.url.link('information/sitemap', 'language=' . this.config.get('config_language'));
 
 		return await this.load.view('extension/opencart/module/information', data);
 	}

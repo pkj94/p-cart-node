@@ -13,16 +13,16 @@ module.exports = class ProfileController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('user/profile', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('user/profile', 'user_token=' + this.session.data['user_token'])
 		});
 
-		data['save'] = this.url.link('user/profile.save', 'user_token=' + this.session.data['user_token']);
-		data['back'] = this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token']);
+		data['save'] = await this.url.link('user/profile.save', 'user_token=' + this.session.data['user_token']);
+		data['back'] = await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token']);
 
 		this.load.model('user/user', this);
 

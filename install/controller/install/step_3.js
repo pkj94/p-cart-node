@@ -80,7 +80,7 @@ module.exports = class Step3Controller extends Controller {
 
                 fs.writeFileSync(DIR_OPENCART + 'admin/config.json', JSON.stringify(output, null, "\t"));
 
-                this.response.setRedirect(this.url.link('install/step_4', 'language=' + this.config.get('language_code')));
+                this.response.setRedirect(await this.url.link('install/step_4', 'language=' + this.config.get('language_code')));
             } catch (e) {
                 console.log(e);
                 this.error['warning'] = e.message;
@@ -127,7 +127,7 @@ module.exports = class Step3Controller extends Controller {
         data['error_password'] = this.error['password'] || '';
         data['error_email'] = this.error['email'] || '';
 
-        data['action'] = this.url.link('install/step_3', 'language=' + this.config.get('language_code'));
+        data['action'] = await this.url.link('install/step_3', 'language=' + this.config.get('language_code'));
 
         const db_drivers = ['mysqli', 'mongodb'];
         data['drivers'] = [];
@@ -152,7 +152,7 @@ module.exports = class Step3Controller extends Controller {
         data['password'] = this.request.post['password'] || '';
         data['email'] = this.request.post['email'] || '';
 
-        data['back'] = this.url.link('install/step_2', 'language=' + this.config.get('language_code'));
+        data['back'] = await this.url.link('install/step_2', 'language=' + this.config.get('language_code'));
 
         data['footer'] = this.load.controller('common/footer');
         data['header'] = this.load.controller('common/header');

@@ -28,15 +28,15 @@ module.exports = class EventController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('marketplace/event', 'user_token=' + this.session.data['user_token'] + url)
+			'href': await this.url.link('marketplace/event', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
-		data['delete'] = this.url.link('marketplace/event.delete', 'user_token=' + this.session.data['user_token']);
+		data['delete'] = await this.url.link('marketplace/event.delete', 'user_token=' + this.session.data['user_token']);
 
 		data['list'] = await this.getList();
 
@@ -92,7 +92,7 @@ module.exports = class EventController extends Controller {
 			url += '&page=' + this.request.get['page'];
 		}
 
-		data['action'] = this.url.link('marketplace/event.list', 'user_token=' + this.session.data['user_token'] + url);
+		data['action'] = await this.url.link('marketplace/event.list', 'user_token=' + this.session.data['user_token'] + url);
 
 		data['events'] = [];
 
@@ -118,8 +118,8 @@ module.exports = class EventController extends Controller {
 				'action': result['action'],
 				'status': result['status'],
 				'sort_order': result['sort_order'],
-				'enable': this.url.link('marketplace/event.enable', 'user_token=' + this.session.data['user_token'] + '&event_id=' + result['event_id']),
-				'disable': this.url.link('marketplace/event.disable', 'user_token=' + this.session.data['user_token'] + '&event_id=' + result['event_id'])
+				'enable': await this.url.link('marketplace/event.enable', 'user_token=' + this.session.data['user_token'] + '&event_id=' + result['event_id']),
+				'disable': await this.url.link('marketplace/event.disable', 'user_token=' + this.session.data['user_token'] + '&event_id=' + result['event_id'])
 			});
 		}
 
@@ -131,8 +131,8 @@ module.exports = class EventController extends Controller {
 			url += '&order=ASC';
 		}
 
-		data['sort_code'] = this.url.link('marketplace/event.list', 'user_token=' + this.session.data['user_token'] + '&sort=code' + url);
-		data['sort_sort_order'] = this.url.link('marketplace/event.list', 'user_token=' + this.session.data['user_token'] + '&sort=sort_order' + url);
+		data['sort_code'] = await this.url.link('marketplace/event.list', 'user_token=' + this.session.data['user_token'] + '&sort=code' + url);
+		data['sort_sort_order'] = await this.url.link('marketplace/event.list', 'user_token=' + this.session.data['user_token'] + '&sort=sort_order' + url);
 
 		url = '';
 
@@ -148,7 +148,7 @@ module.exports = class EventController extends Controller {
 			'total': event_total,
 			'page': page,
 			'limit': this.config.get('config_pagination_admin'),
-			'url': this.url.link('marketplace/event.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
+			'url': await this.url.link('marketplace/event.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (event_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (event_total - this.config.get('config_pagination_admin'))) ? event_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), event_total, Math.ceil(event_total / this.config.get('config_pagination_admin')));

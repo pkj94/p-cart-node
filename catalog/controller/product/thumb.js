@@ -7,21 +7,21 @@ namespace Opencart\Catalog\Controller\Product;
  */
 class ThumbController extends Controller {
 	/**
-	 * @param array $data
+	 * @param array data
 	 *
 	 * @return string
 	 */
-	async index(array $data): string {
-		$this->load->language('product/thumb');
+	async index(array data) {
+		await this.load.language('product/thumb');
 
-		$data['cart'] = $this->url->link('common/cart.info', 'language=' . $this->config->get('config_language'));
+		data['cart'] = await this.url.link('common/cart+info', 'language=' + this.config.get('config_language'));
 
-		$data['add_to_cart'] = $this->url->link('checkout/cart.add', 'language=' . $this->config->get('config_language'));
-		$data['add_to_wishlist'] = $this->url->link('account/wishlist.add', 'language=' . $this->config->get('config_language'));
-		$data['add_to_compare'] = $this->url->link('product/compare.add', 'language=' . $this->config->get('config_language'));
+		data['add_to_cart'] = await this.url.link('checkout/cart+add', 'language=' + this.config.get('config_language'));
+		data['add_to_wishlist'] = await this.url.link('account/wishlist+add', 'language=' + this.config.get('config_language'));
+		data['add_to_compare'] = await this.url.link('product/compare+add', 'language=' + this.config.get('config_language'));
 
-		$data['review_status'] = (int)$this->config->get('config_review_status');
+		data['review_status'] = this.config.get('config_review_status');
 
-		return $this->load->view('product/thumb', $data);
+		return await this.load.view('product/thumb', data);
 	}
 }

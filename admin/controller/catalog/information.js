@@ -28,16 +28,16 @@ module.exports = class InformationController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('catalog/information', 'user_token=' + this.session.data['user_token'] + url)
+			'href': await this.url.link('catalog/information', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
-		data['add'] = this.url.link('catalog/information.form', 'user_token=' + this.session.data['user_token'] + url);
-		data['delete'] = this.url.link('catalog/information.delete', 'user_token=' + this.session.data['user_token']);
+		data['add'] = await this.url.link('catalog/information.form', 'user_token=' + this.session.data['user_token'] + url);
+		data['delete'] = await this.url.link('catalog/information.delete', 'user_token=' + this.session.data['user_token']);
 
 		data['list'] = await this.getList();
 
@@ -92,7 +92,7 @@ module.exports = class InformationController extends Controller {
 			url += '&page=' + this.request.get['page'];
 		}
 
-		data['action'] = this.url.link('catalog/information.list', 'user_token=' + this.session.data['user_token'] + url);
+		data['action'] = await this.url.link('catalog/information.list', 'user_token=' + this.session.data['user_token'] + url);
 
 		data['informations'] = [];
 
@@ -115,7 +115,7 @@ module.exports = class InformationController extends Controller {
 				'title': result['title'],
 				'status': result['status'],
 				'sort_order': result['sort_order'],
-				'edit': this.url.link('catalog/information.form', 'user_token=' + this.session.data['user_token'] + '&information_id=' + result['information_id'] + url)
+				'edit': await this.url.link('catalog/information.form', 'user_token=' + this.session.data['user_token'] + '&information_id=' + result['information_id'] + url)
 			});
 		}
 
@@ -127,8 +127,8 @@ module.exports = class InformationController extends Controller {
 			url += '&order=ASC';
 		}
 
-		data['sort_title'] = this.url.link('catalog/information.list', 'user_token=' + this.session.data['user_token'] + '&sort=id.title' + url);
-		data['sort_sort_order'] = this.url.link('catalog/information.list', 'user_token=' + this.session.data['user_token'] + '&sort=i.sort_order' + url);
+		data['sort_title'] = await this.url.link('catalog/information.list', 'user_token=' + this.session.data['user_token'] + '&sort=id.title' + url);
+		data['sort_sort_order'] = await this.url.link('catalog/information.list', 'user_token=' + this.session.data['user_token'] + '&sort=i.sort_order' + url);
 
 		url = '';
 
@@ -144,7 +144,7 @@ module.exports = class InformationController extends Controller {
 			'total': information_total,
 			'page': page,
 			'limit': this.config.get('config_pagination_admin'),
-			'url': this.url.link('catalog/information.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
+			'url': await this.url.link('catalog/information.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (information_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (information_total - this.config.get('config_pagination_admin'))) ? information_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), information_total, Math.ceil(information_total / this.config.get('config_pagination_admin')));
@@ -186,16 +186,16 @@ module.exports = class InformationController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('catalog/information', 'user_token=' + this.session.data['user_token'] + url)
+			'href': await this.url.link('catalog/information', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
-		data['save'] = this.url.link('catalog/information.save', 'user_token=' + this.session.data['user_token']);
-		data['back'] = this.url.link('catalog/information', 'user_token=' + this.session.data['user_token'] + url);
+		data['save'] = await this.url.link('catalog/information.save', 'user_token=' + this.session.data['user_token']);
+		data['back'] = await this.url.link('catalog/information', 'user_token=' + this.session.data['user_token'] + url);
 		let information_info;
 		if ((this.request.get['information_id'])) {
 			this.load.model('catalog/information', this);

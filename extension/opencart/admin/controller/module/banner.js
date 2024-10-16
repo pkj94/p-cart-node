@@ -16,11 +16,11 @@ module.exports = class BannerModuleController extends Controller {
 			breadcrumbs: [
 				{
 					text: this.language.get('text_home'),
-					href: this.url.link('common/dashboard', `user_token=${this.session.data['user_token']}`)
+					href: await this.url.link('common/dashboard', `user_token=${this.session.data['user_token']}`)
 				},
 				{
 					text: this.language.get('text_extension'),
-					href: this.url.link('marketplace/extension', `user_token=${this.session.data['user_token']}&type=module`)
+					href: await this.url.link('marketplace/extension', `user_token=${this.session.data['user_token']}&type=module`)
 				}
 			]
 		};
@@ -28,20 +28,20 @@ module.exports = class BannerModuleController extends Controller {
 		if (!this.request.get['module_id']) {
 			data.breadcrumbs.push({
 				text: this.language.get('heading_title'),
-				href: this.url.link('extension/opencart/module/banner', `user_token=${this.session.data['user_token']}`)
+				href: await this.url.link('extension/opencart/module/banner', `user_token=${this.session.data['user_token']}`)
 			});
 		} else {
 			data.breadcrumbs.push({
 				text: this.language.get('heading_title'),
-				href: this.url.link('extension/opencart/module/banner', `user_token=${this.session.data['user_token']}&module_id=${this.request.get['module_id']}`)
+				href: await this.url.link('extension/opencart/module/banner', `user_token=${this.session.data['user_token']}&module_id=${this.request.get['module_id']}`)
 			});
 		}
 
 		data.save = !this.request.get['module_id'] ?
-			this.url.link('extension/opencart/module/banner.save', `user_token=${this.session.data['user_token']}`) :
-			this.url.link('extension/opencart/module/banner.save', `user_token=${this.session.data['user_token']}&module_id=${this.request.get['module_id']}`);
+			await this.url.link('extension/opencart/module/banner.save', `user_token=${this.session.data['user_token']}`) :
+			await this.url.link('extension/opencart/module/banner.save', `user_token=${this.session.data['user_token']}&module_id=${this.request.get['module_id']}`);
 
-		data.back = this.url.link('marketplace/extension', `user_token=${this.session.data['user_token']}&type=module`);
+		data.back = await this.url.link('marketplace/extension', `user_token=${this.session.data['user_token']}&type=module`);
 
 		let module_info;
 		if (this.request.get['module_id']) {

@@ -9,68 +9,69 @@ class ShippingMethodController extends Controller {
 	/**
 	 * @return void
 	 */
-	async index(): void {
-		$this->load->language('api/sale/shipping_method');
+	async index() {
+const data ={};
+		await this.load.language('api/sale/shipping_method');
 
-		$json = [];
+		const json = {};
 
-		if ($this->cart->hasShipping()) {
-			if (!($this->session->data['shipping_address'])) {
-				$json['error'] = $this->language->get('error_shipping_address');
+		if (this.cart.hasShipping()) {
+			if (!(this.session.data['shipping_address'])) {
+				json['error'] = this.language.get('error_shipping_address');
 			}
 		} else {
-			$json['error'] = $this->language->get('error_shipping');
+			json['error'] = this.language.get('error_shipping');
 		}
 
-		if (!$json) {
-			$this->load->model('checkout/shipping_method');
+		if (!Object.keys(json).length) {
+			this.load.model('checkout/shipping_method');
 
-			$shipping_methods = $this->model_checkout_shipping_method->getMethods($this->session->data['shipping_address']);
+			shipping_methods = await this.model_checkout_shipping_method.getMethods(this.session.data['shipping_address']);
 
-			if ($shipping_methods) {
-				$json['shipping_methods'] = $this->session->data['shipping_methods'] = $shipping_methods;
+			if (shipping_methods) {
+				json['shipping_methods'] = this.session.data['shipping_methods'] = shipping_methods;
 			} else {
-				$json['error'] = $this->language->get('error_no_shipping');
+				json['error'] = this.language.get('error_no_shipping');
 			}
 		}
 
-		$this->response->addHeader('Content-Type: application/json');
-		$this->response->setOutput(json_encode($json));
+		this.response.addHeader('Content-Type: application/json');
+		this.response.setOutput(json);
 	}
 
 	/**
 	 * @return void
 	 */
-	async save(): void {
-		$this->load->language('api/sale/shipping_method');
+	async save() {
+		await this.load.language('api/sale/shipping_method');
 
-		$json = [];
+		const json = {};
 
-		if ($this->cart->hasShipping()) {
-			if (!($this->session->data['shipping_address'])) {
-				$json['error'] = $this->language->get('error_shipping_address');
+		if (this.cart.hasShipping()) {
+			if (!(this.session.data['shipping_address'])) {
+				json['error'] = this.language.get('error_shipping_address');
 			}
 
-			if (($this->request->post['shipping_method'])) {
-				$shipping = explode('.', $this->request->post['shipping_method']);
+			if ((this.request.post['shipping_method'])) {
+				shipping = explode('+', this.request.post['shipping_method']);
 
-				if (!($shipping[0]) || !($shipping[1]) || !($this->session->data['shipping_methods'][$shipping[0]]['quote'][$shipping[1]])) {
-					$json['error'] = $this->language->get('error_shipping_method');
+				if (!(shipping[0]) || !(shipping[1]) || !(this.session.data['shipping_methods'][shipping[0]]['quote'][shipping[1]])) {
+					json['error'] = this.language.get('error_shipping_method');
 				}
 			} else {
-				$json['error'] = $this->language->get('error_shipping_method');
+				json['error'] = this.language.get('error_shipping_method');
 			}
 		} else {
-			$json['error'] = $this->language->get('error_shipping');
+			json['error'] = this.language.get('error_shipping');
 		}
 
-		if (!$json) {
-			$this->session->data['shipping_method'] = $this->session->data['shipping_methods'][$shipping[0]]['quote'][$shipping[1]];
+		if (!Object.keys(json).length) {
+			this.session.data['shipping_method'] = this.session.data['shipping_methods'][shipping[0]]['quote'][shipping[1]];
 
-			$json['success'] = $this->language->get('text_success');
+			json['success'] = this.language.get('text_success');
 		}
 
-		$this->response->addHeader('Content-Type: application/json');
-		$this->response->setOutput(json_encode($json));
+		this.response.addHeader('Content-Type: application/json');
+		this.response.setOutput(json);
 	}
 }

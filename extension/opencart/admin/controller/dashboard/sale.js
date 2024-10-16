@@ -13,19 +13,19 @@ module.exports = class SaleDashboardController extends Controller {
 			breadcrumbs: [
 				{
 					text: this.language.get('text_home'),
-					href: this.url.link('common/dashboard', `user_token=${this.session.data['user_token']}`)
+					href: await this.url.link('common/dashboard', `user_token=${this.session.data['user_token']}`)
 				},
 				{
 					text: this.language.get('text_extension'),
-					href: this.url.link('marketplace/extension', `user_token=${this.session.data['user_token']}&type=dashboard`)
+					href: await this.url.link('marketplace/extension', `user_token=${this.session.data['user_token']}&type=dashboard`)
 				},
 				{
 					text: this.language.get('heading_title'),
-					href: this.url.link('extension/opencart/dashboard/sale', `user_token=${this.session.data['user_token']}`)
+					href: await this.url.link('extension/opencart/dashboard/sale', `user_token=${this.session.data['user_token']}`)
 				}
 			],
-			save: this.url.link('extension/opencart/dashboard/sale.save', `user_token=${this.session.data['user_token']}`),
-			back: this.url.link('marketplace/extension', `user_token=${this.session.data['user_token']}&type=dashboard`),
+			save: await this.url.link('extension/opencart/dashboard/sale.save', `user_token=${this.session.data['user_token']}`),
+			back: await this.url.link('marketplace/extension', `user_token=${this.session.data['user_token']}&type=dashboard`),
 			dashboard_sale_width: this.config.get('dashboard_sale_width'),
 			columns: [],
 			dashboard_sale_status: this.config.get('dashboard_sale_status'),
@@ -77,7 +77,7 @@ module.exports = class SaleDashboardController extends Controller {
 
 		const data = {
 			percentage: difference && today ? Math.round((difference / today) * 100) : 0,
-			sale: this.url.link('sale/order', `user_token=${this.session.data['user_token']}`),
+			sale: await this.url.link('sale/order', `user_token=${this.session.data['user_token']}`),
 			user_token: this.session.data['user_token']
 		};
 

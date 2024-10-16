@@ -7,6 +7,6 @@ module.exports = class LogoutController extends Controller {
 
 		delete (this.session.data['user_token']);
 
-		this.response.setRedirect(this.url.link('common/login', '', true));
+		this.response.setRedirect(await this.url.link('common/login', '', true));
 	}
 }

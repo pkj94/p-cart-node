@@ -15,19 +15,19 @@ module.exports = class GdprController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('customer/gdpr', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('customer/gdpr', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['text_info'] = sprintf(this.language.get('text_info'), this.config.get('config_gdpr_limit'));
 
-		data['approve'] = this.url.link('customer/gdpr.approve', 'user_token=' + this.session.data['user_token'], true);
-		data['deny'] = this.url.link('customer/gdpr.deny', 'user_token=' + this.session.data['user_token'], true);
-		data['delete'] = this.url.link('customer/gdpr.delete', 'user_token=' + this.session.data['user_token'], true);
+		data['approve'] = await this.url.link('customer/gdpr.approve', 'user_token=' + this.session.data['user_token'], true);
+		data['deny'] = await this.url.link('customer/gdpr.deny', 'user_token=' + this.session.data['user_token'], true);
+		data['delete'] = await this.url.link('customer/gdpr.delete', 'user_token=' + this.session.data['user_token'], true);
 
 		data['list'] = await this.getList();
 
@@ -104,7 +104,7 @@ module.exports = class GdprController extends Controller {
 			url += '&filter_date_to=' + this.request.get['filter_date_to'];
 		}
 
-		data['action'] = this.url.link('customer/gdpr.list', 'user_token=' + this.session.data['user_token'] + url, true);
+		data['action'] = await this.url.link('customer/gdpr.list', 'user_token=' + this.session.data['user_token'] + url, true);
 
 		data['gdprs'] = [];
 
@@ -129,7 +129,7 @@ module.exports = class GdprController extends Controller {
 			const customer_info = await this.model_customer_customer.getCustomerByEmail(result['email']);
 			let edit = '';
 			if (customer_info.customer_id) {
-				edit = this.url.link('customer/customer.form', 'user_token=' + this.session.data['user_token'] + '&customer_id=' + customer_info['customer_id'], true);
+				edit = await this.url.link('customer/customer.form', 'user_token=' + this.session.data['user_token'] + '&customer_id=' + customer_info['customer_id'], true);
 			}
 
 			data['gdprs'].push({
@@ -138,10 +138,10 @@ module.exports = class GdprController extends Controller {
 				'action': this.language.get('text_' + result['action']),
 				'status': result['status'],
 				'date_added': date(this.language.get('date_format_short'), new Date(result['date_added'])),
-				'approve': this.url.link('customer/gdpr.approve', 'user_token=' + this.session.data['user_token'] + '&gdpr_id=' + result['gdpr_id'], true),
-				'deny': this.url.link('customer/gdpr.deny', 'user_token=' + this.session.data['user_token'] + '&gdpr_id=' + result['gdpr_id'], true),
+				'approve': await this.url.link('customer/gdpr.approve', 'user_token=' + this.session.data['user_token'] + '&gdpr_id=' + result['gdpr_id'], true),
+				'deny': await this.url.link('customer/gdpr.deny', 'user_token=' + this.session.data['user_token'] + '&gdpr_id=' + result['gdpr_id'], true),
 				'edit': edit,
-				'delete': this.url.link('customer/gdpr.delete', 'user_token=' + this.session.data['user_token'] + '&gdpr_id=' + result['gdpr_id'], true)
+				'delete': await this.url.link('customer/gdpr.delete', 'user_token=' + this.session.data['user_token'] + '&gdpr_id=' + result['gdpr_id'], true)
 			});
 		}
 
@@ -171,7 +171,7 @@ module.exports = class GdprController extends Controller {
 			'total': gdpr_total,
 			'page': page,
 			'limit': this.config.get('config_pagination_admin'),
-			'url': this.url.link('customer/gdpr.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
+			'url': await this.url.link('customer/gdpr.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (gdpr_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (gdpr_total - this.config.get('config_pagination_admin'))) ? gdpr_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), gdpr_total, Math.ceil(gdpr_total / this.config.get('config_pagination_admin')));

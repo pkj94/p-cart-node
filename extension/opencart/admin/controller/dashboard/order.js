@@ -22,22 +22,22 @@ module.exports = class OrderDashboardController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_extension'),
-			'href': this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=dashboard')
+			'href': await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=dashboard')
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('extension/opencart/dashboard/order', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('extension/opencart/dashboard/order', 'user_token=' + this.session.data['user_token'])
 		});
 
-		data['save'] = this.url.link('extension/opencart/dashboard/order+save', 'user_token=' + this.session.data['user_token']);
+		data['save'] = await this.url.link('extension/opencart/dashboard/order+save', 'user_token=' + this.session.data['user_token']);
 
-		data['back'] = this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=dashboard');
+		data['back'] = await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=dashboard');
 
 		data['dashboard_order_width'] = this.config.get('dashboard_order_width');
 
@@ -117,7 +117,7 @@ module.exports = class OrderDashboardController extends Controller {
 			data['total'] = order_total;
 		}
 
-		data['order'] = this.url.link('sale/order', 'user_token=' + this.session.data['user_token']);
+		data['order'] = await this.url.link('sale/order', 'user_token=' + this.session.data['user_token']);
 
 		data['user_token'] = this.session.data['user_token'];
 

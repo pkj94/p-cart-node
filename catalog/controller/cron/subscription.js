@@ -9,7 +9,7 @@ class SubscriptionController extends Controller {
 	/**
 	 * Index
 	 *
-	 * @param int    cron_id
+	 * @param    cron_id
 	 * @param string code
 	 * @param string cycle
 	 * @param string date_added
@@ -17,177 +17,177 @@ class SubscriptionController extends Controller {
 	 *
 	 * @return void
 	 */
-	async index(cron_id, string code, string cycle, string date_added, string date_modified): void {
-        this->load->language('cron/subscription');
+	async index(cron_id, code, cycle, date_added, date_modified) {
+        this.load.language('cron/subscription');
 
 		// Check the there is an order and the order status is complete and subscription status is active
 		filter_data = [
-			'filter_date_next'              => date('Y-m-d H:i:s'),
-			'filter_subscription_status_id' => this->config->get('config_subscription_active_status_id'),
-			'start'                         => 0,
-			'limit'                         => 10
+			'filter_date_next'              : date('Y-m-d H:i:s'),
+			'filter_subscription_status_id' : this.config.get('config_subscription_active_status_id'),
+			'start'                         : 0,
+			'limit'                         : 10
 		];
 
 		// Get all
-		this->load->model('checkout/subscription');
-		this->load->model('checkout/order');
+		this.load.model('checkout/subscription');
+		this.load.model('checkout/order');
 
-        results = this->model_checkout_subscription->getSubscriptions(filter_data);
+        results = await this.model_checkout_subscription.getSubscriptions(filter_data);
 
-		foreach (results as result) {
-			order_info = this->model_checkout_order->getOrder(result['order_id']);
+		for (let result of results) {
+			order_info = await this.model_checkout_order.getOrder(result['order_id']);
 
 			// Check the there is an order and the order status is complete and subscription status is active
-			if (order_info && in_array(order_info['order_status_id'], (array)this->config->get('config_complete_status'))) {
-				this->load->model('setting/store');
+			if (order_info && in_array(order_info['order_status_id'], this.config.get('config_complete_status'))) {
+				this.load.model('setting/store',this);
 
 				error = '';
 
-				// 1. Language
-				this->load->model('localisation/language');
+				// 1+ Language
+				this.load.model('localisation/language',this);
 
-				language_info = this->model_localisation_language->getLanguage(result['language_id']);
+				const language_info = await this.model_localisation_language.getLanguage(result['language_id']);
 
 				if (!language_info) {
-					error = this->language->get('error_language');
+					error = this.language.get('error_language');
 				}
 
-				// 2. Currency
-				this->load->model('localisation/currency');
+				// 2+ Currency
+				this.load.model('localisation/currency',this);
 
-				currency_info = this->model_localisation_currency->getCurrency(result['currency_id']);
+				currency_info = await this.model_localisation_currency.getCurrency(result['currency_id']);
 
 				if (!currency_info) {
-					error = this->language->get('error_currency');
+					error = this.language.get('error_currency');
 				}
 
-				// 3. Create new instance of a store
+				// 3+ Create new instance of a store
 				if (!error) {
-					store = this->model_setting_store->createStoreInstance(result['store_id'], language_info['code']);
+					store = await this.model_setting_store.createStoreInstance(result['store_id'], language_info['code']);
 
 					// Login
-					this->load->model('account/customer');
+					this.load.model('account/customer');
 
-					customer_info = this->model_account_customer->getCustomer(result['customer_id']);
+					customer_info = await this.model_account_customer.getCustomer(result['customer_id']);
 
-					if (customer_info && this->customer->login(customer_info['email'], '', true)) {
+					if (customer_info && await this.customer.login(customer_info['email'], '', true)) {
 						// Add customer details into session
-						store->session->data['customer'] = [
-							'customer_id'       => customer_info['customer_id'],
-							'customer_group_id' => customer_info['customer_group_id'],
-							'firstname'         => customer_info['firstname'],
-							'lastname'          => customer_info['lastname'],
-							'email'             => customer_info['email'],
-							'telephone'         => customer_info['telephone'],
-							'custom_field'      => customer_info['custom_field']
+						store.session.data['customer'] = [
+							'customer_id'       : customer_info['customer_id'],
+							'customer_group_id' : customer_info['customer_group_id'],
+							'firstname'         : customer_info['firstname'],
+							'lastname'          : customer_info['lastname'],
+							'email'             : customer_info['email'],
+							'telephone'         : customer_info['telephone'],
+							'custom_field'      : customer_info['custom_field']
 						];
 					} else {
-						error = this->language->get('error_customer');
+						error = this.language.get('error_customer');
 					}
 				}
 
-				// 4. Add product
+				// 4+ Add product
 				if (!error) {
-					this->load->model('catalog/product');
+					this.load.model('catalog/product',this);
 
-					product_info = this->model_checkout_order->getProduct(result['product_id']);
+					product_info = await this.model_checkout_order.getProduct(result['product_id']);
 
 					if (product_info) {
-						option_data = [];
+						let option_data = [];
 
-						order_options = this->model_account_order->getOptions(result['order_id'], result['order_product_id']);
+						order_options = await this.model_account_order.getOptions(result['order_id'], result['order_product_id']);
 
-						foreach (order_options as order_option) {
+						for (order_options as order_option) {
 							if (order_option['type'] == 'select' || order_option['type'] == 'radio' || order_option['type'] == 'image') {
 								option_data[order_option['product_option_id']] = order_option['product_option_value_id'];
-							} elseif (order_option['type'] == 'checkbox') {
-								option_data[order_option['product_option_id']][] = order_option['product_option_value_id'];
-							} elseif (order_option['type'] == 'text' || order_option['type'] == 'textarea' || order_option['type'] == 'date' || order_option['type'] == 'datetime' || order_option['type'] == 'time') {
+							} else if (order_option['type'] == 'checkbox') {
+								option_data[order_option['product_option_id']].push(order_option['product_option_value_id'];
+							} else if (order_option['type'] == 'text' || order_option['type'] == 'textarea' || order_option['type'] == 'date' || order_option['type'] == 'datetime' || order_option['type'] == 'time') {
 								option_data[order_option['product_option_id']] = order_option['value'];
-							} elseif (order_option['type'] == 'file') {
+							} else if (order_option['type'] == 'file') {
 								option_data[order_option['product_option_id']] = order_option['value'];
 							}
 						}
 
-						store->cart->add(result['product_id'], result['quantity'], option_data);
+						store.cart.add(result['product_id'], result['quantity'], option_data);
 					} else {
-						error = this->language->get('error_product');
+						error = this.language.get('error_product');
 					}
 				}
 
-				// 5. Add Shipping Address
-				if (!error && store->cart->hasShipping()) {
-					this->load->model('account/address');
+				// 5+ Add Shipping Address
+				if (!error && store.cart.hasShipping()) {
+					this.load.model('account/address');
 
-					shipping_address_info = this->model_account_address->getAddress(result['customer_id'], result['shipping_address_id']);
+					shipping_address_info = await this.model_account_address.getAddress(result['customer_id'], result['shipping_address_id']);
 
 					if (shipping_address_info) {
-						store->session->data['shipping_address'] = shipping_address_info;
+						store.session.data['shipping_address'] = shipping_address_info;
 					} else {
-						error = this->language->get('error_shipping_address');
+						error = this.language.get('error_shipping_address');
 					}
 
-					// 5. Shipping Methods
+					// 5+ Shipping Methods
 					if (!error) {
-						this->load->model('checkout/shipping_method');
+						this.load.model('checkout/shipping_method');
 
-						shipping_methods = this->model_checkout_shipping_method->getMethods(shipping_address_info);
+						shipping_methods = await this.model_checkout_shipping_method.getMethods(shipping_address_info);
 
 						// Validate shipping method
 						if ((order_info['shipping_method']['code']) && shipping_methods) {
-							shipping = explode('.', order_info['shipping_method']['code']);
+							shipping = explode('+', order_info['shipping_method']['code']);
 
 							if ((shipping[0]) && (shipping[1]) && (shipping_methods[shipping[0]]['quote'][shipping[1]])) {
-								store->session->data['shipping_method'] = shipping_methods[shipping[0]]['quote'][shipping[1]];
+								store.session.data['shipping_method'] = shipping_methods[shipping[0]]['quote'][shipping[1]];
 							} else {
-								error = this->language->get('error_shipping_method');
+								error = this.language.get('error_shipping_method');
 							}
 						} else {
-							error = this->language->get('error_shipping_method');
+							error = this.language.get('error_shipping_method');
 						}
 					}
 				}
 
-				// 6. Payment Address
+				// 6+ Payment Address
 				payment_address = [];
 
-				if (!error && this->config->get('config_checkout_payment_address')) {
-					this->load->model('account/address');
+				if (!error && this.config.get('config_checkout_payment_address')) {
+					this.load.model('account/address');
 
-					payment_address_info = this->model_account_address->getAddress(order_info['customer_id'], result['payment_address_id']);
+					payment_address_info = await this.model_account_address.getAddress(order_info['customer_id'], result['payment_address_id']);
 
 					if (payment_address_info) {
-						store->session->data['payment_address'] = payment_address_info;
+						store.session.data['payment_address'] = payment_address_info;
 					} else {
-						error = this->language->get('error_payment_address');
+						error = this.language.get('error_payment_address');
 					}
 				}
 
-				// 7. Payment Methods
+				// 7+ Payment Methods
 				if (!error) {
-					this->load->model('checkout/payment_method');
+					this.load.model('checkout/payment_method');
 
-					payment_methods = this->model_checkout_payment_method->getMethods(payment_address);
+					payment_methods = await this.model_checkout_payment_method.getMethods(payment_address);
 
 					// Validate payment methods
 					if ((order_info['payment_method']['code']) && payment_methods) {
-						payment = explode('.', order_info['payment_method']['code']);
+						payment = explode('+', order_info['payment_method']['code']);
 
 						if ((payment[0]) && (payment[1]) && (payment_methods[payment[0]]['option'][payment[1]])) {
-							store->session->data['payment_method'] = payment_methods[payment[0]]['option'][payment[1]];
+							store.session.data['payment_method'] = payment_methods[payment[0]]['option'][payment[1]];
 						} else {
-							error = this->language->get('error_payment_method');
+							error = this.language.get('error_payment_method');
 						}
 					} else {
-						error = this->language->get('error_payment_method');
+						error = this.language.get('error_payment_method');
 					}
 				}
 
 				if (!error) {
-					this->load->model('marketing/marketing');
+					this.load.model('marketing/marketing',this);
 
-					marketing_info = this->model_marketing_marketing->getMarketingByCode(this->session->data['tracking']);
-					order_data['language_id'] = this->config->get('config_language_id');
+					marketing_info = await this.model_marketing_marketing.getMarketingByCode(this.session.data['tracking']);
+					order_data['language_id'] = this.config.get('config_language_id');
 				}
 
 				if (!error) {
@@ -242,10 +242,10 @@ class SubscriptionController extends Controller {
 						order_data['payment_custom_field'] = [];
 					}
 
-					order_data['payment_method'] = this->session->data['payment_method'];
+					order_data['payment_method'] = this.session.data['payment_method'];
 
 					// Shipping Details
-					if (store->cart->hasShipping()) {
+					if (store.cart.hasShipping()) {
 						order_data['shipping_address_id'] = shipping_address_info['address_id'];
 						order_data['shipping_firstname'] = shipping_address_info['firstname'];
 						order_data['shipping_lastname'] = shipping_address_info['lastname'];
@@ -284,23 +284,23 @@ class SubscriptionController extends Controller {
 					// Products
 					order_data['products'] = [];
 
-					products = this->model_checkout_cart->getProducts();
+					let products = await this.model_checkout_cart.getProducts();
 
-					foreach (products as product) {
-						order_data['products'][] = [
-							'product_id'   => product['product_id'],
-							'master_id'    => product['master_id'],
-							'name'         => product['name'],
-							'model'        => product['model'],
-							'option'       => product['option'],
-							'subscription' => [],
-							'download'     => product['download'],
-							'quantity'     => product['quantity'],
-							'subtract'     => product['subtract'],
-							'price'        => product['price'],
-							'total'        => product['total'],
-							'tax'          => this->tax->getTax(product['price'], product['tax_class_id']),
-							'reward'       => product['reward']
+					for (let product of products) {
+						order_data['products'].push({
+							'product_id'   : product['product_id'],
+							'master_id'    : product['master_id'],
+							'name'         : product['name'],
+							'model'        : product['model'],
+							'option'       : product['option'],
+							'subscription' : [],
+							'download'     : product['download'],
+							'quantity'     : product['quantity'],
+							'subtract'     : product['subtract'],
+							'price'        : product['price'],
+							'total'        : product['total'],
+							'tax'          : this.tax.getTax(product['price'], product['tax_class_id']),
+							'reward'       : product['reward']
 						];
 					}
 
@@ -309,17 +309,17 @@ class SubscriptionController extends Controller {
 
 					// Order Totals
 					totals = [];
-					taxes = store->cart->getTaxes();
+					taxes = store.cart.getTaxes();
 					total = 0;
 
-					store->load->model('checkout/cart');
+					store.load.model('checkout/cart');
 
-					(store->model_checkout_cart->getTotals)(totals, taxes, total);
+					(store.model_checkout_cart.getTotals)(totals, taxes, total);
 
 					total_data = [
-						'totals' => totals,
-						'taxes' => taxes,
-						'total' => total
+						'totals' : totals,
+						'taxes' : taxes,
+						'total' : total
 					];
 
 					order_data = array_merge(order_data, total_data);
@@ -329,25 +329,25 @@ class SubscriptionController extends Controller {
 					order_data['marketing_id'] = 0;
 					order_data['tracking'] = '';
 
-					if ((this->session->data['tracking'])) {
-						subtotal = this->cart->getSubTotal();
+					if ((this.session.data['tracking'])) {
+						subtotal = await this.cart.getSubTotal();
 
 						// Affiliate
-						if (this->config->get('config_affiliate_status')) {
-							this->load->model('account/affiliate');
+						if (this.config.get('config_affiliate_status')) {
+							this.load.model('account/affiliate',this);
 
-							affiliate_info = this->model_account_affiliate->getAffiliateByTracking(this->session->data['tracking']);
+							affiliate_info = await this.model_account_affiliate.getAffiliateByTracking(this.session.data['tracking']);
 
 							if (affiliate_info) {
 								order_data['affiliate_id'] = affiliate_info['customer_id'];
 								order_data['commission'] = (subtotal / 100) * affiliate_info['commission'];
-								order_data['tracking'] = this->session->data['tracking'];
+								order_data['tracking'] = this.session.data['tracking'];
 							}
 						}
 
-						this->load->model('marketing/marketing');
+						this.load.model('marketing/marketing',this);
 
-						marketing_info = this->model_marketing_marketing->getMarketingByCode(this->session->data['tracking']);
+						marketing_info = await this.model_marketing_marketing.getMarketingByCode(this.session.data['tracking']);
 
 						if (marketing_info) {
 							order_data['marketing_id'] = marketing_info['marketing_id'];
@@ -372,69 +372,69 @@ class SubscriptionController extends Controller {
 
 				if (result['trial_status'] && (!result['trial_duration'] || result['trial_remaining'])) {
 					amount = result['trial_price'];
-				} elseif (!result['duration'] || result['remaining']) {
+				} else if (!result['duration'] || result['remaining']) {
 					amount = result['price'];
 				}
 
-				subscription_status_id = this->config->get('config_subscription_status_id');
+				subscription_status_id = this.config.get('config_subscription_status_id');
 
 				// Get the payment method used by the subscription
 				// Check payment status
-				//this->load->model('extension/payment/' . payment_info['code']);
+				//this.load.model('extension/payment/' + payment_info['code']);
 
 				/*
 				if (product['subscription']) {
 					if (product['subscription']['trial_duration'] && product['subscription']['trial_remaining']) {
-						date_next = date('Y-m-d', strtotime('+' . product['subscription']['trial_cycle'] . ' ' . product['subscription']['trial_frequency']));
-					} elseif (product['subscription']['duration'] && product['subscription']['remaining']) {
-						date_next = date('Y-m-d', strtotime('+' . product['subscription']['cycle'] . ' ' . product['subscription']['frequency']));
+						date_next = date('Y-m-d', strtotime('+' + product['subscription']['trial_cycle'] + ' ' + product['subscription']['trial_frequency']));
+					} else if (product['subscription']['duration'] && product['subscription']['remaining']) {
+						date_next = date('Y-m-d', strtotime('+' + product['subscription']['cycle'] + ' ' + product['subscription']['frequency']));
 					}
 
 					subscription_data = [
-						'subscription_plan_id' => product['subscription']['subscription_plan_id'],
-						'name'                 => product['subscription']['name'],
-						'trial_price'          => product['subscription']['trial_price'],
-						'trial_frequency'      => product['subscription']['trial_frequency'],
-						'trial_cycle'          => product['subscription']['trial_cycle'],
-						'trial_duration'       => product['subscription']['trial_duration'],
-						'trial_remaining'      => product['subscription']['trial_remaining'],
-						'trial_status'         => product['subscription']['trial_status'],
-						'price'                => product['subscription']['price'],
-						'frequency'            => product['subscription']['frequency'],
-						'cycle'                => product['subscription']['cycle'],
-						'duration'             => product['subscription']['duration'],
-						'remaining'            => product['subscription']['duration'],
-						'date_next'            => date_next
+						'subscription_plan_id' : product['subscription']['subscription_plan_id'],
+						'name'                 : product['subscription']['name'],
+						'trial_price'          : product['subscription']['trial_price'],
+						'trial_frequency'      : product['subscription']['trial_frequency'],
+						'trial_cycle'          : product['subscription']['trial_cycle'],
+						'trial_duration'       : product['subscription']['trial_duration'],
+						'trial_remaining'      : product['subscription']['trial_remaining'],
+						'trial_status'         : product['subscription']['trial_status'],
+						'price'                : product['subscription']['price'],
+						'frequency'            : product['subscription']['frequency'],
+						'cycle'                : product['subscription']['cycle'],
+						'duration'             : product['subscription']['duration'],
+						'remaining'            : product['subscription']['duration'],
+						'date_next'            : date_next
 					];
 				}
 				*/
 				// Transaction
-				if (this->config->get('config_subscription_active_status_id') == subscription_status_id) {
+				if (this.config.get('config_subscription_active_status_id') == subscription_status_id) {
 					if (result['trial_duration'] && result['trial_remaining']) {
-						date_next = date('Y-m-d', strtotime('+' . result['trial_cycle'] . ' ' . result['trial_frequency']));
-					} elseif (result['duration'] && result['remaining']) {
-						date_next = date('Y-m-d', strtotime('+' . result['cycle'] . ' ' . result['frequency']));
+						date_next = date('Y-m-d', strtotime('+' + result['trial_cycle'] + ' ' + result['trial_frequency']));
+					} else if (result['duration'] && result['remaining']) {
+						date_next = date('Y-m-d', strtotime('+' + result['cycle'] + ' ' + result['frequency']));
 					}
 
 					filter_data = [
-						'filter_date_next' => date_next,
-						'filter_subscription_status_id' => subscription_status_id,
-						'start' => 0,
-						'limit' => 1
+						'filter_date_next' : date_next,
+						'filter_subscription_status_id' : subscription_status_id,
+						'start' : 0,
+						'limit' : 1
 					];
 
-					subscriptions = this->model_account_subscription->getSubscriptions(filter_data);
+					subscriptions = await this.model_account_subscription.getSubscriptions(filter_data);
 
 					if (subscriptions) {
 						// Only match the latest order ID of the same customer ID
 						// since new subscriptions cannot be re-added with the same
 						// order ID; only as a new order ID added by an extension
-						foreach (subscriptions as subscription) {
+						for (subscriptions as subscription) {
 							if (subscription['customer_id'] == result['customer_id'] && (subscription['subscription_id'] != result['subscription_id']) && (subscription['order_id'] != result['order_id']) && (subscription['order_product_id'] != result['order_product_id'])) {
-								subscription_info = this->model_account_subscription->getSubscription(subscription['subscription_id']);
+								subscription_info = await this.model_account_subscription.getSubscription(subscription['subscription_id']);
 
 								if (subscription_info) {
-									// this->model_account_subscription->addTransaction(subscription['subscription_id'], subscription['order_id'], this->language->get('text_success'), amount, subscription_info['type'], subscription_info['payment_method'], subscription_info['payment_code']);
+									// this.model_account_subscription.addTransaction(subscription['subscription_id'], subscription['order_id'], this.language.get('text_success'), amount, subscription_info['type'], subscription_info['payment_method'], subscription_info['payment_code']);
 								}
 							}
 						}
@@ -446,32 +446,32 @@ class SubscriptionController extends Controller {
 		/*
 		// Failed if payment method does not have recurring payment method
 
-		subscription_status_id = this->config->get('config_subscription_failed_status_id');
+		subscription_status_id = this.config.get('config_subscription_failed_status_id');
 
-		this->model_checkout_subscription->addHistory(result['subscription_id'], subscription_status_id, this->language->get('error_recurring'), true);
+		this.model_checkout_subscription.addHistory(result['subscription_id'], subscription_status_id, this.language.get('error_recurring'), true);
 
-		subscription_status_id = this->config->get('config_subscription_failed_status_id');
+		subscription_status_id = this.config.get('config_subscription_failed_status_id');
 
-		this->model_checkout_subscription->addHistory(result['subscription_id'], subscription_status_id, this->language->get('error_extension'), true);
+		this.model_checkout_subscription.addHistory(result['subscription_id'], subscription_status_id, this.language.get('error_extension'), true);
 
-		this->model_checkout_subscription->addHistory(result['subscription_id'], subscription_status_id, sprintf(this->language->get('error_payment'), ''), true);
+		this.model_checkout_subscription.addHistory(result['subscription_id'], subscription_status_id, sprintf(this.language.get('error_payment'), ''), true);
 
 		// History
 		if (result['subscription_status_id'] != subscription_status_id) {
-			this->model_checkout_subscription->addHistory(result['subscription_id'], subscription_status_id, 'payment extension ' . result['payment_code'] . ' could not be loaded', true);
+			await this.model_checkout_subscription.addHistory(result['subscription_id'], subscription_status_id, 'payment extension ' + result['payment_code'] + ' could not be loaded', true);
 		}
 
 		// Success
-		if (this->config->get('config_subscription_active_status_id') == subscription_status_id) {
+		if (this.config.get('config_subscription_active_status_id') == subscription_status_id) {
 			// Trial
 			if (result['trial_status'] && (!result['trial_duration'] || result['trial_remaining'])) {
 				if (result['trial_duration'] && result['trial_remaining']) {
-					this->model_account_subscription->editTrialRemaining(result['subscription_id'], result['trial_remaining'] - 1);
+					await this.model_account_subscription.editTrialRemaining(result['subscription_id'], result['trial_remaining'] - 1);
 				}
-			} elseif (!result['duration'] || result['remaining']) {
+			} else if (!result['duration'] || result['remaining']) {
 				// Subscription
 				if (result['duration'] && result['remaining']) {
-					this->model_account_subscription->editRemaining(result['subscription_id'], result['remaining'] - 1);
+					await this.model_account_subscription.editRemaining(result['subscription_id'], result['remaining'] - 1);
 				}
 			}
 		}

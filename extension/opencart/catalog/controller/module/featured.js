@@ -70,7 +70,7 @@ class FeaturedController extends Controller {
 					'tax'         : $tax,
 					'minimum'     : $product['minimum'] > 0 ? $product['minimum'] : 1,
 					'rating'      : $product['rating'],
-					'href'        : this.url.link('product/product', 'language=' . this.config.get('config_language') . '&product_id=' . $product['product_id'])
+					'href'        : await this.url.link('product/product', 'language=' . this.config.get('config_language') . '&product_id=' . $product['product_id'])
 				];
 
 				data['products'][] = await this.load.controller('product/thumb', $product_data);

@@ -1,16 +1,15 @@
-module.exports=class ApiController extends Controller {
+module.exports = class ApiController extends Controller {
 	/**
 	 * @return object|\Opencart\System\Engine\Action|null
 	 */
 	async index() {
-		if ((this->request->get['route'])) {
-			route = (string)this->request->get['route'];
-		} else {
-			route = '';
+		let route = '';
+		if ((this.request.get['route'])) {
+			route = this.request.get['route'];
 		}
 
-		if (substr(route, 0, 4) == 'api/' && route !== 'api/account/login' && !(this->session->data['api_id'])) {
-			return new \Opencart\System\Engine\Action('error/permission');
+		if (route.substring(0, 4) == 'api/' && route !== 'api/account/login' && !(this.session.data['api_id'])) {
+			return new Action('error/permission');
 		}
 
 		return null;

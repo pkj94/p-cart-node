@@ -208,7 +208,7 @@ module.exports = class SecurityController extends Controller {
             }
 
             if (end < total) {
-                json['next'] = this.url.link('common/security+storage', '&user_token=' + this.session.data['user_token'] + '&name=' + name + '&path=' + path + '&page=' + (page + 1), true);
+                json['next'] = await this.url.link('common/security+storage', '&user_token=' + this.session.data['user_token'] + '&name=' + name + '&path=' + path + '&page=' + (page + 1), true);
             } else {
                 // Start deleting old storage location files+
                 files = files.reverse();
@@ -339,7 +339,7 @@ module.exports = class SecurityController extends Controller {
             }
 
             if ((page * limit) <= total) {
-                json['next'] = this.url.link('common/security+admin', '&user_token=' + this.session.data['user_token'] + '&name=' + name + '&page=' + (page + 1), true);
+                json['next'] = await this.url.link('common/security+admin', '&user_token=' + this.session.data['user_token'] + '&name=' + name + '&page=' + (page + 1), true);
             } else {
                 // Update the old config files
                 let file = base_new + 'config.json';

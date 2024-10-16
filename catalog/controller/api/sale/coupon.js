@@ -9,40 +9,41 @@ class CouponController extends Controller {
 	/**
 	 * @return void
 	 */
-	async index(): void {
-		this->load->language('api/sale/coupon');
+	async index() {
+const data ={};
+		await this.load.language('api/sale/coupon');
 
-		json = [];
+		const json = {};
 
-		if ((this->request->post['coupon'])) {
-			coupon = (string)this->request->post['coupon'];
+		if ((this.request.post['coupon'])) {
+			coupon = this.request.post['coupon'];
 		} else {
 			coupon = '';
 		}
 
 		if (coupon) {
-			this->load->model('marketing/coupon');
+			this.load.model('marketing/coupon');
 
-			coupon_info = this->model_marketing_coupon->getCoupon(coupon);
+			coupon_info = await this.model_marketing_coupon.getCoupon(coupon);
 
 			if (!coupon_info) {
-				json['error'] = this->language->get('error_coupon');
+				json['error'] = this.language.get('error_coupon');
 			}
 		}
 
-		if (!json) {
+		if (!Object.keys(json).length) {
 			if (coupon) {
-				json['success'] = this->language->get('text_success');
+				json['success'] = this.language.get('text_success');
 
-				this->session->data['coupon'] = coupon;
+				this.session.data['coupon'] = coupon;
 			} else {
-				json['success'] = this->language->get('text_remove');
+				json['success'] = this.language.get('text_remove');
 
-				unset(this->session->data['coupon']);
+				delete (this.session.data['coupon']);
 			}
 		}
 
-		this->response->addHeader('Content-Type: application/json');
-		this->response->setOutput(json_encode(json));
+		this.response.addHeader('Content-Type: application/json');
+		this.response.setOutput(json);
 	}
 }

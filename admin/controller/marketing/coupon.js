@@ -29,16 +29,16 @@ module.exports = class CouponController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('marketing/coupon', 'user_token=' + this.session.data['user_token'] + url)
+			'href': await this.url.link('marketing/coupon', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
-		data['add'] = this.url.link('marketing/coupon.form', 'user_token=' + this.session.data['user_token'] + url);
-		data['delete'] = this.url.link('marketing/coupon.delete', 'user_token=' + this.session.data['user_token']);
+		data['add'] = await this.url.link('marketing/coupon.form', 'user_token=' + this.session.data['user_token'] + url);
+		data['delete'] = await this.url.link('marketing/coupon.delete', 'user_token=' + this.session.data['user_token']);
 
 		data['list'] = await this.getList();
 
@@ -94,7 +94,7 @@ module.exports = class CouponController extends Controller {
 			url += '&page=' + this.request.get['page'];
 		}
 
-		data['action'] = this.url.link('marketing/coupon.list', 'user_token=' + this.session.data['user_token'] + url);
+		data['action'] = await this.url.link('marketing/coupon.list', 'user_token=' + this.session.data['user_token'] + url);
 
 		data['coupons'] = [];
 
@@ -120,7 +120,7 @@ module.exports = class CouponController extends Controller {
 				'date_start': date(this.language.get('date_format_short'), new Date(result['date_start'])),
 				'date_end': date(this.language.get('date_format_short'), new Date(result['date_end'])),
 				'status': result['status'],
-				'edit': this.url.link('marketing/coupon.form', 'user_token=' + this.session.data['user_token'] + '&coupon_id=' + result['coupon_id'] + url)
+				'edit': await this.url.link('marketing/coupon.form', 'user_token=' + this.session.data['user_token'] + '&coupon_id=' + result['coupon_id'] + url)
 			});
 		}
 
@@ -132,12 +132,12 @@ module.exports = class CouponController extends Controller {
 			url += '&order=ASC';
 		}
 
-		data['sort_name'] = this.url.link('marketing/coupon.list', 'user_token=' + this.session.data['user_token'] + '&sort=name' + url);
-		data['sort_code'] = this.url.link('marketing/coupon.list', 'user_token=' + this.session.data['user_token'] + '&sort=code' + url);
-		data['sort_discount'] = this.url.link('marketing/coupon.list', 'user_token=' + this.session.data['user_token'] + '&sort=discount' + url);
-		data['sort_date_start'] = this.url.link('marketing/coupon.list', 'user_token=' + this.session.data['user_token'] + '&sort=date_start' + url);
-		data['sort_date_end'] = this.url.link('marketing/coupon.list', 'user_token=' + this.session.data['user_token'] + '&sort=date_end' + url);
-		data['sort_status'] = this.url.link('marketing/coupon.list', 'user_token=' + this.session.data['user_token'] + '&sort=status' + url);
+		data['sort_name'] = await this.url.link('marketing/coupon.list', 'user_token=' + this.session.data['user_token'] + '&sort=name' + url);
+		data['sort_code'] = await this.url.link('marketing/coupon.list', 'user_token=' + this.session.data['user_token'] + '&sort=code' + url);
+		data['sort_discount'] = await this.url.link('marketing/coupon.list', 'user_token=' + this.session.data['user_token'] + '&sort=discount' + url);
+		data['sort_date_start'] = await this.url.link('marketing/coupon.list', 'user_token=' + this.session.data['user_token'] + '&sort=date_start' + url);
+		data['sort_date_end'] = await this.url.link('marketing/coupon.list', 'user_token=' + this.session.data['user_token'] + '&sort=date_end' + url);
+		data['sort_status'] = await this.url.link('marketing/coupon.list', 'user_token=' + this.session.data['user_token'] + '&sort=status' + url);
 
 		url = '';
 
@@ -153,7 +153,7 @@ module.exports = class CouponController extends Controller {
 			'total': coupon_total,
 			'page': page,
 			'limit': this.config.get('config_pagination_admin'),
-			'url': this.url.link('marketing/coupon.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
+			'url': await this.url.link('marketing/coupon.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (coupon_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (coupon_total - this.config.get('config_pagination_admin'))) ? coupon_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), coupon_total, Math.ceil(coupon_total / this.config.get('config_pagination_admin')));
@@ -193,16 +193,16 @@ module.exports = class CouponController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('marketing/coupon', 'user_token=' + this.session.data['user_token'] + url)
+			'href': await this.url.link('marketing/coupon', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
-		data['save'] = this.url.link('marketing/coupon.save', 'user_token=' + this.session.data['user_token']);
-		data['back'] = this.url.link('marketing/coupon', 'user_token=' + this.session.data['user_token'] + url);
+		data['save'] = await this.url.link('marketing/coupon.save', 'user_token=' + this.session.data['user_token']);
+		data['back'] = await this.url.link('marketing/coupon', 'user_token=' + this.session.data['user_token'] + url);
 		let coupon_info;
 		if ((this.request.get['coupon_id'])) {
 			this.load.model('marketing/coupon', this);
@@ -461,7 +461,7 @@ module.exports = class CouponController extends Controller {
 			'total': history_total,
 			'page': page,
 			'limit': limit,
-			'url': this.url.link('marketing/coupon.history', 'user_token=' + this.session.data['user_token'] + '&coupon_id=' + coupon_id + '&page={page}')
+			'url': await this.url.link('marketing/coupon.history', 'user_token=' + this.session.data['user_token'] + '&coupon_id=' + coupon_id + '&page={page}')
 		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (history_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (history_total - limit)) ? history_total : (((page - 1) * limit) + limit), history_total, Math.ceil(history_total / limit));

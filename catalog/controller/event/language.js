@@ -1,21 +1,6 @@
-<?php
-namespace Opencart\Catalog\Controller\Event;
-/**
- *
- *
- * @package Opencart\Catalog\Controller\Event
- */
-class LanguageController extends Controller {
-	// view/*/before
-	// Dump all the language vars into the template.
-	/**
-	 * @param string route
-	 * @param array  args
-	 *
-	 * @return void
-	 */
-	async index(string &route, array &args): void {
-		foreach (this->language->all() as key => value) {
+module.exports = class LanguageController extends Controller {
+	async index(route, args) {
+		for (let [key, value] of Object.entries(this.language.all())) {
 			if (!(args[key])) {
 				args[key] = value;
 			}
@@ -23,38 +8,38 @@ class LanguageController extends Controller {
 	}
 
 	// controller/*/before
-	// 1. Before controller load store all current loaded language data
+	// 1+ Before controller load store all current loaded language data
 	/**
 	 * @param string route
-	 * @param array  args
+	 * @param  args
 	 *
 	 * @return void
 	 */
-	async before(string &route, array &args): void {
-		data = this->language->all();
+	async before(route, args) {
+		let data = this.language.all();
 
 		if (data) {
-			this->language->set('backup', json_encode(data));
+			this.language.set('backup', data);
 		}
 	}
 
 	// controller/*/after
-	// 2. After controller load restore old language data
+	// 2+ After controller load restore old language data
 	/**
 	 * @param string route
-	 * @param array  args
+	 * @param  args
 	 * @param mixed  output
 	 *
 	 * @return void
 	 */
-	async after(string &route, array &args, mixed &output): void {
-		data = JSON.parse(this->language->get('backup'), true);
+	async after(route, args, output) {
+		let data = this.language.get('backup');
 
-		if (is_array(data)) {
-			this->language->clear();
+		if (Array.isArray(data)) {
+			this.language.clear();
 
-			foreach (data as key => value) {
-				this->language->set(key, value);
+			for (let [key, value] of Object.keys(data)) {
+				this.language.set(key, value);
 			}
 		}
 	}

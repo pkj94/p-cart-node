@@ -15,12 +15,12 @@ module.exports = class UpgradeController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('tool/upgrade', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('tool/upgrade', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['current_version'] = VERSION;
@@ -103,7 +103,7 @@ module.exports = class UpgradeController extends Controller {
 		if (!Object.keys(json).length) {
 			json['text'] = this.language.get('text_install');
 
-			json['next'] = this.url.link('tool/upgrade.install', 'user_token=' + this.session.data['user_token'] + '&version=' + version, true);
+			json['next'] = await this.url.link('tool/upgrade.install', 'user_token=' + this.session.data['user_token'] + '&version=' + version, true);
 		}
 
 		this.response.addHeader('Content-Type: application/json');

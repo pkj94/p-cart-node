@@ -15,74 +15,74 @@ class TransactionController extends Controller {
 	 * @return void
 	 * @throws \Exception
 	 */
-	async index(string &route, array &args, mixed &output): void {
-		this->load->language('mail/transaction');
+	async index(&route, args, mixed &output) {
+		await this.load.language('mail/transaction');
 
-		this->load->model('account/customer');
+		this.load.model('account/customer');
 
-		customer_info = this->model_account_customer->getCustomer(args[0]);
+		customer_info = await this.model_account_customer.getCustomer(args[0]);
 
 		if (customer_info) {
-			this->load->model('setting/store');
+			this.load.model('setting/store',this);
 
-			store_info = this->model_setting_store->getStore(customer_info['store_id']);
+			const store_info = await this.model_setting_store.getStore(customer_info['store_id']);
 
 			if (store_info) {
 				store_name = html_entity_decode(store_info['name']);
 				store_url = store_info['store_url'];
 			} else {
-				store_name = html_entity_decode(this->config->get('config_name'));
-				store_url = this->config->get('config_url');
+				store_name = html_entity_decode(this.config.get('config_name'));
+				store_url = this.config.get('config_url');
 			}
 
-			this->load->model('localisation/language');
+			this.load.model('localisation/language',this);
 
-			language_info = this->model_localisation_language->getLanguage(customer_info['language_id']);
+			const language_info = await this.model_localisation_language.getLanguage(customer_info['language_id']);
 
 			if (language_info) {
 				language_code = language_info['code'];
 			} else {
-				language_code = this->config->get('config_language');
+				language_code = this.config.get('config_language');
 			}
 
-			// Load the language for any mails using a different country code and prefixing it so it does not pollute the main data pool.
-			this->load->language('default', 'mail', language_code);
-			this->load->language('mail/transaction', 'mail', language_code);
+			// Load the language for any mails using a different country code and prefixing it so it does not pollute the main data pool+
+			await this.load.language('default', 'mail', language_code);
+			await this.load.language('mail/transaction', 'mail', language_code);
 
 			// Add language vars to the template folder
-			results = this->language->all('mail');
+			const results = this.language.all('mail');
 
-			foreach (results as key => value) {
+			for (results as key : value) {
 				data[key] = value;
 			}
 
-			subject = sprintf(this->language->get('mail_text_subject'), store_name);
+			subject = sprintf(this.language.get('mail_text_subject'), store_name);
 
-			data['text_received'] = sprintf(this->language->get('mail_text_received'), store_name);
+			data['text_received'] = sprintf(this.language.get('mail_text_received'), store_name);
 
-			data['amount'] = this->currency->format(args[2], this->config->get('config_currency'));
-			data['total'] = this->currency->format(this->model_account_customer->getTransactionTotal(args[0]), this->config->get('config_currency'));
+			data['amount'] = this.currency.format(args[2], this.config.get('config_currency'));
+			data['total'] = this.currency.format(this.model_account_customer.getTransactionTotal(args[0]), this.config.get('config_currency'));
 
 			data['store'] = store_name;
 			data['store_url'] = store_url;
 
-			if (this->config->get('config_mail_engine')) {
+			if (this.config.get('config_mail_engine')) {
 				mail_option = [
-					'parameter'     => this->config->get('config_mail_parameter'),
-					'smtp_hostname' => this->config->get('config_mail_smtp_hostname'),
-					'smtp_username' => this->config->get('config_mail_smtp_username'),
-					'smtp_password' => html_entity_decode(this->config->get('config_mail_smtp_password')),
-					'smtp_port'     => this->config->get('config_mail_smtp_port'),
-					'smtp_timeout'  => this->config->get('config_mail_smtp_timeout')
+					'parameter'     : this.config.get('config_mail_parameter'),
+					'smtp_hostname' : this.config.get('config_mail_smtp_hostname'),
+					'smtp_username' : this.config.get('config_mail_smtp_username'),
+					'smtp_password' : html_entity_decode(this.config.get('config_mail_smtp_password')),
+					'smtp_port'     : this.config.get('config_mail_smtp_port'),
+					'smtp_timeout'  : this.config.get('config_mail_smtp_timeout')
 				];
 
-				mail = new MailLibrary(this->config->get('config_mail_engine'), mail_option);
-				mail->setTo(customer_info['email']);
-				mail->setFrom(this->config->get('config_email'));
-				mail->setSender(store_name);
-				mail->setSubject(subject);
-				mail->setHtml(this->load->view('mail/transaction', data));
-				mail->send();
+				mail = new MailLibrary(this.config.get('config_mail_engine'), mail_option);
+				mail.setTo(customer_info['email']);
+				mail.setFrom(this.config.get('config_email'));
+				mail.setSender(store_name);
+				mail.setSubject(subject);
+				mail.setHtml(await this.load.view('mail/transaction', data));
+				mail.send();
 			}
 		}
 	}

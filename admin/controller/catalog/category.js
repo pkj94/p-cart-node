@@ -31,17 +31,17 @@ module.exports = class CategoryCatalogController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('catalog/category', 'user_token=' + this.session.data['user_token'] + url)
+			'href': await this.url.link('catalog/category', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
-		data['repair'] = this.url.link('catalog/category.repair', 'user_token=' + this.session.data['user_token']);
-		data['add'] = this.url.link('catalog/category.form', 'user_token=' + this.session.data['user_token'] + url);
-		data['delete'] = this.url.link('catalog/category.delete', 'user_token=' + this.session.data['user_token']);
+		data['repair'] = await this.url.link('catalog/category.repair', 'user_token=' + this.session.data['user_token']);
+		data['add'] = await this.url.link('catalog/category.form', 'user_token=' + this.session.data['user_token'] + url);
+		data['delete'] = await this.url.link('catalog/category.delete', 'user_token=' + this.session.data['user_token']);
 
 		data['list'] = await this.getList();
 
@@ -95,7 +95,7 @@ module.exports = class CategoryCatalogController extends Controller {
 			url += '&page=' + this.request.get['page'];
 		}
 
-		data['action'] = this.url.link('catalog/category.list', 'user_token=' + this.session.data['user_token'] + url);
+		data['action'] = await this.url.link('catalog/category.list', 'user_token=' + this.session.data['user_token'] + url);
 
 		data['categories'] = [];
 
@@ -118,7 +118,7 @@ module.exports = class CategoryCatalogController extends Controller {
 				'name': result['name'],
 				'status': result['status'],
 				'sort_order': result['sort_order'],
-				'edit': this.url.link('catalog/category.form', 'user_token=' + this.session.data['user_token'] + '&category_id=' + result['category_id'] + url)
+				'edit': await this.url.link('catalog/category.form', 'user_token=' + this.session.data['user_token'] + '&category_id=' + result['category_id'] + url)
 			});
 		}
 
@@ -130,8 +130,8 @@ module.exports = class CategoryCatalogController extends Controller {
 			url += '&order=ASC';
 		}
 
-		data['sort_name'] = this.url.link('catalog/category.list', 'user_token=' + this.session.data['user_token'] + '&sort=name' + url);
-		data['sort_sort_order'] = this.url.link('catalog/category.list', 'user_token=' + this.session.data['user_token'] + '&sort=sort_order' + url);
+		data['sort_name'] = await this.url.link('catalog/category.list', 'user_token=' + this.session.data['user_token'] + '&sort=name' + url);
+		data['sort_sort_order'] = await this.url.link('catalog/category.list', 'user_token=' + this.session.data['user_token'] + '&sort=sort_order' + url);
 
 		url = '';
 
@@ -147,7 +147,7 @@ module.exports = class CategoryCatalogController extends Controller {
 			'total': category_total,
 			'page': page,
 			'limit': this.config.get('config_pagination_admin'),
-			'url': this.url.link('catalog/category.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
+			'url': await this.url.link('catalog/category.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (category_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (category_total - this.config.get('config_pagination_admin'))) ? category_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), category_total, Math.ceil(category_total / this.config.get('config_pagination_admin')));
@@ -189,16 +189,16 @@ module.exports = class CategoryCatalogController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('catalog/category', 'user_token=' + this.session.data['user_token'] + url)
+			'href': await this.url.link('catalog/category', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
-		data['save'] = this.url.link('catalog/category.save', 'user_token=' + this.session.data['user_token']);
-		data['back'] = this.url.link('catalog/category', 'user_token=' + this.session.data['user_token'] + url);
+		data['save'] = await this.url.link('catalog/category.save', 'user_token=' + this.session.data['user_token']);
+		data['back'] = await this.url.link('catalog/category', 'user_token=' + this.session.data['user_token'] + url);
 		let category_info = {};
 		if ((this.request.get['category_id'])) {
 			this.load.model('catalog/category', this);

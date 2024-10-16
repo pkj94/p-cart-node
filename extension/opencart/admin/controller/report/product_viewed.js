@@ -17,21 +17,21 @@ module.exports = class ProductViewedReportController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_extension'),
-			'href': this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=report')
+			'href': await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=report')
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('extension/opencart/report/product_viewed', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('extension/opencart/report/product_viewed', 'user_token=' + this.session.data['user_token'])
 		});
 
-		data['save'] = this.url.link('extension/opencart/report/product_viewed.save', 'user_token=' + this.session.data['user_token']);
-		data['back'] = this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=report');
+		data['save'] = await this.url.link('extension/opencart/report/product_viewed.save', 'user_token=' + this.session.data['user_token']);
+		data['back'] = await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=report');
 
 		data['report_product_viewed_status'] = this.config.get('report_product_viewed_status');
 		data['report_product_viewed_sort_order'] = this.config.get('report_product_viewed_sort_order');
@@ -162,7 +162,7 @@ module.exports = class ProductViewedReportController extends Controller {
 			'total': viewed_total,
 			'page': page,
 			'limit': this.config.get('config_pagination'),
-			'url': this.url.link('extension/opencart/report/product_viewed.list', 'user_token=' + this.session.data['user_token'] + '&code=product_viewed&page={page}')
+			'url': await this.url.link('extension/opencart/report/product_viewed.list', 'user_token=' + this.session.data['user_token'] + '&code=product_viewed&page={page}')
 		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (viewed_total) ? ((page - 1) * this.config.get('config_pagination')) + 1 : 0, (((page - 1) * this.config.get('config_pagination')) > (viewed_total - this.config.get('config_pagination'))) ? viewed_total : (((page - 1) * this.config.get('config_pagination')) + this.config.get('config_pagination')), viewed_total, Math.ceil(viewed_total / this.config.get('config_pagination')));
@@ -214,7 +214,7 @@ module.exports = class ProductViewedReportController extends Controller {
 			if ((page * limit) <= product_total) {
 				json['text'] = sprintf(this.language.get('text_progress'), (page - 1) * limit, product_total);
 
-				json['next'] = this.url.link('extension/opencart/report/product_viewed.generate', 'user_token=' + this.session.data['user_token'] + '&page=' + (page + 1), true);
+				json['next'] = await this.url.link('extension/opencart/report/product_viewed.generate', 'user_token=' + this.session.data['user_token'] + '&page=' + (page + 1), true);
 			} else {
 				json['success'] = this.language.get('text_success');
 			}

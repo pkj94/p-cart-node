@@ -28,16 +28,16 @@ module.exports = class AttributeController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('catalog/attribute', 'user_token=' + this.session.data['user_token'] + url)
+			'href': await this.url.link('catalog/attribute', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
-		data['add'] = this.url.link('catalog/attribute.form', 'user_token=' + this.session.data['user_token'] + url);
-		data['delete'] = this.url.link('catalog/attribute.delete', 'user_token=' + this.session.data['user_token']);
+		data['add'] = await this.url.link('catalog/attribute.form', 'user_token=' + this.session.data['user_token'] + url);
+		data['delete'] = await this.url.link('catalog/attribute.delete', 'user_token=' + this.session.data['user_token']);
 
 		data['list'] = await this.getList();
 
@@ -93,7 +93,7 @@ module.exports = class AttributeController extends Controller {
 			url += '&page=' + this.request.get['page'];
 		}
 
-		data['action'] = this.url.link('catalog/attribute.list', 'user_token=' + this.session.data['user_token'] + url);
+		data['action'] = await this.url.link('catalog/attribute.list', 'user_token=' + this.session.data['user_token'] + url);
 
 		data['attributes'] = [];
 
@@ -116,7 +116,7 @@ module.exports = class AttributeController extends Controller {
 				'name': result['name'],
 				'attribute_group': result['attribute_group'],
 				'sort_order': result['sort_order'],
-				'edit': this.url.link('catalog/attribute.form', 'user_token=' + this.session.data['user_token'] + '&attribute_id=' + result['attribute_id'] + url)
+				'edit': await this.url.link('catalog/attribute.form', 'user_token=' + this.session.data['user_token'] + '&attribute_id=' + result['attribute_id'] + url)
 			});
 		}
 
@@ -128,9 +128,9 @@ module.exports = class AttributeController extends Controller {
 			url += '&order=ASC';
 		}
 
-		data['sort_name'] = this.url.link('catalog/attribute.list', 'user_token=' + this.session.data['user_token'] + '&sort=ad.name' + url);
-		data['sort_attribute_group'] = this.url.link('catalog/attribute.list', 'user_token=' + this.session.data['user_token'] + '&sort=attribute_group' + url);
-		data['sort_sort_order'] = this.url.link('catalog/attribute.list', 'user_token=' + this.session.data['user_token'] + '&sort=a.sort_order' + url);
+		data['sort_name'] = await this.url.link('catalog/attribute.list', 'user_token=' + this.session.data['user_token'] + '&sort=ad.name' + url);
+		data['sort_attribute_group'] = await this.url.link('catalog/attribute.list', 'user_token=' + this.session.data['user_token'] + '&sort=attribute_group' + url);
+		data['sort_sort_order'] = await this.url.link('catalog/attribute.list', 'user_token=' + this.session.data['user_token'] + '&sort=a.sort_order' + url);
 
 		url = '';
 
@@ -146,7 +146,7 @@ module.exports = class AttributeController extends Controller {
 			'total': attribute_total,
 			'page': page,
 			'limit': this.config.get('config_pagination_admin'),
-			'url': this.url.link('catalog/attribute.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
+			'url': await this.url.link('catalog/attribute.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (attribute_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (attribute_total - this.config.get('config_pagination_admin'))) ? attribute_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), attribute_total, Math.ceil(attribute_total / this.config.get('config_pagination_admin')));
@@ -186,16 +186,16 @@ module.exports = class AttributeController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('catalog/attribute', 'user_token=' + this.session.data['user_token'] + url)
+			'href': await this.url.link('catalog/attribute', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
-		data['save'] = this.url.link('catalog/attribute.save', 'user_token=' + this.session.data['user_token']);
-		data['back'] = this.url.link('catalog/attribute', 'user_token=' + this.session.data['user_token'] + url);
+		data['save'] = await this.url.link('catalog/attribute.save', 'user_token=' + this.session.data['user_token']);
+		data['back'] = await this.url.link('catalog/attribute', 'user_token=' + this.session.data['user_token'] + url);
 		let attribute_info;
 		if ((this.request.get['attribute_id'])) {
 			this.load.model('catalog/attribute', this);

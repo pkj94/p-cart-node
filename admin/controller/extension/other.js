@@ -51,10 +51,10 @@ module.exports = class OtherController extends Controller {
 				data['extensions'].push({
 					'name': this.language.get(code + '_heading_title'),
 					'status': this.config.get('other_' + code + '_status') ? this.language.get('text_enabled') : this.language.get('text_disabled'),
-					'install': this.url.link('extension/other.install', 'user_token=' + this.session.data['user_token'] + '&extension=' + extension + '&code=' + code),
-					'uninstall': this.url.link('extension/other.uninstall', 'user_token=' + this.session.data['user_token'] + '&extension=' + extension + '&code=' + code),
+					'install': await this.url.link('extension/other.install', 'user_token=' + this.session.data['user_token'] + '&extension=' + extension + '&code=' + code),
+					'uninstall': await this.url.link('extension/other.uninstall', 'user_token=' + this.session.data['user_token'] + '&extension=' + extension + '&code=' + code),
 					'installed': installed.includes(code),
-					'edit': this.url.link('extension/' + extension + '/other/' + code, 'user_token=' + this.session.data['user_token'])
+					'edit': await this.url.link('extension/' + extension + '/other/' + code, 'user_token=' + this.session.data['user_token'])
 				});
 			}
 		}

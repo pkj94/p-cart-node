@@ -15,12 +15,12 @@ module.exports = class ThemeController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('design/theme', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('design/theme', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['stores'] = [];
@@ -82,8 +82,8 @@ module.exports = class ThemeController extends Controller {
 				'store': (result['store_id'] ? store : this.language.get('text_default')),
 				'route': result['route'],
 				'date_added': date(this.language.get('date_format_short'), new Date(result['date_added'])),
-				'edit': this.url.link('design/theme.template', 'user_token=' + this.session.data['user_token']),
-				'delete': this.url.link('design/theme.delete', 'user_token=' + this.session.data['user_token'] + '&theme_id=' + result['theme_id'])
+				'edit': await this.url.link('design/theme.template', 'user_token=' + this.session.data['user_token']),
+				'delete': await this.url.link('design/theme.delete', 'user_token=' + this.session.data['user_token'] + '&theme_id=' + result['theme_id'])
 			});
 		}
 
@@ -91,7 +91,7 @@ module.exports = class ThemeController extends Controller {
 			'total': history_total,
 			'page': page,
 			'limit': limit,
-			'url': this.url.link('design/theme.history', 'user_token=' + this.session.data['user_token'] + '&page={page}')
+			'url': await this.url.link('design/theme.history', 'user_token=' + this.session.data['user_token'] + '&page={page}')
 		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (history_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (history_total - limit)) ? history_total : (((page - 1) * limit) + limit), history_total, Math.ceil(history_total / limit));

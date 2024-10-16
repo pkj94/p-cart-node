@@ -21,16 +21,16 @@ module.exports = class AddressFormatController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('localisation/address_format', 'user_token=' + this.session.data['user_token'] + url)
+			'href': await this.url.link('localisation/address_format', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
-		data['add'] = this.url.link('localisation/address_format.form', 'user_token=' + this.session.data['user_token'] + url);
-		data['delete'] = this.url.link('localisation/address_format.delete', 'user_token=' + this.session.data['user_token']);
+		data['add'] = await this.url.link('localisation/address_format.form', 'user_token=' + this.session.data['user_token'] + url);
+		data['delete'] = await this.url.link('localisation/address_format.delete', 'user_token=' + this.session.data['user_token']);
 
 		data['list'] = await this.getList();
 
@@ -68,7 +68,7 @@ module.exports = class AddressFormatController extends Controller {
 			url += '&page=' + this.request.get['page'];
 		}
 
-		data['action'] = this.url.link('localisation/address_format.list', 'user_token=' + this.session.data['user_token'] + url);
+		data['action'] = await this.url.link('localisation/address_format.list', 'user_token=' + this.session.data['user_token'] + url);
 
 		data['address_formats'] = [];
 
@@ -88,7 +88,7 @@ module.exports = class AddressFormatController extends Controller {
 				'address_format_id': result['address_format_id'],
 				'name': result['name'] + ((result['address_format_id'] == this.config.get('config_address_format_id')) ? this.language.get('text_default') : ''),
 				'address_format': nl2br(result['address_format']),
-				'edit': this.url.link('localisation/address_format.form', 'user_token=' + this.session.data['user_token'] + '&address_format_id=' + result['address_format_id'] + url)
+				'edit': await this.url.link('localisation/address_format.form', 'user_token=' + this.session.data['user_token'] + '&address_format_id=' + result['address_format_id'] + url)
 			});
 		}
 
@@ -96,7 +96,7 @@ module.exports = class AddressFormatController extends Controller {
 			'total': address_format_total,
 			'page': page,
 			'limit': this.config.get('config_pagination_admin'),
-			'url': this.url.link('localisation/address_format.list', 'user_token=' + this.session.data['user_token'] + '&page={page}')
+			'url': await this.url.link('localisation/address_format.list', 'user_token=' + this.session.data['user_token'] + '&page={page}')
 		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (address_format_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (address_format_total - this.config.get('config_pagination_admin'))) ? address_format_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), address_format_total, Math.ceil(address_format_total / this.config.get('config_pagination_admin')));
@@ -125,16 +125,16 @@ module.exports = class AddressFormatController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('localisation/address_format', 'user_token=' + this.session.data['user_token'] + url)
+			'href': await this.url.link('localisation/address_format', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
-		data['save'] = this.url.link('localisation/address_format.save', 'user_token=' + this.session.data['user_token']);
-		data['back'] = this.url.link('localisation/address_format', 'user_token=' + this.session.data['user_token'] + url);
+		data['save'] = await this.url.link('localisation/address_format.save', 'user_token=' + this.session.data['user_token']);
+		data['back'] = await this.url.link('localisation/address_format', 'user_token=' + this.session.data['user_token'] + url);
 		let address_format_info;
 		if ((this.request.get['address_format_id'])) {
 			this.load.model('localisation/address_format', this);

@@ -28,16 +28,16 @@ module.exports = class VoucherThemeController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('sale/voucher_theme', 'user_token=' + this.session.data['user_token'] + url)
+			'href': await this.url.link('sale/voucher_theme', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
-		data['add'] = this.url.link('sale/voucher_theme.form', 'user_token=' + this.session.data['user_token'] + url);
-		data['delete'] = this.url.link('sale/voucher_theme.delete', 'user_token=' + this.session.data['user_token']);
+		data['add'] = await this.url.link('sale/voucher_theme.form', 'user_token=' + this.session.data['user_token'] + url);
+		data['delete'] = await this.url.link('sale/voucher_theme.delete', 'user_token=' + this.session.data['user_token']);
 
 		data['list'] = await this.getList();
 
@@ -93,7 +93,7 @@ module.exports = class VoucherThemeController extends Controller {
 			url += '&page=' + this.request.get['page'];
 		}
 
-		data['action'] = this.url.link('sale/voucher_theme.list', 'user_token=' + this.session.data['user_token'] + url);
+		data['action'] = await this.url.link('sale/voucher_theme.list', 'user_token=' + this.session.data['user_token'] + url);
 
 		data['voucher_themes'] = [];
 
@@ -114,7 +114,7 @@ module.exports = class VoucherThemeController extends Controller {
 			data['voucher_themes'].push({
 				'voucher_theme_id': result['voucher_theme_id'],
 				'name': result['name'],
-				'edit': this.url.link('sale/voucher_theme.form', 'user_token=' + this.session.data['user_token'] + '&voucher_theme_id=' + result['voucher_theme_id'] + url)
+				'edit': await this.url.link('sale/voucher_theme.form', 'user_token=' + this.session.data['user_token'] + '&voucher_theme_id=' + result['voucher_theme_id'] + url)
 			});
 		}
 
@@ -126,7 +126,7 @@ module.exports = class VoucherThemeController extends Controller {
 			url += '&order=ASC';
 		}
 
-		data['sort_name'] = this.url.link('sale/voucher_theme.list', 'user_token=' + this.session.data['user_token'] + '&sort=name' + url);
+		data['sort_name'] = await this.url.link('sale/voucher_theme.list', 'user_token=' + this.session.data['user_token'] + '&sort=name' + url);
 
 		url = '';
 
@@ -142,7 +142,7 @@ module.exports = class VoucherThemeController extends Controller {
 			'total': voucher_theme_total,
 			'page': page,
 			'limit': this.config.get('config_pagination_admin'),
-			'url': this.url.link('sale/voucher_theme.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
+			'url': await this.url.link('sale/voucher_theme.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (voucher_theme_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (voucher_theme_total - this.config.get('config_pagination_admin'))) ? voucher_theme_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), voucher_theme_total, Math.ceil(voucher_theme_total / this.config.get('config_pagination_admin')));
@@ -182,16 +182,16 @@ module.exports = class VoucherThemeController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('sale/voucher_theme', 'user_token=' + this.session.data['user_token'] + url)
+			'href': await this.url.link('sale/voucher_theme', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
-		data['save'] = this.url.link('sale/voucher_theme.save', 'user_token=' + this.session.data['user_token']);
-		data['back'] = this.url.link('sale/voucher_theme', 'user_token=' + this.session.data['user_token'] + url);
+		data['save'] = await this.url.link('sale/voucher_theme.save', 'user_token=' + this.session.data['user_token']);
+		data['back'] = await this.url.link('sale/voucher_theme', 'user_token=' + this.session.data['user_token'] + url);
 		let voucher_theme_info;
 		if ((this.request.get['voucher_theme_id'])) {
 			this.load.model('sale/voucher_theme', this);

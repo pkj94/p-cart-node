@@ -396,7 +396,7 @@ module.exports = class Upgrade1Controller extends Controller {
 				url += '&admin=' + this.request.get['admin'];
 			}
 
-			json['next'] = this.url.link('upgrade/upgrade_2', url, true);
+			json['next'] = await this.url.link('upgrade/upgrade_2', url, true);
 		}
 
 		this.response.addHeader('Content-Type: application/json');

@@ -16,21 +16,21 @@ module.exports = class SubTotalTotalController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_extension'),
-			'href' : this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=total')
+			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=total')
 		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('extension/opencart/total/sub_total', 'user_token=' + this.session.data['user_token'])
+			'href' : await this.url.link('extension/opencart/total/sub_total', 'user_token=' + this.session.data['user_token'])
 		});
 
-		data['save'] = this.url.link('extension/opencart/total/sub_total.save', 'user_token=' + this.session.data['user_token']);
-		data['back'] = this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=total');
+		data['save'] = await this.url.link('extension/opencart/total/sub_total.save', 'user_token=' + this.session.data['user_token']);
+		data['back'] = await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=total');
 
 		data['total_sub_total_status'] = this.config.get('total_sub_total_status');
 		data['total_sub_total_sort_order'] = this.config.get('total_sub_total_sort_order');

@@ -16,21 +16,21 @@ module.exports = class FreeShippingController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_extension'),
-			'href' : this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=shipping')
+			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=shipping')
 		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('extension/opencart/shipping/free', 'user_token=' + this.session.data['user_token'])
+			'href' : await this.url.link('extension/opencart/shipping/free', 'user_token=' + this.session.data['user_token'])
 		});
 
-		data['save'] = this.url.link('extension/opencart/shipping/free.save', 'user_token=' + this.session.data['user_token']);
-		data['back'] = this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=shipping');
+		data['save'] = await this.url.link('extension/opencart/shipping/free.save', 'user_token=' + this.session.data['user_token']);
+		data['back'] = await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=shipping');
 
 		data['shipping_free_total'] = this.config.get('shipping_free_total');
 		data['shipping_free_geo_zone_id'] = this.config.get('shipping_free_geo_zone_id');

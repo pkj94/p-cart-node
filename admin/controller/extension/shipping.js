@@ -51,10 +51,10 @@ module.exports = class ShippingController extends Controller {
 					'name': this.language.get(code + '_heading_title'),
 					'status': this.config.get('shipping_' + code + '_status') ? this.language.get('text_enabled') : this.language.get('text_disabled'),
 					'sort_order': this.config.get('shipping_' + code + '_sort_order'),
-					'install': this.url.link('extension/shipping.install', 'user_token=' + this.session.data['user_token'] + '&extension=' + extension + '&code=' + code),
-					'uninstall': this.url.link('extension/shipping.uninstall', 'user_token=' + this.session.data['user_token'] + '&extension=' + extension + '&code=' + code),
+					'install': await this.url.link('extension/shipping.install', 'user_token=' + this.session.data['user_token'] + '&extension=' + extension + '&code=' + code),
+					'uninstall': await this.url.link('extension/shipping.uninstall', 'user_token=' + this.session.data['user_token'] + '&extension=' + extension + '&code=' + code),
 					'installed': installed.includes(code),
-					'edit': this.url.link('extension/' + extension + '/shipping/' + code, 'user_token=' + this.session.data['user_token'])
+					'edit': await this.url.link('extension/' + extension + '/shipping/' + code, 'user_token=' + this.session.data['user_token'])
 				});
 			}
 		}

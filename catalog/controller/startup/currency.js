@@ -1,41 +1,42 @@
-module.exports=class CurrencyController extends Controller {
+module.exports = class CurrencyController extends Controller {
 	/**
 	 * @return void
 	 */
-	async index(): void {
-		code = '';
+	async index() {
 
-		this->load->model('localisation/currency');
+		let code = '';
 
-		currencies = this->model_localisation_currency->getCurrencies();
+		this.load.model('localisation/currency', this);
 
-		if ((this->session->data['currency'])) {
-			code = this->session->data['currency'];
+		const currencies = await this.model_localisation_currency.getCurrencies();
+
+		if ((this.session.data['currency'])) {
+			code = this.session.data['currency'];
 		}
 
-		if ((this->request->cookie['currency']) && !array_key_exists(code, currencies)) {
-			code = this->request->cookie['currency'];
+		if ((this.request.cookie['currency']) && !currencies.hasOwnProperty(code)) {
+			code = this.request.cookie['currency'];
 		}
 
-		if (!array_key_exists(code, currencies)) {
-			code = this->config->get('config_currency');
+		if (!currencies.hasOwnProperty(code)) {
+			code = this.config.get('config_currency');
 		}
 
-		if (!(this->session->data['currency']) || this->session->data['currency'] != code) {
-			this->session->data['currency'] = code;
+		if (!(this.session.data['currency']) || this.session.data['currency'] != code) {
+			this.session.data['currency'] = code;
 		}
 
 		// Set a new currency cookie if the code does not match the current one
-		if (!(this->request->cookie['currency']) || this->request->cookie['currency'] != code) {
-			option = [
-				'expires'  => time() + 60 * 60 * 24 * 30,
-				'path'     => '/',
-				'SameSite' => 'Lax'
-			];
+		if (!(this.request.cookie['currency']) || this.request.cookie['currency'] != code) {
+			let option = {
+				'expires': new Date(Date.now() + 60 * 60 * 24 * 30 * 1000),
+				'path': '/',
+				'SameSite': 'Lax'
+			};
 
-			setcookie('currency', code, option);
+			this.response.response.cookie('currency', code, option);
 		}
 
-		this->registry->set('currency', new \Opencart\System\Library\Cart\Currency(this->registry));
+		this.registry.set('currency', new (require(DIR_SYSTEM + 'library/cart/currency'))(this.registry));
 	}
 }

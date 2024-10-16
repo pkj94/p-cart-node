@@ -1,215 +1,208 @@
-<?php
-namespace Opencart\Catalog\Controller\Account;
-/**
- *
- *
- * @package Opencart\Catalog\Controller\Account
- */
-class WishListController extends Controller {
+module.exports=class WishListController extends Controller {
 	/**
 	 * @return void
 	 */
-	public function index(): void {
-		$this->load->language('account/wishlist');
+	public function index() {
+		await this.load.language('account/wishlist');
 
-		if (!$this->customer->isLogged() || (!($this->request->get['customer_token']) || !($this->session->data['customer_token']) || ($this->request->get['customer_token'] != $this->session->data['customer_token']))) {
-			$this->session->data['redirect'] = $this->url->link('account/wishlist', 'language=' . $this->config->get('config_language'));
+		if (!await this.customer.isLogged() || (!(this.request.get['customer_token']) || !(this.session.data['customer_token']) || (this.request.get['customer_token'] != this.session.data['customer_token']))) {
+			this.session.data['redirect'] = await this.url.link('account/wishlist', 'language=' + this.config.get('config_language'));
 
-			$this->response->redirect($this->url->link('account/login', 'language=' . $this->config->get('config_language')));
+			this.response.redirect(await this.url.link('account/login', 'language=' + this.config.get('config_language')));
 		}
 
-		$this->document->setTitle($this->language->get('heading_title'));
+		this.document.setTitle(this.language.get('heading_title'));
 
-		$data['breadcrumbs'] = [];
+		data['breadcrumbs'] = [];
 
-		$data['breadcrumbs'][] = [
-			'text' => $this->language->get('text_home'),
-			'href' => $this->url->link('common/home', 'language=' . $this->config->get('config_language'))
+		data['breadcrumbs'].push({
+			'text' : this.language.get('text_home'),
+			'href' : await this.url.link('common/home', 'language=' + this.config.get('config_language'))
 		];
 
-		$data['breadcrumbs'][] = [
-			'text' => $this->language->get('text_account'),
-			'href' => $this->url->link('account/account', 'language=' . $this->config->get('config_language') . (($this->session->data['customer_token']) ? '&customer_token=' . $this->session->data['customer_token'] : ''))
+		data['breadcrumbs'].push({
+			'text' : this.language.get('text_account'),
+			'href' : await this.url.link('account/account', 'language=' + this.config.get('config_language') + ((this.session.data['customer_token']) ? '&customer_token=' + this.session.data['customer_token'] : ''))
 		];
 
-		$data['breadcrumbs'][] = [
-			'text' => $this->language->get('heading_title'),
-			'href' => $this->url->link('account/wishlist', 'language=' . $this->config->get('config_language') . (($this->session->data['customer_token']) ? '&customer_token=' . $this->session->data['customer_token'] : ''))
+		data['breadcrumbs'].push({
+			'text' : this.language.get('heading_title'),
+			'href' : await this.url.link('account/wishlist', 'language=' + this.config.get('config_language') + ((this.session.data['customer_token']) ? '&customer_token=' + this.session.data['customer_token'] : ''))
 		];
 
-		if (($this->session->data['success'])) {
-			$data['success'] = $this->session->data['success'];
+		if ((this.session.data['success'])) {
+			data['success'] = this.session.data['success'];
 
-			unset($this->session->data['success']);
+			delete (this.session.data['success']);
 		} else {
-			$data['success'] = '';
+			data['success'] = '';
 		}
 
-		$data['list'] = $this->load->controller('account/wishlist.getList');
+		data['list'] = await this.load.controller('account/wishlist+getList');
 
-		$data['continue'] = $this->url->link('account/account', 'language=' . $this->config->get('config_language') . (($this->session->data['customer_token']) ? '&customer_token=' . $this->session->data['customer_token'] : ''));
+		data['continue'] = await this.url.link('account/account', 'language=' + this.config.get('config_language') + ((this.session.data['customer_token']) ? '&customer_token=' + this.session.data['customer_token'] : ''));
 
-		$data['column_left'] = $this->load->controller('common/column_left');
-		$data['column_right'] = $this->load->controller('common/column_right');
-		$data['content_top'] = $this->load->controller('common/content_top');
-		$data['content_bottom'] = $this->load->controller('common/content_bottom');
-		$data['footer'] = $this->load->controller('common/footer');
-		$data['header'] = $this->load->controller('common/header');
+		data['column_left'] = await this.load.controller('common/column_left');
+		data['column_right'] = await this.load.controller('common/column_right');
+		data['content_top'] = await this.load.controller('common/content_top');
+		data['content_bottom'] = await this.load.controller('common/content_bottom');
+		data['footer'] = await this.load.controller('common/footer');
+		data['header'] = await this.load.controller('common/header');
 
-		$this->response->setOutput($this->load->view('account/wishlist', $data));
+		this.response.setOutput(await this.load.view('account/wishlist', data));
 	}
 
 	/**
 	 * @return void
 	 */
-	public function list(): void {
-		$this->load->language('account/wishlist');
+	public function list() {
+		await this.load.language('account/wishlist');
 
-		$this->response->setOutput($this->getList());
+		this.response.setOutput(this.getList());
 	}
 
 	/**
 	 * @return string
 	 */
-	public function getList(): string {
-		$data['wishlist'] = $this->url->link('account/wishlist.list', 'language=' . $this->config->get('config_language') . (($this->session->data['customer_token']) ? '&customer_token=' . $this->session->data['customer_token'] : ''));
-		$data['add_to_cart'] = $this->url->link('checkout/cart.add', 'language=' . $this->config->get('config_language'));
-		$data['remove'] = $this->url->link('account/wishlist.remove', 'language=' . $this->config->get('config_language') . (($this->session->data['customer_token']) ? '&customer_token=' . $this->session->data['customer_token'] : ''));
+	public function getList() {
+		data['wishlist'] = await this.url.link('account/wishlist+list', 'language=' + this.config.get('config_language') + ((this.session.data['customer_token']) ? '&customer_token=' + this.session.data['customer_token'] : ''));
+		data['add_to_cart'] = await this.url.link('checkout/cart+add', 'language=' + this.config.get('config_language'));
+		data['remove'] = await this.url.link('account/wishlist+remove', 'language=' + this.config.get('config_language') + ((this.session.data['customer_token']) ? '&customer_token=' + this.session.data['customer_token'] : ''));
 
-		$data['products'] = [];
+		data['products'] = [];
 
-		$this->load->model('account/wishlist');
-		$this->load->model('catalog/product');
-		$this->load->model('tool/image');
+		this.load.model('account/wishlist',this);
+		this.load.model('catalog/product',this);
+		this.load.model('tool/image',this);
 
-		$results = $this->model_account_wishlist->getWishlist();
+		const results = await this.model_account_wishlist.getWishlist();
 
-		foreach ($results as $result) {
-			$product_info = $this->model_catalog_product->getProduct($result['product_id']);
+		for (let result of results) {
+			product_info = await this.model_catalog_product.getProduct(result['product_id']);
 
-			if ($product_info) {
-				if ($product_info['image']) {
-					$image = $this->model_tool_image->resize(html_entity_decode($product_info['image']), $this->config->get('config_image_wishlist_width'), $this->config->get('config_image_wishlist_height'));
+			if (product_info) {
+				if (product_info['image']) {
+					image = await this.model_tool_image.resize(html_entity_decode(product_info['image']), this.config.get('config_image_wishlist_width'), this.config.get('config_image_wishlist_height'));
 				} else {
-					$image = false;
+					image = false;
 				}
 
-				if ($product_info['quantity'] <= 0) {
-					$stock = $product_info['stock_status'];
-				} elseif ($this->config->get('config_stock_display')) {
-					$stock = $product_info['quantity'];
+				if (product_info['quantity'] <= 0) {
+					stock = product_info['stock_status'];
+				} else if (this.config.get('config_stock_display')) {
+					stock = product_info['quantity'];
 				} else {
-					$stock = $this->language->get('text_instock');
+					stock = this.language.get('text_instock');
 				}
 
-				if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
-					$price = $this->currency->format($this->tax->calculate($product_info['price'], $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+				if (await this.customer.isLogged() || !this.config.get('config_customer_price')) {
+					price = this.currency.format(this.tax.calculate(product_info['price'], product_info['tax_class_id'], this.config.get('config_tax')), this.session.data['currency']);
 				} else {
-					$price = false;
+					price = false;
 				}
 
-				if ($product_info['special']) {
-					$special = $this->currency->format($this->tax->calculate($product_info['special'], $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+				if (product_info['special']) {
+					special = this.currency.format(this.tax.calculate(product_info['special'], product_info['tax_class_id'], this.config.get('config_tax')), this.session.data['currency']);
 				} else {
-					$special = false;
+					special = false;
 				}
 
-				$data['products'][] = [
-					'product_id' => $product_info['product_id'],
-					'thumb'      => $image,
-					'name'       => $product_info['name'],
-					'model'      => $product_info['model'],
-					'stock'      => $stock,
-					'price'      => $price,
-					'special'    => $special,
-					'minimum'    => $product_info['minimum'] > 0 ? $product_info['minimum'] : 1,
-					'href'       => $this->url->link('product/product', 'language=' . $this->config->get('config_language') . '&product_id=' . $product_info['product_id'])
+				data['products'].push({
+					'product_id' : product_info['product_id'],
+					'thumb'      : image,
+					'name'       : product_info['name'],
+					'model'      : product_info['model'],
+					'stock'      : stock,
+					'price'      : price,
+					'special'    : special,
+					'minimum'    : product_info['minimum'] > 0 ? product_info['minimum'] : 1,
+					'href'       : await this.url.link('product/product', 'language=' + this.config.get('config_language') + '&product_id=' + product_info['product_id'])
 				];
 			} else {
-				$this->model_account_wishlist->deleteWishlist($result['product_id']);
+				await this.model_account_wishlist.deleteWishlist(result['product_id']);
 			}
 		}
 
-		return $this->load->view('account/wishlist_list', $data);
+		return await this.load.view('account/wishlist_list', data);
 	}
 
 	/**
 	 * @return void
 	 */
-	public function add(): void {
-		$this->load->language('account/wishlist');
+	public function add() {
+		await this.load.language('account/wishlist');
 
-		$json = [];
+		const json = {};
 
-		if (($this->request->post['product_id'])) {
-			$product_id = (int)$this->request->post['product_id'];
+		if ((this.request.post['product_id'])) {
+			product_id = this.request.post['product_id'];
 		} else {
-			$product_id = 0;
+			product_id = 0;
 		}
 
-		$this->load->model('catalog/product');
+		this.load.model('catalog/product',this);
 
-		$product_info = $this->model_catalog_product->getProduct($product_id);
+		product_info = await this.model_catalog_product.getProduct(product_id);
 
-		if (!$product_info) {
-			$json['error'] = $this->language->get('error_product');
+		if (!product_info) {
+			json['error'] = this.language.get('error_product');
 		}
 
-		if (!$json) {
-			if (!($this->session->data['wishlist'])) {
-				$this->session->data['wishlist'] = [];
+		if (!Object.keys(json).length) {
+			if (!(this.session.data['wishlist'])) {
+				this.session.data['wishlist'] = [];
 			}
 
-			$this->session->data['wishlist'][] = $product_id;
+			this.session.data['wishlist'].push(product_id;
 
-			$this->session->data['wishlist'] = array_unique($this->session->data['wishlist']);
+			this.session.data['wishlist'] = array_unique(this.session.data['wishlist']);
 
 			// Store the
-			if ($this->customer->isLogged()) {
+			if (await this.customer.isLogged()) {
 				// Edit customers cart
-				$this->load->model('account/wishlist');
+				this.load.model('account/wishlist',this);
 
-				$this->model_account_wishlist->addWishlist($product_id);
+				await this.model_account_wishlist.addWishlist(product_id);
 
-				$json['success'] = sprintf($this->language->get('text_success'), $this->url->link('product/product', 'language=' . $this->config->get('config_language') . '&product_id=' . $product_id), $product_info['name'], $this->url->link('account/wishlist', 'language=' . $this->config->get('config_language') . (($this->session->data['customer_token']) ? '&customer_token=' . $this->session->data['customer_token'] : '')));
+				json['success'] = sprintf(this.language.get('text_success'), await this.url.link('product/product', 'language=' + this.config.get('config_language') + '&product_id=' + product_id), product_info['name'], await this.url.link('account/wishlist', 'language=' + this.config.get('config_language') + ((this.session.data['customer_token']) ? '&customer_token=' + this.session.data['customer_token'] : '')));
 
-				$json['total'] = sprintf($this->language->get('text_wishlist'), $this->model_account_wishlist->getTotalWishlist());
+				json['total'] = sprintf(this.language.get('text_wishlist'), this.model_account_wishlist.getTotalWishlist());
 			} else {
-				$json['success'] = sprintf($this->language->get('text_login'), $this->url->link('account/login', 'language=' . $this->config->get('config_language')), $this->url->link('account/register', 'language=' . $this->config->get('config_language')), $this->url->link('product/product', 'language=' . $this->config->get('config_language') . '&product_id=' . (int)$product_id), $product_info['name'], $this->url->link('account/wishlist', 'language=' . $this->config->get('config_language') . (($this->session->data['customer_token']) ? '&customer_token=' . $this->session->data['customer_token'] : '')));
+				json['success'] = sprintf(this.language.get('text_login'), await this.url.link('account/login', 'language=' + this.config.get('config_language')), await this.url.link('account/register', 'language=' + this.config.get('config_language')), await this.url.link('product/product', 'language=' + this.config.get('config_language') + '&product_id=' + product_id), product_info['name'], await this.url.link('account/wishlist', 'language=' + this.config.get('config_language') + ((this.session.data['customer_token']) ? '&customer_token=' + this.session.data['customer_token'] : '')));
 
-				$json['total'] = sprintf($this->language->get('text_wishlist'), (($this->session->data['wishlist']) ? count($this->session->data['wishlist']) : 0));
+				json['total'] = sprintf(this.language.get('text_wishlist'), ((this.session.data['wishlist']) ? count(this.session.data['wishlist']) : 0));
 			}
 		}
 
-		$this->response->addHeader('Content-Type: application/json');
-		$this->response->setOutput(json_encode($json));
+		this.response.addHeader('Content-Type: application/json');
+		this.response.setOutput(json);
 	}
 
 	/**
 	 * @return void
 	 */
-	public function remove(): void {
-		$this->load->language('account/wishlist');
+	public function remove() {
+		await this.load.language('account/wishlist');
 
-		$json = [];
+		const json = {};
 
-		if (($this->request->post['product_id'])) {
-			$product_id = (int)$this->request->post['product_id'];
+		if ((this.request.post['product_id'])) {
+			product_id = this.request.post['product_id'];
 		} else {
-			$product_id = 0;
+			product_id = 0;
 		}
 
-		if (!$json) {
-			if ($this->customer->isLogged()) {
-				$this->load->model('account/wishlist');
+		if (!Object.keys(json).length) {
+			if (await this.customer.isLogged()) {
+				this.load.model('account/wishlist',this);
 
-				$this->model_account_wishlist->deleteWishlist($product_id);
+				await this.model_account_wishlist.deleteWishlist(product_id);
 
-				$json['success'] = $this->language->get('text_remove');
+				json['success'] = this.language.get('text_remove');
 			}
 		}
 
-		$this->response->addHeader('Content-Type: application/json');
-		$this->response->setOutput(json_encode($json));
+		this.response.addHeader('Content-Type: application/json');
+		this.response.setOutput(json);
 	}
 }

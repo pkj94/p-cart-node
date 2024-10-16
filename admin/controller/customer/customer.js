@@ -88,16 +88,16 @@ module.exports = class CustomerController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('customer/customer', 'user_token=' + this.session.data['user_token'] + url)
+			'href': await this.url.link('customer/customer', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
-		data['add'] = this.url.link('customer/customer.form', 'user_token=' + this.session.data['user_token'] + url);
-		data['delete'] = this.url.link('customer/customer.delete', 'user_token=' + this.session.data['user_token']);
+		data['add'] = await this.url.link('customer/customer.form', 'user_token=' + this.session.data['user_token'] + url);
+		data['delete'] = await this.url.link('customer/customer.delete', 'user_token=' + this.session.data['user_token']);
 
 		data['list'] = await this.getList();
 
@@ -222,7 +222,7 @@ module.exports = class CustomerController extends Controller {
 			url += '&page=' + this.request.get['page'];
 		}
 
-		data['action'] = this.url.link('customer/customer.list', 'user_token=' + this.session.data['user_token'] + url);
+		data['action'] = await this.url.link('customer/customer.list', 'user_token=' + this.session.data['user_token'] + url);
 
 		this.load.model('setting/store', this);
 
@@ -254,7 +254,7 @@ module.exports = class CustomerController extends Controller {
 			const login_info = await this.model_customer_customer.getTotalLoginAttempts(result['email']);
 			let unlock = '';
 			if (login_info && login_info['total'] >= this.config.get('config_login_attempts')) {
-				unlock = this.url.link('customer/customer.unlock', 'user_token=' + this.session.data['user_token'] + '&email=' + result['email'] + url);
+				unlock = await this.url.link('customer/customer.unlock', 'user_token=' + this.session.data['user_token'] + '&email=' + result['email'] + url);
 			}
 
 			let store_data = [];
@@ -262,14 +262,14 @@ module.exports = class CustomerController extends Controller {
 			store_data.push({
 				'store_id': 0,
 				'name': this.config.get('config_name'),
-				'href': this.url.link('customer/customer.login', 'user_token=' + this.session.data['user_token'] + '&customer_id=' + result['customer_id'] + '&store_id=0')
+				'href': await this.url.link('customer/customer.login', 'user_token=' + this.session.data['user_token'] + '&customer_id=' + result['customer_id'] + '&store_id=0')
 			});
 
 			for (let store of stores) {
 				store_data.push({
 					'store_id': store['store_id'],
 					'name': store['name'],
-					'href': this.url.link('customer/customer.login', 'user_token=' + this.session.data['user_token'] + '&customer_id=' + result['customer_id'] + '&store_id=' + store['store_id'])
+					'href': await this.url.link('customer/customer.login', 'user_token=' + this.session.data['user_token'] + '&customer_id=' + result['customer_id'] + '&store_id=' + store['store_id'])
 				});
 			}
 
@@ -283,7 +283,7 @@ module.exports = class CustomerController extends Controller {
 				'date_added': date(this.language.get('date_format_short'), new Date(result['date_added'])),
 				'unlock': unlock,
 				'store': store_data,
-				'edit': this.url.link('customer/customer.form', 'user_token=' + this.session.data['user_token'] + '&customer_id=' + result['customer_id'] + url)
+				'edit': await this.url.link('customer/customer.form', 'user_token=' + this.session.data['user_token'] + '&customer_id=' + result['customer_id'] + url)
 			});
 		}
 
@@ -323,11 +323,11 @@ module.exports = class CustomerController extends Controller {
 			url += '&order=ASC';
 		}
 
-		data['sort_name'] = this.url.link('customer/customer.list', 'user_token=' + this.session.data['user_token'] + '&sort=name' + url);
-		data['sort_email'] = this.url.link('customer/customer.list', 'user_token=' + this.session.data['user_token'] + '&sort=c.email' + url);
-		data['sort_customer_group'] = this.url.link('customer/customer.list', 'user_token=' + this.session.data['user_token'] + '&sort=customer_group' + url);
-		data['sort_status'] = this.url.link('customer/customer.list', 'user_token=' + this.session.data['user_token'] + '&sort=c.status' + url);
-		data['sort_date_added'] = this.url.link('customer/customer.list', 'user_token=' + this.session.data['user_token'] + '&sort=c.date_added' + url);
+		data['sort_name'] = await this.url.link('customer/customer.list', 'user_token=' + this.session.data['user_token'] + '&sort=name' + url);
+		data['sort_email'] = await this.url.link('customer/customer.list', 'user_token=' + this.session.data['user_token'] + '&sort=c.email' + url);
+		data['sort_customer_group'] = await this.url.link('customer/customer.list', 'user_token=' + this.session.data['user_token'] + '&sort=customer_group' + url);
+		data['sort_status'] = await this.url.link('customer/customer.list', 'user_token=' + this.session.data['user_token'] + '&sort=c.status' + url);
+		data['sort_date_added'] = await this.url.link('customer/customer.list', 'user_token=' + this.session.data['user_token'] + '&sort=c.date_added' + url);
 
 		url = '';
 
@@ -371,7 +371,7 @@ module.exports = class CustomerController extends Controller {
 			'total': customer_total,
 			'page': page,
 			'limit': this.config.get('config_pagination_admin'),
-			'url': this.url.link('customer/customer.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
+			'url': await this.url.link('customer/customer.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (customer_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (customer_total - this.config.get('config_pagination_admin'))) ? customer_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), customer_total, Math.ceil(customer_total / this.config.get('config_pagination_admin')));
@@ -444,20 +444,20 @@ module.exports = class CustomerController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('customer/customer', 'user_token=' + this.session.data['user_token'] + url)
+			'href': await this.url.link('customer/customer', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
-		data['save'] = this.url.link('customer/customer.save', 'user_token=' + this.session.data['user_token']);
-		data['back'] = this.url.link('customer/customer', 'user_token=' + this.session.data['user_token'] + url);
-		data['upload'] = this.url.link('tool/upload.upload', 'user_token=' + this.session.data['user_token']);
+		data['save'] = await this.url.link('customer/customer.save', 'user_token=' + this.session.data['user_token']);
+		data['back'] = await this.url.link('customer/customer', 'user_token=' + this.session.data['user_token'] + url);
+		data['upload'] = await this.url.link('tool/upload.upload', 'user_token=' + this.session.data['user_token']);
 
 		if ((this.request.get['customer_id'])) {
-			data['orders'] = this.url.link('sale/order', 'user_token=' + this.session.data['user_token'] + '&filter_customer_id=' + this.request.get['customer_id']);
+			data['orders'] = await this.url.link('sale/order', 'user_token=' + this.session.data['user_token'] + '&filter_customer_id=' + this.request.get['customer_id']);
 		} else {
 			data['orders'] = '';
 		}
@@ -882,7 +882,7 @@ module.exports = class CustomerController extends Controller {
 				'type': result['type'],
 				'status': result['status'],
 				'date_expire': date(this.language.get('date_format_short'), new Date(result['date_expire'])),
-				'delete': this.url.link('customer/customer.deletePayment', 'user_token=' + this.session.data['user_token'] + '&customer_payment_id=' + result['customer_payment_id'])
+				'delete': await this.url.link('customer/customer.deletePayment', 'user_token=' + this.session.data['user_token'] + '&customer_payment_id=' + result['customer_payment_id'])
 			});
 		}
 
@@ -892,7 +892,7 @@ module.exports = class CustomerController extends Controller {
 			'total': payment_total,
 			'page': page,
 			'limit': limit,
-			'url': this.url.link('customer/customer.payment', 'user_token=' + this.session.data['user_token'] + '&customer_id=' + customer_id + '&page={page}')
+			'url': await this.url.link('customer/customer.payment', 'user_token=' + this.session.data['user_token'] + '&customer_id=' + customer_id + '&page={page}')
 		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (payment_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (payment_total - limit)) ? payment_total : (((page - 1) * limit) + limit), payment_total, Math.ceil(payment_total / limit));
@@ -972,7 +972,7 @@ module.exports = class CustomerController extends Controller {
 			'total': history_total,
 			'page': page,
 			'limit': limit,
-			'url': this.url.link('customer/customer.history', 'user_token=' + this.session.data['user_token'] + '&customer_id=' + customer_id + '&page={page}')
+			'url': await this.url.link('customer/customer.history', 'user_token=' + this.session.data['user_token'] + '&customer_id=' + customer_id + '&page={page}')
 		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (history_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (history_total - limit)) ? history_total : (((page - 1) * limit) + limit), history_total, Math.ceil(history_total / limit));
@@ -1055,7 +1055,7 @@ module.exports = class CustomerController extends Controller {
 			'total': transaction_total,
 			'page': page,
 			'limit': limit,
-			'url': this.url.link('customer/customer.transaction', 'user_token=' + this.session.data['user_token'] + '&customer_id=' + customer_id + '&page={page}')
+			'url': await this.url.link('customer/customer.transaction', 'user_token=' + this.session.data['user_token'] + '&customer_id=' + customer_id + '&page={page}')
 		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (transaction_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (transaction_total - limit)) ? transaction_total : (((page - 1) * limit) + limit), transaction_total, Math.ceil(transaction_total / limit));
@@ -1145,7 +1145,7 @@ module.exports = class CustomerController extends Controller {
 			'total': reward_total,
 			'page': page,
 			'limit': limit,
-			'url': this.url.link('customer/customer.reward', 'user_token=' + this.session.data['user_token'] + '&customer_id=' + customer_id + '&page={page}')
+			'url': await this.url.link('customer/customer.reward', 'user_token=' + this.session.data['user_token'] + '&customer_id=' + customer_id + '&page={page}')
 		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (reward_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (reward_total - limit)) ? reward_total : (((page - 1) * limit) + limit), reward_total, Math.ceil(reward_total / limit));
@@ -1237,7 +1237,7 @@ module.exports = class CustomerController extends Controller {
 				'store': store,
 				'country': result['country'],
 				'date_added': date(this.language.get('datetime_format'), new Date(result['date_added'])),
-				'filter_ip': this.url.link('customer/customer', 'user_token=' + this.session.data['user_token'] + '&filter_ip=' + result['ip'])
+				'filter_ip': await this.url.link('customer/customer', 'user_token=' + this.session.data['user_token'] + '&filter_ip=' + result['ip'])
 			});
 		}
 
@@ -1247,7 +1247,7 @@ module.exports = class CustomerController extends Controller {
 			'total': ip_total,
 			'page': page,
 			'limit': limit,
-			'url': this.url.link('customer/customer.ip', 'user_token=' + this.session.data['user_token'] + '&customer_id=' + customer_id + '&page={page}')
+			'url': await this.url.link('customer/customer.ip', 'user_token=' + this.session.data['user_token'] + '&customer_id=' + customer_id + '&page={page}')
 		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (ip_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (ip_total - limit)) ? ip_total : (((page - 1) * limit) + limit), ip_total, Math.ceil(ip_total / limit));

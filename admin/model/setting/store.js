@@ -1,4 +1,3 @@
-const crypto = require('crypto');
 module.exports = class StoreSettingModel extends Model {
     constructor(registry) {
         super(registry)
@@ -158,7 +157,7 @@ module.exports = class StoreSettingModel extends Model {
 		registry.set('request', request);
 
 		// Response
-		let response = new ResponseLibrary(this.response.response);
+		let response = new ResponseLibrary(this.response.response, this.request.server);
 		registry.set('response', response);
 
 		// Database
@@ -170,6 +169,7 @@ module.exports = class StoreSettingModel extends Model {
 		// Session
 		// let session = new SessionLibrary(config.get('session_engine'), registry);
 		let session = new SessionLibrary(registry);
+		session.start(this.request.server.sessionID)
 		registry.set('session', session);
 
 		// Start session

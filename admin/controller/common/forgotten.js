@@ -6,7 +6,7 @@ module.exports = class ForgottenController extends Controller {
 		await this.load.language('common/forgotten');
 
 		if (await this.user.isLogged() || !this.config.get('config_mail_engine')) {
-			this.response.setRedirect(this.url.link('common/login', '', true));
+			this.response.setRedirect(await this.url.link('common/login', '', true));
 		}
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -15,16 +15,16 @@ module.exports = class ForgottenController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard')
+			'href' : await this.url.link('common/dashboard')
 		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('common/forgotten')
+			'href' : await this.url.link('common/forgotten')
 		});
 
-		data['confirm'] = this.url.link('common/forgotten.confirm');
-		data['back'] = this.url.link('common/login');
+		data['confirm'] = await this.url.link('common/forgotten.confirm');
+		data['back'] = await this.url.link('common/login');
 
 		data['header'] = await this.load.controller('common/header');
 		data['footer'] = await this.load.controller('common/footer');
@@ -42,7 +42,7 @@ module.exports = class ForgottenController extends Controller {
 
 		// Stop any undefined index messages.
 		if (await this.user.isLogged() || !this.config.get('config_mail_engine')) {
-			json['redirect'] = this.url.link('common/login', '', true);
+			json['redirect'] = await this.url.link('common/login', '', true);
 		}
 
 		keys = ['email'];
@@ -66,7 +66,7 @@ module.exports = class ForgottenController extends Controller {
 
 			this.session.data['success'] = this.language.get('text_success');
 
-			json['redirect'] = this.url.link('common/login', '', true);
+			json['redirect'] = await this.url.link('common/login', '', true);
 		}
 
 		this.response.addHeader('Content-Type: application/json');
@@ -92,7 +92,7 @@ module.exports = class ForgottenController extends Controller {
 		}
 
 		if (await this.user.isLogged() || !this.config.get('config_mail_engine')) {
-			this.response.setRedirect(this.url.link('common/login', '', true));
+			this.response.setRedirect(await this.url.link('common/login', '', true));
 		}
 
 		this.load.model('user/user',this);
@@ -104,7 +104,7 @@ module.exports = class ForgottenController extends Controller {
 
 			this.session.data['error'] = this.language.get('error_code');
 
-			this.response.setRedirect(this.url.link('common/login', '', true));
+			this.response.setRedirect(await this.url.link('common/login', '', true));
 		}
 
 		this.document.setTitle(this.language.get('heading_reset'));
@@ -113,18 +113,18 @@ module.exports = class ForgottenController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard')
+			'href' : await this.url.link('common/dashboard')
 		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('common/forgotten.reset')
+			'href' : await this.url.link('common/forgotten.reset')
 		});
 
 		this.session.data['reset_token'] = substr(bin2hex(openssl_random_pseudo_bytes(26)), 0, 26);
 
-		data['reset'] = this.url.link('common/forgotten.password', 'email=' + encodeURIComponent(email) + '&code=' + code + '&reset_token=' + this.session.data['reset_token']);
-		data['back'] = this.url.link('common/login');
+		data['reset'] = await this.url.link('common/forgotten.password', 'email=' + encodeURIComponent(email) + '&code=' + code + '&reset_token=' + this.session.data['reset_token']);
+		data['back'] = await this.url.link('common/login');
 
 		data['header'] = await this.load.controller('common/header');
 		data['footer'] = await this.load.controller('common/footer');
@@ -166,7 +166,7 @@ module.exports = class ForgottenController extends Controller {
 		if (!(this.request.get['reset_token']) || !(this.session.data['reset_token']) || (this.session.data['reset_token'] != this.request.get['reset_token'])) {
 			this.session.data['error'] = this.language.get('error_session');
 
-			json['redirect'] = this.url.link('account/forgotten', true);
+			json['redirect'] = await this.url.link('account/forgotten', true);
 		}
 
 		this.load.model('user/user',this);
@@ -178,7 +178,7 @@ module.exports = class ForgottenController extends Controller {
 
 			this.session.data['error'] = this.language.get('error_code');
 
-			json['redirect'] = this.url.link('common/login', '', true);
+			json['redirect'] = await this.url.link('common/login', '', true);
 		}
 
 		if (!Object.keys(json).length) {
@@ -198,7 +198,7 @@ module.exports = class ForgottenController extends Controller {
 
 			delete (this.session.data['reset_token']);
 
-			json['redirect'] = this.url.link('common/login', '', true);
+			json['redirect'] = await this.url.link('common/login', '', true);
 		}
 
 		this.response.addHeader('Content-Type: application/json');

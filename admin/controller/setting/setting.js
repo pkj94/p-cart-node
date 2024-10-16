@@ -15,21 +15,21 @@ module.exports = class SettingController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_stores'),
-			'href': this.url.link('setting/store', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('setting/store', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('setting/setting', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('setting/setting', 'user_token=' + this.session.data['user_token'])
 		});
 
-		data['save'] = this.url.link('setting/setting.save', 'user_token=' + this.session.data['user_token']);
-		data['back'] = this.url.link('setting/store', 'user_token=' + this.session.data['user_token']);
+		data['save'] = await this.url.link('setting/setting.save', 'user_token=' + this.session.data['user_token']);
+		data['back'] = await this.url.link('setting/store', 'user_token=' + this.session.data['user_token']);
 
 		// General
 		data['config_meta_title'] = this.config.get('config_meta_title');

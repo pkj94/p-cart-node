@@ -12,19 +12,19 @@ module.exports = class ECBCurrencyController extends Controller {
       breadcrumbs: [
         {
           text: this.language.get('text_home'),
-          href: this.url.link('common/dashboard', `user_token=${this.session.data['user_token']}`)
+          href: await this.url.link('common/dashboard', `user_token=${this.session.data['user_token']}`)
         },
         {
           text: this.language.get('text_extension'),
-          href: this.url.link('marketplace/extension', `user_token=${this.session.data['user_token']}&type=currency`)
+          href: await this.url.link('marketplace/extension', `user_token=${this.session.data['user_token']}&type=currency`)
         },
         {
           text: this.language.get('heading_title'),
-          href: this.url.link('extension/opencart/currency/ecb', `user_token=${this.session.data['user_token']}`)
+          href: await this.url.link('extension/opencart/currency/ecb', `user_token=${this.session.data['user_token']}`)
         }
       ],
-      save: this.url.link('extension/opencart/currency/ecb.save', `user_token=${this.session.data['user_token']}`),
-      back: this.url.link('marketplace/extension', `user_token=${this.session.data['user_token']}&type=currency`),
+      save: await this.url.link('extension/opencart/currency/ecb.save', `user_token=${this.session.data['user_token']}`),
+      back: await this.url.link('marketplace/extension', `user_token=${this.session.data['user_token']}&type=currency`),
       currency_ecb_status: this.config.get('currency_ecb_status'),
       header: await this.load.controller('common/header'),
       column_left: await this.load.controller('common/column_left'),

@@ -7,7 +7,7 @@ namespace Opencart\Catalog\Controller\Cron;
  */
 class GdprController extends Controller {
 	/**
-	 * @param int    cron_id
+	 * @param    cron_id
 	 * @param string code
 	 * @param string cycle
 	 * @param string date_added
@@ -15,19 +15,19 @@ class GdprController extends Controller {
 	 *
 	 * @return void
 	 */
-	async index(cron_id, string code, string cycle, string date_added, string date_modified): void {
-		this->load->model('account/gdpr');
-		this->load->model('account/customer');
+	async index(cron_id, code, cycle, date_added, date_modified) {
+		this.load.model('account/gdpr');
+		this.load.model('account/customer');
 
-		results = this->model_account_gdpr->getExpires();
+		const results = await this.model_account_gdpr.getExpires();
 
-		foreach (results as result) {
-			this->model_account_gdpr->editStatus(result['gdpr_id'], 3);
+		for (let result of results) {
+			await this.model_account_gdpr.editStatus(result['gdpr_id'], 3);
 
-			customer_info = this->model_account_customer->getCustomerByEmail(result['email']);
+			customer_info = await this.model_account_customer.getCustomerByEmail(result['email']);
 
 			if (customer_info) {
-				this->model_account_customer->deleteCustomer(customer_info['customer_id']);
+				await this.model_account_customer.deleteCustomer(customer_info['customer_id']);
 			}
 		}
 	}

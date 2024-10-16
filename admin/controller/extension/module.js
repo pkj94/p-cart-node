@@ -20,7 +20,7 @@ module.exports = class ModuleController extends Controller {
 
 		await this.load.language('extension/module');
 
-		data['text_layout'] = sprintf(this.language.get('text_layout'), this.url.link('design/layout', 'user_token=' + this.session.data['user_token']));
+		data['text_layout'] = sprintf(this.language.get('text_layout'), await this.url.link('design/layout', 'user_token=' + this.session.data['user_token']));
 
 		let available = [];
 
@@ -69,8 +69,8 @@ module.exports = class ModuleController extends Controller {
 					module_data.push({
 						'name': module['name'],
 						'status': Number(setting_info['status']) ? this.language.get('text_enabled') : this.language.get('text_disabled'),
-						'edit': this.url.link('extension/' + extension + '/module/' + code, 'user_token=' + this.session.data['user_token'] + '&module_id=' + module['module_id']),
-						'delete': this.url.link('extension/module.delete', 'user_token=' + this.session.data['user_token'] + '&module_id=' + module['module_id'])
+						'edit': await this.url.link('extension/' + extension + '/module/' + code, 'user_token=' + this.session.data['user_token'] + '&module_id=' + module['module_id']),
+						'delete': await this.url.link('extension/module.delete', 'user_token=' + this.session.data['user_token'] + '&module_id=' + module['module_id'])
 					});
 				}
 				let status = '';
@@ -83,10 +83,10 @@ module.exports = class ModuleController extends Controller {
 					'name': this.language.get(code + '_heading_title'),
 					'status': status,
 					'module': module_data,
-					'install': this.url.link('extension/module.install', 'user_token=' + this.session.data['user_token'] + '&extension=' + extension + '&code=' + code),
-					'uninstall': this.url.link('extension/module.uninstall', 'user_token=' + this.session.data['user_token'] + '&extension=' + extension + '&code=' + code),
+					'install': await this.url.link('extension/module.install', 'user_token=' + this.session.data['user_token'] + '&extension=' + extension + '&code=' + code),
+					'uninstall': await this.url.link('extension/module.uninstall', 'user_token=' + this.session.data['user_token'] + '&extension=' + extension + '&code=' + code),
 					'installed': installed.includes(code),
-					'edit': this.url.link('extension/' + extension + '/module/' + code, 'user_token=' + this.session.data['user_token'])
+					'edit': await this.url.link('extension/' + extension + '/module/' + code, 'user_token=' + this.session.data['user_token'])
 				});
 			}
 		}

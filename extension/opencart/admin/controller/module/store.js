@@ -13,21 +13,21 @@ module.exports = class StoreModuleController extends Controller {
 
 		data.breadcrumbs.push({
 			text: this.language.get('text_home'),
-			href: this.url.link('common/dashboard', 'user_token=' + this.session.data.user_token)
+			href: await this.url.link('common/dashboard', 'user_token=' + this.session.data.user_token)
 		});
 
 		data.breadcrumbs.push({
 			text: this.language.get('text_extension'),
-			href: this.url.link('marketplace/extension', 'user_token=' + this.session.data.user_token + '&type=module')
+			href: await this.url.link('marketplace/extension', 'user_token=' + this.session.data.user_token + '&type=module')
 		});
 
 		data.breadcrumbs.push({
 			text: this.language.get('heading_title'),
-			href: this.url.link('extension/opencart/module/store', 'user_token=' + this.session.data.user_token)
+			href: await this.url.link('extension/opencart/module/store', 'user_token=' + this.session.data.user_token)
 		});
 
-		data.save = this.url.link('extension/opencart/module/store.save', 'user_token=' + this.session.data.user_token);
-		data.back = this.url.link('marketplace/extension', 'user_token=' + this.session.data.user_token + '&type=module');
+		data.save = await this.url.link('extension/opencart/module/store.save', 'user_token=' + this.session.data.user_token);
+		data.back = await this.url.link('marketplace/extension', 'user_token=' + this.session.data.user_token + '&type=module');
 
 		data.module_store_admin = this.config.get('module_store_admin');
 		data.module_store_status = this.config.get('module_store_status');

@@ -95,16 +95,16 @@ module.exports = class ReturnsController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('sale/returns', 'user_token=' + this.session.data['user_token'] + url)
+			'href': await this.url.link('sale/returns', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
-		data['add'] = this.url.link('sale/returns.form', 'user_token=' + this.session.data['user_token'] + url);
-		data['delete'] = this.url.link('sale/returns.delete', 'user_token=' + this.session.data['user_token']);
+		data['add'] = await this.url.link('sale/returns.form', 'user_token=' + this.session.data['user_token'] + url);
+		data['delete'] = await this.url.link('sale/returns.delete', 'user_token=' + this.session.data['user_token']);
 
 		data['list'] = await this.getList();
 
@@ -239,7 +239,7 @@ module.exports = class ReturnsController extends Controller {
 			url += '&page=' + this.request.get['page'];
 		}
 
-		data['action'] = this.url.link('sale/returns.list', 'user_token=' + this.session.data['user_token'] + url);
+		data['action'] = await this.url.link('sale/returns.list', 'user_token=' + this.session.data['user_token'] + url);
 
 		data['returns'] = [];
 
@@ -274,7 +274,7 @@ module.exports = class ReturnsController extends Controller {
 				'return_status': result['return_status'],
 				'date_added': date(this.language.get('date_format_short'), new Date(result['date_added'])),
 				'date_modified': date(this.language.get('date_format_short'), new Date(result['date_modified'])),
-				'edit': this.url.link('sale/returns.form', 'user_token=' + this.session.data['user_token'] + '&return_id=' + result['return_id'] + url)
+				'edit': await this.url.link('sale/returns.form', 'user_token=' + this.session.data['user_token'] + '&return_id=' + result['return_id'] + url)
 			});
 		}
 
@@ -318,14 +318,14 @@ module.exports = class ReturnsController extends Controller {
 			url += '&order=ASC';
 		}
 
-		data['sort_return_id'] = this.url.link('sale/returns.list', 'user_token=' + this.session.data['user_token'] + '&sort=r.return_id' + url);
-		data['sort_order_id'] = this.url.link('sale/returns.list', 'user_token=' + this.session.data['user_token'] + '&sort=r.order_id' + url);
-		data['sort_customer'] = this.url.link('sale/returns.list', 'user_token=' + this.session.data['user_token'] + '&sort=customer' + url);
-		data['sort_product'] = this.url.link('sale/returns.list', 'user_token=' + this.session.data['user_token'] + '&sort=r.product' + url);
-		data['sort_model'] = this.url.link('sale/returns.list', 'user_token=' + this.session.data['user_token'] + '&sort=r.model' + url);
-		data['sort_status'] = this.url.link('sale/returns.list', 'user_token=' + this.session.data['user_token'] + '&sort=return_status' + url);
-		data['sort_date_added'] = this.url.link('sale/returns.list', 'user_token=' + this.session.data['user_token'] + '&sort=r.date_added' + url);
-		data['sort_date_modified'] = this.url.link('sale/returns.list', 'user_token=' + this.session.data['user_token'] + '&sort=r.date_modified' + url);
+		data['sort_return_id'] = await this.url.link('sale/returns.list', 'user_token=' + this.session.data['user_token'] + '&sort=r.return_id' + url);
+		data['sort_order_id'] = await this.url.link('sale/returns.list', 'user_token=' + this.session.data['user_token'] + '&sort=r.order_id' + url);
+		data['sort_customer'] = await this.url.link('sale/returns.list', 'user_token=' + this.session.data['user_token'] + '&sort=customer' + url);
+		data['sort_product'] = await this.url.link('sale/returns.list', 'user_token=' + this.session.data['user_token'] + '&sort=r.product' + url);
+		data['sort_model'] = await this.url.link('sale/returns.list', 'user_token=' + this.session.data['user_token'] + '&sort=r.model' + url);
+		data['sort_status'] = await this.url.link('sale/returns.list', 'user_token=' + this.session.data['user_token'] + '&sort=return_status' + url);
+		data['sort_date_added'] = await this.url.link('sale/returns.list', 'user_token=' + this.session.data['user_token'] + '&sort=r.date_added' + url);
+		data['sort_date_modified'] = await this.url.link('sale/returns.list', 'user_token=' + this.session.data['user_token'] + '&sort=r.date_modified' + url);
 
 		url = '';
 
@@ -373,7 +373,7 @@ module.exports = class ReturnsController extends Controller {
 			'total': return_total,
 			'page': page,
 			'limit': this.config.get('config_pagination_admin'),
-			'url': this.url.link('sale/returns.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
+			'url': await this.url.link('sale/returns.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (return_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (return_total - this.config.get('config_pagination_admin'))) ? return_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), return_total, Math.ceil(return_total / this.config.get('config_pagination_admin')));
@@ -445,16 +445,16 @@ module.exports = class ReturnsController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('sale/returns', 'user_token=' + this.session.data['user_token'] + url)
+			'href': await this.url.link('sale/returns', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
-		data['save'] = this.url.link('sale/returns.save', 'user_token=' + this.session.data['user_token']);
-		data['back'] = this.url.link('sale/returns', 'user_token=' + this.session.data['user_token'] + url);
+		data['save'] = await this.url.link('sale/returns.save', 'user_token=' + this.session.data['user_token']);
+		data['back'] = await this.url.link('sale/returns', 'user_token=' + this.session.data['user_token'] + url);
 		let return_info;
 		if ((this.request.get['return_id'])) {
 			this.load.model('sale/returns', this);
@@ -734,7 +734,7 @@ module.exports = class ReturnsController extends Controller {
 			'total': history_total,
 			'page': page,
 			'limit': limit,
-			'url': this.url.link('sale/returns.history', 'user_token=' + this.session.data['user_token'] + '&return_id=' + return_id + '&page={page}')
+			'url': await this.url.link('sale/returns.history', 'user_token=' + this.session.data['user_token'] + '&return_id=' + return_id + '&page={page}')
 		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (history_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (history_total - limit)) ? history_total : (((page - 1) * limit) + limit), history_total, Math.ceil(history_total / limit));

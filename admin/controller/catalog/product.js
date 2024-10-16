@@ -76,17 +76,17 @@ module.exports = class ProductController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('catalog/product', 'user_token=' + this.session.data['user_token'] + url)
+			'href': await this.url.link('catalog/product', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
-		data['add'] = this.url.link('catalog/product.form', 'user_token=' + this.session.data['user_token'] + url);
-		data['copy'] = this.url.link('catalog/product.copy', 'user_token=' + this.session.data['user_token']);
-		data['delete'] = this.url.link('catalog/product.delete', 'user_token=' + this.session.data['user_token']);
+		data['add'] = await this.url.link('catalog/product.form', 'user_token=' + this.session.data['user_token'] + url);
+		data['copy'] = await this.url.link('catalog/product.copy', 'user_token=' + this.session.data['user_token']);
+		data['delete'] = await this.url.link('catalog/product.delete', 'user_token=' + this.session.data['user_token']);
 
 		data['list'] = await this.getList();
 
@@ -184,7 +184,7 @@ module.exports = class ProductController extends Controller {
 			url += '&page=' + this.request.get['page'];
 		}
 
-		data['action'] = this.url.link('catalog/product.list', 'user_token=' + this.session.data['user_token'] + url);
+		data['action'] = await this.url.link('catalog/product.list', 'user_token=' + this.session.data['user_token'] + url);
 
 		data['products'] = [];
 
@@ -237,8 +237,8 @@ module.exports = class ProductController extends Controller {
 				'special': special,
 				'quantity': result['quantity'],
 				'status': result['status'],
-				'edit': this.url.link('catalog/product.form', 'user_token=' + this.session.data['user_token'] + '&product_id=' + result['product_id'] + (result['master_id'] ? '&master_id=' + result['master_id'] : '') + url),
-				'variant': (!result['master_id'] ? this.url.link('catalog/product.form', 'user_token=' + this.session.data['user_token'] + '&master_id=' + result['product_id'] + url) : '')
+				'edit': await this.url.link('catalog/product.form', 'user_token=' + this.session.data['user_token'] + '&product_id=' + result['product_id'] + (result['master_id'] ? '&master_id=' + result['master_id'] : '') + url),
+				'variant': (!result['master_id'] ? await this.url.link('catalog/product.form', 'user_token=' + this.session.data['user_token'] + '&master_id=' + result['product_id'] + url) : '')
 			});
 		}
 
@@ -270,11 +270,11 @@ module.exports = class ProductController extends Controller {
 			url += '&order=ASC';
 		}
 
-		data['sort_name'] = this.url.link('catalog/product.list', 'user_token=' + this.session.data['user_token'] + '&sort=pd.name' + url);
-		data['sort_model'] = this.url.link('catalog/product.list', 'user_token=' + this.session.data['user_token'] + '&sort=p.model' + url);
-		data['sort_price'] = this.url.link('catalog/product.list', 'user_token=' + this.session.data['user_token'] + '&sort=p.price' + url);
-		data['sort_quantity'] = this.url.link('catalog/product.list', 'user_token=' + this.session.data['user_token'] + '&sort=p.quantity' + url);
-		data['sort_order'] = this.url.link('catalog/product.list', 'user_token=' + this.session.data['user_token'] + '&sort=p.sort_order' + url);
+		data['sort_name'] = await this.url.link('catalog/product.list', 'user_token=' + this.session.data['user_token'] + '&sort=pd.name' + url);
+		data['sort_model'] = await this.url.link('catalog/product.list', 'user_token=' + this.session.data['user_token'] + '&sort=p.model' + url);
+		data['sort_price'] = await this.url.link('catalog/product.list', 'user_token=' + this.session.data['user_token'] + '&sort=p.price' + url);
+		data['sort_quantity'] = await this.url.link('catalog/product.list', 'user_token=' + this.session.data['user_token'] + '&sort=p.quantity' + url);
+		data['sort_order'] = await this.url.link('catalog/product.list', 'user_token=' + this.session.data['user_token'] + '&sort=p.sort_order' + url);
 
 		url = '';
 
@@ -310,7 +310,7 @@ module.exports = class ProductController extends Controller {
 			'total': product_total,
 			'page': page,
 			'limit': this.config.get('config_pagination_admin'),
-			'url': this.url.link('catalog/product.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
+			'url': await this.url.link('catalog/product.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (product_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (product_total - this.config.get('config_pagination_admin'))) ? product_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), product_total, Math.ceil(product_total / this.config.get('config_pagination_admin')));
@@ -336,13 +336,13 @@ module.exports = class ProductController extends Controller {
 
 		data['error_upload_size'] = sprintf(this.language.get('error_upload_size'), this.config.get('config_file_max_size'));
 
-		data['upload'] = this.url.link('tool/upload', 'user_token=' + this.session.data['user_token']);
+		data['upload'] = await this.url.link('tool/upload', 'user_token=' + this.session.data['user_token']);
 		data['config_file_max_size'] = (this.config.get('config_file_max_size') * 1024 * 1024);
 
 		if ((this.request.get['master_id'])) {
 			this.load.model('catalog/product', this);
 
-			let url = this.url.link('catalog/product.form', 'user_token=' + this.session.data['user_token'] + '&product_id=' + this.request.get['master_id']);
+			let url = await this.url.link('catalog/product.form', 'user_token=' + this.session.data['user_token'] + '&product_id=' + this.request.get['master_id']);
 
 			data['text_variant'] = sprintf(this.language.get('text_variant'), url, url);
 		} else {
@@ -391,12 +391,12 @@ module.exports = class ProductController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('catalog/product', 'user_token=' + this.session.data['user_token'] + url)
+			'href': await this.url.link('catalog/product', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
 		url = '';
@@ -433,9 +433,9 @@ module.exports = class ProductController extends Controller {
 			url += '&page=' + this.request.get['page'];
 		}
 
-		data['save'] = this.url.link('catalog/product.save', 'user_token=' + this.session.data['user_token']);
-		data['back'] = this.url.link('catalog/product', 'user_token=' + this.session.data['user_token'] + url);
-		data['upload'] = this.url.link('tool/upload.upload', 'user_token=' + this.session.data['user_token']);
+		data['save'] = await this.url.link('catalog/product.save', 'user_token=' + this.session.data['user_token']);
+		data['back'] = await this.url.link('catalog/product', 'user_token=' + this.session.data['user_token'] + url);
+		data['upload'] = await this.url.link('tool/upload.upload', 'user_token=' + this.session.data['user_token']);
 
 		if ((this.request.get['product_id'])) {
 			data['product_id'] = this.request.get['product_id'];
@@ -1238,7 +1238,7 @@ module.exports = class ProductController extends Controller {
 			'total': report_total,
 			'page': page,
 			'limit': limit,
-			'url': this.url.link('catalog/product.report', 'user_token=' + this.session.data['user_token'] + '&product_id=' + product_id + '&page={page}')
+			'url': await this.url.link('catalog/product.report', 'user_token=' + this.session.data['user_token'] + '&product_id=' + product_id + '&page={page}')
 		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (report_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (report_total - limit)) ? report_total : (((page - 1) * limit) + limit), report_total, Math.ceil(report_total / limit));

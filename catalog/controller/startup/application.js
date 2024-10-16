@@ -1,15 +1,15 @@
-module.exports=class ApplicationController extends Controller {
+module.exports = class ApplicationController extends Controller {
 	/**
 	 * @return void
 	 */
-	async index(): void {
+	async index() {
 		// Weight
-		this->registry->set('weight', new \Opencart\System\Library\Cart\Weight(this->registry));
+		this.registry.set('weight', new (require(DIR_SYSTEM + 'library/cart/weight'))(this.registry));
 
 		// Length
-		this->registry->set('length', new \Opencart\System\Library\Cart\Length(this->registry));
+		this.registry.set('length', new (require(DIR_SYSTEM + 'library/cart/length'))(this.registry));
 
 		// Cart
-		this->registry->set('cart', new \Opencart\System\Library\Cart\Cart(this->registry));
+		this.registry.set('cart', new (require(DIR_SYSTEM + 'library/cart/cart'))(this.registry));
 	}
 }

@@ -1,18 +1,11 @@
-<?php
-namespace Opencart\Catalog\Controller\Event;
-/**
- *
- *
- * @package Opencart\Catalog\Controller\Event
- */
-class DebugController extends Controller {
+module.exports=class DebugController extends Controller {
 	/**
 	 * @param string route
 	 * @param array  args
 	 *
 	 * @return void
 	 */
-	async index(string &route, array &args): void {
+	async index(&route, args) {
 		//echo route;
 	}
 
@@ -22,11 +15,11 @@ class DebugController extends Controller {
 	 *
 	 * @return void
 	 */
-	async before(string &route, array &args): void {
+	async before(&route, args) {
 		// add the route you want to test
 		/*
 		if (route == 'common/home') {
-			this->session->data['debug'][route] = microtime(true);
+			this.session.data['debug'][route] = microtime(true);
 		}
 		*/
 	}
@@ -38,17 +31,17 @@ class DebugController extends Controller {
 	 *
 	 * @return void
 	 */
-	async after(string route, array &args, mixed &output): void {
+	async after(route, args, mixed &output) {
 		// add the route you want to test
 		/*
 		if (route == 'common/home') {
-			if ((this->session->data['debug'][route])) {
+			if ((this.session.data['debug'][route])) {
 				log_data = [
-					'route' => route,
-					'time'  => microtime(true) - this->session->data['debug'][route]
+					'route' : route,
+					'time'  : microtime(true) - this.session.data['debug'][route]
 				];
 				
-				this->log->write(log_data);
+				this.log.write(log_data);
 			}
 		}
 		*/

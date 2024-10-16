@@ -19,12 +19,12 @@ class CommentController extends Controller {
 
 		data['breadcrumbs'][] = array(
 			'text' : this.language.get('text_home'),
-			'href' : this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		);
 
 		data['breadcrumbs'][] = array(
 			'text' : this.language.get('heading_title'),
-			'href' : this.url.link('cms/comment', 'user_token=' + this.session.data['user_token'])
+			'href' : await this.url.link('cms/comment', 'user_token=' + this.session.data['user_token'])
 		);
 
 		data['list'] = await this.getList();
@@ -132,21 +132,21 @@ class CommentController extends Controller {
 
 		for (let result of results) {
 			if (!result['status']) {
-				approve = this.url.link('cms/comment.approve', 'user_token=' + this.session.data['user_token'] + '&comment_id=' + result['comment_id'] + url);
+				approve = await this.url.link('cms/comment.approve', 'user_token=' + this.session.data['user_token'] + '&comment_id=' + result['comment_id'] + url);
 			} else {
 				approve = '';
 			}
 
 			data['comments'][] = array(
 				'article'       : result['article'],
-				'article_edit'  : this.url.link('cms/article.edit', 'user_token=' + this.session.data['user_token'] + '&article_id=' + result['article_id']),
+				'article_edit'  : await this.url.link('cms/article.edit', 'user_token=' + this.session.data['user_token'] + '&article_id=' + result['article_id']),
 				'customer'      : result['customer'],
-				'customer_edit' : this.url.link('customer/customer.edit', 'user_token=' + this.session.data['user_token'] + '&customer_id=' + result['customer_id']),
+				'customer_edit' : await this.url.link('customer/customer.edit', 'user_token=' + this.session.data['user_token'] + '&customer_id=' + result['customer_id']),
 				'comment'       : nl2br(result['comment']),
 				'date_added'    : date('d/m/Y', new Date(result['date_added'])),
 				'approve'       : approve,
-				'spam'          : this.url.link('cms/comment.spam', 'user_token=' + this.session.data['user_token'] + '&comment_id=' + result['comment_id'] + url),
-				'delete'        : this.url.link('cms/comment.delete', 'user_token=' + this.session.data['user_token'] + '&comment_id=' + result['comment_id'] + url)
+				'spam'          : await this.url.link('cms/comment.spam', 'user_token=' + this.session.data['user_token'] + '&comment_id=' + result['comment_id'] + url),
+				'delete'        : await this.url.link('cms/comment.delete', 'user_token=' + this.session.data['user_token'] + '&comment_id=' + result['comment_id'] + url)
 			);
 		}
 
@@ -176,7 +176,7 @@ class CommentController extends Controller {
 			'total' : comment_total,
 			'page'  : page,
 			'limit' : 10,
-			'url'   : this.url.link('cms/comment.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
+			'url'   : await this.url.link('cms/comment.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		));
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (comment_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (comment_total - this.config.get('config_pagination_admin'))) ? comment_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), comment_total, Math.ceil(comment_total / this.config.get('config_pagination_admin')));
@@ -253,7 +253,7 @@ class CommentController extends Controller {
 				url += '&page=' + this.request.get['page'];
 			}
 
-			json['redirect'] = this.url.link('cms/comment.comment', 'user_token=' + this.session.data['user_token'] + url, true);
+			json['redirect'] = await this.url.link('cms/comment.comment', 'user_token=' + this.session.data['user_token'] + url, true);
 		}
 
 		this.response.addHeader('Content-Type: application/json');
@@ -325,7 +325,7 @@ class CommentController extends Controller {
 				url += '&page=' + this.request.get['page'];
 			}
 
-			json['redirect'] = this.url.link('cms/comment/comment', 'user_token=' + this.session.data['user_token'] + url, true);
+			json['redirect'] = await this.url.link('cms/comment/comment', 'user_token=' + this.session.data['user_token'] + url, true);
 		}
 
 		this.response.addHeader('Content-Type: application/json');
@@ -386,7 +386,7 @@ class CommentController extends Controller {
 				url += '&page=' + this.request.get['page'];
 			}
 
-			json['redirect'] = this.url.link('cms/comment.comment', 'user_token=' + this.session.data['user_token'] + url, true);
+			json['redirect'] = await this.url.link('cms/comment.comment', 'user_token=' + this.session.data['user_token'] + url, true);
 		}
 
 		this.response.addHeader('Content-Type: application/json');

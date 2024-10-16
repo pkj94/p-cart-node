@@ -52,7 +52,7 @@ module.exports = class AuthorizeCommontController extends Controller {
 			this.response.response.cookie('authorize', token);
 		}
 
-		data['action'] = this.url.link('common/authorize.validate', 'user_token=' + this.session.data['user_token']);
+		data['action'] = await this.url.link('common/authorize.validate', 'user_token=' + this.session.data['user_token']);
 
 		// Set the code to be emailed
 		this.session.data['code'] = oc_token(4);
@@ -71,9 +71,9 @@ module.exports = class AuthorizeCommontController extends Controller {
 				url+= args;
 			}
 
-			data['redirect'] = this.url.link(route, url);
+			data['redirect'] = await this.url.link(route, url);
 		} else {
-			data['redirect'] = this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true);
+			data['redirect'] = await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true);
 		}
 
 		data['user_token'] = this.session.data['user_token'];
@@ -122,7 +122,7 @@ module.exports = class AuthorizeCommontController extends Controller {
 			}
 
 			if (authorize_info['attempts'] >= 2) {
-				json['redirect'] = this.url.link('common/authorize.unlock', 'user_token=' + this.session.data['user_token'], true);
+				json['redirect'] = await this.url.link('common/authorize.unlock', 'user_token=' + this.session.data['user_token'], true);
 			}
 		} else {
 			json['error'] = this.language.get('error_code');
@@ -136,7 +136,7 @@ module.exports = class AuthorizeCommontController extends Controller {
 			if ((this.request.post['redirect']) && (strpos(this.request.post['redirect'], HTTP_SERVER) === 0)) {
 				json['redirect'] = str_replace('&amp;', '&', this.request.post['redirect'] + '&user_token=' + this.session.data['user_token']);
 			} else {
-				json['redirect'] = this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true);
+				json['redirect'] = await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true);
 			}
 		}
 
@@ -159,7 +159,7 @@ module.exports = class AuthorizeCommontController extends Controller {
 
 		if (authorize_info && authorize_info['status']) {
 			// Redirect if already have a valid token.
-			this.response.setRedirect(this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true));
+			this.response.setRedirect(await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true));
 		}
 
 		data['user_token'] = this.session.data['user_token'];
@@ -214,7 +214,7 @@ module.exports = class AuthorizeCommontController extends Controller {
 
 			this.session.data['success'] = this.language.get('text_unlocked');
 
-			this.response.setRedirect(this.url.link('common/authorize', 'user_token=' + this.session.data['user_token'], true));
+			this.response.setRedirect(await this.url.link('common/authorize', 'user_token=' + this.session.data['user_token'], true));
 		} else {
 			await this.user.logout();
 
@@ -222,7 +222,7 @@ module.exports = class AuthorizeCommontController extends Controller {
 
 			this.session.data['error'] = this.language.get('error_reset');
 
-			this.response.setRedirect(this.url.link('common/login', '', true));
+			this.response.setRedirect(await this.url.link('common/login', '', true));
 		}
 	}
 }

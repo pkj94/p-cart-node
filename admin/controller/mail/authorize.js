@@ -88,7 +88,7 @@ module.exports=class AuthorizeController extends Controller {
 			await this.load.language('mail/authorize_reset');
 
 			data['username'] = this.user.getUsername();
-			data['reset'] = this.url.link('common/authorize.reset', 'email=' + email + '&code=' + code, true);
+			data['reset'] = await this.url.link('common/authorize.reset', 'email=' + email + '&code=' + code, true);
 			data['ip'] = this.request.server.headers['x-forwarded-for'] || (
                     this.request.server.connection ? (this.request.server.connection.remoteAddress ||
                         this.request.server.socket.remoteAddress ||

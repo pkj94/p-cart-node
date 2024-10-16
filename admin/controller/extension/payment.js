@@ -58,10 +58,10 @@ module.exports = class PaymentController extends Controller {
 					'link': link,
 					'status': this.config.get('payment_' + code + '_status') ? this.language.get('text_enabled') : this.language.get('text_disabled'),
 					'sort_order': this.config.get('payment_' + code + '_sort_order'),
-					'install': this.url.link('extension/payment.install', 'user_token=' + this.session.data['user_token'] + '&extension=' + extension + '&code=' + code),
-					'uninstall': this.url.link('extension/payment.uninstall', 'user_token=' + this.session.data['user_token'] + '&extension=' + extension + '&code=' + code),
+					'install': await this.url.link('extension/payment.install', 'user_token=' + this.session.data['user_token'] + '&extension=' + extension + '&code=' + code),
+					'uninstall': await this.url.link('extension/payment.uninstall', 'user_token=' + this.session.data['user_token'] + '&extension=' + extension + '&code=' + code),
 					'installed': installed.includes(code),
-					'edit': this.url.link('extension/' + extension + '/payment/' + code, 'user_token=' + this.session.data['user_token'])
+					'edit': await this.url.link('extension/' + extension + '/payment/' + code, 'user_token=' + this.session.data['user_token'])
 				});
 			}
 		}

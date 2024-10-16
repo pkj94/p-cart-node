@@ -9,32 +9,33 @@ class CurrencyController extends Controller {
 	/**
 	 * @return void
 	 */
-	async index(): void {
-		this->load->language('api/localisation/currency');
+	async index() {
+const data ={};
+		await this.load.language('api/localisation/currency');
 
-		json = [];
+		const json = {};
 
-		if ((this->request->post['currency'])) {
-			currency = (string)this->request->post['currency'];
+		if ((this.request.post['currency'])) {
+			currency = this.request.post['currency'];
 		} else {
 			currency = '';
 		}
 
-		this->load->model('localisation/currency');
+		this.load.model('localisation/currency',this);
 
-		currency_info = this->model_localisation_currency->getCurrencyByCode(currency);
+		currency_info = await this.model_localisation_currency.getCurrencyByCode(currency);
 
 		if (!currency_info) {
-			json['error'] = this->language->get('error_currency');
+			json['error'] = this.language.get('error_currency');
 		}
 
-		if (!json) {
-			this->session->data['currency'] = currency;
+		if (!Object.keys(json).length) {
+			this.session.data['currency'] = currency;
 
-			json['success'] = this->language->get('text_success');
+			json['success'] = this.language.get('text_success');
 		}
 
-		this->response->addHeader('Content-Type: application/json');
-		this->response->setOutput(json_encode(json));
+		this.response.addHeader('Content-Type: application/json');
+		this.response.setOutput(json);
 	}
 }

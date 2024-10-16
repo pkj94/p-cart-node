@@ -101,18 +101,18 @@ module.exports = class OrderController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('sale/order', 'user_token=' + this.session.data['user_token'] + url)
+			'href': await this.url.link('sale/order', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
-		data['add'] = this.url.link('sale/order.info', 'user_token=' + this.session.data['user_token'] + url);
-		data['delete'] = this.url.link('sale/order.delete', 'user_token=' + this.session.data['user_token']);
-		data['invoice'] = this.url.link('sale/order.invoice', 'user_token=' + this.session.data['user_token']);
-		data['shipping'] = this.url.link('sale/order.shipping', 'user_token=' + this.session.data['user_token']);
+		data['add'] = await this.url.link('sale/order.info', 'user_token=' + this.session.data['user_token'] + url);
+		data['delete'] = await this.url.link('sale/order.delete', 'user_token=' + this.session.data['user_token']);
+		data['invoice'] = await this.url.link('sale/order.invoice', 'user_token=' + this.session.data['user_token']);
+		data['shipping'] = await this.url.link('sale/order.shipping', 'user_token=' + this.session.data['user_token']);
 
 		data['list'] = await this.getList();
 
@@ -271,7 +271,7 @@ module.exports = class OrderController extends Controller {
 			url += '&page=' + this.request.get['page'];
 		}
 
-		data['action'] = this.url.link('sale/order.list', 'user_token=' + this.session.data['user_token'] + url);
+		data['action'] = await this.url.link('sale/order.list', 'user_token=' + this.session.data['user_token'] + url);
 
 		data['orders'] = [];
 
@@ -307,7 +307,7 @@ module.exports = class OrderController extends Controller {
 				'date_added': date(this.language.get('date_format_short'), new Date(result['date_added'])),
 				'date_modified': date(this.language.get('date_format_short'), new Date(result['date_modified'])),
 				'shipping_method': result['shipping_method'],
-				'view': this.url.link('sale/order.info', 'user_token=' + this.session.data['user_token'] + '&order_id=' + result['order_id'] + url)
+				'view': await this.url.link('sale/order.info', 'user_token=' + this.session.data['user_token'] + '&order_id=' + result['order_id'] + url)
 			});
 		}
 
@@ -355,13 +355,13 @@ module.exports = class OrderController extends Controller {
 			url += '&order=ASC';
 		}
 
-		data['sort_order'] = this.url.link('sale/order.list', 'user_token=' + this.session.data['user_token'] + '&sort=o.order_id' + url);
-		data['sort_store_name'] = this.url.link('sale/order.list', 'user_token=' + this.session.data['user_token'] + '&sort=o.store_name' + url);
-		data['sort_customer'] = this.url.link('sale/order.list', 'user_token=' + this.session.data['user_token'] + '&sort=customer' + url);
-		data['sort_status'] = this.url.link('sale/order.list', 'user_token=' + this.session.data['user_token'] + '&sort=order_status' + url);
-		data['sort_total'] = this.url.link('sale/order.list', 'user_token=' + this.session.data['user_token'] + '&sort=o.total' + url);
-		data['sort_date_added'] = this.url.link('sale/order.list', 'user_token=' + this.session.data['user_token'] + '&sort=o.date_added' + url);
-		data['sort_date_modified'] = this.url.link('sale/order.list', 'user_token=' + this.session.data['user_token'] + '&sort=o.date_modified' + url);
+		data['sort_order'] = await this.url.link('sale/order.list', 'user_token=' + this.session.data['user_token'] + '&sort=o.order_id' + url);
+		data['sort_store_name'] = await this.url.link('sale/order.list', 'user_token=' + this.session.data['user_token'] + '&sort=o.store_name' + url);
+		data['sort_customer'] = await this.url.link('sale/order.list', 'user_token=' + this.session.data['user_token'] + '&sort=customer' + url);
+		data['sort_status'] = await this.url.link('sale/order.list', 'user_token=' + this.session.data['user_token'] + '&sort=order_status' + url);
+		data['sort_total'] = await this.url.link('sale/order.list', 'user_token=' + this.session.data['user_token'] + '&sort=o.total' + url);
+		data['sort_date_added'] = await this.url.link('sale/order.list', 'user_token=' + this.session.data['user_token'] + '&sort=o.date_added' + url);
+		data['sort_date_modified'] = await this.url.link('sale/order.list', 'user_token=' + this.session.data['user_token'] + '&sort=o.date_modified' + url);
 
 		url = '';
 
@@ -413,7 +413,7 @@ module.exports = class OrderController extends Controller {
 			'total': order_total,
 			'page': page,
 			'limit': this.config.get('config_pagination_admin'),
-			'url': this.url.link('sale/order.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
+			'url': await this.url.link('sale/order.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (order_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (order_total - this.config.get('config_pagination_admin'))) ? order_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), order_total, Math.ceil(order_total / this.config.get('config_pagination_admin')));
@@ -499,19 +499,19 @@ module.exports = class OrderController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('sale/order', 'user_token=' + this.session.data['user_token'] + url)
+			'href': await this.url.link('sale/order', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
-		data['shipping'] = this.url.link('sale/order.shipping', 'user_token=' + this.session.data['user_token'] + '&order_id=' + order_id);
-		data['invoice'] = this.url.link('sale/order.invoice', 'user_token=' + this.session.data['user_token'] + '&order_id=' + order_id);
-		data['back'] = this.url.link('sale/order', 'user_token=' + this.session.data['user_token'] + url);
-		data['upload'] = this.url.link('tool/upload.upload', 'user_token=' + this.session.data['user_token']);
-		data['customer_add'] = this.url.link('customer/customer.form', 'user_token=' + this.session.data['user_token']);
+		data['shipping'] = await this.url.link('sale/order.shipping', 'user_token=' + this.session.data['user_token'] + '&order_id=' + order_id);
+		data['invoice'] = await this.url.link('sale/order.invoice', 'user_token=' + this.session.data['user_token'] + '&order_id=' + order_id);
+		data['back'] = await this.url.link('sale/order', 'user_token=' + this.session.data['user_token'] + url);
+		data['upload'] = await this.url.link('tool/upload.upload', 'user_token=' + this.session.data['user_token']);
+		data['customer_add'] = await this.url.link('customer/customer.form', 'user_token=' + this.session.data['user_token']);
 		let order_info;
 		if (order_id) {
 			this.load.model('sale/order', this);
@@ -647,7 +647,7 @@ module.exports = class OrderController extends Controller {
 							'name': option['name'],
 							'value': upload_info['name'],
 							'type': option['type'],
-							'href': this.url.link('tool/upload.download', 'user_token=' + this.session.data['user_token'] + '&code=' + upload_info['code'])
+							'href': await this.url.link('tool/upload.download', 'user_token=' + this.session.data['user_token'] + '&code=' + upload_info['code'])
 						});
 					}
 				}
@@ -682,7 +682,7 @@ module.exports = class OrderController extends Controller {
 			subscription_info = await this.model_sale_subscription.getSubscriptionByOrderProductId(order_id, product['order_product_id']);
 			let subscription = '';
 			if (subscription_info) {
-				subscription = this.url.link('sale/subscription.info', 'user_token=' + this.session.data['user_token'] + '&subscription_id=' + subscription_info['subscription_id']);
+				subscription = await this.url.link('sale/subscription.info', 'user_token=' + this.session.data['user_token'] + '&subscription_id=' + subscription_info['subscription_id']);
 			}
 
 			data['order_products'].push({
@@ -709,7 +709,7 @@ module.exports = class OrderController extends Controller {
 			data['order_vouchers'].push({
 				'description': voucher['description'],
 				'amount': this.currency.format(voucher['amount'], order_info['currency_code'], order_info['currency_value']),
-				'href': this.url.link('sale/voucher.form', 'user_token=' + this.session.data['user_token'] + '&voucher_id=' + voucher['voucher_id'])
+				'href': await this.url.link('sale/voucher.form', 'user_token=' + this.session.data['user_token'] + '&voucher_id=' + voucher['voucher_id'])
 			});
 		}
 
@@ -1708,7 +1708,7 @@ module.exports = class OrderController extends Controller {
 			'total': history_total,
 			'page': page,
 			'limit': limit,
-			'url': this.url.link('sale/order.history', 'user_token=' + this.session.data['user_token'] + '&order_id=' + order_id + '&page={page}')
+			'url': await this.url.link('sale/order.history', 'user_token=' + this.session.data['user_token'] + '&order_id=' + order_id + '&page={page}')
 		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (history_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (history_total - limit)) ? history_total : (((page - 1) * limit) + limit), history_total, Math.ceil(history_total / limit));

@@ -15,12 +15,12 @@ module.exports = class LogController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('tool/log', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('tool/log', 'user_token=' + this.session.data['user_token'])
 		});
 
 		if ((this.session.data['error'])) {
@@ -75,8 +75,8 @@ module.exports = class LogController extends Controller {
 			data['logs'].push({
 				'name': filename,
 				'output': fs.readFileSync(handle, { encoding: 'utf8', length: 3145728 }),
-				'download': this.url.link('tool/log.download', 'user_token=' + this.session.data['user_token'] + '&filename=' + filename),
-				'clear': this.url.link('tool/log.clear', 'user_token=' + this.session.data['user_token'] + '&filename=' + filename),
+				'download': await this.url.link('tool/log.download', 'user_token=' + this.session.data['user_token'] + '&filename=' + filename),
+				'clear': await this.url.link('tool/log.clear', 'user_token=' + this.session.data['user_token'] + '&filename=' + filename),
 				'error': error
 			});
 			fs.closeSync(handle);
@@ -106,13 +106,13 @@ module.exports = class LogController extends Controller {
 		if (!fs.lstatSync(file).isFile()) {
 			this.session.data['error'] = sprintf(this.language.get('error_file'), filename);
 
-			this.response.setRedirect(this.url.link('tool/log', 'user_token=' + this.session.data['user_token'], true));
+			this.response.setRedirect(await this.url.link('tool/log', 'user_token=' + this.session.data['user_token'], true));
 		}
 
 		if (!fs.lstatSync(file).size) {
 			this.session.data['error'] = sprintf(this.language.get('error_!'), filename);
 
-			this.response.setRedirect(this.url.link('tool/log', 'user_token=' + this.session.data['user_token'], true));
+			this.response.setRedirect(await this.url.link('tool/log', 'user_token=' + this.session.data['user_token'], true));
 		}
 		this.response.headers = [];
 		this.response.addHeader('Pragma: public');

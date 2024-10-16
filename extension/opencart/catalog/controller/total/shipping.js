@@ -69,7 +69,7 @@ class ShippingController extends Controller {
 		}
 
 		if (!this.cart.hasShipping()) {
-			$json['error']['warning'] = sprintf(this.language.get('error_no_shipping'), this.url.link('information/contact', 'language=' . this.config.get('config_language')));
+			$json['error']['warning'] = sprintf(this.language.get('error_no_shipping'), await this.url.link('information/contact', 'language=' . this.config.get('config_language')));
 		}
 
 		this.load.model('localisation/country',this);
@@ -134,7 +134,7 @@ class ShippingController extends Controller {
 			if ($shipping_methods) {
 				$json['shipping_methods'] = this.session.data['shipping_methods'] = $shipping_methods;
 			} else {
-				$json['error']['warning'] = sprintf(this.language.get('error_no_shipping'), this.url.link('information/contact', 'language=' . this.config.get('config_language')));
+				$json['error']['warning'] = sprintf(this.language.get('error_no_shipping'), await this.url.link('information/contact', 'language=' . this.config.get('config_language')));
 			}
 		}
 

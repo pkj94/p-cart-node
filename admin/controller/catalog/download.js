@@ -30,16 +30,16 @@ module.exports = class DownloadController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('catalog/download', 'user_token=' + this.session.data['user_token'] + url)
+			'href': await this.url.link('catalog/download', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
-		data['add'] = this.url.link('catalog/download.form', 'user_token=' + this.session.data['user_token'] + url);
-		data['delete'] = this.url.link('catalog/download.delete', 'user_token=' + this.session.data['user_token']);
+		data['add'] = await this.url.link('catalog/download.form', 'user_token=' + this.session.data['user_token'] + url);
+		data['delete'] = await this.url.link('catalog/download.delete', 'user_token=' + this.session.data['user_token']);
 
 		data['user_token'] = this.session.data['user_token'];
 
@@ -95,7 +95,7 @@ module.exports = class DownloadController extends Controller {
 			url += '&page=' + this.request.get['page'];
 		}
 
-		data['action'] = this.url.link('catalog/download.list', 'user_token=' + this.session.data['user_token'] + url);
+		data['action'] = await this.url.link('catalog/download.list', 'user_token=' + this.session.data['user_token'] + url);
 
 		data['downloads'] = [];
 
@@ -117,7 +117,7 @@ module.exports = class DownloadController extends Controller {
 				'download_id': result['download_id'],
 				'name': result['name'],
 				'date_added': date(this.language.get('date_format_short'), new Date(result['date_added'])),
-				'edit': this.url.link('catalog/download.form', 'user_token=' + this.session.data['user_token'] + '&download_id=' + result['download_id'] + url)
+				'edit': await this.url.link('catalog/download.form', 'user_token=' + this.session.data['user_token'] + '&download_id=' + result['download_id'] + url)
 			});
 		}
 
@@ -129,8 +129,8 @@ module.exports = class DownloadController extends Controller {
 			url += '&order=ASC';
 		}
 
-		data['sort_name'] = this.url.link('catalog/download.list', 'user_token=' + this.session.data['user_token'] + '&sort=dd.name' + url);
-		data['sort_date_added'] = this.url.link('catalog/download.list', 'user_token=' + this.session.data['user_token'] + '&sort=d.date_added' + url);
+		data['sort_name'] = await this.url.link('catalog/download.list', 'user_token=' + this.session.data['user_token'] + '&sort=dd.name' + url);
+		data['sort_date_added'] = await this.url.link('catalog/download.list', 'user_token=' + this.session.data['user_token'] + '&sort=d.date_added' + url);
 
 		url = '';
 
@@ -146,7 +146,7 @@ module.exports = class DownloadController extends Controller {
 			'total': download_total,
 			'page': page,
 			'limit': this.config.get('config_pagination_admin'),
-			'url': this.url.link('catalog/download.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
+			'url': await this.url.link('catalog/download.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (download_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (download_total - this.config.get('config_pagination_admin'))) ? download_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), download_total, Math.ceil(download_total / this.config.get('config_pagination_admin')));
@@ -191,17 +191,17 @@ module.exports = class DownloadController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('catalog/download', 'user_token=' + this.session.data['user_token'] + url)
+			'href': await this.url.link('catalog/download', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
-		data['save'] = this.url.link('catalog/download.save', 'user_token=' + this.session.data['user_token']);
-		data['back'] = this.url.link('catalog/download', 'user_token=' + this.session.data['user_token'] + url);
-		data['upload'] = this.url.link('catalog/download.upload', 'user_token=' + this.session.data['user_token']);
+		data['save'] = await this.url.link('catalog/download.save', 'user_token=' + this.session.data['user_token']);
+		data['back'] = await this.url.link('catalog/download', 'user_token=' + this.session.data['user_token'] + url);
+		data['upload'] = await this.url.link('catalog/download.upload', 'user_token=' + this.session.data['user_token']);
 		let download_info;
 		if ((this.request.get['download_id'])) {
 			this.load.model('catalog/download', this);
@@ -399,7 +399,7 @@ module.exports = class DownloadController extends Controller {
 				'store': store,
 				'country': result['country'],
 				'date_added': date(this.language.get('datetime_format'), new Date(result['date_added'])),
-				'filter_ip': this.url.link('customer/customer', 'user_token=' + this.session.data['user_token'] + '&filter_ip=' + result['ip'])
+				'filter_ip': await this.url.link('customer/customer', 'user_token=' + this.session.data['user_token'] + '&filter_ip=' + result['ip'])
 			});
 		}
 
@@ -409,7 +409,7 @@ module.exports = class DownloadController extends Controller {
 			'total': report_total,
 			'page': page,
 			'limit': limit,
-			'url': this.url.link('catalog/download.report', 'user_token=' + this.session.data['user_token'] + '&download_id=' + download_id + '&page={page}')
+			'url': await this.url.link('catalog/download.report', 'user_token=' + this.session.data['user_token'] + '&download_id=' + download_id + '&page={page}')
 		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (report_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (report_total - limit)) ? report_total : (((page - 1) * limit) + limit), report_total, Math.ceil(report_total / limit));
@@ -519,12 +519,12 @@ module.exports = class DownloadController extends Controller {
 
 			data['breadcrumbs'].push({
 				'text': this.language.get('text_home'),
-				'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+				'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 			});
 
 			data['breadcrumbs'].push({
 				'text': this.language.get('heading_title'),
-				'href': this.url.link('error/not_found', 'user_token=' + this.session.data['user_token'])
+				'href': await this.url.link('error/not_found', 'user_token=' + this.session.data['user_token'])
 			});
 
 			data['header'] = await this.load.controller('common/header');

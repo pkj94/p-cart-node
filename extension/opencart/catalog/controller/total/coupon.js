@@ -16,8 +16,8 @@ class CouponController extends Controller {
 		if (this.config.get('total_coupon_status')) {
 			this.load.language('extension/opencart/total/coupon');
 
-			data['save'] = this.url.link('extension/opencart/total/coupon.save', 'language=' . this.config.get('config_language'), true);
-			data['list'] = this.url.link('checkout/cart.list', 'language=' . this.config.get('config_language'), true);
+			data['save'] = await this.url.link('extension/opencart/total/coupon.save', 'language=' . this.config.get('config_language'), true);
+			data['list'] = await this.url.link('checkout/cart.list', 'language=' . this.config.get('config_language'), true);
 
 			if ((this.session.data['coupon'])) {
 				data['coupon'] = this.session.data['coupon'];

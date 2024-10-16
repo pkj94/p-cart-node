@@ -1,35 +1,24 @@
-module.exports=class SassController extends Controller {
+const fs = require('fs');
+const expressPath = require('path');
+const sass = require('sass');
+module.exports = class SassController extends Controller {
 	/**
 	 * @return void
 	 * @throws \ScssPhp\ScssPhp\Exception\SassException
 	 */
-	async index(): void {
-		files = glob(DIR_APPLICATION . 'view/stylesheet/*.scss');
-
-		if (files) {
-			foreach (files as file) {
+	async index() {
+		let files = fs.globSync(DIR_APPLICATION + 'view/stylesheet/*.scss');
+		if (files.length) {
+			for (let file of files) {
 				// Get the filename
-				filename = basename(file, '.scss');
+				let filename = expressPath.basename(file, '.scss');
 
-				stylesheet = DIR_APPLICATION . 'view/stylesheet/' . filename . '.css';
+				let stylesheet = DIR_APPLICATION + 'view/stylesheet/' + filename + '.css';
 
-				if (!is_file(stylesheet) || !this->config->get('developer_sass')) {
-					scss = new \ScssPhp\ScssPhp\Compiler();
-					scss->setImportPaths(DIR_APPLICATION . 'view/stylesheet/');
+				if (!fs.existsSync(stylesheet) || !this.config.get('developer_sass')) {
+					const result = sass.compile(`${filename}.scss`);
 
-					output = scss->compileString('@import "' . filename . '.scss"')->getCss();
-
-					handle = fopen(stylesheet, 'w');
-
-					flock(handle, LOCK_EX);
-
-					fwrite(handle, output);
-
-					fflush(handle);
-
-					flock(handle, LOCK_UN);
-
-					fclose(handle);
+					fs.writeFileSync(stylesheet, result.css);
 				}
 			}
 		}

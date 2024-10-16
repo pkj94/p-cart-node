@@ -29,16 +29,16 @@ module.exports = class VoucherController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('sale/voucher', 'user_token=' + this.session.data['user_token'] + url)
+			'href': await this.url.link('sale/voucher', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
-		data['add'] = this.url.link('sale/voucher.form', 'user_token=' + this.session.data['user_token'] + url);
-		data['delete'] = this.url.link('sale/voucher.delete', 'user_token=' + this.session.data['user_token']);
+		data['add'] = await this.url.link('sale/voucher.form', 'user_token=' + this.session.data['user_token'] + url);
+		data['delete'] = await this.url.link('sale/voucher.delete', 'user_token=' + this.session.data['user_token']);
 
 		data['list'] = await this.getList();
 
@@ -93,7 +93,7 @@ module.exports = class VoucherController extends Controller {
 			url += '&page=' + this.request.get['page'];
 		}
 
-		data['action'] = this.url.link('sale/voucher.list', 'user_token=' + this.session.data['user_token'] + url);
+		data['action'] = await this.url.link('sale/voucher.list', 'user_token=' + this.session.data['user_token'] + url);
 
 		data['vouchers'] = [];
 
@@ -113,7 +113,7 @@ module.exports = class VoucherController extends Controller {
 		for (let result of results) {
 			let order_href = '';
 			if (result['order_id']) {
-				order_href = this.url.link('sale/order.info', 'user_token=' + this.session.data['user_token'] + '&order_id=' + result['order_id'] + url);
+				order_href = await this.url.link('sale/order.info', 'user_token=' + this.session.data['user_token'] + '&order_id=' + result['order_id'] + url);
 			}
 
 			data['vouchers'].push({
@@ -125,7 +125,7 @@ module.exports = class VoucherController extends Controller {
 				'theme': result['theme'],
 				'amount': this.currency.format(result['amount'], this.config.get('config_currency')),
 				'date_added': date(this.language.get('date_format_short'), new Date(result['date_added'])),
-				'edit': this.url.link('sale/voucher.form', 'user_token=' + this.session.data['user_token'] + '&voucher_id=' + result['voucher_id'] + url),
+				'edit': await this.url.link('sale/voucher.form', 'user_token=' + this.session.data['user_token'] + '&voucher_id=' + result['voucher_id'] + url),
 				'order': order_href
 			});
 		}
@@ -138,13 +138,13 @@ module.exports = class VoucherController extends Controller {
 			url += '&order=ASC';
 		}
 
-		data['sort_code'] = this.url.link('sale/voucher.list', 'user_token=' + this.session.data['user_token'] + '&sort=v.code' + url);
-		data['sort_from'] = this.url.link('sale/voucher.list', 'user_token=' + this.session.data['user_token'] + '&sort=v.from_name' + url);
-		data['sort_to'] = this.url.link('sale/voucher.list', 'user_token=' + this.session.data['user_token'] + '&sort=v.to_name' + url);
-		data['sort_theme'] = this.url.link('sale/voucher.list', 'user_token=' + this.session.data['user_token'] + '&sort=theme' + url);
-		data['sort_amount'] = this.url.link('sale/voucher.list', 'user_token=' + this.session.data['user_token'] + '&sort=v.amount' + url);
-		data['sort_status'] = this.url.link('sale/voucher.list', 'user_token=' + this.session.data['user_token'] + '&sort=v.status' + url);
-		data['sort_date_added'] = this.url.link('sale/voucher.list', 'user_token=' + this.session.data['user_token'] + '&sort=v.date_added' + url);
+		data['sort_code'] = await this.url.link('sale/voucher.list', 'user_token=' + this.session.data['user_token'] + '&sort=v.code' + url);
+		data['sort_from'] = await this.url.link('sale/voucher.list', 'user_token=' + this.session.data['user_token'] + '&sort=v.from_name' + url);
+		data['sort_to'] = await this.url.link('sale/voucher.list', 'user_token=' + this.session.data['user_token'] + '&sort=v.to_name' + url);
+		data['sort_theme'] = await this.url.link('sale/voucher.list', 'user_token=' + this.session.data['user_token'] + '&sort=theme' + url);
+		data['sort_amount'] = await this.url.link('sale/voucher.list', 'user_token=' + this.session.data['user_token'] + '&sort=v.amount' + url);
+		data['sort_status'] = await this.url.link('sale/voucher.list', 'user_token=' + this.session.data['user_token'] + '&sort=v.status' + url);
+		data['sort_date_added'] = await this.url.link('sale/voucher.list', 'user_token=' + this.session.data['user_token'] + '&sort=v.date_added' + url);
 
 		url = '';
 
@@ -160,7 +160,7 @@ module.exports = class VoucherController extends Controller {
 			'total': voucher_total,
 			'page': page,
 			'limit': this.config.get('config_pagination_admin'),
-			'url': this.url.link('sale/voucher.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
+			'url': await this.url.link('sale/voucher.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (voucher_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (voucher_total - this.config.get('config_pagination_admin'))) ? voucher_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), voucher_total, Math.ceil(voucher_total / this.config.get('config_pagination_admin')));
@@ -200,16 +200,16 @@ module.exports = class VoucherController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('sale/voucher', 'user_token=' + this.session.data['user_token'] + url)
+			'href': await this.url.link('sale/voucher', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
-		data['save'] = this.url.link('sale/voucher.save', 'user_token=' + this.session.data['user_token']);
-		data['back'] = this.url.link('sale/voucher', 'user_token=' + this.session.data['user_token'] + url);
+		data['save'] = await this.url.link('sale/voucher.save', 'user_token=' + this.session.data['user_token']);
+		data['back'] = await this.url.link('sale/voucher', 'user_token=' + this.session.data['user_token'] + url);
 		let voucher_info;
 		if ((this.request.get['voucher_id'])) {
 			this.load.model('sale/voucher', this);
@@ -377,7 +377,7 @@ module.exports = class VoucherController extends Controller {
 			const order_voucher_info = await this.model_sale_order.getVoucherByVoucherId(voucher_id);
 
 			if (order_voucher_info.order_voucher_id) {
-				json['error'] = sprintf(this.language.get('error_order'), this.url.link('sale/order.info', 'user_token=' + this.session.data['user_token'] + '&order_id=' + order_voucher_info['order_id']));
+				json['error'] = sprintf(this.language.get('error_order'), await this.url.link('sale/order.info', 'user_token=' + this.session.data['user_token'] + '&order_id=' + order_voucher_info['order_id']));
 
 				break;
 			}
@@ -443,7 +443,7 @@ module.exports = class VoucherController extends Controller {
 			'total': history_total,
 			'page': page,
 			'limit': limit,
-			'url': this.url.link('sale/voucher.history', 'user_token=' + this.session.data['user_token'] + '&voucher_id=' + voucher_id + '&page={page}')
+			'url': await this.url.link('sale/voucher.history', 'user_token=' + this.session.data['user_token'] + '&voucher_id=' + voucher_id + '&page={page}')
 		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (history_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (history_total - limit)) ? history_total : (((page - 1) * limit) + limit), history_total, Math.ceil(history_total / limit));

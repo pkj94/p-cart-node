@@ -28,16 +28,16 @@ module.exports = class CustomFieldController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('customer/custom_field', 'user_token=' + this.session.data['user_token'] + url)
+			'href': await this.url.link('customer/custom_field', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
-		data['add'] = this.url.link('customer/custom_field.form', 'user_token=' + this.session.data['user_token'] + url);
-		data['delete'] = this.url.link('customer/custom_field.delete', 'user_token=' + this.session.data['user_token']);
+		data['add'] = await this.url.link('customer/custom_field.form', 'user_token=' + this.session.data['user_token'] + url);
+		data['delete'] = await this.url.link('customer/custom_field.delete', 'user_token=' + this.session.data['user_token']);
 
 		data['list'] = await this.getList();
 
@@ -93,7 +93,7 @@ module.exports = class CustomFieldController extends Controller {
 			url += '&page=' + this.request.get['page'];
 		}
 
-		data['action'] = this.url.link('customer/custom_field.list', 'user_token=' + this.session.data['user_token'] + url);
+		data['action'] = await this.url.link('customer/custom_field.list', 'user_token=' + this.session.data['user_token'] + url);
 
 		data['custom_fields'] = [];
 
@@ -153,7 +153,7 @@ module.exports = class CustomFieldController extends Controller {
 				'type': type,
 				'status': result['status'],
 				'sort_order': result['sort_order'],
-				'edit': this.url.link('customer/custom_field.form', 'user_token=' + this.session.data['user_token'] + '&custom_field_id=' + result['custom_field_id'] + url)
+				'edit': await this.url.link('customer/custom_field.form', 'user_token=' + this.session.data['user_token'] + '&custom_field_id=' + result['custom_field_id'] + url)
 			});
 		}
 
@@ -165,11 +165,11 @@ module.exports = class CustomFieldController extends Controller {
 			url += '&order=ASC';
 		}
 
-		data['sort_name'] = this.url.link('customer/custom_field.list', 'user_token=' + this.session.data['user_token'] + '&sort=cfd.name' + url);
-		data['sort_location'] = this.url.link('customer/custom_field.list', 'user_token=' + this.session.data['user_token'] + '&sort=cf.location' + url);
-		data['sort_type'] = this.url.link('customer/custom_field.list', 'user_token=' + this.session.data['user_token'] + '&sort=cf.type' + url);
-		data['sort_status'] = this.url.link('customer/custom_field.list', 'user_token=' + this.session.data['user_token'] + '&sort=cf.status' + url);
-		data['sort_sort_order'] = this.url.link('customer/custom_field.list', 'user_token=' + this.session.data['user_token'] + '&sort=cf.sort_order' + url);
+		data['sort_name'] = await this.url.link('customer/custom_field.list', 'user_token=' + this.session.data['user_token'] + '&sort=cfd.name' + url);
+		data['sort_location'] = await this.url.link('customer/custom_field.list', 'user_token=' + this.session.data['user_token'] + '&sort=cf.location' + url);
+		data['sort_type'] = await this.url.link('customer/custom_field.list', 'user_token=' + this.session.data['user_token'] + '&sort=cf.type' + url);
+		data['sort_status'] = await this.url.link('customer/custom_field.list', 'user_token=' + this.session.data['user_token'] + '&sort=cf.status' + url);
+		data['sort_sort_order'] = await this.url.link('customer/custom_field.list', 'user_token=' + this.session.data['user_token'] + '&sort=cf.sort_order' + url);
 
 		url = '';
 
@@ -185,7 +185,7 @@ module.exports = class CustomFieldController extends Controller {
 			'total': custom_field_total,
 			'page': page,
 			'limit': this.config.get('config_pagination_admin'),
-			'url': this.url.link('customer/custom_field.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
+			'url': await this.url.link('customer/custom_field.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (custom_field_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (custom_field_total - this.config.get('config_pagination_admin'))) ? custom_field_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), custom_field_total, Math.ceil(custom_field_total / this.config.get('config_pagination_admin')));
@@ -225,16 +225,16 @@ module.exports = class CustomFieldController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('customer/custom_field', 'user_token=' + this.session.data['user_token'] + url)
+			'href': await this.url.link('customer/custom_field', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
-		data['save'] = this.url.link('customer/custom_field.save', 'user_token=' + this.session.data['user_token']);
-		data['back'] = this.url.link('customer/custom_field', 'user_token=' + this.session.data['user_token'] + url);
+		data['save'] = await this.url.link('customer/custom_field.save', 'user_token=' + this.session.data['user_token']);
+		data['back'] = await this.url.link('customer/custom_field', 'user_token=' + this.session.data['user_token'] + url);
 		let custom_field_info;
 		if ((this.request.get['custom_field_id'])) {
 			this.load.model('customer/custom_field', this);

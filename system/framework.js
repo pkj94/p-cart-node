@@ -54,7 +54,7 @@ module.exports = class Framework {
             request.get['route'] = request.get['route'].replace('%7C', '|');
         }
         // Response
-        let response = new ResponseLibrary(res);
+        let response = new ResponseLibrary(res, req);
         registry.set('response', response);
         for (let header of global.config.get('response_header') || []) {
             response.addHeader(header);
@@ -77,6 +77,7 @@ module.exports = class Framework {
         // Session
         if (global.config.get('session_autostart')) {
             let session = new SessionLibrary(registry);
+            session.start(req.sessionID)
             registry.set('session', session);
         }
         // Cache
@@ -159,7 +160,9 @@ module.exports = class Framework {
         }
         // Output
         // console.log('outputData', response.level)
-        await registry.get('db').close();
+        if (global.config.get('db_autostart')) {
+            await registry.get('db').close();
+        }
         return response.output();
     }
 }

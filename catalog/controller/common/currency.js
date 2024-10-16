@@ -1,83 +1,76 @@
-<?php
-namespace Opencart\Catalog\Controller\Common;
-/**
- *
- *
- * @package Opencart\Catalog\Controller\Common
- */
-class CurrencyController extends Controller {
+module.exports = class CurrencyController extends Controller {
 	/**
 	 * @return string
 	 */
-	async index(): string {
-		$this->load->language('common/currency');
+	async index() {
+		const data = {};
+		await this.load.language('common/currency');
 
-		$data['action'] = $this->url->link('common/currency.save', 'language=' . $this->config->get('config_language'));
+		data['action'] = await this.url.link('common/currency.save', 'language=' + this.config.get('config_language'));
 
-		$data['code'] = $this->session->data['currency'];
+		data['code'] = this.session.data['currency'];
 
-		$url_data = $this->request->get;
-
-		if (($url_data['route'])) {
-			$route = $url_data['route'];
-		} else {
-			$route = $this->config->get('action_default');
+		let url_data = this.request.get;
+		let route = this.config.get('action_default');
+		if ((url_data['route'])) {
+			route = url_data['route'];
 		}
 
-		unset($url_data['route']);
-		unset($url_data['_route_']);
+		delete url_data['route'];
+		delete url_data['_route_'];
 
-		$data['currencies'] = [];
+		data['currencies'] = [];
 
-		$this->load->model('localisation/currency');
+		this.load.model('localisation/currency', this);
 
-		$results = $this->model_localisation_currency->getCurrencies();
+		const results = await this.model_localisation_currency.getCurrencies();
 
-		foreach ($results as $result) {
-			if ($result['status']) {
-				$data['currencies'][] = [
-					'title'        => $result['title'],
-					'code'         => $result['code'],
-					'symbol_left'  => $result['symbol_left'],
-					'symbol_right' => $result['symbol_right']
-				];
+		for (let result of results) {
+			if (result['status']) {
+				data['currencies'].push({
+					'title': result['title'],
+					'code': result['code'],
+					'symbol_left': result['symbol_left'],
+					'symbol_right': result['symbol_right']
+				});
 			}
 		}
 
-		$url = '';
+		let url = '';
 
-		if ($url_data) {
-			$url .= '&' . decodeURIComponent(http_build_query($url_data, '', '&'));
+		if (url_data) {
+			url += '&' + decodeURIComponent(http_build_query(url_data, '', '&'));
 		}
 
-		$data['redirect'] = $this->url->link($route, $url);
+		data['redirect'] = await this.url.link(route, url);
 
-		return $this->load->view('common/currency', $data);
+		return await this.load.view('common/currency', data);
 	}
 
 	/**
 	 * @return void
 	 */
-	async save(): void {
-		if (($this->request->post['code'])) {
-			$this->session->data['currency'] = $this->request->post['code'];
+	async save() {
+		if ((this.request.post['code'])) {
+			this.session.data['currency'] = this.request.post['code'];
 
-			unset($this->session->data['shipping_method']);
-			unset($this->session->data['shipping_methods']);
+			delete this.session.data['shipping_method'];
+			delete this.session.data['shipping_methods'];
 		}
+		let expire = new Date();
+		expire.setTime(expire.getTime() + (days * 24 * 60 * 60 * 1000));
+		let option = {
+			'expires': expire,
+			'path': '/',
+			'SameSite': 'Lax'
+		};
 
-		$option = [
-			'expires'  => time() + 60 * 60 * 24 * 30,
-			'path'     => '/',
-			'SameSite' => 'Lax'
-		];
-
-		setcookie('currency', $this->session->data['currency'], $option);
-
-		if (($this->request->post['redirect']) && substr($this->request->post['redirect'], 0, strlen($this->config->get('config_url'))) == $this->config->get('config_url')) {
-			$this->response->redirect(str_replace('&amp;', '&', $this->request->post['redirect']));
+		this.response.response.cookie('currency', this.session.data['currency'], option);
+		await this.session.save();
+		if ((this.request.post['redirect']) && this.request.post['redirect'].substring(0, this.config.get('config_url').length) == this.config.get('config_url')) {
+			this.response.redirect(this.request.post['redirect'].replace('&amp;', '&'));
 		} else {
-			$this->response->redirect($this->url->link($this->config->get('action_default')));
+			this.response.redirect(await this.url.link(this.config.get('action_default')));
 		}
 	}
 }

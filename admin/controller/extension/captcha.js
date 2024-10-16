@@ -49,10 +49,10 @@ module.exports = class CaptchaController extends Controller {
 				data['extensions'].push({
 					'name': this.language.get(code + '_heading_title') + (code == this.config.get('config_captcha') ? this.language.get('text_default') : ''),
 					'status': Number(this.config.get('captcha_' + code + '_status')) ? this.language.get('text_enabled') : this.language.get('text_disabled'),
-					'install': this.url.link('extension/captcha.install', 'user_token=' + this.session.data['user_token'] + '&extension=' + extension + '&code=' + code),
-					'uninstall': this.url.link('extension/captcha.uninstall', 'user_token=' + this.session.data['user_token'] + '&extension=' + extension + '&code=' + code),
+					'install': await this.url.link('extension/captcha.install', 'user_token=' + this.session.data['user_token'] + '&extension=' + extension + '&code=' + code),
+					'uninstall': await this.url.link('extension/captcha.uninstall', 'user_token=' + this.session.data['user_token'] + '&extension=' + extension + '&code=' + code),
 					'installed': installed.includes(code),
-					'edit': this.url.link('extension/' + extension + '/captcha/' + code, 'user_token=' + this.session.data['user_token'])
+					'edit': await this.url.link('extension/' + extension + '/captcha/' + code, 'user_token=' + this.session.data['user_token'])
 				});
 			}
 		}

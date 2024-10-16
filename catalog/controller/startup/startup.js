@@ -1,16 +1,16 @@
-module.exports=class StartupController extends Controller {
+module.exports = class StartupController extends Controller {
 	/**
 	 * @return void
 	 */
-	async index(): void {
+	async index() {
 		// Load startup actions
-		$this->load->model('setting/startup');
+		this.load.model('setting/startup', this);
 
-		$results = $this->model_setting_startup->getStartups();
+		const results = await this.model_setting_startup.getStartups();
 
-		foreach ($results as $result) {
-			if (substr($result['action'], 0, 8) == 'catalog/') {
-				$this->load->controller(substr($result['action'], 8));
+		for (let result of results) {
+			if (result['action'].substring(0, 8) == 'catalog/') {
+				await this.load.controller(result['action'].substring(8));
 			}
 		}
 	}

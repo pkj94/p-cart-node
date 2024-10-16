@@ -1,21 +1,14 @@
-<?php
-namespace Opencart\Catalog\Model\Setting;
-/**
- *
- *
- * @package Opencart\Catalog\Model\Setting
- */
-class ApiController extends Model {
+module.exports =class ApiController extends Model {
 	/**
 	 * @param string username
 	 * @param string key
 	 *
 	 * @return array
 	 */
-	async login(string username, string key): array {
-		query = this->db->query("SELECT * FROM `" . DB_PREFIX . "api` a LEFT JOIN `" . DB_PREFIX . "api_ip` ai ON (a.`api_id` = ai.`api_id`) WHERE a.`username` = '" . this->db->escape(username) . "' AND a.`key` = '" . this->db->escape(key) . "'");
+	async login(username, key) {
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "api` a LEFT JOIN `" + DB_PREFIX + "api_ip` ai ON (a.`api_id` = ai.`api_id`) WHERE a.`username` = '" + this.db.escape(username) + "' AND a.`key` = '" + this.db.escape(key) + "'");
 
-		return query->row;
+		return query.row;
 	}
 
 	/**
@@ -23,32 +16,32 @@ class ApiController extends Model {
 	 *
 	 * @return array
 	 */
-	async getApiByToken(string token): array {
-		query = this->db->query("SELECT DISTINCT * FROM `" . DB_PREFIX . "api` a LEFT JOIN `" . DB_PREFIX . "api_session` `as` ON (a.`api_id` = `as`.`api_id`) LEFT JOIN `" . DB_PREFIX . "api_ip` ai ON (a.`api_id` = ai.`api_id`) WHERE a.`status` = '1' AND `as`.`session_id` = '" . this->db->escape((string)token) . "' AND ai.`ip` = '" . this->db->escape((string)this->request->server['REMOTE_ADDR']) . "'");
+	async getApiByToken(token) {
+		const query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "api` a LEFT JOIN `" + DB_PREFIX + "api_session` `as` ON (a.`api_id` = `as`.`api_id`) LEFT JOIN `" + DB_PREFIX + "api_ip` ai ON (a.`api_id` = ai.`api_id`) WHERE a.`status` = '1' AND `as`.`session_id` = '" + this.db.escape(token) + "' AND ai.`ip` = '" + this.db.escape(this.request.server['REMOTE_ADDR']) + "'");
 
-		return query->row;
+		return query.row;
 	}
 
 	/**
-	 * @param int api_id
+	 * @param api_id
 	 *
 	 * @return array
 	 */
-	async getSessions(api_id): array {
-		query = this->db->query("SELECT * FROM `" . DB_PREFIX . "api_session` WHERE TIMESTAMPADD(HOUR, 1, `date_modified`) < NOW() AND `api_id` = '" . (int)api_id . "'");
+	async getSessions(api_id) {
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "api_session` WHERE TIMESTAMPADD(HOUR, 1, `date_modified`) < NOW() AND `api_id` = '" + api_id + "'");
 
-		return query->rows;
+		return query.rows;
 	}
 
 	/**
-	 * @param int api_id
+	 * @param api_id
 	 *
 	 * @return array
 	 */
-	async deleteSessions(api_id): array {
-		query = this->db->query("SELECT * FROM `" . DB_PREFIX . "api_session` WHERE TIMESTAMPADD(HOUR, 1, `date_modified`) < NOW() AND `api_id` = '" . (int)api_id . "'");
+	async deleteSessions(api_id) {
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "api_session` WHERE TIMESTAMPADD(HOUR, 1, `date_modified`) < NOW() AND `api_id` = '" + api_id + "'");
 
-		return query->rows;
+		return query.rows;
 	}
 
 	/**
@@ -56,15 +49,15 @@ class ApiController extends Model {
 	 *
 	 * @return void
 	 */
-	async updateSession(string api_session_id): void {
+	async updateSession(api_session_id) {
 		// keep the session alive
-		this->db->query("UPDATE `" . DB_PREFIX . "api_session` SET `date_modified` = NOW() WHERE `api_session_id` = '" . (int)api_session_id . "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "api_session` SET `date_modified` = NOW() WHERE `api_session_id` = '" + api_session_id + "'");
 	}
 
 	/**
 	 * @return void
 	 */
-	async cleanSessions(): void {
-		this->db->query("DELETE FROM `" . DB_PREFIX . "api_session` WHERE TIMESTAMPADD(HOUR, 1, `date_modified`) < NOW()");
+	async cleanSessions() {
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "api_session` WHERE TIMESTAMPADD(HOUR, 1, `date_modified`) < NOW()");
 	}
 }

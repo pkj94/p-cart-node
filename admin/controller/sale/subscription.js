@@ -77,16 +77,16 @@ module.exports = class SubscriptionController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('sale/subscription', 'user_token=' + this.session.data['user_token'] + url)
+			'href': await this.url.link('sale/subscription', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
-		data['add'] = this.url.link('sale/subscription.form', 'user_token=' + this.session.data['user_token'] + url);
-		data['delete'] = this.url.link('sale/subscription.delete', 'user_token=' + this.session.data['user_token']);
+		data['add'] = await this.url.link('sale/subscription.form', 'user_token=' + this.session.data['user_token'] + url);
+		data['delete'] = await this.url.link('sale/subscription.delete', 'user_token=' + this.session.data['user_token']);
 
 		data['list'] = await this.getList();
 
@@ -228,8 +228,8 @@ module.exports = class SubscriptionController extends Controller {
 				'customer': result['customer'],
 				'status': result['subscription_status'],
 				'date_added': date(this.language.get('date_format_short'), new Date(result['date_added'])),
-				'view': this.url.link('sale/subscription.info', 'user_token=' + this.session.data['user_token'] + '&subscription_id=' + result['subscription_id'] + url),
-				'order': this.url.link('sale/order.info', 'user_token=' + this.session.data['user_token'] + '&order_id=' + result['order_id'])
+				'view': await this.url.link('sale/subscription.info', 'user_token=' + this.session.data['user_token'] + '&subscription_id=' + result['subscription_id'] + url),
+				'order': await this.url.link('sale/order.info', 'user_token=' + this.session.data['user_token'] + '&order_id=' + result['order_id'])
 			});
 		}
 
@@ -265,11 +265,11 @@ module.exports = class SubscriptionController extends Controller {
 			url += '&order=ASC';
 		}
 
-		data['sort_subscription'] = this.url.link('sale/subscription.list', 'user_token=' + this.session.data['user_token'] + '&sort=s.subscription_id' + url);
-		data['sort_order'] = this.url.link('sale/subscription.list', 'user_token=' + this.session.data['user_token'] + '&sort=s.order_id' + url);
-		data['sort_customer'] = this.url.link('sale/subscription.list', 'user_token=' + this.session.data['user_token'] + '&sort=customer' + url);
-		data['sort_status'] = this.url.link('sale/subscription.list', 'user_token=' + this.session.data['user_token'] + '&sort=subscription_status' + url);
-		data['sort_date_added'] = this.url.link('sale/subscription.list', 'user_token=' + this.session.data['user_token'] + '&sort=s.date_added' + url);
+		data['sort_subscription'] = await this.url.link('sale/subscription.list', 'user_token=' + this.session.data['user_token'] + '&sort=s.subscription_id' + url);
+		data['sort_order'] = await this.url.link('sale/subscription.list', 'user_token=' + this.session.data['user_token'] + '&sort=s.order_id' + url);
+		data['sort_customer'] = await this.url.link('sale/subscription.list', 'user_token=' + this.session.data['user_token'] + '&sort=customer' + url);
+		data['sort_status'] = await this.url.link('sale/subscription.list', 'user_token=' + this.session.data['user_token'] + '&sort=subscription_status' + url);
+		data['sort_date_added'] = await this.url.link('sale/subscription.list', 'user_token=' + this.session.data['user_token'] + '&sort=s.date_added' + url);
 
 		url = '';
 
@@ -309,7 +309,7 @@ module.exports = class SubscriptionController extends Controller {
 			'total': subscription_total,
 			'page': page,
 			'limit': this.config.get('config_pagination_admin'),
-			'url': this.url.link('sale/subscription.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
+			'url': await this.url.link('sale/subscription.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
 		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (subscription_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (subscription_total - this.config.get('config_pagination_admin'))) ? subscription_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), subscription_total, Math.ceil(subscription_total / this.config.get('config_pagination_admin')));
@@ -377,15 +377,15 @@ module.exports = class SubscriptionController extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('heading_title'),
-			'href': this.url.link('sale/subscription', 'user_token=' + this.session.data['user_token'] + url)
+			'href': await this.url.link('sale/subscription', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
-		data['back'] = this.url.link('sale/subscription', 'user_token=' + this.session.data['user_token'] + url);
+		data['back'] = await this.url.link('sale/subscription', 'user_token=' + this.session.data['user_token'] + url);
 
 		data['subscription_id'] = subscription_id;
 
@@ -408,7 +408,7 @@ module.exports = class SubscriptionController extends Controller {
 		}
 
 		if ((subscription_info)) {
-			data['order'] = this.url.link('sale/order.info', 'user_token=' + this.session.data['user_token'] + '&order_id=' + subscription_info['order_id']);
+			data['order'] = await this.url.link('sale/order.info', 'user_token=' + this.session.data['user_token'] + '&order_id=' + subscription_info['order_id']);
 		} else {
 			data['order'] = '';
 		}
@@ -648,7 +648,7 @@ module.exports = class SubscriptionController extends Controller {
 		}
 
 		if (product_info && product_info.product_id) {
-			data['product'] = this.url.link('catalog/product.form', 'user_token=' + this.session.data['user_token'] + '&product_id=' + product_info['product_id']);
+			data['product'] = await this.url.link('catalog/product.form', 'user_token=' + this.session.data['user_token'] + '&product_id=' + product_info['product_id']);
 		} else {
 			data['product'] = '';
 		}
@@ -672,7 +672,7 @@ module.exports = class SubscriptionController extends Controller {
 						'name': option['name'],
 						'value': upload_info['name'],
 						'type': option['type'],
-						'href': this.url.link('tool/upload.download', 'user_token=' + this.session.data['user_token'] + '&code=' + upload_info['code'])
+						'href': await this.url.link('tool/upload.download', 'user_token=' + this.session.data['user_token'] + '&code=' + upload_info['code'])
 					});
 				}
 			}
@@ -833,7 +833,7 @@ module.exports = class SubscriptionController extends Controller {
 			'total': subscription_total,
 			'page': page,
 			'limit': limit,
-			'url': this.url.link('sale/subscription.history', 'user_token=' + this.session.data['user_token'] + '&subscription_id=' + subscription_id + '&page={page}')
+			'url': await this.url.link('sale/subscription.history', 'user_token=' + this.session.data['user_token'] + '&subscription_id=' + subscription_id + '&page={page}')
 		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (subscription_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (subscription_total - limit)) ? subscription_total : (((page - 1) * limit) + limit), subscription_total, Math.ceil(subscription_total / limit));
@@ -922,7 +922,7 @@ module.exports = class SubscriptionController extends Controller {
 				'status': result['status'],
 				'total': this.currency.format(result['total'], result['currency_code'], result['currency_value']),
 				'date_added': date(this.language.get('date_format_short'), new Date(result['date_added'])),
-				'view': this.url.link('sale/subscription.order', 'user_token=' + this.session.data['user_token'] + '&order_id=' + result['order_id'] + '&page={page}')
+				'view': await this.url.link('sale/subscription.order', 'user_token=' + this.session.data['user_token'] + '&order_id=' + result['order_id'] + '&page={page}')
 			});
 		}
 
@@ -932,7 +932,7 @@ module.exports = class SubscriptionController extends Controller {
 			'total': order_total,
 			'page': page,
 			'limit': limit,
-			'url': this.url.link('sale/subscription.order', 'user_token=' + this.session.data['user_token'] + '&subscription_id=' + subscription_id + '&page={page}')
+			'url': await this.url.link('sale/subscription.order', 'user_token=' + this.session.data['user_token'] + '&subscription_id=' + subscription_id + '&page={page}')
 		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (order_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (order_total - limit)) ? order_total : (((page - 1) * limit) + limit), order_total, Math.ceil(order_total / limit));

@@ -14,33 +14,33 @@ module.exports = class BestSellerModuleController extends Controller {
 
 		data.breadcrumbs.push({
 			text: this.language.get('text_home'),
-			href: this.url.link('common/dashboard', 'user_token=' + this.session.data.user_token)
+			href: await this.url.link('common/dashboard', 'user_token=' + this.session.data.user_token)
 		});
 
 		data.breadcrumbs.push({
 			text: this.language.get('text_extension'),
-			href: this.url.link('marketplace/extension', 'user_token=' + this.session.data.user_token + '&type=module')
+			href: await this.url.link('marketplace/extension', 'user_token=' + this.session.data.user_token + '&type=module')
 		});
 
 		if (!this.request.get['module_id']) {
 			data.breadcrumbs.push({
 				text: this.language.get('heading_title'),
-				href: this.url.link('extension/opencart/module/bestseller', 'user_token=' + this.session.data.user_token)
+				href: await this.url.link('extension/opencart/module/bestseller', 'user_token=' + this.session.data.user_token)
 			});
 		} else {
 			data.breadcrumbs.push({
 				text: this.language.get('heading_title'),
-				href: this.url.link('extension/opencart/module/bestseller', 'user_token=' + this.session.data.user_token + '&module_id=' + this.request.get['module_id'])
+				href: await this.url.link('extension/opencart/module/bestseller', 'user_token=' + this.session.data.user_token + '&module_id=' + this.request.get['module_id'])
 			});
 		}
 
 		if (!this.request.get['module_id']) {
-			data.save = this.url.link('extension/opencart/module/bestseller.save', 'user_token=' + this.session.data.user_token);
+			data.save = await this.url.link('extension/opencart/module/bestseller.save', 'user_token=' + this.session.data.user_token);
 		} else {
-			data.save = this.url.link('extension/opencart/module/bestseller.save', 'user_token=' + this.session.data.user_token + '&module_id=' + this.request.get['module_id']);
+			data.save = await this.url.link('extension/opencart/module/bestseller.save', 'user_token=' + this.session.data.user_token + '&module_id=' + this.request.get['module_id']);
 		}
 
-		data.back = this.url.link('marketplace/extension', 'user_token=' + this.session.data.user_token + '&type=module');
+		data.back = await this.url.link('marketplace/extension', 'user_token=' + this.session.data.user_token + '&type=module');
 
 		let module_info;
 		if (this.request.get['module_id']) {
@@ -142,7 +142,7 @@ module.exports = class BestSellerModuleController extends Controller {
 			data.reports.push({
 				product: product,
 				total: result.total,
-				edit: this.url.link('catalog/product.edit', 'user_token=' + this.session.data.user_token + '&product_id=' + result.product_id)
+				edit: await this.url.link('catalog/product.edit', 'user_token=' + this.session.data.user_token + '&product_id=' + result.product_id)
 			});
 		});
 
@@ -152,7 +152,7 @@ module.exports = class BestSellerModuleController extends Controller {
 			total: report_total,
 			page: page,
 			limit: limit,
-			url: this.url.link('extension/opencart/module/bestseller.report', 'user_token=' + this.session.data.user_token + '&page={page}')
+			url: await this.url.link('extension/opencart/module/bestseller.report', 'user_token=' + this.session.data.user_token + '&page={page}')
 		});
 
 		data.results = sprintf(this.language.get('text_pagination'), report_total ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (report_total - limit)) ? report_total : (((page - 1) * limit) + limit), report_total, Math.ceil(report_total / limit));
@@ -200,7 +200,7 @@ module.exports = class BestSellerModuleController extends Controller {
 
 			if (end < total) {
 				json.text = sprintf(this.language.get('text_next'), end, total);
-				json.next = this.url.link('extension/opencart/module/bestseller.sync', 'user_token=' + this.session.data.user_token + '&page=' + (page + 1), true);
+				json.next = await this.url.link('extension/opencart/module/bestseller.sync', 'user_token=' + this.session.data.user_token + '&page=' + (page + 1), true);
 			} else {
 				json.success = sprintf(this.language.get('text_next'), end, total);
 				json.next = '';
