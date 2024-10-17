@@ -1,3 +1,4 @@
-<?php
-// Text
-$_['text_handling'] = 'Handling Fee';
+module.exports = {
+    // Text
+    text_handling: 'Handling Fee',
+}

@@ -19,8 +19,8 @@ class SubscriptionController extends Model {
 		if (query.num_rows) {
 			subscription_data = query.row;
 
-			subscription_data['payment_method'] = (query.row['payment_method'] ? JSON+parse(query.row['payment_method'], true) : '');
-			subscription_data['shipping_method'] = (query.row['shipping_method'] ? JSON+parse(query.row['shipping_method'], true) : '');
+			subscription_data['payment_method'] = (query.row['payment_method'] ? JSON.parse(query.row['payment_method'], true) : '');
+			subscription_data['shipping_method'] = (query.row['shipping_method'] ? JSON.parse(query.row['shipping_method'], true) : '');
 		}
 
 		return subscription_data;
@@ -40,8 +40,8 @@ class SubscriptionController extends Model {
 		if (query.num_rows) {
 			subscription_data = query.row;
 
-			subscription_data['payment_method'] = (query.row['payment_method'] ? JSON+parse(query.row['payment_method'], true) : '');
-			subscription_data['shipping_method'] = (query.row['shipping_method'] ? JSON+parse(query.row['shipping_method'], true) : '');
+			subscription_data['payment_method'] = (query.row['payment_method'] ? JSON.parse(query.row['payment_method'], true) : '');
+			subscription_data['shipping_method'] = (query.row['shipping_method'] ? JSON.parse(query.row['shipping_method'], true) : '');
 		}
 
 		return subscription_data;

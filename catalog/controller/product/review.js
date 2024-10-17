@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Catalog\Controller\Product;
-/**
- *
- *
- * @package Opencart\Catalog\Controller\Product
- */
-class ReviewController extends Controller {
+module.exports = class ReviewController extends Controller {
 	/**
 	 * @return string
 	 */

@@ -7,10 +7,13 @@ module.exports = class Event {
         this.data.push({ trigger, action, priority });
         this.data.sort((a, b) => a.priority - b.priority);
     }
-    trigger(event, args = []) {
+    async trigger(event, args = []) {
+
         for (const { trigger, action } of this.data) {
             if (new RegExp('^' + trigger.replace(/[\*\?]/g, (m) => ({ '*': '.*', '?': '.' }[m])) + '$').test(event)) {
-                const result = action.execute(this.registry, args);
+                const result = await action.execute(this.registry, args);
+                // if (event.indexOf('/header') >= 0)
+                //     console.log('trigger event', event,  trigger, action,result)
                 if (result !== null && !(result instanceof Error)) {
                     return result;
                 }

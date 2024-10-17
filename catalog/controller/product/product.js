@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Catalog\Controller\Product;
-/**
- *
- *
- * @package Opencart\Catalog\Controller\Product
- */
-class ProductController extends Controller {
+module.exports = class ProductController extends Controller {
 	/**
 	 * @return void
 	 */
@@ -90,7 +83,7 @@ class ProductController extends Controller {
 				}
 			}
 
-			this.load.model('catalog/manufacturer');
+			this.load.model('catalog/manufacturer',this);
 
 			if ((this.request.get['manufacturer_id'])) {
 				data['breadcrumbs'].push({
@@ -121,7 +114,7 @@ class ProductController extends Controller {
 				if (manufacturer_info) {
 					data['breadcrumbs'].push({
 						'text' : manufacturer_info['name'],
-						'href' : await this.url.link('product/manufacturer+info', 'language=' + this.config.get('config_language') + '&manufacturer_id=' + this.request.get['manufacturer_id'] + url)
+						'href' : await this.url.link('product/manufacturer.info', 'language=' + this.config.get('config_language') + '&manufacturer_id=' + this.request.get['manufacturer_id'] + url)
 					];
 				}
 			}
@@ -258,7 +251,7 @@ class ProductController extends Controller {
 				data['manufacturer'] = '';
 			}
 
-			data['manufacturers'] = await this.url.link('product/manufacturer+info', 'language=' + this.config.get('config_language') + '&manufacturer_id=' + product_info['manufacturer_id']);
+			data['manufacturers'] = await this.url.link('product/manufacturer.info', 'language=' + this.config.get('config_language') + '&manufacturer_id=' + product_info['manufacturer_id']);
 			data['model'] = product_info['model'];
 			data['reward'] = product_info['reward'];
 			data['points'] = product_info['points'];

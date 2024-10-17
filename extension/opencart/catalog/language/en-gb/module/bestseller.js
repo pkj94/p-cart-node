@@ -1,3 +1,4 @@
-<?php
-// Heading
-$_['heading_title'] = 'Best Sellers';
+module.exports = {
+    // Heading
+    heading_title: 'Best Sellers',
+}

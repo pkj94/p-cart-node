@@ -1,53 +1,46 @@
-<?php
-namespace Opencart\Catalog\Model\Extension\Opencart\Payment;
-/**
- * Class FreeCheckout
- *
- * @package
- */
-class FreeCheckout extends \Opencart\System\Engine\Model {
+module.exports = class FreeCheckoutModel extends Model {
 	/**
-	 * @param array $address
+	 * @param address
 	 *
 	 * @return array
 	 */
-	async getMethods(array $address = []): array {
-		this.load.language('extension/opencart/payment/free_checkout');
+	async getMethods(address = {}) {
+		await this.load.language('extension/opencart/payment/free_checkout');
 
-		$total = this.cart.getTotal();
+		let total = await this.cart.getTotal();
+		let amounts = []
+		if (this.session.data['vouchers'].length) {
+			amounts = this.session.data.vouchers.map(voucher => voucher.amount);
+		}
 
-		if (!empty(this.session.data['vouchers'])) {
-			$amounts = array_column(this.session.data['vouchers'], 'amount');
+		total = total + amounts.reduce((a, b) => a + b, 0);
+		let status = false;
+		if (total <= 0.00) {
+			status = true;
+		} else if (await this.cart.hasSubscription()) {
+			status = false;
 		} else {
-			$amounts = [];
+			status = false;
 		}
 
-		$total = $total + array_sum($amounts);
+		let method_data = {};
 
-		if ($total <= 0.00) {
-			$status = true;
-		} elseif (this.cart.hasSubscription()) {
-			$status = false;
-		} else {
-			$status = false;
+		if (status) {
+			let option_data = {
+				free_checkout: {
+					'code': 'free_checkout.free_checkout',
+					'name': this.language.get('heading_title')
+				}
+			};
+
+			method_data = {
+				'code': 'free_checkout',
+				'name': this.language.get('heading_title'),
+				'option': option_data,
+				'sort_order': this.config.get('payment_free_checkout_sort_order')
+			};
 		}
 
-		$method_data = [];
-
-		if ($status) {
-			$option_data['free_checkout'] = [
-				'code' : 'free_checkout.free_checkout',
-				'name' : this.language.get('heading_title')
-			];
-
-			$method_data = [
-				'code'       : 'free_checkout',
-				'name'       : this.language.get('heading_title'),
-				'option'     : $option_data,
-				'sort_order' : this.config.get('payment_free_checkout_sort_order')
-			];
-		}
-
-		return $method_data;
+		return method_data;
 	}
 }

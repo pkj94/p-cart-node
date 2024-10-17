@@ -1,17 +1,10 @@
-<?php
-namespace Opencart\Catalog\Controller\Product;
-/**
- *
- *
- * @package Opencart\Catalog\Controller\Product
- */
-class ThumbController extends Controller {
+module.exports = class ThumbController extends Controller {
 	/**
 	 * @param array data
 	 *
 	 * @return string
 	 */
-	async index(array data) {
+	async index(data) {
 		await this.load.language('product/thumb');
 
 		data['cart'] = await this.url.link('common/cart+info', 'language=' + this.config.get('config_language'));

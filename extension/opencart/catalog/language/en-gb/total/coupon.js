@@ -1,15 +1,16 @@
-<?php
-// Heading
-$_['heading_title'] = 'Use Coupon Code';
+module.exports = {
+    // Heading
+    heading_title: 'Use Coupon Code',
 
-// Text
-$_['text_coupon']   = 'Coupon (%s)';
-$_['text_success']  = 'Success: Your coupon discount has been applied!';
-$_['text_remove']   = 'Success: Your coupon discount has been removed!';
+    // Text
+    text_coupon: 'Coupon (%s)',
+    text_success: 'Success: Your coupon discount has been applied!',
+    text_remove: 'Success: Your coupon discount has been removed!',
 
-// Entry
-$_['entry_coupon']  = 'Enter your coupon here';
+    // Entry
+    entry_coupon: 'Enter your coupon here',
 
-// Error
-$_['error_coupon']  = 'Warning: Coupon is either invalid, expired or reached its usage limit!';
-$_['error_status']  = 'Warning: Coupons are not enabled on this store!';
+    // Error
+    error_coupon: 'Warning: Coupon is either invalid, expired or reached its usage limit!',
+    error_status: 'Warning: Coupons are not enabled on this store!',
+}

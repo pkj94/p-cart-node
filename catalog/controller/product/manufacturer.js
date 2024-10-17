@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Catalog\Controller\Product;
-/**
- *
- *
- * @package Opencart\Catalog\Controller\Product
- */
-class ManufacturerController extends Controller {
+module.exports = class ManufacturerController extends Controller {
 	/**
 	 * @return void
 	 */
@@ -13,7 +6,7 @@ class ManufacturerController extends Controller {
 const data ={};
 		await this.load.language('product/manufacturer');
 
-		this.load.model('catalog/manufacturer');
+		this.load.model('catalog/manufacturer',this);
 
 		this.document.setTitle(this.language.get('heading_title'));
 
@@ -47,7 +40,7 @@ const data ={};
 
 			data['categories'][key]['manufacturer'].push({
 				'name'  : result['name'],
-				'href'  : await this.url.link('product/manufacturer+info', 'language=' + this.config.get('config_language') + '&manufacturer_id=' + result['manufacturer_id'])
+				'href'  : await this.url.link('product/manufacturer.info', 'language=' + this.config.get('config_language') + '&manufacturer_id=' + result['manufacturer_id'])
 			];
 		}
 
@@ -98,7 +91,7 @@ if ((this.request.get['page'])) {
 			limit = this.config.get('config_pagination');
 		}
 
-		this.load.model('catalog/manufacturer');
+		this.load.model('catalog/manufacturer',this);
 
 		manufacturer_info = await this.model_catalog_manufacturer.getManufacturer(manufacturer_id);
 
@@ -137,7 +130,7 @@ if ((this.request.get['page'])) {
 
 			data['breadcrumbs'].push({
 				'text' : manufacturer_info['name'],
-				'href' : await this.url.link('product/manufacturer+info', 'language=' + this.config.get('config_language') + '&manufacturer_id=' + this.request.get['manufacturer_id'] + url)
+				'href' : await this.url.link('product/manufacturer.info', 'language=' + this.config.get('config_language') + '&manufacturer_id=' + this.request.get['manufacturer_id'] + url)
 			];
 
 			data['heading_title'] = manufacturer_info['name'];
@@ -215,57 +208,57 @@ if ((this.request.get['page'])) {
 			data['sorts'].push({
 				'text'  : this.language.get('text_default'),
 				'value' : 'p+sort_order-ASC',
-				'href'  : await this.url.link('product/manufacturer+info', 'language=' + this.config.get('config_language') + '&manufacturer_id=' + this.request.get['manufacturer_id'] + '&sort=p+sort_order&order=ASC' + url)
+				'href'  : await this.url.link('product/manufacturer.info', 'language=' + this.config.get('config_language') + '&manufacturer_id=' + this.request.get['manufacturer_id'] + '&sort=p+sort_order&order=ASC' + url)
 			];
 
 			data['sorts'].push({
 				'text'  : this.language.get('text_name_asc'),
 				'value' : 'pd+name-ASC',
-				'href'  : await this.url.link('product/manufacturer+info', 'language=' + this.config.get('config_language') + '&manufacturer_id=' + this.request.get['manufacturer_id'] + '&sort=pd+name&order=ASC' + url)
+				'href'  : await this.url.link('product/manufacturer.info', 'language=' + this.config.get('config_language') + '&manufacturer_id=' + this.request.get['manufacturer_id'] + '&sort=pd+name&order=ASC' + url)
 			];
 
 			data['sorts'].push({
 				'text'  : this.language.get('text_name_desc'),
 				'value' : 'pd+name-DESC',
-				'href'  : await this.url.link('product/manufacturer+info', 'language=' + this.config.get('config_language') + '&manufacturer_id=' + this.request.get['manufacturer_id'] + '&sort=pd+name&order=DESC' + url)
+				'href'  : await this.url.link('product/manufacturer.info', 'language=' + this.config.get('config_language') + '&manufacturer_id=' + this.request.get['manufacturer_id'] + '&sort=pd+name&order=DESC' + url)
 			];
 
 			data['sorts'].push({
 				'text'  : this.language.get('text_price_asc'),
 				'value' : 'p+price-ASC',
-				'href'  : await this.url.link('product/manufacturer+info', 'language=' + this.config.get('config_language') + '&manufacturer_id=' + this.request.get['manufacturer_id'] + '&sort=p+price&order=ASC' + url)
+				'href'  : await this.url.link('product/manufacturer.info', 'language=' + this.config.get('config_language') + '&manufacturer_id=' + this.request.get['manufacturer_id'] + '&sort=p+price&order=ASC' + url)
 			];
 
 			data['sorts'].push({
 				'text'  : this.language.get('text_price_desc'),
 				'value' : 'p+price-DESC',
-				'href'  : await this.url.link('product/manufacturer+info', 'language=' + this.config.get('config_language') + '&manufacturer_id=' + this.request.get['manufacturer_id'] + '&sort=p+price&order=DESC' + url)
+				'href'  : await this.url.link('product/manufacturer.info', 'language=' + this.config.get('config_language') + '&manufacturer_id=' + this.request.get['manufacturer_id'] + '&sort=p+price&order=DESC' + url)
 			];
 
 			if (this.config.get('config_review_status')) {
 				data['sorts'].push({
 					'text'  : this.language.get('text_rating_desc'),
 					'value' : 'rating-DESC',
-					'href'  : await this.url.link('product/manufacturer+info', 'language=' + this.config.get('config_language') + '&manufacturer_id=' + this.request.get['manufacturer_id'] + '&sort=rating&order=DESC' + url)
+					'href'  : await this.url.link('product/manufacturer.info', 'language=' + this.config.get('config_language') + '&manufacturer_id=' + this.request.get['manufacturer_id'] + '&sort=rating&order=DESC' + url)
 				];
 
 				data['sorts'].push({
 					'text'  : this.language.get('text_rating_asc'),
 					'value' : 'rating-ASC',
-					'href'  : await this.url.link('product/manufacturer+info', 'language=' + this.config.get('config_language') + '&manufacturer_id=' + this.request.get['manufacturer_id'] + '&sort=rating&order=ASC' + url)
+					'href'  : await this.url.link('product/manufacturer.info', 'language=' + this.config.get('config_language') + '&manufacturer_id=' + this.request.get['manufacturer_id'] + '&sort=rating&order=ASC' + url)
 				];
 			}
 
 			data['sorts'].push({
 				'text'  : this.language.get('text_model_asc'),
 				'value' : 'p+model-ASC',
-				'href'  : await this.url.link('product/manufacturer+info', 'language=' + this.config.get('config_language') + '&manufacturer_id=' + this.request.get['manufacturer_id'] + '&sort=p+model&order=ASC' + url)
+				'href'  : await this.url.link('product/manufacturer.info', 'language=' + this.config.get('config_language') + '&manufacturer_id=' + this.request.get['manufacturer_id'] + '&sort=p+model&order=ASC' + url)
 			];
 
 			data['sorts'].push({
 				'text'  : this.language.get('text_model_desc'),
 				'value' : 'p+model-DESC',
-				'href'  : await this.url.link('product/manufacturer+info', 'language=' + this.config.get('config_language') + '&manufacturer_id=' + this.request.get['manufacturer_id'] + '&sort=p+model&order=DESC' + url)
+				'href'  : await this.url.link('product/manufacturer.info', 'language=' + this.config.get('config_language') + '&manufacturer_id=' + this.request.get['manufacturer_id'] + '&sort=p+model&order=DESC' + url)
 			];
 
 			let url = '';
@@ -288,7 +281,7 @@ if ((this.request.get['page'])) {
 				data['limits'].push({
 					'text'  : value,
 					'value' : value,
-					'href'  : await this.url.link('product/manufacturer+info', 'language=' + this.config.get('config_language') + '&manufacturer_id=' + this.request.get['manufacturer_id'] + url + '&limit=' + value)
+					'href'  : await this.url.link('product/manufacturer.info', 'language=' + this.config.get('config_language') + '&manufacturer_id=' + this.request.get['manufacturer_id'] + url + '&limit=' + value)
 				];
 			}
 
@@ -310,24 +303,24 @@ if ((this.request.get['page'])) {
 				'total' : product_total,
 				'page'  : page,
 				'limit' : limit,
-				'url'   : await this.url.link('product/manufacturer+info', 'language=' + this.config.get('config_language') + '&manufacturer_id=' + this.request.get['manufacturer_id'] + url + '&page={page}')
+				'url'   : await this.url.link('product/manufacturer.info', 'language=' + this.config.get('config_language') + '&manufacturer_id=' + this.request.get['manufacturer_id'] + url + '&page={page}')
 			]);
 
 			data['results'] = sprintf(this.language.get('text_pagination'), (product_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (product_total - limit)) ? product_total : (((page - 1) * limit) + limit), product_total, ceil(product_total / limit));
 
 			// http://googlewebmastercentral+blogspot+com/2011/09/pagination-with-relnext-and-relprev+html
 			if (page == 1) {
-			    this.document.addLink(await this.url.link('product/manufacturer+info', 'language=' + this.config.get('config_language') + '&manufacturer_id=' + this.request.get['manufacturer_id']), 'canonical');
+			    this.document.addLink(await this.url.link('product/manufacturer.info', 'language=' + this.config.get('config_language') + '&manufacturer_id=' + this.request.get['manufacturer_id']), 'canonical');
 			} else {
-				this.document.addLink(await this.url.link('product/manufacturer+info', 'language=' + this.config.get('config_language') + '&manufacturer_id=' + this.request.get['manufacturer_id'] + '&page=' + page), 'canonical');
+				this.document.addLink(await this.url.link('product/manufacturer.info', 'language=' + this.config.get('config_language') + '&manufacturer_id=' + this.request.get['manufacturer_id'] + '&page=' + page), 'canonical');
 			}
 
 			if (page > 1) {
-				this.document.addLink(await this.url.link('product/manufacturer+info', 'language=' + this.config.get('config_language') + '&manufacturer_id=' + this.request.get['manufacturer_id'] + ((page - 2) ? '&page=' + (page - 1) : '')), 'prev');
+				this.document.addLink(await this.url.link('product/manufacturer.info', 'language=' + this.config.get('config_language') + '&manufacturer_id=' + this.request.get['manufacturer_id'] + ((page - 2) ? '&page=' + (page - 1) : '')), 'prev');
 			}
 
 			if (limit && ceil(product_total / limit) > page) {
-				this.document.addLink(await this.url.link('product/manufacturer+info', 'language=' + this.config.get('config_language') + '&manufacturer_id=' + this.request.get['manufacturer_id'] + '&page=' + (page + 1)), 'next');
+				this.document.addLink(await this.url.link('product/manufacturer.info', 'language=' + this.config.get('config_language') + '&manufacturer_id=' + this.request.get['manufacturer_id'] + '&page=' + (page + 1)), 'next');
 			}
 
 			data['sort'] = sort;

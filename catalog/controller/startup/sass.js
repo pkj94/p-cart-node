@@ -14,10 +14,8 @@ module.exports = class SassController extends Controller {
 				let filename = expressPath.basename(file, '.scss');
 
 				let stylesheet = DIR_APPLICATION + 'view/stylesheet/' + filename + '.css';
-
 				if (!fs.existsSync(stylesheet) || !this.config.get('developer_sass')) {
-					const result = sass.compile(`${filename}.scss`);
-
+					const result = await sass.compileAsync(`${file}`);
 					fs.writeFileSync(stylesheet, result.css);
 				}
 			}

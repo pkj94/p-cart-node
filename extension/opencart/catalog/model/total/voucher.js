@@ -1,73 +1,70 @@
-<?php
-namespace Opencart\Catalog\Model\Extension\Opencart\Total;
-/**
- * Class Voucher
- *
- * @package
- */
-class Voucher extends \Opencart\System\Engine\Model {
+const sprintf = require("locutus/php/strings/sprintf");
+
+module.exports = class VoucherModel extends Model {
 	/**
-	 * @param array $totals
-	 * @param array $taxes
-	 * @param float $total
+	 * @param totals
+	 * @param taxes
+	 * @param float total
 	 *
 	 * @return void
 	 */
-	async getTotal(array &$totals, array &$taxes, float &$total) {
-		if (($this->session->data['voucher'])) {
-			$this->load->language('extension/opencart/total/voucher', 'voucher');
+	async getTotal(totals, taxes, total) {
+		if (this.session.data['voucher']) {
+			await this.load.language('extension/opencart/total/voucher', 'voucher');
 
-			$this->load->model('checkout/voucher');
+			this.load.model('checkout/voucher', this);
 
-			$voucher_info = $this->model_checkout_voucher->getVoucher($this->session->data['voucher']);
+			let voucher_info = await this.registry.get('model_checkout_voucher').getVoucher(this.session.data['voucher']);
 
-			if ($voucher_info) {
-				$amount = min($voucher_info['amount'], $total);
+			if (voucher_info.voucher_id) {
+				let amount = Math.min(voucher_info['amount'], total);
 
-				if ($amount > 0) {
-					$totals[] = [
-						'extension'  => 'opencart',
-						'code'       => 'voucher',
-						'title'      => sprintf($this->language->get('voucher_text_voucher'), $this->session->data['voucher']),
-						'value'      => -$amount,
-						'sort_order' => $this->config->get('total_voucher_sort_order')
-					];
+				if (amount > 0) {
+					totals.push({
+						'extension': 'opencart',
+						'code': 'voucher',
+						'title': sprintf(this.language.get('voucher_text_voucher'), this.session.data['voucher']),
+						'value': -amount,
+						'sort_order': this.config.get('total_voucher_sort_order')
+					});
 
-					$total -= $amount;
+					total -= amount;
 				} else {
-					unset($this->session->data['voucher']);
+					delete this.session.data['voucher'];
 				}
 			} else {
-				unset($this->session->data['voucher']);
+				delete this.session.data['voucher'];
 			}
 		}
+		await this.session.save();
+		return { totals, taxes, total }
 	}
 
 	/**
-	 * @param array $order_info
-	 * @param array $order_total
+	 * @param order_info
+	 * @param order_total
 	 *
 	 * @return int
 	 */
-	async confirm(array $order_info, array $order_total): int {
-		$code = '';
+	async confirm(order_info, order_total) {
+		let code = '';
 
-		$start = strpos($order_total['title'], '(') + 1;
-		$end = strrpos($order_total['title'], ')');
+		let start = order_total['title'].indexOf('(') + 1;
+		let end = order_total['title'].indexOf(')');
 
-		if ($start && $end) {
-			$code = substr($order_total['title'], $start, $end - $start);
+		if (start && end) {
+			code = order_total['title'].substring(start, end - start);
 		}
 
-		if ($code) {
-			$this->load->model('checkout/voucher');
+		if (code) {
+			this.load.model('checkout/voucher', this);
 
-			$voucher_info = $this->model_checkout_voucher->getVoucher($code);
+			const voucher_info = await this.registry.get('model_checkout_voucher').getVoucher(code);
 
-			if ($voucher_info) {
-				$this->db->query("INSERT INTO `" . DB_PREFIX . "voucher_history` SET `voucher_id` = '" . $voucher_info['voucher_id'] . "', `order_id` = '" . $order_info['order_id'] . "', `amount` = '" . $order_total['value'] . "', `date_added` = NOW()");
+			if (voucher_info.voucher_id) {
+				this.db.query("INSERT INTO `" + DB_PREFIX + "voucher_history` SET `voucher_id` = '" + voucher_info['voucher_id'] + "', `order_id` = '" + order_info['order_id'] + "', `amount` = '" + order_total['value'] + "', `date_added` = NOW()");
 			} else {
-				return $this->config->get('config_fraud_status_id');
+				return this.config.get('config_fraud_status_id');
 			}
 		}
 
@@ -75,11 +72,11 @@ class Voucher extends \Opencart\System\Engine\Model {
 	}
 
 	/**
-	 * @param int $order_id
+	 * @param int order_id
 	 *
 	 * @return void
 	 */
-	async unconfirm($order_id) {
-		$this->db->query("DELETE FROM `" . DB_PREFIX . "voucher_history` WHERE `order_id` = '" . $order_id . "'");
+	async unconfirm(order_id) {
+		this.db.query("DELETE FROM `" + DB_PREFIX + "voucher_history` WHERE `order_id` = '" + order_id + "'");
 	}
 }

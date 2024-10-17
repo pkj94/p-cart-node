@@ -1,6 +1,7 @@
-<?php
-// Heading
-$_['heading_title']    = 'Per Item';
+module.exports = {
+    // Heading
+    heading_title: 'Per Item',
 
-// Text
-$_['text_description'] = 'Per Item Shipping Rate';
+    // Text
+    text_description: 'Per Item Shipping Rate',
+}

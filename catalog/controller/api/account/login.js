@@ -36,7 +36,7 @@ class LoginController extends Controller {
 	 * curl_close(curl);
 	 *
 	 * if (status == 200) {
-	 *		api_token = JSON+parse(response, true);
+	 *		api_token = JSON.parse(response, true);
 	 *
 	 * 		if ((api_token['api_token'])) {
 	 *

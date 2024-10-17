@@ -1,63 +1,45 @@
-<?php
-namespace Opencart\Catalog\Controller\Extension\Opencart\Currency;
-/**
- * Class Fixer
- *
- * @package
- */
-class FixerController extends Controller {
+const axios = require("axios");
+
+module.exports = class FixerController extends Controller {
 	constructor(registry) {
 		super(registry)
 	}
 	/**
-	 * @param string $default
+	 * @param default
 	 *
 	 * @return void
 	 */
-	async currency(string $default = '') {
+	async currency(default_ = '') {
 		if (this.config.get('currency_fixer_status')) {
-			$curl = curl_init();
+			try {
+				const response = await axios.get(`http://data.fixer.io/api/latest?access_key=${this.config.get('currency_fixer_api')}`, {
+					timeout: 30000
+				});
 
-			curl_setopt($curl, CURLOPT_URL, 'http://data.fixer.io/api/latest?access_key=' . this.config.get('currency_fixer_api'));
-			curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-			curl_setopt($curl, CURLOPT_HEADER, false);
-			curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
-			curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 30);
-			curl_setopt($curl, CURLOPT_TIMEOUT, 30);
+				const responseInfo = response.data;
 
-			$response = curl_exec($curl);
+				if (responseInfo && responseInfo.rates) {
+					const currencies = { EUR: 1.0000, ...responseInfo.rates };
 
-			curl_close($curl);
+					this.load.model('localisation/currency', this);
 
-			$response_info = JSON.parse($response, true);
+					const results = await this.model_localisation_currency.getCurrencies();
 
-			if (is_array($response_info) && ($response_info['rates'])) {
-				// Compile all the rates into an array
-				$currencies = [];
+					for (const result of results) {
+						if (currencies[result.code]) {
+							const from = currencies['EUR'];
+							const to = currencies[result.code];
 
-				$currencies['EUR'] = 1.0000;
-
-				foreach ($response_info['rates'] as $key : $value) {
-					$currencies[$key] = $value;
-				}
-
-				this.load.model('localisation/currency',this);
-
-				const results = await this.model_localisation_currency.getCurrencies();
-
-				for(let result of results) {
-					if (($currencies[result['code']])) {
-						$from = $currencies['EUR'];
-
-						$to = $currencies[result['code']];
-
-						await this.model_localisation_currency.editValueByCode(result['code'], 1 / ($currencies[$default] * ($from / $to)));
+							await this.model_localisation_currency.editValueByCode(result.code, 1 / (currencies[default_] * (from / to)));
+						}
 					}
+
+					await this.model_localisation_currency.editValueByCode(default_, 1);
+
+					await this.cache.delete('currency');
 				}
-
-				await this.model_localisation_currency.editValueByCode($default, 1);
-
-				this.cache.delete('currency');
+			} catch (error) {
+				console.error('Error fetching currency data:', error);
 			}
 		}
 	}

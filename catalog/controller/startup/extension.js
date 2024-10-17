@@ -14,45 +14,46 @@ module.exports = class ExtensionController extends Controller {
 		const results = await this.model_setting_extension.getExtensions();
 
 		for (let result of results) {
-
+			// console.log(result)
 			// Register controllers, models and system extension folders
-			if (fs.existsSync(`${DIR_EXTENSION}${result.code}/admin/controller/`))
-				fs.readdirSync(`${DIR_EXTENSION}${result.code}/admin/controller/`).forEach((folder) => {
-					fs.readdirSync(`${DIR_EXTENSION}${result.code}/admin/controller/${folder}`).forEach((controller) => {
+			if (fs.existsSync(`${DIR_EXTENSION}${result.extension}/catalog/controller/`))
+				fs.readdirSync(`${DIR_EXTENSION}${result.extension}/catalog/controller/`).forEach((folder) => {
+					fs.readdirSync(`${DIR_EXTENSION}${result.extension}/catalog/controller/${folder}`).forEach((controller) => {
 						if (controller.indexOf('.html') == -1) {
 							let name = ucfirst(controller).replace('.js', '') + ucfirst(folder) + 'Controller';
-							global[name] = require(DIR_EXTENSION + result.code + '/admin/controller/' + folder + '/' + controller);
+							// console.log('name----',name)
+							global[name] = require(DIR_EXTENSION + result.extension + '/catalog/controller/' + folder + '/' + controller);
 						}
 					})
 				});
 
-			// this.autoloader.register(`Opencart\Admin\Controller\Extension\\${extension}`, `${DIR_EXTENSION}${result.code}/admin/controller/`);
-			if (fs.existsSync(`${DIR_EXTENSION}${result.code}/admin/model/`))
-				fs.readdirSync(`${DIR_EXTENSION}${result.code}/admin/model/`).forEach((folder) => {
-					fs.readdirSync(`${DIR_EXTENSION}${result.code}/admin/model/${folder}`).forEach((model) => {
+			// this.autoloader.register(`Opencart\Admin\Controller\Extension\\${extension}`, `${DIR_EXTENSION}${result.extension}/catalog/controller/`);
+			if (fs.existsSync(`${DIR_EXTENSION}${result.extension}/catalog/model/`))
+				fs.readdirSync(`${DIR_EXTENSION}${result.extension}/catalog/model/`).forEach((folder) => {
+					fs.readdirSync(`${DIR_EXTENSION}${result.extension}/catalog/model/${folder}`).forEach((model) => {
 						let name = ucfirst(model).replace('.js', '') + ucfirst(folder) + 'Model';
-						global[name] = require(DIR_EXTENSION + result.code + '/admin/model/' + folder + '/' + model)
+						global[name] = require(DIR_EXTENSION + result.extension + '/catalog/model/' + folder + '/' + model)
 					})
 				});
-			// this.autoloader.register(`Opencart\Admin\Model\Extension\\${extension}`, `${DIR_EXTENSION}${result.code}/admin/model/`);
-			if (fs.existsSync(`${DIR_EXTENSION}${result.code}/system/library/`))
-				fs.readdirSync(`${DIR_EXTENSION}${result.code}/system/library/`).forEach((library) => {
+			// this.autoloader.register(`Opencart\Admin\Model\Extension\\${extension}`, `${DIR_EXTENSION}${result.extension}/catalog/model/`);
+			if (fs.existsSync(`${DIR_EXTENSION}${result.extension}/system/library/`))
+				fs.readdirSync(`${DIR_EXTENSION}${result.extension}/system/library/`).forEach((library) => {
 					let name = ucfirst(library).replace('.js', '') + 'Library';
-					global[name] = require(DIR_EXTENSION + result.code + '/system/library/' + '/' + library);
+					global[name] = require(DIR_EXTENSION + result.extension + '/system/library/' + '/' + library);
 				});
-			// this.autoloader.register(`Opencart\System\Library\Extension\\${extension}`, `${DIR_EXTENSION}${result.code}/system/library/`);
+			// this.autoloader.register(`Opencart\System\Library\Extension\\${extension}`, `${DIR_EXTENSION}${result.extension}/system/library/`);
 
 			// Template directory
-			if (fs.existsSync(`${DIR_EXTENSION}${result.code}/admin/view/template/`))
-				this.template.addPath(`extension/${result.code}`, `${DIR_EXTENSION}${result.code}/admin/view/template/`);
+			if (fs.existsSync(`${DIR_EXTENSION}${result.extension}/catalog/view/template/`))
+				this.template.addPath(`extension/${result.extension}`, `${DIR_EXTENSION}${result.extension}/catalog/view/template/`);
 
 			// Language directory
-			if (fs.existsSync(`${DIR_EXTENSION}${result.code}/admin/language/`))
-				this.language.addPath(`extension/${result.code}`, `${DIR_EXTENSION}${result.code}/admin/language/`);
+			if (fs.existsSync(`${DIR_EXTENSION}${result.extension}/catalog/language/`))
+				this.language.addPath(`extension/${result.extension}`, `${DIR_EXTENSION}${result.extension}/catalog/language/`);
 
 			// Config directory
-			if (fs.existsSync(`${DIR_EXTENSION}${result.code}/system/config/`))
-				this.config.addPath(`extension/${result.code}`, `${DIR_EXTENSION}${result.code}/system/config/`);
+			if (fs.existsSync(`${DIR_EXTENSION}${result.extension}/system/config/`))
+				this.config.addPath(`extension/${result.extension}`, `${DIR_EXTENSION}${result.extension}/system/config/`);
 		}
 	}
 }

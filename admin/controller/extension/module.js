@@ -27,7 +27,6 @@ module.exports = class ModuleController extends Controller {
 		this.load.model('setting/extension', this);
 
 		const results = await this.model_setting_extension.getPaths('%/admin/controller/module/%.js');
-
 		for (let result of results) {
 			available.push(expressPath.basename(result['path'], '.js'));
 		}

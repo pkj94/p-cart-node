@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Catalog\Controller\Extension\Opencart\Module;
-/**
- * Class Information
- *
- * @package
- */
-class InformationController extends Controller {
+module.exports = class InformationController extends Controller {
 	constructor(registry) {
 		super(registry)
 	}
@@ -13,21 +6,22 @@ class InformationController extends Controller {
 	 * @return string
 	 */
 	async index() {
-		this.load.language('extension/opencart/module/information');
+		const data = {};
+		await this.load.language('extension/opencart/module/information');
 
-		this.load.model('catalog/information',this);
+		this.load.model('catalog/information', this);
 
 		data['informations'] = [];
 
-		foreach (this.model_catalog_information.getInformations() as result) {
+		for (let result of await this.model_catalog_information.getInformations()) {
 			data['informations'].push({
-				'title' : result['title'],
-				'href'  : await this.url.link('information/information', 'language=' . this.config.get('config_language') . '&information_id=' . result['information_id'])
-			];
+				'title': result['title'],
+				'href': await this.url.link('information/information', 'language=' + this.config.get('config_language') + '&information_id=' + result['information_id'])
+			});
 		}
 
-		data['contact'] = await this.url.link('information/contact', 'language=' . this.config.get('config_language'));
-		data['sitemap'] = await this.url.link('information/sitemap', 'language=' . this.config.get('config_language'));
+		data['contact'] = await this.url.link('information/contact', 'language=' + this.config.get('config_language'));
+		data['sitemap'] = await this.url.link('information/sitemap', 'language=' + this.config.get('config_language'));
 
 		return await this.load.view('extension/opencart/module/information', data);
 	}

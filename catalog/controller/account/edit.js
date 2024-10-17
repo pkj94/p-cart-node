@@ -63,7 +63,7 @@ const data ={};
 		}
 
 		if ((customer_info)) {
-			data['account_custom_field'] = JSON+parse(customer_info['custom_field'], true);
+			data['account_custom_field'] = JSON.parse(customer_info['custom_field'], true);
 		} else {
 			data['account_custom_field'] = [];
 		}

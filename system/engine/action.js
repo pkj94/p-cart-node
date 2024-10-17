@@ -26,6 +26,7 @@ module.exports = class Action {
             if (!fs.existsSync(className)) {
                 // console.log('className----===',className)
                 let classT = this.class.split('opencart/')[1].split('/').reverse().map(a => ucfirst(a)).join('');
+                // console.log('classT----===',classT)
                 if (global[classT + 'Controller']) {
                     try {
                         let controller = new (global[classT + 'Controller'])(registry);

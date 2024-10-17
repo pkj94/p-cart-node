@@ -1,92 +1,88 @@
-<?php
-namespace Opencart\Catalog\Model\Extension\Opencart\Total;
-/**
- * Class Reward
- *
- * @package
- */
-class Reward extends \Opencart\System\Engine\Model {
+const sprintf = require("locutus/php/strings/sprintf");
+
+module.exports = class RewardModel extends Model {
 	/**
-	 * @param array $totals
-	 * @param array $taxes
-	 * @param float $total
+	 * @param totals
+	 * @param taxes
+	 * @param float total
 	 *
 	 * @return void
 	 */
-	async getTotal(array &$totals, array &$taxes, float &$total) {
+	async getTotal(totals, taxes, total) {
 		if ((this.session.data['reward'])) {
-			this.load.language('extension/opencart/total/reward', 'reward');
+			await this.load.language('extension/opencart/total/reward', 'reward');
 
-			$points = this.customer.getRewardPoints();
+			let points = await this.customer.getRewardPoints();
 
-			if (this.session.data['reward'] <= $points) {
-				$discount_total = 0;
+			if (this.session.data['reward'] <= points) {
+				let discount_total = 0;
 
-				$points_total = 0;
+				let points_total = 0;
 
-				foreach (this.cart.getProducts() as $product) {
-					if ($product['points']) {
-						$points_total += $product['points'];
+				for (let product of await this.cart.getProducts()) {
+					if (product['points']) {
+						points_total += product['points'];
 					}
 				}
 
-				$points = min($points, $points_total);
+				points = Math.min(points, points_total);
 
-				foreach (this.cart.getProducts() as $product) {
-					$discount = 0;
+				for (let product of await this.cart.getProducts()) {
+					let discount = 0;
 
-					if ($product['points']) {
-						$discount = $product['total'] * (this.session.data['reward'] / $points_total);
+					if (product['points']) {
+						let discount = product['total'] * (this.session.data['reward'] / points_total);
 
-						if ($product['tax_class_id']) {
-							$tax_rates = this.tax.getRates($product['total'] - ($product['total'] - $discount), $product['tax_class_id']);
+						if (product['tax_class_id']) {
+							const tax_rates = this.tax.getRates(product['total'] - (product['total'] - discount), product['tax_class_id']);
 
-							foreach ($tax_rates as $tax_rate) {
-								if ($tax_rate['type'] == 'P') {
-									$taxes[$tax_rate['tax_rate_id']] -= $tax_rate['amount'];
+							for (let tax_rate of tax_rates) {
+								if (tax_rate['type'] == 'P') {
+									taxes[tax_rate['tax_rate_id']] -= tax_rate['amount'];
 								}
 							}
 						}
 					}
 
-					$discount_total += $discount;
+					discount_total += discount;
 				}
 
-				$totals.push({
-					'extension'  : 'opencart',
-					'code'       : 'reward',
-					'title'      : sprintf(this.language.get('reward_text_reward'), this.session.data['reward']),
-					'value'      : -$discount_total,
-					'sort_order' : this.config.get('total_reward_sort_order')
-				];
+				totals.push({
+					'extension': 'opencart',
+					'code': 'reward',
+					'title': sprintf(this.language.get('reward_text_reward'), this.session.data['reward']),
+					'value': -discount_total,
+					'sort_order': this.config.get('total_reward_sort_order')
+				});
 
-				$total -= $discount_total;
+				total -= discount_total;
 			}
 		}
+		return { totals, taxes, total }
 	}
 
 	/**
-	 * @param array $order_info
-	 * @param array $order_total
+	 * @param order_info
+	 * @param order_total
 	 *
 	 * @return int
 	 */
-	async confirm(array $order_info, array $order_total): int {
-		this.load.language('extension/opencart/total/reward');
+	async confirm(order_info, order_total) {
+		await this.load.language('extension/opencart/total/reward');
 
-		$points = 0;
+		let points = 0;
 
-		$start = strpos($order_total['title'], '(') + 1;
-		$end = strrpos($order_total['title'], ')');
+		let start = order_total['title'].indexOf('(') + 1;
+		let end = order_total['title'].indexOf(')');
 
-		if ($start && $end) {
-			$points = substr($order_total['title'], $start, $end - $start);
+		if (start && end) {
+			points = order_total['title'].substring(start, end - start);
 		}
 
-		this.load.model('account/customer');
+		this.load.model('account/customer', this);
 
-		if ($order_info['customer_id'] && this.model_account_customer.getRewardTotal($order_info['customer_id']) >= $points) {
-			this.db.query("INSERT INTO `" . DB_PREFIX . "customer_reward` SET `customer_id` = '" . $order_info['customer_id'] . "', `order_id` = '" . $order_info['order_id'] . "', `description` = '" . this.db.escape(sprintf(this.language.get('text_order_id'), $order_info['order_id'])) . "', `points` = '" .  - $points . "', `date_added` = NOW()");
+		if (order_info['customer_id'] && await this.registery.get('model_account_customer').getRewardTotal(order_info['customer_id']) >= points) {
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "customer_reward` SET `customer_id` = '" + order_info['customer_id'] + "', `order_id` = '" + order_info['order_id'] + "', `description` = " + this.db.escape(sprintf(this.language.get('text_order_id'), order_info['order_id'])) + ", `points` = '" + - points + "', `date_added` = NOW()");
 		} else {
 			return this.config.get('config_fraud_status_id');
 		}
@@ -95,11 +91,11 @@ class Reward extends \Opencart\System\Engine\Model {
 	}
 
 	/**
-	 * @param int $order_id
+	 * @param int order_id
 	 *
 	 * @return void
 	 */
-	async unconfirm($order_id) {
-		this.db.query("DELETE FROM `" . DB_PREFIX . "customer_reward` WHERE `order_id` = '" . $order_id . "' AND `points` < '0'");
+	async unconfirm(order_id) {
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_reward` WHERE `order_id` = '" + order_id + "' AND `points` < '0'");
 	}
 }

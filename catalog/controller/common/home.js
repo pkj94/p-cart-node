@@ -1,13 +1,13 @@
-module.exports=class HomeController extends Controller {
+module.exports = class HomeController extends Controller {
 	/**
 	 * @return void
 	 */
 	async index() {
-const data ={};
+		const data = {};
 		this.document.setTitle(this.config.get('config_meta_title'));
 		this.document.setDescription(this.config.get('config_meta_description'));
 		this.document.setKeywords(this.config.get('config_meta_keyword'));
-
+		
 		data['column_left'] = await this.load.controller('common/column_left');
 		data['column_right'] = await this.load.controller('common/column_right');
 		data['content_top'] = await this.load.controller('common/content_top');

@@ -1,79 +1,73 @@
-<?php
-namespace Opencart\Catalog\Model\Extension\Opencart\Shipping;
-/**
- * Class Weight
- *
- * @package
- */
-class Weight extends \Opencart\System\Engine\Model {
+module.exports = class WeightModel extends Model {
 	/**
-	 * @param array $address
+	 * @param address
 	 *
 	 * @return array
 	 */
-	async getQuote(array $address): array {
-		this.load.language('extension/opencart/shipping/weight');
+	async getQuote(address) {
+		await this.load.language('extension/opencart/shipping/weight');
 
-		$quote_data = [];
+		let quote_data = {};
 
-		$query = this.db.query("SELECT * FROM `" . DB_PREFIX . "geo_zone` ORDER BY `name`");
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "geo_zone` ORDER BY `name`");
 
-		$weight = this.cart.getWeight();
+		let weight = await this.cart.getWeight();
 
-		foreach ($query.rows as result) {
-			if (this.config.get('shipping_weight_' . result['geo_zone_id'] + '_status')) {
-				$query = this.db.query("SELECT * FROM `" . DB_PREFIX . "zone_to_geo_zone` WHERE `geo_zone_id` = '" . result['geo_zone_id'] . "' AND `country_id` = '" . $address['country_id'] . "' AND (`zone_id` = '" . $address['zone_id'] . "' OR `zone_id` = '0')");
+		for (let result of query.rows) {
+			let status = false;
+			if (this.config.get('shipping_weight_' + result['geo_zone_id'] + '_status')) {
+				const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "zone_to_geo_zone` WHERE `geo_zone_id` = '" + result['geo_zone_id'] + "' AND `country_id` = '" + address['country_id'] + "' AND (`zone_id` = '" + address['zone_id'] + "' OR `zone_id` = '0')");
 
-				if ($query.num_rows) {
-					$status = true;
+				if (query.num_rows) {
+					status = true;
 				} else {
-					$status = false;
+					status = false;
 				}
 			} else {
-				$status = false;
+				status = false;
 			}
 
-			if ($status) {
-				$cost = '';
+			if (status) {
+				let cost = '';
 
-				$rates = explode(',', this.config.get('shipping_weight_' . result['geo_zone_id'] + '_rate'));
+				let rates = this.config.get('shipping_weight_' + result['geo_zone_id'] + '_rate').split(',');
 
-				foreach ($rates as $rate) {
-					data = explode(':', $rate);
+				for (let rate of rates) {
+					let data = rate.split(':');
 
-					if (data[0] >= $weight) {
+					if (Number(data[0]) >= Number(weight)) {
 						if ((data[1])) {
-							$cost = data[1];
+							cost = Number(data[1]);
 						}
 
 						break;
 					}
 				}
 
-				if ((string)$cost != '') {
-					$quote_data['weight_' . result['geo_zone_id']] = [
-						'code'         : 'weight.weight_' . result['geo_zone_id'],
-						'name'         : result['name'] + '  (' . this.language.get('text_weight') . ' ' . this.weight.format($weight, this.config.get('config_weight_class_id')) . ')',
-						'cost'         : $cost,
-						'tax_class_id' : this.config.get('shipping_weight_tax_class_id'),
-						'text'         : this.currency.format(this.tax.calculate($cost, this.config.get('shipping_weight_tax_class_id'), this.config.get('config_tax')), this.session.data['currency'])
-					];
+				if (cost != '') {
+					quote_data['weight_' + result['geo_zone_id']] = {
+						'code': 'weight.weight_' + result['geo_zone_id'],
+						'name': result['name'] + '  (' + this.language.get('text_weight') + ' ' + this.weight.format(weight, this.config.get('config_weight_class_id')) + ')',
+						'cost': cost,
+						'tax_class_id': this.config.get('shipping_weight_tax_class_id'),
+						'text': this.currency.format(this.tax.calculate(cost, this.config.get('shipping_weight_tax_class_id'), this.config.get('config_tax')), this.session.data['currency'])
+					};
 				}
 			}
 		}
 
-		$method_data = [];
+		let method_data = {};
 
-		if ($quote_data) {
-			$method_data = [
-				'code'       : 'weight',
-				'name'       : this.language.get('heading_title'),
-				'quote'      : $quote_data,
-				'sort_order' : this.config.get('shipping_weight_sort_order'),
-				'error'      : false
-			];
+		if (Object.keys(quote_data).length) {
+			method_data = {
+				'code': 'weight',
+				'name': this.language.get('heading_title'),
+				'quote': quote_data,
+				'sort_order': this.config.get('shipping_weight_sort_order'),
+				'error': false
+			};
 		}
 
-		return $method_data;
+		return method_data;
 	}
 }

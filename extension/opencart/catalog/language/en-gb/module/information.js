@@ -1,7 +1,8 @@
-<?php
-// Heading
-$_['heading_title'] = 'Information';
+module.exports = {
+    // Heading
+    heading_title: 'Information',
 
-// Text
-$_['text_contact']  = 'Contact Us';
-$_['text_sitemap']  = 'Site Map';
+    // Text
+    text_contact: 'Contact Us',
+    text_sitemap: 'Site Map',
+}

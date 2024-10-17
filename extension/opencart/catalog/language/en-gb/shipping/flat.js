@@ -1,6 +1,7 @@
-<?php
-// Heading
-$_['heading_title']    = 'Flat Rate';
+module.exports = {
+    // Heading
+    heading_title: 'Flat Rate',
 
-// Text
-$_['text_description'] = 'Flat Shipping Rate';
+    // Text
+    text_description: 'Flat Shipping Rate',
+}

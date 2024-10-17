@@ -1,21 +1,22 @@
-<?php
-// Heading
-$_['heading_title']     = 'Account';
+module.exports = {
+    // Heading
+    heading_title: 'Account',
 
-// Text
-$_['text_register']     = 'Register';
-$_['text_login']        = 'Login';
-$_['text_logout']       = 'Logout';
-$_['text_forgotten']    = 'Forgotten Password';
-$_['text_account']      = 'My Account';
-$_['text_edit']         = 'Edit Account';
-$_['text_password']     = 'Password';
-$_['text_address']      = 'Address Book';
-$_['text_wishlist']     = 'Wish List';
-$_['text_order']        = 'Order History';
-$_['text_download']     = 'Downloads';
-$_['text_reward']       = 'Reward Points';
-$_['text_return']       = 'Returns';
-$_['text_transaction']  = 'Transactions';
-$_['text_newsletter']   = 'Newsletter';
-$_['text_subscription'] = 'Subscriptions';
+    // Text
+    text_register: 'Register',
+    text_login: 'Login',
+    text_logout: 'Logout',
+    text_forgotten: 'Forgotten Password',
+    text_account: 'My Account',
+    text_edit: 'Edit Account',
+    text_password: 'Password',
+    text_address: 'Address Book',
+    text_wishlist: 'Wish List',
+    text_order: 'Order History',
+    text_download: 'Downloads',
+    text_reward: 'Reward Points',
+    text_return: 'Returns',
+    text_transaction: 'Transactions',
+    text_newsletter: 'Newsletter',
+    text_subscription: 'Subscriptions',
+}

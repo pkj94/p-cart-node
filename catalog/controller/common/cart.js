@@ -11,7 +11,7 @@ module.exports = class CartController extends Controller {
 		let totals = [];
 		let taxes = await this.cart.getTaxes();
 		let total = 0;
-
+		console.log('totals',totals)
 		this.load.model('checkout/cart', this);
 
 		if (await this.customer.isLogged() || !this.config.get('config_customer_price')) {
@@ -102,7 +102,7 @@ module.exports = class CartController extends Controller {
 
 		// Totals
 		data['totals'] = [];
-
+		console.log('totals',totals)
 		for (let total of totals) {
 			data['totals'].push({
 				'title': total['title'],

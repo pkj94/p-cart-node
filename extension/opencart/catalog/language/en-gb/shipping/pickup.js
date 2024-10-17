@@ -1,6 +1,7 @@
-<?php
-// Heading
-$_['heading_title']    = 'Pickup';
+module.exports = {
+    // Heading
+    heading_title: 'Pickup',
 
-// Text
-$_['text_description'] = 'Pickup From Store';
+    // Text
+    text_description: 'Pickup From Store',
+}

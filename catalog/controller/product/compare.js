@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Catalog\Controller\Product;
-/**
- *
- *
- * @package Opencart\Catalog\Controller\Product
- */
-class CompareController extends Controller {
+module.exports = class CompareController extends Controller {
 	/**
 	 * @return void
 	 */
@@ -14,7 +7,7 @@ const data ={};
 		await this.load.language('product/compare');
 
 		this.load.model('catalog/product',this);
-		this.load.model('catalog/manufacturer');
+		this.load.model('catalog/manufacturer',this);
 		this.load.model('localisation/stock_status');
 		this.load.model('tool/image',this);
 

@@ -1,6 +1,7 @@
-<?php
-// Heading
-$_['heading_title'] = 'Weight Based Shipping';
+module.exports = {
+    // Heading
+    heading_title: 'Weight Based Shipping',
 
-// Text
-$_['text_weight']   = 'Weight:';
+    // Text
+    text_weight: 'Weight:',
+}

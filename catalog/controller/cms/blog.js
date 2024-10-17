@@ -150,7 +150,7 @@ if ((this.request.get['page'])) {
 				'author'        : result['author'],
 				'comment_total' : this.model_cms_article.getTotalComments(result['article_id']),
 				'date_added'    : date(this.language.get('date_format_short'), new Date(result['date_added'])),
-				'href'          : await this.url.link('cms/blog+info', 'language=' + this.config.get('config_language') + '&article_id=' + result['article_id'] + url)
+				'href'          : await this.url.link('cms/blog.info', 'language=' + this.config.get('config_language') + '&article_id=' + result['article_id'] + url)
 			];
 		}
 

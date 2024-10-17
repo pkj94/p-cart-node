@@ -71,7 +71,7 @@ module.exports = class CustomerReportController extends Controller {
 	 * @return void
 	 */
 	async report() {
-		this.load.language('extension/opencart/report/customer');
+		await this.load.language('extension/opencart/report/customer');
 
 		const data = {
 			list: await this.getReport()

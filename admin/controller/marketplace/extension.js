@@ -32,14 +32,13 @@ module.exports = class ExtensionController extends Controller {
 
 		this.load.model('setting/extension', this);
 
-		let files = fs.readdirSync(DIR_APPLICATION + 'controller/extension/').filter(a => a.indexOf('.js') >= 0);
+		let files = fs.globSync(DIR_APPLICATION + 'controller/extension/*.js');
 		for (let file of files) {
-			let extension = expressPath.basename(file).replace('.js','');
+			let extension = expressPath.basename(file,'.js');
 			await this.load.language('extension/' + extension, extension);
 
 			if (await this.user.hasPermission('access', 'extension/' + extension)) {
 				let extensions = await this.model_setting_extension.getPaths('%/admin/controller/' + extension + '/%.js');
-
 				data['categories'].push({
 					'code': extension,
 					'text': this.language.get(extension + '_heading_title') + ' (' + extensions.length + ')',

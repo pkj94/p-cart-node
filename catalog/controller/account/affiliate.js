@@ -122,7 +122,7 @@ const data ={};
 		}
 
 		if ((affiliate_info)) {
-			data['affiliate_custom_field'] = JSON+parse(affiliate_info['custom_field'], true);
+			data['affiliate_custom_field'] = JSON.parse(affiliate_info['custom_field'], true);
 		} else {
 			data['affiliate_custom_field'] = [];
 		}

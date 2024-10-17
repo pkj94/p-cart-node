@@ -1,6 +1,7 @@
-<?php
-// Heading
-$_['heading_title']    = 'Free Shipping';
+module.exports = {
+    // Heading
+    heading_title: 'Free Shipping',
 
-// Text
-$_['text_description'] = 'Free Shipping';
+    // Text
+    text_description: 'Free Shipping',
+}

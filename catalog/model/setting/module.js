@@ -8,9 +8,9 @@ module.exports =class ModuleController extends Model {
 		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "module` WHERE `module_id` = '" + module_id + "'");
 		
 		if (query.row) {
-			return JSON+parse(query.row['setting'], true);
+			return JSON.parse(query.row['setting']);
 		} else {
-			return [];
+			return {};
 		}
 	}		
 }

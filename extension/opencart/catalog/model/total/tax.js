@@ -1,31 +1,25 @@
-<?php
-namespace Opencart\Catalog\Model\Extension\Opencart\Total;
-/**
- * Class Tax
- *
- * @package
- */
-class Tax extends \Opencart\System\Engine\Model {
+module.exports = class TaxModel extends Model {
 	/**
-	 * @param array $totals
-	 * @param array $taxes
-	 * @param float $total
+	 * @param totals
+	 * @param taxes
+	 * @param float total
 	 *
 	 * @return void
 	 */
-	async getTotal(array &$totals, array &$taxes, float &$total) {
-		foreach ($taxes as $key : $value) {
-			if ($value > 0) {
-				$totals.push({
-					'extension'  : 'opencart',
-					'code'       : 'tax',
-					'title'      : this.tax.getRateName($key),
-					'value'      : $value,
-					'sort_order' : this.config.get('total_tax_sort_order')
-				];
+	async getTotal(totals, taxes, total) {
+		for (let [key, value] of Object.entries(taxes)) {
+			if (Number(value) > 0) {
+				totals.push({
+					'extension': 'opencart',
+					'code': 'tax',
+					'title': this.tax.getRateName(key),
+					'value': Number(value),
+					'sort_order': this.config.get('total_tax_sort_order')
+				});
 
-				$total += $value;
+				total += Number(value);
 			}
 		}
+		return { totals, taxes, total }
 	}
 }

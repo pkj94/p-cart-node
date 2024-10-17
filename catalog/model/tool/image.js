@@ -70,6 +70,6 @@ module.exports = class ImageToolModel extends Model {
 			}
 		}
 
-		return HTTP_CATALOG + 'image/' + image_new;
+		return this.config.get('config_url')  + 'image/' + image_new;
 	}
 }

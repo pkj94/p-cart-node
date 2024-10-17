@@ -1,11 +1,6 @@
-<?php
-namespace Opencart\Catalog\Controller\Extension\Opencart\Captcha;
-/**
- * Class Basic
- *
- * @package
- */
-class BasicController extends Controller {
+const substr = require("locutus/php/strings/substr");
+const { createCanvas } = require('canvas');
+module.exports = class BasicController extends Controller {
 	constructor(registry) {
 		super(registry)
 	}
@@ -13,11 +8,12 @@ class BasicController extends Controller {
 	 * @return string
 	 */
 	async index() {
-		this.load.language('extension/opencart/captcha/basic');
+		const data = {}
+		await this.load.language('extension/opencart/captcha/basic');
 
-		data['route'] = (string)this.request.get['route'];
+		data['route'] = this.request.get['route'];
 
-		this.session.data['captcha'] = substr(oc_token(100), rand(0, 94), 6);
+		this.session.data['captcha'] = substr(oc_token(100), Math.rand(0, 94), 6);
 
 		return await this.load.view('extension/opencart/captcha/basic', data);
 	}
@@ -26,7 +22,7 @@ class BasicController extends Controller {
 	 * @return string
 	 */
 	async validate() {
-		this.load.language('extension/opencart/captcha/basic');
+		await this.load.language('extension/opencart/captcha/basic');
 
 		if (!(this.session.data['captcha']) || !(this.request.post['captcha']) || (this.session.data['captcha'] != this.request.post['captcha'])) {
 			return this.language.get('error_captcha');
@@ -39,35 +35,52 @@ class BasicController extends Controller {
 	 * @return void
 	 */
 	async captcha() {
-		$image  = imagecreatetruecolor(150, 35);
+		const width = 150;
+		const height = 35;
 
-		$width  = imagesx($image);
-		$height = imagesy($image);
+		const canvas = createCanvas(width, height);
+		const ctx = canvas.getContext('2d');
 
-		$black  = imagecolorallocate($image, 0, 0, 0);
-		$white  = imagecolorallocate($image, 255, 255, 255);
-		$red    = imagecolorallocatealpha($image, 255, 0, 0, 75);
-		$green  = imagecolorallocatealpha($image, 0, 255, 0, 75);
-		$blue   = imagecolorallocatealpha($image, 0, 0, 255, 75);
+		// Set up colors
+		const black = '#000000';
+		const white = '#FFFFFF';
+		const red = 'rgba(255, 0, 0, 0.75)';
+		const green = 'rgba(0, 255, 0, 0.75)';
+		const blue = 'rgba(0, 0, 255, 0.75)';
 
-		imagefilledrectangle($image, 0, 0, $width, $height, $white);
-		imagefilledellipse($image, Math.ceil(rand(5, 145)), Math.ceil(rand(0, 35)), 30, 30, $red);
-		imagefilledellipse($image, Math.ceil(rand(5, 145)), Math.ceil(rand(0, 35)), 30, 30, $green);
-		imagefilledellipse($image, Math.ceil(rand(5, 145)), Math.ceil(rand(0, 35)), 30, 30, $blue);
-		imagefilledrectangle($image, 0, 0, $width, 0, $black);
-		imagefilledrectangle($image, $width - 1, 0, $width - 1, $height - 1, $black);
-		imagefilledrectangle($image, 0, 0, 0, $height - 1, $black);
-		imagefilledrectangle($image, 0, $height - 1, $width, $height - 1, $black);
+		// Fill the background with white
+		ctx.fillStyle = white;
+		ctx.fillRect(0, 0, width, height);
 
-		imagestring($image, 10, intval(($width - (strlen(this.session.data['captcha']) * 9)) / 2), intval(($height - 15) / 2), this.session.data['captcha'], $black);
+		// Draw random colored ellipses
+		ctx.fillStyle = red;
+		ctx.beginPath();
+		ctx.ellipse(Math.random() * width, Math.random() * height, 30, 30, 0, 0, Math.PI * 2);
+		ctx.fill();
 
-		header('Content-type: image/jpeg');
-		header('Cache-Control: no-cache');
-		header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
+		ctx.fillStyle = green;
+		ctx.beginPath();
+		ctx.ellipse(Math.random() * width, Math.random() * height, 30, 30, 0, 0, Math.PI * 2);
+		ctx.fill();
 
-		imagejpeg($image);
+		ctx.fillStyle = blue;
+		ctx.beginPath();
+		ctx.ellipse(Math.random() * width, Math.random() * height, 30, 30, 0, 0, Math.PI * 2);
+		ctx.fill();
 
-		imagedestroy($image);
-		exit();
+		// Add the black border
+		ctx.strokeStyle = black;
+		ctx.lineWidth = 2;
+		ctx.strokeRect(0, 0, width, height);
+
+		// Draw the captcha text
+		ctx.fillStyle = black;
+		ctx.font = '20px Arial';
+		ctx.textAlign = 'center';
+		ctx.textBaseline = 'middle';
+		ctx.fillText(session.captcha, width / 2, height / 2);
+		this.response.addHeader('Content-Type: image/jpeg');
+		this.response.addHeader('Cache-Control: no-cache');
+		this.response.setOuput(canvas.toBuffer('image/jpeg'));
 	}
 }

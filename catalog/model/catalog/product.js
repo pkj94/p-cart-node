@@ -18,9 +18,8 @@ module.exports = class ProductController extends Model {
 
 		if (query.num_rows) {
 			let product_data = query.row;
-
-			product_data['variant'] = JSON + parse(query.row['variant'], true);
-			product_data['override'] = JSON + parse(query.row['override'], true);
+			product_data['variant'] = query.row['variant'] ? JSON.parse(query.row['variant']) : {};
+			product_data['override'] = query.row['override'] ? JSON.parse(query.row['override']) : {};
 			product_data['price'] = (query.row['discount'] ? query.row['discount'] : query.row['price']);
 			product_data['rating'] = query.row['rating'];
 			product_data['reviews'] = query.row['reviews'] ? query.row['reviews'] : 0;

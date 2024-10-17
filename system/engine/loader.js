@@ -112,6 +112,8 @@ module.exports = class Loader {
             route = route.replace(/[^a-zA-Z0-9_\/]/g, '');
             let output = '';
             let result = await this.registry.data.event.trigger(`view/${route}/before`, [route, data, code]);
+            // if (route.indexOf('header') >= 0)
+            //     console.log('load view', route)
             if (result) {
                 output = result;
             }

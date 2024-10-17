@@ -1,60 +1,56 @@
-<?php
-namespace Opencart\Catalog\Model\Extension\Opencart\Total;
-/**
- * Class Credit
- *
- * @package
- */
-class Credit extends \Opencart\System\Engine\Model {
+const sprintf = require("locutus/php/strings/sprintf");
+
+module.exports = class CreditModel extends Model {
 	/**
-	 * @param array $totals
-	 * @param array $taxes
-	 * @param float $total
+	 * @param totals
+	 * @param taxes
+	 * @param float total
 	 *
 	 * @return void
 	 */
-	async getTotal(array &$totals, array &$taxes, float &$total) {
-		this.load.language('extension/opencart/total/credit');
+	async getTotal(totals, taxes, total) {
+		await this.load.language('extension/opencart/total/credit');
 
-		$balance = this.customer.getBalance();
+		let balance = await this.customer.getBalance();
 
-		if ($balance) {
-			$credit = min($balance, $total);
+		if (balance) {
+			let credit = Math.min(balance, total);
 
-			if ($credit > 0) {
-				$totals.push({
-					'extension'  : 'opencart',
-					'code'       : 'credit',
-					'title'      : this.language.get('text_credit'),
-					'value'      : -$credit,
-					'sort_order' : this.config.get('total_credit_sort_order')
-				];
+			if (credit > 0) {
+				totals.push({
+					'extension': 'opencart',
+					'code': 'credit',
+					'title': this.language.get('text_credit'),
+					'value': -credit,
+					'sort_order': this.config.get('total_credit_sort_order')
+				});
 
-				$total -= $credit;
+				total -= credit;
 			}
 		}
+		return { totals, taxes, total }
 	}
 
 	/**
-	 * @param array $order_info
-	 * @param array $order_total
+	 * @param order_info
+	 * @param order_total
 	 *
 	 * @return void
 	 */
-	async confirm(array $order_info, array $order_total) {
-		this.load.language('extension/opencart/total/credit');
+	async confirm(order_info, order_total) {
+		await this.load.language('extension/opencart/total/credit');
 
-		if ($order_info['customer_id']) {
-			this.db.query("INSERT INTO `" . DB_PREFIX . "customer_transaction` SET `customer_id` = '" . $order_info['customer_id'] . "', `order_id` = '" . $order_info['order_id'] . "', `description` = '" . this.db.escape(sprintf(this.language.get('text_order_id'), $order_info['order_id'])) . "', `amount` = '" . $order_total['value'] . "', `date_added` = NOW()");
+		if (order_info['customer_id']) {
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "customer_transaction` SET `customer_id` = '" + order_info['customer_id'] + "', `order_id` = '" + order_info['order_id'] + "', `description` = " + this.db.escape(sprintf(this.language.get('text_order_id'), order_info['order_id'])) + ", `amount` = '" + order_total['value'] + "', `date_added` = NOW()");
 		}
 	}
 
 	/**
-	 * @param int $order_id
+	 * @param int order_id
 	 *
 	 * @return void
 	 */
-	async unconfirm($order_id) {
-		this.db.query("DELETE FROM `" . DB_PREFIX . "customer_transaction` WHERE `order_id` = '" . $order_id . "'");
+	async unconfirm(order_id) {
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_transaction` WHERE `order_id` = '" + order_id + "'");
 	}
 }

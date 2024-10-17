@@ -3,7 +3,7 @@ module.exports = class MaintenanceController extends Controller {
 	 * @return object|\Opencart\System\Engine\Action|null
 	 */
 	async index() {
-		if (this.config.get('config_maintenance')) {
+		if (Number(this.config.get('config_maintenance'))) {
 			// Route
 			let route = this.config.get('action_default');
 			if ((this.request.get['route'])) {

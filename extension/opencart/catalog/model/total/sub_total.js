@@ -1,37 +1,32 @@
-<?php
-namespace Opencart\Catalog\Model\Extension\Opencart\Total;
-/**
- * Class SubTotal
- *
- * @package
- */
-class SubTotal extends \Opencart\System\Engine\Model {
+module.exports = class SubTotalModel extends Model {
 	/**
-	 * @param array $totals
-	 * @param array $taxes
-	 * @param float $total
+	 * @param totals
+	 * @param taxes
+	 * @param float total
 	 *
 	 * @return void
 	 */
-	async getTotal(array &$totals, array &$taxes, float &$total) {
-		this.load.language('extension/opencart/total/sub_total');
+	async getTotal(totals, taxes, total) {
+		await this.load.language('extension/opencart/total/sub_total');
 
-		$sub_total = this.cart.getSubTotal();
+		let sub_total = await this.cart.getSubTotal();
 
-		if (!empty(this.session.data['vouchers'])) {
-			foreach (this.session.data['vouchers'] as $voucher) {
-				$sub_total += $voucher['amount'];
+		if (this.session.data['vouchers'].length) {
+			for (let voucher of this.session.data['vouchers']) {
+				sub_total += voucher['amount'];
 			}
 		}
 
-		$totals.push({
-			'extension'  : 'opencart',
-			'code'       : 'sub_total',
-			'title'      : this.language.get('text_sub_total'),
-			'value'      : $sub_total,
-			'sort_order' : this.config.get('total_sub_total_sort_order')
-		];
+		totals.push({
+			'extension': 'opencart',
+			'code': 'sub_total',
+			'title': this.language.get('text_sub_total'),
+			'value': sub_total,
+			'sort_order': this.config.get('total_sub_total_sort_order')
+		});
 
-		$total += $sub_total;
+		total += sub_total;
+		return { totals, taxes, total }
 	}
+
 }

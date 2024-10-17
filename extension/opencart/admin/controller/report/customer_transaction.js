@@ -6,7 +6,7 @@ module.exports = class CustomerTransactionReportController extends Controller {
 	}
 	async index() {
 		const data = {};
-		this.load.language('extension/opencart/report/customer_transaction');
+		await this.load.language('extension/opencart/report/customer_transaction');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
@@ -83,7 +83,7 @@ module.exports = class CustomerTransactionReportController extends Controller {
 	 * @return void
 	 */
 	async list() {
-		this.load.language('extension/opencart/report/customer_transaction');
+		await this.load.language('extension/opencart/report/customer_transaction');
 
 		this.response.setOutput(await this.getReport());
 	}

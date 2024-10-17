@@ -1,3 +1,4 @@
-<?php
-// Text
-$_['text_total'] = 'Total';
+module.exports = {
+    // Text
+    text_total: 'Total',
+}
