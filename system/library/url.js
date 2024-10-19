@@ -8,6 +8,7 @@ module.exports = class UrlLibrary {
     }
     async link(route, args = '', js = false) {
         let url = `${this.url.substring(0, this.url.length - 1)}/?route=${route}`;
+
         if (args) {
             if (typeof args == 'object') {
                 Object.keys(args).map(key => {
@@ -21,6 +22,7 @@ module.exports = class UrlLibrary {
         for (const rewrite of this.rewrite) {
             url = await rewrite.rewrite(url);
         }
+
         return js ? url : url.replace(/&/g, '&amp;');
     }
 }

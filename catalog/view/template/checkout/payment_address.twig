@@ -201,7 +201,7 @@ $('#input-payment-address').on('change', function() {
 
     chain.attach(function() {
         return $.ajax({
-            url: 'index.php?route=checkout/payment_address.address&language={{ language }}&address_id=' + $(element).val(),
+            url: '?route=checkout/payment_address.address&language={{ language }}&address_id=' + $(element).val(),
             dataType: 'json',
             beforeSend: function() {
                 $(element).prop('disabled', true);
@@ -230,7 +230,7 @@ $('#input-payment-address').on('change', function() {
                     $('#input-shipping-method').val('');
                     $('#input-payment-method').val('');
 
-                    $('#checkout-confirm').load('index.php?route=checkout/confirm.confirm&language={{ language }}');
+                    $('#checkout-confirm').load('?route=checkout/confirm.confirm&language={{ language }}');
                 }
             },
             error: function(xhr, ajaxOptions, thrownError) {
@@ -246,7 +246,7 @@ $('#form-payment-address').on('submit', function(e) {
 
     chain.attach(function() {
         return $.ajax({
-            url: 'index.php?route=checkout/payment_address.save&language={{ language }}',
+            url: '?route=checkout/payment_address.save&language={{ language }}',
             type: 'post',
             data: $('#form-payment-address').serialize(),
             dataType: 'json',
@@ -319,7 +319,7 @@ $('#form-payment-address').on('submit', function(e) {
                     $('#input-shipping-method').val('');
                     $('#input-payment-method').val('');
 
-                    $('#checkout-confirm').load('index.php?route=checkout/confirm.confirm&language={{ language }}');
+                    $('#checkout-confirm').load('?route=checkout/confirm.confirm&language={{ language }}');
                 }
             },
             error: function(xhr, ajaxOptions, thrownError) {
@@ -334,7 +334,7 @@ $('#input-payment-country').on('change', function() {
 
     chain.attach(function() {
         return $.ajax({
-            url: 'index.php?route=localisation/country&language={{ language }}&country_id=' + $('#input-payment-country').val(),
+            url: '?route=localisation/country&language={{ language }}&country_id=' + $('#input-payment-country').val(),
             dataType: 'json',
             beforeSend: function() {
                 $(element).prop('disabled', true);

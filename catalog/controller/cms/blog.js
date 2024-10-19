@@ -175,7 +175,7 @@ if ((this.request.get['page'])) {
 			'url'   : await this.url.link('cms/blog', 'language=' + this.config.get('config_language') + url + '&page={page}')
 		]);
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (article_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (article_total - limit)) ? article_total : (((page - 1) * limit) + limit), article_total, ceil(article_total / limit));
+		data['results'] = sprintf(this.language.get('text_pagination'), (article_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (article_total - limit)) ? article_total : (((page - 1) * limit) + limit), article_total, Math.ceil(article_total / limit));
 
 		// http://googlewebmastercentral+articlespot+com/2011/09/pagination-with-relnext-and-relprev+html
 		if (page == 1) {
@@ -306,7 +306,7 @@ if ((this.request.get['page'])) {
 
 			this.response.setOutput(await this.load.view('cms/blog_info', data));
 		} else {
-			return new \Opencart\System\Engine\Action('error/not_found');
+			return new Action('error/not_found');
 		}
 
 		return null;
@@ -359,7 +359,7 @@ if ((this.request.get['page'])) {
 			'url'   : await this.url.link('cms/blog+comment', 'language=' + this.config.get('config_language') + '&article_id=' + article_id + '&page={page}')
 		]);
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (comment_total) ? ((page - 1) * 5) + 1 : 0, (((page - 1) * 5) > (comment_total - 5)) ? comment_total : (((page - 1) * 5) + 5), comment_total, ceil(comment_total / 5));
+		data['results'] = sprintf(this.language.get('text_pagination'), (comment_total) ? ((page - 1) * 5) + 1 : 0, (((page - 1) * 5) > (comment_total - 5)) ? comment_total : (((page - 1) * 5) + 5), comment_total, Math.ceil(comment_total / 5));
 
 		return await this.load.view('cms/comment', data);
 	}
@@ -384,7 +384,7 @@ if ((this.request.get['page'])) {
 			'author'
 		];
 
-		for (keys as key) {
+		for (let key of keys) {
 			if (!(this.request.post[key])) {
 				this.request.post[key] = '';
 			}
@@ -415,8 +415,8 @@ if ((this.request.get['page'])) {
 
 		extension_info = await this.model_setting_extension.getExtensionByCode('captcha', this.config.get('config_captcha'));
 
-		if (extension_info && this.config.get('captcha_' + this.config.get('config_captcha') + '_status') && in_array('comment', this.config.get('config_captcha_page'))) {
-			captcha = await this.load.controller('extension/'  + extension_info['extension'] + '/captcha/' + extension_info['code'] + '+validate');
+		if (extension_info && Number(this.config.get('captcha_' + this.config.get('config_captcha') + '_status')) && in_array('comment', this.config.get('config_captcha_page'))) {
+			const captcha = await this.load.controller('extension/'  + extension_info['extension'] + '/captcha/' + extension_info['code'] + '+validate');
 
 			if (captcha) {
 				json['error']['captcha'] = captcha;

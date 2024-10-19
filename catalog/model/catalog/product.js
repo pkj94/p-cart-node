@@ -1,4 +1,4 @@
-module.exports = class ProductController extends Model {
+module.exports = class ProductModel extends Model {
 	constructor(registry) {
 		super(registry);
 		this.statement = {};
@@ -31,7 +31,7 @@ module.exports = class ProductController extends Model {
 	}
 
 	/**
-	 * @param array data
+	 * @param data
 	 *
 	 * @return array
 	 */
@@ -361,7 +361,7 @@ module.exports = class ProductController extends Model {
 	}
 
 	/**
-	 * @param array data
+	 * @param data
 	 *
 	 * @return int
 	 */
@@ -472,7 +472,7 @@ module.exports = class ProductController extends Model {
 	}
 
 	/**
-	 * @param array data
+	 * @param data
 	 *
 	 * @return array
 	 */
@@ -552,6 +552,6 @@ module.exports = class ProductController extends Model {
 	 * @return void
 	 */
 	async addReport(product_id, ip, country = '') {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "product_report` SET `product_id` = '" + product_id + "', `store_id` = '" + this.config.get('config_store_id') + "', `ip` = '" + this.db.escape(ip) + "', `country` = '" + this.db.escape(country) + "', `date_added` = NOW()");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "product_report` SET `product_id` = '" + product_id + "', `store_id` = '" + this.config.get('config_store_id') + "', `ip` = " + this.db.escape(ip) + ", `country` = " + this.db.escape(country) + ", `date_added` = NOW()");
 	}
 }

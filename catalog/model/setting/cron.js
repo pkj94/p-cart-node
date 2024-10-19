@@ -1,4 +1,4 @@
-module.exports =class CronController extends Model {
+module.exports =class CronModel extends Model {
 	/**
 	 * @param cron_id
 	 *
@@ -35,7 +35,7 @@ module.exports =class CronController extends Model {
 	 * @return array
 	 */
 	async getCronByCode(code) {
-		const query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "cron` WHERE `code` = '" + this.db.escape(code) + "' LIMIT 1");
+		const query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "cron` WHERE `code` = " + this.db.escape(code) + " LIMIT 1");
 
 		return query.row;
 	}

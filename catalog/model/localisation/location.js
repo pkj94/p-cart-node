@@ -1,4 +1,4 @@
-module.exports =class LocationController extends Model {
+module.exports =class LocationModel extends Model {
 	/**
 	 * @param location_id
 	 *

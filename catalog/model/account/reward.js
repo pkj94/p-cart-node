@@ -1,13 +1,6 @@
-<?php
-namespace Opencart\Catalog\Model\Account;
-/**
- *
- *
- * @package Opencart\Catalog\Model\Account
- */
-class RewardController extends Model {
+module.exports =class RewardModel extends Model {
 	/**
-	 * @param array data
+	 * @param data
 	 *
 	 * @return array
 	 */

@@ -39,7 +39,7 @@ $('#form-comment').on('submit', function(e) {
     var element = this;
 
     $.ajax({
-        url: 'index.php?route=cms/comment.addComment&language={{ language }}&comment_token={{ comment_token }}&article_id={{ article_id }}',
+        url: '?route=cms/comment.addComment&language={{ language }}&comment_token={{ comment_token }}&article_id={{ article_id }}',
         type: 'post',
         data: $('#form-comment').serialize(),
         dataType: 'json',

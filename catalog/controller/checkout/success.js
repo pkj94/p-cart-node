@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Catalog\Controller\Checkout;
-/**
- *
- *
- * @package Opencart\Catalog\Controller\Checkout
- */
-class SuccessController extends Controller {
+module.exports = class SuccessController extends Controller {
 	/**
 	 * @return void
 	 */

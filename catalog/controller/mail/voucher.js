@@ -8,7 +8,7 @@ namespace Opencart\Catalog\Controller\Mail;
 class VoucherController extends Controller {
 	/**
 	 * @param string route
-	 * @param array  args
+	 * @param  args
 	 * @param mixed  output
 	 *
 	 * @return void

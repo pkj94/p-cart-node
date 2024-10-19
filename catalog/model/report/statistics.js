@@ -5,7 +5,7 @@ namespace Opencart\Catalog\Model\Report;
  *
  * @package Opencart\Catalog\Model\Report
  */
-class StatisticsController extends Model {
+class StatisticsModel extends Model {
 	/**
 	 * @return array
 	 */
@@ -21,7 +21,7 @@ class StatisticsController extends Model {
 	 * @return float
 	 */
 	async getValue(code): {
-		const query = await this.db.query("SELECT `value` FROM `" + DB_PREFIX + "statistics` WHERE `code` = '" + this.db.escape(code) + "'");
+		const query = await this.db.query("SELECT `value` FROM `" + DB_PREFIX + "statistics` WHERE `code` = " + this.db.escape(code) + "");
 
 		if (query.num_rows) {
 			return query.row['value'];
@@ -37,7 +37,7 @@ class StatisticsController extends Model {
 	 * @return void
 	 */
 	async addValue(code, value) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "statistics` SET `value` = (`value` + '" + value + "') WHERE `code` = '" + this.db.escape(code) + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "statistics` SET `value` = (`value` + '" + value + "') WHERE `code` = " + this.db.escape(code) + "");
 	}
 
 	/**
@@ -47,7 +47,7 @@ class StatisticsController extends Model {
 	 * @return void
 	 */
 	async removeValue(code, value) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "statistics` SET `value` = (`value` - '" + value + "') WHERE `code` = '" + this.db.escape(code) + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "statistics` SET `value` = (`value` - '" + value + "') WHERE `code` = " + this.db.escape(code) + "");
 	}
 
 	/**
@@ -57,6 +57,6 @@ class StatisticsController extends Model {
 	 * @return void
 	 */
 	async editValue(code, value) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "statistics` SET `value` = '" + value + "' WHERE `code` = '" + this.db.escape(code) + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "statistics` SET `value` = '" + value + "' WHERE `code` = " + this.db.escape(code) + "");
 	}	
 }

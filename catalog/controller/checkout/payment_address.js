@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Catalog\Controller\Checkout;
-/**
- *
- *
- * @package Opencart\Catalog\Controller\Checkout
- */
-class PaymentAddressController extends Controller {
+module.exports = class PaymentAddressController extends Controller {
 	/**
 	 * @return string
 	 */
@@ -13,8 +6,8 @@ class PaymentAddressController extends Controller {
 const data ={};
 		await this.load.language('checkout/payment_address');
 
-		data['error_upload_size'] = sprintf(this.language.get('error_upload_size'), this.config.get('config_file_max_size'));
-		data['config_file_max_size'] = (this.config.get('config_file_max_size') * 1024 * 1024);
+		data['error_upload_size'] = sprintf(this.language.get('error_upload_size'), Number(this.config.get('config_file_max_size')));
+		data['config_file_max_size'] = (Number(this.config.get('config_file_max_size')) * 1024 * 1024);
 
 		data['upload'] = await this.url.link('tool/upload', 'language=' + this.config.get('config_language'));
 
@@ -59,7 +52,7 @@ const data ={};
 		const json = {};
 
 		// Validate cart has products and has stock+
-		if ((!this.cart.hasProducts() && empty(this.session.data['vouchers'])) || (!this.cart.hasStock() && !this.config.get('config_stock_checkout'))) {
+		if ((!await this.cart.hasProducts() && empty(this.session.data['vouchers'])) || (!await this.cart.hasStock() && !Number(this.config.get('config_stock_checkout')))) {
 			json['redirect'] = await this.url.link('checkout/cart', 'language=' + this.config.get('config_language'), true);
 		}
 
@@ -98,7 +91,7 @@ const data ={};
 				'custom_field'
 			];
 
-			for (keys as key) {
+			for (let key of keys) {
 				if (!(this.request.post[key])) {
 					this.request.post[key] = '';
 				}
@@ -200,7 +193,7 @@ const data ={};
 		}
 
 		// Validate cart has products and has stock+
-		if ((!this.cart.hasProducts() && empty(this.session.data['vouchers'])) || (!this.cart.hasStock() && !this.config.get('config_stock_checkout'))) {
+		if ((!await this.cart.hasProducts() && empty(this.session.data['vouchers'])) || (!await this.cart.hasStock() && !Number(this.config.get('config_stock_checkout')))) {
 			json['redirect'] = await this.url.link('checkout/cart', 'language=' + this.config.get('config_language'), true);
 		}
 

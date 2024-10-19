@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Catalog\Controller\Checkout;
-/**
- *
- *
- * @package Opencart\Catalog\Controller\Checkout
- */
-class VoucherController extends Controller {
+module.exports = class VoucherController extends Controller {
 	/**
 	 * @return void
 	 */
@@ -88,7 +81,7 @@ const data ={};
 			'agree'
 		];
 
-		for (keys as key) {
+		for (let key of keys) {
 			if (!(this.request.post[key])) {
 				this.request.post[key] = '';
 			}
@@ -173,7 +166,7 @@ const data ={};
 		}
 
 		if (!Object.keys(json).length) {
-			if (this.cart.hasProducts() || (this.session.data['vouchers'])) {
+			if (await this.cart.hasProducts() (this.session.data['vouchers'] && this.session.data['vouchers'].length)) {
 				json['success'] = this.language.get('text_remove');
 			} else {
 				json['redirect'] = await this.url.link('checkout/cart', 'language=' + this.config.get('config_language'), true);

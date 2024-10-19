@@ -1,4 +1,4 @@
-module.exports = class LanguageController extends Model {
+module.exports = class LanguageModel extends Model {
 	constructor(registry) {
 		super(registry);
 		this.data = {};

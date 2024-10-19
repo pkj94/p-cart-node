@@ -9,7 +9,7 @@ const data ={};
 		if (!await this.customer.isLogged() || (!(this.request.get['customer_token']) || !(this.session.data['customer_token']) || (this.request.get['customer_token'] != this.session.data['customer_token']))) {
 			this.session.data['redirect'] = await this.url.link('account/download', 'language=' + this.config.get('config_language'));
 
-			this.response.redirect(await this.url.link('account/login', 'language=' + this.config.get('config_language')));
+			this.response.setRedirect(await this.url.link('account/login', 'language=' + this.config.get('config_language')));
 		}
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -86,7 +86,7 @@ if ((this.request.get['page'])) {
 			'url'   : await this.url.link('account/download', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'] + '&page={page}')
 		]);
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (download_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (download_total - limit)) ? download_total : (((page - 1) * limit) + limit), download_total, ceil(download_total / limit));
+		data['results'] = sprintf(this.language.get('text_pagination'), (download_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (download_total - limit)) ? download_total : (((page - 1) * limit) + limit), download_total, Math.ceil(download_total / limit));
 		
 		data['continue'] = await this.url.link('account/account', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token']);
 
@@ -107,7 +107,7 @@ if ((this.request.get['page'])) {
 		if (!await this.customer.isLogged() || (!(this.request.get['customer_token']) || !(this.session.data['customer_token']) || (this.request.get['customer_token'] != this.session.data['customer_token']))) {
 			this.session.data['redirect'] = await this.url.link('account/download', 'language=' + this.config.get('config_language'));
 
-			this.response.redirect(await this.url.link('account/login', 'language=' + this.config.get('config_language')));
+			this.response.setRedirect(await this.url.link('account/login', 'language=' + this.config.get('config_language')));
 		}
 
 		this.load.model('account/download');
@@ -139,7 +139,10 @@ if ((this.request.get['page'])) {
 
 					readfile(file, 'rb');
 
-					await this.model_account_download.addReport(download_id, this.request.server['REMOTE_ADDR']);
+					await this.model_account_download.addReport(download_id, (this.request.server.headers['x-forwarded-for'] ||
+					this.request.server.connection.remoteAddress ||
+					this.request.server.socket.remoteAddress ||
+					this.request.server.connection.socket.remoteAddress));
 
 					exit();
 				} else {
@@ -149,7 +152,7 @@ if ((this.request.get['page'])) {
 				exit(this.language.get('error_headers_sent'));
 			}
 		} else {
-			this.response.redirect(await this.url.link('account/download', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token']));
+			this.response.setRedirect(await this.url.link('account/download', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token']));
 		}
 	}
 }

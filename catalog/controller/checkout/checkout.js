@@ -1,19 +1,12 @@
-<?php
-namespace Opencart\Catalog\Controller\Checkout;
-/**
- *
- *
- * @package Opencart\Catalog\Controller\Checkout
- */
-class CheckoutController extends Controller {
+module.exports = class CheckoutController extends Controller {
 	/**
 	 * @return void
 	 */
 	async index() {
 const data ={};
 		// Validate cart has products and has stock+
-		if ((!this.cart.hasProducts() && empty(this.session.data['vouchers'])) || (!this.cart.hasStock() && !this.config.get('config_stock_checkout'))) {
-			this.response.redirect(await this.url.link('checkout/cart', 'language=' + this.config.get('config_language')));
+		if ((!await this.cart.hasProducts() && empty(this.session.data['vouchers'])) || (!await this.cart.hasStock() && !Number(this.config.get('config_stock_checkout')))) {
+			this.response.setRedirect(await this.url.link('checkout/cart', 'language=' + this.config.get('config_language')));
 		}
 
 		// Validate minimum quantity requirements+
@@ -21,7 +14,7 @@ const data ={};
 
 		for (let product of products) {
 			if (!product['minimum']) {
-				this.response.redirect(await this.url.link('checkout/cart', 'language=' + this.config.get('config_language'), true));
+				this.response.setRedirect(await this.url.link('checkout/cart', 'language=' + this.config.get('config_language'), true));
 
 				break;
 			}
@@ -66,7 +59,7 @@ const data ={};
 			data['shipping_address'] = '';
 		}
 
-		if (this.cart.hasShipping()) {
+		if (await this.cart.hasShipping()) {
 			data['shipping_method'] = await this.load.controller('checkout/shipping_method');
 		}  else {
 			data['shipping_method'] = '';

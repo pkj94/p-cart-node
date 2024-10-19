@@ -229,7 +229,7 @@ $('#input-country').on('change', function () {
     var element = this;
 
     $.ajax({
-        url: 'index.php?route=localisation/country&country_id=' + this.value + '&language={{ language }}',
+        url: '?route=localisation/country&country_id=' + this.value + '&language={{ language }}',
         dataType: 'json',
         beforeSend: function () {
             $(element).prop('disabled', true);

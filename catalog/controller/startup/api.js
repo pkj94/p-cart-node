@@ -1,6 +1,6 @@
 module.exports = class ApiController extends Controller {
 	/**
-	 * @return object|\Opencart\System\Engine\Action|null
+	 * @return object|Action|null
 	 */
 	async index() {
 		let route = '';

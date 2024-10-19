@@ -1,9 +1,12 @@
+const nl2br = require("locutus/php/strings/nl2br");
+const sprintf = require("locutus/php/strings/sprintf");
+
 module.exports = class ReviewController extends Controller {
 	/**
 	 * @return string
 	 */
 	async index() {
-const data ={};
+		const data = {};
 		await this.load.language('product/review');
 
 		data['text_login'] = sprintf(this.language.get('text_login'), await this.url.link('account/login', 'language=' + this.config.get('config_language')), await this.url.link('account/register', 'language=' + this.config.get('config_language')));
@@ -34,12 +37,12 @@ const data ={};
 		data['review_token'] = this.session.data['review_token'];
 
 		// Captcha
-		this.load.model('setting/extension',this);
+		this.load.model('setting/extension', this);
 
-		extension_info = await this.model_setting_extension.getExtensionByCode('captcha', this.config.get('config_captcha'));
+		const extension_info = await this.model_setting_extension.getExtensionByCode('captcha', this.config.get('config_captcha'));
 
-		if (extension_info && this.config.get('captcha_' + this.config.get('config_captcha') + '_status') && in_array('review', this.config.get('config_captcha_page'))) {
-			data['captcha'] = await this.load.controller('extension/'  + extension_info['extension'] + '/captcha/' + extension_info['code']);
+		if (extension_info.extension_id && Number(this.config.get('captcha_' + this.config.get('config_captcha') + '_status')) && this.config.get('config_captcha_page').includes('review')) {
+			data['captcha'] = await this.load.controller('extension/' + extension_info['extension'] + '/captcha/' + extension_info['code']);
 		} else {
 			data['captcha'] = '';
 		}
@@ -57,33 +60,32 @@ const data ={};
 
 		const json = {};
 
+		let product_id = 0;
 		if ((this.request.get['product_id'])) {
 			product_id = this.request.get['product_id'];
-		} else {
-			product_id = 0;
 		}
 
 		if (!(this.request.get['review_token']) || !(this.session.data['review_token']) || this.request.get['review_token'] != this.session.data['review_token']) {
 			json['error']['warning'] = this.language.get('error_token');
 		}
 
-		keys = [
+		let keys = [
 			'name',
 			'text',
 			'rating'
 		];
 
-		for (keys as key) {
+		for (let key of keys) {
 			if (!(this.request.post[key])) {
 				this.request.post[key] = '';
 			}
 		}
 
-		this.load.model('product/product');
+		this.load.model('product/product', this);
 
-		product_info = await this.model_product_product.getProduct(product_id);
+		const product_info = await this.model_product_product.getProduct(product_id);
 
-		if (!product_info) {
+		if (!product_info.product_id) {
 			json['error']['warning'] = this.language.get('error_product');
 		}
 
@@ -96,28 +98,28 @@ const data ={};
 		}
 
 		if (this.request.post['rating'] < 1 || this.request.post['rating'] > 5) {
-			json['error']['rating']  = this.language.get('error_rating');
+			json['error']['rating'] = this.language.get('error_rating');
 		}
 
 		if (!await this.customer.isLogged() && !this.config.get('config_review_guest')) {
-			json['error']['warning']  = this.language.get('error_guest');
+			json['error']['warning'] = this.language.get('error_guest');
 		}
 
 		if (await this.customer.isLogged() && this.config.get('config_review_purchased')) {
-			this.load.model('account/order',this);
+			this.load.model('account/order', this);
 
-			if (!this.model_account_order.getTotalOrdersByProductId(product_id)) {
-				json['error']['purchased']  = this.language.get('error_purchased');
+			if (!await this.model_account_order.getTotalOrdersByProductId(product_id)) {
+				json['error']['purchased'] = this.language.get('error_purchased');
 			}
 		}
 
 		// Captcha
-		this.load.model('setting/extension',this);
+		this.load.model('setting/extension', this);
 
-		extension_info = await this.model_setting_extension.getExtensionByCode('captcha', this.config.get('config_captcha'));
+		const extension_info = await this.model_setting_extension.getExtensionByCode('captcha', this.config.get('config_captcha'));
 
-		if (extension_info && this.config.get('captcha_' + this.config.get('config_captcha') + '_status') && in_array('review', this.config.get('config_captcha_page'))) {
-			captcha = await this.load.controller('extension/'  + extension_info['extension'] + '/captcha/' + extension_info['code'] + '+validate');
+		if (extension_info.extension_id && Number(this.config.get('captcha_' + this.config.get('config_captcha') + '_status')) && this.config.get('config_captcha_page').includes('review')) {
+			const captcha = await this.load.controller('extension/' + extension_info['extension'] + '/captcha/' + extension_info['code'] + '+validate');
 
 			if (captcha) {
 				json['error']['captcha'] = captcha;
@@ -125,7 +127,7 @@ const data ={};
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('catalog/review');
+			this.load.model('catalog/review', this);
 
 			await this.model_catalog_review.addReview(product_id, this.request.post);
 
@@ -142,49 +144,49 @@ const data ={};
 	async list() {
 		await this.load.language('product/review');
 
-		this.response.setOutput(this.getList());
+		this.response.setOutput(await this.getList());
 	}
 
 	/**
 	 * @return string
 	 */
 	async getList() {
+		const data = {};
+		let product_id = 0;
 		if ((this.request.get['product_id'])) {
 			product_id = this.request.get['product_id'];
-		} else {
-			product_id = 0;
 		}
 
 		let page = 1;
-if ((this.request.get['page'])) {
+		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
-		} 
+		}
 
 		data['reviews'] = [];
 
-		this.load.model('catalog/review');
+		this.load.model('catalog/review', this);
 
-		review_total = await this.model_catalog_review.getTotalReviewsByProductId(product_id);
+		const review_total = await this.model_catalog_review.getTotalReviewsByProductId(product_id);
 
 		const results = await this.model_catalog_review.getReviewsByProductId(product_id, (page - 1) * 5, 5);
 
 		for (let result of results) {
 			data['reviews'].push({
-				'author'     : result['author'],
-				'text'       : nl2br(result['text']),
-				'rating'     : result['rating'],
-				'date_added' : date(this.language.get('date_format_short'), new Date(result['date_added']))
-			];
+				'author': result['author'],
+				'text': nl2br(result['text']),
+				'rating': result['rating'],
+				'date_added': date(this.language.get('date_format_short'), new Date(result['date_added']))
+			});
 		}
 
 		data['pagination'] = await this.load.controller('common/pagination', {
-			'total' : review_total,
-			'page'  : page,
-			'limit' : 5,
-			'url'   : await this.url.link('product/review+list', 'language=' + this.config.get('config_language') + '&product_id=' + product_id + '&page={page}')
-		]);
+			'total': review_total,
+			'page': page,
+			'limit': 5,
+			'url': await this.url.link('product/review+list', 'language=' + this.config.get('config_language') + '&product_id=' + product_id + '&page={page}')
+		});
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (review_total) ? ((page - 1) * 5) + 1 : 0, (((page - 1) * 5) > (review_total - 5)) ? review_total : (((page - 1) * 5) + 5), review_total, ceil(review_total / 5));
+		data['results'] = sprintf(this.language.get('text_pagination'), (review_total) ? ((page - 1) * 5) + 1 : 0, (((page - 1) * 5) > (review_total - 5)) ? review_total : (((page - 1) * 5) + 5), review_total, Math.ceil(review_total / 5));
 
 		return await this.load.view('product/review_list', data);
 	}

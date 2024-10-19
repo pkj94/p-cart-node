@@ -694,8 +694,8 @@ module.exports = class OrderController extends Controller {
 				'subscription': subscription,
 				'subscription_description': description,
 				'quantity': product['quantity'],
-				'price': this.currency.format(product['price'] + (this.config.get('config_tax') ? product['tax'] : 0), order_info['currency_code'], order_info['currency_value']),
-				'total': this.currency.format(product['total'] + (this.config.get('config_tax') ? (product['tax'] * product['quantity']) : 0), order_info['currency_code'], order_info['currency_value']),
+				'price': this.currency.format(product['price'] + (Number(this.config.get('config_tax')) ? product['tax'] : 0), order_info['currency_code'], order_info['currency_value']),
+				'total': this.currency.format(product['total'] + (Number(this.config.get('config_tax')) ? (product['tax'] * product['quantity']) : 0), order_info['currency_code'], order_info['currency_value']),
 				'reward': product['reward']
 			});
 		}
@@ -1431,8 +1431,8 @@ module.exports = class OrderController extends Controller {
 						'option': option_data,
 						'subscription': description,
 						'quantity': product['quantity'],
-						'price': this.currency.format(product['price'] + (this.config.get('config_tax') ? product['tax'] : 0), order_info['currency_code'], order_info['currency_value']),
-						'total': this.currency.format(product['total'] + (this.config.get('config_tax') ? (product['tax'] * product['quantity']) : 0), order_info['currency_code'], order_info['currency_value'])
+						'price': this.currency.format(product['price'] + (Number(this.config.get('config_tax')) ? product['tax'] : 0), order_info['currency_code'], order_info['currency_value']),
+						'total': this.currency.format(product['total'] + (Number(this.config.get('config_tax')) ? (product['tax'] * product['quantity']) : 0), order_info['currency_code'], order_info['currency_value'])
 					});
 				}
 

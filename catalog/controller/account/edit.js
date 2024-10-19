@@ -9,7 +9,7 @@ const data ={};
 		if (!await this.customer.isLogged() || (!(this.request.get['customer_token']) || !(this.session.data['customer_token']) || (this.request.get['customer_token'] != this.session.data['customer_token']))) {
 			this.session.data['redirect'] = await this.url.link('account/edit', 'language=' + this.config.get('config_language'));
 
-			this.response.redirect(await this.url.link('account/login', 'language=' + this.config.get('config_language')));
+			this.response.setRedirect(await this.url.link('account/login', 'language=' + this.config.get('config_language')));
 		}
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -31,9 +31,9 @@ const data ={};
 			'href' : await this.url.link('account/edit', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'])
 		];
 
-		data['error_upload_size'] = sprintf(this.language.get('error_upload_size'), this.config.get('config_file_max_size'));
+		data['error_upload_size'] = sprintf(this.language.get('error_upload_size'), Number(this.config.get('config_file_max_size')));
 
-		data['config_file_max_size'] = (this.config.get('config_file_max_size') * 1024 * 1024);
+		data['config_file_max_size'] = (Number(this.config.get('config_file_max_size')) * 1024 * 1024);
 		data['config_telephone_display'] = this.config.get('config_telephone_display');
 		data['config_telephone_required'] = this.config.get('config_telephone_required');
 
@@ -104,7 +104,7 @@ const data ={};
 				'telephone'
 			];
 
-			for (keys as key) {
+			for (let key of keys) {
 				if (!(this.request.post[key])) {
 					this.request.post[key] = '';
 				}

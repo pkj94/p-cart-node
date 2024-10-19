@@ -25,7 +25,7 @@ const data ={};
 
 		points_total = 0;
 
-		for (this.cart.getProducts() as product) {
+		for (await this.cart.getProducts() as product) {
 			if (product['points']) {
 				points_total += product['points'];
 			}
@@ -67,7 +67,7 @@ const data ={};
 
 		json['maximum'] = 0;
 
-		for (this.cart.getProducts() as product) {
+		for (await this.cart.getProducts() as product) {
 			if (product['points']) {
 				json['maximum'] += product['points'];
 			}

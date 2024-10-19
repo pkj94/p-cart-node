@@ -1,19 +1,12 @@
-<?php
-namespace Opencart\Catalog\Model\Account;
-/**
- *
- *
- * @package Opencart\Catalog\Model\Account
- */
-class AddressController extends Model {
+module.exports =class AddressModel extends Model {
 	/**
 	 * @param   customer_id
-	 * @param array data
+	 * @param data
 	 *
 	 * @return int
 	 */
-	async addAddress(customer_id, array data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "address` SET `customer_id` = '" + customer_id + "', `firstname` = '" + this.db.escape(data['firstname']) + "', `lastname` = '" + this.db.escape(data['lastname']) + "', `company` = '" + this.db.escape(data['company']) + "', `address_1` = '" + this.db.escape(data['address_1']) + "', `address_2` = '" + this.db.escape(data['address_2']) + "', `postcode` = '" + this.db.escape(data['postcode']) + "', `city` = '" + this.db.escape(data['city']) + "', `zone_id` = '" + data['zone_id'] + "', `country_id` = '" + data['country_id'] + "', `custom_field` = '" + this.db.escape((data['custom_field']) ? json_encode(data['custom_field']) : '') + "', `default` = '" + ((data['default']) ? data['default'] : 0) + "'");
+	async addAddress(customer_id, data) {
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "address` SET `customer_id` = '" + customer_id + "', `firstname` = " + this.db.escape(data['firstname']) + ", `lastname` = " + this.db.escape(data['lastname']) + ", `company` = " + this.db.escape(data['company']) + ", `address_1` = " + this.db.escape(data['address_1']) + ", `address_2` = " + this.db.escape(data['address_2']) + ", `postcode` = " + this.db.escape(data['postcode']) + ", `city` = " + this.db.escape(data['city']) + ", `zone_id` = '" + data['zone_id'] + "', `country_id` = '" + data['country_id'] + "', `custom_field` = " + this.db.escape((data['custom_field']) ? json_encode(data['custom_field']) : '') + ", `default` = '" + ((data['default']) ? data['default'] : 0) + "'");
 
 		address_id = this.db.getLastId();
 
@@ -26,12 +19,12 @@ class AddressController extends Model {
 
 	/**
 	 * @param   address_id
-	 * @param array data
+	 * @param data
 	 *
 	 * @return void
 	 */
-	async editAddress(address_id, array data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "address` SET `firstname` = '" + this.db.escape(data['firstname']) + "', `lastname` = '" + this.db.escape(data['lastname']) + "', `company` = '" + this.db.escape(data['company']) + "', `address_1` = '" + this.db.escape(data['address_1']) + "', `address_2` = '" + this.db.escape(data['address_2']) + "', `postcode` = '" + this.db.escape(data['postcode']) + "', `city` = '" + this.db.escape(data['city']) + "', `zone_id` = '" + data['zone_id'] + "', `country_id` = '" + data['country_id'] + "', `custom_field` = '" + this.db.escape((data['custom_field']) ? json_encode(data['custom_field']) : '') + "', `default` = '" + ((data['default']) ? data['default'] : 0) + "' WHERE `address_id` = '" + address_id + "' AND `customer_id` = '" + await this.customer.getId() + "'");
+	async editAddress(address_id, data) {
+		await this.db.query("UPDATE `" + DB_PREFIX + "address` SET `firstname` = " + this.db.escape(data['firstname']) + ", `lastname` = " + this.db.escape(data['lastname']) + ", `company` = " + this.db.escape(data['company']) + ", `address_1` = " + this.db.escape(data['address_1']) + ", `address_2` = " + this.db.escape(data['address_2']) + ", `postcode` = " + this.db.escape(data['postcode']) + ", `city` = " + this.db.escape(data['city']) + ", `zone_id` = '" + data['zone_id'] + "', `country_id` = '" + data['country_id'] + "', `custom_field` = " + this.db.escape((data['custom_field']) ? json_encode(data['custom_field']) : '') + ", `default` = '" + ((data['default']) ? data['default'] : 0) + "' WHERE `address_id` = '" + address_id + "' AND `customer_id` = '" + await this.customer.getId() + "'");
 
 		if ((data['default'])) {
 			await this.db.query("UPDATE `" + DB_PREFIX + "address` SET `default` = '0' WHERE `address_id` != '" + address_id + "' AND `customer_id` = '" + await this.customer.getId() + "'");
@@ -85,7 +78,7 @@ class AddressController extends Model {
 				zone_code = '';
 			}
 
-			return [
+			return {
 				'address_id'     : address_query.row['address_id'],
 				'firstname'      : address_query.row['firstname'],
 				'lastname'       : address_query.row['lastname'],
@@ -104,9 +97,9 @@ class AddressController extends Model {
 				'address_format' : address_format,
 				'custom_field'   : JSON.parse(address_query.row['custom_field'], true),
 				'default'        : address_query.row['default']
-			];
+			};
 		} else {
-			return [];
+			return { m};
 		}
 	}
 

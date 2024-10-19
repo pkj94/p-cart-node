@@ -36,7 +36,7 @@ module.exports = class VoucherModel extends Model {
 				delete this.session.data['voucher'];
 			}
 		}
-		await this.session.save();
+		await this.session.save(this.session.data);
 		return { totals, taxes, total }
 	}
 

@@ -787,7 +787,7 @@ module.exports = class ProductController extends Controller {
 		this.load.model('catalog/option', this);
 		let product_options = [];
 		if (product_id) {
-			product_options = await this.model_catalog_product.getOptions(product_id);
+			const product_options = await this.model_catalog_product.getOptions(product_id);
 		}
 
 		data['product_options'] = [];

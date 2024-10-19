@@ -1,4 +1,4 @@
-module.exports = class UploadController extends Model {
+module.exports = class UploadModel extends Model {
 	/**
 	 * @param string name
 	 * @param string filename

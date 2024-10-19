@@ -1,7 +1,7 @@
 module.exports = class ThemeController extends Controller {
 	/**
 	 * @param string route
-	 * @param array  args
+	 * @param  args
 	 * @param string code
 	 *
 	 * @return void

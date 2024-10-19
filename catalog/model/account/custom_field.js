@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Catalog\Model\Account;
-/**
- *
- *
- * @package Opencart\Catalog\Model\Account
- */
-class CustomFieldController extends Model {
+module.exports =class CustomFieldModel extends Model {
 	/**
 	 * @param custom_field_id
 	 *

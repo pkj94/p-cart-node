@@ -1,4 +1,4 @@
-module.exports =class StockStatusController extends Model {
+module.exports =class StockStatusModel extends Model {
 	/**
 	 * @param stock_status_id
 	 *
@@ -11,7 +11,7 @@ module.exports =class StockStatusController extends Model {
 	}
 
 	/**
-	 * @param array data
+	 * @param data
 	 *
 	 * @return array
 	 */

@@ -1,12 +1,12 @@
-module.exports=class TranslationController extends Controller {
+module.exports = class TranslationController extends Controller {
 	/**
 	 * @param string route
 	 * @param string prefix
 	 *
 	 * @return void
 	 */
-	async index(&route, &prefix) {
-		this.load.model('design/translation');
+	async index(route, prefix) {
+		this.load.model('design/translation', this);
 
 		const results = await this.model_design_translation.getTranslations(route);
 
@@ -16,6 +16,6 @@ module.exports=class TranslationController extends Controller {
 			} else {
 				this.language.set(prefix + '_' + result['key'], html_entity_decode(result['value']));
 			}
-		}	
+		}
 	}
 }

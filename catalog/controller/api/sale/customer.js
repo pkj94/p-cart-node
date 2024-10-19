@@ -25,7 +25,7 @@ const data ={};
 			'account_custom_field'
 		];
 
-		for (keys as key) {
+		for (let key of keys) {
 			if (!(this.request.post[key])) {
 				this.request.post[key] = '';
 			}

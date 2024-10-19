@@ -1,4 +1,3 @@
-const { number } = require("joi");
 module.exports = {
     name: DB_PREFIX + 'coupon_history',
     schema: {

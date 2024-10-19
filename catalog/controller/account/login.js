@@ -6,7 +6,7 @@ module.exports=class LoginController extends Controller {
 const data ={};
 		// If already logged in and has matching token then redirect to account page
 		if (await this.customer.isLogged() && (this.request.get['customer_token']) && (this.session.data['customer_token']) && (this.request.get['customer_token'] == this.session.data['customer_token'])) {
-			this.response.redirect(await this.url.link('account/account', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token']));
+			this.response.setRedirect(await this.url.link('account/account', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token']));
 		}
 
 		await this.load.language('account/login');
@@ -113,7 +113,7 @@ const data ={};
 				'redirect'
 			];
 
-			for (keys as key) {
+			for (let key of keys) {
 				if (!(this.request.post[key])) {
 					this.request.post[key] = '';
 				}
@@ -170,14 +170,17 @@ const data ={};
 			}
 
 			// Log the IP info
-			await this.model_account_customer.addLogin(await this.customer.getId(), this.request.server['REMOTE_ADDR']);
+			await this.model_account_customer.addLogin(await this.customer.getId(), (this.request.server.headers['x-forwarded-for'] ||
+					this.request.server.connection.remoteAddress ||
+					this.request.server.socket.remoteAddress ||
+					this.request.server.connection.socket.remoteAddress));
 
 			// Create customer token
 			this.session.data['customer_token'] = oc_token(26);
 
 			await this.model_account_customer.deleteLoginAttempts(this.request.post['email']);
 
-			// Added strpos check to pass McAfee PCI compliance test (http://forum+opencart+com/viewtopic+php?f=10&t=12043&p=151494#p151295)
+			// Added strpos check to pass McAfee PCI compliance test (http://forum.open.com/viewtopic+php?f=10&t=12043&p=151494#p151295)
 			if ((this.request.post['redirect']) && (strpos(this.request.post['redirect'], this.config.get('config_url')) !== false)) {
 				json['redirect'] = str_replace('&amp;', '&', this.request.post['redirect']) + '&customer_token=' + this.session.data['customer_token'];
 			} else {
@@ -259,13 +262,13 @@ const data ={};
 			// Create customer token
 			this.session.data['customer_token'] = oc_token(26);
 
-			this.response.redirect(await this.url.link('account/account', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token']));
+			this.response.setRedirect(await this.url.link('account/account', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token']));
 		} else {
 			this.session.data['error'] = this.language.get('error_login');
 
 			await this.model_account_customer.editToken(email, '');
 
-			this.response.redirect(await this.url.link('account/login', 'language=' + this.config.get('config_language')));
+			this.response.setRedirect(await this.url.link('account/login', 'language=' + this.config.get('config_language')));
 		}
 	}
 }

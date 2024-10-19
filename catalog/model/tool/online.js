@@ -1,4 +1,4 @@
-module.exports = class OnlineController extends Model {
+module.exports = class OnlineModel extends Model {
 	/**
 	 * @param string ip
 	 * @param    customer_id

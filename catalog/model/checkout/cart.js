@@ -1,7 +1,5 @@
-module.exports = class CartController extends Model {
-	/**
-	 * @return array
-	 */
+module.exports = class CartModel extends Model {
+
 	async getProducts() {
 		this.load.model('tool/image', this);
 		this.load.model('tool/upload', this);
@@ -10,8 +8,7 @@ module.exports = class CartController extends Model {
 		let product_data = [];
 
 		let products = await this.cart.getProducts();
-
-		for (let product of products) {
+		for (let [cart_id, product] of Object.entries(products)) {
 			let image = await this.model_tool_image.resize('placeholder.png', this.config.get('config_image_cart_width'), this.config.get('config_image_cart_height'));
 			if (product['image']) {
 				image = await this.model_tool_image.resize(html_entity_decode(product['image']), this.config.get('config_image_cart_width'), this.config.get('config_image_cart_height'));
@@ -46,7 +43,7 @@ module.exports = class CartController extends Model {
 
 			let product_total = 0;
 
-			for (let product_2 of products) {
+			for (let [cart_id, product_2] of Object.entries(products)) {
 				if (product_2['product_id'] == product['product_id']) {
 					product_total += product_2['quantity'];
 				}
@@ -83,9 +80,6 @@ module.exports = class CartController extends Model {
 		return product_data;
 	}
 
-	/**
-	 * @return array
-	 */
 	async getVouchers() {
 		let voucher_data = [];
 
@@ -108,25 +102,23 @@ module.exports = class CartController extends Model {
 		return voucher_data;
 	}
 
-	/**
-	 * @param array totals
-	 * @param array taxes
-	 * @param   total
-	 *
-	 * @return void
-	 */
 	async getTotals(totals, taxes, total) {
 		this.load.model('setting/extension', this);
-		let results = await this.model_setting_extension.getExtensionsByType('total');
-
+		let results = await this.registry.get('model_setting_extension').getExtensionsByType('total');
+		// console.log(results)
 		results = results.sort((a, b) => a['total_' + a['code'] + '_sort_order'] - b['total_' + b['code'] + '_sort_order']);
 
 		for (let result of results) {
 			if (this.config.get('total_' + result['code'] + '_status')) {
 				this.load.model('extension/' + result['extension'] + '/total/' + result['code'], this);
 
-				// __call magic method cannot pass-by-reference so we get PHP to call it as an anonymous function+
-				let data = await this['model_extension_' + result['extension'] + '_total_' + result['code']].getTotal(totals, taxes, total);
+				// __call magic method cannot pass-by-reference so we get PHP to call it as an anonymous function.
+				let data = await this.registry.get('model_extension_' + result['extension'] + '_total_' + result['code']).getTotal(totals, taxes, total);
+				// console.log('data---', data)
+
+				total = data.total;
+				totals = data.totals;
+				taxes = data.taxes;
 			}
 		}
 

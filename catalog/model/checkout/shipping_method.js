@@ -1,10 +1,10 @@
 module.exports=class ShippingMethodController extends Controller {
 	/**
-	 * @param array shipping_address
+	 * @param shipping_address
 	 *
 	 * @return array
 	 */
-	async getMethods(array shipping_address) {
+	async getMethods(shipping_address) {
 		method_data = [];
 
 		this.load.model('setting/extension',this);

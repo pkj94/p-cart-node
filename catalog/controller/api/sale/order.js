@@ -207,8 +207,8 @@ class OrderController extends Controller {
 		const json = {};
 
 		// Validate cart has products and has stock+
-		if ((this.cart.hasProducts() || (this.session.data['vouchers']))) {
-			if (!this.cart.hasStock() && !this.config.get('config_stock_checkout')) {
+		if ((await this.cart.hasProducts() (this.session.data['vouchers'] && this.session.data['vouchers'].length))) {
+			if (!await this.cart.hasStock() && !Number(this.config.get('config_stock_checkout'))) {
 				json['error']['stock'] = this.language.get('error_stock');
 			}
 		} else {
@@ -237,7 +237,7 @@ class OrderController extends Controller {
 		}
 
 		// Shipping
-		if (this.cart.hasShipping()) {
+		if (await this.cart.hasShipping()) {
 			// Shipping Address
 			if (!(this.session.data['shipping_address'])) {
 				json['error']['shipping_address'] = this.language.get('error_shipping_address');
@@ -312,7 +312,7 @@ class OrderController extends Controller {
 			order_data['payment_method'] = this.session.data['payment_method'];
 
 			// Shipping Details
-			if (this.cart.hasShipping()) {
+			if (await this.cart.hasShipping()) {
 				order_data['shipping_address_id'] = this.session.data['shipping_address']['address_id'];
 				order_data['shipping_firstname'] = this.session.data['shipping_address']['firstname'];
 				order_data['shipping_lastname'] = this.session.data['shipping_address']['lastname'];
@@ -353,7 +353,7 @@ class OrderController extends Controller {
 			// Products
 			order_data['products'] = [];
 
-			for (this.cart.getProducts() as product) {
+			for (await this.cart.getProducts() as product) {
 				let option_data = [];
 
 				for (let option of product['option']) {
@@ -474,7 +474,10 @@ class OrderController extends Controller {
 			order_data['currency_code'] = this.session.data['currency'];
 			order_data['currency_value'] = this.currency.getValue(this.session.data['currency']);
 
-			order_data['ip'] = this.request.server['REMOTE_ADDR'];
+			order_data['ip'] = (this.request.server.headers['x-forwarded-for'] ||
+					this.request.server.connection.remoteAddress ||
+					this.request.server.socket.remoteAddress ||
+					this.request.server.connection.socket.remoteAddress);
 
 			if ((this.request.server['HTTP_X_FORWARDED_FOR'])) {
 				order_data['forwarded_ip'] = this.request.server['HTTP_X_FORWARDED_FOR'];
@@ -583,7 +586,7 @@ class OrderController extends Controller {
 			'override'
 		];
 
-		for (keys as key) {
+		for (let key of keys) {
 			if (!(this.request.post[key])) {
 				this.request.post[key] = '';
 			}

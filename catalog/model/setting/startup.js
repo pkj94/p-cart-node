@@ -1,4 +1,4 @@
-module.exports = class StartupController extends Model {
+module.exports = class StartupModel extends Model {
 	/**
 	 * @return mixed
 	 */

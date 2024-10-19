@@ -1,4 +1,4 @@
-module.exports =class OrderStatusController extends Model {
+module.exports =class OrderStatusModel extends Model {
 	/**
 	 * @param order_status_id
 	 *

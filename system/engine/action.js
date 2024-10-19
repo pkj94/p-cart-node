@@ -45,6 +45,8 @@ module.exports = class Action {
                 try {
                     const ControllerClass = require(`${className}`);
                     const controller = new ControllerClass(registry);
+                    // if (this.route.indexOf('theme') >= 0)
+                    //     console.log(className)
                     if (typeof controller[this.method] == 'function') {
                         resolve(await controller[this.method](...args));
                     } else {

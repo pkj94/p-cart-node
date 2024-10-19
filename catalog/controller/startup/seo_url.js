@@ -4,7 +4,7 @@ module.exports = class SeoUrlController extends Controller {
 	 */
 	async index() {
 		// Add rewrite to URL class
-		if (this.config.get('config_seo_url')) {
+		if (Number(this.config.get('config_seo_url'))) {
 			this.url.addRewrite(this);
 
 			this.load.model('design/seo_url', this);

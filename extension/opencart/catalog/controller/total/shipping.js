@@ -133,7 +133,7 @@ module.exports = class ShippingController extends Controller {
 				json['error']['warning'] = sprintf(this.language.get('error_no_shipping'), await this.url.link('information/contact', 'language=' + this.config.get('config_language')));
 			}
 		}
-		await this.session.save();
+		await this.session.save(this.session.data);
 		this.response.addHeader('Content-Type: application/json');
 		this.response.setOutput(json);
 	}
@@ -164,7 +164,7 @@ module.exports = class ShippingController extends Controller {
 			delete this.session.data['payment_method'];
 			delete this.session.data['payment_methods'];
 		}
-		await this.session.save();
+		await this.session.save(this.session.data);
 		this.response.addHeader('Content-Type: application/json');
 		this.response.setOutput(json);
 	}

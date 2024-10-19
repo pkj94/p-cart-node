@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Catalog\Model\Account;
-/**
- *
- *
- * @package Opencart\Catalog\Model\Account
- */
-class CustomerGroupController extends Model {
+module.exports =class CustomerGroupModel extends Model {
 	/**
 	 * @param customer_group_id
 	 *

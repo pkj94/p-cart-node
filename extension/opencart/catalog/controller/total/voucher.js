@@ -67,7 +67,7 @@ module.exports = class VoucherController extends Controller {
 			delete this.session.data['payment_method'];
 			delete this.session.data['payment_methods'];
 		}
-		await this.session.save();
+		await this.session.save(this.session.data);
 		this.response.addHeader('Content-Type: application/json');
 		this.response.setOutput(json);
 	}

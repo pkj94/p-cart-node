@@ -9,7 +9,7 @@ class ForgottenController extends Controller {
 	// catalog/model/account/customer/editCode/after
 	/**
 	 * @param string route
-	 * @param array  args
+	 * @param  args
 	 * @param mixed  output
 	 *
 	 * @return void
@@ -31,7 +31,10 @@ class ForgottenController extends Controller {
 				data['text_greeting'] = sprintf(this.language.get('text_greeting'), store_name);
 
 				data['reset'] = await this.url.link('account/forgotten+reset', 'language=' + this.config.get('config_language') + '&email=' + encodeURIComponent(args[0]) + '&code=' + args[1], true);
-				data['ip'] = this.request.server['REMOTE_ADDR'];
+				data['ip'] = (this.request.server.headers['x-forwarded-for'] ||
+					this.request.server.connection.remoteAddress ||
+					this.request.server.socket.remoteAddress ||
+					this.request.server.connection.socket.remoteAddress);
 
 				data['store'] = store_name;
 				data['store_url'] = this.config.get('config_url');

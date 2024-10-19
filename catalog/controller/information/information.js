@@ -55,7 +55,7 @@ const data ={};
 
 			this.response.setOutput(await this.load.view('information/information', data));
 		} else {
-			return new \Opencart\System\Engine\Action('error/not_found');
+			return new Action('error/not_found');
 		}
 
 		return null;

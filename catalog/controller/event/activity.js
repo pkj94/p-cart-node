@@ -2,7 +2,7 @@ module.exports=class ActivityController extends Controller {
 	// catalog/model/account/customer/addCustomer/after
 	/**
 	 * @param string route
-	 * @param array  args
+	 * @param  args
 	 * @param mixed  output
 	 *
 	 * @return void
@@ -24,7 +24,7 @@ module.exports=class ActivityController extends Controller {
 
 	/**
 	 * @param string route
-	 * @param array  args
+	 * @param  args
 	 * @param mixed  output
 	 *
 	 * @return void
@@ -46,7 +46,7 @@ module.exports=class ActivityController extends Controller {
 
 	/**
 	 * @param string route
-	 * @param array  args
+	 * @param  args
 	 * @param mixed  output
 	 *
 	 * @return void
@@ -81,7 +81,7 @@ module.exports=class ActivityController extends Controller {
 
 	/**
 	 * @param string route
-	 * @param array  args
+	 * @param  args
 	 * @param mixed  output
 	 *
 	 * @return void
@@ -107,7 +107,7 @@ module.exports=class ActivityController extends Controller {
 
 	/**
 	 * @param string route
-	 * @param array  args
+	 * @param  args
 	 * @param mixed  output
 	 *
 	 * @return void
@@ -135,7 +135,7 @@ module.exports=class ActivityController extends Controller {
 
 	/**
 	 * @param string route
-	 * @param array  args
+	 * @param  args
 	 * @param mixed  output
 	 *
 	 * @return void
@@ -164,7 +164,7 @@ module.exports=class ActivityController extends Controller {
 
 	/**
 	 * @param string route
-	 * @param array  args
+	 * @param  args
 	 * @param mixed  output
 	 *
 	 * @return void
@@ -186,7 +186,7 @@ module.exports=class ActivityController extends Controller {
 
 	/**
 	 * @param string route
-	 * @param array  args
+	 * @param  args
 	 * @param mixed  output
 	 *
 	 * @return void
@@ -208,7 +208,7 @@ module.exports=class ActivityController extends Controller {
 
 	/**
 	 * @param string route
-	 * @param array  args
+	 * @param  args
 	 * @param mixed  output
 	 *
 	 * @return void
@@ -230,7 +230,7 @@ module.exports=class ActivityController extends Controller {
 
 	/**
 	 * @param string route
-	 * @param array  args
+	 * @param  args
 	 * @param mixed  output
 	 *
 	 * @return void
@@ -252,7 +252,7 @@ module.exports=class ActivityController extends Controller {
 
 	/**
 	 * @param string route
-	 * @param array  args
+	 * @param  args
 	 * @param mixed  output
 	 *
 	 * @return void
@@ -274,7 +274,7 @@ module.exports=class ActivityController extends Controller {
 
 	/**
 	 * @param string route
-	 * @param array  args
+	 * @param  args
 	 * @param mixed  output
 	 *
 	 * @return void
@@ -306,7 +306,7 @@ module.exports=class ActivityController extends Controller {
 
 	/**
 	 * @param string route
-	 * @param array  args
+	 * @param  args
 	 *
 	 * @return void
 	 */

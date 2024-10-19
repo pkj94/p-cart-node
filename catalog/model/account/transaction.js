@@ -1,13 +1,6 @@
-<?php
-namespace Opencart\Catalog\Model\Account;
-/**
- *
- *
- * @package Opencart\Catalog\Model\Account
- */
-class TransactionController extends Model {
+module.exports =class TransactionModel extends Model {
 	/**
-	 * @param array data
+	 * @param data
 	 *
 	 * @return array
 	 */

@@ -1,4 +1,4 @@
-module.exports = class SeoUrlController extends Model {
+module.exports = class SeoUrlModel extends Model {
 	/**
 	 * @param string keyword
 	 *

@@ -49,12 +49,13 @@ module.exports = class SessionController extends Controller {
 		// session.start(session_id);
 
 		let option = {
-			'expires': Date.now() + (parseInt(config.get('config_session_expire')) * 1000),
+			'expires': new Date(Date.now() + (parseInt(config.get('config_session_expire')) * 1000)),
 			'path': this.config.get('session_path'),
 			'secure': this.request.server['protocol'].toLowerCase() == 'https' ? true : false,
 			'httponly': false,
 			'SameSite': this.config.get('session_samesite')
 		};
+		// console.log(option)
 
 		this.response.addHeader('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
 		this.response.response.cookie(this.config.get('session_name'), session.getId(), option);

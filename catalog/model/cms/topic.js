@@ -5,7 +5,7 @@ namespace Opencart\Catalog\Model\Cms;
  *
  * @package Opencart\Catalog\Model\Cms
  */
-class TopicController extends Model {
+class TopicModel extends Model {
 	/**
 	 * @param topic_id
 	 *

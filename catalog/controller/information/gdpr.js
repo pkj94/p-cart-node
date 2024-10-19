@@ -7,7 +7,7 @@ namespace Opencart\Catalog\Controller\Information;
  */
 class GdprController extends Controller {
 	/**
-	 * @return object|\Opencart\System\Engine\Action|null
+	 * @return object|Action|null
 	 */
 	async index() {
 const data ={};
@@ -55,7 +55,7 @@ const data ={};
 
 			return null;
 		} else {
-			return new \Opencart\System\Engine\Action('error/not_found');
+			return new Action('error/not_found');
 		}
 	}
 
@@ -145,7 +145,7 @@ const data ={};
 	}
 
 	/**
-	 * @return object|\Opencart\System\Engine\Action|null
+	 * @return object|Action|null
 	 */
 	async success() {
 		if ((this.request.get['code'])) {
@@ -201,7 +201,7 @@ const data ={};
 
 			return null;
 		} else {
-			return new \Opencart\System\Engine\Action('error/not_found');
+			return new Action('error/not_found');
 		}
 	}
 }

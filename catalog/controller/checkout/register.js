@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Catalog\Controller\Checkout;
-/**
- *
- *
- * @package Opencart\Catalog\Controller\Checkout
- */
-class RegisterController extends Controller {
+module.exports = class RegisterController extends Controller {
 	/**
 	 * @return string
 	 */
@@ -17,11 +10,11 @@ const data ={};
 
 		data['entry_newsletter'] = sprintf(this.language.get('entry_newsletter'), this.config.get('config_name'));
 
-		data['error_upload_size'] = sprintf(this.language.get('error_upload_size'), this.config.get('config_file_max_size'));
+		data['error_upload_size'] = sprintf(this.language.get('error_upload_size'), Number(this.config.get('config_file_max_size')));
 
 		data['config_checkout_payment_address'] = this.config.get('config_checkout_payment_address');
-		data['config_checkout_guest'] = (this.config.get('config_checkout_guest') && !this.config.get('config_customer_price') && !this.cart.hasDownload() && !this.cart.hasSubscription());
-		data['config_file_max_size'] = (this.config.get('config_file_max_size') * 1024 * 1024);
+		data['config_checkout_guest'] = (this.config.get('config_checkout_guest') && !Number(this.config.get('config_customer_price')) && !this.cart.hasDownload() && !this.cart.hasSubscription());
+		data['config_file_max_size'] = (Number(this.config.get('config_file_max_size')) * 1024 * 1024);
 		data['config_telephone_display'] = this.config.get('config_telephone_display');
 		data['config_telephone_required'] = this.config.get('config_telephone_required');
 
@@ -144,7 +137,7 @@ const data ={};
 
 		extension_info = await this.model_setting_extension.getExtensionByCode('captcha', this.config.get('config_captcha'));
 
-		if (extension_info && this.config.get('captcha_' + this.config.get('config_captcha') + '_status') && in_array('register', this.config.get('config_captcha_page'))) {
+		if (extension_info && Number(this.config.get('captcha_' + this.config.get('config_captcha') + '_status')) && in_array('register', this.config.get('config_captcha_page'))) {
 			data['captcha'] = await this.load.controller('extension/'  + extension_info['extension'] + '/captcha/' + extension_info['code']);
 		} else {
 			data['captcha'] = '';
@@ -203,19 +196,19 @@ const data ={};
 			'agree'
 		];
 
-		for (keys as key) {
+		for (let key of keys) {
 			if (!(this.request.post[key])) {
 				this.request.post[key] = '';
 			}
 		}
 
 		// Force account requires subscript or is a downloadable product+
-		if (this.cart.hasDownload() || this.cart.hasSubscription()) {
+		if (await this.cart.hasDownload() || this.cart.hasSubscription()) {
 			this.request.post['account'] = 1;
 		}
 
 		// Validate cart has products and has stock+
-		if ((!this.cart.hasProducts() && empty(this.session.data['vouchers'])) || (!this.cart.hasStock() && !this.config.get('config_stock_checkout'))) {
+		if ((!await this.cart.hasProducts() && empty(this.session.data['vouchers'])) || (!await this.cart.hasStock() && !Number(this.config.get('config_stock_checkout')))) {
 			json['redirect'] = await this.url.link('checkout/cart', 'language=' + this.config.get('config_language'), true);
 		}
 
@@ -232,7 +225,7 @@ const data ={};
 
 		if (!Object.keys(json).length) {
 			// If not guest checkout disabled, login require price or cart has downloads
-			if (!this.request.post['account'] && (!this.config.get('config_checkout_guest') || this.config.get('config_customer_price'))) {
+			if (!this.request.post['account'] && (!this.config.get('config_checkout_guest') || Number(this.config.get('config_customer_price')))) {
 				json['error']['warning'] = this.language.get('error_guest');
 			}
 
@@ -334,7 +327,7 @@ const data ={};
 				}
 			}
 
-			if (this.cart.hasShipping() && !this.request.post['address_match']) {
+			if (await this.cart.hasShipping() && !this.request.post['address_match']) {
 				// If payment address not required we need to use the firstname and lastname from the account+
 				if (this.config.get('config_checkout_payment_address')) {
 					if ((oc_strlen(this.request.post['shipping_firstname']) < 1) || (oc_strlen(this.request.post['shipping_firstname']) > 32)) {
@@ -403,8 +396,8 @@ const data ={};
 			if (!await this.customer.isLogged()) {
 				extension_info = await this.model_setting_extension.getExtensionByCode('captcha', this.config.get('config_captcha'));
 
-				if (extension_info && this.config.get('captcha_' + this.config.get('config_captcha') + '_status') && in_array('register', this.config.get('config_captcha_page'))) {
-					captcha = await this.load.controller('extension/' + extension_info['extension'] + '/captcha/' + extension_info['code'] + '+validate');
+				if (extension_info && Number(this.config.get('captcha_' + this.config.get('config_captcha') + '_status')) && in_array('register', this.config.get('config_captcha_page'))) {
+					const captcha = await this.load.controller('extension/' + extension_info['extension'] + '/captcha/' + extension_info['code'] + '+validate');
 
 					if (captcha) {
 						json['error']['captcha'] = captcha;
@@ -513,7 +506,7 @@ const data ={};
 			}
 
 			// Shipping Address
-			if (this.cart.hasShipping()) {
+			if (await this.cart.hasShipping()) {
 				if (!this.request.post['address_match']) {
 					if ((this.session.data['shipping_address']['address_id'])) {
 						address_id = this.session.data['shipping_address']['address_id'];

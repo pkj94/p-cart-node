@@ -38,7 +38,7 @@ module.exports = class Framework {
                 let value = actionEvents[key];
                 for (let priority in value) {
                     let action = value[priority];
-                    event.register(key, new Action(action), priority);
+                    await event.register(key, new Action(action), priority);
                 }
             }
         }
@@ -79,6 +79,7 @@ module.exports = class Framework {
             let session = new SessionLibrary(registry);
             session.start(req.sessionID)
             registry.set('session', session);
+
         }
         // Cache
         registry.set('cache', new CacheLibrary(global.config.get('cache_engine'), global.config.get('cache_expire')));

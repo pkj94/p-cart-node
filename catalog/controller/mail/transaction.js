@@ -9,7 +9,7 @@ class TransactionController extends Controller {
 	// catalog/model/account/customer/addTransaction/after
 	/**
 	 * @param string route
-	 * @param array  args
+	 * @param  args
 	 * @param mixed  output
 	 *
 	 * @return void

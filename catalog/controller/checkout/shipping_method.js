@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Catalog\Controller\Checkout;
-/**
- *
- *
- * @package Opencart\Catalog\Controller\Checkout
- */
-class ShippingMethodController extends Controller {
+module.exports = class ShippingMethodController extends Controller {
 	/**
 	 * @return string
 	 */
@@ -35,7 +28,7 @@ const data ={};
 		const json = {};
 
 		// Validate cart has products and has stock+
-		if ((!this.cart.hasProducts() && empty(this.session.data['vouchers'])) || (!this.cart.hasStock() && !this.config.get('config_stock_checkout'))) {
+		if ((!await this.cart.hasProducts() && empty(this.session.data['vouchers'])) || (!await this.cart.hasStock() && !Number(this.config.get('config_stock_checkout')))) {
 			json['redirect'] = await this.url.link('checkout/cart', 'language=' + this.config.get('config_language'), true);
 		}
 
@@ -62,7 +55,7 @@ const data ={};
 			}
 
 			// Validate if shipping not required+ If not the customer should not have reached this page+
-			if (this.cart.hasShipping() && !(this.session.data['shipping_address']['address_id'])) {
+			if (await this.cart.hasShipping() && !(this.session.data['shipping_address']['address_id'])) {
 				json['error'] = this.language.get('error_shipping_address');
 			}
 		}
@@ -93,7 +86,7 @@ const data ={};
 		const json = {};
 
 		// Validate cart has products and has stock+
-		if ((!this.cart.hasProducts() && empty(this.session.data['vouchers'])) || (!this.cart.hasStock() && !this.config.get('config_stock_checkout'))) {
+		if ((!await this.cart.hasProducts() && empty(this.session.data['vouchers'])) || (!await this.cart.hasStock() && !Number(this.config.get('config_stock_checkout')))) {
 			json['redirect'] = await this.url.link('checkout/cart', 'language=' + this.config.get('config_language'), true);
 		}
 
@@ -120,7 +113,7 @@ const data ={};
 			}
 
 			// Validate if shipping not required+ If not the customer should not have reached this page+
-			if (this.cart.hasShipping() && !(this.session.data['shipping_address']['address_id'])) {
+			if (await this.cart.hasShipping() && !(this.session.data['shipping_address']['address_id'])) {
 				json['error'] = this.language.get('error_shipping_address');
 			}
 

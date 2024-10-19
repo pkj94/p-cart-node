@@ -5,7 +5,7 @@ namespace Opencart\Catalog\Model\Cms;
  *
  * @package Opencart\Catalog\Model\Cms
  */
-class ArticleController extends Model {
+class ArticleModel extends Model {
 	/**
 	 * @param article_id
 	 *
@@ -28,7 +28,7 @@ class ArticleController extends Model {
 	}
 
 	/**
-	 * @param array data
+	 * @param data
 	 *
 	 * @return array
 	 */
@@ -166,18 +166,18 @@ class ArticleController extends Model {
 
 	/**
 	 * @param   product_id
-	 * @param array data
+	 * @param data
 	 *
 	 * @return int
 	 */
-	async addComment(article_id, array data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "article_comment` SET `article_id` = '" + article_id + "', `customer_id` = '" + await this.customer.getId() + "', `author` = '" + this.db.escape(data['author']) + "', `comment` = '" + this.db.escape(data['comment']) + "', `status` = '" + (data['status']) + "', `date_added` = NOW()");
+	async addComment(article_id, data) {
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "article_comment` SET `article_id` = '" + article_id + "', `customer_id` = '" + await this.customer.getId() + "', `author` = '" + this.db.escape(data['author']) + "', `comment` = " + this.db.escape(data['comment']) + ", `status` = '" + (data['status']) + "', `date_added` = NOW()");
 
 		return this.db.getLastId();
 	}
 
 	/**
-	 * @param array data
+	 * @param data
 	 *
 	 * @return array
 	 */
@@ -206,7 +206,7 @@ class ArticleController extends Model {
 	}
 
 	/**
-	 * @param array data
+	 * @param data
 	 *
 	 * @return int
 	 */

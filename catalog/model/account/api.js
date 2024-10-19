@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Catalog\Model\Account;
-/**
- *
- *
- * @package Opencart\Catalog\Model\Account
- */
-class ApiController extends Model {
+module.exports =class ApiModel extends Model {
 	/**
 	 * @param string username
 	 * @param string key
@@ -13,7 +6,7 @@ class ApiController extends Model {
 	 * @return array
 	 */
 	async login(username, key) {
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "api` WHERE `username` = '" + this.db.escape(username) + "' AND `key` = '" + this.db.escape(key) + "' AND `status` = '1'");
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "api` WHERE `username` = " + this.db.escape(username) + " AND `key` = " + this.db.escape(key) + " AND `status` = '1'");
 
 		return query.row;
 	}
@@ -26,7 +19,7 @@ class ApiController extends Model {
 	 * @return int
 	 */
 	async addSession(api_id, session_id, ip) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "api_session` SET `api_id` = '" + api_id + "', `session_id` = '" + this.db.escape(session_id) + "', `ip` = '" + this.db.escape(ip) + "', `date_added` = NOW(), `date_modified` = NOW()");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "api_session` SET `api_id` = '" + api_id + "', `session_id` = " + this.db.escape(session_id) + ", `ip` = " + this.db.escape(ip) + ", `date_added` = NOW(), `date_modified` = NOW()");
 
 		return this.db.getLastId();
 	}

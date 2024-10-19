@@ -1,24 +1,25 @@
 const sprintf = require("locutus/php/strings/sprintf");
 
-module.exports = class CartController extends Controller {
+module.exports = class CartCommonController extends Controller {
 	/**
 	 * @return string
 	 */
 	async index() {
 		const data = {};
 		await this.load.language('common/cart');
-
+		console.log('session common cart---', this.session.session_id)
 		let totals = [];
 		let taxes = await this.cart.getTaxes();
 		let total = 0;
-		console.log('totals',totals)
 		this.load.model('checkout/cart', this);
 
-		if (await this.customer.isLogged() || !this.config.get('config_customer_price')) {
-			let data = await this.model_checkout_cart.getTotals(totals, taxes, total);
-			totals = data.totals;
-			taxes = data.taxes;
-			total = data.total;
+		if (await this.customer.isLogged() || !Number(this.config.get('config_customer_price'))) {
+
+			let dataTotals = await this.model_checkout_cart.getTotals(totals, taxes, total);
+			// console.log('dataTotals---', dataTotals)
+			totals = dataTotals.totals || [];
+			taxes = dataTotals.taxes || {};
+			total = dataTotals.total || 0;
 		}
 
 		data['text_items'] = sprintf(this.language.get('text_items'), await this.cart.countProducts() + ((this.session.data['vouchers']) ? this.session.data['vouchers'].length : 0), this.currency.format(total, this.session.data['currency']));
@@ -38,9 +39,8 @@ module.exports = class CartController extends Controller {
 			// Display prices
 			let price = false;
 			let total = false;
-			if (await this.customer.isLogged() || !this.config.get('config_customer_price')) {
-				unit_price = this.tax.calculate(product['price'], product['tax_class_id'], this.config.get('config_tax'));
-
+			if (await this.customer.isLogged() || !Number(this.config.get('config_customer_price'))) {
+				let unit_price = this.tax.calculate(product['price'], product['tax_class_id'], Number(this.config.get('config_tax')));
 				price = this.currency.format(unit_price, this.session.data['currency']);
 				total = this.currency.format(unit_price * product['quantity'], this.session.data['currency']);
 			}
@@ -49,7 +49,7 @@ module.exports = class CartController extends Controller {
 
 			if (product['subscription']) {
 				if (product['subscription']['trial_status']) {
-					let trial_price = this.currency.format(this.tax.calculate(product['subscription']['trial_price'], product['tax_class_id'], this.config.get('config_tax')), this.session.data['currency']);
+					let trial_price = this.currency.format(this.tax.calculate(product['subscription']['trial_price'], product['tax_class_id'], Number(this.config.get('config_tax'))), this.session.data['currency']);
 					let trial_cycle = product['subscription']['trial_cycle'];
 					let trial_frequency = this.language.get('text_' + product['subscription']['trial_frequency']);
 					let trial_duration = product['subscription']['trial_duration'];
@@ -57,8 +57,8 @@ module.exports = class CartController extends Controller {
 					description += sprintf(this.language.get('text_subscription_trial'), trial_price, trial_cycle, trial_frequency, trial_duration);
 				}
 
-				if (await this.customer.isLogged() || !this.config.get('config_customer_price')) {
-					price = this.currency.format(this.tax.calculate(product['subscription']['price'], product['tax_class_id'], this.config.get('config_tax')), this.session.data['currency']);
+				if (await this.customer.isLogged() || !Number(this.config.get('config_customer_price'))) {
+					price = this.currency.format(this.tax.calculate(product['subscription']['price'], product['tax_class_id'], Number(this.config.get('config_tax'))), this.session.data['currency']);
 				}
 
 				let cycle = product['subscription']['cycle'];
@@ -102,7 +102,7 @@ module.exports = class CartController extends Controller {
 
 		// Totals
 		data['totals'] = [];
-		console.log('totals',totals)
+		// console.log('totals',totals)
 		for (let total of totals) {
 			data['totals'].push({
 				'title': total['title'],
@@ -110,9 +110,9 @@ module.exports = class CartController extends Controller {
 			});
 		}
 
-		data['list'] = await this.url.link('common/cart+info', 'language=' + this.config.get('config_language'));
-		data['product_remove'] = await this.url.link('common/cart+removeProduct', 'language=' + this.config.get('config_language'));
-		data['voucher_remove'] = await this.url.link('common/cart+removeVoucher', 'language=' + this.config.get('config_language'));
+		data['list'] = await this.url.link('common/cart.info', 'language=' + this.config.get('config_language'));
+		data['product_remove'] = await this.url.link('common/cart.removeProduct', 'language=' + this.config.get('config_language'));
+		data['voucher_remove'] = await this.url.link('common/cart.removeVoucher', 'language=' + this.config.get('config_language'));
 
 		data['cart'] = await this.url.link('checkout/cart', 'language=' + this.config.get('config_language'));
 		data['checkout'] = await this.url.link('checkout/checkout', 'language=' + this.config.get('config_language'));
@@ -154,7 +154,7 @@ module.exports = class CartController extends Controller {
 			delete this.session.data['payment_methods'];
 			delete this.session.data['reward'];
 		}
-		await this.session.save();
+		await this.session.save(this.session.data);
 		this.response.addHeader('Content-Type: application/json');
 		this.response.setOutput(json);
 	}
@@ -169,7 +169,7 @@ module.exports = class CartController extends Controller {
 		let key = '';
 		if ((this.request.get['key'])) {
 			key = this.request.get['key'];
-		} 
+		}
 
 		if (!(this.session.data['vouchers'][key])) {
 			json['error'] = this.language.get('error_voucher');
@@ -185,7 +185,7 @@ module.exports = class CartController extends Controller {
 			delete this.session.data['payment_methods'];
 			delete this.session.data['reward'];
 		}
-		await this.session.save();
+		await this.session.save(this.session.data);
 		this.response.addHeader('Content-Type: application/json');
 		this.response.setOutput(json);
 	}

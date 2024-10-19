@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Catalog\Model\Account;
-/**
- *
- *
- * @package Opencart\Catalog\Model\Account
- */
-class OrderController extends Model {
+module.exports =class OrderModel extends Model {
 	/**
 	 * @param order_id
 	 *

@@ -15,7 +15,7 @@ const data ={};
 
 		const json = {};
 
-		if (this.cart.hasShipping()) {
+		if (await this.cart.hasShipping()) {
 			if (!(this.session.data['shipping_address'])) {
 				json['error'] = this.language.get('error_shipping_address');
 			}
@@ -47,7 +47,7 @@ const data ={};
 
 		const json = {};
 
-		if (this.cart.hasShipping()) {
+		if (await this.cart.hasShipping()) {
 			if (!(this.session.data['shipping_address'])) {
 				json['error'] = this.language.get('error_shipping_address');
 			}

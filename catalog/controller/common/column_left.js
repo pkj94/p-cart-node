@@ -4,7 +4,7 @@ module.exports = class ColumnLeftController extends Controller {
 	 */
 	async index() {
 		const data = {};
-		this.load.model('design/layout',this);
+		this.load.model('design/layout', this);
 		let route = 'common/home';
 		if ((this.request.get['route'])) {
 			route = this.request.get['route'];
@@ -14,9 +14,9 @@ module.exports = class ColumnLeftController extends Controller {
 		if (route == 'product/category' && (this.request.get['path'])) {
 			this.load.model('catalog/category', this);
 
-			let path = this.request.get['path'].split('_');
+			let path = (Array.isArray(this.request.get['path']) ? this.request.get['path'][this.request.get['path'].length - 1] : this.request.get['path']).split('_');
 
-			layout_id = await this.model_catalog_category.getLayoutId(path[path.length-1]);
+			layout_id = await this.model_catalog_category.getLayoutId(path[path.length - 1]);
 		}
 
 		if (route == 'product/product' && (this.request.get['product_id'])) {
@@ -38,7 +38,7 @@ module.exports = class ColumnLeftController extends Controller {
 		}
 
 		if (route == 'cms/blog.info' && (this.request.get['blog_id'])) {
-			this.load.model('cms/blog',this);
+			this.load.model('cms/blog', this);
 
 			layout_id = await this.model_cms_blog.getLayoutId(this.request.get['blog_id']);
 		}
@@ -71,7 +71,7 @@ module.exports = class ColumnLeftController extends Controller {
 			if ((part[2])) {
 				const setting_info = await this.model_setting_module.getModule(part[2]);
 
-				if (setting_info.name&& Number(setting_info['status'])) {
+				if (setting_info.name && Number(setting_info['status'])) {
 					const output = await this.load.controller('extension/' + part[0] + '/module/' + part[1], setting_info);
 
 					if (output.length) {

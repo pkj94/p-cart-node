@@ -1,12 +1,12 @@
-module.exports=class ReviewController extends Model {
+module.exports=class ReviewModel extends Model {
 	/**
 	 * @param   product_id
-	 * @param array data
+	 * @param data
 	 *
 	 * @return int
 	 */
-	async addReview(product_id, array data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "review` SET `author` = '" + this.db.escape(data['name']) + "', `customer_id` = '" + await this.customer.getId() + "', `product_id` = '" + product_id + "', `text` = '" + this.db.escape(data['text']) + "', `rating` = '" + data['rating'] + "', `date_added` = NOW()");
+	async addReview(product_id, data) {
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "review` SET `author` = " + this.db.escape(data['name']) + ", `customer_id` = '" + await this.customer.getId() + "', `product_id` = '" + product_id + "', `text` = " + this.db.escape(data['text']) + ", `rating` = '" + data['rating'] + "', `date_added` = NOW()");
 
 		return this.db.getLastId();
 	}

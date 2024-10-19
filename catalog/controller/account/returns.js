@@ -9,7 +9,7 @@ const data ={};
 		if (!await this.customer.isLogged() || (!(this.request.get['customer_token']) || !(this.session.data['customer_token']) || (this.request.get['customer_token'] != this.session.data['customer_token']))) {
 			this.session.data['redirect'] = await this.url.link('account/returns', 'language=' + this.config.get('config_language'));
 
-			this.response.redirect(await this.url.link('account/login', 'language=' + this.config.get('config_language')));
+			this.response.setRedirect(await this.url.link('account/login', 'language=' + this.config.get('config_language')));
 		}
 
 		let page = 1;
@@ -59,7 +59,7 @@ if ((this.request.get['page'])) {
 				'name'       : result['firstname'] + ' ' + result['lastname'],
 				'status'     : result['status'],
 				'date_added' : date(this.language.get('date_format_short'), new Date(result['date_added'])),
-				'href'       : await this.url.link('account/returns+info', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'] + '&return_id=' + result['return_id'] + url)
+				'href'       : await this.url.link('account/returns.info', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'] + '&return_id=' + result['return_id'] + url)
 			];
 		}
 
@@ -70,7 +70,7 @@ if ((this.request.get['page'])) {
 			'url'   : await this.url.link('account/returns', 'language=' + this.config.get('config_language') + '&page={page}')
 		]);
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (return_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (return_total - limit)) ? return_total : (((page - 1) * limit) + limit), return_total, ceil(return_total / limit));
+		data['results'] = sprintf(this.language.get('text_pagination'), (return_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (return_total - limit)) ? return_total : (((page - 1) * limit) + limit), return_total, Math.ceil(return_total / limit));
 
 		data['continue'] = await this.url.link('account/account', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token']);
 
@@ -91,9 +91,9 @@ if ((this.request.get['page'])) {
 		await this.load.language('account/returns');
 
 		if (!await this.customer.isLogged() || (!(this.request.get['customer_token']) || !(this.session.data['customer_token']) || (this.request.get['customer_token'] != this.session.data['customer_token']))) {
-			this.session.data['redirect'] = await this.url.link('account/returns+info', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token']);
+			this.session.data['redirect'] = await this.url.link('account/returns.info', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token']);
 
-			this.response.redirect(await this.url.link('account/login', 'language=' + this.config.get('config_language')));
+			this.response.setRedirect(await this.url.link('account/login', 'language=' + this.config.get('config_language')));
 		}
 
 		if ((this.request.get['return_id'])) {
@@ -134,7 +134,7 @@ if ((this.request.get['page'])) {
 
 			data['breadcrumbs'].push({
 				'text' : this.language.get('text_return'),
-				'href' : await this.url.link('account/returns+info', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'] + '&return_id=' + this.request.get['return_id'] + url)
+				'href' : await this.url.link('account/returns.info', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'] + '&return_id=' + this.request.get['return_id'] + url)
 			];
 
 			data['return_id'] = return_info['return_id'];
@@ -176,7 +176,7 @@ if ((this.request.get['page'])) {
 
 			this.response.setOutput(await this.load.view('account/returns_info', data));
 		} else {
-			return new \Opencart\System\Engine\Action('error/not_found');
+			return new Action('error/not_found');
 		}
 
 		return null;
@@ -204,12 +204,12 @@ if ((this.request.get['page'])) {
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('account/returns+add', 'language=' + this.config.get('config_language'))
+			'href' : await this.url.link('account/returns.add', 'language=' + this.config.get('config_language'))
 		];
 
 		this.session.data['return_token'] = substr(bin2hex(openssl_random_pseudo_bytes(26)), 0, 26);
 
-		data['save'] = await this.url.link('account/returns+save', 'language=' + this.config.get('config_language') + '&return_token=' + this.session.data['return_token']);
+		data['save'] = await this.url.link('account/returns.save', 'language=' + this.config.get('config_language') + '&return_token=' + this.session.data['return_token']);
 
 		this.load.model('account/order',this);
 
@@ -220,7 +220,7 @@ if ((this.request.get['page'])) {
 		this.load.model('catalog/product',this);
 
 		if ((this.request.get['product_id'])) {
-			product_info = await this.model_catalog_product.getProduct(this.request.get['product_id']);
+			const product_info = await this.model_catalog_product.getProduct(this.request.get['product_id']);
 		}
 
 		if ((order_info)) {
@@ -286,7 +286,7 @@ if ((this.request.get['page'])) {
 
 		extension_info = await this.model_setting_extension.getExtensionByCode('captcha', this.config.get('config_captcha'));
 
-		if (extension_info && this.config.get('captcha_' + this.config.get('config_captcha') + '_status') && in_array('returns', this.config.get('config_captcha_page'))) {
+		if (extension_info && Number(this.config.get('captcha_' + this.config.get('config_captcha') + '_status')) && in_array('returns', this.config.get('config_captcha_page'))) {
 			data['captcha'] = await this.load.controller('extension/'  + extension_info['extension'] + '/captcha/' + extension_info['code']);
 		} else {
 			data['captcha'] = '';
@@ -323,7 +323,7 @@ if ((this.request.get['page'])) {
 		const json = {};
 
 		if (!(this.request.get['return_token']) || !(this.session.data['return_token']) || (this.request.get['return_token'] != this.session.data['return_token'])) {
-			json['redirect'] = await this.url.link('account/returns+add', 'language=' + this.config.get('config_language'), true);
+			json['redirect'] = await this.url.link('account/returns.add', 'language=' + this.config.get('config_language'), true);
 		}
 
 		if (!Object.keys(json).length) {
@@ -339,7 +339,7 @@ if ((this.request.get['page'])) {
 				'agree'
 			];
 
-			for (keys as key) {
+			for (let key of keys) {
 				if (!(this.request.post[key])) {
 					this.request.post[key] = '';
 				}
@@ -382,8 +382,8 @@ if ((this.request.get['page'])) {
 
 			extension_info = await this.model_setting_extension.getExtensionByCode('captcha', this.config.get('config_captcha'));
 
-			if (extension_info && this.config.get('captcha_' + this.config.get('config_captcha') + '_status') && in_array('return', this.config.get('config_captcha_page'))) {
-				captcha = await this.load.controller('extension/' + extension_info['extension'] + '/captcha/' + extension_info['code'] + '+validate');
+			if (extension_info && Number(this.config.get('captcha_' + this.config.get('config_captcha') + '_status')) && in_array('return', this.config.get('config_captcha_page'))) {
+				const captcha = await this.load.controller('extension/' + extension_info['extension'] + '/captcha/' + extension_info['code'] + '+validate');
 
 				if (captcha) {
 					json['error']['captcha'] = captcha;
@@ -406,7 +406,7 @@ if ((this.request.get['page'])) {
 
 			await this.model_account_returns.addReturn(this.request.post);
 
-			json['redirect'] = await this.url.link('account/returns+success', 'language=' + this.config.get('config_language'), true);
+			json['redirect'] = await this.url.link('account/returns.success', 'language=' + this.config.get('config_language'), true);
 		}
 
 		this.response.addHeader('Content-Type: application/json');
@@ -430,7 +430,7 @@ if ((this.request.get['page'])) {
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('account/returns+add', 'language=' + this.config.get('config_language'))
+			'href' : await this.url.link('account/returns.add', 'language=' + this.config.get('config_language'))
 		];
 
 		data['continue'] = await this.url.link('common/home', 'language=' + this.config.get('config_language'));

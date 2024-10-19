@@ -1,183 +1,105 @@
-const {Jimp} = require('jimp');
+const fs = require('fs');
+const sharp = require('sharp');
 
 module.exports = class ImageLibrary {
-    /**
-     * Constructor
-     * @param {string} file - The image file path
-     */
     constructor(file) {
+        if (!fs.existsSync(file)) {
+            throw new Error(`Error: Could not load image ${file}!`);
+        }
         this.file = file;
-        this.image = null;
-    }
 
-    /**
-     * Load the image
-     */
+        this.image = sharp(file);
+
+    }
     async load() {
-        try {
-            this.image =  await Jimp.read(this.file);
-            this.width = this.image.bitmap.width;
-            this.height = this.image.bitmap.height;
-            this.mime = this.image.mime;
-        } catch (err) {
-            console.log(err)
-            throw new Error(`Error: Could not load image ${this.file}!`);
-        }
+        let info = await this.image.metadata()
+        this.width = info.width;
+        this.height = info.height;
+        this.mime = info.format;
     }
-
-    /**
-     * Save the image to a file
-     * @param {string} file - The destination file path
-     * @param {number} quality - JPEG quality (1-100)
-     */
     async save(file, quality = 90) {
-        if (this.mime === Jimp.MIME_JPEG) {
-            await this.image.getBuffer(this.mime, {
-                quality: quality,
-            }).write(file);
-        } else {
-            await this.image.write(file);
-        }
+        await this.image.toFile(file, { quality });
+        console.log('The file was created.');
     }
 
-    /**
-     * Resize the image
-     * @param {number} width - The target width
-     * @param {number} height - The target height
-     * @param {string} defaultOption - Default aspect ratio handling ('w' or 'h')
-     */
-    async resize(width = 0, height = 0, defaultOption = '') {
-        if (!this.width || !this.height) return;
-
-        let scale;
+    async resize(width, height, defaultScale = '') {
+        let scale = 1;
         const scaleW = width / this.width;
         const scaleH = height / this.height;
 
-        if (defaultOption === 'w') {
+        if (defaultScale === 'w') {
             scale = scaleW;
-        } else if (defaultOption === 'h') {
+        } else if (defaultScale === 'h') {
             scale = scaleH;
         } else {
             scale = Math.min(scaleW, scaleH);
         }
 
-        await this.image.scale(scale);
-    }
+        const newWidth = Math.round(this.width * scale);
+        const newHeight = Math.round(this.height * scale);
+        const xpos = Math.round((width - newWidth) / 2);
+        const ypos = Math.round((height - newHeight) / 2);
 
-    /**
-     * Apply a watermark
-     * @param {Image} watermark - The watermark image
-     * @param {string} position - Position of the watermark ('bottomright', 'topleft', etc.)
-     */
-    async watermark(watermark, position = 'bottomright') {
-        let xpos, ypos;
-
-        switch (position) {
-            case 'topleft':
-                xpos = 0;
-                ypos = 0;
-                break;
-            case 'topcenter':
-                xpos = (this.width - watermark.width) / 2;
-                ypos = 0;
-                break;
-            case 'topright':
-                xpos = this.width - watermark.width;
-                ypos = 0;
-                break;
-            case 'middleleft':
-                xpos = 0;
-                ypos = (this.height - watermark.height) / 2;
-                break;
-            case 'middlecenter':
-                xpos = (this.width - watermark.width) / 2;
-                ypos = (this.height - watermark.height) / 2;
-                break;
-            case 'middleright':
-                xpos = this.width - watermark.width;
-                ypos = (this.height - watermark.height) / 2;
-                break;
-            case 'bottomleft':
-                xpos = 0;
-                ypos = this.height - watermark.height;
-                break;
-            case 'bottomcenter':
-                xpos = (this.width - watermark.width) / 2;
-                ypos = this.height - watermark.height;
-                break;
-            case 'bottomright':
-                xpos = this.width - watermark.width;
-                ypos = this.height - watermark.height;
-                break;
-        }
-
-        this.image.composite(watermark.image, xpos, ypos, {
-            mode: Jimp.BLEND_SOURCE_OVER,
-            opacitySource: 1,
-            opacityDest: 1,
+        this.image = this.image.resize(newWidth, newHeight).extend({
+            top: ypos,
+            bottom: height - newHeight - ypos,
+            left: xpos,
+            right: width - newWidth - xpos,
+            background: { r: 255, g: 255, b: 255, alpha: 127 }
         });
     }
 
-    /**
-     * Crop the image
-     * @param {number} topX - Top-left x-coordinate
-     * @param {number} topY - Top-left y-coordinate
-     * @param {number} bottomX - Bottom-right x-coordinate
-     * @param {number} bottomY - Bottom-right y-coordinate
-     */
+    async watermark(watermarkFile, position = 'bottomright') {
+        const watermark = sharp(watermarkFile);
+        const watermarkMetadata = await watermark.metadata();
+
+        const positions = {
+            'topleft': { left: 0, top: 0 },
+            'topcenter': { left: Math.floor((this.width - watermarkMetadata.width) / 2), top: 0 },
+            'topright': { left: this.width - watermarkMetadata.width, top: 0 },
+            'middleleft': { left: 0, top: Math.floor((this.height - watermarkMetadata.height) / 2) },
+            'middlecenter': { left: Math.floor((this.width - watermarkMetadata.width) / 2), top: Math.floor((this.height - watermarkMetadata.height) / 2) },
+            'middleright': { left: this.width - watermarkMetadata.width, top: Math.floor((this.height - watermarkMetadata.height) / 2) },
+            'bottomleft': { left: 0, top: this.height - watermarkMetadata.height },
+            'bottomcenter': { left: Math.floor((this.width - watermarkMetadata.width) / 2), top: this.height - watermarkMetadata.height },
+            'bottomright': { left: this.width - watermarkMetadata.width, top: this.height - watermarkMetadata.height },
+        };
+
+        const { left, top } = positions[position];
+
+        this.image = this.image.composite([{ input: await watermark.toBuffer(), blend: 'over', left, top }]);
+    }
+
     async crop(topX, topY, bottomX, bottomY) {
-        await this.image.crop(topX, topY, bottomX - topX, bottomY - topY);
+        this.image = this.image.extract({ left: topX, top: topY, width: bottomX - topX, height: bottomY - topY });
     }
 
-    /**
-     * Rotate the image
-     * @param {number} degree - The degree to rotate the image
-     * @param {string} color - Background color in hex format (e.g., 'FFFFFF')
-     */
     async rotate(degree, color = 'FFFFFF') {
-        const hexColor = Jimp.cssColorToHex(`#${color}`);
-        await this.image.rotate(degree, hexColor);
+        const rgb = this.html2rgb(color);
+        this.image = this.image.rotate(degree, { background: { r: rgb[0], g: rgb[1], b: rgb[2] } });
     }
 
-    /**
-     * Add text to the image
-     * @param {string} text - The text to add
-     * @param {number} x - x-coordinate
-     * @param {number} y - y-coordinate
-     * @param {number} size - Font size
-     * @param {string} color - Text color in hex format
-     */
-    async text(text, x = 0, y = 0, size = 32, color = '000000') {
-        const font = await Jimp.loadFont(Jimp.FONT_SANS_32_BLACK);
-        await this.image.print(font, x, y, {
-            text: text,
-            alignmentX: Jimp.HORIZONTAL_ALIGN_LEFT,
-            alignmentY: Jimp.VERTICAL_ALIGN_TOP,
-        }, this.width, this.height);
+    async text(text, x = 0, y = 0, size = 5, color = '000000') {
+        // For adding text, you might need to use third-party libraries as sharp does not support text drawing.
+        // Alternatively, you can pre-create an image with text and use sharp to composite it.
     }
 
-    /**
-     * Merge another image
-     * @param {Image} mergeImage - The image to merge
-     * @param {number} x - x-coordinate
-     * @param {number} y - y-coordinate
-     * @param {number} opacity - Opacity of the merged image (0-100)
-     */
-    async merge(mergeImage, x = 0, y = 0, opacity = 100) {
-        this.image.composite(mergeImage.image, x, y, {
-            mode: Jimp.BLEND_SOURCE_OVER,
-            opacitySource: opacity / 100,
-            opacityDest: 1,
-        });
+    async merge(mergeFile, x = 0, y = 0, opacity = 100) {
+        const merge = sharp(mergeFile);
+        this.image = this.image.composite([{ input: await merge.toBuffer(), blend: 'over', left: x, top: y, opacity: opacity / 100 }]);
     }
 
-    /**
-     * Helper to convert HTML color code to RGB
-     * @param {string} color - The color in HTML format
-     * @return {Array} - Array of RGB values
-     */
     html2rgb(color) {
-        return Jimp.cssColorToHex(color);
+        if (color.startsWith('#')) {
+            color = color.slice(1);
+        }
+        if (color.length === 3) {
+            color = color.split('').map(c => c + c).join('');
+        }
+        return [
+            parseInt(color.slice(0, 2), 16),
+            parseInt(color.slice(2, 4), 16),
+            parseInt(color.slice(4, 6), 16),
+        ];
     }
 }
-

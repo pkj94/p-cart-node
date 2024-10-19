@@ -9,7 +9,7 @@ class ReviewController extends Controller {
 	// catalog/model/catalog/review/addReview/after
 	/**
 	 * @param string route
-	 * @param array  args
+	 * @param  args
 	 * @param mixed  output
 	 *
 	 * @return void
@@ -21,9 +21,9 @@ class ReviewController extends Controller {
 
 			this.load.model('catalog/product',this);
 
-			product_info = await this.model_catalog_product.getProduct(args[0]);
+			const product_info = await this.model_catalog_product.getProduct(args[0]);
 
-			if (product_info) {
+			if (product_info.product_id) {
 				store_name = html_entity_decode(this.config.get('config_name'));
 
 				subject = sprintf(this.language.get('text_subject'), store_name);

@@ -15,7 +15,7 @@ const data ={};
 
 		const json = {};
 
-		if (this.cart.hasShipping()) {
+		if (await this.cart.hasShipping()) {
 			// Add keys for missing post vars
 			keys = [
 				'firstname',
@@ -29,7 +29,7 @@ const data ={};
 				'country_id'
 			];
 
-			for (keys as key) {
+			for (let key of keys) {
 				if (!(this.request.post[key])) {
 					this.request.post[key] = '';
 				}

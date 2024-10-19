@@ -15,7 +15,7 @@ module.exports = class ContentBottomController extends Controller {
 		if (route == 'product/category' && (this.request.get['path'])) {
 			this.load.model('catalog/category', this);
 
-			let path = this.request.get['path'].split('_');
+			let path = (Array.isArray(this.request.get['path']) ? this.request.get['path'][this.request.get['path'].length - 1] : this.request.get['path']).split('_');
 
 			layout_id = await this.model_catalog_category.getLayoutId(path[path.length - 1]);
 		}

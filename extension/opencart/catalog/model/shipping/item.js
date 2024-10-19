@@ -37,7 +37,7 @@ module.exports = class ItemModel extends Model {
 					'name': this.language.get('text_description'),
 					'cost': cost * items,
 					'tax_class_id': tax_class_id,
-					'text': this.currency.format(this.tax.calculate(cost * items, tax_class_id, this.config.get('config_tax')), this.session.data['currency'])
+					'text': this.currency.format(this.tax.calculate(cost * items, tax_class_id, Number(this.config.get('config_tax'))), this.session.data['currency'])
 				}
 			};
 

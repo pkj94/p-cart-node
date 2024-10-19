@@ -16,7 +16,7 @@ module.exports = class TaxController extends Controller {
 		} else if (this.config.get('config_tax_default') == 'payment') {
 			this.registry.get('tax').setPaymentAddress(this.config.get('config_country_id'), this.config.get('config_zone_id'));
 		}
-
+		// console.log(this.session.data,this.config.get('config_country_id'),this.config.get('config_zone_id'))
 		this.registry.get('tax').setStoreAddress(this.config.get('config_country_id'), this.config.get('config_zone_id'));
 	}
 }

@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Catalog\Controller\Checkout;
-/**
- *
- *
- * @package Opencart\Catalog\Controller\Checkout
- */
-class ConfirmController extends Controller {
+module.exports = class ConfirmController extends Controller {
 	/**
 	 * @return string
 	 */
@@ -22,7 +15,7 @@ const data ={};
 
 		(this.model_checkout_cart.getTotals)(totals, taxes, total);
 
-		status = (await this.customer.isLogged() || !this.config.get('config_customer_price'));
+		status = (await this.customer.isLogged() || !Number(this.config.get('config_customer_price')));
 
 		// Validate customer data is set
 		if (!(this.session.data['customer'])) {
@@ -30,7 +23,7 @@ const data ={};
 		}
 
 		// Validate cart has products and has stock+
-		if ((!this.cart.hasProducts() && empty(this.session.data['vouchers'])) || (!this.cart.hasStock() && !this.config.get('config_stock_checkout'))) {
+		if ((!await this.cart.hasProducts() && empty(this.session.data['vouchers'])) || (!await this.cart.hasStock() && !Number(this.config.get('config_stock_checkout')))) {
 			status = false;
 		}
 
@@ -46,7 +39,7 @@ const data ={};
 		}
 
 		// Shipping
-		if (this.cart.hasShipping()) {
+		if (await this.cart.hasShipping()) {
 			// Validate shipping address
 			if (!(this.session.data['shipping_address']['address_id'])) {
 				status = false;
@@ -133,7 +126,7 @@ const data ={};
 			order_data['payment_method'] = this.session.data['payment_method'];
 
 			// Shipping Details
-			if (this.cart.hasShipping()) {
+			if (await this.cart.hasShipping()) {
 				order_data['shipping_address_id'] = this.session.data['shipping_address']['address_id'];
 				order_data['shipping_firstname'] = this.session.data['shipping_address']['firstname'];
 				order_data['shipping_lastname'] = this.session.data['shipping_address']['lastname'];
@@ -221,7 +214,10 @@ const data ={};
 			order_data['currency_code'] = this.session.data['currency'];
 			order_data['currency_value'] = this.currency.getValue(this.session.data['currency']);
 
-			order_data['ip'] = this.request.server['REMOTE_ADDR'];
+			order_data['ip'] = (this.request.server.headers['x-forwarded-for'] ||
+					this.request.server.connection.remoteAddress ||
+					this.request.server.socket.remoteAddress ||
+					this.request.server.connection.socket.remoteAddress);
 
 			if ((this.request.server['HTTP_X_FORWARDED_FOR'])) {
 				order_data['forwarded_ip'] = this.request.server['HTTP_X_FORWARDED_FOR'];
@@ -320,7 +316,7 @@ const data ={};
 		}
 
 		// Display prices
-		if (await this.customer.isLogged() || !this.config.get('config_customer_price')) {
+		if (await this.customer.isLogged() || !Number(this.config.get('config_customer_price'))) {
 			price_status = true;
 		} else {
 			price_status = false;
@@ -341,7 +337,7 @@ const data ={};
 
 			if (product['subscription']) {
 				if (product['subscription']['trial_status']) {
-					trial_price = this.currency.format(this.tax.calculate(product['subscription']['trial_price'], product['tax_class_id'], this.config.get('config_tax')), this.session.data['currency']);
+					trial_price = this.currency.format(this.tax.calculate(product['subscription']['trial_price'], product['tax_class_id'], Number(Number(this.config.get('config_tax')))), this.session.data['currency']);
 					trial_cycle = product['subscription']['trial_cycle'];
 					trial_frequency = this.language.get('text_' + product['subscription']['trial_frequency']);
 					trial_duration = product['subscription']['trial_duration'];
@@ -349,7 +345,7 @@ const data ={};
 					description += sprintf(this.language.get('text_subscription_trial'), trial_price, trial_cycle, trial_frequency, trial_duration);
 				}
 
-				price = this.currency.format(this.tax.calculate(product['subscription']['price'], product['tax_class_id'], this.config.get('config_tax')), this.session.data['currency']);
+				price = this.currency.format(this.tax.calculate(product['subscription']['price'], product['tax_class_id'], Number(Number(this.config.get('config_tax')))), this.session.data['currency']);
 				cycle = product['subscription']['cycle'];
 				frequency = this.language.get('text_' + product['subscription']['frequency']);
 				duration = product['subscription']['duration'];
@@ -369,8 +365,8 @@ const data ={};
 				'option'       : product['option'],
 				'subscription' : description,
 				'quantity'     : product['quantity'],
-				'price'        : price_status ? this.currency.format(this.tax.calculate(product['price'], product['tax_class_id'], this.config.get('config_tax')), this.session.data['currency']) : '',
-				'total'        : price_status ? this.currency.format(this.tax.calculate(product['total'], product['tax_class_id'], this.config.get('config_tax')), this.session.data['currency']) : '',
+				'price'        : price_status ? this.currency.format(this.tax.calculate(product['price'], product['tax_class_id'], Number(Number(this.config.get('config_tax')))), this.session.data['currency']) : '',
+				'total'        : price_status ? this.currency.format(this.tax.calculate(product['total'], product['tax_class_id'], Number(Number(this.config.get('config_tax')))), this.session.data['currency']) : '',
 				'reward'       : product['reward'],
 				'href'         : await this.url.link('product/product', 'language=' + this.config.get('config_language') + '&product_id=' + product['product_id'])
 			];

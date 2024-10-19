@@ -8,7 +8,7 @@ module.exports=class WishListController extends Controller {
 		if (!await this.customer.isLogged() || (!(this.request.get['customer_token']) || !(this.session.data['customer_token']) || (this.request.get['customer_token'] != this.session.data['customer_token']))) {
 			this.session.data['redirect'] = await this.url.link('account/wishlist', 'language=' + this.config.get('config_language'));
 
-			this.response.redirect(await this.url.link('account/login', 'language=' + this.config.get('config_language')));
+			this.response.setRedirect(await this.url.link('account/login', 'language=' + this.config.get('config_language')));
 		}
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -38,7 +38,7 @@ module.exports=class WishListController extends Controller {
 			data['success'] = '';
 		}
 
-		data['list'] = await this.load.controller('account/wishlist+getList');
+		data['list'] = await this.load.controller('account/wishlist.getList');
 
 		data['continue'] = await this.url.link('account/account', 'language=' + this.config.get('config_language') + ((this.session.data['customer_token']) ? '&customer_token=' + this.session.data['customer_token'] : ''));
 
@@ -58,16 +58,16 @@ module.exports=class WishListController extends Controller {
 	public function list() {
 		await this.load.language('account/wishlist');
 
-		this.response.setOutput(this.getList());
+		this.response.setOutput(await this.getList());
 	}
 
 	/**
 	 * @return string
 	 */
 	public function getList() {
-		data['wishlist'] = await this.url.link('account/wishlist+list', 'language=' + this.config.get('config_language') + ((this.session.data['customer_token']) ? '&customer_token=' + this.session.data['customer_token'] : ''));
-		data['add_to_cart'] = await this.url.link('checkout/cart+add', 'language=' + this.config.get('config_language'));
-		data['remove'] = await this.url.link('account/wishlist+remove', 'language=' + this.config.get('config_language') + ((this.session.data['customer_token']) ? '&customer_token=' + this.session.data['customer_token'] : ''));
+		data['wishlist'] = await this.url.link('account/wishlist.list', 'language=' + this.config.get('config_language') + ((this.session.data['customer_token']) ? '&customer_token=' + this.session.data['customer_token'] : ''));
+		data['add_to_cart'] = await this.url.link('checkout/cart.add', 'language=' + this.config.get('config_language'));
+		data['remove'] = await this.url.link('account/wishlist.remove', 'language=' + this.config.get('config_language') + ((this.session.data['customer_token']) ? '&customer_token=' + this.session.data['customer_token'] : ''));
 
 		data['products'] = [];
 
@@ -78,9 +78,9 @@ module.exports=class WishListController extends Controller {
 		const results = await this.model_account_wishlist.getWishlist();
 
 		for (let result of results) {
-			product_info = await this.model_catalog_product.getProduct(result['product_id']);
+			const product_info = await this.model_catalog_product.getProduct(result['product_id']);
 
-			if (product_info) {
+			if (product_info.product_id) {
 				if (product_info['image']) {
 					image = await this.model_tool_image.resize(html_entity_decode(product_info['image']), this.config.get('config_image_wishlist_width'), this.config.get('config_image_wishlist_height'));
 				} else {
@@ -95,14 +95,14 @@ module.exports=class WishListController extends Controller {
 					stock = this.language.get('text_instock');
 				}
 
-				if (await this.customer.isLogged() || !this.config.get('config_customer_price')) {
-					price = this.currency.format(this.tax.calculate(product_info['price'], product_info['tax_class_id'], this.config.get('config_tax')), this.session.data['currency']);
+				if (await this.customer.isLogged() || !Number(this.config.get('config_customer_price'))) {
+					price = this.currency.format(this.tax.calculate(product_info['price'], product_info['tax_class_id'], Number(Number(this.config.get('config_tax')))), this.session.data['currency']);
 				} else {
 					price = false;
 				}
 
 				if (product_info['special']) {
-					special = this.currency.format(this.tax.calculate(product_info['special'], product_info['tax_class_id'], this.config.get('config_tax')), this.session.data['currency']);
+					special = this.currency.format(this.tax.calculate(product_info['special'], product_info['tax_class_id'], Number(Number(this.config.get('config_tax')))), this.session.data['currency']);
 				} else {
 					special = false;
 				}
@@ -142,7 +142,7 @@ module.exports=class WishListController extends Controller {
 
 		this.load.model('catalog/product',this);
 
-		product_info = await this.model_catalog_product.getProduct(product_id);
+		const product_info = await this.model_catalog_product.getProduct(product_id);
 
 		if (!product_info) {
 			json['error'] = this.language.get('error_product');

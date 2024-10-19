@@ -1,7 +1,7 @@
 module.exports=class DebugController extends Controller {
 	/**
 	 * @param string route
-	 * @param array  args
+	 * @param  args
 	 *
 	 * @return void
 	 */
@@ -11,7 +11,7 @@ module.exports=class DebugController extends Controller {
 
 	/**
 	 * @param string route
-	 * @param array  args
+	 * @param  args
 	 *
 	 * @return void
 	 */
@@ -26,7 +26,7 @@ module.exports=class DebugController extends Controller {
 
 	/**
 	 * @param string route
-	 * @param array  args
+	 * @param  args
 	 * @param mixed  output
 	 *
 	 * @return void

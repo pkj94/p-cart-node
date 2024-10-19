@@ -1,4 +1,4 @@
-module.exports = class CategoryController extends Model {
+module.exports = class CategoryModel extends Model {
 	/**
 	 * @param category_id
 	 *

@@ -8,7 +8,7 @@ namespace Opencart\Catalog\Controller\Mail;
 class AffiliateController extends Controller {
 	/**
 	 * @param string route
-	 * @param array  args
+	 * @param  args
 	 * @param mixed  output
 	 *
 	 * @return void
@@ -72,7 +72,7 @@ class AffiliateController extends Controller {
 
 	/**
 	 * @param string route
-	 * @param array  args
+	 * @param  args
 	 * @param mixed  output
 	 *
 	 * @return void

@@ -1,4 +1,4 @@
-module.exports =class EventController extends Model {
+module.exports =class EventModel extends Model {
 	/**
 	 * @return array
 	 */

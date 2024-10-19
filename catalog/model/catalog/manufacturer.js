@@ -1,4 +1,4 @@
-module.exports=class ManufacturerController extends Model {
+module.exports=class ManufacturerModel extends Model {
 	/**
 	 * @param manufacturer_id
 	 *
@@ -11,7 +11,7 @@ module.exports=class ManufacturerController extends Model {
 	}
 
 	/**
-	 * @param array data
+	 * @param data
 	 *
 	 * @return array
 	 */

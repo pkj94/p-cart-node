@@ -1,6 +1,6 @@
 module.exports = class MaintenanceController extends Controller {
 	/**
-	 * @return object|\Opencart\System\Engine\Action|null
+	 * @return object|Action|null
 	 */
 	async index() {
 		if (Number(this.config.get('config_maintenance'))) {

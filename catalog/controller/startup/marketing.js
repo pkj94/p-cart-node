@@ -20,7 +20,10 @@ module.exports = class MarketingController extends Controller {
 			const marketing_info = await this.model_marketing_marketing.getMarketingByCode(tracking);
 
 			if (marketing_info.marketing_id) {
-				await this.model_marketing_marketing.addReport(marketing_info['marketing_id'], this.request.server['REMOTE_ADDR']);
+				await this.model_marketing_marketing.addReport(marketing_info['marketing_id'], (this.request.server.headers['x-forwarded-for'] ||
+					this.request.server.connection.remoteAddress ||
+					this.request.server.socket.remoteAddress ||
+					this.request.server.connection.socket.remoteAddress));
 			}
 
 			if (this.config.get('config_affiliate_status')) {
@@ -29,7 +32,10 @@ module.exports = class MarketingController extends Controller {
 				const affiliate_info = await this.model_account_affiliate.getAffiliateByTracking(tracking);
 
 				if (affiliate_info.affiliate_id && affiliate_info['status']) {
-					await this.model_account_affiliate.addReport(affiliate_info['customer_id'], this.request.server['REMOTE_ADDR']);
+					await this.model_account_affiliate.addReport(affiliate_info['customer_id'], (this.request.server.headers['x-forwarded-for'] ||
+					this.request.server.connection.remoteAddress ||
+					this.request.server.socket.remoteAddress ||
+					this.request.server.connection.socket.remoteAddress));
 				}
 
 				if (marketing_info.marketing_id || (affiliate_info && affiliate_info['status'])) {
@@ -37,7 +43,7 @@ module.exports = class MarketingController extends Controller {
 
 					if (!(this.request.cookie['tracking'])) {
 						let option = {
-							'expires': this.config.get('config_affiliate_expire') ? new Date(Date.now() + parseInt(thsi.config.get('config_affiliate_expire')) * 1000) : 0,
+							'expires': this.config.get('config_affiliate_expire') ? new Date(Date.now() + parseInt(this.config.get('config_affiliate_expire')) * 1000) : new Date(),
 							'path': this.config.get('session_path'),
 							'SameSite': this.config.get('config_session_samesite')
 						};

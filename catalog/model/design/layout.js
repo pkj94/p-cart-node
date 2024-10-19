@@ -1,4 +1,4 @@
-module.exports =class LayoutController extends Model {
+module.exports =class LayoutModel extends Model {
 	/**
 	 * @param string route
 	 *

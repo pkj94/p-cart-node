@@ -1,4 +1,4 @@
-module.exports=class VoucherThemeController extends Model {
+module.exports=class VoucherThemeModel extends Model {
 	/**
 	 * @param voucher_theme_id
 	 *
@@ -11,7 +11,7 @@ module.exports=class VoucherThemeController extends Model {
 	}
 
 	/**
-	 * @param array data
+	 * @param data
 	 *
 	 * @return array
 	 */

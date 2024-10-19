@@ -7,13 +7,11 @@ module.exports = class Event {
         this.data.push({ trigger, action, priority });
         this.data.sort((a, b) => a.priority - b.priority);
     }
-    async trigger(event, args = []) {
+    trigger_old(event, args = []) {
 
         for (const { trigger, action } of this.data) {
             if (new RegExp('^' + trigger.replace(/[\*\?]/g, (m) => ({ '*': '.*', '?': '.' }[m])) + '$').test(event)) {
-                const result = await action.execute(this.registry, args);
-                // if (event.indexOf('/header') >= 0)
-                //     console.log('trigger event', event,  trigger, action,result)
+                const result = action.execute(this.registry, args);
                 if (result !== null && !(result instanceof Error)) {
                     return result;
                 }
@@ -21,6 +19,29 @@ module.exports = class Event {
         }
         return '';
     }
+    async trigger(event, args = []) {
+        for (let value of this.data) {
+            const triggerRegex = new RegExp('^' + value.trigger.replace(/\*|\?/g, match => (match === '*' ? '.*' : '.')));
+            // if (event.indexOf('model/setting/startup/after') >= 0)
+            //     console.log('1---', event, triggerRegex.test(event), '^' + value.trigger.replace(/\*|\?/g, match => (match === '*' ? '.*' : '.')))
+            if (triggerRegex.test(event)) {
+                // if (event.indexOf('model/setting/startup/after') >= 0)
+                //     console.log('2-----', event, triggerRegex.test(event), value)
+                try {
+                    const result = await value.action.execute(this.registry, args);
+                    // if (event.indexOf('model/setting/startup/after') >= 0)
+                    //     console.log('3-----', event, result)
+                    if (result && result !== null && !(result instanceof Error)) {
+                        return result;
+                    }
+                } catch (e) {
+                    // Handle exception if needed
+                }
+            }
+        }
+        return '';
+    }
+
     unregister(trigger, route) {
         this.data = this.data.filter((item) => !(item.trigger === trigger && item.action.getId() === route));
     }

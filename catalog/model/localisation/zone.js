@@ -1,4 +1,4 @@
-module.exports =class ZoneController extends Model {
+module.exports =class ZoneModel extends Model {
 	/**
 	 * @param zone_id
 	 *

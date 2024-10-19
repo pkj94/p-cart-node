@@ -24,8 +24,7 @@ module.exports = class CurrencyController extends Controller {
 		this.load.model('localisation/currency', this);
 
 		const results = await this.model_localisation_currency.getCurrencies();
-
-		for (let result of results) {
+		for (let [code, result] of Object.entries(results)) {
 			if (result['status']) {
 				data['currencies'].push({
 					'title': result['title'],
@@ -43,7 +42,6 @@ module.exports = class CurrencyController extends Controller {
 		}
 
 		data['redirect'] = await this.url.link(route, url);
-
 		return await this.load.view('common/currency', data);
 	}
 
@@ -58,7 +56,7 @@ module.exports = class CurrencyController extends Controller {
 			delete this.session.data['shipping_methods'];
 		}
 		let expire = new Date();
-		expire.setTime(expire.getTime() + (days * 24 * 60 * 60 * 1000));
+		expire.setTime(expire.getTime() + (30 * 24 * 60 * 60 * 1000));
 		let option = {
 			'expires': expire,
 			'path': '/',
@@ -66,11 +64,11 @@ module.exports = class CurrencyController extends Controller {
 		};
 
 		this.response.response.cookie('currency', this.session.data['currency'], option);
-		await this.session.save();
+		await this.session.save(this.session.data);
 		if ((this.request.post['redirect']) && this.request.post['redirect'].substring(0, this.config.get('config_url').length) == this.config.get('config_url')) {
-			this.response.redirect(this.request.post['redirect'].replace('&amp;', '&'));
+			this.response.setRedirect(this.request.post['redirect'].replaceAll('&amp;', '&'));
 		} else {
-			this.response.redirect(await this.url.link(this.config.get('action_default')));
+			this.response.setRedirect(await this.url.link(this.config.get('action_default')));
 		}
 	}
 }

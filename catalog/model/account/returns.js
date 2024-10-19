@@ -1,18 +1,11 @@
-<?php
-namespace Opencart\Catalog\Model\Account;
-/**
- *
- *
- * @package Opencart\Catalog\Model\Account
- */
-class ReturnsController extends Model {
+module.exports =class ReturnsModel extends Model {
 	/**
-	 * @param array data
+	 * @param data
 	 *
 	 * @return int
 	 */
-	async addReturn(array data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "return` SET `order_id` = '" + data['order_id'] + "', `product_id` = '" + data['product_id'] + "', `customer_id` = '" + await this.customer.getId() + "', `firstname` = '" + this.db.escape(data['firstname']) + "', `lastname` = '" + this.db.escape(data['lastname']) + "', `email` = '" + this.db.escape(data['email']) + "', `telephone` = '" + this.db.escape(data['telephone']) + "', `product` = '" + this.db.escape(data['product']) + "', `model` = '" + this.db.escape(data['model']) + "', `quantity` = '" + data['quantity'] + "', `opened` = '" + data['opened'] + "', `return_reason_id` = '" + data['return_reason_id'] + "', `return_status_id` = '" + this.config.get('config_return_status_id') + "', `comment` = '" + this.db.escape(data['comment']) + "', `date_ordered` = '" + this.db.escape(data['date_ordered']) + "', `date_added` = NOW(), `date_modified` = NOW()");
+	async addReturn(data) {
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "return` SET `order_id` = '" + data['order_id'] + "', `product_id` = '" + data['product_id'] + "', `customer_id` = '" + await this.customer.getId() + "', `firstname` = " + this.db.escape(data['firstname']) + ", `lastname` = " + this.db.escape(data['lastname']) + ", `email` = " + this.db.escape(data['email']) + ", `telephone` = " + this.db.escape(data['telephone']) + ", `product` = " + this.db.escape(data['product']) + ", `model` = " + this.db.escape(data['model']) + ", `quantity` = '" + data['quantity'] + "', `opened` = '" + data['opened'] + "', `return_reason_id` = '" + data['return_reason_id'] + "', `return_status_id` = '" + this.config.get('config_return_status_id') + "', `comment` = " + this.db.escape(data['comment']) + ", `date_ordered` = " + this.db.escape(data['date_ordered']) + ", `date_added` = NOW(), `date_modified` = NOW()");
 
 		return this.db.getLastId();
 	}

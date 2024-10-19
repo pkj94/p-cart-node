@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Catalog\Model\Account;
-/**
- *
- *
- * @package Opencart\Catalog\Model\Account
- */
-class SubscriptionController extends Model {
+module.exports =class SubscriptionModel extends Model {
 	/**
 	 * @param subscription_id
 	 *

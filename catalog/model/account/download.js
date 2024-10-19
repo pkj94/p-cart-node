@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Catalog\Model\Account;
-/**
- *
- *
- * @package Opencart\Catalog\Model\Account
- */
-class DownloadController extends Model {
+module.exports =class DownloadModel extends Model {
 	/**
 	 * @param download_id
 	 *
@@ -90,6 +83,6 @@ class DownloadController extends Model {
 	 * @return void
 	 */
 	async addReport(download_id, ip, country = '') {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "download_report` SET `download_id` = '" + download_id + "', `store_id` = '" + this.config.get('config_store_id') + "', `ip` = '" + this.db.escape(ip) + "', `country` = '" + this.db.escape(country) + "', `date_added` = NOW()");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "download_report` SET `download_id` = '" + download_id + "', `store_id` = '" + this.config.get('config_store_id') + "', `ip` = " + this.db.escape(ip) + ", `country` = " + this.db.escape(country) + ", `date_added` = NOW()");
 	}
 }

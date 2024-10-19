@@ -119,7 +119,7 @@ $(document).ready(function() {
 
     // Search
     $('#search input[name=\'search\']').parent().find('button').on('click', function() {
-        var url = $('base').attr('href') + 'index.php?route=product/search&language=' + $(this).attr('data-lang');
+        var url = $('base').attr('href') + '?route=product/search&language=' + $(this).attr('data-lang');
 
         var value = $('header #search input[name=\'search\']').val();
 

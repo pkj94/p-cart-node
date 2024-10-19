@@ -9,7 +9,7 @@ class GdprController extends Controller {
 	// catalog/model/account/gdpr/addGdpr
 	/**
 	 * @param string route
-	 * @param array  args
+	 * @param  args
 	 * @param mixed  output
 	 *
 	 * @return void
@@ -54,7 +54,10 @@ class GdprController extends Controller {
 
 		data['confirm'] = await this.url.link('information/gdpr+success', 'language=' + this.config.get('config_language') + '&code=' + code, true);
 
-		data['ip'] = this.request.server['REMOTE_ADDR'];
+		data['ip'] = (this.request.server.headers['x-forwarded-for'] ||
+					this.request.server.connection.remoteAddress ||
+					this.request.server.socket.remoteAddress ||
+					this.request.server.connection.socket.remoteAddress);
 
 		data['store_name'] = store_name;
 		data['store_url'] = this.config.get('config_url');
@@ -83,7 +86,7 @@ class GdprController extends Controller {
 
 	/**
 	 * @param string route
-	 * @param array  args
+	 * @param  args
 	 * @param mixed  output
 	 *
 	 * @return void

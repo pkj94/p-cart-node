@@ -9,7 +9,7 @@ class RegisterController extends Controller {
 	// catalog/model/account/customer/addCustomer/after
 	/**
 	 * @param string route
-	 * @param array  args
+	 * @param  args
 	 * @param mixed  output
 	 *
 	 * @return void
@@ -69,7 +69,7 @@ class RegisterController extends Controller {
 
 	/**
 	 * @param string route
-	 * @param array  args
+	 * @param  args
 	 * @param mixed  output
 	 *
 	 * @return void

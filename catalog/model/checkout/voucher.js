@@ -1,12 +1,12 @@
-module.exports=class VoucherController extends Model {
+module.exports=class VoucherModel extends Model {
 	/**
 	 * @param   order_id
-	 * @param array data
+	 * @param data
 	 *
 	 * @return int
 	 */
-	async addVoucher(order_id, array data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "voucher` SET `order_id` = '" + order_id + "', `code` = '" + this.db.escape(data['code']) + "', `from_name` = '" + this.db.escape(data['from_name']) + "', `from_email` = '" + this.db.escape(data['from_email']) + "', `to_name` = '" + this.db.escape(data['to_name']) + "', `to_email` = '" + this.db.escape(data['to_email']) + "', `voucher_theme_id` = '" + data['voucher_theme_id'] + "', `message` = '" + this.db.escape(data['message']) + "', `amount` = '" + data['amount'] + "', `status` = '1', `date_added` = NOW()");
+	async addVoucher(order_id, data) {
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "voucher` SET `order_id` = '" + order_id + "', `code` = " + this.db.escape(data['code']) + ", `from_name` = " + this.db.escape(data['from_name']) + ", `from_email` = " + this.db.escape(data['from_email']) + ", `to_name` = " + this.db.escape(data['to_name']) + ", `to_email` = " + this.db.escape(data['to_email']) + ", `voucher_theme_id` = '" + data['voucher_theme_id'] + "', `message` = " + this.db.escape(data['message']) + ", `amount` = '" + data['amount'] + "', `status` = '1', `date_added` = NOW()");
 
 		return this.db.getLastId();
 	}
@@ -28,7 +28,7 @@ module.exports=class VoucherController extends Model {
 	async getVoucher(code) {
 		status = true;
 
-		voucher_query = await this.db.query("SELECT *, vtd.`name` AS theme FROM `" + DB_PREFIX + "voucher` v LEFT JOIN `" + DB_PREFIX + "voucher_theme` vt ON (v.`voucher_theme_id` = vt.`voucher_theme_id`) LEFT JOIN `" + DB_PREFIX + "voucher_theme_description` vtd ON (vt.`voucher_theme_id` = vtd.`voucher_theme_id`) WHERE v.`code` = '" + this.db.escape(code) + "' AND vtd.`language_id` = '" + this.config.get('config_language_id') + "' AND v.`status` = '1'");
+		voucher_query = await this.db.query("SELECT *, vtd.`name` AS theme FROM `" + DB_PREFIX + "voucher` v LEFT JOIN `" + DB_PREFIX + "voucher_theme` vt ON (v.`voucher_theme_id` = vt.`voucher_theme_id`) LEFT JOIN `" + DB_PREFIX + "voucher_theme_description` vtd ON (vt.`voucher_theme_id` = vtd.`voucher_theme_id`) WHERE v.`code` = " + this.db.escape(code) + " AND vtd.`language_id` = '" + this.config.get('config_language_id') + "' AND v.`status` = '1'");
 
 		if (voucher_query.num_rows) {
 			if (voucher_query.row['order_id']) {

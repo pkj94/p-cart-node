@@ -13,7 +13,7 @@ $('#button-shipping-methods').on('click', function() {
 
     chain.attach(function() {
         return $.ajax({
-            url: 'index.php?route=checkout/shipping_method.quote&language={{ language }}',
+            url: '?route=checkout/shipping_method.quote&language={{ language }}',
             dataType: 'json',
             beforeSend: function() {
                 $(element).button('loading');
@@ -98,7 +98,7 @@ $(document).on('submit', '#form-shipping-method', function(e) {
 
     chain.attach(function() {
         return $.ajax({
-            url: 'index.php?route=checkout/shipping_method.save&language={{ language }}',
+            url: '?route=checkout/shipping_method.save&language={{ language }}',
             type: 'post',
             data: $('#form-shipping-method').serialize(),
             dataType: 'json',
@@ -130,7 +130,7 @@ $(document).on('submit', '#form-shipping-method', function(e) {
 
                     $('#input-payment-method').val('');
 
-                    $('#checkout-confirm').load('index.php?route=checkout/confirm.confirm&language={{ language }}');
+                    $('#checkout-confirm').load('?route=checkout/confirm.confirm&language={{ language }}');
                 }
             },
             error: function(xhr, ajaxOptions, thrownError) {

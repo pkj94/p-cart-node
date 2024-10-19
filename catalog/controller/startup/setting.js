@@ -6,9 +6,8 @@ module.exports = class SettingController extends Controller {
 		this.load.model('setting/store', this);
 
 		const hostname = `${this.request.server.protocol}://${this.request.server.hostname.replace('www.', '')}${this.request.server.originalUrl.substring(0, this.request.server.originalUrl.lastIndexOf('/'))}/`;
-
+		
 		const store_info = await this.model_setting_store.getStoreByHostname(hostname);
-
 		// Store
 		if ((this.request.get['store_id'])) {
 			this.config.set('config_store_id', this.request.get['store_id']);
@@ -31,7 +30,6 @@ module.exports = class SettingController extends Controller {
 		this.load.model('setting/setting', this);
 
 		const results = await this.model_setting_setting.getSettings(this.config.get('config_store_id'));
-
 		for (let result of results) {
 			if (!result['serialized']) {
 				this.config.set(result['key'], result['value']);

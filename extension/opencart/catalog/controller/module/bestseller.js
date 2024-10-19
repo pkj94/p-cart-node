@@ -27,15 +27,15 @@ module.exports = class BestSellerController extends Controller {
 					image = await this.model_tool_image.resize(html_entity_decode(result['image']), setting['width'], setting['height']);
 				}
 				let price = false;
-				if (await this.customer.isLogged() || !this.config.get('config_customer_price')) {
-					price = this.currency.format(this.tax.calculate(result['price'], result['tax_class_id'], this.config.get('config_tax')), this.session.data['currency']);
+				if (await this.customer.isLogged() || !Number(this.config.get('config_customer_price'))) {
+					price = this.currency.format(this.tax.calculate(result['price'], result['tax_class_id'], Number(this.config.get('config_tax'))), this.session.data['currency']);
 				}
 				let special = false;
 				if (result['special']) {
-					special = this.currency.format(this.tax.calculate(result['special'], result['tax_class_id'], this.config.get('config_tax')), this.session.data['currency']);
+					special = this.currency.format(this.tax.calculate(result['special'], result['tax_class_id'], Number(this.config.get('config_tax'))), this.session.data['currency']);
 				}
 				let tax = false;
-				if (this.config.get('config_tax')) {
+				if (Number(this.config.get('config_tax'))) {
 					tax = this.currency.format(result['special'] ? result['special'] : result['price'], this.session.data['currency']);
 				}
 

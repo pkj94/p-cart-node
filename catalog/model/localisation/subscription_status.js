@@ -1,4 +1,4 @@
-module.exports =class SubscriptionStatusController extends Model {
+module.exports =class SubscriptionStatusModel extends Model {
 	/**
 	 * @param subscription_status_id
 	 *

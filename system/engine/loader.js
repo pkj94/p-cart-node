@@ -17,7 +17,7 @@ module.exports = class Loader {
             let action = new Action(route);
             while (action) {
                 route = action.getId();
-                let result = await this.registry.data.event.trigger(`controller/${route}/before`, [route, args]);
+                let result = await this.registry.get('event').trigger(`controller/${route}/before`, [route, args]);
                 if (result instanceof Action) {
                     action = result;
                 }
@@ -31,7 +31,7 @@ module.exports = class Loader {
                 if (!action) {
                     output = result;
                 }
-                result = await this.registry.data.event.trigger(`controller/${route}/after`, [route, args, output]);
+                result = await this.registry.get('event').trigger(`controller/${route}/after`, [route, args, output]);
                 if (result instanceof Action) {
                     action = result;
                 }
@@ -64,14 +64,15 @@ module.exports = class Loader {
 
                 for (const method of Object.getOwnPropertyNames(ModelClass.prototype).filter(method => method !== 'constructor')) {
                     if (!method.startsWith('__') && typeof model[method] === 'function') {
-                        proxy[method] = (...args) => {
+                        proxy[method] = async (...args) => {
                             route = `${route}/${method}`;
 
                             let output = '';
 
                             // Trigger the pre events
-                            let result = this.registry.data.event.trigger(`model/${route}/before`, [route, args]);
-
+                            let result = await this.registry.get('event').trigger(`model/${route}/before`, [route, args]);
+                            // if (route.indexOf('design/layout') >= 0)
+                            //     console.log('load model', route,result)
                             if (result) {
                                 output = result;
                             }
@@ -86,7 +87,7 @@ module.exports = class Loader {
                             }
 
                             // Trigger the post events
-                            result = this.registry.data.event.trigger(`model/${route}/after`, [route, args, output]);
+                            result = await this.registry.get('event').trigger(`model/${route}/after`, [route, args, output]);
 
                             if (result) {
                                 output = result;
@@ -111,17 +112,18 @@ module.exports = class Loader {
         return new Promise(async (resolve, reject) => {
             route = route.replace(/[^a-zA-Z0-9_\/]/g, '');
             let output = '';
-            let result = await this.registry.data.event.trigger(`view/${route}/before`, [route, data, code]);
-            // if (route.indexOf('header') >= 0)
-            //     console.log('load view', route)
+            let result = await this.registry.get('event').trigger(`view/${route}/before`, [route, data, code]);
+
             if (result) {
                 output = result;
             }
             if (!output) {
 
-                output = await this.registry.data.template.render(route, data, code);
+                output = await this.registry.get('template').render(route, data, code);
             }
-            result = this.registry.data.event.trigger(`view/${route}/after`, [route, data, output]);
+            result = await this.registry.get('event').trigger(`view/${route}/after`, [route, data, output]);
+            // if (route.indexOf('header') >= 0)
+            //     console.log('load view', route,result)
             if (result) {
                 output = result;
             }
@@ -132,14 +134,14 @@ module.exports = class Loader {
         return new Promise(async (resolve, reject) => {
             route = route.replace(/[^a-zA-Z0-9_\-\/]/g, '');
             let output = {};
-            let result = await this.registry.data.event.trigger(`language/${route}/before`, [route, prefix, code]);
+            let result = await this.registry.get('event').trigger(`language/${route}/before`, [route, prefix, code]);
             if (result) {
                 output = result;
             }
             if (Object.keys(output).length === 0) {
-                output = await this.registry.data.language.load(route, prefix, code);
+                output = await this.registry.get('language').load(route, prefix, code);
             }
-            result = await this.registry.data.event.trigger(`language/${route}/after`, [route, prefix, code, output]);
+            result = await this.registry.get('event').trigger(`language/${route}/after`, [route, prefix, code, output]);
             if (result) {
                 output = result;
             }
@@ -149,14 +151,14 @@ module.exports = class Loader {
     config(route) {
         route = route.replace(/[^a-zA-Z0-9_\-\/]/g, '');
         let output = {};
-        let result = this.registry.data.event.trigger(`config/${route}/before`, [route]);
+        let result = this.registry.get('event').trigger(`config/${route}/before`, [route]);
         if (result) {
             output = result;
         }
         if (Object.keys(output).length === 0) {
             output = this.config.load(route);
         }
-        result = this.registry.data.event.trigger(`config/${route}/after`, [route, output]);
+        result = this.registry.get('event').trigger(`config/${route}/after`, [route, output]);
         if (result) {
             output = result;
         }

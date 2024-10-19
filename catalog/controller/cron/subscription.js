@@ -90,9 +90,9 @@ class SubscriptionController extends Controller {
 				if (!error) {
 					this.load.model('catalog/product',this);
 
-					product_info = await this.model_checkout_order.getProduct(result['product_id']);
+					const product_info = await this.model_checkout_order.getProduct(result['product_id']);
 
-					if (product_info) {
+					if (product_info.product_id) {
 						let option_data = [];
 
 						order_options = await this.model_account_order.getOptions(result['order_id'], result['order_product_id']);
@@ -429,7 +429,7 @@ class SubscriptionController extends Controller {
 						// Only match the latest order ID of the same customer ID
 						// since new subscriptions cannot be re-added with the same
 						// order ID; only as a new order ID added by an extension
-						for (subscriptions as subscription) {
+						for (let subscription of subscriptions) {
 							if (subscription['customer_id'] == result['customer_id'] && (subscription['subscription_id'] != result['subscription_id']) && (subscription['order_id'] != result['order_id']) && (subscription['order_product_id'] != result['order_product_id'])) {
 								subscription_info = await this.model_account_subscription.getSubscription(subscription['subscription_id']);
 

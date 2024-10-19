@@ -1,4 +1,4 @@
-module.exports =class CountryController extends Model {
+module.exports =class CountryModel extends Model {
 	/**
 	 * @param country_id
 	 *

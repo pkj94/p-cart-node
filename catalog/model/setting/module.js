@@ -1,4 +1,4 @@
-module.exports =class ModuleController extends Model {
+module.exports =class ModuleModel extends Model {
 	/**
 	 * @param module_id
 	 *

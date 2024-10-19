@@ -24,7 +24,7 @@ const data ={};
 				this.session.data['success'] = this.language.get('text_remove');
 			}
 
-			this.response.redirect(await this.url.link('product/compare', 'language=' + this.config.get('config_language')));
+			this.response.setRedirect(await this.url.link('product/compare', 'language=' + this.config.get('config_language')));
 		}
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -41,8 +41,8 @@ const data ={};
 			'href' : await this.url.link('product/compare', 'language=' + this.config.get('config_language'))
 		];
 
-		data['add_to_cart'] = await this.url.link('checkout/cart+add', 'language=' + this.config.get('config_language'));
-		data['cart'] = await this.url.link('common/cart+info', 'language=' + this.config.get('config_language'));
+		data['add_to_cart'] = await this.url.link('checkout/cart.add', 'language=' + this.config.get('config_language'));
+		data['cart'] = await this.url.link('common/cart.info', 'language=' + this.config.get('config_language'));
 
 		if ((this.session.data['success'])) {
 			data['success'] = this.session.data['success'];
@@ -57,30 +57,30 @@ const data ={};
 		data['attribute_groups'] = [];
 
 		for (this.session.data['compare'] as key : product_id) {
-			product_info = await this.model_catalog_product.getProduct(product_id);
+			const product_info = await this.model_catalog_product.getProduct(product_id);
 
-			if (product_info) {
+			if (product_info.product_id) {
 				if (is_file(DIR_IMAGE + html_entity_decode(product_info['image']))) {
 					image = await this.model_tool_image.resize(html_entity_decode(product_info['image']), this.config.get('config_image_compare_width'), this.config.get('config_image_compare_height'));
 				} else {
 					image = false;
 				}
 
-				if (await this.customer.isLogged() || !this.config.get('config_customer_price')) {
-					price = this.currency.format(this.tax.calculate(product_info['price'], product_info['tax_class_id'], this.config.get('config_tax')), this.session.data['currency']);
+				if (await this.customer.isLogged() || !Number(this.config.get('config_customer_price'))) {
+					price = this.currency.format(this.tax.calculate(product_info['price'], product_info['tax_class_id'], Number(Number(this.config.get('config_tax')))), this.session.data['currency']);
 				} else {
 					price = false;
 				}
 
 				if (product_info['special']) {
-					special = this.currency.format(this.tax.calculate(product_info['special'], product_info['tax_class_id'], this.config.get('config_tax')), this.session.data['currency']);
+					special = this.currency.format(this.tax.calculate(product_info['special'], product_info['tax_class_id'], Number(Number(this.config.get('config_tax')))), this.session.data['currency']);
 				} else {
 					special = false;
 				}
 
-				manufacturer_info = await this.model_catalog_manufacturer.getManufacturer(product_info['manufacturer_id']);
+				const manufacturer_info  = await this.model_catalog_manufacturer.getManufacturer(product_info['manufacturer_id']);
 
-				if (manufacturer_info) {
+				if (manufacturer_info.manufacturer_id) {
 					manufacturer = manufacturer_info['name'];
 				} else {
 					manufacturer = '';
@@ -176,14 +176,14 @@ const data ={};
 
 		this.load.model('catalog/product',this);
 
-		product_info = await this.model_catalog_product.getProduct(product_id);
+		const product_info = await this.model_catalog_product.getProduct(product_id);
 
 		if (!product_info) {
 			json['error'] = this.language.get('error_product');
 		}
 
 		if (!Object.keys(json).length) {
-			// If already in array remove the product_id so it will be added to the back of the array
+			// If already in remove the product_id so it will be added to the back of the array
 			key = array_search(this.request.post['product_id'], this.session.data['compare']);
 
 			if (key !== false) {

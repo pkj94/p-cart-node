@@ -9,7 +9,7 @@ module.exports = class CODModel extends Model {
 		let status = false;
 		if (await this.cart.hasSubscription()) {
 			status = false;
-		} else if (!this.cart.hasShipping()) {
+		} else if (!await this.cart.hasShipping()) {
 			status = false;
 		} else if (!this.config.get('config_checkout_payment_address')) {
 			status = true;

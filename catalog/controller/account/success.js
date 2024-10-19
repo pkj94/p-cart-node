@@ -30,7 +30,7 @@ module.exports=class SuccessController extends Controller {
 			data['text_message'] = sprintf(this.language.get('text_approval'), this.config.get('config_name'), await this.url.link('information/contact', 'language=' + this.config.get('config_language')));
 		}
 
-		if (this.cart.hasProducts()) {
+		if (await this.cart.hasProducts()) {
 			data['continue'] = await this.url.link('checkout/cart', 'language=' + this.config.get('config_language'));
 		} else {
 			data['continue'] = await this.url.link('account/account', 'language=' + this.config.get('config_language') + ((this.session.data['customer_token']) ? '&customer_token=' + this.session.data['customer_token'] : ''));

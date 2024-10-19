@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Catalog\Model\Account;
-/**
- *
- *
- * @package Opencart\Catalog\Model\Account
- */
-class WishlistController extends Model {
+module.exports =class WishlistModel extends Model {
 	/**
 	 * @param product_id
 	 *

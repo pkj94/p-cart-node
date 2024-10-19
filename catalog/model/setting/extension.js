@@ -1,4 +1,4 @@
-module.exports =class ExtensionController extends Model {
+module.exports =class ExtensionModel extends Model {
 	/**
 	 * @return array
 	 */
@@ -14,7 +14,7 @@ module.exports =class ExtensionController extends Model {
 	 * @return array
 	 */
 	async getExtensionsByType(type) {
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "extension` WHERE `type` = '" + this.db.escape(type) + "'");
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "extension` WHERE `type` = " + this.db.escape(type) );
 
 		return query.rows;
 	}
@@ -26,7 +26,7 @@ module.exports =class ExtensionController extends Model {
 	 * @return array
 	 */
 	async getExtensionByCode(type, code) {
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "extension` WHERE `type` = '" + this.db.escape(type) + "' AND `code` = '" + this.db.escape(code) + "'");
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "extension` WHERE `type` = " + this.db.escape(type) + " AND `code` = " + this.db.escape(code) + "");
 
 		return query.row;
 	}

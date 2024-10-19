@@ -28,7 +28,7 @@ const data ={};
 			'country_id'
 		];
 
-		for (keys as key) {
+		for (let key of keys) {
 			if (!(this.request.post[key])) {
 				this.request.post[key] = '';
 			}

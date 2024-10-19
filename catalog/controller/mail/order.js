@@ -8,7 +8,7 @@ namespace Opencart\Catalog\Controller\Mail;
 class OrderController extends Controller {
 	/**
 	 * @param string route
-	 * @param array  args
+	 * @param  args
 	 *
 	 * @return void
 	 */
@@ -54,7 +54,7 @@ class OrderController extends Controller {
 	}
 
 	/**
-	 * @param array  order_info
+	 * @param  order_info
 	 * @param    order_status_id
 	 * @param string comment
 	 * @param bool   notify
@@ -62,7 +62,7 @@ class OrderController extends Controller {
 	 * @return void
 	 * @throws \Exception
 	 */
-	async add(array order_info, order_status_id, comment, bool notify) {
+	async add(order_info, order_status_id, comment, bool notify) {
 		// Check for any downloadable products
 		download_status = false;
 
@@ -274,7 +274,7 @@ class OrderController extends Controller {
 
 			if (subscription_info) {
 				if (subscription_info['trial_status']) {
-					trial_price = this.currency.format(subscription_info['trial_price'] + (this.config.get('config_tax') ? subscription_info['trial_tax'] : 0), order_info['currency_code'], order_info['currency_value']);
+					trial_price = this.currency.format(subscription_info['trial_price'] + (Number(Number(this.config.get('config_tax'))) ? subscription_info['trial_tax'] : 0), order_info['currency_code'], order_info['currency_value']);
 					trial_cycle = subscription_info['trial_cycle'];
 					trial_frequency = this.language.get('text_' + subscription_info['trial_frequency']);
 					trial_duration = subscription_info['trial_duration'];
@@ -282,7 +282,7 @@ class OrderController extends Controller {
 					description += sprintf(this.language.get('text_subscription_trial'), trial_price, trial_cycle, trial_frequency, trial_duration);
 				}
 
-				price = this.currency.format(subscription_info['price'] + (this.config.get('config_tax') ? subscription_info['tax'] : 0), order_info['currency_code'], order_info['currency_value']);
+				price = this.currency.format(subscription_info['price'] + (Number(Number(this.config.get('config_tax'))) ? subscription_info['tax'] : 0), order_info['currency_code'], order_info['currency_value']);
 				cycle = subscription_info['cycle'];
 				frequency = this.language.get('text_' + subscription_info['frequency']);
 				duration = subscription_info['duration'];
@@ -300,8 +300,8 @@ class OrderController extends Controller {
 				'option'       : option_data,
 				'subscription' : description,
 				'quantity'     : order_product['quantity'],
-				'price'        : this.currency.format(order_product['price'] + (this.config.get('config_tax') ? order_product['tax'] : 0), order_info['currency_code'], order_info['currency_value']),
-				'total'        : this.currency.format(order_product['total'] + (this.config.get('config_tax') ? (order_product['tax'] * order_product['quantity']) : 0), order_info['currency_code'], order_info['currency_value']),
+				'price'        : this.currency.format(order_product['price'] + (Number(Number(this.config.get('config_tax'))) ? order_product['tax'] : 0), order_info['currency_code'], order_info['currency_value']),
+				'total'        : this.currency.format(order_product['total'] + (Number(Number(this.config.get('config_tax'))) ? (order_product['tax'] * order_product['quantity']) : 0), order_info['currency_code'], order_info['currency_value']),
 				'reward'       : order_product['reward']
 			];
 		}
@@ -359,7 +359,7 @@ class OrderController extends Controller {
 	}
 
 	/**
-	 * @param array  order_info
+	 * @param  order_info
 	 * @param    order_status_id
 	 * @param string comment
 	 * @param bool   notify
@@ -367,7 +367,7 @@ class OrderController extends Controller {
 	 * @return void
 	 * @throws \Exception
 	 */
-	async edit(array order_info, order_status_id, comment, bool notify) {
+	async edit(order_info, order_status_id, comment, bool notify) {
 		store_name = html_entity_decode(this.config.get('config_name'));
 
 		if (!defined('HTTP_CATALOG')) {
@@ -462,7 +462,7 @@ class OrderController extends Controller {
 
 	/**
 	 * @param string route
-	 * @param array  args
+	 * @param  args
 	 *
 	 * @return void
 	 * @throws \Exception
@@ -548,7 +548,7 @@ class OrderController extends Controller {
 
 				if (subscription_info) {
 					if (subscription_info['trial_status']) {
-						trial_price = this.currency.format(subscription_info['trial_price'] + (this.config.get('config_tax') ? subscription_info['trial_tax'] : 0), this.session.data['currency']);
+						trial_price = this.currency.format(subscription_info['trial_price'] + (Number(Number(this.config.get('config_tax'))) ? subscription_info['trial_tax'] : 0), this.session.data['currency']);
 						trial_cycle = subscription_info['trial_cycle'];
 						trial_frequency = this.language.get('text_' + subscription_info['trial_frequency']);
 						trial_duration = subscription_info['trial_duration'];
@@ -556,7 +556,7 @@ class OrderController extends Controller {
 						description += sprintf(this.language.get('text_subscription_trial'), trial_price, trial_cycle, trial_frequency, trial_duration);
 					}
 
-					price = this.currency.format(subscription_info['price'] + (this.config.get('config_tax') ? subscription_info['tax'] : 0), this.session.data['currency']);
+					price = this.currency.format(subscription_info['price'] + (Number(Number(this.config.get('config_tax'))) ? subscription_info['tax'] : 0), this.session.data['currency']);
 					cycle = subscription_info['cycle'];
 					frequency = this.language.get('text_' + subscription_info['frequency']);
 					duration = subscription_info['duration'];
@@ -574,7 +574,7 @@ class OrderController extends Controller {
 					'quantity'     : order_product['quantity'],
 					'option'       : option_data,
 					'subscription' : description,
-					'total'        : html_entity_decode(this.currency.format(order_product['total'] + (this.config.get('config_tax') ? order_product['tax'] * order_product['quantity'] : 0), order_info['currency_code'], order_info['currency_value']), ENT_NOQUOTES, 'UTF-8')
+					'total'        : html_entity_decode(this.currency.format(order_product['total'] + (Number(Number(this.config.get('config_tax'))) ? order_product['tax'] * order_product['quantity'] : 0), order_info['currency_code'], order_info['currency_value']), ENT_NOQUOTES, 'UTF-8')
 				];
 			}
 

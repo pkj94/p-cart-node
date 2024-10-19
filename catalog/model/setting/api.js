@@ -1,4 +1,4 @@
-module.exports =class ApiController extends Model {
+module.exports =class ApiModel extends Model {
 	/**
 	 * @param string username
 	 * @param string key
@@ -17,7 +17,10 @@ module.exports =class ApiController extends Model {
 	 * @return array
 	 */
 	async getApiByToken(token) {
-		const query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "api` a LEFT JOIN `" + DB_PREFIX + "api_session` `as` ON (a.`api_id` = `as`.`api_id`) LEFT JOIN `" + DB_PREFIX + "api_ip` ai ON (a.`api_id` = ai.`api_id`) WHERE a.`status` = '1' AND `as`.`session_id` = '" + this.db.escape(token) + "' AND ai.`ip` = '" + this.db.escape(this.request.server['REMOTE_ADDR']) + "'");
+		const query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "api` a LEFT JOIN `" + DB_PREFIX + "api_session` `as` ON (a.`api_id` = `as`.`api_id`) LEFT JOIN `" + DB_PREFIX + "api_ip` ai ON (a.`api_id` = ai.`api_id`) WHERE a.`status` = '1' AND `as`.`session_id` = " + this.db.escape(token) + " AND ai.`ip` = " + this.db.escape((this.request.server.headers['x-forwarded-for'] ||
+					this.request.server.connection.remoteAddress ||
+					this.request.server.socket.remoteAddress ||
+					this.request.server.connection.socket.remoteAddress)) + "");
 
 		return query.row;
 	}

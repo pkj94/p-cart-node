@@ -1,10 +1,10 @@
 module.exports=class PaymentMethodController extends Controller {
 	/**
-	 * @param array payment_address
+	 * @param payment_address
 	 *
 	 * @return array
 	 */
-	async getMethods(array payment_address = []) {
+	async getMethods(payment_address = []) {
 		method_data = [];
 
 		this.load.model('setting/extension',this);

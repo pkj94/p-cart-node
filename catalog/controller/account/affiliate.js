@@ -11,14 +11,14 @@ const data ={};
 
 			this.session.data['redirect'] = await this.url.link('account/affiliate', 'language=' + this.config.get('config_language'));
 
-			this.response.redirect(await this.url.link('account/login', 'language=' + this.config.get('config_language')));
+			this.response.setRedirect(await this.url.link('account/login', 'language=' + this.config.get('config_language')));
 		}
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		data['error_upload_size'] = sprintf(this.language.get('error_upload_size'), this.config.get('config_file_max_size'));
+		data['error_upload_size'] = sprintf(this.language.get('error_upload_size'), Number(this.config.get('config_file_max_size')));
 
-		data['config_file_max_size'] = (this.config.get('config_file_max_size') * 1024 * 1024);
+		data['config_file_max_size'] = (Number(this.config.get('config_file_max_size')) * 1024 * 1024);
 
 		data['breadcrumbs'] = [];
 
@@ -184,7 +184,7 @@ const data ={};
 			'agree'
 		];
 
-		for (keys as key) {
+		for (let key of keys) {
 			if (!(this.request.post[key])) {
 				this.request.post[key] = '';
 			}

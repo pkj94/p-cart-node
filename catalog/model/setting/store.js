@@ -1,4 +1,4 @@
-module.exports = class StoreController extends Model {
+module.exports = class StoreModel extends Model {
 	/**
 	 * @param store_id
 	 *

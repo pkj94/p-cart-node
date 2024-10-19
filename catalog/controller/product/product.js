@@ -1,21 +1,22 @@
+const sprintf = require("locutus/php/strings/sprintf");
+const fs = require('fs');
 module.exports = class ProductController extends Controller {
 	/**
 	 * @return void
 	 */
-	async index(): \Opencart\System\Engine\Action|null {
+	async index() {
+		const data = {};
 		await this.load.language('product/product');
-
+		let product_id = 0;
 		if ((this.request.get['product_id'])) {
 			product_id = this.request.get['product_id'];
-		} else {
-			product_id = 0;
 		}
 
-		this.load.model('catalog/product',this);
+		this.load.model('catalog/product', this);
 
-		product_info = await this.model_catalog_product.getProduct(product_id);
+		const product_info = await this.model_catalog_product.getProduct(product_id);
 
-		if (product_info) {
+		if (product_info.product_id) {
 			this.document.setTitle(product_info['meta_title']);
 			this.document.setDescription(product_info['meta_description']);
 			this.document.setKeywords(product_info['meta_keyword']);
@@ -24,40 +25,40 @@ module.exports = class ProductController extends Controller {
 			data['breadcrumbs'] = [];
 
 			data['breadcrumbs'].push({
-				'text' : this.language.get('text_home'),
-				'href' : await this.url.link('common/home', 'language=' + this.config.get('config_language'))
-			];
+				'text': this.language.get('text_home'),
+				'href': await this.url.link('common/home', 'language=' + this.config.get('config_language'))
+			});
 
-			this.load.model('catalog/category',this);
+			this.load.model('catalog/category', this);
 
 			if ((this.request.get['path'])) {
-				path = '';
+				let path = '';
 
-				let parts = explode('_', this.request.get['path']);
+				let parts = Array.isArray(this.request.get['path']) ? this.request.get['path'][this.request.get['path'].length - 1] : this.request.get['path'].split('_');
 
-				category_id = array_pop(parts);
+				let category_id = parts.pop();
 
-				for (parts as path_id) {
+				for (let path_id of parts) {
 					if (!path) {
 						path = path_id;
 					} else {
 						path += '_' + path_id;
 					}
 
-					category_info = await this.model_catalog_category.getCategory(path_id);
+					const category_info = await this.model_catalog_category.getCategory(path_id);
 
-					if (category_info) {
+					if (category_info.category_id) {
 						data['breadcrumbs'].push({
-							'text' : category_info['name'],
-							'href' : await this.url.link('product/category', 'language=' + this.config.get('config_language') + '&path=' + path)
-						];
+							'text': category_info['name'],
+							'href': await this.url.link('product/category', 'language=' + this.config.get('config_language') + '&path=' + path)
+						});
 					}
 				}
 
 				// Set the last category breadcrumb
-				category_info = await this.model_catalog_category.getCategory(category_id);
+				const category_info = await this.model_catalog_category.getCategory(category_id);
 
-				if (category_info) {
+				if (category_info.category_id) {
 					let url = '';
 
 					if ((this.request.get['sort'])) {
@@ -77,19 +78,19 @@ module.exports = class ProductController extends Controller {
 					}
 
 					data['breadcrumbs'].push({
-						'text' : category_info['name'],
-						'href' : await this.url.link('product/category', 'language=' + this.config.get('config_language') + '&path=' + this.request.get['path'] + url)
-					];
+						'text': category_info['name'],
+						'href': await this.url.link('product/category', 'language=' + this.config.get('config_language') + '&path=' + this.request.get['path'] + url)
+					});
 				}
 			}
 
-			this.load.model('catalog/manufacturer',this);
+			this.load.model('catalog/manufacturer', this);
 
 			if ((this.request.get['manufacturer_id'])) {
 				data['breadcrumbs'].push({
-					'text' : this.language.get('text_brand'),
-					'href' : await this.url.link('product/manufacturer', 'language=' + this.config.get('config_language'))
-				];
+					'text': this.language.get('text_brand'),
+					'href': await this.url.link('product/manufacturer', 'language=' + this.config.get('config_language'))
+				});
 
 				let url = '';
 
@@ -109,13 +110,13 @@ module.exports = class ProductController extends Controller {
 					url += '&limit=' + this.request.get['limit'];
 				}
 
-				manufacturer_info = await this.model_catalog_manufacturer.getManufacturer(this.request.get['manufacturer_id']);
+				const manufacturer_info = await this.model_catalog_manufacturer.getManufacturer(this.request.get['manufacturer_id']);
 
-				if (manufacturer_info) {
+				if (manufacturer_info.manufacturer_id) {
 					data['breadcrumbs'].push({
-						'text' : manufacturer_info['name'],
-						'href' : await this.url.link('product/manufacturer.info', 'language=' + this.config.get('config_language') + '&manufacturer_id=' + this.request.get['manufacturer_id'] + url)
-					];
+						'text': manufacturer_info['name'],
+						'href': await this.url.link('product/manufacturer.info', 'language=' + this.config.get('config_language') + '&manufacturer_id=' + this.request.get['manufacturer_id'] + url)
+					});
 				}
 			}
 
@@ -159,15 +160,15 @@ module.exports = class ProductController extends Controller {
 				}
 
 				data['breadcrumbs'].push({
-					'text' : this.language.get('text_search'),
-					'href' : await this.url.link('product/search', 'language=' + this.config.get('config_language') + url)
-				];
+					'text': this.language.get('text_search'),
+					'href': await this.url.link('product/search', 'language=' + this.config.get('config_language') + url)
+				});
 			}
 
 			let url = '';
 
 			if ((this.request.get['path'])) {
-				url += '&path=' + this.request.get['path'];
+				url += '&path=' + Array.isArray(this.request.get['path']) ? this.request.get['path'][this.request.get['path'].length - 1] : this.request.get['path'];
 			}
 
 			if ((this.request.get['filter'])) {
@@ -215,17 +216,17 @@ module.exports = class ProductController extends Controller {
 			}
 
 			data['breadcrumbs'].push({
-				'text' : product_info['name'],
-				'href' : await this.url.link('product/product', 'language=' + this.config.get('config_language') + url + '&product_id=' + product_id)
-			];
+				'text': product_info['name'],
+				'href': await this.url.link('product/product', 'language=' + this.config.get('config_language') + url + '&product_id=' + product_id)
+			});
 
 			this.document.setTitle(product_info['meta_title']);
 			this.document.setDescription(product_info['meta_description']);
 			this.document.setKeywords(product_info['meta_keyword']);
 			this.document.addLink(await this.url.link('product/product', 'language=' + this.config.get('config_language') + '&product_id=' + product_id), 'canonical');
 
-			this.document.addScript('catalog/view/javascript/jquery/magnific/jquery+magnific-popup+min+js');
-			this.document.addStyle('catalog/view/javascript/jquery/magnific/magnific-popup+css');
+			this.document.addScript('catalog/view/javascript/jquery/magnific/jquery.magnific-popup.min.js');
+			this.document.addStyle('catalog/view/javascript/jquery/magnific/magnific-popup.css');
 
 			data['heading_title'] = product_info['name'];
 
@@ -235,17 +236,17 @@ module.exports = class ProductController extends Controller {
 
 			data['tab_review'] = sprintf(this.language.get('tab_review'), product_info['reviews']);
 
-			data['error_upload_size'] = sprintf(this.language.get('error_upload_size'), this.config.get('config_file_max_size'));
+			data['error_upload_size'] = sprintf(this.language.get('error_upload_size'), Number(this.config.get('config_file_max_size')));
 
-			data['config_file_max_size'] = (this.config.get('config_file_max_size') * 1024 * 1024);
+			data['config_file_max_size'] = (Number(this.config.get('config_file_max_size')) * 1024 * 1024);
 
 			data['upload'] = await this.url.link('tool/upload', 'language=' + this.config.get('config_language'));
 
 			data['product_id'] = product_id;
 
-			manufacturer_info = await this.model_catalog_manufacturer.getManufacturer(product_info['manufacturer_id']);
+			const manufacturer_info = await this.model_catalog_manufacturer.getManufacturer(product_info['manufacturer_id']);
 
-			if (manufacturer_info) {
+			if (manufacturer_info.manufacturer_id) {
 				data['manufacturer'] = manufacturer_info['name'];
 			} else {
 				data['manufacturer'] = '';
@@ -274,22 +275,22 @@ module.exports = class ProductController extends Controller {
 			}
 
 			data['rating'] = product_info['rating'];
-			data['review_status'] = this.config.get('config_review_status');
+			data['review_status'] = Number(this.config.get('config_review_status'));
 
 			data['review'] = await this.load.controller('product/review');
 
-			data['add_to_wishlist'] = await this.url.link('account/wishlist+add', 'language=' + this.config.get('config_language'));
-			data['add_to_compare'] = await this.url.link('product/compare+add', 'language=' + this.config.get('config_language'));
+			data['add_to_wishlist'] = await this.url.link('account/wishlist.add', 'language=' + this.config.get('config_language'));
+			data['add_to_compare'] = await this.url.link('product/compare.add', 'language=' + this.config.get('config_language'));
 
-			this.load.model('tool/image',this);
+			this.load.model('tool/image', this);
 
-			if (is_file(DIR_IMAGE + html_entity_decode(product_info['image']))) {
-				data['popup'] = await this.model_tool_image.resize(html_entity_decode(product_info['image']), this.config.get('config_image_popup_width'), this.config.get('config_image_popup_height'));
+			if (product_info['image'] && fs.existsSync(DIR_IMAGE + html_entity_decode(product_info['image']))) {
+				data['popup'] = await this.model_tool_image.resize(html_entity_decode(product_info['image']), Number(this.config.get('config_image_popup_width')), Number(this.config.get('config_image_popup_height')));
 			} else {
 				data['popup'] = '';
 			}
 
-			if (is_file(DIR_IMAGE + html_entity_decode(product_info['image']))) {
+			if (product_info['image'] && fs.existsSync(DIR_IMAGE + html_entity_decode(product_info['image']))) {
 				data['thumb'] = await this.model_tool_image.resize(html_entity_decode(product_info['image']), this.config.get('config_image_thumb_width'), this.config.get('config_image_thumb_height'));
 			} else {
 				data['thumb'] = '';
@@ -297,45 +298,45 @@ module.exports = class ProductController extends Controller {
 
 			data['images'] = [];
 
-			const results = await this.model_catalog_product.getImages(product_id);
+			let results = await this.model_catalog_product.getImages(product_id);
 
 			for (let result of results) {
-				if (is_file(DIR_IMAGE + html_entity_decode(result['image']))) {
+				if (result['image'] && fs.existsSync(DIR_IMAGE + html_entity_decode(result['image']))) {
 					data['images'].push({
-						'popup' : this.model_tool_image.resize(html_entity_decode(result['image']), this.config.get('config_image_popup_width'), this.config.get('config_image_popup_height')),
-						'thumb' : this.model_tool_image.resize(html_entity_decode(result['image']), this.config.get('config_image_additional_width'), this.config.get('config_image_additional_height'))
-					];
+						'popup': this.model_tool_image.resize(html_entity_decode(result['image']), Number(this.config.get('config_image_popup_width')), Number(this.config.get('config_image_popup_height'))),
+						'thumb': this.model_tool_image.resize(html_entity_decode(result['image']), Number(this.config.get('config_image_additional_width')), Number(this.config.get('config_image_additional_height')))
+					});
 				}
 			}
 
-			if (await this.customer.isLogged() || !this.config.get('config_customer_price')) {
-				data['price'] = this.currency.format(this.tax.calculate(product_info['price'], product_info['tax_class_id'], this.config.get('config_tax')), this.session.data['currency']);
+			if (await this.customer.isLogged() || !Number(this.config.get('config_customer_price'))) {
+				data['price'] = this.currency.format(this.tax.calculate(product_info['price'], product_info['tax_class_id'], Number(Number(this.config.get('config_tax')))), this.session.data['currency']);
 			} else {
 				data['price'] = false;
 			}
 
 			if (product_info['special']) {
-				data['special'] = this.currency.format(this.tax.calculate(product_info['special'], product_info['tax_class_id'], this.config.get('config_tax')), this.session.data['currency']);
+				data['special'] = this.currency.format(this.tax.calculate(product_info['special'], product_info['tax_class_id'], Number(Number(this.config.get('config_tax')))), this.session.data['currency']);
 			} else {
 				data['special'] = false;
 			}
 
-			if (this.config.get('config_tax')) {
+			if (Number(Number(this.config.get('config_tax')))) {
 				data['tax'] = this.currency.format(product_info['special'] ? product_info['special'] : product_info['price'], this.session.data['currency']);
 			} else {
 				data['tax'] = false;
 			}
 
-			discounts = await this.model_catalog_product.getDiscounts(product_id);
+			const discounts = await this.model_catalog_product.getDiscounts(product_id);
 
 			data['discounts'] = [];
 
-			if (await this.customer.isLogged() || !this.config.get('config_customer_price')) {
-				for (discounts as discount) {
+			if (await this.customer.isLogged() || !Number(this.config.get('config_customer_price'))) {
+				for (let discount of discounts) {
 					data['discounts'].push({
-						'quantity' : discount['quantity'],
-						'price'    : this.currency.format(this.tax.calculate(discount['price'], product_info['tax_class_id'], this.config.get('config_tax')), this.session.data['currency'])
-					];
+						'quantity': discount['quantity'],
+						'price': this.currency.format(this.tax.calculate(discount['price'], product_info['tax_class_id'], Number(Number(this.config.get('config_tax')))), this.session.data['currency'])
+					});
 				}
 			}
 
@@ -348,70 +349,67 @@ module.exports = class ProductController extends Controller {
 				product_id = this.request.get['product_id'];
 			}
 
-			product_options = await this.model_catalog_product.getOptions(product_id);
+			const product_options = await this.model_catalog_product.getOptions(product_id);
 
-			for (product_options as option) {
+			for (let option of product_options) {
 				if (this.request.get['product_id'] && !(product_info['override']['variant'][option['product_option_id']])) {
-					product_option_value_data = [];
+					let product_option_value_data = [];
 
-					for (option['product_option_value'] as option_value) {
+					for (let option_value of option['product_option_value']) {
 						if (!option_value['subtract'] || (option_value['quantity'] > 0)) {
-							if (((this.config.get('config_customer_price') && await this.customer.isLogged()) || !this.config.get('config_customer_price')) && option_value['price']) {
-								price = this.currency.format(this.tax.calculate(option_value['price'], product_info['tax_class_id'], this.config.get('config_tax') ? 'P' : false), this.session.data['currency']);
-							} else {
-								price = false;
+							let price = false;
+							if (((Number(this.config.get('config_customer_price')) && await this.customer.isLogged()) || !Number(this.config.get('config_customer_price'))) && option_value['price']) {
+								price = this.currency.format(this.tax.calculate(option_value['price'], product_info['tax_class_id'], Number(Number(this.config.get('config_tax'))) ? 'P' : false), this.session.data['currency']);
 							}
-
-							if (is_file(DIR_IMAGE + html_entity_decode(option_value['image']))) {
+							let image = '';
+							if (option_value['image'] && fs.existsSync(DIR_IMAGE + html_entity_decode(option_value['image']))) {
 								image = await this.model_tool_image.resize(html_entity_decode(option_value['image']), 50, 50);
-							} else {
-								image = '';
 							}
 
 							product_option_value_data.push({
-								'product_option_value_id' : option_value['product_option_value_id'],
-								'option_value_id'         : option_value['option_value_id'],
-								'name'                    : option_value['name'],
-								'image'                   : image,
-								'price'                   : price,
-								'price_prefix'            : option_value['price_prefix']
-							];
+								'product_option_value_id': option_value['product_option_value_id'],
+								'option_value_id': option_value['option_value_id'],
+								'name': option_value['name'],
+								'image': image,
+								'price': price,
+								'price_prefix': option_value['price_prefix']
+							});
 						}
 					}
 
 					data['options'].push({
-						'product_option_id'    : option['product_option_id'],
-						'product_option_value' : product_option_value_data,
-						'option_id'            : option['option_id'],
-						'name'                 : option['name'],
-						'type'                 : option['type'],
-						'value'                : option['value'],
-						'required'             : option['required']
-					];
+						'product_option_id': option['product_option_id'],
+						'product_option_value': product_option_value_data,
+						'option_id': option['option_id'],
+						'name': option['name'],
+						'type': option['type'],
+						'value': option['value'],
+						'required': option['required']
+					});
 				}
 			}
 
 			// Subscriptions
-			data['subscription_plans']  = [];
+			data['subscription_plans'] = [];
 
-			const results = await this.model_catalog_product.getSubscriptions(product_id);
+			results = await this.model_catalog_product.getSubscriptions(product_id);
 
 			for (let result of results) {
-				description = '';
+				let description = '';
 
 				if (result['trial_status']) {
-					trial_price = this.currency.format(this.tax.calculate(result['trial_price'], product_info['tax_class_id'], this.config.get('config_tax')), this.session.data['currency']);
-					trial_cycle = result['trial_cycle'];
-					trial_frequency = this.language.get('text_' + result['trial_frequency']);
-					trial_duration = result['trial_duration'];
+					let trial_price = this.currency.format(this.tax.calculate(result['trial_price'], product_info['tax_class_id'], Number(Number(this.config.get('config_tax')))), this.session.data['currency']);
+					let trial_cycle = result['trial_cycle'];
+					let trial_frequency = this.language.get('text_' + result['trial_frequency']);
+					let trial_duration = result['trial_duration'];
 
 					description += sprintf(this.language.get('text_subscription_trial'), trial_price, trial_cycle, trial_frequency, trial_duration);
 				}
 
-				price = this.currency.format(this.tax.calculate(result['price'], product_info['tax_class_id'], this.config.get('config_tax')), this.session.data['currency']);
-				cycle = result['cycle'];
-				frequency = this.language.get('text_' + result['frequency']);
-				duration = result['duration'];
+				let price = this.currency.format(this.tax.calculate(result['price'], product_info['tax_class_id'], Number(Number(this.config.get('config_tax')))), this.session.data['currency']);
+				let cycle = result['cycle'];
+				let frequency = this.language.get('text_' + result['frequency']);
+				let duration = result['duration'];
 
 				if (duration) {
 					description += sprintf(this.language.get('text_subscription_duration'), price, cycle, frequency, duration);
@@ -420,10 +418,10 @@ module.exports = class ProductController extends Controller {
 				}
 
 				data['subscription_plans'].push({
-					'subscription_plan_id' : result['subscription_plan_id'],
-					'name'                 : result['name'],
-					'description'          : description
-				];
+					'subscription_plan_id': result['subscription_plan_id'],
+					'name': result['name'],
+					'description': description
+				});
 			}
 
 			if (product_info['minimum']) {
@@ -438,64 +436,60 @@ module.exports = class ProductController extends Controller {
 
 			data['products'] = [];
 
-			const results = await this.model_catalog_product.getRelated(product_id);
+			results = await this.model_catalog_product.getRelated(product_id);
 
 			for (let result of results) {
-				if (is_file(DIR_IMAGE + html_entity_decode(result['image']))) {
-					image = await this.model_tool_image.resize(html_entity_decode(result['image']), this.config.get('config_image_related_width'), this.config.get('config_image_related_height'));
-				} else {
-					image = await this.model_tool_image.resize('placeholder.png', this.config.get('config_image_related_width'), this.config.get('config_image_related_height'));
+				let image = await this.model_tool_image.resize('placeholder.png', Number(this.config.get('config_image_related_width')), Number(this.config.get('config_image_related_height')));
+				if (result['image'] && fs.existsSync(DIR_IMAGE + html_entity_decode(result['image']))) {
+					image = await this.model_tool_image.resize(html_entity_decode(result['image']), Number(this.config.get('config_image_related_width')), Number(this.config.get('config_image_related_height')));
 				}
-
-				if (await this.customer.isLogged() || !this.config.get('config_customer_price')) {
-					price = this.currency.format(this.tax.calculate(result['price'], result['tax_class_id'], this.config.get('config_tax')), this.session.data['currency']);
-				} else {
-					price = false;
+				let price = false;
+				if (await this.customer.isLogged() || !Number(this.config.get('config_customer_price'))) {
+					price = this.currency.format(this.tax.calculate(result['price'], result['tax_class_id'], Number(Number(this.config.get('config_tax')))), this.session.data['currency']);
 				}
-
+				let special = false;
 				if (result['special']) {
-					special = this.currency.format(this.tax.calculate(result['special'], result['tax_class_id'], this.config.get('config_tax')), this.session.data['currency']);
-				} else {
-					special = false;
+					special = this.currency.format(this.tax.calculate(result['special'], result['tax_class_id'], Number(Number(this.config.get('config_tax')))), this.session.data['currency']);
 				}
-
-				if (this.config.get('config_tax')) {
+				let tax = false;
+				if (Number(Number(this.config.get('config_tax')))) {
 					tax = this.currency.format(result['special'] ? result['special'] : result['price'], this.session.data['currency']);
-				} else {
-					tax = false;
 				}
 
-				let product_data = [
-					'product_id'  : result['product_id'],
-					'thumb'       : image,
-					'name'        : result['name'],
-					'description' : oc_substr(trim(strip_tags(html_entity_decode(result['description']))), 0, this.config.get('config_product_description_length')) + '++',
-					'price'       : price,
-					'special'     : special,
-					'tax'         : tax,
-					'minimum'     : result['minimum'] > 0 ? result['minimum'] : 1,
-					'rating'      : result['rating'],
-					'href'        : await this.url.link('product/product', 'language=' + this.config.get('config_language') + '&product_id=' + result['product_id'])
-				];
+				let product_data = {
+					'product_id': result['product_id'],
+					'thumb': image,
+					'name': result['name'],
+					'description': oc_substr(trim(strip_tags(html_entity_decode(result['description']))), 0, Number(this.config.get('config_product_description_length'))) + '++',
+					'price': price,
+					'special': special,
+					'tax': tax,
+					'minimum': result['minimum'] > 0 ? result['minimum'] : 1,
+					'rating': result['rating'],
+					'href': await this.url.link('product/product', 'language=' + this.config.get('config_language') + '&product_id=' + result['product_id'])
+				};
 
-				data['products'].push(await this.load.controller('product/thumb', product_data);
+				data['products'].push(await this.load.controller('product/thumb', product_data));
 			}
 
 			data['tags'] = [];
 
 			if (product_info['tag']) {
-				tags = explode(',', product_info['tag']);
+				let tags = product_info['tag'].split(',');
 
-				for (tags as tag) {
+				for (let tag of tags) {
 					data['tags'].push({
-						'tag'  : trim(tag),
-						'href' : await this.url.link('product/search', 'language=' + this.config.get('config_language') + '&tag=' + trim(tag))
-					];
+						'tag': tag.trim(),
+						'href': await this.url.link('product/search', 'language=' + this.config.get('config_language') + '&tag=' + tag.trim())
+					});
 				}
 			}
 
 			if (this.config.get('config_product_report_status')) {
-				await this.model_catalog_product.addReport(this.request.get['product_id'], this.request.server['REMOTE_ADDR']);
+				await this.model_catalog_product.addReport(this.request.get['product_id'], (this.request.server.headers['x-forwarded-for'] ||
+					this.request.server.connection.remoteAddress ||
+					this.request.server.socket.remoteAddress ||
+					this.request.server.connection.socket.remoteAddress));
 			}
 
 			data['language'] = this.config.get('config_language');
@@ -509,7 +503,7 @@ module.exports = class ProductController extends Controller {
 
 			this.response.setOutput(await this.load.view('product/product', data));
 		} else {
-			return new \Opencart\System\Engine\Action('error/not_found');
+			return new Action('error/not_found');
 		}
 
 		return null;

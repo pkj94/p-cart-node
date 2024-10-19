@@ -1,4 +1,4 @@
-module.exports =class BannerController extends Model {
+module.exports =class BannerModel extends Model {
 	/**
 	 * @param banner_id
 	 *

@@ -29,7 +29,11 @@ global.APP = async () => {
     const session = require('express-session')
     var sess = {
         secret: require('crypto').randomBytes(26).toString('hex').slice(0, 26),
-        cookie: {},
+        cookie: {
+            maxAge: 30 * 60 * 60 * 1000,
+            httpOnly: false,
+            secure: false
+        },
         resave: false,
         saveUninitialized: true
     }
@@ -100,6 +104,9 @@ global.APP = async () => {
     adminRoutes();
     catalogRoutes();
     installRoutes();
+
+    app.use('/error.html', express.static('./error.html'));
+
     let port = typeof SERVER_PORT == 'undefined' ? 8080 : SERVER_PORT;
     app.listen(port, () => {
         console.log("Application is running on the port:" + port);

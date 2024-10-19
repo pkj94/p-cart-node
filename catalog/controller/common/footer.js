@@ -24,7 +24,7 @@ module.exports = class FooterController extends Controller {
 		}
 
 		data['contact'] = await this.url.link('information/contact', 'language=' + this.config.get('config_language'));
-		data['return'] = await this.url.link('account/returns+add', 'language=' + this.config.get('config_language'));
+		data['return'] = await this.url.link('account/returns.add', 'language=' + this.config.get('config_language'));
 
 		if (this.config.get('config_gdpr_id')) {
 			data['gdpr'] = await this.url.link('information/gdpr', 'language=' + this.config.get('config_language'));

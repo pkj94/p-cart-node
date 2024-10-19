@@ -22,7 +22,7 @@ const data ={};
 			delete (this.session.data['vouchers']);
 			delete (this.session.data['customer_token']);
 
-			this.response.redirect(await this.url.link('account/logout', 'language=' + this.config.get('config_language')));
+			this.response.setRedirect(await this.url.link('account/logout', 'language=' + this.config.get('config_language')));
 		}
 
 		await this.load.language('account/logout');

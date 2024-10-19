@@ -1,41 +1,35 @@
-module.exports=class PaginationController extends Controller {
+const str_replace = require("locutus/php/strings/str_replace");
+
+module.exports = class PaginationController extends Controller {
 	/**
-	 * @param array setting
+	 * @param setting
 	 *
 	 * @return string
 	 */
-	async index(array setting) {
+	async index(setting) {
+		const data = {};
+		let total = 0;
 		if ((setting['total'])) {
 			total = setting['total'];
-		} else {
-			total = 0;
 		}
-
+		let page = 1;
 		if ((setting['page']) && setting['page'] > 0) {
 			page = setting['page'];
-		} else {
-			page = 1;
 		}
-
+		let limit = 10;
 		if ((setting['limit']) && setting['limit']) {
 			limit = setting['limit'];
-		} else {
-			let limit = 10;
 		}
-
+		let url = '';
 		if ((setting['url'])) {
 			url = str_replace('%7Bpage%7D', '{page}', setting['url']);
-		} else {
-			let url = '';
 		}
 
-		num_links = 8;
-		num_pages = ceil(total / limit);
-
+		let num_links = 8;
+		let num_pages = Math.ceil(total / limit);
+		let back = false;
 		if (url && page > 1 && num_pages < page) {
 			back = true;
-		} else {
-			back = false;
 		}
 
 		data['page'] = page;
@@ -56,15 +50,17 @@ module.exports=class PaginationController extends Controller {
 		data['links'] = [];
 
 		if (num_pages > 1) {
+			let start = 1;
+			let end = 1;
 			if (num_pages <= num_links) {
 				start = 1;
 				end = num_pages;
 			} else {
-				start = page - floor(num_links / 2);
-				end = page + floor(num_links / 2);
+				start = page - Math.floor(num_links / 2);
+				end = page + Math.floor(num_links / 2);
 
 				if (start < 1) {
-					end += abs(start) + 1;
+					end += Math.abs(start) + 1;
 					start = 1;
 				}
 
@@ -74,11 +70,11 @@ module.exports=class PaginationController extends Controller {
 				}
 			}
 
-			for (i = start; i <= end; i++) {
+			for (let i = start; i <= end; i++) {
 				data['links'].push({
-					'page' : i,
-					'href' : str_replace('{page}', i, url)
-				];
+					'page': i,
+					'href': str_replace('{page}', i, url)
+				});
 			}
 		}
 

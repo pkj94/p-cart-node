@@ -1,4 +1,4 @@
-module.exports = class ThemeController extends Model {
+module.exports = class ThemeModel extends Model {
 	/**
 	 * @param string route
 	 *

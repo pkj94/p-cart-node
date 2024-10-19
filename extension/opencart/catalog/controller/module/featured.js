@@ -17,7 +17,7 @@ module.exports = class FeaturedController extends Controller {
 
 		this.load.model('catalog/product', this);
 		this.load.model('tool/image', this);
-		
+
 		if ((setting['product'])) {
 			let products = [];
 
@@ -35,15 +35,15 @@ module.exports = class FeaturedController extends Controller {
 					image = await this.model_tool_image.resize(html_entity_decode(product['image']), setting['width'], setting['height']);
 				}
 				let price = false;
-				if (await this.customer.isLogged() || !this.config.get('config_customer_price')) {
-					price = this.currency.format(this.tax.calculate(product['price'], product['tax_class_id'], this.config.get('config_tax')), this.session.data['currency']);
+				if (await this.customer.isLogged() || !Number(this.config.get('config_customer_price'))) {
+					price = this.currency.format(this.tax.calculate(product['price'], product['tax_class_id'], Number(this.config.get('config_tax'))), this.session.data['currency']);
 				}
 				let special = false;
 				if (product['special']) {
-					special = this.currency.format(this.tax.calculate(product['special'], product['tax_class_id'], this.config.get('config_tax')), this.session.data['currency']);
+					special = this.currency.format(this.tax.calculate(product['special'], product['tax_class_id'], Number(this.config.get('config_tax'))), this.session.data['currency']);
 				}
 				let tax = false;
-				if (this.config.get('config_tax')) {
+				if (Number(this.config.get('config_tax'))) {
 					tax = this.currency.format(product['special'] ? product['special'] : product['price'], this.session.data['currency']);
 				}
 
@@ -63,7 +63,6 @@ module.exports = class FeaturedController extends Controller {
 				data['products'].push(await this.load.controller('product/thumb', product_data));
 			}
 		}
-
 		if (data['products'].length) {
 			return await this.load.view('extension/opencart/module/featured', data);
 		} else {

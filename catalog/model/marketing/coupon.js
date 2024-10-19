@@ -5,7 +5,7 @@ namespace Opencart\Catalog\Model\Marketing;
  *
  * @package Opencart\Catalog\Model\Marketing
  */
-class CouponController extends Model {
+class CouponModel extends Model {
 	/**
 	 * @param string code
 	 *
@@ -14,7 +14,7 @@ class CouponController extends Model {
 	async getCoupon(code) {
 		status = true;
 
-		coupon_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "coupon` WHERE `code` = '" + this.db.escape(code) + "' AND ((`date_start` = '0000-00-00' OR `date_start` < NOW()) AND (`date_end` = '0000-00-00' OR `date_end` > NOW())) AND `status` = '1'");
+		coupon_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "coupon` WHERE `code` = " + this.db.escape(code) + " AND ((`date_start` = '0000-00-00' OR `date_start` < NOW()) AND (`date_end` = '0000-00-00' OR `date_end` > NOW())) AND `status` = '1'");
 
 		if (coupon_query.num_rows) {
 			if (coupon_query.row['total'] > this.cart.getSubTotal()) {
@@ -60,7 +60,7 @@ class CouponController extends Model {
 			let product_data = [];
 
 			if (coupon_product_data || coupon_category_data) {
-				for (this.cart.getProducts() as product) {
+				for (await this.cart.getProducts() as product) {
 					if (in_array(product['product_id'], coupon_product_data)) {
 						product_data.push(product['product_id'];
 

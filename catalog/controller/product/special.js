@@ -13,24 +13,22 @@ const data ={};
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
 		} else {
-			sort = 'p+sort_order';
+			sort = 'p.sort_order';
 		}
 
-		if ((this.request.get['order'])) {
+		let order = 'ASC';
+if ((this.request.get['order'])) {
 			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
-		}
+		} 
 
 		let page = 1;
 if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
 		} 
 
-		if ((this.request.get['limit']) && this.request.get['limit']) {
+		let limit = this.config.get('config_pagination');
+if ((this.request.get['limit']) && this.request.get['limit']) {
 			limit = this.request.get['limit'];
-		} else {
-			limit = this.config.get('config_pagination');
 		}
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -89,29 +87,29 @@ if ((this.request.get['page'])) {
 				image = await this.model_tool_image.resize('placeholder.png', this.config.get('config_image_product_width'), this.config.get('config_image_product_height'));
 			}
 
-			if (await this.customer.isLogged() || !this.config.get('config_customer_price')) {
-				price = this.currency.format(this.tax.calculate(result['price'], result['tax_class_id'], this.config.get('config_tax')), this.session.data['currency']);
+			if (await this.customer.isLogged() || !Number(this.config.get('config_customer_price'))) {
+				price = this.currency.format(this.tax.calculate(result['price'], result['tax_class_id'], Number(Number(this.config.get('config_tax')))), this.session.data['currency']);
 			} else {
 				price = false;
 			}
 
 			if (result['special']) {
-				special = this.currency.format(this.tax.calculate(result['special'], result['tax_class_id'], this.config.get('config_tax')), this.session.data['currency']);
+				special = this.currency.format(this.tax.calculate(result['special'], result['tax_class_id'], Number(Number(this.config.get('config_tax')))), this.session.data['currency']);
 			} else {
 				special = false;
 			}
 
-			if (this.config.get('config_tax')) {
+			if (Number(Number(this.config.get('config_tax')))) {
 				tax = this.currency.format(result['special'] ? result['special'] : result['price'], this.session.data['currency']);
 			} else {
 				tax = false;
 			}
 
-			let product_data = [
+			let product_data = {
 				'product_id'  : result['product_id'],
 				'thumb'       : image,
 				'name'        : result['name'],
-				'description' : oc_substr(trim(strip_tags(html_entity_decode(result['description']))), 0, this.config.get('config_product_description_length')) + '++',
+				'description' : oc_substr(trim(strip_tags(html_entity_decode(result['description']))), 0, Number(this.config.get('config_product_description_length'))) + '++',
 				'price'       : price,
 				'special'     : special,
 				'tax'         : tax,
@@ -133,8 +131,8 @@ if ((this.request.get['page'])) {
 
 		data['sorts'].push({
 			'text'  : this.language.get('text_default'),
-			'value' : 'p+sort_order-ASC',
-			'href'  : await this.url.link('product/special', 'language=' + this.config.get('config_language') + '&sort=p+sort_order&order=ASC' + url)
+			'value' : 'p.sort_order-ASC',
+			'href'  : await this.url.link('product/special', 'language=' + this.config.get('config_language') + '&sort=p.sort_order&order=ASC' + url)
 		];
 
 		data['sorts'].push({
@@ -161,7 +159,7 @@ if ((this.request.get['page'])) {
 			'href'  : await this.url.link('product/special', 'language=' + this.config.get('config_language') + '&sort=ps+price&order=DESC' + url)
 		];
 
-		if (this.config.get('config_review_status')) {
+		if (Number(this.config.get('config_review_status'))) {
 			data['sorts'].push({
 				'text'  : this.language.get('text_rating_desc'),
 				'value' : 'rating-DESC',
@@ -203,7 +201,7 @@ if ((this.request.get['page'])) {
 
 		sort(limits);
 
-		for (limits as value) {
+		for (let value of limits) {
 			data['limits'].push({
 				'text'  : value,
 				'value' : value,
@@ -232,7 +230,7 @@ if ((this.request.get['page'])) {
 			'url'   : await this.url.link('product/special', 'language=' + this.config.get('config_language') + url + '&page={page}')
 		]);
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (product_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (product_total - limit)) ? product_total : (((page - 1) * limit) + limit), product_total, ceil(product_total / limit));
+		data['results'] = sprintf(this.language.get('text_pagination'), (product_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (product_total - limit)) ? product_total : (((page - 1) * limit) + limit), product_total, Math.ceil(product_total / limit));
 
 		// http://googlewebmastercentral+blogspot+com/2011/09/pagination-with-relnext-and-relprev+html
 		if (page == 1) {
@@ -245,7 +243,7 @@ if ((this.request.get['page'])) {
 			this.document.addLink(await this.url.link('product/special', 'language=' + this.config.get('config_language') + ((page - 2) ? '&page='+ (page - 1) : '')), 'prev');
 		}
 
-		if (limit && ceil(product_total / limit) > page) {
+		if (limit && Math.ceil(product_total / limit) > page) {
 		    this.document.addLink(await this.url.link('product/special', 'language=' + this.config.get('config_language') + '&page='+ (page + 1)), 'next');
 		}
 

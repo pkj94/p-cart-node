@@ -204,7 +204,7 @@ $('#input-shipping-address').on('change', function () {
 
     chain.attach(function () {
         return $.ajax({
-            url: 'index.php?route=checkout/shipping_address.address&language={{ language }}&address_id=' + $(element).val(),
+            url: '?route=checkout/shipping_address.address&language={{ language }}&address_id=' + $(element).val(),
             dataType: 'json',
             beforeSend: function () {
                 $(element).prop('disabled', true);
@@ -233,7 +233,7 @@ $('#input-shipping-address').on('change', function () {
                     $('#input-shipping-method').val('');
                     $('#input-payment-method').val('');
 
-                    $('#checkout-confirm').load('index.php?route=checkout/confirm.confirm&language={{ language }}');
+                    $('#checkout-confirm').load('?route=checkout/confirm.confirm&language={{ language }}');
                 }
             },
             error: function (xhr, ajaxOptions, thrownError) {
@@ -249,7 +249,7 @@ $('#form-shipping-address').on('submit', function (e) {
 
     chain.attach(function () {
         return $.ajax({
-            url: 'index.php?route=checkout/shipping_address.save&language={{ language }}',
+            url: '?route=checkout/shipping_address.save&language={{ language }}',
             type: 'post',
             data: $('#form-shipping-address').serialize(),
             dataType: 'json',
@@ -321,7 +321,7 @@ $('#form-shipping-address').on('submit', function (e) {
                     $('#input-shipping-method').val('');
                     $('#input-payment-method').val('');
 
-                    $('#checkout-confirm').load('index.php?route=checkout/confirm.confirm&language={{ language }}');
+                    $('#checkout-confirm').load('?route=checkout/confirm.confirm&language={{ language }}');
                 }
             },
             error: function (xhr, ajaxOptions, thrownError) {
@@ -336,7 +336,7 @@ $('#input-shipping-country').on('change', function () {
 
     chain.attach(function () {
         return $.ajax({
-            url: 'index.php?route=localisation/country&language={{ language }}&country_id=' + $('#input-shipping-country').val(),
+            url: '?route=localisation/country&language={{ language }}&country_id=' + $('#input-shipping-country').val(),
             dataType: 'json',
             beforeSend: function () {
                 $(element).prop('disabled', true);

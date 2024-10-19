@@ -8,7 +8,7 @@ module.exports=class SubscriptionController extends Controller {
 		if (!await this.customer.isLogged() || (!(this.request.get['customer_token']) || !(this.session.data['customer_token']) || (this.request.get['customer_token'] != this.session.data['customer_token']))) {
 			this.session.data['redirect'] = await this.url.link('account/subscription', 'language=' + this.config.get('config_language'));
 
-			this.response.redirect(await this.url.link('account/login', 'language=' + this.config.get('config_language')));
+			this.response.setRedirect(await this.url.link('account/login', 'language=' + this.config.get('config_language')));
 		}
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -56,9 +56,9 @@ if ((this.request.get['page'])) {
 		const results = await this.model_account_subscription.getSubscriptions((page - 1) * limit, limit);
 
 		for (let result of results) {
-			product_info = await this.model_catalog_product.getProduct(result['product_id']);
+			const product_info = await this.model_catalog_product.getProduct(result['product_id']);
 
-			if (product_info) {
+			if (product_info.product_id) {
 				currency_info = await this.model_localisation_currency.getCurrency(result['currency_id']);
 
 				if (currency_info) {
@@ -70,7 +70,7 @@ if ((this.request.get['page'])) {
 				description = '';
 
 				if (result['trial_status']) {
-					trial_price = this.currency.format(this.tax.calculate(result['trial_price'], product_info['tax_class_id'], this.config.get('config_tax')), currency);
+					trial_price = this.currency.format(this.tax.calculate(result['trial_price'], product_info['tax_class_id'], Number(Number(this.config.get('config_tax')))), currency);
 					trial_cycle = result['trial_cycle'];
 					trial_frequency = this.language.get('text_' + result['trial_frequency']);
 					trial_duration = result['trial_duration'];
@@ -78,7 +78,7 @@ if ((this.request.get['page'])) {
 					description += sprintf(this.language.get('text_subscription_trial'), trial_price, trial_cycle, trial_frequency, trial_duration);
 				}
 
-				price = this.currency.format(this.tax.calculate(result['price'], product_info['tax_class_id'], this.config.get('config_tax')), currency);
+				price = this.currency.format(this.tax.calculate(result['price'], product_info['tax_class_id'], Number(Number(this.config.get('config_tax')))), currency);
 				cycle = result['cycle'];
 				frequency = this.language.get('text_' + result['frequency']);
 				duration = result['duration'];
@@ -117,7 +117,7 @@ if ((this.request.get['page'])) {
 			'url'   : await this.url.link('account/subscription', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'] + '&page={page}')
 		]);
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (subscription_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (subscription_total - limit)) ? subscription_total : (((page - 1) * limit) + limit), subscription_total, ceil(subscription_total / limit));
+		data['results'] = sprintf(this.language.get('text_pagination'), (subscription_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (subscription_total - limit)) ? subscription_total : (((page - 1) * limit) + limit), subscription_total, Math.ceil(subscription_total / limit));
 
 		data['continue'] = await this.url.link('account/account', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token']);
 
@@ -140,7 +140,7 @@ if ((this.request.get['page'])) {
 		if (!await this.customer.isLogged() || (!(this.request.get['customer_token']) || !(this.session.data['customer_token']) || (this.request.get['customer_token'] != this.session.data['customer_token']))) {
 			this.session.data['redirect'] = await this.url.link('account/subscription', 'language=' + this.config.get('config_language'));
 
-			this.response.redirect(await this.url.link('account/login', 'language=' + this.config.get('config_language')));
+			this.response.setRedirect(await this.url.link('account/login', 'language=' + this.config.get('config_language')));
 		}
 
 		if ((this.request.get['subscription_id'])) {
@@ -315,9 +315,9 @@ if ((this.request.get['page'])) {
 
 			this.load.model('catalog/product',this);
 
-			product_info = await this.model_catalog_product.getProduct(subscription_info['product_id']);
+			const product_info = await this.model_catalog_product.getProduct(subscription_info['product_id']);
 
-			if (product_info) {
+			if (product_info.product_id) {
 				data['name'] = product_info['name'];
 			} else {
 				data['name'] = '';
@@ -346,7 +346,7 @@ if ((this.request.get['page'])) {
 			data['description'] = '';
 
 			if (subscription_info['trial_status']) {
-				trial_price = this.currency.format(this.tax.calculate(subscription_info['trial_price'], product_info['tax_class_id'], this.config.get('config_tax')), currency);
+				trial_price = this.currency.format(this.tax.calculate(subscription_info['trial_price'], product_info['tax_class_id'], Number(Number(this.config.get('config_tax')))), currency);
 				trial_cycle = subscription_info['trial_cycle'];
 				trial_frequency = this.language.get('text_' + subscription_info['trial_frequency']);
 				trial_duration = subscription_info['trial_duration'];
@@ -354,7 +354,7 @@ if ((this.request.get['page'])) {
 				data['description'] += sprintf(this.language.get('text_subscription_trial'), trial_price, trial_cycle, trial_frequency, trial_duration);
 			}
 
-			price = this.currency.format(this.tax.calculate(subscription_info['price'], product_info['tax_class_id'], this.config.get('config_tax')), currency);
+			price = this.currency.format(this.tax.calculate(subscription_info['price'], product_info['tax_class_id'], Number(Number(this.config.get('config_tax')))), currency);
 			cycle = subscription_info['cycle'];
 			frequency = this.language.get('text_' + subscription_info['frequency']);
 			duration = subscription_info['duration'];
@@ -381,7 +381,7 @@ if ((this.request.get['page'])) {
 
 			this.response.setOutput(await this.load.view('account/subscription_info', data));
 		} else {
-			return new \Opencart\System\Engine\Action('error/not_found');
+			return new Action('error/not_found');
 		}
 
 		return null;
@@ -437,7 +437,7 @@ if ((this.request.get['page'])) {
 			'url'   : await this.url.link('account/subscription+history', 'customer_token=' + this.session.data['customer_token'] + '&subscription_id=' + subscription_id + '&page={page}')
 		]);
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (subscription_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (subscription_total - limit)) ? subscription_total : (((page - 1) * limit) + limit), subscription_total, ceil(subscription_total / limit));
+		data['results'] = sprintf(this.language.get('text_pagination'), (subscription_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (subscription_total - limit)) ? subscription_total : (((page - 1) * limit) + limit), subscription_total, Math.ceil(subscription_total / limit));
 
 		return await this.load.view('account/subscription_history', data);
 	}
@@ -494,7 +494,7 @@ if ((this.request.get['page'])) {
 			'url'   : await this.url.link('sale/subscription+order', 'customer_token=' + this.session.data['customer_token'] + '&subscription_id=' + subscription_id + '&page={page}')
 		]);
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (order_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (order_total - limit)) ? order_total : (((page - 1) * limit) + limit), order_total, ceil(order_total / limit));
+		data['results'] = sprintf(this.language.get('text_pagination'), (order_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (order_total - limit)) ? order_total : (((page - 1) * limit) + limit), order_total, Math.ceil(order_total / limit));
 
 		return await this.load.view('account/subscription_order', data);
 	}

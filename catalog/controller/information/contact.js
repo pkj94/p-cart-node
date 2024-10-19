@@ -80,7 +80,7 @@ const data ={};
 
 		extension_info = await this.model_setting_extension.getExtensionByCode('captcha', this.config.get('config_captcha'));
 
-		if (extension_info && this.config.get('captcha_' + this.config.get('config_captcha') + '_status') && in_array('contact', this.config.get('config_captcha_page'))) {
+		if (extension_info && Number(this.config.get('captcha_' + this.config.get('config_captcha') + '_status')) && in_array('contact', this.config.get('config_captcha_page'))) {
 			data['captcha'] = await this.load.controller('extension/' + extension_info['extension'] + '/captcha/' + extension_info['code']);
 		} else {
 			data['captcha'] = '';
@@ -111,7 +111,7 @@ const data ={};
 			'enquiry'
 		];
 
-		for (keys as key) {
+		for (let key of keys) {
 			if (!(this.request.post[key])) {
 				this.request.post[key] = '';
 			}
@@ -134,8 +134,8 @@ const data ={};
 
 		extension_info = await this.model_setting_extension.getExtensionByCode('captcha', this.config.get('config_captcha'));
 
-		if (extension_info && this.config.get('captcha_' + this.config.get('config_captcha') + '_status') && in_array('contact', this.config.get('config_captcha_page'))) {
-			captcha = await this.load.controller('extension/' + extension_info['extension'] + '/captcha/' + extension_info['code'] + '+validate');
+		if (extension_info && Number(this.config.get('captcha_' + this.config.get('config_captcha') + '_status')) && in_array('contact', this.config.get('config_captcha_page'))) {
+			const captcha = await this.load.controller('extension/' + extension_info['extension'] + '/captcha/' + extension_info['code'] + '+validate');
 
 			if (captcha) {
 				json['error']['captcha'] = captcha;

@@ -1,4 +1,4 @@
-module.exports = class SettingController extends Model {
+module.exports = class SettingModel extends Model {
 	/**
 	 * @param store_id
 	 *
@@ -6,7 +6,6 @@ module.exports = class SettingController extends Model {
 	 */
 	async getSettings(store_id = 0) {
 		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "setting` WHERE `store_id` = '" + store_id + "' OR `store_id` = 0 ORDER BY `store_id` ASC");
-
 		return query.rows;
 	}
 
@@ -19,7 +18,7 @@ module.exports = class SettingController extends Model {
 	async getSetting(code, store_id = 0) {
 		let setting_data = {};
 
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "setting` WHERE `store_id` = '" + store_id + "' AND `code` = '" + this.db.escape(code) + "'");
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "setting` WHERE `store_id` = '" + store_id + "' AND `code` = " + this.db.escape(code) + "");
 
 		for (let result of query.rows) {
 			if (!result['serialized']) {

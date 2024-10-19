@@ -1,6 +1,6 @@
-module.exports =class ReturnReasonController extends Model {
+module.exports =class ReturnReasonModel extends Model {
 	/**
-	 * @param array data
+	 * @param data
 	 *
 	 * @return array
 	 */

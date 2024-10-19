@@ -16,7 +16,7 @@ const data ={};
 		const json = {};
 
 		// Stock
-		if (!this.cart.hasStock() && (!this.config.get('config_stock_checkout') || this.config.get('config_stock_warning'))) {
+		if (!await this.cart.hasStock() && (!Number(this.config.get('config_stock_checkout')) || Number(this.config.get('config_stock_warning')))) {
 			json['error']['stock'] = this.language.get('error_stock');
 		}
 
@@ -37,7 +37,7 @@ const data ={};
 
 			if (product['subscription']) {
 				if (product['subscription']['trial_status']) {
-					trial_price = this.currency.format(this.tax.calculate(product['subscription']['trial_price'], product['tax_class_id'], this.config.get('config_tax')), this.session.data['currency']);
+					trial_price = this.currency.format(this.tax.calculate(product['subscription']['trial_price'], product['tax_class_id'], Number(Number(this.config.get('config_tax')))), this.session.data['currency']);
 					trial_cycle = product['subscription']['trial_cycle'];
 					trial_frequency = this.language.get('text_' + product['subscription']['trial_frequency']);
 					trial_duration = product['subscription']['trial_duration'];
@@ -45,7 +45,7 @@ const data ={};
 					description += sprintf(this.language.get('text_subscription_trial'), trial_price, trial_cycle, trial_frequency, trial_duration);
 				}
 
-				price = this.currency.format(this.tax.calculate(product['subscription']['price'], product['tax_class_id'], this.config.get('config_tax')), this.session.data['currency']);
+				price = this.currency.format(this.tax.calculate(product['subscription']['price'], product['tax_class_id'], Number(Number(this.config.get('config_tax')))), this.session.data['currency']);
 				cycle = product['subscription']['cycle'];
 				frequency = this.language.get('text_' + product['subscription']['frequency']);
 				duration = product['subscription']['duration'];
@@ -68,8 +68,8 @@ const data ={};
 				'stock'        : product['stock'],
 				'minimum'      : product['minimum'],
 				'reward'       : product['reward'],
-				'price'        : this.currency.format(this.tax.calculate(product['price'], product['tax_class_id'], this.config.get('config_tax')), this.session.data['currency']),
-				'total'        : this.currency.format(this.tax.calculate(product['price'], product['tax_class_id'], this.config.get('config_tax')) * product['quantity'], this.session.data['currency']),
+				'price'        : this.currency.format(this.tax.calculate(product['price'], product['tax_class_id'], Number(Number(this.config.get('config_tax')))), this.session.data['currency']),
+				'total'        : this.currency.format(this.tax.calculate(product['price'], product['tax_class_id'], Number(Number(this.config.get('config_tax')))) * product['quantity'], this.session.data['currency']),
 			];
 		}
 
@@ -134,24 +134,25 @@ const data ={};
 
 		this.load.model('catalog/product',this);
 
-		product_info = await this.model_catalog_product.getProduct(product_id);
+		const product_info = await this.model_catalog_product.getProduct(product_id);
 
-		if (product_info) {
+		if (product_info.product_id) {
 			// If variant get master product
 			if (product_info['master_id']) {
 				product_id = product_info['master_id'];
 			}
 
 			// Merge variant code with options
-			for (product_info['variant'] as key : value) {
+			for (let [key , value] of 
+ Object.entries(product_info['variant'])) {
 				option[key] = value;
 			}
 
 			// Validate options
-			product_options = await this.model_catalog_product.getOptions(product_id);
+			const product_options = await this.model_catalog_product.getOptions(product_id);
 
-			for (product_options as product_option) {
-				if (product_option['required'] && empty(option[product_option['product_option_id']])) {
+			for (let product_option of product_options) {
+				if (product_option['required'] && option[product_option['product_option_id']]) {
 					json['error']['option_' + product_option['product_option_id']] = sprintf(this.language.get('error_required'), product_option['name']);
 				}
 			}
@@ -162,7 +163,7 @@ const data ={};
 			if (subscriptions) {
 				subscription_plan_ids = [];
 
-				for (subscriptions as subscription) {
+				for (let subscription of subscriptions) {
 					subscription_plan_ids.push(subscription['subscription_plan_id'];
 				}
 

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 15, 2024 at 05:21 PM
+-- Generation Time: Oct 19, 2024 at 12:31 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.0.28
 
@@ -27,7 +27,6 @@ SET time_zone = "+00:00";
 -- Table structure for table `pc_address`
 --
 
-DROP TABLE IF EXISTS `pc_address`;
 CREATE TABLE `pc_address` (
   `address_id` int(11) NOT NULL,
   `customer_id` int(11) NOT NULL,
@@ -44,20 +43,12 @@ CREATE TABLE `pc_address` (
   `default` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
---
--- Dumping data for table `pc_address`
---
-
-INSERT INTO `pc_address` (`address_id`, `customer_id`, `firstname`, `lastname`, `company`, `address_1`, `address_2`, `city`, `postcode`, `country_id`, `zone_id`, `custom_field`, `default`) VALUES
-(3, 2, 'Pradeep', 'Kumar', 'test', 'dsfdfds', 'Teh. Bawani Khera', 'Delhi', '2213213', 99, 1475, '{}', 0);
-
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `pc_address_format`
 --
 
-DROP TABLE IF EXISTS `pc_address_format`;
 CREATE TABLE `pc_address_format` (
   `address_format_id` int(11) NOT NULL,
   `name` varchar(128) NOT NULL,
@@ -77,7 +68,6 @@ INSERT INTO `pc_address_format` (`address_format_id`, `name`, `address_format`) 
 -- Table structure for table `pc_antispam`
 --
 
-DROP TABLE IF EXISTS `pc_antispam`;
 CREATE TABLE `pc_antispam` (
   `antispam_id` int(11) NOT NULL,
   `keyword` varchar(64) NOT NULL
@@ -89,7 +79,6 @@ CREATE TABLE `pc_antispam` (
 -- Table structure for table `pc_api`
 --
 
-DROP TABLE IF EXISTS `pc_api`;
 CREATE TABLE `pc_api` (
   `api_id` int(11) NOT NULL,
   `username` varchar(64) NOT NULL,
@@ -104,7 +93,7 @@ CREATE TABLE `pc_api` (
 --
 
 INSERT INTO `pc_api` (`api_id`, `username`, `key`, `status`, `date_added`, `date_modified`) VALUES
-(1, 'Default', 'db62e56ba5be7e082134ae9c7d487ef5c4dd89362490abc0aa8dfcd95a9219a8552cd5b2c20ed2788e36b5228454e3ecc871e69a8a4ae4d037d20eecdc22e48644868010d75a2f7a7e2cb3819060f5eef0e6655b1ff26e8171d735fc4a9c390dcf6e941181afc28190f91e4ab8515a0ed354530545f494d530939be9297aee40', 1, '2024-10-09 20:11:16', '2024-10-15 04:45:28');
+(1, 'Default', '8d510dd782ca06a822782639bf7105a6e2dbe7fbc044bcc6ef748f41a82c880303939a8eb9272549ff36f28e18215722fb7165a387029a057b0685514f9aea0c7b98f2d7b704f68157b9a2c5059c533f74225e038951eb20404fc4c706bc2268a38750069cc0c51bede6bbc610776895c3af946f9dcf929161d621a237d7f4a3', 1, '2024-10-17 01:14:31', '2024-10-17 01:14:31');
 
 -- --------------------------------------------------------
 
@@ -112,20 +101,11 @@ INSERT INTO `pc_api` (`api_id`, `username`, `key`, `status`, `date_added`, `date
 -- Table structure for table `pc_api_ip`
 --
 
-DROP TABLE IF EXISTS `pc_api_ip`;
 CREATE TABLE `pc_api_ip` (
   `api_ip_id` int(11) NOT NULL,
   `api_id` int(11) NOT NULL,
   `ip` varchar(40) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
-
---
--- Dumping data for table `pc_api_ip`
---
-
-INSERT INTO `pc_api_ip` (`api_ip_id`, `api_id`, `ip`) VALUES
-(1, 1, '1.1.1.1'),
-(2, 2, '1.1.1.1');
 
 -- --------------------------------------------------------
 
@@ -133,7 +113,6 @@ INSERT INTO `pc_api_ip` (`api_ip_id`, `api_id`, `ip`) VALUES
 -- Table structure for table `pc_api_session`
 --
 
-DROP TABLE IF EXISTS `pc_api_session`;
 CREATE TABLE `pc_api_session` (
   `api_session_id` int(11) NOT NULL,
   `api_id` int(11) NOT NULL,
@@ -149,7 +128,6 @@ CREATE TABLE `pc_api_session` (
 -- Table structure for table `pc_article`
 --
 
-DROP TABLE IF EXISTS `pc_article`;
 CREATE TABLE `pc_article` (
   `article_id` int(11) NOT NULL,
   `topic_id` int(11) NOT NULL,
@@ -165,7 +143,6 @@ CREATE TABLE `pc_article` (
 -- Table structure for table `pc_article_comment`
 --
 
-DROP TABLE IF EXISTS `pc_article_comment`;
 CREATE TABLE `pc_article_comment` (
   `article_comment_id` int(11) NOT NULL,
   `article_id` int(11) NOT NULL,
@@ -181,7 +158,6 @@ CREATE TABLE `pc_article_comment` (
 -- Table structure for table `pc_article_description`
 --
 
-DROP TABLE IF EXISTS `pc_article_description`;
 CREATE TABLE `pc_article_description` (
   `article_id` int(11) NOT NULL,
   `language_id` int(11) NOT NULL,
@@ -200,7 +176,6 @@ CREATE TABLE `pc_article_description` (
 -- Table structure for table `pc_article_to_layout`
 --
 
-DROP TABLE IF EXISTS `pc_article_to_layout`;
 CREATE TABLE `pc_article_to_layout` (
   `article_id` int(11) NOT NULL,
   `store_id` int(11) NOT NULL,
@@ -213,7 +188,6 @@ CREATE TABLE `pc_article_to_layout` (
 -- Table structure for table `pc_article_to_store`
 --
 
-DROP TABLE IF EXISTS `pc_article_to_store`;
 CREATE TABLE `pc_article_to_store` (
   `article_id` int(11) NOT NULL,
   `store_id` int(11) NOT NULL DEFAULT 0
@@ -225,7 +199,6 @@ CREATE TABLE `pc_article_to_store` (
 -- Table structure for table `pc_attribute`
 --
 
-DROP TABLE IF EXISTS `pc_attribute`;
 CREATE TABLE `pc_attribute` (
   `attribute_id` int(11) NOT NULL,
   `attribute_group_id` int(11) NOT NULL,
@@ -255,7 +228,6 @@ INSERT INTO `pc_attribute` (`attribute_id`, `attribute_group_id`, `sort_order`) 
 -- Table structure for table `pc_attribute_description`
 --
 
-DROP TABLE IF EXISTS `pc_attribute_description`;
 CREATE TABLE `pc_attribute_description` (
   `attribute_id` int(11) NOT NULL,
   `language_id` int(11) NOT NULL,
@@ -285,7 +257,6 @@ INSERT INTO `pc_attribute_description` (`attribute_id`, `language_id`, `name`) V
 -- Table structure for table `pc_attribute_group`
 --
 
-DROP TABLE IF EXISTS `pc_attribute_group`;
 CREATE TABLE `pc_attribute_group` (
   `attribute_group_id` int(11) NOT NULL,
   `sort_order` int(3) NOT NULL
@@ -307,7 +278,6 @@ INSERT INTO `pc_attribute_group` (`attribute_group_id`, `sort_order`) VALUES
 -- Table structure for table `pc_attribute_group_description`
 --
 
-DROP TABLE IF EXISTS `pc_attribute_group_description`;
 CREATE TABLE `pc_attribute_group_description` (
   `attribute_group_id` int(11) NOT NULL,
   `language_id` int(11) NOT NULL,
@@ -330,7 +300,6 @@ INSERT INTO `pc_attribute_group_description` (`attribute_group_id`, `language_id
 -- Table structure for table `pc_banner`
 --
 
-DROP TABLE IF EXISTS `pc_banner`;
 CREATE TABLE `pc_banner` (
   `banner_id` int(11) NOT NULL,
   `name` varchar(64) NOT NULL,
@@ -352,7 +321,6 @@ INSERT INTO `pc_banner` (`banner_id`, `name`, `status`) VALUES
 -- Table structure for table `pc_banner_image`
 --
 
-DROP TABLE IF EXISTS `pc_banner_image`;
 CREATE TABLE `pc_banner_image` (
   `banner_image_id` int(11) NOT NULL,
   `banner_id` int(11) NOT NULL,
@@ -368,7 +336,9 @@ CREATE TABLE `pc_banner_image` (
 --
 
 INSERT INTO `pc_banner_image` (`banner_image_id`, `banner_id`, `language_id`, `title`, `link`, `image`, `sort_order`) VALUES
-(87, 6, 1, 'HP Banner', 'index.php?route=product/manufacturer.info&amp;manufacturer_id=7', 'catalog/demo/compaq_presario.jpg', 0),
+(79, 7, 1, 'iPhone 6', '?route=product/product&amp;path=57&amp;product_id=49', 'catalog/demo/banners/iPhone6.jpg', 0),
+(80, 7, 1, 'MacBookAir', '', 'catalog/demo/banners/MacBookAir.jpg', 0),
+(87, 6, 1, 'HP Banner', '?route=product/manufacturer.info&amp;manufacturer_id=7', 'catalog/demo/compaq_presario.jpg', 0),
 (88, 8, 1, 'Harley Davidson', '', 'catalog/demo/manufacturer/harley.png', 0),
 (89, 8, 1, 'Dell', '', 'catalog/demo/manufacturer/dell.png', 0),
 (90, 8, 1, 'Disney', '', 'catalog/demo/manufacturer/disney.png', 0),
@@ -379,9 +349,7 @@ INSERT INTO `pc_banner_image` (`banner_image_id`, `banner_id`, `language_id`, `t
 (95, 8, 1, 'RedBull', '', 'catalog/demo/manufacturer/redbull.png', 0),
 (96, 8, 1, 'Sony', '', 'catalog/demo/manufacturer/sony.png', 0),
 (97, 8, 1, 'Starbucks', '', 'catalog/demo/manufacturer/starbucks.png', 0),
-(98, 8, 1, 'Nintendo', '', 'catalog/demo/manufacturer/nintendo.png', 0),
-(99, 7, 1, 'iPhone 6', 'index.php?route=product/product&path=57&product_id=49', 'catalog/demo/banners/iPhone6.jpg', 0),
-(100, 7, 1, 'MacBookAir', '', 'catalog/demo/banners/MacBookAir.jpg', 0);
+(98, 8, 1, 'Nintendo', '', 'catalog/demo/manufacturer/nintendo.png', 0);
 
 -- --------------------------------------------------------
 
@@ -389,7 +357,6 @@ INSERT INTO `pc_banner_image` (`banner_image_id`, `banner_id`, `language_id`, `t
 -- Table structure for table `pc_cart`
 --
 
-DROP TABLE IF EXISTS `pc_cart`;
 CREATE TABLE `pc_cart` (
   `cart_id` int(11) NOT NULL,
   `api_id` int(11) NOT NULL,
@@ -404,13 +371,22 @@ CREATE TABLE `pc_cart` (
   `date_added` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
+--
+-- Dumping data for table `pc_cart`
+--
+
+INSERT INTO `pc_cart` (`cart_id`, `api_id`, `customer_id`, `session_id`, `product_id`, `subscription_plan_id`, `option`, `quantity`, `override`, `price`, `date_added`) VALUES
+(46, 0, 0, 'fdESs4a23bQYBFJs-TIfCVnDCsbuNG05', 40, 0, '[]', 1, 0, 0.0000, '2024-10-19 09:41:01'),
+(47, 0, 0, 'TWUqST3dyjhnfnhl0Zn1Lb28HZuQaOqM', 40, 0, '[]', 1, 0, 0.0000, '2024-10-19 09:49:13'),
+(48, 0, 0, '35KpkDEXacTU81XzNxthPYAvy_2qfZR3', 40, 0, '[]', 1, 0, 0.0000, '2024-10-19 09:49:39'),
+(49, 0, 0, 'xSbStcpUrRBM-_YtkAd8FsvLh2iKeSTp', 40, 0, '[]', 1, 0, 0.0000, '2024-10-19 09:50:25');
+
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `pc_category`
 --
 
-DROP TABLE IF EXISTS `pc_category`;
 CREATE TABLE `pc_category` (
   `category_id` int(11) NOT NULL,
   `image` varchar(255) NOT NULL,
@@ -473,7 +449,6 @@ INSERT INTO `pc_category` (`category_id`, `image`, `parent_id`, `top`, `column`,
 -- Table structure for table `pc_category_description`
 --
 
-DROP TABLE IF EXISTS `pc_category_description`;
 CREATE TABLE `pc_category_description` (
   `category_id` int(11) NOT NULL,
   `language_id` int(11) NOT NULL,
@@ -534,7 +509,6 @@ INSERT INTO `pc_category_description` (`category_id`, `language_id`, `name`, `de
 -- Table structure for table `pc_category_filter`
 --
 
-DROP TABLE IF EXISTS `pc_category_filter`;
 CREATE TABLE `pc_category_filter` (
   `category_id` int(11) NOT NULL,
   `filter_id` int(11) NOT NULL
@@ -546,7 +520,6 @@ CREATE TABLE `pc_category_filter` (
 -- Table structure for table `pc_category_path`
 --
 
-DROP TABLE IF EXISTS `pc_category_path`;
 CREATE TABLE `pc_category_path` (
   `category_id` int(11) NOT NULL,
   `path_id` int(11) NOT NULL,
@@ -636,7 +609,6 @@ INSERT INTO `pc_category_path` (`category_id`, `path_id`, `level`) VALUES
 -- Table structure for table `pc_category_to_layout`
 --
 
-DROP TABLE IF EXISTS `pc_category_to_layout`;
 CREATE TABLE `pc_category_to_layout` (
   `category_id` int(11) NOT NULL,
   `store_id` int(11) NOT NULL,
@@ -649,7 +621,6 @@ CREATE TABLE `pc_category_to_layout` (
 -- Table structure for table `pc_category_to_store`
 --
 
-DROP TABLE IF EXISTS `pc_category_to_store`;
 CREATE TABLE `pc_category_to_store` (
   `category_id` int(11) NOT NULL,
   `store_id` int(11) NOT NULL DEFAULT 0
@@ -705,7 +676,6 @@ INSERT INTO `pc_category_to_store` (`category_id`, `store_id`) VALUES
 -- Table structure for table `pc_country`
 --
 
-DROP TABLE IF EXISTS `pc_country`;
 CREATE TABLE `pc_country` (
   `country_id` int(11) NOT NULL,
   `name` varchar(128) NOT NULL,
@@ -981,7 +951,6 @@ INSERT INTO `pc_country` (`country_id`, `name`, `iso_code_2`, `iso_code_3`, `add
 -- Table structure for table `pc_coupon`
 --
 
-DROP TABLE IF EXISTS `pc_coupon`;
 CREATE TABLE `pc_coupon` (
   `coupon_id` int(11) NOT NULL,
   `name` varchar(128) NOT NULL,
@@ -1014,7 +983,6 @@ INSERT INTO `pc_coupon` (`coupon_id`, `name`, `code`, `type`, `discount`, `logge
 -- Table structure for table `pc_coupon_category`
 --
 
-DROP TABLE IF EXISTS `pc_coupon_category`;
 CREATE TABLE `pc_coupon_category` (
   `coupon_id` int(11) NOT NULL,
   `category_id` int(11) NOT NULL
@@ -1026,7 +994,6 @@ CREATE TABLE `pc_coupon_category` (
 -- Table structure for table `pc_coupon_history`
 --
 
-DROP TABLE IF EXISTS `pc_coupon_history`;
 CREATE TABLE `pc_coupon_history` (
   `coupon_history_id` int(11) NOT NULL,
   `coupon_id` int(11) NOT NULL,
@@ -1042,7 +1009,6 @@ CREATE TABLE `pc_coupon_history` (
 -- Table structure for table `pc_coupon_product`
 --
 
-DROP TABLE IF EXISTS `pc_coupon_product`;
 CREATE TABLE `pc_coupon_product` (
   `coupon_product_id` int(11) NOT NULL,
   `coupon_id` int(11) NOT NULL,
@@ -1055,7 +1021,6 @@ CREATE TABLE `pc_coupon_product` (
 -- Table structure for table `pc_cron`
 --
 
-DROP TABLE IF EXISTS `pc_cron`;
 CREATE TABLE `pc_cron` (
   `cron_id` int(11) NOT NULL,
   `code` varchar(128) NOT NULL,
@@ -1082,7 +1047,6 @@ INSERT INTO `pc_cron` (`cron_id`, `code`, `description`, `cycle`, `action`, `sta
 -- Table structure for table `pc_currency`
 --
 
-DROP TABLE IF EXISTS `pc_currency`;
 CREATE TABLE `pc_currency` (
   `currency_id` int(11) NOT NULL,
   `title` varchar(32) NOT NULL,
@@ -1100,15 +1064,14 @@ CREATE TABLE `pc_currency` (
 --
 
 INSERT INTO `pc_currency` (`currency_id`, `title`, `code`, `symbol_left`, `symbol_right`, `decimal_place`, `value`, `status`, `date_modified`) VALUES
-(1, 'Pound Sterling', 'GBP', '£', '', 2, 0.70225742, 1, '2024-10-15 06:20:40'),
-(2, 'US Dollar', 'USD', '$', '', 2, 1.00000000, 1, '2024-10-15 06:20:40'),
-(3, 'Euro', 'EUR', '', '€', 2, 0.83936822, 1, '2024-10-15 06:20:40'),
-(4, 'Hong Kong Dollar', 'HKD', 'HK$', '', 2, 7.11095965, 0, '2024-10-15 06:20:40'),
-(5, 'Indian Rupee', 'INR', '₹', '', 2, 76.99440708, 1, '2024-10-15 06:20:40'),
+(1, 'Pound Sterling', 'GBP', '£', '', 2, 0.61250001, 1, '2014-09-25 14:40:00'),
+(2, 'US Dollar', 'USD', '$', '', 2, 1.00000000, 1, '2014-09-25 14:40:00'),
+(3, 'Euro', 'EUR', '', '€', 2, 0.78460002, 1, '2014-09-25 14:40:00'),
+(4, 'Hong Kong Dollar', 'HKD', 'HK$', '', 2, 7.82224000, 0, '2018-02-16 12:00:00'),
+(5, 'Indian Rupee', 'INR', '₹', '', 2, 64.40000000, 0, '2018-02-16 12:00:00'),
 (6, 'Russian Ruble', 'RUB', '', '₽', 2, 56.40360000, 0, '2018-02-16 12:00:00'),
-(7, 'Chinese Yuan Renminbi', 'CNY', '¥', '', 2, 6.49100229, 0, '2024-10-15 06:20:40'),
-(8, 'Australian Dollar', 'AUD', '$', '', 2, 1.36380548, 0, '2024-10-15 06:20:40'),
-(10, 'Rupees', 'INR', '', '₹', 2, 76.99440708, 1, '2024-10-15 06:20:40');
+(7, 'Chinese Yuan Renminbi', 'CNY', '¥', '', 2, 6.34510000, 0, '2018-02-16 12:00:00'),
+(8, 'Australian Dollar', 'AUD', '$', '', 2, 1.26544000, 0, '2018-02-16 12:00:00');
 
 -- --------------------------------------------------------
 
@@ -1116,7 +1079,6 @@ INSERT INTO `pc_currency` (`currency_id`, `title`, `code`, `symbol_left`, `symbo
 -- Table structure for table `pc_customer`
 --
 
-DROP TABLE IF EXISTS `pc_customer`;
 CREATE TABLE `pc_customer` (
   `customer_id` int(11) NOT NULL,
   `customer_group_id` int(11) NOT NULL,
@@ -1137,20 +1099,12 @@ CREATE TABLE `pc_customer` (
   `date_added` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
---
--- Dumping data for table `pc_customer`
---
-
-INSERT INTO `pc_customer` (`customer_id`, `customer_group_id`, `store_id`, `language_id`, `firstname`, `lastname`, `email`, `telephone`, `password`, `custom_field`, `newsletter`, `ip`, `status`, `safe`, `token`, `code`, `date_added`) VALUES
-(2, 1, 0, 0, 'Pradeep', 'Kumar', 'pradeep@cqs.in', '01234567890', '$2b$10$TcwkTMwB33CiyYIinVYwP.uP46kuem1jgkgH5zoF0bvbosVJcwtO2', '{}', 0, '', 1, 0, '', '', '2024-10-14 08:31:44');
-
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `pc_customer_activity`
 --
 
-DROP TABLE IF EXISTS `pc_customer_activity`;
 CREATE TABLE `pc_customer_activity` (
   `customer_activity_id` int(11) NOT NULL,
   `customer_id` int(11) NOT NULL,
@@ -1166,7 +1120,6 @@ CREATE TABLE `pc_customer_activity` (
 -- Table structure for table `pc_customer_affiliate`
 --
 
-DROP TABLE IF EXISTS `pc_customer_affiliate`;
 CREATE TABLE `pc_customer_affiliate` (
   `customer_id` int(11) NOT NULL,
   `company` varchar(60) NOT NULL,
@@ -1194,7 +1147,6 @@ CREATE TABLE `pc_customer_affiliate` (
 -- Table structure for table `pc_customer_affiliate_report`
 --
 
-DROP TABLE IF EXISTS `pc_customer_affiliate_report`;
 CREATE TABLE `pc_customer_affiliate_report` (
   `customer_affiliate_report_id` int(11) NOT NULL,
   `customer_id` int(11) NOT NULL,
@@ -1210,7 +1162,6 @@ CREATE TABLE `pc_customer_affiliate_report` (
 -- Table structure for table `pc_customer_approval`
 --
 
-DROP TABLE IF EXISTS `pc_customer_approval`;
 CREATE TABLE `pc_customer_approval` (
   `customer_approval_id` int(11) NOT NULL,
   `customer_id` int(11) NOT NULL,
@@ -1224,7 +1175,6 @@ CREATE TABLE `pc_customer_approval` (
 -- Table structure for table `pc_customer_group`
 --
 
-DROP TABLE IF EXISTS `pc_customer_group`;
 CREATE TABLE `pc_customer_group` (
   `customer_group_id` int(11) NOT NULL,
   `approval` int(1) NOT NULL,
@@ -1244,7 +1194,6 @@ INSERT INTO `pc_customer_group` (`customer_group_id`, `approval`, `sort_order`) 
 -- Table structure for table `pc_customer_group_description`
 --
 
-DROP TABLE IF EXISTS `pc_customer_group_description`;
 CREATE TABLE `pc_customer_group_description` (
   `customer_group_id` int(11) NOT NULL,
   `language_id` int(11) NOT NULL,
@@ -1265,7 +1214,6 @@ INSERT INTO `pc_customer_group_description` (`customer_group_id`, `language_id`,
 -- Table structure for table `pc_customer_history`
 --
 
-DROP TABLE IF EXISTS `pc_customer_history`;
 CREATE TABLE `pc_customer_history` (
   `customer_history_id` int(11) NOT NULL,
   `customer_id` int(11) NOT NULL,
@@ -1273,22 +1221,12 @@ CREATE TABLE `pc_customer_history` (
   `date_added` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
---
--- Dumping data for table `pc_customer_history`
---
-
-INSERT INTO `pc_customer_history` (`customer_history_id`, `customer_id`, `comment`, `date_added`) VALUES
-(1, 2, 'undefined', '2024-10-14 10:44:29'),
-(2, 2, 'undefined', '2024-10-14 10:48:04'),
-(3, 2, 'DSFDSF', '2024-10-14 10:52:29');
-
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `pc_customer_ip`
 --
 
-DROP TABLE IF EXISTS `pc_customer_ip`;
 CREATE TABLE `pc_customer_ip` (
   `customer_ip_id` int(11) NOT NULL,
   `customer_id` int(11) NOT NULL,
@@ -1304,7 +1242,6 @@ CREATE TABLE `pc_customer_ip` (
 -- Table structure for table `pc_customer_login`
 --
 
-DROP TABLE IF EXISTS `pc_customer_login`;
 CREATE TABLE `pc_customer_login` (
   `customer_login_id` int(11) NOT NULL,
   `email` varchar(96) NOT NULL,
@@ -1320,7 +1257,6 @@ CREATE TABLE `pc_customer_login` (
 -- Table structure for table `pc_customer_online`
 --
 
-DROP TABLE IF EXISTS `pc_customer_online`;
 CREATE TABLE `pc_customer_online` (
   `ip` varchar(40) NOT NULL,
   `customer_id` int(11) NOT NULL,
@@ -1329,13 +1265,20 @@ CREATE TABLE `pc_customer_online` (
   `date_added` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
+--
+-- Dumping data for table `pc_customer_online`
+--
+
+INSERT INTO `pc_customer_online` (`ip`, `customer_id`, `url`, `referer`, `date_added`) VALUES
+('::1', 0, 'http://localhost:8080/?route=checkout/cart&language=en-gb', 'http://localhost:8080/', '2024-10-19 09:50:34'),
+('::ffff:127.0.0.1', 0, 'http://localhost:8080/', '', '2024-10-19 08:42:09');
+
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `pc_customer_reward`
 --
 
-DROP TABLE IF EXISTS `pc_customer_reward`;
 CREATE TABLE `pc_customer_reward` (
   `customer_reward_id` int(11) NOT NULL,
   `customer_id` int(11) NOT NULL DEFAULT 0,
@@ -1351,7 +1294,6 @@ CREATE TABLE `pc_customer_reward` (
 -- Table structure for table `pc_customer_search`
 --
 
-DROP TABLE IF EXISTS `pc_customer_search`;
 CREATE TABLE `pc_customer_search` (
   `customer_search_id` int(11) NOT NULL,
   `store_id` int(11) NOT NULL,
@@ -1372,7 +1314,6 @@ CREATE TABLE `pc_customer_search` (
 -- Table structure for table `pc_customer_transaction`
 --
 
-DROP TABLE IF EXISTS `pc_customer_transaction`;
 CREATE TABLE `pc_customer_transaction` (
   `customer_transaction_id` int(11) NOT NULL,
   `customer_id` int(11) NOT NULL,
@@ -1382,23 +1323,12 @@ CREATE TABLE `pc_customer_transaction` (
   `date_added` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
---
--- Dumping data for table `pc_customer_transaction`
---
-
-INSERT INTO `pc_customer_transaction` (`customer_transaction_id`, `customer_id`, `order_id`, `description`, `amount`, `date_added`) VALUES
-(1, 2, 0, 'TEST', 1.0000, '2024-10-14 10:52:37'),
-(2, 2, 0, 'Cheque Payment', -1.0000, '2024-10-14 10:54:46'),
-(3, 2, 0, 'Cheque Payment', -1.0000, '2024-10-14 10:58:10'),
-(4, 2, 0, 'Cheque Payment', -1.0000, '2024-10-14 10:58:42');
-
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `pc_customer_wishlist`
 --
 
-DROP TABLE IF EXISTS `pc_customer_wishlist`;
 CREATE TABLE `pc_customer_wishlist` (
   `customer_id` int(11) NOT NULL,
   `product_id` int(11) NOT NULL,
@@ -1411,7 +1341,6 @@ CREATE TABLE `pc_customer_wishlist` (
 -- Table structure for table `pc_custom_field`
 --
 
-DROP TABLE IF EXISTS `pc_custom_field`;
 CREATE TABLE `pc_custom_field` (
   `custom_field_id` int(11) NOT NULL,
   `type` varchar(32) NOT NULL,
@@ -1429,14 +1358,14 @@ CREATE TABLE `pc_custom_field` (
 INSERT INTO `pc_custom_field` (`custom_field_id`, `type`, `value`, `validation`, `location`, `status`, `sort_order`) VALUES
 (1, 'select', '', '', 'account', 0, 1),
 (2, 'radio', '', '', 'account', 0, 2),
-(3, 'checkbox', '', '', 'account', 1, 3),
+(3, 'checkbox', '', '', 'account', 0, 3),
 (4, 'text', '', '', 'account', 0, 4),
 (5, 'textarea', '', '', 'account', 0, 5),
 (6, 'file', '', '', 'account', 0, 6),
 (7, 'date', '', '', 'account', 0, 7),
 (8, 'time', '', '', 'account', 0, 8),
 (9, 'datetime', '', '', 'account', 0, 9),
-(11, 'select', '', '', 'account', 1, 0),
+(11, 'checkbox', '', '', 'address', 0, 3),
 (12, 'time', '', '', 'address', 0, 8),
 (13, 'date', '', '', 'address', 0, 7),
 (14, 'datetime', '', '', 'address', 0, 9),
@@ -1445,7 +1374,7 @@ INSERT INTO `pc_custom_field` (`custom_field_id`, `type`, `value`, `validation`,
 (17, 'select', '', '', 'address', 0, 1),
 (18, 'text', '', '', 'address', 0, 4),
 (19, 'textarea', '', '', 'address', 0, 5),
-(20, 'select', '', '', 'account', 1, 0),
+(20, 'checkbox', '', '', 'affiliate', 0, 3),
 (21, 'date', '', '', 'affiliate', 0, 8),
 (22, 'datetime', '', '', 'affiliate', 0, 9),
 (23, 'file', '', '', 'affiliate', 0, 6),
@@ -1461,7 +1390,6 @@ INSERT INTO `pc_custom_field` (`custom_field_id`, `type`, `value`, `validation`,
 -- Table structure for table `pc_custom_field_customer_group`
 --
 
-DROP TABLE IF EXISTS `pc_custom_field_customer_group`;
 CREATE TABLE `pc_custom_field_customer_group` (
   `custom_field_id` int(11) NOT NULL,
   `customer_group_id` int(11) NOT NULL,
@@ -1507,7 +1435,6 @@ INSERT INTO `pc_custom_field_customer_group` (`custom_field_id`, `customer_group
 -- Table structure for table `pc_custom_field_description`
 --
 
-DROP TABLE IF EXISTS `pc_custom_field_description`;
 CREATE TABLE `pc_custom_field_description` (
   `custom_field_id` int(11) NOT NULL,
   `language_id` int(11) NOT NULL,
@@ -1521,7 +1448,7 @@ CREATE TABLE `pc_custom_field_description` (
 INSERT INTO `pc_custom_field_description` (`custom_field_id`, `language_id`, `name`) VALUES
 (1, 1, 'Select'),
 (2, 1, 'Radio'),
-(3, 0, 'Checkbox'),
+(3, 1, 'Checkbox'),
 (4, 1, 'Text'),
 (5, 1, 'Textarea'),
 (6, 1, 'File'),
@@ -1537,7 +1464,7 @@ INSERT INTO `pc_custom_field_description` (`custom_field_id`, `language_id`, `na
 (17, 1, 'Select'),
 (18, 1, 'Text'),
 (19, 1, 'Textarea'),
-(20, 0, 'Checkbox'),
+(20, 1, 'Checkbox'),
 (21, 1, 'Date'),
 (22, 1, 'Date &amp; Time'),
 (23, 1, 'File'),
@@ -1553,7 +1480,6 @@ INSERT INTO `pc_custom_field_description` (`custom_field_id`, `language_id`, `na
 -- Table structure for table `pc_custom_field_value`
 --
 
-DROP TABLE IF EXISTS `pc_custom_field_value`;
 CREATE TABLE `pc_custom_field_value` (
   `custom_field_value_id` int(11) NOT NULL,
   `custom_field_id` int(11) NOT NULL,
@@ -1584,14 +1510,14 @@ INSERT INTO `pc_custom_field_value` (`custom_field_value_id`, `custom_field_id`,
 (36, 17, 2),
 (37, 17, 3),
 (38, 20, 1),
+(39, 20, 2),
+(40, 20, 3),
 (41, 24, 1),
 (42, 24, 2),
 (43, 24, 3),
 (44, 25, 0),
 (45, 25, 0),
-(46, 25, 0),
-(47, 20, 2),
-(48, 20, 3);
+(46, 25, 0);
 
 -- --------------------------------------------------------
 
@@ -1599,7 +1525,6 @@ INSERT INTO `pc_custom_field_value` (`custom_field_value_id`, `custom_field_id`,
 -- Table structure for table `pc_custom_field_value_description`
 --
 
-DROP TABLE IF EXISTS `pc_custom_field_value_description`;
 CREATE TABLE `pc_custom_field_value_description` (
   `custom_field_value_id` int(11) NOT NULL,
   `language_id` int(11) NOT NULL,
@@ -1618,9 +1543,9 @@ INSERT INTO `pc_custom_field_value_description` (`custom_field_value_id`, `langu
 (4, 1, 2, 'Test 1'),
 (5, 1, 2, 'Test 2'),
 (6, 1, 2, 'Test 3'),
-(7, 0, 3, 'Test 1'),
-(8, 0, 3, 'Test 2'),
-(9, 0, 3, 'Test 3'),
+(7, 1, 3, 'Test 1'),
+(8, 1, 3, 'Test 2'),
+(9, 1, 3, 'Test 3'),
 (20, 1, 11, 'Test 1'),
 (21, 1, 11, 'Test 2'),
 (22, 1, 11, 'Test 3'),
@@ -1630,15 +1555,15 @@ INSERT INTO `pc_custom_field_value_description` (`custom_field_value_id`, `langu
 (35, 1, 17, 'Test 1'),
 (36, 1, 17, 'Test 2'),
 (37, 1, 17, 'Test 3'),
-(38, 0, 20, 'Test 1'),
+(38, 1, 20, 'Test 1'),
+(39, 1, 20, 'Test 2'),
+(40, 1, 20, 'Test 3'),
 (41, 1, 24, 'Test 1'),
 (42, 1, 24, 'Test 2'),
 (43, 1, 24, 'Test 3'),
 (44, 1, 25, 'Test 1'),
 (45, 1, 25, 'Test 2'),
-(46, 1, 25, 'Test 3'),
-(47, 0, 20, 'Test 2'),
-(48, 0, 20, 'Test 3');
+(46, 1, 25, 'Test 3');
 
 -- --------------------------------------------------------
 
@@ -1646,7 +1571,6 @@ INSERT INTO `pc_custom_field_value_description` (`custom_field_value_id`, `langu
 -- Table structure for table `pc_download`
 --
 
-DROP TABLE IF EXISTS `pc_download`;
 CREATE TABLE `pc_download` (
   `download_id` int(11) NOT NULL,
   `filename` varchar(160) NOT NULL,
@@ -1654,33 +1578,17 @@ CREATE TABLE `pc_download` (
   `date_added` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
---
--- Dumping data for table `pc_download`
---
-
-INSERT INTO `pc_download` (`download_id`, `filename`, `mask`, `date_added`) VALUES
-(1, 'RSASecurIDSoftwareToken5.0.3x64.zip.884eb77a1f95dd6f2d797f34e9aa7b8d', 'RSASecurIDSoftwareToken5.0.3x64.zip', '2024-10-10 17:03:56'),
-(3, 'dl.pdf.8ba7a561f80d9674b41aa06c78fb0593', 'dl.pdf', '2024-10-10 17:09:20');
-
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `pc_download_description`
 --
 
-DROP TABLE IF EXISTS `pc_download_description`;
 CREATE TABLE `pc_download_description` (
   `download_id` int(11) NOT NULL,
   `language_id` int(11) NOT NULL,
   `name` varchar(64) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
-
---
--- Dumping data for table `pc_download_description`
---
-
-INSERT INTO `pc_download_description` (`download_id`, `language_id`, `name`) VALUES
-(3, 1, 'test');
 
 -- --------------------------------------------------------
 
@@ -1688,7 +1596,6 @@ INSERT INTO `pc_download_description` (`download_id`, `language_id`, `name`) VAL
 -- Table structure for table `pc_download_report`
 --
 
-DROP TABLE IF EXISTS `pc_download_report`;
 CREATE TABLE `pc_download_report` (
   `download_report_id` int(11) NOT NULL,
   `download_id` int(11) NOT NULL,
@@ -1704,7 +1611,6 @@ CREATE TABLE `pc_download_report` (
 -- Table structure for table `pc_event`
 --
 
-DROP TABLE IF EXISTS `pc_event`;
 CREATE TABLE `pc_event` (
   `event_id` int(11) NOT NULL,
   `code` varchar(128) NOT NULL,
@@ -1771,7 +1677,6 @@ INSERT INTO `pc_event` (`event_id`, `code`, `description`, `trigger`, `action`, 
 -- Table structure for table `pc_extension`
 --
 
-DROP TABLE IF EXISTS `pc_extension`;
 CREATE TABLE `pc_extension` (
   `extension_id` int(11) NOT NULL,
   `extension` varchar(255) NOT NULL,
@@ -1789,18 +1694,14 @@ INSERT INTO `pc_extension` (`extension_id`, `extension`, `type`, `code`) VALUES
 (3, 'opencart', 'total', 'sub_total'),
 (4, 'opencart', 'total', 'tax'),
 (5, 'opencart', 'total', 'total'),
-(6, 'opencart', 'module', 'banner'),
 (8, 'opencart', 'total', 'credit'),
 (9, 'opencart', 'shipping', 'flat'),
 (10, 'opencart', 'total', 'handling'),
 (11, 'opencart', 'total', 'low_order_fee'),
 (12, 'opencart', 'total', 'coupon'),
-(13, 'opencart', 'module', 'category'),
-(14, 'opencart', 'module', 'account'),
 (15, 'opencart', 'total', 'reward'),
 (16, 'opencart', 'total', 'voucher'),
 (17, 'opencart', 'payment', 'free_checkout'),
-(18, 'opencart', 'module', 'featured'),
 (20, 'opencart', 'theme', 'basic'),
 (21, 'opencart', 'dashboard', 'activity'),
 (22, 'opencart', 'dashboard', 'sale'),
@@ -1825,14 +1726,7 @@ INSERT INTO `pc_extension` (`extension_id`, `extension`, `type`, `code`) VALUES
 (42, 'opencart', 'currency', 'ecb'),
 (43, 'opencart', 'report', 'marketing'),
 (44, 'opencart', 'report', 'customer_subscription'),
-(45, 'opencart', 'report', 'customer'),
-(58, 'opencart', 'captcha', 'basic'),
-(62, 'opencart', 'module', 'filter'),
-(63, 'opencart', 'module', 'html'),
-(64, 'opencart', 'module', 'information'),
-(65, 'opencart', 'module', 'latest'),
-(66, 'opencart', 'module', 'special'),
-(67, 'opencart', 'module', 'store');
+(45, 'opencart', 'report', 'customer');
 
 -- --------------------------------------------------------
 
@@ -1840,7 +1734,6 @@ INSERT INTO `pc_extension` (`extension_id`, `extension`, `type`, `code`) VALUES
 -- Table structure for table `pc_extension_install`
 --
 
-DROP TABLE IF EXISTS `pc_extension_install`;
 CREATE TABLE `pc_extension_install` (
   `extension_install_id` int(11) NOT NULL,
   `extension_id` int(11) NOT NULL,
@@ -1859,10 +1752,7 @@ CREATE TABLE `pc_extension_install` (
 --
 
 INSERT INTO `pc_extension_install` (`extension_install_id`, `extension_id`, `extension_download_id`, `name`, `code`, `version`, `author`, `link`, `status`, `date_added`) VALUES
-(1, 0, 0, 'OpenCart Default Extensions', 'opencart', '1.0', 'OpenCart Ltd', 'http://www.opencart.com', 1, '2020-08-29 15:35:39'),
-(2, 0, 0, 'OpenCart Language Example', 'oc_language_example', '1.0', 'OpenCart Ltd', 'https://www.opencart.com', 0, '2024-10-11 07:19:06'),
-(3, 0, 0, 'OpenCart Payment Example', 'oc_payment_example', '1.0', 'OpenCart Ltd', 'https://www.opencart.com', 0, '2024-10-11 07:19:06'),
-(4, 0, 0, 'OpenCart Theme Example', 'oc_theme_example', '1.0', 'OpenCart Ltd', 'https://www.opencart.com', 0, '2024-10-11 07:19:06');
+(1, 0, 0, 'OpenCart Default Extensions', 'opencart', '1.0', 'OpenCart Ltd', 'http://www.opencart.com', 1, '2020-08-29 15:35:39');
 
 -- --------------------------------------------------------
 
@@ -1870,7 +1760,6 @@ INSERT INTO `pc_extension_install` (`extension_install_id`, `extension_id`, `ext
 -- Table structure for table `pc_extension_path`
 --
 
-DROP TABLE IF EXISTS `pc_extension_path`;
 CREATE TABLE `pc_extension_path` (
   `extension_path_id` int(11) NOT NULL,
   `extension_install_id` int(11) NOT NULL,
@@ -2290,20 +2179,11 @@ INSERT INTO `pc_extension_path` (`extension_path_id`, `extension_install_id`, `p
 -- Table structure for table `pc_filter`
 --
 
-DROP TABLE IF EXISTS `pc_filter`;
 CREATE TABLE `pc_filter` (
   `filter_id` int(11) NOT NULL,
   `filter_group_id` int(11) NOT NULL,
   `sort_order` int(3) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
-
---
--- Dumping data for table `pc_filter`
---
-
-INSERT INTO `pc_filter` (`filter_id`, `filter_group_id`, `sort_order`) VALUES
-(3, 2, 1),
-(4, 2, 2);
 
 -- --------------------------------------------------------
 
@@ -2311,7 +2191,6 @@ INSERT INTO `pc_filter` (`filter_id`, `filter_group_id`, `sort_order`) VALUES
 -- Table structure for table `pc_filter_description`
 --
 
-DROP TABLE IF EXISTS `pc_filter_description`;
 CREATE TABLE `pc_filter_description` (
   `filter_id` int(11) NOT NULL,
   `language_id` int(11) NOT NULL,
@@ -2319,32 +2198,16 @@ CREATE TABLE `pc_filter_description` (
   `name` varchar(64) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
---
--- Dumping data for table `pc_filter_description`
---
-
-INSERT INTO `pc_filter_description` (`filter_id`, `language_id`, `filter_group_id`, `name`) VALUES
-(3, 1, 2, 'test2'),
-(4, 1, 2, 'test3');
-
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `pc_filter_group`
 --
 
-DROP TABLE IF EXISTS `pc_filter_group`;
 CREATE TABLE `pc_filter_group` (
   `filter_group_id` int(11) NOT NULL,
   `sort_order` int(3) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
-
---
--- Dumping data for table `pc_filter_group`
---
-
-INSERT INTO `pc_filter_group` (`filter_group_id`, `sort_order`) VALUES
-(2, 1);
 
 -- --------------------------------------------------------
 
@@ -2352,19 +2215,11 @@ INSERT INTO `pc_filter_group` (`filter_group_id`, `sort_order`) VALUES
 -- Table structure for table `pc_filter_group_description`
 --
 
-DROP TABLE IF EXISTS `pc_filter_group_description`;
 CREATE TABLE `pc_filter_group_description` (
   `filter_group_id` int(11) NOT NULL,
   `language_id` int(11) NOT NULL,
   `name` varchar(64) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
-
---
--- Dumping data for table `pc_filter_group_description`
---
-
-INSERT INTO `pc_filter_group_description` (`filter_group_id`, `language_id`, `name`) VALUES
-(2, 1, 'test');
 
 -- --------------------------------------------------------
 
@@ -2372,7 +2227,6 @@ INSERT INTO `pc_filter_group_description` (`filter_group_id`, `language_id`, `na
 -- Table structure for table `pc_gdpr`
 --
 
-DROP TABLE IF EXISTS `pc_gdpr`;
 CREATE TABLE `pc_gdpr` (
   `gdpr_id` int(11) NOT NULL,
   `store_id` int(11) NOT NULL,
@@ -2390,7 +2244,6 @@ CREATE TABLE `pc_gdpr` (
 -- Table structure for table `pc_geo_zone`
 --
 
-DROP TABLE IF EXISTS `pc_geo_zone`;
 CREATE TABLE `pc_geo_zone` (
   `geo_zone_id` int(11) NOT NULL,
   `name` varchar(32) NOT NULL,
@@ -2413,7 +2266,6 @@ INSERT INTO `pc_geo_zone` (`geo_zone_id`, `name`, `description`, `date_added`, `
 -- Table structure for table `pc_information`
 --
 
-DROP TABLE IF EXISTS `pc_information`;
 CREATE TABLE `pc_information` (
   `information_id` int(11) NOT NULL,
   `bottom` int(1) NOT NULL DEFAULT 0,
@@ -2437,7 +2289,6 @@ INSERT INTO `pc_information` (`information_id`, `bottom`, `sort_order`, `status`
 -- Table structure for table `pc_information_description`
 --
 
-DROP TABLE IF EXISTS `pc_information_description`;
 CREATE TABLE `pc_information_description` (
   `information_id` int(11) NOT NULL,
   `language_id` int(11) NOT NULL,
@@ -2453,7 +2304,7 @@ CREATE TABLE `pc_information_description` (
 --
 
 INSERT INTO `pc_information_description` (`information_id`, `language_id`, `title`, `description`, `meta_title`, `meta_description`, `meta_keyword`) VALUES
-(1, 1, 'About Us', '&lt;p&gt;\r\n	About Us&lt;/p&gt;', 'About Us', '', ''),
+(1, 1, 'About Us', '&lt;p&gt;\r\n	About Us&lt;/p&gt;\r\n', 'About Us', '', ''),
 (2, 1, 'Terms &amp; Conditions', '&lt;p&gt;\r\n	Terms &amp;amp; Conditions&lt;/p&gt;\r\n', 'Terms &amp; Conditions', '', ''),
 (3, 1, 'Privacy Policy', '&lt;p&gt;\r\n	Privacy Policy&lt;/p&gt;\r\n', 'Privacy Policy', '', ''),
 (4, 1, 'Delivery Information', '&lt;p&gt;\r\n	Delivery Information&lt;/p&gt;\r\n', 'Delivery Information', '', '');
@@ -2464,19 +2315,11 @@ INSERT INTO `pc_information_description` (`information_id`, `language_id`, `titl
 -- Table structure for table `pc_information_to_layout`
 --
 
-DROP TABLE IF EXISTS `pc_information_to_layout`;
 CREATE TABLE `pc_information_to_layout` (
   `information_id` int(11) NOT NULL,
   `store_id` int(11) NOT NULL,
   `layout_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
-
---
--- Dumping data for table `pc_information_to_layout`
---
-
-INSERT INTO `pc_information_to_layout` (`information_id`, `store_id`, `layout_id`) VALUES
-(1, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -2484,7 +2327,6 @@ INSERT INTO `pc_information_to_layout` (`information_id`, `store_id`, `layout_id
 -- Table structure for table `pc_information_to_store`
 --
 
-DROP TABLE IF EXISTS `pc_information_to_store`;
 CREATE TABLE `pc_information_to_store` (
   `information_id` int(11) NOT NULL,
   `store_id` int(11) NOT NULL
@@ -2506,7 +2348,6 @@ INSERT INTO `pc_information_to_store` (`information_id`, `store_id`) VALUES
 -- Table structure for table `pc_language`
 --
 
-DROP TABLE IF EXISTS `pc_language`;
 CREATE TABLE `pc_language` (
   `language_id` int(11) NOT NULL,
   `name` varchar(32) NOT NULL,
@@ -2530,7 +2371,6 @@ INSERT INTO `pc_language` (`language_id`, `name`, `code`, `locale`, `extension`,
 -- Table structure for table `pc_layout`
 --
 
-DROP TABLE IF EXISTS `pc_layout`;
 CREATE TABLE `pc_layout` (
   `layout_id` int(11) NOT NULL,
   `name` varchar(64) NOT NULL
@@ -2561,7 +2401,6 @@ INSERT INTO `pc_layout` (`layout_id`, `name`) VALUES
 -- Table structure for table `pc_layout_module`
 --
 
-DROP TABLE IF EXISTS `pc_layout_module`;
 CREATE TABLE `pc_layout_module` (
   `layout_module_id` int(11) NOT NULL,
   `layout_id` int(11) NOT NULL,
@@ -2576,12 +2415,12 @@ CREATE TABLE `pc_layout_module` (
 
 INSERT INTO `pc_layout_module` (`layout_module_id`, `layout_id`, `code`, `position`, `sort_order`) VALUES
 (1, 10, 'opencart.account', 'column_right', 1),
+(2, 6, 'opencart.account', 'column_right', 1),
 (3, 1, 'opencart.banner.3', 'content_top', 1),
 (4, 1, 'opencart.featured.2', 'content_top', 2),
 (5, 1, 'opencart.banner.4', 'content_bottom', 1),
 (6, 3, 'opencart.category', 'column_left', 1),
-(7, 3, 'opencart.banner.1', 'column_left', 2),
-(8, 6, 'opencart.account', 'column_right', 1);
+(7, 3, 'opencart.banner.1', 'column_left', 2);
 
 -- --------------------------------------------------------
 
@@ -2589,7 +2428,6 @@ INSERT INTO `pc_layout_module` (`layout_module_id`, `layout_id`, `code`, `positi
 -- Table structure for table `pc_layout_route`
 --
 
-DROP TABLE IF EXISTS `pc_layout_route`;
 CREATE TABLE `pc_layout_route` (
   `layout_route_id` int(11) NOT NULL,
   `layout_id` int(11) NOT NULL,
@@ -2602,6 +2440,8 @@ CREATE TABLE `pc_layout_route` (
 --
 
 INSERT INTO `pc_layout_route` (`layout_route_id`, `layout_id`, `store_id`, `route`) VALUES
+(1, 6, 0, 'account/%'),
+(2, 6, 0, 'information/gdpr'),
 (3, 10, 0, 'affiliate/%'),
 (4, 3, 0, 'product/category'),
 (5, 1, 0, 'common/home'),
@@ -2613,9 +2453,7 @@ INSERT INTO `pc_layout_route` (`layout_route_id`, `layout_id`, `store_id`, `rout
 (11, 4, 0, ''),
 (12, 5, 0, 'product/manufacturer'),
 (13, 12, 0, 'product/compare'),
-(14, 13, 0, 'product/search'),
-(15, 6, 0, 'account/%'),
-(16, 6, 0, 'information/gdpr');
+(14, 13, 0, 'product/search');
 
 -- --------------------------------------------------------
 
@@ -2623,7 +2461,6 @@ INSERT INTO `pc_layout_route` (`layout_route_id`, `layout_id`, `store_id`, `rout
 -- Table structure for table `pc_length_class`
 --
 
-DROP TABLE IF EXISTS `pc_length_class`;
 CREATE TABLE `pc_length_class` (
   `length_class_id` int(11) NOT NULL,
   `value` decimal(15,8) NOT NULL
@@ -2644,7 +2481,6 @@ INSERT INTO `pc_length_class` (`length_class_id`, `value`) VALUES
 -- Table structure for table `pc_length_class_description`
 --
 
-DROP TABLE IF EXISTS `pc_length_class_description`;
 CREATE TABLE `pc_length_class_description` (
   `length_class_id` int(11) NOT NULL,
   `language_id` int(11) NOT NULL,
@@ -2667,7 +2503,6 @@ INSERT INTO `pc_length_class_description` (`length_class_id`, `language_id`, `ti
 -- Table structure for table `pc_location`
 --
 
-DROP TABLE IF EXISTS `pc_location`;
 CREATE TABLE `pc_location` (
   `location_id` int(11) NOT NULL,
   `name` varchar(32) NOT NULL,
@@ -2685,7 +2520,6 @@ CREATE TABLE `pc_location` (
 -- Table structure for table `pc_manufacturer`
 --
 
-DROP TABLE IF EXISTS `pc_manufacturer`;
 CREATE TABLE `pc_manufacturer` (
   `manufacturer_id` int(11) NOT NULL,
   `name` varchar(64) NOT NULL,
@@ -2711,7 +2545,6 @@ INSERT INTO `pc_manufacturer` (`manufacturer_id`, `name`, `image`, `sort_order`)
 -- Table structure for table `pc_manufacturer_to_layout`
 --
 
-DROP TABLE IF EXISTS `pc_manufacturer_to_layout`;
 CREATE TABLE `pc_manufacturer_to_layout` (
   `manufacturer_id` int(11) NOT NULL,
   `store_id` int(11) NOT NULL,
@@ -2724,7 +2557,6 @@ CREATE TABLE `pc_manufacturer_to_layout` (
 -- Table structure for table `pc_manufacturer_to_store`
 --
 
-DROP TABLE IF EXISTS `pc_manufacturer_to_store`;
 CREATE TABLE `pc_manufacturer_to_store` (
   `manufacturer_id` int(11) NOT NULL,
   `store_id` int(11) NOT NULL
@@ -2748,7 +2580,6 @@ INSERT INTO `pc_manufacturer_to_store` (`manufacturer_id`, `store_id`) VALUES
 -- Table structure for table `pc_marketing`
 --
 
-DROP TABLE IF EXISTS `pc_marketing`;
 CREATE TABLE `pc_marketing` (
   `marketing_id` int(11) NOT NULL,
   `name` varchar(32) NOT NULL,
@@ -2758,20 +2589,12 @@ CREATE TABLE `pc_marketing` (
   `date_added` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
---
--- Dumping data for table `pc_marketing`
---
-
-INSERT INTO `pc_marketing` (`marketing_id`, `name`, `description`, `code`, `clicks`, `date_added`) VALUES
-(2, 'test', 'dfdsf', '670cff8f45a9d', 0, '2024-10-14 11:25:08');
-
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `pc_marketing_report`
 --
 
-DROP TABLE IF EXISTS `pc_marketing_report`;
 CREATE TABLE `pc_marketing_report` (
   `marketing_report_id` int(11) NOT NULL,
   `marketing_id` int(11) NOT NULL,
@@ -2787,7 +2610,6 @@ CREATE TABLE `pc_marketing_report` (
 -- Table structure for table `pc_module`
 --
 
-DROP TABLE IF EXISTS `pc_module`;
 CREATE TABLE `pc_module` (
   `module_id` int(11) NOT NULL,
   `name` varchar(64) NOT NULL,
@@ -2800,13 +2622,10 @@ CREATE TABLE `pc_module` (
 --
 
 INSERT INTO `pc_module` (`module_id`, `name`, `code`, `setting`) VALUES
-(1, 'Category Banner', 'opencart.banner', '{\"name\":\"Category Banner\",\"banner_id\":\"6\",\"effect\":\"fade\",\"items\":\"1\",\"controls\":\"0\",\"indicators\":\"0\",\"interval\":\"5000\",\"width\":\"200\",\"height\":\"180\",\"status\":\"1\",\"module_id\":\"1\"}'),
-(2, 'Featured', 'opencart.featured', '{\"name\":\"Featured\",\"product\":[\"42\",\"30\",\"47\"],\"axis\":\"horizontal\",\"width\":\"200\",\"height\":\"200\",\"status\":\"1\",\"module_id\":\"2\"}'),
+(1, 'Category Banner', 'opencart.banner', '{\"name\":\"Category Banner\",\"banner_id\":\"6\",\"effect\":\"fade\",\"items\":\"1\",\"controls\":\"0\",\"indicators\":\"0\",\"interval\":\"5000\",\"width\":\"200\",\"height\":\"180\",\"status\":\"1\"}'),
+(2, 'Featured', 'opencart.featured', '{\"name\":\"Featured\",\"product_name\":\"\",\"product\":[\"43\",\"40\",\"42\",\"30\"],\"axis\":\"horizontal\",\"limit\":\"4\",\"width\":\"200\",\"height\":\"200\",\"status\":\"1\"}'),
 (3, 'Homepage Slideshow', 'opencart.banner', '{\"name\":\"Homepage Slideshow\",\"banner_id\":\"7\",\"effect\":\"slide\",\"items\":\"1\",\"controls\":\"1\",\"indicators\":\"1\",\"interval\":\"5000\",\"width\":\"1140\",\"height\":\"380\",\"status\":\"1\"}'),
-(4, 'Homepage Manufacturers', 'opencart.banner', '{\"name\":\"Homepage Manufacturers\",\"banner_id\":\"8\",\"effect\":\"slide\",\"items\":\"5\",\"controls\":\"1\",\"indicators\":\"1\",\"interval\":\"5000\",\"width\":\"130\",\"height\":\"100\",\"status\":\"1\"}'),
-(5, 'test', 'opencart.html', '{\"name\":\"test\",\"module_description\":{\"language-1\":{\"title\":\"test\",\"description\":\"&lt;p&gt;&lt;b&gt;test&lt;/b&gt;&lt;/p&gt;\"}},\"status\":\"1\",\"module_id\":5}'),
-(6, 'test', 'opencart.latest', '{\"name\":\"test\",\"axis\":\"horizontal\",\"limit\":\"5\",\"width\":\"200\",\"height\":\"200\",\"status\":\"1\",\"module_id\":0}'),
-(7, 'test', 'opencart.special', '{\"name\":\"test\",\"axis\":\"horizontal\",\"limit\":\"5\",\"width\":\"200\",\"height\":\"200\",\"status\":\"1\",\"module_id\":7}');
+(4, 'Homepage Manufacturers', 'opencart.banner', '{\"name\":\"Homepage Manufacturers\",\"banner_id\":\"8\",\"effect\":\"slide\",\"items\":\"5\",\"controls\":\"1\",\"indicators\":\"1\",\"interval\":\"5000\",\"width\":\"130\",\"height\":\"100\",\"status\":\"1\",\"module_id\":4}');
 
 -- --------------------------------------------------------
 
@@ -2814,7 +2633,6 @@ INSERT INTO `pc_module` (`module_id`, `name`, `code`, `setting`) VALUES
 -- Table structure for table `pc_notification`
 --
 
-DROP TABLE IF EXISTS `pc_notification`;
 CREATE TABLE `pc_notification` (
   `notification_id` int(11) NOT NULL,
   `title` varchar(64) NOT NULL,
@@ -2829,7 +2647,6 @@ CREATE TABLE `pc_notification` (
 -- Table structure for table `pc_option`
 --
 
-DROP TABLE IF EXISTS `pc_option`;
 CREATE TABLE `pc_option` (
   `option_id` int(11) NOT NULL,
   `type` varchar(32) NOT NULL,
@@ -2859,7 +2676,6 @@ INSERT INTO `pc_option` (`option_id`, `type`, `sort_order`) VALUES
 -- Table structure for table `pc_option_description`
 --
 
-DROP TABLE IF EXISTS `pc_option_description`;
 CREATE TABLE `pc_option_description` (
   `option_id` int(11) NOT NULL,
   `language_id` int(11) NOT NULL,
@@ -2889,7 +2705,6 @@ INSERT INTO `pc_option_description` (`option_id`, `language_id`, `name`) VALUES
 -- Table structure for table `pc_option_value`
 --
 
-DROP TABLE IF EXISTS `pc_option_value`;
 CREATE TABLE `pc_option_value` (
   `option_value_id` int(11) NOT NULL,
   `option_id` int(11) NOT NULL,
@@ -2923,7 +2738,6 @@ INSERT INTO `pc_option_value` (`option_value_id`, `option_id`, `image`, `sort_or
 -- Table structure for table `pc_option_value_description`
 --
 
-DROP TABLE IF EXISTS `pc_option_value_description`;
 CREATE TABLE `pc_option_value_description` (
   `option_value_id` int(11) NOT NULL,
   `language_id` int(11) NOT NULL,
@@ -2957,7 +2771,6 @@ INSERT INTO `pc_option_value_description` (`option_value_id`, `language_id`, `op
 -- Table structure for table `pc_order`
 --
 
-DROP TABLE IF EXISTS `pc_order`;
 CREATE TABLE `pc_order` (
   `order_id` int(11) NOT NULL,
   `subscription_id` int(11) NOT NULL,
@@ -3030,7 +2843,6 @@ CREATE TABLE `pc_order` (
 -- Table structure for table `pc_order_history`
 --
 
-DROP TABLE IF EXISTS `pc_order_history`;
 CREATE TABLE `pc_order_history` (
   `order_history_id` int(11) NOT NULL,
   `order_id` int(11) NOT NULL,
@@ -3046,7 +2858,6 @@ CREATE TABLE `pc_order_history` (
 -- Table structure for table `pc_order_option`
 --
 
-DROP TABLE IF EXISTS `pc_order_option`;
 CREATE TABLE `pc_order_option` (
   `order_option_id` int(11) NOT NULL,
   `order_id` int(11) NOT NULL,
@@ -3064,7 +2875,6 @@ CREATE TABLE `pc_order_option` (
 -- Table structure for table `pc_order_product`
 --
 
-DROP TABLE IF EXISTS `pc_order_product`;
 CREATE TABLE `pc_order_product` (
   `order_product_id` int(11) NOT NULL,
   `order_id` int(11) NOT NULL,
@@ -3085,7 +2895,6 @@ CREATE TABLE `pc_order_product` (
 -- Table structure for table `pc_order_status`
 --
 
-DROP TABLE IF EXISTS `pc_order_status`;
 CREATE TABLE `pc_order_status` (
   `order_status_id` int(11) NOT NULL,
   `language_id` int(11) NOT NULL,
@@ -3118,7 +2927,6 @@ INSERT INTO `pc_order_status` (`order_status_id`, `language_id`, `name`) VALUES
 -- Table structure for table `pc_order_subscription`
 --
 
-DROP TABLE IF EXISTS `pc_order_subscription`;
 CREATE TABLE `pc_order_subscription` (
   `order_subscription_id` int(11) NOT NULL,
   `order_product_id` int(11) NOT NULL,
@@ -3145,7 +2953,6 @@ CREATE TABLE `pc_order_subscription` (
 -- Table structure for table `pc_order_total`
 --
 
-DROP TABLE IF EXISTS `pc_order_total`;
 CREATE TABLE `pc_order_total` (
   `order_total_id` int(10) NOT NULL,
   `order_id` int(11) NOT NULL,
@@ -3162,7 +2969,6 @@ CREATE TABLE `pc_order_total` (
 -- Table structure for table `pc_order_voucher`
 --
 
-DROP TABLE IF EXISTS `pc_order_voucher`;
 CREATE TABLE `pc_order_voucher` (
   `order_voucher_id` int(11) NOT NULL,
   `order_id` int(11) NOT NULL,
@@ -3184,7 +2990,6 @@ CREATE TABLE `pc_order_voucher` (
 -- Table structure for table `pc_product`
 --
 
-DROP TABLE IF EXISTS `pc_product`;
 CREATE TABLE `pc_product` (
   `product_id` int(11) NOT NULL,
   `master_id` int(11) NOT NULL DEFAULT 0,
@@ -3227,25 +3032,25 @@ CREATE TABLE `pc_product` (
 --
 
 INSERT INTO `pc_product` (`product_id`, `master_id`, `model`, `sku`, `upc`, `ean`, `jan`, `isbn`, `mpn`, `location`, `variant`, `override`, `quantity`, `stock_status_id`, `image`, `manufacturer_id`, `shipping`, `price`, `points`, `tax_class_id`, `date_available`, `weight`, `weight_class_id`, `length`, `width`, `height`, `length_class_id`, `subtract`, `minimum`, `rating`, `sort_order`, `status`, `date_added`, `date_modified`) VALUES
-(28, 0, 'Product 1', '', '', '', '', '', '', '', '', '', 939, 7, 'catalog/demo/htc_touch_hd_1.jpg', 5, 1, 100.0000, 200, 9, '2009-02-03', 146.40000000, 2, 0.00000000, 0.00000000, 0.00000000, 1, 1, 1, 0, 0, 1, '2009-02-03 16:06:50', '2024-10-10 17:53:08'),
-(29, 0, 'Product 2', '', '', '', '', '', '', '', '', '', 999, 6, 'catalog/demo/palm_treo_pro_1.jpg', 6, 1, 279.9900, 0, 9, '2009-02-03', 133.00000000, 2, 0.00000000, 0.00000000, 0.00000000, 3, 1, 1, 0, 0, 1, '2009-02-03 16:42:17', '2024-10-10 17:53:08'),
-(30, 0, 'Product 3', '', '', '', '', '', '', '', '', '', 7, 6, 'catalog/demo/canon_eos_5d_1.jpg', 9, 1, 100.0000, 0, 9, '2009-02-03', 0.00000000, 1, 0.00000000, 0.00000000, 0.00000000, 1, 1, 1, 0, 0, 1, '2009-02-03 16:59:00', '2024-10-10 17:53:08'),
-(31, 0, 'Product 4', '', '', '', '', '', '', '', '', '', 1000, 6, 'catalog/demo/nikon_d300_1.jpg', 0, 1, 80.0000, 0, 9, '2009-02-03', 0.00000000, 1, 0.00000000, 0.00000000, 0.00000000, 3, 1, 1, 0, 0, 1, '2009-02-03 17:00:10', '2024-10-10 17:53:08'),
-(32, 0, 'Product 5', '', '', '', '', '', '', '', '', '', 999, 6, 'catalog/demo/ipod_touch_1.jpg', 8, 1, 100.0000, 0, 9, '2009-02-03', 5.00000000, 1, 0.00000000, 0.00000000, 0.00000000, 1, 1, 1, 0, 0, 1, '2009-02-03 17:07:26', '2024-10-10 17:53:08'),
-(33, 0, 'Product 6', '', '', '', '', '', '', '', '', '', 1000, 6, 'catalog/demo/samsung_syncmaster_941bw.jpg', 0, 1, 200.0000, 0, 9, '2009-02-03', 5.00000000, 1, 0.00000000, 0.00000000, 0.00000000, 2, 1, 1, 0, 0, 1, '2009-02-03 17:08:31', '2024-10-10 17:53:08'),
-(34, 0, 'Product 7', '', '', '', '', '', '', '', '', '', 1000, 6, 'catalog/demo/ipod_shuffle_1.jpg', 8, 1, 100.0000, 0, 9, '2009-02-03', 5.00000000, 1, 0.00000000, 0.00000000, 0.00000000, 2, 1, 1, 0, 0, 1, '2009-02-03 18:07:54', '2024-10-10 17:53:08'),
-(35, 0, 'Product 8', '', '', '', '', '', '', '', '', '', 1000, 5, '', 0, 0, 100.0000, 0, 9, '2009-02-03', 5.00000000, 1, 0.00000000, 0.00000000, 0.00000000, 1, 1, 1, 0, 0, 1, '2009-02-03 18:08:31', '2024-10-10 17:53:08'),
-(36, 0, 'Product 9', '', '', '', '', '', '', '', '', '', 994, 6, 'catalog/demo/ipod_nano_1.jpg', 8, 0, 100.0000, 100, 9, '2009-02-03', 5.00000000, 1, 0.00000000, 0.00000000, 0.00000000, 2, 1, 1, 0, 0, 1, '2009-02-03 18:09:19', '2024-10-10 17:53:08'),
-(40, 0, 'product 11', '', '', '', '', '', '', '', '', '', 970, 5, 'catalog/demo/iphone_1.jpg', 8, 1, 101.0000, 0, 9, '2009-02-03', 10.00000000, 1, 0.00000000, 0.00000000, 0.00000000, 1, 1, 1, 0, 0, 1, '2009-02-03 21:07:12', '2024-10-10 17:53:08'),
-(41, 0, 'Product 14', '', '', '', '', '', '', '', '', '', 977, 5, 'catalog/demo/imac_1.jpg', 8, 1, 100.0000, 0, 9, '2009-02-03', 5.00000000, 1, 0.00000000, 0.00000000, 0.00000000, 1, 1, 1, 0, 0, 1, '2009-02-03 21:07:26', '2024-10-10 17:53:08'),
-(42, 0, 'Product 15', '', '', '', '', '', '', '', '', '', 990, 5, 'catalog/demo/apple_cinema_30.jpg', 8, 1, 100.0000, 400, 9, '2009-02-04', 12.50000000, 1, 1.00000000, 2.00000000, 3.00000000, 1, 1, 2, 0, 0, 1, '2009-02-03 21:07:37', '2024-10-10 17:53:35'),
-(43, 0, 'Product 16', '', '', '', '', '', '', '', '', '', 929, 5, 'catalog/demo/macbook_1.jpg', 8, 0, 500.0000, 0, 9, '2009-02-03', 0.00000000, 1, 0.00000000, 0.00000000, 0.00000000, 2, 1, 1, 0, 0, 1, '2009-02-03 21:07:49', '2024-10-10 17:53:08'),
-(44, 0, 'Product 17', '', '', '', '', '', '', '', '', '', 1000, 5, 'catalog/demo/macbook_air_1.jpg', 8, 1, 1000.0000, 0, 9, '2009-02-03', 0.00000000, 1, 0.00000000, 0.00000000, 0.00000000, 2, 1, 1, 0, 0, 1, '2009-02-03 21:08:00', '2024-10-10 17:53:08'),
-(45, 0, 'Product 18', '', '', '', '', '', '', '', '', '', 998, 5, 'catalog/demo/macbook_pro_1.jpg', 8, 1, 2000.0000, 0, 100, '2009-02-03', 0.00000000, 1, 0.00000000, 0.00000000, 0.00000000, 2, 1, 1, 0, 0, 1, '2009-02-03 21:08:17', '2024-10-10 17:53:08'),
-(46, 0, 'Product 19', '', '', '', '', '', '', '', '', '', 1000, 5, 'catalog/demo/sony_vaio_1.jpg', 10, 1, 1000.0000, 0, 9, '2009-02-03', 0.00000000, 1, 0.00000000, 0.00000000, 0.00000000, 2, 1, 1, 0, 0, 1, '2009-02-03 21:08:29', '2024-10-10 17:53:08'),
-(47, 0, 'Product 21', '', '', '', '', '', '', '', '', '', 1000, 5, 'catalog/demo/hp_1.jpg', 7, 1, 100.0000, 400, 9, '2009-02-03', 1.00000000, 1, 0.00000000, 0.00000000, 0.00000000, 1, 0, 1, 0, 0, 1, '2009-02-03 21:08:40', '2024-10-10 17:53:08'),
-(48, 0, 'product 20', 'test 1', '', '', '', '', '', 'test 2', '', '', 995, 5, 'catalog/demo/ipod_classic_1.jpg', 8, 1, 100.0000, 0, 9, '2009-02-08', 1.00000000, 1, 0.00000000, 0.00000000, 0.00000000, 2, 1, 1, 0, 0, 1, '2009-02-08 17:21:51', '2024-10-10 17:53:08'),
-(49, 0, 'SAM1', '', '', '', '', '', '', '', '', '', 0, 8, 'catalog/demo/samsung_tab_1.jpg', 0, 1, 199.9900, 0, 9, '2011-04-25', 0.00000000, 1, 0.00000000, 0.00000000, 0.00000000, 1, 1, 1, 0, 1, 1, '2011-04-26 08:57:34', '2024-10-10 17:53:08');
+(28, 0, 'Product 1', '', '', '', '', '', '', '', '', '', 939, 7, 'catalog/demo/htc_touch_hd_1.jpg', 5, 1, 100.0000, 200, 9, '2009-02-03', 146.40000000, 2, 0.00000000, 0.00000000, 0.00000000, 1, 1, 1, 0, 0, 1, '2009-02-03 16:06:50', '2011-09-30 01:05:39'),
+(29, 0, 'Product 2', '', '', '', '', '', '', '', '', '', 999, 6, 'catalog/demo/palm_treo_pro_1.jpg', 6, 1, 279.9900, 0, 9, '2009-02-03', 133.00000000, 2, 0.00000000, 0.00000000, 0.00000000, 3, 1, 1, 0, 0, 1, '2009-02-03 16:42:17', '2011-09-30 01:06:08'),
+(30, 0, 'Product 3', '', '', '', '', '', '', '', '', '', 7, 6, 'catalog/demo/canon_eos_5d_1.jpg', 9, 1, 100.0000, 0, 9, '2009-02-03', 0.00000000, 1, 0.00000000, 0.00000000, 0.00000000, 1, 1, 1, 0, 0, 1, '2009-02-03 16:59:00', '2011-09-30 01:05:23'),
+(31, 0, 'Product 4', '', '', '', '', '', '', '', '', '', 1000, 6, 'catalog/demo/nikon_d300_1.jpg', 0, 1, 80.0000, 0, 9, '2009-02-03', 0.00000000, 1, 0.00000000, 0.00000000, 0.00000000, 3, 1, 1, 0, 0, 1, '2009-02-03 17:00:10', '2011-09-30 01:06:00'),
+(32, 0, 'Product 5', '', '', '', '', '', '', '', '', '', 999, 6, 'catalog/demo/ipod_touch_1.jpg', 8, 1, 100.0000, 0, 9, '2009-02-03', 5.00000000, 1, 0.00000000, 0.00000000, 0.00000000, 1, 1, 1, 0, 0, 1, '2009-02-03 17:07:26', '2011-09-30 01:07:22'),
+(33, 0, 'Product 6', '', '', '', '', '', '', '', '', '', 1000, 6, 'catalog/demo/samsung_syncmaster_941bw.jpg', 0, 1, 200.0000, 0, 9, '2009-02-03', 5.00000000, 1, 0.00000000, 0.00000000, 0.00000000, 2, 1, 1, 0, 0, 1, '2009-02-03 17:08:31', '2011-09-30 01:06:29'),
+(34, 0, 'Product 7', '', '', '', '', '', '', '', '', '', 1000, 6, 'catalog/demo/ipod_shuffle_1.jpg', 8, 1, 100.0000, 0, 9, '2009-02-03', 5.00000000, 1, 0.00000000, 0.00000000, 0.00000000, 2, 1, 1, 0, 0, 1, '2009-02-03 18:07:54', '2011-09-30 01:07:17'),
+(35, 0, 'Product 8', '', '', '', '', '', '', '', '', '', 1000, 5, '', 0, 0, 100.0000, 0, 9, '2009-02-03', 5.00000000, 1, 0.00000000, 0.00000000, 0.00000000, 1, 1, 1, 0, 0, 1, '2009-02-03 18:08:31', '2011-09-30 01:06:17'),
+(36, 0, 'Product 9', '', '', '', '', '', '', '', '', '', 994, 6, 'catalog/demo/ipod_nano_1.jpg', 8, 0, 100.0000, 100, 9, '2009-02-03', 5.00000000, 1, 0.00000000, 0.00000000, 0.00000000, 2, 1, 1, 0, 0, 1, '2009-02-03 18:09:19', '2011-09-30 01:07:12'),
+(40, 0, 'product 11', '', '', '', '', '', '', '', '', '', 970, 5, 'catalog/demo/iphone_1.jpg', 8, 1, 101.0000, 0, 9, '2009-02-03', 10.00000000, 1, 0.00000000, 0.00000000, 0.00000000, 1, 1, 1, 0, 0, 1, '2009-02-03 21:07:12', '2011-09-30 01:06:53'),
+(41, 0, 'Product 14', '', '', '', '', '', '', '', '', '', 977, 5, 'catalog/demo/imac_1.jpg', 8, 1, 100.0000, 0, 9, '2009-02-03', 5.00000000, 1, 0.00000000, 0.00000000, 0.00000000, 1, 1, 1, 0, 0, 1, '2009-02-03 21:07:26', '2011-09-30 01:06:44'),
+(42, 0, 'Product 15', '', '', '', '', '', '', '', '', '', 990, 5, 'catalog/demo/apple_cinema_30.jpg', 8, 1, 100.0000, 400, 9, '2009-02-04', 12.50000000, 1, 1.00000000, 2.00000000, 3.00000000, 1, 1, 2, 0, 0, 1, '2009-02-03 21:07:37', '2011-09-30 00:46:19'),
+(43, 0, 'Product 16', '', '', '', '', '', '', '', '', '', 929, 5, 'catalog/demo/macbook_1.jpg', 8, 0, 500.0000, 0, 9, '2009-02-03', 0.00000000, 1, 0.00000000, 0.00000000, 0.00000000, 2, 1, 1, 0, 0, 1, '2009-02-03 21:07:49', '2011-09-30 01:05:46'),
+(44, 0, 'Product 17', '', '', '', '', '', '', '', '', '', 1000, 5, 'catalog/demo/macbook_air_1.jpg', 8, 1, 1000.0000, 0, 9, '2009-02-03', 0.00000000, 1, 0.00000000, 0.00000000, 0.00000000, 2, 1, 1, 0, 0, 1, '2009-02-03 21:08:00', '2011-09-30 01:05:53'),
+(45, 0, 'Product 18', '', '', '', '', '', '', '', '', '', 998, 5, 'catalog/demo/macbook_pro_1.jpg', 8, 1, 2000.0000, 0, 100, '2009-02-03', 0.00000000, 1, 0.00000000, 0.00000000, 0.00000000, 2, 1, 1, 0, 0, 1, '2009-02-03 21:08:17', '2011-09-15 22:22:01'),
+(46, 0, 'Product 19', '', '', '', '', '', '', '', '', '', 1000, 5, 'catalog/demo/sony_vaio_1.jpg', 10, 1, 1000.0000, 0, 9, '2009-02-03', 0.00000000, 1, 0.00000000, 0.00000000, 0.00000000, 2, 1, 1, 0, 0, 1, '2009-02-03 21:08:29', '2011-09-30 01:06:39'),
+(47, 0, 'Product 21', '', '', '', '', '', '', '', '', '', 1000, 5, 'catalog/demo/hp_1.jpg', 7, 1, 100.0000, 400, 9, '2009-02-03', 1.00000000, 1, 0.00000000, 0.00000000, 0.00000000, 1, 0, 1, 0, 0, 1, '2009-02-03 21:08:40', '2011-09-30 01:05:28'),
+(48, 0, 'product 20', 'test 1', '', '', '', '', '', 'test 2', '', '', 995, 5, 'catalog/demo/ipod_classic_1.jpg', 8, 1, 100.0000, 0, 9, '2009-02-08', 1.00000000, 1, 0.00000000, 0.00000000, 0.00000000, 2, 1, 1, 0, 0, 1, '2009-02-08 17:21:51', '2011-09-30 01:07:06'),
+(49, 0, 'SAM1', '', '', '', '', '', '', '', '', '', 0, 8, 'catalog/demo/samsung_tab_1.jpg', 0, 1, 199.9900, 0, 9, '2011-04-25', 0.00000000, 1, 0.00000000, 0.00000000, 0.00000000, 1, 1, 1, 0, 1, 1, '2011-04-26 08:57:34', '2011-09-30 01:06:23');
 
 -- --------------------------------------------------------
 
@@ -3253,7 +3058,6 @@ INSERT INTO `pc_product` (`product_id`, `master_id`, `model`, `sku`, `upc`, `ean
 -- Table structure for table `pc_product_attribute`
 --
 
-DROP TABLE IF EXISTS `pc_product_attribute`;
 CREATE TABLE `pc_product_attribute` (
   `product_id` int(11) NOT NULL,
   `attribute_id` int(11) NOT NULL,
@@ -3278,7 +3082,6 @@ INSERT INTO `pc_product_attribute` (`product_id`, `attribute_id`, `language_id`,
 -- Table structure for table `pc_product_description`
 --
 
-DROP TABLE IF EXISTS `pc_product_description`;
 CREATE TABLE `pc_product_description` (
   `product_id` int(11) NOT NULL,
   `language_id` int(11) NOT NULL,
@@ -3306,7 +3109,7 @@ INSERT INTO `pc_product_description` (`product_id`, `language_id`, `name`, `desc
 (36, 1, 'iPod Nano', '&lt;div&gt;\r\n	&lt;p&gt;\r\n		&lt;strong&gt;Video in your pocket.&lt;/strong&gt;&lt;/p&gt;\r\n	&lt;p&gt;\r\n		Its the small iPod with one very big idea: video. The worlds most popular music player now lets you enjoy movies, TV shows, and more on a two-inch display thats 65% brighter than before.&lt;/p&gt;\r\n	&lt;p&gt;\r\n		&lt;strong&gt;Cover Flow.&lt;/strong&gt;&lt;/p&gt;\r\n	&lt;p&gt;\r\n		Browse through your music collection by flipping through album art. Select an album to turn it over and see the track list.&lt;strong&gt;&amp;nbsp;&lt;/strong&gt;&lt;/p&gt;\r\n	&lt;p&gt;\r\n		&lt;strong&gt;Enhanced interface.&lt;/strong&gt;&lt;/p&gt;\r\n	&lt;p&gt;\r\n		Experience a whole new way to browse and view your music and video.&lt;/p&gt;\r\n	&lt;p&gt;\r\n		&lt;strong&gt;Sleek and colorful.&lt;/strong&gt;&lt;/p&gt;\r\n	&lt;p&gt;\r\n		With an anodized aluminum and polished stainless steel enclosure and a choice of five colors, iPod nano is dressed to impress.&lt;/p&gt;\r\n	&lt;p&gt;\r\n		&lt;strong&gt;iTunes.&lt;/strong&gt;&lt;/p&gt;\r\n	&lt;p&gt;\r\n		Available as a free download, iTunes makes it easy to browse and buy millions of songs, movies, TV shows, audiobooks, and games and download free podcasts all at the iTunes Store. And you can import your own music, manage your whole media library, and sync your iPod or iPhone with ease.&lt;/p&gt;\r\n&lt;/div&gt;\r\n', '', 'iPod Nano', '', ''),
 (40, 1, 'iPhone', '&lt;p class=&quot;intro&quot;&gt;\r\n	iPhone is a revolutionary new mobile phone that allows you to make a call by simply tapping a name or number in your address book, a favorites list, or a call log. It also automatically syncs all your contacts from a PC, Mac, or Internet service. And it lets you select and listen to voicemail messages in whatever order you want just like email.&lt;/p&gt;\r\n', '', 'iPhone', '', ''),
 (41, 1, 'iMac', '&lt;div&gt;\r\n	Just when you thought iMac had everything, now there&acute;s even more. More powerful Intel Core 2 Duo processors. And more memory standard. Combine this with Mac OS X Leopard and iLife &acute;08, and it&acute;s more all-in-one than ever. iMac packs amazing performance into a stunningly slim space.&lt;/div&gt;\r\n', '', 'iMac', '', ''),
-(42, 1, 'Apple Cinema 30', '&lt;p&gt;\r\n	&lt;font face=\"helvetica,geneva,arial\" size=\"2\"&gt;&lt;font face=\"Helvetica\" size=\"2\"&gt;The 30-inch Apple Cinema HD Display delivers an amazing 2560 x 1600 pixel resolution. Designed specifically for the creative professional, this display provides more space for easier access to all the tools and palettes needed to edit, format and composite your work. Combine this display with a Mac Pro, MacBook Pro, or PowerMac G5 and there\'s no limit to what you can achieve. &lt;br&gt;\r\n	&lt;br&gt;\r\n	&lt;/font&gt;&lt;font face=\"Helvetica\" size=\"2\"&gt;The Cinema HD features an active-matrix liquid crystal display that produces flicker-free images that deliver twice the brightness, twice the sharpness and twice the contrast ratio of a typical CRT display. Unlike other flat panels, it\'s designed with a pure digital interface to deliver distortion-free images that never need adjusting. With over 4 million digital pixels, the display is uniquely suited for scientific and technical applications such as visualizing molecular structures or analyzing geological data. &lt;br&gt;\r\n	&lt;br&gt;\r\n	&lt;/font&gt;&lt;font face=\"Helvetica\" size=\"2\"&gt;Offering accurate, brilliant color performance, the Cinema HD delivers up to 16.7 million colors across a wide gamut allowing you to see subtle nuances between colors from soft pastels to rich jewel tones. A wide viewing angle ensures uniform color from edge to edge. Apple\'s ColorSync technology allows you to create custom profiles to maintain consistent color onscreen and in print. The result: You can confidently use this display in all your color-critical applications. &lt;br&gt;\r\n	&lt;br&gt;\r\n	&lt;/font&gt;&lt;font face=\"Helvetica\" size=\"2\"&gt;Housed in a new aluminum design, the display has a very thin bezel that enhances visual accuracy. Each display features two FireWire 400 ports and two USB 2.0 ports, making attachment of desktop peripherals, such as iSight, iPod, digital and still cameras, hard drives, printers and scanners, even more accessible and convenient. Taking advantage of the much thinner and lighter footprint of an LCD, the new displays support the VESA (Video Electronics Standards Association) mounting interface standard. Customers with the optional Cinema Display VESA Mount Adapter kit gain the flexibility to mount their display in locations most appropriate for their work environment. &lt;br&gt;\r\n	&lt;br&gt;\r\n	&lt;/font&gt;&lt;font face=\"Helvetica\" size=\"2\"&gt;The Cinema HD features a single cable design with elegant breakout for the USB 2.0, FireWire 400 and a pure digital connection using the industry standard Digital Video Interface (DVI) interface. The DVI connection allows for a direct pure-digital connection.&lt;br&gt;\r\n	&lt;/font&gt;&lt;/font&gt;&lt;/p&gt;\r\n&lt;h3&gt;\r\n	Features:&lt;/h3&gt;\r\n&lt;p&gt;\r\n	Unrivaled display performance&lt;/p&gt;\r\n&lt;ul&gt;\r\n	&lt;li&gt;\r\n		30-inch (viewable) active-matrix liquid crystal display provides breathtaking image quality and vivid, richly saturated color.&lt;/li&gt;\r\n	&lt;li&gt;\r\n		Support for 2560-by-1600 pixel resolution for display of high definition still and video imagery.&lt;/li&gt;\r\n	&lt;li&gt;\r\n		Wide-format design for simultaneous display of two full pages of text and graphics.&lt;/li&gt;\r\n	&lt;li&gt;\r\n		Industry standard DVI connector for direct attachment to Mac- and Windows-based desktops and notebooks&lt;/li&gt;\r\n	&lt;li&gt;\r\n		Incredibly wide (170 degree) horizontal and vertical viewing angle for maximum visibility and color performance.&lt;/li&gt;\r\n	&lt;li&gt;\r\n		Lightning-fast pixel response for full-motion digital video playback.&lt;/li&gt;\r\n	&lt;li&gt;\r\n		Support for 16.7 million saturated colors, for use in all graphics-intensive applications.&lt;/li&gt;\r\n&lt;/ul&gt;\r\n&lt;p&gt;\r\n	Simple setup and operation&lt;/p&gt;\r\n&lt;ul&gt;\r\n	&lt;li&gt;\r\n		Single cable with elegant breakout for connection to DVI, USB and FireWire ports&lt;/li&gt;\r\n	&lt;li&gt;\r\n		Built-in two-port USB 2.0 hub for easy connection of desktop peripheral devices.&lt;/li&gt;\r\n	&lt;li&gt;\r\n		Two FireWire 400 ports to support iSight and other desktop peripherals&lt;/li&gt;\r\n&lt;/ul&gt;\r\n&lt;p&gt;\r\n	Sleek, elegant design&lt;/p&gt;\r\n&lt;ul&gt;\r\n	&lt;li&gt;\r\n		Huge virtual workspace, very small footprint.&lt;/li&gt;\r\n	&lt;li&gt;\r\n		Narrow Bezel design to minimize visual impact of using dual displays&lt;/li&gt;\r\n	&lt;li&gt;\r\n		Unique hinge design for effortless adjustment&lt;/li&gt;\r\n	&lt;li&gt;\r\n		Support for VESA mounting solutions (Apple Cinema Display VESA Mount Adapter sold separately)&lt;/li&gt;\r\n&lt;/ul&gt;\r\n&lt;h3&gt;\r\n	Technical specifications&lt;/h3&gt;\r\n&lt;p&gt;\r\n	&lt;b&gt;Screen size (diagonal viewable image size)&lt;/b&gt;&lt;/p&gt;\r\n&lt;ul&gt;\r\n	&lt;li&gt;\r\n		Apple Cinema HD Display: 30 inches (29.7-inch viewable)&lt;/li&gt;\r\n&lt;/ul&gt;\r\n&lt;p&gt;\r\n	&lt;b&gt;Screen type&lt;/b&gt;&lt;/p&gt;\r\n&lt;ul&gt;\r\n	&lt;li&gt;\r\n		Thin film transistor (TFT) active-matrix liquid crystal display (AMLCD)&lt;/li&gt;\r\n&lt;/ul&gt;\r\n&lt;p&gt;\r\n	&lt;b&gt;Resolutions&lt;/b&gt;&lt;/p&gt;\r\n&lt;ul&gt;\r\n	&lt;li&gt;\r\n		2560 x 1600 pixels (optimum resolution)&lt;/li&gt;\r\n	&lt;li&gt;\r\n		2048 x 1280&lt;/li&gt;\r\n	&lt;li&gt;\r\n		1920 x 1200&lt;/li&gt;\r\n	&lt;li&gt;\r\n		1280 x 800&lt;/li&gt;\r\n	&lt;li&gt;\r\n		1024 x 640&lt;/li&gt;\r\n&lt;/ul&gt;\r\n&lt;p&gt;\r\n	&lt;b&gt;Display colors (maximum)&lt;/b&gt;&lt;/p&gt;\r\n&lt;ul&gt;\r\n	&lt;li&gt;\r\n		16.7 million&lt;/li&gt;\r\n&lt;/ul&gt;\r\n&lt;p&gt;\r\n	&lt;b&gt;Viewing angle (typical)&lt;/b&gt;&lt;/p&gt;\r\n&lt;ul&gt;\r\n	&lt;li&gt;\r\n		170° horizontal; 170° vertical&lt;/li&gt;\r\n&lt;/ul&gt;\r\n&lt;p&gt;\r\n	&lt;b&gt;Brightness (typical)&lt;/b&gt;&lt;/p&gt;\r\n&lt;ul&gt;\r\n	&lt;li&gt;\r\n		30-inch Cinema HD Display: 400 cd/m2&lt;/li&gt;\r\n&lt;/ul&gt;\r\n&lt;p&gt;\r\n	&lt;b&gt;Contrast ratio (typical)&lt;/b&gt;&lt;/p&gt;\r\n&lt;ul&gt;\r\n	&lt;li&gt;\r\n		700:1&lt;/li&gt;\r\n&lt;/ul&gt;\r\n&lt;p&gt;\r\n	&lt;b&gt;Response time (typical)&lt;/b&gt;&lt;/p&gt;\r\n&lt;ul&gt;\r\n	&lt;li&gt;\r\n		16 ms&lt;/li&gt;\r\n&lt;/ul&gt;\r\n&lt;p&gt;\r\n	&lt;b&gt;Pixel pitch&lt;/b&gt;&lt;/p&gt;\r\n&lt;ul&gt;\r\n	&lt;li&gt;\r\n		30-inch Cinema HD Display: 0.250 mm&lt;/li&gt;\r\n&lt;/ul&gt;\r\n&lt;p&gt;\r\n	&lt;b&gt;Screen treatment&lt;/b&gt;&lt;/p&gt;\r\n&lt;ul&gt;\r\n	&lt;li&gt;\r\n		Antiglare hardcoat&lt;/li&gt;\r\n&lt;/ul&gt;\r\n&lt;p&gt;\r\n	&lt;b&gt;User controls (hardware and software)&lt;/b&gt;&lt;/p&gt;\r\n&lt;ul&gt;\r\n	&lt;li&gt;\r\n		Display Power,&lt;/li&gt;\r\n	&lt;li&gt;\r\n		System sleep, wake&lt;/li&gt;\r\n	&lt;li&gt;\r\n		Brightness&lt;/li&gt;\r\n	&lt;li&gt;\r\n		Monitor tilt&lt;/li&gt;\r\n&lt;/ul&gt;\r\n&lt;p&gt;\r\n	&lt;b&gt;Connectors and cables&lt;/b&gt;&lt;br&gt;\r\n	Cable&lt;/p&gt;\r\n&lt;ul&gt;\r\n	&lt;li&gt;\r\n		DVI (Digital Visual Interface)&lt;/li&gt;\r\n	&lt;li&gt;\r\n		FireWire 400&lt;/li&gt;\r\n	&lt;li&gt;\r\n		USB 2.0&lt;/li&gt;\r\n	&lt;li&gt;\r\n		DC power (24 V)&lt;/li&gt;\r\n&lt;/ul&gt;\r\n&lt;p&gt;\r\n	Connectors&lt;/p&gt;\r\n&lt;ul&gt;\r\n	&lt;li&gt;\r\n		Two-port, self-powered USB 2.0 hub&lt;/li&gt;\r\n	&lt;li&gt;\r\n		Two FireWire 400 ports&lt;/li&gt;\r\n	&lt;li&gt;\r\n		Kensington security port&lt;/li&gt;\r\n&lt;/ul&gt;\r\n&lt;p&gt;\r\n	&lt;b&gt;VESA mount adapter&lt;/b&gt;&lt;br&gt;\r\n	Requires optional Cinema Display VESA Mount Adapter (M9649G/A)&lt;/p&gt;\r\n&lt;ul&gt;\r\n	&lt;li&gt;\r\n		Compatible with VESA FDMI (MIS-D, 100, C) compliant mounting solutions&lt;/li&gt;\r\n&lt;/ul&gt;\r\n&lt;p&gt;\r\n	&lt;b&gt;Electrical requirements&lt;/b&gt;&lt;/p&gt;\r\n&lt;ul&gt;\r\n	&lt;li&gt;\r\n		Input voltage: 100-240 VAC 50-60Hz&lt;/li&gt;\r\n	&lt;li&gt;\r\n		Maximum power when operating: 150W&lt;/li&gt;\r\n	&lt;li&gt;\r\n		Energy saver mode: 3W or less&lt;/li&gt;\r\n&lt;/ul&gt;\r\n&lt;p&gt;\r\n	&lt;b&gt;Environmental requirements&lt;/b&gt;&lt;/p&gt;\r\n&lt;ul&gt;\r\n	&lt;li&gt;\r\n		Operating temperature: 50° to 95° F (10° to 35° C)&lt;/li&gt;\r\n	&lt;li&gt;\r\n		Storage temperature: -40° to 116° F (-40° to 47° C)&lt;/li&gt;\r\n	&lt;li&gt;\r\n		Operating humidity: 20% to 80% noncondensing&lt;/li&gt;\r\n	&lt;li&gt;\r\n		Maximum operating altitude: 10,000 feet&lt;/li&gt;\r\n&lt;/ul&gt;\r\n&lt;p&gt;\r\n	&lt;b&gt;Agency approvals&lt;/b&gt;&lt;/p&gt;\r\n&lt;ul&gt;\r\n	&lt;li&gt;\r\n		FCC Part 15 Class B&lt;/li&gt;\r\n	&lt;li&gt;\r\n		EN55022 Class B&lt;/li&gt;\r\n	&lt;li&gt;\r\n		EN55024&lt;/li&gt;\r\n	&lt;li&gt;\r\n		VCCI Class B&lt;/li&gt;\r\n	&lt;li&gt;\r\n		AS/NZS 3548 Class B&lt;/li&gt;\r\n	&lt;li&gt;\r\n		CNS 13438 Class B&lt;/li&gt;\r\n	&lt;li&gt;\r\n		ICES-003 Class B&lt;/li&gt;\r\n	&lt;li&gt;\r\n		ISO 13406 part 2&lt;/li&gt;\r\n	&lt;li&gt;\r\n		MPR II&lt;/li&gt;\r\n	&lt;li&gt;\r\n		IEC 60950&lt;/li&gt;\r\n	&lt;li&gt;\r\n		UL 60950&lt;/li&gt;\r\n	&lt;li&gt;\r\n		CSA 60950&lt;/li&gt;\r\n	&lt;li&gt;\r\n		EN60950&lt;/li&gt;\r\n	&lt;li&gt;\r\n		ENERGY STAR&lt;/li&gt;\r\n	&lt;li&gt;\r\n		TCO \'03&lt;/li&gt;\r\n&lt;/ul&gt;\r\n&lt;p&gt;\r\n	&lt;b&gt;Size and weight&lt;/b&gt;&lt;br&gt;\r\n	30-inch Apple Cinema HD Display&lt;/p&gt;\r\n&lt;ul&gt;\r\n	&lt;li&gt;\r\n		Height: 21.3 inches (54.3 cm)&lt;/li&gt;\r\n	&lt;li&gt;\r\n		Width: 27.2 inches (68.8 cm)&lt;/li&gt;\r\n	&lt;li&gt;\r\n		Depth: 8.46 inches (21.5 cm)&lt;/li&gt;\r\n	&lt;li&gt;\r\n		Weight: 27.5 pounds (12.5 kg)&lt;/li&gt;\r\n&lt;/ul&gt;\r\n&lt;p&gt;\r\n	&lt;b&gt;System Requirements&lt;/b&gt;&lt;/p&gt;\r\n&lt;ul&gt;\r\n	&lt;li&gt;\r\n		Mac Pro, all graphic options&lt;/li&gt;\r\n	&lt;li&gt;\r\n		MacBook Pro&lt;/li&gt;\r\n	&lt;li&gt;\r\n		Power Mac G5 (PCI-X) with ATI Radeon 9650 or better or NVIDIA GeForce 6800 GT DDL or better&lt;/li&gt;\r\n	&lt;li&gt;\r\n		Power Mac G5 (PCI Express), all graphics options&lt;/li&gt;\r\n	&lt;li&gt;\r\n		PowerBook G4 with dual-link DVI support&lt;/li&gt;\r\n	&lt;li&gt;\r\n		Windows PC and graphics card that supports DVI ports with dual-link digital bandwidth and VESA DDC standard for plug-and-play setup&lt;/li&gt;\r\n&lt;/ul&gt;', '', 'Apple Cinema 30', '', ''),
+(42, 1, 'Apple Cinema 30&quot;', '&lt;p&gt;\r\n	&lt;font face=&quot;helvetica,geneva,arial&quot; size=&quot;2&quot;&gt;&lt;font face=&quot;Helvetica&quot; size=&quot;2&quot;&gt;The 30-inch Apple Cinema HD Display delivers an amazing 2560 x 1600 pixel resolution. Designed specifically for the creative professional, this display provides more space for easier access to all the tools and palettes needed to edit, format and composite your work. Combine this display with a Mac Pro, MacBook Pro, or PowerMac G5 and there\'s no limit to what you can achieve. &lt;br&gt;\r\n	&lt;br&gt;\r\n	&lt;/font&gt;&lt;font face=&quot;Helvetica&quot; size=&quot;2&quot;&gt;The Cinema HD features an active-matrix liquid crystal display that produces flicker-free images that deliver twice the brightness, twice the sharpness and twice the contrast ratio of a typical CRT display. Unlike other flat panels, it\'s designed with a pure digital interface to deliver distortion-free images that never need adjusting. With over 4 million digital pixels, the display is uniquely suited for scientific and technical applications such as visualizing molecular structures or analyzing geological data. &lt;br&gt;\r\n	&lt;br&gt;\r\n	&lt;/font&gt;&lt;font face=&quot;Helvetica&quot; size=&quot;2&quot;&gt;Offering accurate, brilliant color performance, the Cinema HD delivers up to 16.7 million colors across a wide gamut allowing you to see subtle nuances between colors from soft pastels to rich jewel tones. A wide viewing angle ensures uniform color from edge to edge. Apple\'s ColorSync technology allows you to create custom profiles to maintain consistent color onscreen and in print. The result: You can confidently use this display in all your color-critical applications. &lt;br&gt;\r\n	&lt;br&gt;\r\n	&lt;/font&gt;&lt;font face=&quot;Helvetica&quot; size=&quot;2&quot;&gt;Housed in a new aluminum design, the display has a very thin bezel that enhances visual accuracy. Each display features two FireWire 400 ports and two USB 2.0 ports, making attachment of desktop peripherals, such as iSight, iPod, digital and still cameras, hard drives, printers and scanners, even more accessible and convenient. Taking advantage of the much thinner and lighter footprint of an LCD, the new displays support the VESA (Video Electronics Standards Association) mounting interface standard. Customers with the optional Cinema Display VESA Mount Adapter kit gain the flexibility to mount their display in locations most appropriate for their work environment. &lt;br&gt;\r\n	&lt;br&gt;\r\n	&lt;/font&gt;&lt;font face=&quot;Helvetica&quot; size=&quot;2&quot;&gt;The Cinema HD features a single cable design with elegant breakout for the USB 2.0, FireWire 400 and a pure digital connection using the industry standard Digital Video Interface (DVI) interface. The DVI connection allows for a direct pure-digital connection.&lt;br&gt;\r\n	&lt;/font&gt;&lt;/font&gt;&lt;/p&gt;\r\n&lt;h3&gt;\r\n	Features:&lt;/h3&gt;\r\n&lt;p&gt;\r\n	Unrivaled display performance&lt;/p&gt;\r\n&lt;ul&gt;\r\n	&lt;li&gt;\r\n		30-inch (viewable) active-matrix liquid crystal display provides breathtaking image quality and vivid, richly saturated color.&lt;/li&gt;\r\n	&lt;li&gt;\r\n		Support for 2560-by-1600 pixel resolution for display of high definition still and video imagery.&lt;/li&gt;\r\n	&lt;li&gt;\r\n		Wide-format design for simultaneous display of two full pages of text and graphics.&lt;/li&gt;\r\n	&lt;li&gt;\r\n		Industry standard DVI connector for direct attachment to Mac- and Windows-based desktops and notebooks&lt;/li&gt;\r\n	&lt;li&gt;\r\n		Incredibly wide (170 degree) horizontal and vertical viewing angle for maximum visibility and color performance.&lt;/li&gt;\r\n	&lt;li&gt;\r\n		Lightning-fast pixel response for full-motion digital video playback.&lt;/li&gt;\r\n	&lt;li&gt;\r\n		Support for 16.7 million saturated colors, for use in all graphics-intensive applications.&lt;/li&gt;\r\n&lt;/ul&gt;\r\n&lt;p&gt;\r\n	Simple setup and operation&lt;/p&gt;\r\n&lt;ul&gt;\r\n	&lt;li&gt;\r\n		Single cable with elegant breakout for connection to DVI, USB and FireWire ports&lt;/li&gt;\r\n	&lt;li&gt;\r\n		Built-in two-port USB 2.0 hub for easy connection of desktop peripheral devices.&lt;/li&gt;\r\n	&lt;li&gt;\r\n		Two FireWire 400 ports to support iSight and other desktop peripherals&lt;/li&gt;\r\n&lt;/ul&gt;\r\n&lt;p&gt;\r\n	Sleek, elegant design&lt;/p&gt;\r\n&lt;ul&gt;\r\n	&lt;li&gt;\r\n		Huge virtual workspace, very small footprint.&lt;/li&gt;\r\n	&lt;li&gt;\r\n		Narrow Bezel design to minimize visual impact of using dual displays&lt;/li&gt;\r\n	&lt;li&gt;\r\n		Unique hinge design for effortless adjustment&lt;/li&gt;\r\n	&lt;li&gt;\r\n		Support for VESA mounting solutions (Apple Cinema Display VESA Mount Adapter sold separately)&lt;/li&gt;\r\n&lt;/ul&gt;\r\n&lt;h3&gt;\r\n	Technical specifications&lt;/h3&gt;\r\n&lt;p&gt;\r\n	&lt;b&gt;Screen size (diagonal viewable image size)&lt;/b&gt;&lt;/p&gt;\r\n&lt;ul&gt;\r\n	&lt;li&gt;\r\n		Apple Cinema HD Display: 30 inches (29.7-inch viewable)&lt;/li&gt;\r\n&lt;/ul&gt;\r\n&lt;p&gt;\r\n	&lt;b&gt;Screen type&lt;/b&gt;&lt;/p&gt;\r\n&lt;ul&gt;\r\n	&lt;li&gt;\r\n		Thin film transistor (TFT) active-matrix liquid crystal display (AMLCD)&lt;/li&gt;\r\n&lt;/ul&gt;\r\n&lt;p&gt;\r\n	&lt;b&gt;Resolutions&lt;/b&gt;&lt;/p&gt;\r\n&lt;ul&gt;\r\n	&lt;li&gt;\r\n		2560 x 1600 pixels (optimum resolution)&lt;/li&gt;\r\n	&lt;li&gt;\r\n		2048 x 1280&lt;/li&gt;\r\n	&lt;li&gt;\r\n		1920 x 1200&lt;/li&gt;\r\n	&lt;li&gt;\r\n		1280 x 800&lt;/li&gt;\r\n	&lt;li&gt;\r\n		1024 x 640&lt;/li&gt;\r\n&lt;/ul&gt;\r\n&lt;p&gt;\r\n	&lt;b&gt;Display colors (maximum)&lt;/b&gt;&lt;/p&gt;\r\n&lt;ul&gt;\r\n	&lt;li&gt;\r\n		16.7 million&lt;/li&gt;\r\n&lt;/ul&gt;\r\n&lt;p&gt;\r\n	&lt;b&gt;Viewing angle (typical)&lt;/b&gt;&lt;/p&gt;\r\n&lt;ul&gt;\r\n	&lt;li&gt;\r\n		170° horizontal; 170° vertical&lt;/li&gt;\r\n&lt;/ul&gt;\r\n&lt;p&gt;\r\n	&lt;b&gt;Brightness (typical)&lt;/b&gt;&lt;/p&gt;\r\n&lt;ul&gt;\r\n	&lt;li&gt;\r\n		30-inch Cinema HD Display: 400 cd/m2&lt;/li&gt;\r\n&lt;/ul&gt;\r\n&lt;p&gt;\r\n	&lt;b&gt;Contrast ratio (typical)&lt;/b&gt;&lt;/p&gt;\r\n&lt;ul&gt;\r\n	&lt;li&gt;\r\n		700:1&lt;/li&gt;\r\n&lt;/ul&gt;\r\n&lt;p&gt;\r\n	&lt;b&gt;Response time (typical)&lt;/b&gt;&lt;/p&gt;\r\n&lt;ul&gt;\r\n	&lt;li&gt;\r\n		16 ms&lt;/li&gt;\r\n&lt;/ul&gt;\r\n&lt;p&gt;\r\n	&lt;b&gt;Pixel pitch&lt;/b&gt;&lt;/p&gt;\r\n&lt;ul&gt;\r\n	&lt;li&gt;\r\n		30-inch Cinema HD Display: 0.250 mm&lt;/li&gt;\r\n&lt;/ul&gt;\r\n&lt;p&gt;\r\n	&lt;b&gt;Screen treatment&lt;/b&gt;&lt;/p&gt;\r\n&lt;ul&gt;\r\n	&lt;li&gt;\r\n		Antiglare hardcoat&lt;/li&gt;\r\n&lt;/ul&gt;\r\n&lt;p&gt;\r\n	&lt;b&gt;User controls (hardware and software)&lt;/b&gt;&lt;/p&gt;\r\n&lt;ul&gt;\r\n	&lt;li&gt;\r\n		Display Power,&lt;/li&gt;\r\n	&lt;li&gt;\r\n		System sleep, wake&lt;/li&gt;\r\n	&lt;li&gt;\r\n		Brightness&lt;/li&gt;\r\n	&lt;li&gt;\r\n		Monitor tilt&lt;/li&gt;\r\n&lt;/ul&gt;\r\n&lt;p&gt;\r\n	&lt;b&gt;Connectors and cables&lt;/b&gt;&lt;br&gt;\r\n	Cable&lt;/p&gt;\r\n&lt;ul&gt;\r\n	&lt;li&gt;\r\n		DVI (Digital Visual Interface)&lt;/li&gt;\r\n	&lt;li&gt;\r\n		FireWire 400&lt;/li&gt;\r\n	&lt;li&gt;\r\n		USB 2.0&lt;/li&gt;\r\n	&lt;li&gt;\r\n		DC power (24 V)&lt;/li&gt;\r\n&lt;/ul&gt;\r\n&lt;p&gt;\r\n	Connectors&lt;/p&gt;\r\n&lt;ul&gt;\r\n	&lt;li&gt;\r\n		Two-port, self-powered USB 2.0 hub&lt;/li&gt;\r\n	&lt;li&gt;\r\n		Two FireWire 400 ports&lt;/li&gt;\r\n	&lt;li&gt;\r\n		Kensington security port&lt;/li&gt;\r\n&lt;/ul&gt;\r\n&lt;p&gt;\r\n	&lt;b&gt;VESA mount adapter&lt;/b&gt;&lt;br&gt;\r\n	Requires optional Cinema Display VESA Mount Adapter (M9649G/A)&lt;/p&gt;\r\n&lt;ul&gt;\r\n	&lt;li&gt;\r\n		Compatible with VESA FDMI (MIS-D, 100, C) compliant mounting solutions&lt;/li&gt;\r\n&lt;/ul&gt;\r\n&lt;p&gt;\r\n	&lt;b&gt;Electrical requirements&lt;/b&gt;&lt;/p&gt;\r\n&lt;ul&gt;\r\n	&lt;li&gt;\r\n		Input voltage: 100-240 VAC 50-60Hz&lt;/li&gt;\r\n	&lt;li&gt;\r\n		Maximum power when operating: 150W&lt;/li&gt;\r\n	&lt;li&gt;\r\n		Energy saver mode: 3W or less&lt;/li&gt;\r\n&lt;/ul&gt;\r\n&lt;p&gt;\r\n	&lt;b&gt;Environmental requirements&lt;/b&gt;&lt;/p&gt;\r\n&lt;ul&gt;\r\n	&lt;li&gt;\r\n		Operating temperature: 50° to 95° F (10° to 35° C)&lt;/li&gt;\r\n	&lt;li&gt;\r\n		Storage temperature: -40° to 116° F (-40° to 47° C)&lt;/li&gt;\r\n	&lt;li&gt;\r\n		Operating humidity: 20% to 80% noncondensing&lt;/li&gt;\r\n	&lt;li&gt;\r\n		Maximum operating altitude: 10,000 feet&lt;/li&gt;\r\n&lt;/ul&gt;\r\n&lt;p&gt;\r\n	&lt;b&gt;Agency approvals&lt;/b&gt;&lt;/p&gt;\r\n&lt;ul&gt;\r\n	&lt;li&gt;\r\n		FCC Part 15 Class B&lt;/li&gt;\r\n	&lt;li&gt;\r\n		EN55022 Class B&lt;/li&gt;\r\n	&lt;li&gt;\r\n		EN55024&lt;/li&gt;\r\n	&lt;li&gt;\r\n		VCCI Class B&lt;/li&gt;\r\n	&lt;li&gt;\r\n		AS/NZS 3548 Class B&lt;/li&gt;\r\n	&lt;li&gt;\r\n		CNS 13438 Class B&lt;/li&gt;\r\n	&lt;li&gt;\r\n		ICES-003 Class B&lt;/li&gt;\r\n	&lt;li&gt;\r\n		ISO 13406 part 2&lt;/li&gt;\r\n	&lt;li&gt;\r\n		MPR II&lt;/li&gt;\r\n	&lt;li&gt;\r\n		IEC 60950&lt;/li&gt;\r\n	&lt;li&gt;\r\n		UL 60950&lt;/li&gt;\r\n	&lt;li&gt;\r\n		CSA 60950&lt;/li&gt;\r\n	&lt;li&gt;\r\n		EN60950&lt;/li&gt;\r\n	&lt;li&gt;\r\n		ENERGY STAR&lt;/li&gt;\r\n	&lt;li&gt;\r\n		TCO \'03&lt;/li&gt;\r\n&lt;/ul&gt;\r\n&lt;p&gt;\r\n	&lt;b&gt;Size and weight&lt;/b&gt;&lt;br&gt;\r\n	30-inch Apple Cinema HD Display&lt;/p&gt;\r\n&lt;ul&gt;\r\n	&lt;li&gt;\r\n		Height: 21.3 inches (54.3 cm)&lt;/li&gt;\r\n	&lt;li&gt;\r\n		Width: 27.2 inches (68.8 cm)&lt;/li&gt;\r\n	&lt;li&gt;\r\n		Depth: 8.46 inches (21.5 cm)&lt;/li&gt;\r\n	&lt;li&gt;\r\n		Weight: 27.5 pounds (12.5 kg)&lt;/li&gt;\r\n&lt;/ul&gt;\r\n&lt;p&gt;\r\n	&lt;b&gt;System Requirements&lt;/b&gt;&lt;/p&gt;\r\n&lt;ul&gt;\r\n	&lt;li&gt;\r\n		Mac Pro, all graphic options&lt;/li&gt;\r\n	&lt;li&gt;\r\n		MacBook Pro&lt;/li&gt;\r\n	&lt;li&gt;\r\n		Power Mac G5 (PCI-X) with ATI Radeon 9650 or better or NVIDIA GeForce 6800 GT DDL or better&lt;/li&gt;\r\n	&lt;li&gt;\r\n		Power Mac G5 (PCI Express), all graphics options&lt;/li&gt;\r\n	&lt;li&gt;\r\n		PowerBook G4 with dual-link DVI support&lt;/li&gt;\r\n	&lt;li&gt;\r\n		Windows PC and graphics card that supports DVI ports with dual-link digital bandwidth and VESA DDC standard for plug-and-play setup&lt;/li&gt;\r\n&lt;/ul&gt;\r\n', '', 'Apple Cinema 30', '', ''),
 (43, 1, 'MacBook', '&lt;div&gt;\r\n	&lt;p&gt;\r\n		&lt;b&gt;Intel Core 2 Duo processor&lt;/b&gt;&lt;/p&gt;\r\n	&lt;p&gt;\r\n		Powered by an Intel Core 2 Duo processor at speeds up to 2.16GHz, the new MacBook is the fastest ever.&lt;/p&gt;\r\n	&lt;p&gt;\r\n		&lt;b&gt;1GB memory, larger hard drives&lt;/b&gt;&lt;/p&gt;\r\n	&lt;p&gt;\r\n		The new MacBook now comes with 1GB of memory standard and larger hard drives for the entire line perfect for running more of your favorite applications and storing growing media collections.&lt;/p&gt;\r\n	&lt;p&gt;\r\n		&lt;b&gt;Sleek, 1.08-inch-thin design&lt;/b&gt;&lt;/p&gt;\r\n	&lt;p&gt;\r\n		MacBook makes it easy to hit the road thanks to its tough polycarbonate case, built-in wireless technologies, and innovative MagSafe Power Adapter that releases automatically if someone accidentally trips on the cord.&lt;/p&gt;\r\n	&lt;p&gt;\r\n		&lt;b&gt;Built-in iSight camera&lt;/b&gt;&lt;/p&gt;\r\n	&lt;p&gt;\r\n		Right out of the box, you can have a video chat with friends or family,2 record a video at your desk, or take fun pictures with Photo Booth&lt;/p&gt;\r\n&lt;/div&gt;\r\n', '', 'MacBook', '', ''),
 (44, 1, 'MacBook Air', '&lt;div&gt;\r\n	MacBook Air is ultrathin, ultraportable, and ultra unlike anything else. But you don&amp;rsquo;t lose inches and pounds overnight. It&amp;rsquo;s the result of rethinking conventions. Of multiple wireless innovations. And of breakthrough design. With MacBook Air, mobile computing suddenly has a new standard.&lt;/div&gt;\r\n', '', 'MacBook Air', '', ''),
 (45, 1, 'MacBook Pro', '&lt;div class=&quot;cpt_product_description &quot;&gt;\r\n	&lt;div&gt;\r\n		&lt;p&gt;\r\n			&lt;b&gt;Latest Intel mobile architecture&lt;/b&gt;&lt;/p&gt;\r\n		&lt;p&gt;\r\n			Powered by the most advanced mobile processors from Intel, the new Core 2 Duo MacBook Pro is over 50% faster than the original Core Duo MacBook Pro and now supports up to 4GB of RAM.&lt;/p&gt;\r\n		&lt;p&gt;\r\n			&lt;b&gt;Leading-edge graphics&lt;/b&gt;&lt;/p&gt;\r\n		&lt;p&gt;\r\n			The NVIDIA GeForce 8600M GT delivers exceptional graphics processing power. For the ultimate creative canvas, you can even configure the 17-inch model with a 1920-by-1200 resolution display.&lt;/p&gt;\r\n		&lt;p&gt;\r\n			&lt;b&gt;Designed for life on the road&lt;/b&gt;&lt;/p&gt;\r\n		&lt;p&gt;\r\n			Innovations such as a magnetic power connection and an illuminated keyboard with ambient light sensor put the MacBook Pro in a class by itself.&lt;/p&gt;\r\n		&lt;p&gt;\r\n			&lt;b&gt;Connect. Create. Communicate.&lt;/b&gt;&lt;/p&gt;\r\n		&lt;p&gt;\r\n			Quickly set up a video conference with the built-in iSight camera. Control presentations and media from up to 30 feet away with the included Apple Remote. Connect to high-bandwidth peripherals with FireWire 800 and DVI.&lt;/p&gt;\r\n		&lt;p&gt;\r\n			&lt;b&gt;Next-generation wireless&lt;/b&gt;&lt;/p&gt;\r\n		&lt;p&gt;\r\n			Featuring 802.11n wireless technology, the MacBook Pro delivers up to five times the performance and up to twice the range of previous-generation technologies.&lt;/p&gt;\r\n	&lt;/div&gt;\r\n&lt;/div&gt;\r\n&lt;!-- cpt_container_end --&gt;', '', 'MacBook Pro', '', ''),
@@ -3321,7 +3124,6 @@ INSERT INTO `pc_product_description` (`product_id`, `language_id`, `name`, `desc
 -- Table structure for table `pc_product_discount`
 --
 
-DROP TABLE IF EXISTS `pc_product_discount`;
 CREATE TABLE `pc_product_discount` (
   `product_discount_id` int(11) NOT NULL,
   `product_id` int(11) NOT NULL,
@@ -3338,9 +3140,9 @@ CREATE TABLE `pc_product_discount` (
 --
 
 INSERT INTO `pc_product_discount` (`product_discount_id`, `product_id`, `customer_group_id`, `quantity`, `priority`, `price`, `date_start`, `date_end`) VALUES
-(444, 42, 1, 10, 1, 88.0000, '0000-00-00', '0000-00-00'),
-(445, 42, 1, 20, 1, 77.0000, '0000-00-00', '0000-00-00'),
-(446, 42, 1, 30, 1, 66.0000, '0000-00-00', '0000-00-00');
+(438, 42, 1, 10, 1, 88.0000, '0000-00-00', '0000-00-00'),
+(439, 42, 1, 20, 1, 77.0000, '0000-00-00', '0000-00-00'),
+(440, 42, 1, 30, 1, 66.0000, '0000-00-00', '0000-00-00');
 
 -- --------------------------------------------------------
 
@@ -3348,7 +3150,6 @@ INSERT INTO `pc_product_discount` (`product_discount_id`, `product_id`, `custome
 -- Table structure for table `pc_product_filter`
 --
 
-DROP TABLE IF EXISTS `pc_product_filter`;
 CREATE TABLE `pc_product_filter` (
   `product_id` int(11) NOT NULL,
   `filter_id` int(11) NOT NULL
@@ -3360,7 +3161,6 @@ CREATE TABLE `pc_product_filter` (
 -- Table structure for table `pc_product_image`
 --
 
-DROP TABLE IF EXISTS `pc_product_image`;
 CREATE TABLE `pc_product_image` (
   `product_image_id` int(11) NOT NULL,
   `product_id` int(11) NOT NULL,
@@ -3417,6 +3217,11 @@ INSERT INTO `pc_product_image` (`product_image_id`, `product_id`, `image`, `sort
 (2011, 32, 'catalog/demo/ipod_touch_7.jpg', 0),
 (2034, 28, 'catalog/demo/htc_touch_hd_3.jpg', 0),
 (2035, 28, 'catalog/demo/htc_touch_hd_2.jpg', 0),
+(2313, 42, 'catalog/demo/canon_eos_5d_2.jpg', 0),
+(2314, 42, 'catalog/demo/canon_eos_5d_1.jpg', 0),
+(2315, 42, 'catalog/demo/compaq_presario.jpg', 0),
+(2316, 42, 'catalog/demo/hp_1.jpg', 0),
+(2317, 42, 'catalog/demo/canon_logo.jpg', 0),
 (2320, 47, 'catalog/demo/hp_2.jpg', 0),
 (2321, 47, 'catalog/demo/hp_3.jpg', 0),
 (2322, 49, 'catalog/demo/samsung_tab_2.jpg', 0),
@@ -3428,12 +3233,7 @@ INSERT INTO `pc_product_image` (`product_image_id`, `product_id`, `image`, `sort
 (2344, 30, 'catalog/demo/canon_eos_5d_3.jpg', 0),
 (2345, 30, 'catalog/demo/canon_eos_5d_2.jpg', 0),
 (2350, 41, 'catalog/demo/imac_2.jpg', 0),
-(2351, 41, 'catalog/demo/imac_3.jpg', 0),
-(2357, 42, 'catalog/demo/canon_eos_5d_2.jpg', 0),
-(2358, 42, 'catalog/demo/canon_eos_5d_1.jpg', 0),
-(2359, 42, 'catalog/demo/compaq_presario.jpg', 0),
-(2360, 42, 'catalog/demo/hp_1.jpg', 0),
-(2361, 42, 'catalog/demo/canon_logo.jpg', 0);
+(2351, 41, 'catalog/demo/imac_3.jpg', 0);
 
 -- --------------------------------------------------------
 
@@ -3441,7 +3241,6 @@ INSERT INTO `pc_product_image` (`product_image_id`, `product_id`, `image`, `sort
 -- Table structure for table `pc_product_option`
 --
 
-DROP TABLE IF EXISTS `pc_product_option`;
 CREATE TABLE `pc_product_option` (
   `product_option_id` int(11) NOT NULL,
   `product_id` int(11) NOT NULL,
@@ -3455,6 +3254,15 @@ CREATE TABLE `pc_product_option` (
 --
 
 INSERT INTO `pc_product_option` (`product_option_id`, `product_id`, `option_id`, `value`, `required`) VALUES
+(208, 42, 4, 'test', 1),
+(209, 42, 6, '', 1),
+(217, 42, 5, '', 1),
+(218, 42, 1, '', 1),
+(219, 42, 8, '2011-02-20', 1),
+(220, 42, 10, '2011-02-20 22:25', 1),
+(221, 42, 9, '22:25', 1),
+(222, 42, 7, '', 1),
+(223, 42, 2, '', 1),
 (224, 35, 11, '', 1),
 (225, 47, 12, '2011-04-22', 1),
 (226, 30, 5, '', 1);
@@ -3465,7 +3273,6 @@ INSERT INTO `pc_product_option` (`product_option_id`, `product_id`, `option_id`,
 -- Table structure for table `pc_product_option_value`
 --
 
-DROP TABLE IF EXISTS `pc_product_option_value`;
 CREATE TABLE `pc_product_option_value` (
   `product_option_value_id` int(11) NOT NULL,
   `product_option_id` int(11) NOT NULL,
@@ -3487,6 +3294,17 @@ CREATE TABLE `pc_product_option_value` (
 --
 
 INSERT INTO `pc_product_option_value` (`product_option_value_id`, `product_option_id`, `product_id`, `option_id`, `option_value_id`, `quantity`, `subtract`, `price`, `price_prefix`, `points`, `points_prefix`, `weight`, `weight_prefix`) VALUES
+(1, 217, 42, 5, 41, 100, 0, 1.0000, '+', 0, '+', 1.00000000, '+'),
+(2, 217, 42, 5, 42, 200, 1, 2.0000, '+', 0, '+', 2.00000000, '+'),
+(3, 217, 42, 5, 40, 300, 0, 3.0000, '+', 0, '+', 3.00000000, '+'),
+(4, 217, 42, 5, 39, 92, 1, 4.0000, '+', 0, '+', 4.00000000, '+'),
+(5, 218, 42, 1, 32, 96, 1, 10.0000, '+', 1, '+', 10.00000000, '+'),
+(6, 218, 42, 1, 31, 146, 1, 20.0000, '+', 2, '-', 20.00000000, '+'),
+(7, 218, 42, 1, 43, 300, 1, 30.0000, '+', 3, '+', 30.00000000, '+'),
+(8, 223, 42, 2, 23, 48, 1, 10.0000, '+', 0, '+', 10.00000000, '+'),
+(9, 223, 42, 2, 24, 194, 1, 20.0000, '+', 0, '+', 20.00000000, '+'),
+(10, 223, 42, 2, 44, 2696, 1, 30.0000, '+', 0, '+', 30.00000000, '+'),
+(11, 223, 42, 2, 45, 3998, 1, 40.0000, '+', 0, '+', 40.00000000, '+'),
 (12, 224, 35, 11, 46, 0, 1, 5.0000, '+', 0, '+', 0.00000000, '+'),
 (13, 224, 35, 11, 47, 10, 1, 10.0000, '+', 0, '+', 0.00000000, '+'),
 (14, 224, 35, 11, 48, 15, 1, 15.0000, '+', 0, '+', 0.00000000, '+'),
@@ -3499,7 +3317,6 @@ INSERT INTO `pc_product_option_value` (`product_option_value_id`, `product_optio
 -- Table structure for table `pc_product_related`
 --
 
-DROP TABLE IF EXISTS `pc_product_related`;
 CREATE TABLE `pc_product_related` (
   `product_id` int(11) NOT NULL,
   `related_id` int(11) NOT NULL
@@ -3510,7 +3327,10 @@ CREATE TABLE `pc_product_related` (
 --
 
 INSERT INTO `pc_product_related` (`product_id`, `related_id`) VALUES
-(42, 42);
+(40, 42),
+(41, 42),
+(42, 40),
+(42, 41);
 
 -- --------------------------------------------------------
 
@@ -3518,7 +3338,6 @@ INSERT INTO `pc_product_related` (`product_id`, `related_id`) VALUES
 -- Table structure for table `pc_product_report`
 --
 
-DROP TABLE IF EXISTS `pc_product_report`;
 CREATE TABLE `pc_product_report` (
   `product_report_id` int(11) NOT NULL,
   `product_id` int(11) NOT NULL,
@@ -3528,13 +3347,26 @@ CREATE TABLE `pc_product_report` (
   `date_added` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
+--
+-- Dumping data for table `pc_product_report`
+--
+
+INSERT INTO `pc_product_report` (`product_report_id`, `product_id`, `store_id`, `ip`, `country`, `date_added`) VALUES
+(1, 33, 0, '::1', '', '2024-10-18 11:48:13'),
+(2, 33, 0, '::1', '', '2024-10-18 11:49:54'),
+(3, 33, 0, '::1', '', '2024-10-18 12:24:10'),
+(4, 33, 0, '::1', '', '2024-10-19 06:54:58'),
+(5, 33, 0, '::1', '', '2024-10-19 07:15:27'),
+(6, 33, 0, '::1', '', '2024-10-19 07:24:52'),
+(7, 33, 0, '::1', '', '2024-10-19 07:25:53'),
+(8, 33, 0, '::1', '', '2024-10-19 07:26:03');
+
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `pc_product_reward`
 --
 
-DROP TABLE IF EXISTS `pc_product_reward`;
 CREATE TABLE `pc_product_reward` (
   `product_reward_id` int(11) NOT NULL,
   `product_id` int(11) NOT NULL DEFAULT 0,
@@ -3561,6 +3393,7 @@ INSERT INTO `pc_product_reward` (`product_reward_id`, `product_id`, `customer_gr
 (355, 32, 1, 0),
 (379, 28, 1, 400),
 (425, 35, 1, 0),
+(515, 42, 1, 100),
 (519, 47, 1, 300),
 (521, 49, 1, 1000),
 (539, 30, 1, 200),
@@ -3572,7 +3405,6 @@ INSERT INTO `pc_product_reward` (`product_reward_id`, `product_id`, `customer_gr
 -- Table structure for table `pc_product_special`
 --
 
-DROP TABLE IF EXISTS `pc_product_special`;
 CREATE TABLE `pc_product_special` (
   `product_special_id` int(11) NOT NULL,
   `product_id` int(11) NOT NULL,
@@ -3588,9 +3420,9 @@ CREATE TABLE `pc_product_special` (
 --
 
 INSERT INTO `pc_product_special` (`product_special_id`, `product_id`, `customer_group_id`, `priority`, `price`, `date_start`, `date_end`) VALUES
+(419, 42, 1, 1, 90.0000, '0000-00-00', '0000-00-00'),
 (438, 30, 1, 1, 80.0000, '0000-00-00', '0000-00-00'),
-(439, 30, 1, 2, 90.0000, '0000-00-00', '0000-00-00'),
-(441, 42, 1, 1, 90.0000, '0000-00-00', '0000-00-00');
+(439, 30, 1, 2, 90.0000, '0000-00-00', '0000-00-00');
 
 -- --------------------------------------------------------
 
@@ -3598,7 +3430,6 @@ INSERT INTO `pc_product_special` (`product_special_id`, `product_id`, `customer_
 -- Table structure for table `pc_product_subscription`
 --
 
-DROP TABLE IF EXISTS `pc_product_subscription`;
 CREATE TABLE `pc_product_subscription` (
   `product_id` int(11) NOT NULL,
   `subscription_plan_id` int(11) NOT NULL,
@@ -3613,7 +3444,6 @@ CREATE TABLE `pc_product_subscription` (
 -- Table structure for table `pc_product_to_category`
 --
 
-DROP TABLE IF EXISTS `pc_product_to_category`;
 CREATE TABLE `pc_product_to_category` (
   `product_id` int(11) NOT NULL,
   `category_id` int(11) NOT NULL
@@ -3640,6 +3470,7 @@ INSERT INTO `pc_product_to_category` (`product_id`, `category_id`) VALUES
 (40, 20),
 (40, 24),
 (41, 27),
+(42, 20),
 (42, 28),
 (43, 18),
 (43, 20),
@@ -3660,7 +3491,6 @@ INSERT INTO `pc_product_to_category` (`product_id`, `category_id`) VALUES
 -- Table structure for table `pc_product_to_download`
 --
 
-DROP TABLE IF EXISTS `pc_product_to_download`;
 CREATE TABLE `pc_product_to_download` (
   `product_id` int(11) NOT NULL,
   `download_id` int(11) NOT NULL
@@ -3672,19 +3502,11 @@ CREATE TABLE `pc_product_to_download` (
 -- Table structure for table `pc_product_to_layout`
 --
 
-DROP TABLE IF EXISTS `pc_product_to_layout`;
 CREATE TABLE `pc_product_to_layout` (
   `product_id` int(11) NOT NULL,
   `store_id` int(11) NOT NULL,
   `layout_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
-
---
--- Dumping data for table `pc_product_to_layout`
---
-
-INSERT INTO `pc_product_to_layout` (`product_id`, `store_id`, `layout_id`) VALUES
-(42, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -3692,7 +3514,6 @@ INSERT INTO `pc_product_to_layout` (`product_id`, `store_id`, `layout_id`) VALUE
 -- Table structure for table `pc_product_to_store`
 --
 
-DROP TABLE IF EXISTS `pc_product_to_store`;
 CREATE TABLE `pc_product_to_store` (
   `product_id` int(11) NOT NULL,
   `store_id` int(11) NOT NULL DEFAULT 0
@@ -3729,7 +3550,6 @@ INSERT INTO `pc_product_to_store` (`product_id`, `store_id`) VALUES
 -- Table structure for table `pc_product_viewed`
 --
 
-DROP TABLE IF EXISTS `pc_product_viewed`;
 CREATE TABLE `pc_product_viewed` (
   `product_id` int(11) NOT NULL,
   `viewed` int(11) NOT NULL
@@ -3741,7 +3561,6 @@ CREATE TABLE `pc_product_viewed` (
 -- Table structure for table `pc_return`
 --
 
-DROP TABLE IF EXISTS `pc_return`;
 CREATE TABLE `pc_return` (
   `return_id` int(11) NOT NULL,
   `order_id` int(11) NOT NULL,
@@ -3770,7 +3589,6 @@ CREATE TABLE `pc_return` (
 -- Table structure for table `pc_return_action`
 --
 
-DROP TABLE IF EXISTS `pc_return_action`;
 CREATE TABLE `pc_return_action` (
   `return_action_id` int(11) NOT NULL,
   `language_id` int(11) NOT NULL DEFAULT 0,
@@ -3792,7 +3610,6 @@ INSERT INTO `pc_return_action` (`return_action_id`, `language_id`, `name`) VALUE
 -- Table structure for table `pc_return_history`
 --
 
-DROP TABLE IF EXISTS `pc_return_history`;
 CREATE TABLE `pc_return_history` (
   `return_history_id` int(11) NOT NULL,
   `return_id` int(11) NOT NULL,
@@ -3808,7 +3625,6 @@ CREATE TABLE `pc_return_history` (
 -- Table structure for table `pc_return_reason`
 --
 
-DROP TABLE IF EXISTS `pc_return_reason`;
 CREATE TABLE `pc_return_reason` (
   `return_reason_id` int(11) NOT NULL,
   `language_id` int(11) NOT NULL DEFAULT 0,
@@ -3832,7 +3648,6 @@ INSERT INTO `pc_return_reason` (`return_reason_id`, `language_id`, `name`) VALUE
 -- Table structure for table `pc_return_status`
 --
 
-DROP TABLE IF EXISTS `pc_return_status`;
 CREATE TABLE `pc_return_status` (
   `return_status_id` int(11) NOT NULL,
   `language_id` int(11) NOT NULL DEFAULT 0,
@@ -3854,7 +3669,6 @@ INSERT INTO `pc_return_status` (`return_status_id`, `language_id`, `name`) VALUE
 -- Table structure for table `pc_review`
 --
 
-DROP TABLE IF EXISTS `pc_review`;
 CREATE TABLE `pc_review` (
   `review_id` int(11) NOT NULL,
   `product_id` int(11) NOT NULL,
@@ -3867,20 +3681,12 @@ CREATE TABLE `pc_review` (
   `date_modified` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
---
--- Dumping data for table `pc_review`
---
-
-INSERT INTO `pc_review` (`review_id`, `product_id`, `customer_id`, `author`, `text`, `rating`, `status`, `date_added`, `date_modified`) VALUES
-(2, 42, 0, 'test', 'test', 5, 1, '2024-10-10 00:00:00', '0000-00-00 00:00:00');
-
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `pc_seo_url`
 --
 
-DROP TABLE IF EXISTS `pc_seo_url`;
 CREATE TABLE `pc_seo_url` (
   `seo_url_id` int(11) NOT NULL,
   `store_id` int(11) NOT NULL,
@@ -3914,6 +3720,8 @@ INSERT INTO `pc_seo_url` (`seo_url_id`, `store_id`, `language_id`, `key`, `value
 (16, 0, 1, 'product_id', '36', 'ipod-nano', 1),
 (17, 0, 1, 'product_id', '34', 'ipod-shuffle', 1),
 (18, 0, 1, 'product_id', '32', 'ipod-touch', 1),
+(19, 0, 1, 'product_id', '50', 'apple-4', 1),
+(20, 0, 1, 'product_id', '42', 'apple-cinema', 1),
 (21, 0, 1, 'manufacturer_id', '5', 'htc', 0),
 (22, 0, 1, 'manufacturer_id', '7', 'hewlett-packard', 0),
 (23, 0, 1, 'manufacturer_id', '6', 'palm', 0),
@@ -3959,6 +3767,7 @@ INSERT INTO `pc_seo_url` (`seo_url_id`, `store_id`, `language_id`, `key`, `value
 (63, 0, 1, 'path', '24', 'smartphone', 0),
 (64, 0, 1, 'path', '17', 'software', 0),
 (65, 0, 1, 'path', '57', 'tablet', 0),
+(66, 0, 1, 'information_id', '1', 'about-us', 0),
 (67, 0, 1, 'information_id', '2', 'terms', 0),
 (68, 0, 1, 'information_id', '4', 'delivery', 0),
 (69, 0, 1, 'information_id', '3', 'privacy', 0),
@@ -3967,9 +3776,7 @@ INSERT INTO `pc_seo_url` (`seo_url_id`, `store_id`, `language_id`, `key`, `value
 (72, 0, 1, 'route', 'information/information', 'information', -1),
 (73, 0, 1, 'route', 'product/product', 'product', -1),
 (74, 0, 1, 'route', 'product/category', 'catalog', -1),
-(75, 0, 1, 'route', 'product/manufacturer', 'brands', -1),
-(77, 0, 1, 'product_id', '42', 'apple-cinema', 0),
-(85, 0, 1, 'information_id', '1', 'about-us', 0);
+(75, 0, 1, 'route', 'product/manufacturer', 'brands', -1);
 
 -- --------------------------------------------------------
 
@@ -3977,7 +3784,6 @@ INSERT INTO `pc_seo_url` (`seo_url_id`, `store_id`, `language_id`, `key`, `value
 -- Table structure for table `pc_session`
 --
 
-DROP TABLE IF EXISTS `pc_session`;
 CREATE TABLE `pc_session` (
   `session_id` varchar(32) NOT NULL,
   `data` text NOT NULL,
@@ -3990,7 +3796,6 @@ CREATE TABLE `pc_session` (
 -- Table structure for table `pc_setting`
 --
 
-DROP TABLE IF EXISTS `pc_setting`;
 CREATE TABLE `pc_setting` (
   `setting_id` int(11) NOT NULL,
   `store_id` int(11) NOT NULL DEFAULT 0,
@@ -4006,6 +3811,7 @@ CREATE TABLE `pc_setting` (
 
 INSERT INTO `pc_setting` (`setting_id`, `store_id`, `code`, `key`, `value`, `serialized`) VALUES
 (126, 0, 'developer', 'developer_sass', '1', 0),
+(127, 0, 'currency_ecb', 'currency_ecb_status', '1', 0),
 (128, 0, 'payment_free_checkout', 'payment_free_checkout_status', '1', 0),
 (129, 0, 'payment_free_checkout', 'payment_free_checkout_order_status_id', '1', 0),
 (130, 0, 'payment_free_checkout', 'payment_free_checkout_sort_order', '1', 0),
@@ -4091,147 +3897,139 @@ INSERT INTO `pc_setting` (`setting_id`, `store_id`, `code`, `key`, `value`, `ser
 (212, 0, 'report_marketing', 'report_marketing_sort_order', '15', 0),
 (213, 0, 'report_customer_subscription', 'report_customer_subscription_status', '1', 0),
 (214, 0, 'report_customer_subscription', 'report_customer_subscription_sort_order', '16', 0),
-(221, 0, 'captcha_basic', 'captcha_basic_status', '1', 0),
-(224, 0, 'module_account', 'module_account_status', '1', 0),
-(227, 0, 'module_category', 'module_category_status', '1', 0),
-(228, 0, 'module_filter', 'module_filter_status', '1', 0),
-(229, 0, 'module_information', 'module_information_status', '1', 0),
-(232, 0, 'module_store', 'module_store_admin', '0', 0),
-(233, 0, 'module_store', 'module_store_status', '1', 0),
-(630, 0, 'config', 'config_meta_title', 'Your Store', 0),
-(631, 0, 'config', 'config_meta_description', 'My Store', 0),
-(632, 0, 'config', 'config_meta_keyword', '', 0),
-(633, 0, 'config', 'config_logo', 'catalog/opencart-logo.png', 0),
-(634, 0, 'config', 'config_theme', 'basic', 0),
-(635, 0, 'config', 'config_layout_id', '4', 0),
-(636, 0, 'config', 'config_name', 'Your Store', 0),
-(637, 0, 'config', 'config_owner', 'Your Name', 0),
-(638, 0, 'config', 'config_address', 'Address 1', 0),
-(639, 0, 'config', 'config_geocode', '', 0),
-(640, 0, 'config', 'config_email', 'pradeep.jangra94@gmail.com', 0),
-(641, 0, 'config', 'config_telephone', '123456789', 0),
-(642, 0, 'config', 'config_image', '', 0),
-(643, 0, 'config', 'config_open', '', 0),
-(644, 0, 'config', 'config_comment', '', 0),
-(645, 0, 'config', 'config_country_id', '222', 0),
-(646, 0, 'config', 'config_zone_id', '3563', 0),
-(647, 0, 'config', 'config_timezone', 'UTC', 0),
-(648, 0, 'config', 'config_language', 'en-gb', 0),
-(649, 0, 'config', 'config_language_admin', 'en-gb', 0),
-(650, 0, 'config', 'config_currency', 'USD', 0),
-(651, 0, 'config', 'config_currency_engine', 'ecb', 0),
-(652, 0, 'config', 'config_currency_auto', '[\"0\",\"1\"]', 1),
-(653, 0, 'config', 'config_length_class_id', '1', 0),
-(654, 0, 'config', 'config_weight_class_id', '1', 0),
-(655, 0, 'config', 'config_product_description_length', '100', 0),
-(656, 0, 'config', 'config_pagination', '10', 0),
-(657, 0, 'config', 'config_product_count', '[\"0\",\"1\"]', 1),
-(658, 0, 'config', 'config_pagination_admin', '10', 0),
-(659, 0, 'config', 'config_product_report_status', '0', 0),
-(660, 0, 'config', 'config_review_status', '[\"0\",\"1\"]', 1),
-(661, 0, 'config', 'config_review_purchased', '0', 0),
-(662, 0, 'config', 'config_review_guest', '[\"0\",\"1\"]', 1),
-(663, 0, 'config', 'config_article_description_length', '90', 0),
-(664, 0, 'config', 'config_comment_status', '0', 0),
-(665, 0, 'config', 'config_comment_guest', '0', 0),
-(666, 0, 'config', 'config_voucher_min', '1', 0),
-(667, 0, 'config', 'config_voucher_max', '1000', 0),
-(668, 0, 'config', 'config_cookie_id', '0', 0),
-(669, 0, 'config', 'config_gdpr_id', '1', 0),
-(670, 0, 'config', 'config_gdpr_limit', '180', 0),
-(671, 0, 'config', 'config_tax', '[\"0\",\"1\"]', 1),
-(672, 0, 'config', 'config_tax_default', 'shipping', 0),
-(673, 0, 'config', 'config_tax_customer', 'shipping', 0),
-(674, 0, 'config', 'config_customer_online', '0', 0),
-(675, 0, 'config', 'config_customer_online_expire', '1', 0),
-(676, 0, 'config', 'config_customer_activity', '0', 0),
-(677, 0, 'config', 'config_customer_search', '0', 0),
-(678, 0, 'config', 'config_customer_group_id', '1', 0),
-(679, 0, 'config', 'config_customer_group_display', '[\"1\"]', 1),
-(680, 0, 'config', 'config_customer_price', '0', 0),
-(681, 0, 'config', 'config_telephone_display', '0', 0),
-(682, 0, 'config', 'config_telephone_required', '0', 0),
-(683, 0, 'config', 'config_login_attempts', '5', 0),
-(684, 0, 'config', 'config_account_id', '3', 0),
-(685, 0, 'config', 'config_invoice_prefix', 'INV-2024-00', 0),
-(686, 0, 'config', 'config_cart_weight', '[\"0\",\"1\"]', 1),
-(687, 0, 'config', 'config_checkout_guest', '[\"0\",\"1\"]', 1),
-(688, 0, 'config', 'config_checkout_payment_address', '0', 0),
-(689, 0, 'config', 'config_checkout_shipping_address', '0', 0),
-(690, 0, 'config', 'config_checkout_id', '0', 0),
-(691, 0, 'config', 'config_order_status_id', '1', 0),
-(692, 0, 'config', 'config_processing_status', '[\"2\"]', 1),
-(693, 0, 'config', 'config_complete_status', '[\"5\"]', 1),
-(694, 0, 'config', 'config_fraud_status_id', '8', 0),
-(695, 0, 'config', 'config_api_id', '1', 0),
-(696, 0, 'config', 'config_subscription_status_id', '1', 0),
-(697, 0, 'config', 'config_subscription_active_status_id', '2', 0),
-(698, 0, 'config', 'config_subscription_expired_status_id', '3', 0),
-(699, 0, 'config', 'config_subscription_suspended_status_id', '4', 0),
-(700, 0, 'config', 'config_subscription_canceled_status_id', '5', 0),
-(701, 0, 'config', 'config_subscription_failed_status_id', '6', 0),
-(702, 0, 'config', 'config_subscription_denied_status_id', '7', 0),
-(703, 0, 'config', 'config_stock_display', '0', 0),
-(704, 0, 'config', 'config_stock_warning', '0', 0),
-(705, 0, 'config', 'config_stock_checkout', '0', 0),
-(706, 0, 'config', 'config_affiliate_status', '[\"0\",\"1\"]', 1),
-(707, 0, 'config', 'config_affiliate_group_id', '1', 0),
-(708, 0, 'config', 'config_affiliate_approval', '0', 0),
-(709, 0, 'config', 'config_affiliate_auto', '0', 0),
-(710, 0, 'config', 'config_affiliate_commission', '5', 0),
-(711, 0, 'config', 'config_affiliate_expire', '0', 0),
-(712, 0, 'config', 'config_affiliate_id', '4', 0),
-(713, 0, 'config', 'config_return_status_id', '2', 0),
-(714, 0, 'config', 'config_return_id', '0', 0),
-(715, 0, 'config', 'config_captcha', 'basic', 0),
-(716, 0, 'config', 'config_captcha_page', '[\"review\",\"contact\"]', 1),
-(717, 0, 'config', 'config_image_category_width', '80', 0),
-(718, 0, 'config', 'config_image_category_height', '80', 0),
-(719, 0, 'config', 'config_image_thumb_width', '500', 0),
-(720, 0, 'config', 'config_image_thumb_height', '500', 0),
-(721, 0, 'config', 'config_image_popup_width', '800', 0),
-(722, 0, 'config', 'config_image_popup_height', '800', 0),
-(723, 0, 'config', 'config_image_product_width', '250', 0),
-(724, 0, 'config', 'config_image_product_height', '250', 0),
-(725, 0, 'config', 'config_image_additional_width', '74', 0),
-(726, 0, 'config', 'config_image_additional_height', '74', 0),
-(727, 0, 'config', 'config_image_related_width', '250', 0),
-(728, 0, 'config', 'config_image_related_height', '250', 0),
-(729, 0, 'config', 'config_image_blog_width', '90', 0),
-(730, 0, 'config', 'config_image_blog_height', '90', 0),
-(731, 0, 'config', 'config_image_compare_width', '90', 0),
-(732, 0, 'config', 'config_image_compare_height', '90', 0),
-(733, 0, 'config', 'config_image_wishlist_width', '47', 0),
-(734, 0, 'config', 'config_image_wishlist_height', '47', 0),
-(735, 0, 'config', 'config_image_cart_width', '47', 0),
-(736, 0, 'config', 'config_image_cart_height', '47', 0),
-(737, 0, 'config', 'config_image_location_width', '268', 0),
-(738, 0, 'config', 'config_image_location_height', '50', 0),
-(739, 0, 'config', 'config_mail_engine', 'smtp', 0),
-(740, 0, 'config', 'config_mail_parameter', '', 0),
-(741, 0, 'config', 'config_mail_smtp_hostname', 'smtp.gmail.com', 0),
-(742, 0, 'config', 'config_mail_smtp_username', 'noreply@cqs.in', 0),
-(743, 0, 'config', 'config_mail_smtp_password', 'Roots@123', 0),
-(744, 0, 'config', 'config_mail_smtp_port', '587', 0),
-(745, 0, 'config', 'config_mail_smtp_timeout', '5', 0),
-(746, 0, 'config', 'config_mail_alert', '[\"order\"]', 1),
-(747, 0, 'config', 'config_mail_alert_email', '', 0),
-(748, 0, 'config', 'config_maintenance', '0', 0),
-(749, 0, 'config', 'config_session_expire', '86400', 0),
-(750, 0, 'config', 'config_session_samesite', 'Strict', 0),
-(751, 0, 'config', 'config_seo_url', '0', 0),
-(752, 0, 'config', 'config_robots', 'abot\r\ndbot\r\nebot\r\nhbot\r\nkbot\r\nlbot\r\nmbot\r\nnbot\r\nobot\r\npbot\r\nrbot\r\nsbot\r\ntbot\r\nvbot\r\nybot\r\nzbot\r\nbot.\r\nbot/\r\n_bot\r\n.bot\r\n/bot\r\n-bot\r\n:bot\r\n(bot\r\ncrawl\r\nslurp\r\nspider\r\nseek\r\naccoona\r\nacoon\r\nadressendeutschland\r\nah-ha.com\r\nahoy\r\naltavista\r\nananzi\r\nanthill\r\nappie\r\narachnophilia\r\narale\r\naraneo\r\naranha\r\narchitext\r\naretha\r\narks\r\nasterias\r\natlocal\r\natn\r\natomz\r\naugurfind\r\nbackrub\r\nbannana_bot\r\nbaypup\r\nbdfetch\r\nbig brother\r\nbiglotron\r\nbjaaland\r\nblackwidow\r\nblaiz\r\nblog\r\nblo.\r\nbloodhound\r\nboitho\r\nbooch\r\nbradley\r\nbutterfly\r\ncalif\r\ncassandra\r\nccubee\r\ncfetch\r\ncharlotte\r\nchurl\r\ncienciaficcion\r\ncmc\r\ncollective\r\ncomagent\r\ncombine\r\ncomputingsite\r\ncsci\r\ncurl\r\ncusco\r\ndaumoa\r\ndeepindex\r\ndelorie\r\ndepspid\r\ndeweb\r\ndie blinde kuh\r\ndigger\r\nditto\r\ndmoz\r\ndocomo\r\ndownload express\r\ndtaagent\r\ndwcp\r\nebiness\r\nebingbong\r\ne-collector\r\nejupiter\r\nemacs-w3 search engine\r\nesther\r\nevliya celebi\r\nezresult\r\nfalcon\r\nfelix ide\r\nferret\r\nfetchrover\r\nfido\r\nfindlinks\r\nfireball\r\nfish search\r\nfouineur\r\nfunnelweb\r\ngazz\r\ngcreep\r\ngenieknows\r\ngetterroboplus\r\ngeturl\r\nglx\r\ngoforit\r\ngolem\r\ngrabber\r\ngrapnel\r\ngralon\r\ngriffon\r\ngromit\r\ngrub\r\ngulliver\r\nhamahakki\r\nharvest\r\nhavindex\r\nhelix\r\nheritrix\r\nhku www octopus\r\nhomerweb\r\nhtdig\r\nhtml index\r\nhtml_analyzer\r\nhtmlgobble\r\nhubater\r\nhyper-decontextualizer\r\nia_archiver\r\nibm_planetwide\r\nichiro\r\niconsurf\r\niltrovatore\r\nimage.kapsi.net\r\nimagelock\r\nincywincy\r\nindexer\r\ninfobee\r\ninformant\r\ningrid\r\ninktomisearch.com\r\ninspector web\r\nintelliagent\r\ninternet shinchakubin\r\nip3000\r\niron33\r\nisraeli-search\r\nivia\r\njack\r\njakarta\r\njavabee\r\njetbot\r\njumpstation\r\nkatipo\r\nkdd-explorer\r\nkilroy\r\nknowledge\r\nkototoi\r\nkretrieve\r\nlabelgrabber\r\nlachesis\r\nlarbin\r\nlegs\r\nlibwww\r\nlinkalarm\r\nlink validator\r\nlinkscan\r\nlockon\r\nlwp\r\nlycos\r\nmagpie\r\nmantraagent\r\nmapoftheinternet\r\nmarvin/\r\nmattie\r\nmediafox\r\nmediapartners\r\nmercator\r\nmerzscope\r\nmicrosoft url control\r\nminirank\r\nmiva\r\nmj12\r\nmnogosearch\r\nmoget\r\nmonster\r\nmoose\r\nmotor\r\nmultitext\r\nmuncher\r\nmuscatferret\r\nmwd.search\r\nmyweb\r\nnajdi\r\nnameprotect\r\nnationaldirectory\r\nnazilla\r\nncsa beta\r\nnec-meshexplorer\r\nnederland.zoek\r\nnetcarta webmap engine\r\nnetmechanic\r\nnetresearchserver\r\nnetscoop\r\nnewscan-online\r\nnhse\r\nnokia6682/\r\nnomad\r\nnoyona\r\nnutch\r\nnzexplorer\r\nobjectssearch\r\noccam\r\nomni\r\nopen text\r\nopenfind\r\nopenintelligencedata\r\norb search\r\nosis-project\r\npack rat\r\npageboy\r\npagebull\r\npage_verifier\r\npanscient\r\nparasite\r\npartnersite\r\npatric\r\npear.\r\npegasus\r\nperegrinator\r\npgp key agent\r\nphantom\r\nphpdig\r\npicosearch\r\npiltdownman\r\npimptrain\r\npinpoint\r\npioneer\r\npiranha\r\nplumtreewebaccessor\r\npogodak\r\npoirot\r\npompos\r\npoppelsdorf\r\npoppi\r\npopular iconoclast\r\npsycheclone\r\npublisher\r\npython\r\nrambler\r\nraven search\r\nroach\r\nroad runner\r\nroadhouse\r\nrobbie\r\nrobofox\r\nrobozilla\r\nrules\r\nsalty\r\nsbider\r\nscooter\r\nscoutjet\r\nscrubby\r\nsearch.\r\nsearchprocess\r\nsemanticdiscovery\r\nsenrigan\r\nsg-scout\r\nshai\'hulud\r\nshark\r\nshopwiki\r\nsidewinder\r\nsift\r\nsilk\r\nsimmany\r\nsite searcher\r\nsite valet\r\nsitetech-rover\r\nskymob.com\r\nsleek\r\nsmartwit\r\nsna-\r\nsnappy\r\nsnooper\r\nsohu\r\nspeedfind\r\nsphere\r\nsphider\r\nspinner\r\nspyder\r\nsteeler/\r\nsuke\r\nsuntek\r\nsupersnooper\r\nsurfnomore\r\nsven\r\nsygol\r\nszukacz\r\ntach black widow\r\ntarantula\r\ntempleton\r\n/teoma\r\nt-h-u-n-d-e-r-s-t-o-n-e\r\ntheophrastus\r\ntitan\r\ntitin\r\ntkwww\r\ntoutatis\r\nt-rex\r\ntutorgig\r\ntwiceler\r\ntwisted\r\nucsd\r\nudmsearch\r\nurl check\r\nupdated\r\nvagabondo\r\nvalkyrie\r\nverticrawl\r\nvictoria\r\nvision-search\r\nvolcano\r\nvoyager/\r\nvoyager-hc\r\nw3c_validator\r\nw3m2\r\nw3mir\r\nwalker\r\nwallpaper\r\nwanderer\r\nwauuu\r\nwavefire\r\nweb core\r\nweb hopper\r\nweb wombat\r\nwebbandit\r\nwebcatcher\r\nwebcopy\r\nwebfoot\r\nweblayers\r\nweblinker\r\nweblog monitor\r\nwebmirror\r\nwebmonkey\r\nwebquest\r\nwebreaper\r\nwebsitepulse\r\nwebsnarf\r\nwebstolperer\r\nwebvac\r\nwebwalk\r\nwebwatch\r\nwebwombat\r\nwebzinger\r\nwhizbang\r\nwhowhere\r\nwild ferret\r\nworldlight\r\nwwwc\r\nwwwster\r\nxenu\r\nxget\r\nxift\r\nxirq\r\nyandex\r\nyanga\r\nyeti\r\nyodao\r\nzao\r\nzippp\r\nzyborg', 0),
-(753, 0, 'config', 'config_compression', '0', 0),
-(754, 0, 'config', 'config_security', '0', 0),
-(755, 0, 'config', 'config_shared', '0', 0),
-(756, 0, 'config', 'config_encryption', 'af3d47b557d729db78a85759fbe49b95be2ac97b5750d1be0b0f2511ef30ee8e15df2ff2062d40f583e78d5d77d2b4e3488fee8394d100a895b48b88753fd44c5572f43b94f0b9cf04501914785d7cbb8e5ab5ae95c190399ee2abe9660b32858cc8ef1fe3c1075267b9dc19ed2888929716788b5019ec8c4ae8e1e661515a6a7f4aa9fe44ec423cce026b9f2abbb7ef584ceb03dc5eb4a240be1aed0bba2e9adfa8ef88328c67b96ce22b7277accac68a8a1689a8b5642335f422d9726d1524585f935b1f94934126f00d9af23f115598b1cec44c80332a17779242699fb5f1e8511db05504956e8f08243001492280e234886412218b90e48dc0f76eaa137e', 0),
-(757, 0, 'config', 'config_file_max_size', '20', 0),
-(758, 0, 'config', 'config_file_ext_allowed', 'zip\r\ntxt\r\npng\r\njpe\r\njpeg\r\nwebp\r\njpg\r\ngif\r\nbmp\r\nico\r\ntiff\r\ntif\r\nsvg\r\nsvgz\r\nzip\r\nrar\r\nmsi\r\ncab\r\nmp3\r\nmp4\r\nqt\r\nmov\r\npdf\r\npsd\r\nai\r\neps\r\nps\r\ndoc', 0),
-(759, 0, 'config', 'config_file_mime_allowed', 'text/plain\r\nimage/png\r\nimage/webp\r\nimage/jpeg\r\nimage/gif\r\nimage/bmp\r\nimage/tiff\r\nimage/svg+xml\r\napplication/zip\r\napplication/x-zip\r\napplication/x-zip-compressed\r\napplication/rar\r\napplication/x-rar\r\napplication/x-rar-compressed\r\napplication/octet-stream\r\naudio/mpeg\r\nvideo/mp4\r\nvideo/quicktime\r\napplication/pdf', 0),
-(760, 0, 'config', 'config_error_display', '[\"0\",\"1\"]', 1),
-(761, 0, 'config', 'config_error_log', '[\"0\",\"1\"]', 1),
-(762, 0, 'config', 'config_error_filename', 'error.log', 0),
-(879, 0, 'currency_ecb', 'currency_ecb_status', '1', 0);
+(217, 0, 'config', 'config_meta_title', 'Your Store', 0),
+(218, 0, 'config', 'config_meta_description', 'My Store', 0),
+(219, 0, 'config', 'config_meta_keyword', '', 0),
+(220, 0, 'config', 'config_logo', 'catalog/opencart-logo.png', 0),
+(221, 0, 'config', 'config_theme', 'basic', 0),
+(222, 0, 'config', 'config_layout_id', '4', 0),
+(223, 0, 'config', 'config_name', 'Your Store', 0),
+(224, 0, 'config', 'config_owner', 'Your Name', 0),
+(225, 0, 'config', 'config_address', 'Address 1', 0),
+(226, 0, 'config', 'config_geocode', '', 0),
+(227, 0, 'config', 'config_email', 'pradeep.jangra94@gmail.com', 0),
+(228, 0, 'config', 'config_telephone', '123456789', 0),
+(229, 0, 'config', 'config_image', '', 0),
+(230, 0, 'config', 'config_open', '', 0),
+(231, 0, 'config', 'config_comment', '', 0),
+(232, 0, 'config', 'config_country_id', '222', 0),
+(233, 0, 'config', 'config_zone_id', '3563', 0),
+(234, 0, 'config', 'config_timezone', 'UTC', 0),
+(235, 0, 'config', 'config_language', 'en-gb', 0),
+(236, 0, 'config', 'config_language_admin', 'en-gb', 0),
+(237, 0, 'config', 'config_currency', 'USD', 0),
+(238, 0, 'config', 'config_currency_engine', 'ecb', 0),
+(239, 0, 'config', 'config_currency_auto', '1', 0),
+(240, 0, 'config', 'config_length_class_id', '1', 0),
+(241, 0, 'config', 'config_weight_class_id', '1', 0),
+(242, 0, 'config', 'config_product_description_length', '100', 0),
+(243, 0, 'config', 'config_pagination', '10', 0),
+(244, 0, 'config', 'config_product_count', '1', 0),
+(245, 0, 'config', 'config_pagination_admin', '10', 0),
+(246, 0, 'config', 'config_product_report_status', '0', 0),
+(247, 0, 'config', 'config_review_status', '1', 0),
+(248, 0, 'config', 'config_review_purchased', '0', 0),
+(249, 0, 'config', 'config_review_guest', '1', 0),
+(250, 0, 'config', 'config_article_description_length', '90', 0),
+(251, 0, 'config', 'config_comment_status', '0', 0),
+(252, 0, 'config', 'config_comment_guest', '0', 0),
+(253, 0, 'config', 'config_voucher_min', '1', 0),
+(254, 0, 'config', 'config_voucher_max', '1000', 0),
+(255, 0, 'config', 'config_cookie_id', '0', 0),
+(256, 0, 'config', 'config_gdpr_id', '0', 0),
+(257, 0, 'config', 'config_gdpr_limit', '180', 0),
+(258, 0, 'config', 'config_tax', '1', 0),
+(259, 0, 'config', 'config_tax_default', 'shipping', 0),
+(260, 0, 'config', 'config_tax_customer', 'shipping', 0),
+(261, 0, 'config', 'config_customer_online', '0', 0),
+(262, 0, 'config', 'config_customer_online_expire', '1', 0),
+(263, 0, 'config', 'config_customer_activity', '0', 0),
+(264, 0, 'config', 'config_customer_search', '0', 0),
+(265, 0, 'config', 'config_customer_group_id', '1', 0),
+(266, 0, 'config', 'config_customer_group_display', '[\"1\"]', 1),
+(267, 0, 'config', 'config_customer_price', '0', 0),
+(268, 0, 'config', 'config_telephone_display', '0', 0),
+(269, 0, 'config', 'config_telephone_required', '0', 0),
+(270, 0, 'config', 'config_login_attempts', '5', 0),
+(271, 0, 'config', 'config_account_id', '3', 0),
+(272, 0, 'config', 'config_invoice_prefix', 'INV-2024-00', 0),
+(273, 0, 'config', 'config_cart_weight', '1', 0),
+(274, 0, 'config', 'config_checkout_guest', '1', 0),
+(275, 0, 'config', 'config_checkout_payment_address', '0', 0),
+(276, 0, 'config', 'config_checkout_shipping_address', '0', 0),
+(277, 0, 'config', 'config_checkout_id', '0', 0),
+(278, 0, 'config', 'config_order_status_id', '1', 0),
+(279, 0, 'config', 'config_processing_status', '[\"5\",\"1\",\"2\",\"12\",\"3\"]', 1),
+(280, 0, 'config', 'config_complete_status', '[\"5\",\"3\"]', 1),
+(281, 0, 'config', 'config_fraud_status_id', '8', 0),
+(282, 0, 'config', 'config_api_id', '1', 0),
+(283, 0, 'config', 'config_subscription_status_id', '1', 0),
+(284, 0, 'config', 'config_subscription_active_status_id', '2', 0),
+(285, 0, 'config', 'config_subscription_expired_status_id', '3', 0),
+(286, 0, 'config', 'config_subscription_suspended_status_id', '4', 0),
+(287, 0, 'config', 'config_subscription_canceled_status_id', '5', 0),
+(288, 0, 'config', 'config_subscription_failed_status_id', '6', 0),
+(289, 0, 'config', 'config_subscription_denied_status_id', '7', 0),
+(290, 0, 'config', 'config_stock_display', '0', 0),
+(291, 0, 'config', 'config_stock_warning', '0', 0),
+(292, 0, 'config', 'config_stock_checkout', '0', 0),
+(293, 0, 'config', 'config_affiliate_status', '1', 0),
+(294, 0, 'config', 'config_affiliate_group_id', '1', 0),
+(295, 0, 'config', 'config_affiliate_approval', '0', 0),
+(296, 0, 'config', 'config_affiliate_auto', '0', 0),
+(297, 0, 'config', 'config_affiliate_commission', '5', 0),
+(298, 0, 'config', 'config_affiliate_expire', '0', 0),
+(299, 0, 'config', 'config_affiliate_id', '4', 0),
+(300, 0, 'config', 'config_return_status_id', '2', 0),
+(301, 0, 'config', 'config_return_id', '0', 0),
+(302, 0, 'config', 'config_captcha', '', 0),
+(303, 0, 'config', 'config_captcha_page', '[\"review\",\"contact\"]', 1),
+(304, 0, 'config', 'config_image_category_width', '80', 0),
+(305, 0, 'config', 'config_image_category_height', '80', 0),
+(306, 0, 'config', 'config_image_thumb_width', '500', 0),
+(307, 0, 'config', 'config_image_thumb_height', '500', 0),
+(308, 0, 'config', 'config_image_popup_width', '800', 0),
+(309, 0, 'config', 'config_image_popup_height', '800', 0),
+(310, 0, 'config', 'config_image_product_width', '250', 0),
+(311, 0, 'config', 'config_image_product_height', '250', 0),
+(312, 0, 'config', 'config_image_additional_width', '74', 0),
+(313, 0, 'config', 'config_image_additional_height', '74', 0),
+(314, 0, 'config', 'config_image_related_width', '250', 0),
+(315, 0, 'config', 'config_image_related_height', '250', 0),
+(316, 0, 'config', 'config_image_blog_width', '90', 0),
+(317, 0, 'config', 'config_image_blog_height', '90', 0),
+(318, 0, 'config', 'config_image_compare_width', '90', 0),
+(319, 0, 'config', 'config_image_compare_height', '90', 0),
+(320, 0, 'config', 'config_image_wishlist_width', '47', 0),
+(321, 0, 'config', 'config_image_wishlist_height', '47', 0),
+(322, 0, 'config', 'config_image_cart_width', '47', 0),
+(323, 0, 'config', 'config_image_cart_height', '47', 0),
+(324, 0, 'config', 'config_image_location_width', '268', 0),
+(325, 0, 'config', 'config_image_location_height', '50', 0),
+(326, 0, 'config', 'config_mail_engine', 'smtp', 0),
+(327, 0, 'config', 'config_mail_parameter', '', 0),
+(328, 0, 'config', 'config_mail_smtp_hostname', 'smtp.gmail.com', 0),
+(329, 0, 'config', 'config_mail_smtp_username', 'noreply@cqs.in', 0),
+(330, 0, 'config', 'config_mail_smtp_password', 'Roots@123', 0),
+(331, 0, 'config', 'config_mail_smtp_port', '587', 0),
+(332, 0, 'config', 'config_mail_smtp_timeout', '5', 0),
+(333, 0, 'config', 'config_mail_alert', '[\"order\"]', 1),
+(334, 0, 'config', 'config_mail_alert_email', '', 0),
+(335, 0, 'config', 'config_maintenance', '0', 0),
+(336, 0, 'config', 'config_session_expire', '86400', 0),
+(337, 0, 'config', 'config_session_samesite', 'Strict', 0),
+(338, 0, 'config', 'config_seo_url', '0', 0),
+(339, 0, 'config', 'config_robots', 'abot\r\ndbot\r\nebot\r\nhbot\r\nkbot\r\nlbot\r\nmbot\r\nnbot\r\nobot\r\npbot\r\nrbot\r\nsbot\r\ntbot\r\nvbot\r\nybot\r\nzbot\r\nbot.\r\nbot/\r\n_bot\r\n.bot\r\n/bot\r\n-bot\r\n:bot\r\n(bot\r\ncrawl\r\nslurp\r\nspider\r\nseek\r\naccoona\r\nacoon\r\nadressendeutschland\r\nah-ha.com\r\nahoy\r\naltavista\r\nananzi\r\nanthill\r\nappie\r\narachnophilia\r\narale\r\naraneo\r\naranha\r\narchitext\r\naretha\r\narks\r\nasterias\r\natlocal\r\natn\r\natomz\r\naugurfind\r\nbackrub\r\nbannana_bot\r\nbaypup\r\nbdfetch\r\nbig brother\r\nbiglotron\r\nbjaaland\r\nblackwidow\r\nblaiz\r\nblog\r\nblo.\r\nbloodhound\r\nboitho\r\nbooch\r\nbradley\r\nbutterfly\r\ncalif\r\ncassandra\r\nccubee\r\ncfetch\r\ncharlotte\r\nchurl\r\ncienciaficcion\r\ncmc\r\ncollective\r\ncomagent\r\ncombine\r\ncomputingsite\r\ncsci\r\ncurl\r\ncusco\r\ndaumoa\r\ndeepindex\r\ndelorie\r\ndepspid\r\ndeweb\r\ndie blinde kuh\r\ndigger\r\nditto\r\ndmoz\r\ndocomo\r\ndownload express\r\ndtaagent\r\ndwcp\r\nebiness\r\nebingbong\r\ne-collector\r\nejupiter\r\nemacs-w3 search engine\r\nesther\r\nevliya celebi\r\nezresult\r\nfalcon\r\nfelix ide\r\nferret\r\nfetchrover\r\nfido\r\nfindlinks\r\nfireball\r\nfish search\r\nfouineur\r\nfunnelweb\r\ngazz\r\ngcreep\r\ngenieknows\r\ngetterroboplus\r\ngeturl\r\nglx\r\ngoforit\r\ngolem\r\ngrabber\r\ngrapnel\r\ngralon\r\ngriffon\r\ngromit\r\ngrub\r\ngulliver\r\nhamahakki\r\nharvest\r\nhavindex\r\nhelix\r\nheritrix\r\nhku www octopus\r\nhomerweb\r\nhtdig\r\nhtml index\r\nhtml_analyzer\r\nhtmlgobble\r\nhubater\r\nhyper-decontextualizer\r\nia_archiver\r\nibm_planetwide\r\nichiro\r\niconsurf\r\niltrovatore\r\nimage.kapsi.net\r\nimagelock\r\nincywincy\r\nindexer\r\ninfobee\r\ninformant\r\ningrid\r\ninktomisearch.com\r\ninspector web\r\nintelliagent\r\ninternet shinchakubin\r\nip3000\r\niron33\r\nisraeli-search\r\nivia\r\njack\r\njakarta\r\njavabee\r\njetbot\r\njumpstation\r\nkatipo\r\nkdd-explorer\r\nkilroy\r\nknowledge\r\nkototoi\r\nkretrieve\r\nlabelgrabber\r\nlachesis\r\nlarbin\r\nlegs\r\nlibwww\r\nlinkalarm\r\nlink validator\r\nlinkscan\r\nlockon\r\nlwp\r\nlycos\r\nmagpie\r\nmantraagent\r\nmapoftheinternet\r\nmarvin/\r\nmattie\r\nmediafox\r\nmediapartners\r\nmercator\r\nmerzscope\r\nmicrosoft url control\r\nminirank\r\nmiva\r\nmj12\r\nmnogosearch\r\nmoget\r\nmonster\r\nmoose\r\nmotor\r\nmultitext\r\nmuncher\r\nmuscatferret\r\nmwd.search\r\nmyweb\r\nnajdi\r\nnameprotect\r\nnationaldirectory\r\nnazilla\r\nncsa beta\r\nnec-meshexplorer\r\nnederland.zoek\r\nnetcarta webmap engine\r\nnetmechanic\r\nnetresearchserver\r\nnetscoop\r\nnewscan-online\r\nnhse\r\nnokia6682/\r\nnomad\r\nnoyona\r\nnutch\r\nnzexplorer\r\nobjectssearch\r\noccam\r\nomni\r\nopen text\r\nopenfind\r\nopenintelligencedata\r\norb search\r\nosis-project\r\npack rat\r\npageboy\r\npagebull\r\npage_verifier\r\npanscient\r\nparasite\r\npartnersite\r\npatric\r\npear.\r\npegasus\r\nperegrinator\r\npgp key agent\r\nphantom\r\nphpdig\r\npicosearch\r\npiltdownman\r\npimptrain\r\npinpoint\r\npioneer\r\npiranha\r\nplumtreewebaccessor\r\npogodak\r\npoirot\r\npompos\r\npoppelsdorf\r\npoppi\r\npopular iconoclast\r\npsycheclone\r\npublisher\r\npython\r\nrambler\r\nraven search\r\nroach\r\nroad runner\r\nroadhouse\r\nrobbie\r\nrobofox\r\nrobozilla\r\nrules\r\nsalty\r\nsbider\r\nscooter\r\nscoutjet\r\nscrubby\r\nsearch.\r\nsearchprocess\r\nsemanticdiscovery\r\nsenrigan\r\nsg-scout\r\nshai\'hulud\r\nshark\r\nshopwiki\r\nsidewinder\r\nsift\r\nsilk\r\nsimmany\r\nsite searcher\r\nsite valet\r\nsitetech-rover\r\nskymob.com\r\nsleek\r\nsmartwit\r\nsna-\r\nsnappy\r\nsnooper\r\nsohu\r\nspeedfind\r\nsphere\r\nsphider\r\nspinner\r\nspyder\r\nsteeler/\r\nsuke\r\nsuntek\r\nsupersnooper\r\nsurfnomore\r\nsven\r\nsygol\r\nszukacz\r\ntach black widow\r\ntarantula\r\ntempleton\r\n/teoma\r\nt-h-u-n-d-e-r-s-t-o-n-e\r\ntheophrastus\r\ntitan\r\ntitin\r\ntkwww\r\ntoutatis\r\nt-rex\r\ntutorgig\r\ntwiceler\r\ntwisted\r\nucsd\r\nudmsearch\r\nurl check\r\nupdated\r\nvagabondo\r\nvalkyrie\r\nverticrawl\r\nvictoria\r\nvision-search\r\nvolcano\r\nvoyager/\r\nvoyager-hc\r\nw3c_validator\r\nw3m2\r\nw3mir\r\nwalker\r\nwallpaper\r\nwanderer\r\nwauuu\r\nwavefire\r\nweb core\r\nweb hopper\r\nweb wombat\r\nwebbandit\r\nwebcatcher\r\nwebcopy\r\nwebfoot\r\nweblayers\r\nweblinker\r\nweblog monitor\r\nwebmirror\r\nwebmonkey\r\nwebquest\r\nwebreaper\r\nwebsitepulse\r\nwebsnarf\r\nwebstolperer\r\nwebvac\r\nwebwalk\r\nwebwatch\r\nwebwombat\r\nwebzinger\r\nwhizbang\r\nwhowhere\r\nwild ferret\r\nworldlight\r\nwwwc\r\nwwwster\r\nxenu\r\nxget\r\nxift\r\nxirq\r\nyandex\r\nyanga\r\nyeti\r\nyodao\r\nzao\r\nzippp\r\nzyborg', 0),
+(340, 0, 'config', 'config_compression', '0', 0),
+(341, 0, 'config', 'config_security', '0', 0),
+(342, 0, 'config', 'config_shared', '0', 0),
+(343, 0, 'config', 'config_encryption', 'a665110b19053a0a22ae4872cd35f5556192c0eb8c4ebb1036551ce7f87a846ff2a207350c20ba44a6e703806f41d476e2036bc8523ae135c4c04c437d99221f68974035cc35d2e556bc2df4b711500eeb43fb8e80d62ebd92daaf53e559bd3dd47814d59a9b7220acf6cb3cd417067318233fd27058f9039f7732b40b3d1bdcfd569d1919b8188e12cb1ecbe7e3a3d595518ab4ba126807c4106a64f57061624bdc3c7727f7edcd5d98ad98ec8fe47e8e82dc8d7970ceba90a76eac9e3f210878511ffff930cde65c9b9a61f13ac3333aa2c0d231199d4f5e59457a0c633a39967c76e22597852405bf9f340b3d14cd7249bda6c6747953714d84a91e71effe', 0),
+(344, 0, 'config', 'config_file_max_size', '20', 0),
+(345, 0, 'config', 'config_file_ext_allowed', 'zip\r\ntxt\r\npng\r\njpe\r\njpeg\r\nwebp\r\njpg\r\ngif\r\nbmp\r\nico\r\ntiff\r\ntif\r\nsvg\r\nsvgz\r\nzip\r\nrar\r\nmsi\r\ncab\r\nmp3\r\nmp4\r\nqt\r\nmov\r\npdf\r\npsd\r\nai\r\neps\r\nps\r\ndoc', 0),
+(346, 0, 'config', 'config_file_mime_allowed', 'text/plain\r\nimage/png\r\nimage/webp\r\nimage/jpeg\r\nimage/gif\r\nimage/bmp\r\nimage/tiff\r\nimage/svg+xml\r\napplication/zip\r\napplication/x-zip\r\napplication/x-zip-compressed\r\napplication/rar\r\napplication/x-rar\r\napplication/x-rar-compressed\r\napplication/octet-stream\r\naudio/mpeg\r\nvideo/mp4\r\nvideo/quicktime\r\napplication/pdf', 0),
+(347, 0, 'config', 'config_error_display', '1', 0),
+(348, 0, 'config', 'config_error_log', '1', 0),
+(349, 0, 'config', 'config_error_filename', 'error.log', 0);
 
 -- --------------------------------------------------------
 
@@ -4239,7 +4037,6 @@ INSERT INTO `pc_setting` (`setting_id`, `store_id`, `code`, `key`, `value`, `ser
 -- Table structure for table `pc_startup`
 --
 
-DROP TABLE IF EXISTS `pc_startup`;
 CREATE TABLE `pc_startup` (
   `startup_id` int(11) NOT NULL,
   `code` varchar(64) NOT NULL,
@@ -4254,7 +4051,6 @@ CREATE TABLE `pc_startup` (
 -- Table structure for table `pc_statistics`
 --
 
-DROP TABLE IF EXISTS `pc_statistics`;
 CREATE TABLE `pc_statistics` (
   `statistics_id` int(11) NOT NULL,
   `code` varchar(64) NOT NULL,
@@ -4280,7 +4076,6 @@ INSERT INTO `pc_statistics` (`statistics_id`, `code`, `value`) VALUES
 -- Table structure for table `pc_stock_status`
 --
 
-DROP TABLE IF EXISTS `pc_stock_status`;
 CREATE TABLE `pc_stock_status` (
   `stock_status_id` int(11) NOT NULL,
   `language_id` int(11) NOT NULL,
@@ -4303,7 +4098,6 @@ INSERT INTO `pc_stock_status` (`stock_status_id`, `language_id`, `name`) VALUES
 -- Table structure for table `pc_store`
 --
 
-DROP TABLE IF EXISTS `pc_store`;
 CREATE TABLE `pc_store` (
   `store_id` int(11) NOT NULL,
   `name` varchar(64) NOT NULL,
@@ -4316,7 +4110,6 @@ CREATE TABLE `pc_store` (
 -- Table structure for table `pc_subscription`
 --
 
-DROP TABLE IF EXISTS `pc_subscription`;
 CREATE TABLE `pc_subscription` (
   `subscription_id` int(11) NOT NULL,
   `order_id` int(11) NOT NULL,
@@ -4363,7 +4156,6 @@ CREATE TABLE `pc_subscription` (
 -- Table structure for table `pc_subscription_history`
 --
 
-DROP TABLE IF EXISTS `pc_subscription_history`;
 CREATE TABLE `pc_subscription_history` (
   `subscription_history_id` int(11) NOT NULL,
   `subscription_id` int(11) NOT NULL,
@@ -4379,7 +4171,6 @@ CREATE TABLE `pc_subscription_history` (
 -- Table structure for table `pc_subscription_plan`
 --
 
-DROP TABLE IF EXISTS `pc_subscription_plan`;
 CREATE TABLE `pc_subscription_plan` (
   `subscription_plan_id` int(11) NOT NULL,
   `trial_frequency` enum('day','week','semi_month','month','year') NOT NULL,
@@ -4398,7 +4189,7 @@ CREATE TABLE `pc_subscription_plan` (
 --
 
 INSERT INTO `pc_subscription_plan` (`subscription_plan_id`, `trial_frequency`, `trial_duration`, `trial_cycle`, `trial_status`, `frequency`, `duration`, `cycle`, `status`, `sort_order`) VALUES
-(1, 'day', 10, 1, 1, 'day', 0, 1, 1, 1),
+(1, 'day', 10, 1, 1, 'day', 0, 1, 1, 0),
 (2, 'week', 11, 2, 1, 'month', 10, 1, 1, 0),
 (3, 'day', 0, 1, 0, 'day', 0, 1, 1, 0);
 
@@ -4408,7 +4199,6 @@ INSERT INTO `pc_subscription_plan` (`subscription_plan_id`, `trial_frequency`, `
 -- Table structure for table `pc_subscription_plan_description`
 --
 
-DROP TABLE IF EXISTS `pc_subscription_plan_description`;
 CREATE TABLE `pc_subscription_plan_description` (
   `subscription_plan_id` int(11) NOT NULL,
   `language_id` int(11) NOT NULL,
@@ -4430,7 +4220,6 @@ INSERT INTO `pc_subscription_plan_description` (`subscription_plan_id`, `languag
 -- Table structure for table `pc_subscription_status`
 --
 
-DROP TABLE IF EXISTS `pc_subscription_status`;
 CREATE TABLE `pc_subscription_status` (
   `subscription_status_id` int(11) NOT NULL,
   `language_id` int(11) NOT NULL,
@@ -4456,7 +4245,6 @@ INSERT INTO `pc_subscription_status` (`subscription_status_id`, `language_id`, `
 -- Table structure for table `pc_tax_class`
 --
 
-DROP TABLE IF EXISTS `pc_tax_class`;
 CREATE TABLE `pc_tax_class` (
   `tax_class_id` int(11) NOT NULL,
   `title` varchar(32) NOT NULL,
@@ -4479,7 +4267,6 @@ INSERT INTO `pc_tax_class` (`tax_class_id`, `title`, `description`, `date_added`
 -- Table structure for table `pc_tax_rate`
 --
 
-DROP TABLE IF EXISTS `pc_tax_rate`;
 CREATE TABLE `pc_tax_rate` (
   `tax_rate_id` int(11) NOT NULL,
   `geo_zone_id` int(11) NOT NULL DEFAULT 0,
@@ -4504,7 +4291,6 @@ INSERT INTO `pc_tax_rate` (`tax_rate_id`, `geo_zone_id`, `name`, `rate`, `type`,
 -- Table structure for table `pc_tax_rate_to_customer_group`
 --
 
-DROP TABLE IF EXISTS `pc_tax_rate_to_customer_group`;
 CREATE TABLE `pc_tax_rate_to_customer_group` (
   `tax_rate_id` int(11) NOT NULL,
   `customer_group_id` int(11) NOT NULL
@@ -4524,7 +4310,6 @@ INSERT INTO `pc_tax_rate_to_customer_group` (`tax_rate_id`, `customer_group_id`)
 -- Table structure for table `pc_tax_rule`
 --
 
-DROP TABLE IF EXISTS `pc_tax_rule`;
 CREATE TABLE `pc_tax_rule` (
   `tax_rule_id` int(11) NOT NULL,
   `tax_class_id` int(11) NOT NULL,
@@ -4549,7 +4334,6 @@ INSERT INTO `pc_tax_rule` (`tax_rule_id`, `tax_class_id`, `tax_rate_id`, `based`
 -- Table structure for table `pc_theme`
 --
 
-DROP TABLE IF EXISTS `pc_theme`;
 CREATE TABLE `pc_theme` (
   `theme_id` int(11) NOT NULL,
   `store_id` int(11) NOT NULL,
@@ -4564,7 +4348,6 @@ CREATE TABLE `pc_theme` (
 -- Table structure for table `pc_topic`
 --
 
-DROP TABLE IF EXISTS `pc_topic`;
 CREATE TABLE `pc_topic` (
   `topic_id` int(11) NOT NULL,
   `sort_order` int(3) NOT NULL DEFAULT 0,
@@ -4577,7 +4360,6 @@ CREATE TABLE `pc_topic` (
 -- Table structure for table `pc_topic_description`
 --
 
-DROP TABLE IF EXISTS `pc_topic_description`;
 CREATE TABLE `pc_topic_description` (
   `topic_id` int(11) NOT NULL,
   `language_id` int(11) NOT NULL,
@@ -4595,7 +4377,6 @@ CREATE TABLE `pc_topic_description` (
 -- Table structure for table `pc_topic_to_store`
 --
 
-DROP TABLE IF EXISTS `pc_topic_to_store`;
 CREATE TABLE `pc_topic_to_store` (
   `topic_id` int(11) NOT NULL,
   `store_id` int(11) NOT NULL DEFAULT 0
@@ -4607,7 +4388,6 @@ CREATE TABLE `pc_topic_to_store` (
 -- Table structure for table `pc_translation`
 --
 
-DROP TABLE IF EXISTS `pc_translation`;
 CREATE TABLE `pc_translation` (
   `translation_id` int(11) NOT NULL,
   `store_id` int(11) NOT NULL,
@@ -4624,7 +4404,6 @@ CREATE TABLE `pc_translation` (
 -- Table structure for table `pc_upload`
 --
 
-DROP TABLE IF EXISTS `pc_upload`;
 CREATE TABLE `pc_upload` (
   `upload_id` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
@@ -4639,7 +4418,6 @@ CREATE TABLE `pc_upload` (
 -- Table structure for table `pc_user`
 --
 
-DROP TABLE IF EXISTS `pc_user`;
 CREATE TABLE `pc_user` (
   `user_id` int(11) NOT NULL,
   `user_group_id` int(11) NOT NULL,
@@ -4660,7 +4438,7 @@ CREATE TABLE `pc_user` (
 --
 
 INSERT INTO `pc_user` (`user_id`, `user_group_id`, `username`, `password`, `firstname`, `lastname`, `email`, `image`, `code`, `ip`, `status`, `date_added`) VALUES
-(1, 1, 'admin', '$2b$10$CweBYtmpM7jwbfpZLF3iHuzxmSDRpvsvok9z7E6/8CBt7kTRocK4G', 'John', 'Doe', 'pradeep.jangra94@gmail.com', 'catalog/profile-pic.png', '', '::1', 1, '2024-10-09 20:11:16');
+(1, 1, 'admin', '$2b$10$ziMuK8hKHoYXJs9dTPTQy./S9CLPBdAoQqHTG8xeKvsUbsxITE/T6', 'John', 'Doe', 'pradeep.jangra94@gmail.com', '', '', '::1', 1, '2024-10-17 01:14:31');
 
 -- --------------------------------------------------------
 
@@ -4668,7 +4446,6 @@ INSERT INTO `pc_user` (`user_id`, `user_group_id`, `username`, `password`, `firs
 -- Table structure for table `pc_user_authorize`
 --
 
-DROP TABLE IF EXISTS `pc_user_authorize`;
 CREATE TABLE `pc_user_authorize` (
   `user_authorize_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
@@ -4686,7 +4463,6 @@ CREATE TABLE `pc_user_authorize` (
 -- Table structure for table `pc_user_group`
 --
 
-DROP TABLE IF EXISTS `pc_user_group`;
 CREATE TABLE `pc_user_group` (
   `user_group_id` int(11) NOT NULL,
   `name` varchar(64) NOT NULL,
@@ -4698,8 +4474,8 @@ CREATE TABLE `pc_user_group` (
 --
 
 INSERT INTO `pc_user_group` (`user_group_id`, `name`, `permission`) VALUES
-(1, 'Administrator', '{\"access\":[\"catalog/attribute\",\"catalog/attribute_group\",\"catalog/category\",\"catalog/download\",\"catalog/filter\",\"catalog/information\",\"catalog/manufacturer\",\"catalog/option\",\"catalog/product\",\"catalog/review\",\"catalog/subscription_plan\",\"common/column_left\",\"common/developer\",\"common/filemanager\",\"common/pagination\",\"common/security\",\"cron/cron\",\"cron/currency\",\"cron/gdpr\",\"cron/subscription\",\"customer/custom_field\",\"customer/customer\",\"customer/customer_approval\",\"customer/customer_group\",\"customer/gdpr\",\"design/banner\",\"design/layout\",\"design/seo_url\",\"design/theme\",\"design/translation\",\"error/exception\",\"extension/analytics\",\"extension/captcha\",\"extension/currency\",\"extension/dashboard\",\"extension/feed\",\"extension/fraud\",\"extension/language\",\"extension/marketplace\",\"extension/module\",\"extension/other\",\"extension/payment\",\"extension/report\",\"extension/shipping\",\"extension/theme\",\"extension/total\",\"localisation/address_format\",\"localisation/country\",\"localisation/currency\",\"localisation/geo_zone\",\"localisation/language\",\"localisation/length_class\",\"localisation/location\",\"localisation/order_status\",\"localisation/return_action\",\"localisation/return_reason\",\"localisation/return_status\",\"localisation/stock_status\",\"localisation/subscription_status\",\"localisation/tax_class\",\"localisation/tax_rate\",\"localisation/weight_class\",\"localisation/zone\",\"mail/affiliate\",\"mail/authorize\",\"mail/customer\",\"mail/forgotten\",\"mail/gdpr\",\"mail/returns\",\"mail/reward\",\"mail/subscription\",\"mail/transaction\",\"mail/voucher\",\"marketing/affiliate\",\"marketing/contact\",\"marketing/coupon\",\"marketing/marketing\",\"marketplace/api\",\"marketplace/cron\",\"marketplace/event\",\"marketplace/extension\",\"marketplace/installer\",\"marketplace/marketplace\",\"marketplace/promotion\",\"marketplace/startup\",\"report/online\",\"report/report\",\"report/statistics\",\"sale/order\",\"sale/returns\",\"sale/subscription\",\"sale/voucher\",\"sale/voucher_theme\",\"setting/setting\",\"setting/store\",\"startup/authorize\",\"tool/backup\",\"tool/log\",\"tool/notification\",\"tool/upgrade\",\"tool/upload\",\"user/api\",\"user/profile\",\"user/user\",\"user/user_permission\",\"extension/opencart/captcha/basic\",\"extension/opencart/currency/ecb\",\"extension/opencart/currency/fixer\",\"extension/opencart/dashboard/activity\",\"extension/opencart/dashboard/chart\",\"extension/opencart/dashboard/customer\",\"extension/opencart/dashboard/map\",\"extension/opencart/dashboard/online\",\"extension/opencart/dashboard/order\",\"extension/opencart/dashboard/recent\",\"extension/opencart/dashboard/sale\",\"extension/opencart/fraud/ip\",\"extension/opencart/module/account\",\"extension/opencart/module/banner\",\"extension/opencart/module/bestseller\",\"extension/opencart/module/category\",\"extension/opencart/module/featured\",\"extension/opencart/module/filter\",\"extension/opencart/module/html\",\"extension/opencart/module/information\",\"extension/opencart/module/latest\",\"extension/opencart/module/special\",\"extension/opencart/module/store\",\"extension/opencart/payment/bank_transfer\",\"extension/opencart/payment/cheque\",\"extension/opencart/payment/cod\",\"extension/opencart/payment/free_checkout\",\"extension/opencart/report/customer\",\"extension/opencart/report/customer_activity\",\"extension/opencart/report/customer_order\",\"extension/opencart/report/customer_reward\",\"extension/opencart/report/customer_search\",\"extension/opencart/report/customer_transaction\",\"extension/opencart/report/customer_subscription\",\"extension/opencart/report/marketing\",\"extension/opencart/report/product_purchased\",\"extension/opencart/report/product_viewed\",\"extension/opencart/report/sale_coupon\",\"extension/opencart/report/sale_order\",\"extension/opencart/report/sale_return\",\"extension/opencart/report/sale_shipping\",\"extension/opencart/report/sale_tax\",\"extension/opencart/shipping/flat\",\"extension/opencart/shipping/free\",\"extension/opencart/shipping/item\",\"extension/opencart/shipping/pickup\",\"extension/opencart/shipping/weight\",\"extension/opencart/theme/basic\",\"extension/opencart/total/coupon\",\"extension/opencart/total/credit\",\"extension/opencart/total/handling\",\"extension/opencart/total/low_order_fee\",\"extension/opencart/total/reward\",\"extension/opencart/total/shipping\",\"extension/opencart/total/sub_total\",\"extension/opencart/total/tax\",\"extension/opencart/total/total\",\"extension/opencart/total/voucher\",\"extension/opencart/currency/fixer\"],\"modify\":[\"catalog/attribute\",\"catalog/attribute_group\",\"catalog/category\",\"catalog/download\",\"catalog/filter\",\"catalog/information\",\"catalog/manufacturer\",\"catalog/option\",\"catalog/product\",\"catalog/review\",\"catalog/subscription_plan\",\"common/column_left\",\"common/developer\",\"common/filemanager\",\"common/pagination\",\"common/security\",\"cron/cron\",\"cron/currency\",\"cron/gdpr\",\"cron/subscription\",\"customer/custom_field\",\"customer/customer\",\"customer/customer_approval\",\"customer/customer_group\",\"customer/gdpr\",\"design/banner\",\"design/layout\",\"design/seo_url\",\"design/theme\",\"design/translation\",\"error/exception\",\"extension/analytics\",\"extension/captcha\",\"extension/currency\",\"extension/dashboard\",\"extension/feed\",\"extension/fraud\",\"extension/language\",\"extension/marketplace\",\"extension/module\",\"extension/other\",\"extension/payment\",\"extension/report\",\"extension/shipping\",\"extension/theme\",\"extension/total\",\"localisation/address_format\",\"localisation/country\",\"localisation/currency\",\"localisation/geo_zone\",\"localisation/language\",\"localisation/length_class\",\"localisation/location\",\"localisation/order_status\",\"localisation/return_action\",\"localisation/return_reason\",\"localisation/return_status\",\"localisation/stock_status\",\"localisation/subscription_status\",\"localisation/tax_class\",\"localisation/tax_rate\",\"localisation/weight_class\",\"localisation/zone\",\"mail/affiliate\",\"mail/authorize\",\"mail/customer\",\"mail/forgotten\",\"mail/gdpr\",\"mail/returns\",\"mail/reward\",\"mail/subscription\",\"mail/transaction\",\"mail/voucher\",\"marketing/affiliate\",\"marketing/contact\",\"marketing/coupon\",\"marketing/marketing\",\"marketplace/api\",\"marketplace/cron\",\"marketplace/event\",\"marketplace/extension\",\"marketplace/installer\",\"marketplace/marketplace\",\"marketplace/promotion\",\"marketplace/startup\",\"report/online\",\"report/report\",\"report/statistics\",\"sale/order\",\"sale/returns\",\"sale/subscription\",\"sale/voucher\",\"sale/voucher_theme\",\"setting/setting\",\"setting/store\",\"startup/authorize\",\"tool/backup\",\"tool/log\",\"tool/notification\",\"tool/upgrade\",\"tool/upload\",\"user/api\",\"user/profile\",\"user/user\",\"user/user_permission\",\"extension/opencart/captcha/basic\",\"extension/opencart/currency/ecb\",\"extension/opencart/currency/fixer\",\"extension/opencart/dashboard/activity\",\"extension/opencart/dashboard/chart\",\"extension/opencart/dashboard/customer\",\"extension/opencart/dashboard/map\",\"extension/opencart/dashboard/online\",\"extension/opencart/dashboard/order\",\"extension/opencart/dashboard/recent\",\"extension/opencart/dashboard/sale\",\"extension/opencart/fraud/ip\",\"extension/opencart/module/account\",\"extension/opencart/module/banner\",\"extension/opencart/module/bestseller\",\"extension/opencart/module/category\",\"extension/opencart/module/featured\",\"extension/opencart/module/filter\",\"extension/opencart/module/html\",\"extension/opencart/module/information\",\"extension/opencart/module/latest\",\"extension/opencart/module/special\",\"extension/opencart/module/store\",\"extension/opencart/payment/bank_transfer\",\"extension/opencart/payment/cheque\",\"extension/opencart/payment/cod\",\"extension/opencart/payment/free_checkout\",\"extension/opencart/report/customer\",\"extension/opencart/report/customer_activity\",\"extension/opencart/report/customer_order\",\"extension/opencart/report/customer_reward\",\"extension/opencart/report/customer_search\",\"extension/opencart/report/customer_transaction\",\"extension/opencart/report/customer_subscription\",\"extension/opencart/report/marketing\",\"extension/opencart/report/product_purchased\",\"extension/opencart/report/product_viewed\",\"extension/opencart/report/sale_coupon\",\"extension/opencart/report/sale_order\",\"extension/opencart/report/sale_return\",\"extension/opencart/report/sale_shipping\",\"extension/opencart/report/sale_tax\",\"extension/opencart/shipping/flat\",\"extension/opencart/shipping/free\",\"extension/opencart/shipping/item\",\"extension/opencart/shipping/pickup\",\"extension/opencart/shipping/weight\",\"extension/opencart/theme/basic\",\"extension/opencart/total/coupon\",\"extension/opencart/total/credit\",\"extension/opencart/total/handling\",\"extension/opencart/total/low_order_fee\",\"extension/opencart/total/reward\",\"extension/opencart/total/shipping\",\"extension/opencart/total/sub_total\",\"extension/opencart/total/tax\",\"extension/opencart/total/total\",\"extension/opencart/total/voucher\",\"extension/opencart/currency/fixer\"]}'),
-(2, 'Demonstration', '{}');
+(1, 'Administrator', '{\"access\":[\"catalog\\/attribute\",\"catalog\\/attribute_group\",\"catalog\\/category\",\"catalog\\/download\",\"catalog\\/filter\",\"catalog\\/information\",\"catalog\\/manufacturer\",\"catalog\\/option\",\"catalog\\/product\",\"catalog\\/review\",\"catalog\\/subscription_plan\",\"common\\/column_left\",\"common\\/developer\",\"common\\/filemanager\",\"common\\/pagination\",\"common\\/security\",\"cron\\/cron\",\"cron\\/currency\",\"cron\\/gdpr\",\"cron\\/subscription\",\"customer\\/custom_field\",\"customer\\/customer\",\"customer\\/customer_approval\",\"customer\\/customer_group\",\"customer\\/gdpr\",\"design\\/banner\",\"design\\/layout\",\"design\\/seo_url\",\"design\\/theme\",\"design\\/translation\",\"error\\/exception\",\"extension\\/analytics\",\"extension\\/captcha\",\"extension\\/currency\",\"extension\\/dashboard\",\"extension\\/feed\",\"extension\\/fraud\",\"extension\\/language\",\"extension\\/marketplace\",\"extension\\/module\",\"extension\\/other\",\"extension\\/payment\",\"extension\\/report\",\"extension\\/shipping\",\"extension\\/theme\",\"extension\\/total\",\"localisation\\/address_format\",\"localisation\\/country\",\"localisation\\/currency\",\"localisation\\/geo_zone\",\"localisation\\/language\",\"localisation\\/length_class\",\"localisation\\/location\",\"localisation\\/order_status\",\"localisation\\/return_action\",\"localisation\\/return_reason\",\"localisation\\/return_status\",\"localisation\\/stock_status\",\"localisation\\/subscription_status\",\"localisation\\/tax_class\",\"localisation\\/tax_rate\",\"localisation\\/weight_class\",\"localisation\\/zone\",\"mail\\/affiliate\",\"mail\\/authorize\",\"mail\\/customer\",\"mail\\/forgotten\",\"mail\\/gdpr\",\"mail\\/returns\",\"mail\\/reward\",\"mail\\/subscription\",\"mail\\/transaction\",\"mail\\/voucher\",\"marketing\\/affiliate\",\"marketing\\/contact\",\"marketing\\/coupon\",\"marketing\\/marketing\",\"marketplace\\/api\",\"marketplace\\/cron\",\"marketplace\\/event\",\"marketplace\\/extension\",\"marketplace\\/installer\",\"marketplace\\/marketplace\",\"marketplace\\/promotion\",\"marketplace\\/startup\",\"report\\/online\",\"report\\/report\",\"report\\/statistics\",\"sale\\/order\",\"sale\\/returns\",\"sale\\/subscription\",\"sale\\/voucher\",\"sale\\/voucher_theme\",\"setting\\/setting\",\"setting\\/store\",\"startup\\/authorize\",\"tool\\/backup\",\"tool\\/log\",\"tool\\/notification\",\"tool\\/upgrade\",\"tool\\/upload\",\"user\\/api\",\"user\\/profile\",\"user\\/user\",\"user\\/user_permission\",\"extension\\/opencart\\/captcha\\/basic\",\"extension\\/opencart\\/currency\\/ecb\",\"extension\\/opencart\\/currency\\/fixer\",\"extension\\/opencart\\/dashboard\\/activity\",\"extension\\/opencart\\/dashboard\\/chart\",\"extension\\/opencart\\/dashboard\\/customer\",\"extension\\/opencart\\/dashboard\\/map\",\"extension\\/opencart\\/dashboard\\/online\",\"extension\\/opencart\\/dashboard\\/order\",\"extension\\/opencart\\/dashboard\\/recent\",\"extension\\/opencart\\/dashboard\\/sale\",\"extension\\/opencart\\/fraud\\/ip\",\"extension\\/opencart\\/module\\/account\",\"extension\\/opencart\\/module\\/banner\",\"extension\\/opencart\\/module\\/bestseller\",\"extension\\/opencart\\/module\\/category\",\"extension\\/opencart\\/module\\/featured\",\"extension\\/opencart\\/module\\/filter\",\"extension\\/opencart\\/module\\/html\",\"extension\\/opencart\\/module\\/information\",\"extension\\/opencart\\/module\\/latest\",\"extension\\/opencart\\/module\\/special\",\"extension\\/opencart\\/module\\/store\",\"extension\\/opencart\\/payment\\/bank_transfer\",\"extension\\/opencart\\/payment\\/cheque\",\"extension\\/opencart\\/payment\\/cod\",\"extension\\/opencart\\/payment\\/free_checkout\",\"extension\\/opencart\\/report\\/customer\",\"extension\\/opencart\\/report\\/customer_activity\",\"extension\\/opencart\\/report\\/customer_order\",\"extension\\/opencart\\/report\\/customer_reward\",\"extension\\/opencart\\/report\\/customer_search\",\"extension\\/opencart\\/report\\/customer_transaction\",\"extension\\/opencart\\/report\\/customer_subscription\",\"extension\\/opencart\\/report\\/marketing\",\"extension\\/opencart\\/report\\/product_purchased\",\"extension\\/opencart\\/report\\/product_viewed\",\"extension\\/opencart\\/report\\/sale_coupon\",\"extension\\/opencart\\/report\\/sale_order\",\"extension\\/opencart\\/report\\/sale_return\",\"extension\\/opencart\\/report\\/sale_shipping\",\"extension\\/opencart\\/report\\/sale_tax\",\"extension\\/opencart\\/shipping\\/flat\",\"extension\\/opencart\\/shipping\\/free\",\"extension\\/opencart\\/shipping\\/item\",\"extension\\/opencart\\/shipping\\/pickup\",\"extension\\/opencart\\/shipping\\/weight\",\"extension\\/opencart\\/theme\\/basic\",\"extension\\/opencart\\/total\\/coupon\",\"extension\\/opencart\\/total\\/credit\",\"extension\\/opencart\\/total\\/handling\",\"extension\\/opencart\\/total\\/low_order_fee\",\"extension\\/opencart\\/total\\/reward\",\"extension\\/opencart\\/total\\/shipping\",\"extension\\/opencart\\/total\\/sub_total\",\"extension\\/opencart\\/total\\/tax\",\"extension\\/opencart\\/total\\/total\",\"extension\\/opencart\\/total\\/voucher\"],\"modify\":[\"catalog\\/attribute\",\"catalog\\/attribute_group\",\"catalog\\/category\",\"catalog\\/download\",\"catalog\\/filter\",\"catalog\\/information\",\"catalog\\/manufacturer\",\"catalog\\/option\",\"catalog\\/product\",\"catalog\\/review\",\"catalog\\/subscription_plan\",\"common\\/column_left\",\"common\\/developer\",\"common\\/filemanager\",\"common\\/pagination\",\"common\\/security\",\"cron\\/cron\",\"cron\\/currency\",\"cron\\/gdpr\",\"cron\\/subscription\",\"customer\\/custom_field\",\"customer\\/customer\",\"customer\\/customer_approval\",\"customer\\/customer_group\",\"customer\\/gdpr\",\"design\\/banner\",\"design\\/layout\",\"design\\/seo_url\",\"design\\/theme\",\"design\\/translation\",\"error\\/exception\",\"extension\\/analytics\",\"extension\\/captcha\",\"extension\\/currency\",\"extension\\/dashboard\",\"extension\\/feed\",\"extension\\/fraud\",\"extension\\/language\",\"extension\\/marketplace\",\"extension\\/module\",\"extension\\/other\",\"extension\\/payment\",\"extension\\/report\",\"extension\\/shipping\",\"extension\\/theme\",\"extension\\/total\",\"localisation\\/address_format\",\"localisation\\/country\",\"localisation\\/currency\",\"localisation\\/geo_zone\",\"localisation\\/language\",\"localisation\\/length_class\",\"localisation\\/location\",\"localisation\\/order_status\",\"localisation\\/return_action\",\"localisation\\/return_reason\",\"localisation\\/return_status\",\"localisation\\/stock_status\",\"localisation\\/subscription_status\",\"localisation\\/tax_class\",\"localisation\\/tax_rate\",\"localisation\\/weight_class\",\"localisation\\/zone\",\"mail\\/affiliate\",\"mail\\/authorize\",\"mail\\/customer\",\"mail\\/forgotten\",\"mail\\/gdpr\",\"mail\\/returns\",\"mail\\/reward\",\"mail\\/subscription\",\"mail\\/transaction\",\"mail\\/voucher\",\"marketing\\/affiliate\",\"marketing\\/contact\",\"marketing\\/coupon\",\"marketing\\/marketing\",\"marketplace\\/api\",\"marketplace\\/cron\",\"marketplace\\/event\",\"marketplace\\/extension\",\"marketplace\\/installer\",\"marketplace\\/marketplace\",\"marketplace\\/promotion\",\"marketplace\\/startup\",\"report\\/online\",\"report\\/report\",\"report\\/statistics\",\"sale\\/order\",\"sale\\/returns\",\"sale\\/subscription\",\"sale\\/voucher\",\"sale\\/voucher_theme\",\"setting\\/setting\",\"setting\\/store\",\"startup\\/authorize\",\"tool\\/backup\",\"tool\\/log\",\"tool\\/notification\",\"tool\\/upgrade\",\"tool\\/upload\",\"user\\/api\",\"user\\/profile\",\"user\\/user\",\"user\\/user_permission\",\"extension\\/opencart\\/captcha\\/basic\",\"extension\\/opencart\\/currency\\/ecb\",\"extension\\/opencart\\/currency\\/fixer\",\"extension\\/opencart\\/dashboard\\/activity\",\"extension\\/opencart\\/dashboard\\/chart\",\"extension\\/opencart\\/dashboard\\/customer\",\"extension\\/opencart\\/dashboard\\/map\",\"extension\\/opencart\\/dashboard\\/online\",\"extension\\/opencart\\/dashboard\\/order\",\"extension\\/opencart\\/dashboard\\/recent\",\"extension\\/opencart\\/dashboard\\/sale\",\"extension\\/opencart\\/fraud\\/ip\",\"extension\\/opencart\\/module\\/account\",\"extension\\/opencart\\/module\\/banner\",\"extension\\/opencart\\/module\\/bestseller\",\"extension\\/opencart\\/module\\/category\",\"extension\\/opencart\\/module\\/featured\",\"extension\\/opencart\\/module\\/filter\",\"extension\\/opencart\\/module\\/html\",\"extension\\/opencart\\/module\\/information\",\"extension\\/opencart\\/module\\/latest\",\"extension\\/opencart\\/module\\/special\",\"extension\\/opencart\\/module\\/store\",\"extension\\/opencart\\/payment\\/bank_transfer\",\"extension\\/opencart\\/payment\\/cheque\",\"extension\\/opencart\\/payment\\/cod\",\"extension\\/opencart\\/payment\\/free_checkout\",\"extension\\/opencart\\/report\\/customer\",\"extension\\/opencart\\/report\\/customer_activity\",\"extension\\/opencart\\/report\\/customer_order\",\"extension\\/opencart\\/report\\/customer_reward\",\"extension\\/opencart\\/report\\/customer_search\",\"extension\\/opencart\\/report\\/customer_transaction\",\"extension\\/opencart\\/report\\/customer_subscription\",\"extension\\/opencart\\/report\\/marketing\",\"extension\\/opencart\\/report\\/product_purchased\",\"extension\\/opencart\\/report\\/product_viewed\",\"extension\\/opencart\\/report\\/sale_coupon\",\"extension\\/opencart\\/report\\/sale_order\",\"extension\\/opencart\\/report\\/sale_return\",\"extension\\/opencart\\/report\\/sale_shipping\",\"extension\\/opencart\\/report\\/sale_tax\",\"extension\\/opencart\\/shipping\\/flat\",\"extension\\/opencart\\/shipping\\/free\",\"extension\\/opencart\\/shipping\\/item\",\"extension\\/opencart\\/shipping\\/pickup\",\"extension\\/opencart\\/shipping\\/weight\",\"extension\\/opencart\\/theme\\/basic\",\"extension\\/opencart\\/total\\/coupon\",\"extension\\/opencart\\/total\\/credit\",\"extension\\/opencart\\/total\\/handling\",\"extension\\/opencart\\/total\\/low_order_fee\",\"extension\\/opencart\\/total\\/reward\",\"extension\\/opencart\\/total\\/shipping\",\"extension\\/opencart\\/total\\/sub_total\",\"extension\\/opencart\\/total\\/tax\",\"extension\\/opencart\\/total\\/total\",\"extension\\/opencart\\/total\\/voucher\"]}'),
+(2, 'Demonstration', '');
 
 -- --------------------------------------------------------
 
@@ -4707,7 +4483,6 @@ INSERT INTO `pc_user_group` (`user_group_id`, `name`, `permission`) VALUES
 -- Table structure for table `pc_user_login`
 --
 
-DROP TABLE IF EXISTS `pc_user_login`;
 CREATE TABLE `pc_user_login` (
   `user_login_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
@@ -4721,624 +4496,17 @@ CREATE TABLE `pc_user_login` (
 --
 
 INSERT INTO `pc_user_login` (`user_login_id`, `user_id`, `ip`, `user_agent`, `date_added`) VALUES
-(1, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 13:42:02'),
-(2, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 13:43:22'),
-(3, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 13:45:10'),
-(4, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 13:46:32'),
-(5, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 13:47:09'),
-(6, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 13:54:09'),
-(7, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 13:57:43'),
-(8, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 13:58:19'),
-(9, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 13:59:15'),
-(10, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 13:59:47'),
-(11, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 14:01:57'),
-(12, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 14:02:25'),
-(13, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 14:04:42'),
-(14, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 14:08:35'),
-(15, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 15:47:28'),
-(16, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 15:50:27'),
-(17, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 15:51:16'),
-(18, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 15:51:41'),
-(19, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 15:52:46'),
-(20, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 15:54:01'),
-(21, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 15:56:34'),
-(22, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 15:57:06'),
-(23, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 15:57:35'),
-(24, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 15:58:13'),
-(25, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 15:59:46'),
-(26, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 16:00:45'),
-(27, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 16:02:32'),
-(28, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 16:13:51'),
-(29, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 16:24:20'),
-(30, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 16:26:24'),
-(31, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 16:26:47'),
-(32, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 16:27:12'),
-(33, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 16:28:16'),
-(34, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 16:29:02'),
-(35, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 16:29:53'),
-(36, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 16:30:52'),
-(37, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 16:40:54'),
-(38, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 16:41:32'),
-(39, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 16:42:35'),
-(40, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 16:43:18'),
-(41, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 16:51:39'),
-(42, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 17:10:28'),
-(43, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 17:14:35'),
-(44, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 17:18:43'),
-(45, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 17:19:43'),
-(46, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 17:21:14'),
-(47, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 17:22:30'),
-(48, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 17:23:13'),
-(49, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 17:24:03'),
-(50, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 17:25:24'),
-(51, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 17:26:18'),
-(52, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 17:31:12'),
-(53, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 17:36:00'),
-(54, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 17:38:09'),
-(55, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 17:39:12'),
-(56, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 17:40:24'),
-(57, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 17:47:23'),
-(58, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 17:49:23'),
-(59, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 17:50:56'),
-(60, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 17:53:23'),
-(61, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 17:59:47'),
-(62, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 17:59:57'),
-(63, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 18:01:18'),
-(64, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 18:01:50'),
-(65, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 18:02:53'),
-(66, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 18:03:54'),
-(67, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 18:15:34'),
-(68, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 18:17:02'),
-(69, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 18:18:26'),
-(70, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 18:25:16'),
-(71, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 18:26:34'),
-(72, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 18:27:39'),
-(73, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 18:29:17'),
-(74, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 18:39:17'),
-(75, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 18:41:22'),
-(76, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 18:43:20'),
-(77, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-09 18:44:50'),
-(78, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-10 16:34:15'),
-(79, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-10 16:42:51'),
-(80, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-10 16:44:12'),
-(81, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-10 16:45:40'),
-(82, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-10 16:49:35'),
-(83, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-10 16:51:00'),
-(84, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-10 16:52:19'),
-(85, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-10 16:53:28'),
-(86, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-10 16:54:37'),
-(87, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-10 16:57:04'),
-(88, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-10 16:58:58'),
-(89, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-10 17:03:24'),
-(90, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-10 17:06:08'),
-(91, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-10 17:16:05'),
-(92, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-10 17:16:50'),
-(93, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-10 17:17:30'),
-(94, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-10 17:17:40'),
-(95, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-10 17:22:49'),
-(96, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-10 17:23:41'),
-(97, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-10 17:24:30'),
-(98, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-10 17:25:32'),
-(99, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-10 17:25:44'),
-(100, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-10 17:27:30'),
-(101, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-10 17:28:38'),
-(102, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-10 17:41:28'),
-(103, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-10 17:43:23'),
-(104, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-10 17:44:52'),
-(105, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-10 17:47:54'),
-(106, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-10 17:50:42'),
-(107, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-10 17:52:36'),
-(108, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-10 17:59:46'),
-(109, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-10 18:00:31'),
-(110, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-10 18:01:01'),
-(111, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 04:54:14'),
-(112, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 05:31:47'),
-(113, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 05:31:58'),
-(114, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 05:33:44'),
-(115, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 05:35:03'),
-(116, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 05:35:45'),
-(117, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 05:36:58'),
-(118, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 05:39:00'),
-(119, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 05:49:09'),
-(120, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 05:50:16'),
-(121, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 05:51:58'),
-(122, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 05:55:26'),
-(123, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 05:59:35'),
-(124, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 06:01:01'),
-(125, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 06:02:01'),
-(126, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 06:02:55'),
-(127, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 06:03:36'),
-(128, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 06:04:44'),
-(129, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 06:06:08'),
-(130, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 06:06:48'),
-(131, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 06:09:21'),
-(132, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 06:53:11'),
-(133, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 07:04:34'),
-(134, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 07:05:18'),
-(135, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 07:05:46'),
-(136, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 07:08:29'),
-(137, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 07:09:22'),
-(138, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 07:09:52'),
-(139, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 07:10:43'),
-(140, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 07:14:05'),
-(141, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 07:15:00'),
-(142, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 07:15:46'),
-(143, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 07:19:06'),
-(144, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 07:19:36'),
-(145, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 07:21:31'),
-(146, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 07:22:18'),
-(147, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 07:24:00'),
-(148, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 07:57:26'),
-(149, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 07:58:23'),
-(150, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 07:58:52'),
-(151, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 07:59:26'),
-(152, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 09:52:12'),
-(153, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 09:52:39'),
-(154, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 10:15:43'),
-(155, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 10:23:21'),
-(156, 0, '::ffff:127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 10:23:41'),
-(157, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 10:35:26'),
-(158, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 10:37:55'),
-(159, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 10:40:25'),
-(160, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 10:41:35'),
-(161, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 10:49:06'),
-(162, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 10:50:57'),
-(163, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 10:51:53'),
-(164, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 10:53:05'),
-(165, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 10:54:33'),
-(166, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 10:55:03'),
-(167, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 10:55:34'),
-(168, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 10:59:45'),
-(169, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 11:01:00'),
-(170, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 11:02:07'),
-(171, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 11:03:05'),
-(172, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 11:05:07'),
-(173, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 11:07:24'),
-(174, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 11:12:18'),
-(175, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 11:13:43'),
-(176, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 11:15:19'),
-(177, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 11:17:40'),
-(178, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 11:18:40'),
-(179, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 11:20:23'),
-(180, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 11:22:11'),
-(181, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 11:33:05'),
-(182, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 11:33:46'),
-(183, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 11:35:57'),
-(184, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 11:37:35'),
-(185, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 11:40:30'),
-(186, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 11:42:13'),
-(187, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 11:42:58'),
-(188, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 11:45:25'),
-(189, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 11:48:00'),
-(190, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 11:49:57'),
-(191, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 11:51:22'),
-(192, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 11:53:32'),
-(193, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 11:53:32'),
-(194, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 11:54:19'),
-(195, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 11:54:19'),
-(196, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 11:55:12'),
-(197, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 11:55:12'),
-(198, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 11:55:14'),
-(199, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 11:55:14'),
-(200, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 11:55:58'),
-(201, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 11:57:27'),
-(202, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 11:58:43'),
-(203, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 12:00:33'),
-(204, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 12:02:10'),
-(205, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 12:02:24'),
-(206, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 12:03:24'),
-(207, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 12:07:11'),
-(208, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 12:08:48'),
-(209, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 12:12:47'),
-(210, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 12:13:51'),
-(211, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 12:16:04'),
-(212, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 12:16:55'),
-(213, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 12:17:16'),
-(214, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 12:20:47'),
-(215, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 12:22:29'),
-(216, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-11 12:23:59'),
-(217, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-12 16:03:14'),
-(218, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-12 16:04:08'),
-(219, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-12 16:05:31'),
-(220, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-12 16:08:22'),
-(221, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-12 16:10:33'),
-(222, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-12 16:13:58'),
-(223, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-12 16:18:11'),
-(224, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-12 16:20:29'),
-(225, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-12 16:21:30'),
-(226, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-12 16:22:45'),
-(227, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-12 16:23:39'),
-(228, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-12 16:24:49'),
-(229, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-12 16:27:51'),
-(230, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-12 16:29:00'),
-(231, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-12 16:34:33'),
-(232, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-12 16:35:22'),
-(233, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-12 16:38:16'),
-(234, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-12 16:38:58'),
-(235, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-12 16:42:31'),
-(236, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-12 16:43:33'),
-(237, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-12 16:45:00'),
-(238, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-12 16:46:47'),
-(239, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-12 16:50:11'),
-(240, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-12 16:59:16'),
-(241, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-12 16:59:56'),
-(242, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-12 17:00:29'),
-(243, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-12 17:01:47'),
-(244, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-12 17:05:33'),
-(245, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-12 17:06:27'),
-(246, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-12 17:10:42'),
-(247, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-12 17:16:23'),
-(248, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-12 17:16:58'),
-(249, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-12 17:24:36'),
-(250, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-12 17:27:22'),
-(251, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-12 17:29:29'),
-(252, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-12 17:31:04'),
-(253, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-12 17:33:32'),
-(254, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-12 17:35:51'),
-(255, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-12 17:38:29'),
-(256, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-12 17:41:03'),
-(257, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 08:55:56'),
-(258, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 08:57:47'),
-(259, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 08:59:33'),
-(260, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 09:01:13'),
-(261, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 09:01:51'),
-(262, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 09:02:44'),
-(263, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 09:10:37'),
-(264, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 09:14:17'),
-(265, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 09:15:59'),
-(266, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 09:21:19'),
-(267, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 09:27:06'),
-(268, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 09:28:50'),
-(269, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 09:29:19'),
-(270, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 09:30:58'),
-(271, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 09:32:22'),
-(272, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 09:34:13'),
-(273, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 09:37:49'),
-(274, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 09:38:48'),
-(275, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 09:45:54'),
-(276, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 10:11:10'),
-(277, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 10:35:14'),
-(278, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 14:44:31'),
-(279, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 14:45:12'),
-(280, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 14:46:02'),
-(281, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 14:46:37'),
-(282, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 14:48:40'),
-(283, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 14:49:15'),
-(284, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 14:50:43'),
-(285, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 14:58:54'),
-(286, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 15:00:24'),
-(287, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 15:02:48'),
-(288, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 15:06:19'),
-(289, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 15:08:19'),
-(290, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 15:10:25'),
-(291, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 15:23:06'),
-(292, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 15:24:23'),
-(293, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 15:27:29'),
-(294, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 15:31:14'),
-(295, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 16:00:22'),
-(296, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 16:02:20'),
-(297, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 16:39:30'),
-(298, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 16:42:21'),
-(299, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 16:43:15'),
-(300, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 16:47:52'),
-(301, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 16:51:53'),
-(302, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 17:15:39'),
-(303, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 17:18:17'),
-(304, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 17:22:45'),
-(305, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 17:24:31'),
-(306, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 17:25:44'),
-(307, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 17:30:26'),
-(308, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 17:32:09'),
-(309, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 17:41:24'),
-(310, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 17:42:19'),
-(311, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 17:43:30'),
-(312, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 18:19:58'),
-(313, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 18:28:11'),
-(314, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-13 18:29:05'),
-(315, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 05:16:07'),
-(316, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 05:17:28'),
-(317, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 05:18:10'),
-(318, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 05:18:53'),
-(319, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 05:20:06'),
-(320, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 05:20:34'),
-(321, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 05:20:55'),
-(322, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 05:22:57'),
-(323, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 05:23:27'),
-(324, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 05:37:09'),
-(325, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 05:45:55'),
-(326, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 05:46:41');
-INSERT INTO `pc_user_login` (`user_login_id`, `user_id`, `ip`, `user_agent`, `date_added`) VALUES
-(327, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 05:50:00'),
-(328, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 05:50:27'),
-(329, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 05:52:53'),
-(330, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 05:54:08'),
-(331, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 05:58:08'),
-(332, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 06:03:16'),
-(333, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 06:03:58'),
-(334, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 06:05:34'),
-(335, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 06:07:06'),
-(336, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 06:07:38'),
-(337, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 06:14:12'),
-(338, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 06:15:56'),
-(339, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 06:18:16'),
-(340, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 06:19:52'),
-(341, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 06:24:10'),
-(342, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 06:26:54'),
-(343, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 06:28:03'),
-(344, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 06:40:42'),
-(345, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 06:42:18'),
-(346, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 06:49:12'),
-(347, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 06:50:17'),
-(348, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 06:51:06'),
-(349, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 06:52:19'),
-(350, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 06:54:31'),
-(351, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 06:55:18'),
-(352, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 07:08:15'),
-(353, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 07:12:49'),
-(354, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 07:14:08'),
-(355, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 07:15:18'),
-(356, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 07:15:57'),
-(357, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 07:16:38'),
-(358, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 07:17:23'),
-(359, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 07:18:00'),
-(360, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 07:18:45'),
-(361, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 07:23:10'),
-(362, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 07:24:31'),
-(363, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 07:25:29'),
-(364, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 07:26:19'),
-(365, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 07:49:20'),
-(366, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 07:50:31'),
-(367, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 07:51:29'),
-(368, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 07:54:22'),
-(369, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 07:55:33'),
-(370, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 07:56:41'),
-(371, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 07:57:58'),
-(372, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 08:01:08'),
-(373, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 08:02:46'),
-(374, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 08:03:25'),
-(375, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 08:09:54'),
-(376, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 08:10:32'),
-(377, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 08:11:16'),
-(378, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 08:11:49'),
-(379, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 08:12:58'),
-(380, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 08:15:08'),
-(381, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 08:15:57'),
-(382, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 08:23:24'),
-(383, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 08:24:41'),
-(384, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 08:27:33'),
-(385, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 08:28:35'),
-(386, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 08:28:49'),
-(387, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 08:30:21'),
-(388, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 08:31:27'),
-(389, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 08:35:29'),
-(390, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 08:40:31'),
-(391, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 08:42:57'),
-(392, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 08:48:42'),
-(393, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 08:50:46'),
-(394, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 08:57:04'),
-(395, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 08:57:28'),
-(396, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 08:59:16'),
-(397, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 08:59:57'),
-(398, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 09:01:30'),
-(399, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 09:06:54'),
-(400, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 09:10:12'),
-(401, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 10:39:48'),
-(402, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 10:42:36'),
-(403, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 10:43:49'),
-(404, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 10:45:15'),
-(405, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 10:47:07'),
-(406, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 10:47:43'),
-(407, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 10:52:22'),
-(408, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 10:53:44'),
-(409, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 10:58:05'),
-(410, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 10:58:38'),
-(411, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 11:01:39'),
-(412, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 11:03:22'),
-(413, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 11:05:14'),
-(414, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 11:05:52'),
-(415, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 11:06:49'),
-(416, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 11:13:42'),
-(417, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 11:14:00'),
-(418, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 11:21:22'),
-(419, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 11:23:50'),
-(420, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 11:24:55'),
-(421, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 11:31:17'),
-(422, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 11:34:14'),
-(423, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 11:35:27'),
-(424, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 11:36:08'),
-(425, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 11:38:12'),
-(426, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 11:39:27'),
-(427, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 11:39:45'),
-(428, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 11:41:49'),
-(429, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 11:43:33'),
-(430, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 11:44:53'),
-(431, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 11:45:38'),
-(432, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 11:47:37'),
-(433, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 11:47:56'),
-(434, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 11:52:05'),
-(435, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 11:57:55'),
-(436, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 11:59:26'),
-(437, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 12:00:46'),
-(438, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 12:01:40'),
-(439, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 12:02:41'),
-(440, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 12:54:14'),
-(441, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 12:55:49'),
-(442, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 13:01:06'),
-(443, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 13:14:23'),
-(444, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 13:15:02'),
-(445, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 13:17:19'),
-(446, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 13:17:45'),
-(447, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 13:18:34'),
-(448, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 13:19:38'),
-(449, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 13:20:10'),
-(450, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 13:27:56'),
-(451, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 13:28:49'),
-(452, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 13:29:56'),
-(453, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 13:31:19'),
-(454, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 13:33:45'),
-(455, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 13:35:04'),
-(456, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 13:37:02'),
-(457, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 13:37:42'),
-(458, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 13:38:42'),
-(459, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 13:39:14'),
-(460, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 13:39:46'),
-(461, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 13:40:33'),
-(462, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 13:43:00'),
-(463, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 13:45:30'),
-(464, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 15:54:57'),
-(465, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 15:57:18'),
-(466, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 15:58:13'),
-(467, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 16:03:47'),
-(468, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 16:06:04'),
-(469, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 16:08:31'),
-(470, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 16:09:33'),
-(471, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 16:11:40'),
-(472, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 16:12:20'),
-(473, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 16:14:41'),
-(474, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 16:17:25'),
-(475, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 16:18:15'),
-(476, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 16:18:48'),
-(477, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 16:20:02'),
-(478, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 16:21:29'),
-(479, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 16:22:23'),
-(480, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 16:23:01'),
-(481, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 16:24:10'),
-(482, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 16:26:50'),
-(483, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 16:29:48'),
-(484, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 16:31:42'),
-(485, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 16:45:19'),
-(486, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 16:47:11'),
-(487, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 16:47:56'),
-(488, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 16:48:18'),
-(489, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 16:49:39'),
-(490, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 16:51:16'),
-(491, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 16:51:49'),
-(492, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 16:54:58'),
-(493, 0, '::ffff:127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 16:55:46'),
-(494, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 16:57:38'),
-(495, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 17:11:03'),
-(496, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 17:13:34'),
-(497, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 17:14:29'),
-(498, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 17:17:40'),
-(499, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 17:22:50'),
-(500, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 17:23:53'),
-(501, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 17:28:59'),
-(502, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 17:32:23'),
-(503, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 17:33:34'),
-(504, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 17:34:46'),
-(505, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 17:35:30'),
-(506, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-14 17:36:05'),
-(507, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 04:30:39'),
-(508, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 04:34:06'),
-(509, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 04:35:03'),
-(510, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 04:35:28'),
-(511, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 04:36:04'),
-(512, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 04:36:37'),
-(513, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 04:37:20'),
-(514, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 04:38:01'),
-(515, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 04:38:28'),
-(516, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 04:38:56'),
-(517, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 04:40:02'),
-(518, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 04:43:31'),
-(519, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 04:45:22'),
-(520, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 04:48:22'),
-(521, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 04:48:44'),
-(522, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 04:49:30'),
-(523, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 04:50:21'),
-(524, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 04:51:08'),
-(525, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 04:51:39'),
-(526, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 04:52:51'),
-(527, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 04:54:29'),
-(528, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 04:55:28'),
-(529, 0, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 04:57:13'),
-(530, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 05:02:57'),
-(531, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 05:06:23'),
-(532, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 05:09:57'),
-(533, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 05:11:47'),
-(534, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 05:20:51'),
-(535, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 05:25:31'),
-(536, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 05:27:37'),
-(537, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 05:32:00'),
-(538, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 05:33:02'),
-(539, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 05:33:46'),
-(540, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 05:36:28'),
-(541, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 05:37:52'),
-(542, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 05:42:23'),
-(543, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 05:43:03'),
-(544, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 05:44:28'),
-(545, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 05:45:08'),
-(546, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 05:47:07'),
-(547, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 05:47:31'),
-(548, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 05:48:45'),
-(549, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 05:52:23'),
-(550, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 05:53:47'),
-(551, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 05:57:07'),
-(552, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 05:57:30'),
-(553, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 05:58:50'),
-(554, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 06:03:19'),
-(555, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 06:03:57'),
-(556, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 06:04:43'),
-(557, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 06:12:32'),
-(558, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 06:13:37'),
-(559, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 06:17:18'),
-(560, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 06:17:46'),
-(561, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 06:18:12'),
-(562, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 06:18:53'),
-(563, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 06:19:54'),
-(564, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 06:20:37'),
-(565, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 06:21:40'),
-(566, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 06:24:27'),
-(567, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 06:25:54'),
-(568, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 06:29:41'),
-(569, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 06:31:35'),
-(570, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 06:39:46'),
-(571, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 06:41:44'),
-(572, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 06:45:42'),
-(573, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 06:50:41'),
-(574, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 07:00:18'),
-(575, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 07:04:35'),
-(576, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 07:06:58'),
-(577, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 07:08:03'),
-(578, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 07:09:25'),
-(579, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 07:14:32'),
-(580, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 07:19:01'),
-(581, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 07:20:34'),
-(582, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 07:26:39'),
-(583, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 08:07:49'),
-(584, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 08:13:11'),
-(585, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 08:18:15'),
-(586, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 08:18:59'),
-(587, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 08:22:30'),
-(588, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 08:23:02'),
-(589, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 08:33:39'),
-(590, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 08:33:59'),
-(591, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 08:34:40'),
-(592, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 08:34:59'),
-(593, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 08:35:33'),
-(594, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 08:36:15'),
-(595, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 08:36:48'),
-(596, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 08:36:59'),
-(597, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 08:38:03'),
-(598, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 10:24:34'),
-(599, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 10:26:09'),
-(600, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 10:26:46'),
-(601, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 10:27:29'),
-(602, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 10:29:18'),
-(603, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 10:30:05'),
-(604, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 10:31:07'),
-(605, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 10:31:58'),
-(606, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 10:34:03'),
-(607, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 10:34:49'),
-(608, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 14:57:34'),
-(609, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 14:58:44'),
-(610, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 14:59:24'),
-(611, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 15:00:49'),
-(612, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 15:01:27'),
-(613, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 15:03:39'),
-(614, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 15:05:57'),
-(615, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 15:06:48'),
-(616, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 15:17:38'),
-(617, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-15 15:19:04');
+(1, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-16 18:46:13'),
+(2, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-16 18:49:28'),
+(3, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-17 04:47:36'),
+(4, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-17 10:53:54'),
+(5, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-17 10:55:53'),
+(6, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-17 10:58:56'),
+(7, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-17 10:59:37'),
+(8, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-18 09:17:42'),
+(9, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-18 10:26:16'),
+(10, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-19 07:27:26'),
+(11, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-19 09:00:59');
 
 -- --------------------------------------------------------
 
@@ -5346,7 +4514,6 @@ INSERT INTO `pc_user_login` (`user_login_id`, `user_id`, `ip`, `user_agent`, `da
 -- Table structure for table `pc_voucher`
 --
 
-DROP TABLE IF EXISTS `pc_voucher`;
 CREATE TABLE `pc_voucher` (
   `voucher_id` int(11) NOT NULL,
   `order_id` int(11) NOT NULL,
@@ -5362,20 +4529,12 @@ CREATE TABLE `pc_voucher` (
   `date_added` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
---
--- Dumping data for table `pc_voucher`
---
-
-INSERT INTO `pc_voucher` (`voucher_id`, `order_id`, `code`, `from_name`, `from_email`, `to_name`, `to_email`, `voucher_theme_id`, `message`, `amount`, `status`, `date_added`) VALUES
-(1, 0, 'TEST1', 'Pradeep', 'pradeep@cqs.in', 'Pradeep1', 'pradeep.jangra94@gmail.com', 7, 'test', 2.0000, 1, '2024-10-14 06:55:34');
-
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `pc_voucher_history`
 --
 
-DROP TABLE IF EXISTS `pc_voucher_history`;
 CREATE TABLE `pc_voucher_history` (
   `voucher_history_id` int(11) NOT NULL,
   `voucher_id` int(11) NOT NULL,
@@ -5390,7 +4549,6 @@ CREATE TABLE `pc_voucher_history` (
 -- Table structure for table `pc_voucher_theme`
 --
 
-DROP TABLE IF EXISTS `pc_voucher_theme`;
 CREATE TABLE `pc_voucher_theme` (
   `voucher_theme_id` int(11) NOT NULL,
   `image` varchar(255) NOT NULL
@@ -5403,7 +4561,7 @@ CREATE TABLE `pc_voucher_theme` (
 INSERT INTO `pc_voucher_theme` (`voucher_theme_id`, `image`) VALUES
 (6, 'catalog/demo/apple_logo.jpg'),
 (7, 'catalog/demo/gift-voucher-birthday.jpg'),
-(8, 'catalog%2Fdemo%2Fcanon_eos_5d_2.jpg');
+(8, 'catalog/demo/canon_eos_5d_2.jpg');
 
 -- --------------------------------------------------------
 
@@ -5411,7 +4569,6 @@ INSERT INTO `pc_voucher_theme` (`voucher_theme_id`, `image`) VALUES
 -- Table structure for table `pc_voucher_theme_description`
 --
 
-DROP TABLE IF EXISTS `pc_voucher_theme_description`;
 CREATE TABLE `pc_voucher_theme_description` (
   `voucher_theme_id` int(11) NOT NULL,
   `language_id` int(11) NOT NULL,
@@ -5433,7 +4590,6 @@ INSERT INTO `pc_voucher_theme_description` (`voucher_theme_id`, `language_id`, `
 -- Table structure for table `pc_weight_class`
 --
 
-DROP TABLE IF EXISTS `pc_weight_class`;
 CREATE TABLE `pc_weight_class` (
   `weight_class_id` int(11) NOT NULL,
   `value` decimal(15,8) NOT NULL DEFAULT 0.00000000
@@ -5447,8 +4603,7 @@ INSERT INTO `pc_weight_class` (`weight_class_id`, `value`) VALUES
 (1, 1.00000000),
 (2, 1000.00000000),
 (5, 2.20460000),
-(6, 35.27400000),
-(7, 1.00000000);
+(6, 35.27400000);
 
 -- --------------------------------------------------------
 
@@ -5456,7 +4611,6 @@ INSERT INTO `pc_weight_class` (`weight_class_id`, `value`) VALUES
 -- Table structure for table `pc_weight_class_description`
 --
 
-DROP TABLE IF EXISTS `pc_weight_class_description`;
 CREATE TABLE `pc_weight_class_description` (
   `weight_class_id` int(11) NOT NULL,
   `language_id` int(11) NOT NULL,
@@ -5480,7 +4634,6 @@ INSERT INTO `pc_weight_class_description` (`weight_class_id`, `language_id`, `ti
 -- Table structure for table `pc_zone`
 --
 
-DROP TABLE IF EXISTS `pc_zone`;
 CREATE TABLE `pc_zone` (
   `zone_id` int(11) NOT NULL,
   `country_id` int(11) NOT NULL,
@@ -9632,7 +8785,6 @@ INSERT INTO `pc_zone` (`zone_id`, `country_id`, `name`, `code`, `status`) VALUES
 -- Table structure for table `pc_zone_to_geo_zone`
 --
 
-DROP TABLE IF EXISTS `pc_zone_to_geo_zone`;
 CREATE TABLE `pc_zone_to_geo_zone` (
   `zone_to_geo_zone_id` int(11) NOT NULL,
   `country_id` int(11) NOT NULL,
@@ -10707,13 +9859,13 @@ ALTER TABLE `pc_zone_to_geo_zone`
 -- AUTO_INCREMENT for table `pc_address`
 --
 ALTER TABLE `pc_address`
-  MODIFY `address_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `address_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `pc_address_format`
 --
 ALTER TABLE `pc_address_format`
-  MODIFY `address_format_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `address_format_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `pc_antispam`
@@ -10725,13 +9877,13 @@ ALTER TABLE `pc_antispam`
 -- AUTO_INCREMENT for table `pc_api`
 --
 ALTER TABLE `pc_api`
-  MODIFY `api_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `api_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `pc_api_ip`
 --
 ALTER TABLE `pc_api_ip`
-  MODIFY `api_ip_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `api_ip_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `pc_api_session`
@@ -10755,31 +9907,31 @@ ALTER TABLE `pc_article_comment`
 -- AUTO_INCREMENT for table `pc_attribute`
 --
 ALTER TABLE `pc_attribute`
-  MODIFY `attribute_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `attribute_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `pc_attribute_group`
 --
 ALTER TABLE `pc_attribute_group`
-  MODIFY `attribute_group_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `attribute_group_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `pc_banner`
 --
 ALTER TABLE `pc_banner`
-  MODIFY `banner_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `banner_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `pc_banner_image`
 --
 ALTER TABLE `pc_banner_image`
-  MODIFY `banner_image_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=128;
+  MODIFY `banner_image_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=99;
 
 --
 -- AUTO_INCREMENT for table `pc_cart`
 --
 ALTER TABLE `pc_cart`
-  MODIFY `cart_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `cart_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
 
 --
 -- AUTO_INCREMENT for table `pc_category`
@@ -10791,13 +9943,13 @@ ALTER TABLE `pc_category`
 -- AUTO_INCREMENT for table `pc_country`
 --
 ALTER TABLE `pc_country`
-  MODIFY `country_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=259;
+  MODIFY `country_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=258;
 
 --
 -- AUTO_INCREMENT for table `pc_coupon`
 --
 ALTER TABLE `pc_coupon`
-  MODIFY `coupon_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `coupon_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `pc_coupon_history`
@@ -10809,7 +9961,7 @@ ALTER TABLE `pc_coupon_history`
 -- AUTO_INCREMENT for table `pc_coupon_product`
 --
 ALTER TABLE `pc_coupon_product`
-  MODIFY `coupon_product_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `coupon_product_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `pc_cron`
@@ -10821,13 +9973,13 @@ ALTER TABLE `pc_cron`
 -- AUTO_INCREMENT for table `pc_currency`
 --
 ALTER TABLE `pc_currency`
-  MODIFY `currency_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `currency_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `pc_customer`
 --
 ALTER TABLE `pc_customer`
-  MODIFY `customer_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `customer_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `pc_customer_activity`
@@ -10851,13 +10003,13 @@ ALTER TABLE `pc_customer_approval`
 -- AUTO_INCREMENT for table `pc_customer_group`
 --
 ALTER TABLE `pc_customer_group`
-  MODIFY `customer_group_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `customer_group_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `pc_customer_history`
 --
 ALTER TABLE `pc_customer_history`
-  MODIFY `customer_history_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `customer_history_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `pc_customer_ip`
@@ -10887,25 +10039,25 @@ ALTER TABLE `pc_customer_search`
 -- AUTO_INCREMENT for table `pc_customer_transaction`
 --
 ALTER TABLE `pc_customer_transaction`
-  MODIFY `customer_transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `customer_transaction_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `pc_custom_field`
 --
 ALTER TABLE `pc_custom_field`
-  MODIFY `custom_field_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+  MODIFY `custom_field_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT for table `pc_custom_field_value`
 --
 ALTER TABLE `pc_custom_field_value`
-  MODIFY `custom_field_value_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
+  MODIFY `custom_field_value_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
 
 --
 -- AUTO_INCREMENT for table `pc_download`
 --
 ALTER TABLE `pc_download`
-  MODIFY `download_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `download_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `pc_download_report`
@@ -10923,13 +10075,13 @@ ALTER TABLE `pc_event`
 -- AUTO_INCREMENT for table `pc_extension`
 --
 ALTER TABLE `pc_extension`
-  MODIFY `extension_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=69;
+  MODIFY `extension_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
 
 --
 -- AUTO_INCREMENT for table `pc_extension_install`
 --
 ALTER TABLE `pc_extension_install`
-  MODIFY `extension_install_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `extension_install_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `pc_extension_path`
@@ -10941,13 +10093,13 @@ ALTER TABLE `pc_extension_path`
 -- AUTO_INCREMENT for table `pc_filter`
 --
 ALTER TABLE `pc_filter`
-  MODIFY `filter_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `filter_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `pc_filter_group`
 --
 ALTER TABLE `pc_filter_group`
-  MODIFY `filter_group_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `filter_group_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `pc_gdpr`
@@ -10959,19 +10111,19 @@ ALTER TABLE `pc_gdpr`
 -- AUTO_INCREMENT for table `pc_geo_zone`
 --
 ALTER TABLE `pc_geo_zone`
-  MODIFY `geo_zone_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `geo_zone_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `pc_information`
 --
 ALTER TABLE `pc_information`
-  MODIFY `information_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `information_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `pc_language`
 --
 ALTER TABLE `pc_language`
-  MODIFY `language_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `language_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `pc_layout`
@@ -10983,37 +10135,37 @@ ALTER TABLE `pc_layout`
 -- AUTO_INCREMENT for table `pc_layout_module`
 --
 ALTER TABLE `pc_layout_module`
-  MODIFY `layout_module_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `layout_module_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `pc_layout_route`
 --
 ALTER TABLE `pc_layout_route`
-  MODIFY `layout_route_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
+  MODIFY `layout_route_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `pc_length_class`
 --
 ALTER TABLE `pc_length_class`
-  MODIFY `length_class_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `length_class_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `pc_location`
 --
 ALTER TABLE `pc_location`
-  MODIFY `location_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `location_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `pc_manufacturer`
 --
 ALTER TABLE `pc_manufacturer`
-  MODIFY `manufacturer_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `manufacturer_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `pc_marketing`
 --
 ALTER TABLE `pc_marketing`
-  MODIFY `marketing_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `marketing_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `pc_marketing_report`
@@ -11025,7 +10177,7 @@ ALTER TABLE `pc_marketing_report`
 -- AUTO_INCREMENT for table `pc_module`
 --
 ALTER TABLE `pc_module`
-  MODIFY `module_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `module_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `pc_notification`
@@ -11037,13 +10189,13 @@ ALTER TABLE `pc_notification`
 -- AUTO_INCREMENT for table `pc_option`
 --
 ALTER TABLE `pc_option`
-  MODIFY `option_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `option_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `pc_option_value`
 --
 ALTER TABLE `pc_option_value`
-  MODIFY `option_value_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
+  MODIFY `option_value_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
 
 --
 -- AUTO_INCREMENT for table `pc_order`
@@ -11073,7 +10225,7 @@ ALTER TABLE `pc_order_product`
 -- AUTO_INCREMENT for table `pc_order_status`
 --
 ALTER TABLE `pc_order_status`
-  MODIFY `order_status_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `order_status_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `pc_order_subscription`
@@ -11097,19 +10249,19 @@ ALTER TABLE `pc_order_voucher`
 -- AUTO_INCREMENT for table `pc_product`
 --
 ALTER TABLE `pc_product`
-  MODIFY `product_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
+  MODIFY `product_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
 
 --
 -- AUTO_INCREMENT for table `pc_product_discount`
 --
 ALTER TABLE `pc_product_discount`
-  MODIFY `product_discount_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=447;
+  MODIFY `product_discount_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=441;
 
 --
 -- AUTO_INCREMENT for table `pc_product_image`
 --
 ALTER TABLE `pc_product_image`
-  MODIFY `product_image_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2362;
+  MODIFY `product_image_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2352;
 
 --
 -- AUTO_INCREMENT for table `pc_product_option`
@@ -11127,19 +10279,19 @@ ALTER TABLE `pc_product_option_value`
 -- AUTO_INCREMENT for table `pc_product_report`
 --
 ALTER TABLE `pc_product_report`
-  MODIFY `product_report_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `product_report_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `pc_product_reward`
 --
 ALTER TABLE `pc_product_reward`
-  MODIFY `product_reward_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=547;
+  MODIFY `product_reward_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=546;
 
 --
 -- AUTO_INCREMENT for table `pc_product_special`
 --
 ALTER TABLE `pc_product_special`
-  MODIFY `product_special_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=442;
+  MODIFY `product_special_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=440;
 
 --
 -- AUTO_INCREMENT for table `pc_return`
@@ -11151,7 +10303,7 @@ ALTER TABLE `pc_return`
 -- AUTO_INCREMENT for table `pc_return_action`
 --
 ALTER TABLE `pc_return_action`
-  MODIFY `return_action_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `return_action_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `pc_return_history`
@@ -11163,31 +10315,31 @@ ALTER TABLE `pc_return_history`
 -- AUTO_INCREMENT for table `pc_return_reason`
 --
 ALTER TABLE `pc_return_reason`
-  MODIFY `return_reason_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `return_reason_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `pc_return_status`
 --
 ALTER TABLE `pc_return_status`
-  MODIFY `return_status_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `return_status_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `pc_review`
 --
 ALTER TABLE `pc_review`
-  MODIFY `review_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `review_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `pc_seo_url`
 --
 ALTER TABLE `pc_seo_url`
-  MODIFY `seo_url_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=161;
+  MODIFY `seo_url_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=76;
 
 --
 -- AUTO_INCREMENT for table `pc_setting`
 --
 ALTER TABLE `pc_setting`
-  MODIFY `setting_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=880;
+  MODIFY `setting_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=350;
 
 --
 -- AUTO_INCREMENT for table `pc_startup`
@@ -11205,13 +10357,13 @@ ALTER TABLE `pc_statistics`
 -- AUTO_INCREMENT for table `pc_stock_status`
 --
 ALTER TABLE `pc_stock_status`
-  MODIFY `stock_status_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `stock_status_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `pc_store`
 --
 ALTER TABLE `pc_store`
-  MODIFY `store_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `store_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `pc_subscription`
@@ -11229,31 +10381,31 @@ ALTER TABLE `pc_subscription_history`
 -- AUTO_INCREMENT for table `pc_subscription_plan`
 --
 ALTER TABLE `pc_subscription_plan`
-  MODIFY `subscription_plan_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `subscription_plan_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `pc_subscription_status`
 --
 ALTER TABLE `pc_subscription_status`
-  MODIFY `subscription_status_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `subscription_status_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `pc_tax_class`
 --
 ALTER TABLE `pc_tax_class`
-  MODIFY `tax_class_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `tax_class_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `pc_tax_rate`
 --
 ALTER TABLE `pc_tax_rate`
-  MODIFY `tax_rate_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=89;
+  MODIFY `tax_rate_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=88;
 
 --
 -- AUTO_INCREMENT for table `pc_tax_rule`
 --
 ALTER TABLE `pc_tax_rule`
-  MODIFY `tax_rule_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=135;
+  MODIFY `tax_rule_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=129;
 
 --
 -- AUTO_INCREMENT for table `pc_theme`
@@ -11301,13 +10453,13 @@ ALTER TABLE `pc_user_group`
 -- AUTO_INCREMENT for table `pc_user_login`
 --
 ALTER TABLE `pc_user_login`
-  MODIFY `user_login_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=618;
+  MODIFY `user_login_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `pc_voucher`
 --
 ALTER TABLE `pc_voucher`
-  MODIFY `voucher_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `voucher_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `pc_voucher_history`
@@ -11319,25 +10471,25 @@ ALTER TABLE `pc_voucher_history`
 -- AUTO_INCREMENT for table `pc_voucher_theme`
 --
 ALTER TABLE `pc_voucher_theme`
-  MODIFY `voucher_theme_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `voucher_theme_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `pc_weight_class`
 --
 ALTER TABLE `pc_weight_class`
-  MODIFY `weight_class_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `weight_class_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `pc_zone`
 --
 ALTER TABLE `pc_zone`
-  MODIFY `zone_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4443;
+  MODIFY `zone_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4442;
 
 --
 -- AUTO_INCREMENT for table `pc_zone_to_geo_zone`
 --
 ALTER TABLE `pc_zone_to_geo_zone`
-  MODIFY `zone_to_geo_zone_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=111;
+  MODIFY `zone_to_geo_zone_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=109;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

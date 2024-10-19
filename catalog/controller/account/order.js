@@ -9,7 +9,7 @@ module.exports = class OrderController extends Controller {
 		if (!await this.customer.isLogged() || (!(this.request.get['customer_token']) || !(this.session.data['customer_token']) || (this.request.get['customer_token'] != this.session.data['customer_token']))) {
 			this.session.data['redirect'] = await this.url.link('account/order', 'language=' + this.config.get('config_language'));
 
-			this.response.redirect(await this.url.link('account/login', 'language=' + this.config.get('config_language')));
+			this.response.setRedirect(await this.url.link('account/login', 'language=' + this.config.get('config_language')));
 		}
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -82,7 +82,7 @@ module.exports = class OrderController extends Controller {
 			'url': await this.url.link('account/order', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'] + '&page={page}')
 		});
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (order_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (order_total - limit)) ? order_total : (((page - 1) * limit) + limit), order_total, ceil(order_total / limit));
+		data['results'] = sprintf(this.language.get('text_pagination'), (order_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (order_total - limit)) ? order_total : (((page - 1) * limit) + limit), order_total, Math.ceil(order_total / limit));
 
 		data['continue'] = await this.url.link('account/account', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token']);
 
@@ -97,7 +97,7 @@ module.exports = class OrderController extends Controller {
 	}
 
 	/**
-	 * @return object|\Opencart\System\Engine\Action|null
+	 * @return object|Action|null
 	 */
 	async info() {
 		await this.load.language('account/order');
@@ -105,7 +105,7 @@ module.exports = class OrderController extends Controller {
 		if (!await this.customer.isLogged() || (!(this.request.get['customer_token']) || !(this.session.data['customer_token']) || (this.request.get['customer_token'] != this.session.data['customer_token']))) {
 			this.session.data['redirect'] = await this.url.link('account/order', 'language=' + this.config.get('config_language'));
 
-			this.response.redirect(await this.url.link('account/login', 'language=' + this.config.get('config_language')));
+			this.response.setRedirect(await this.url.link('account/login', 'language=' + this.config.get('config_language')));
 		}
 
 		if ((this.request.get['order_id'])) {
@@ -291,7 +291,7 @@ module.exports = class OrderController extends Controller {
 
 				if (subscription_info) {
 					if (subscription_info['trial_status']) {
-						trial_price = this.currency.format(subscription_info['trial_price'] + (this.config.get('config_tax') ? subscription_info['trial_tax'] : 0), order_info['currency_code'], order_info['currency_value']);
+						trial_price = this.currency.format(subscription_info['trial_price'] + (Number(Number(this.config.get('config_tax'))) ? subscription_info['trial_tax'] : 0), order_info['currency_code'], order_info['currency_value']);
 						trial_cycle = subscription_info['trial_cycle'];
 						trial_frequency = this.language.get('text_' + subscription_info['trial_frequency']);
 						trial_duration = subscription_info['trial_duration'];
@@ -299,7 +299,7 @@ module.exports = class OrderController extends Controller {
 						description += sprintf(this.language.get('text_subscription_trial'), trial_price, trial_cycle, trial_frequency, trial_duration);
 					}
 
-					price = this.currency.format(subscription_info['price'] + (this.config.get('config_tax') ? subscription_info['tax'] : 0), order_info['currency_code'], order_info['currency_value']);
+					price = this.currency.format(subscription_info['price'] + (Number(Number(this.config.get('config_tax'))) ? subscription_info['tax'] : 0), order_info['currency_code'], order_info['currency_value']);
 					cycle = subscription_info['cycle'];
 					frequency = this.language.get('text_' + subscription_info['frequency']);
 					duration = subscription_info['duration'];
@@ -319,9 +319,9 @@ module.exports = class OrderController extends Controller {
 					subscription = '';
 				}
 
-				product_info = await this.model_catalog_product.getProduct(product['product_id']);
+				const product_info = await this.model_catalog_product.getProduct(product['product_id']);
 
-				if (product_info) {
+				if (product_info.product_id) {
 					reorder = await this.url.link('account/order+reorder', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'] + '&order_id=' + order_id + '&order_product_id=' + product['order_product_id']);
 				} else {
 					reorder = '';
@@ -334,11 +334,11 @@ module.exports = class OrderController extends Controller {
 					'subscription': subscription,
 					'subscription_description': description,
 					'quantity': product['quantity'],
-					'price': this.currency.format(product['price'] + (this.config.get('config_tax') ? product['tax'] : 0), order_info['currency_code'], order_info['currency_value']),
-					'total': this.currency.format(product['total'] + (this.config.get('config_tax') ? (product['tax'] * product['quantity']) : 0), order_info['currency_code'], order_info['currency_value']),
+					'price': this.currency.format(product['price'] + (Number(Number(this.config.get('config_tax'))) ? product['tax'] : 0), order_info['currency_code'], order_info['currency_value']),
+					'total': this.currency.format(product['total'] + (Number(Number(this.config.get('config_tax'))) ? (product['tax'] * product['quantity']) : 0), order_info['currency_code'], order_info['currency_value']),
 					'href': await this.url.link('product/product', 'language=' + this.config.get('config_language') + '&product_id=' + product['product_id']),
 					'reorder': reorder,
-					'return': await this.url.link('account/returns+add', 'language=' + this.config.get('config_language') + '&order_id=' + order_info['order_id'] + '&product_id=' + product['product_id'])
+					'return': await this.url.link('account/returns.add', 'language=' + this.config.get('config_language') + '&order_id=' + order_info['order_id'] + '&product_id=' + product['product_id'])
 				];
 			}
 
@@ -384,7 +384,7 @@ module.exports = class OrderController extends Controller {
 
 			return null;
 		} else {
-			return new \Opencart\System\Engine\Action('error/not_found');
+			return new Action('error/not_found');
 		}
 	}
 
@@ -438,7 +438,7 @@ module.exports = class OrderController extends Controller {
 			'url': await this.url.link('account/order+history', 'customer_token=' + this.session.data['customer_token'] + '&order_id=' + order_id + '&page={page}')
 		]);
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (order_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (order_total - limit)) ? order_total : (((page - 1) * limit) + limit), order_total, ceil(order_total / limit));
+		data['results'] = sprintf(this.language.get('text_pagination'), (order_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (order_total - limit)) ? order_total : (((page - 1) * limit) + limit), order_total, Math.ceil(order_total / limit));
 
 		return await this.load.view('account/order_history', data);
 	}
@@ -452,7 +452,7 @@ module.exports = class OrderController extends Controller {
 		if (!await this.customer.isLogged() || (!(this.request.get['customer_token']) || !(this.session.data['customer_token']) || (this.request.get['customer_token'] != this.session.data['customer_token']))) {
 			this.session.data['redirect'] = await this.url.link('account/order', 'language=' + this.config.get('config_language'));
 
-			this.response.redirect(await this.url.link('account/login', 'language=' + this.config.get('config_language')));
+			this.response.setRedirect(await this.url.link('account/login', 'language=' + this.config.get('config_language')));
 		}
 
 		if ((this.request.get['order_id'])) {
@@ -477,9 +477,9 @@ module.exports = class OrderController extends Controller {
 			if (order_product_info) {
 				this.load.model('catalog/product',this);
 
-				product_info = await this.model_catalog_product.getProduct(order_product_info['product_id']);
+				const product_info = await this.model_catalog_product.getProduct(order_product_info['product_id']);
 
-				if (product_info) {
+				if (product_info.product_id) {
 					let option_data = [];
 
 					order_options = await this.model_account_order.getOptions(order_product_info['order_id'], order_product_id);
@@ -518,6 +518,6 @@ module.exports = class OrderController extends Controller {
 			}
 		}
 
-		this.response.redirect(await this.url.link('account/order+info', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'] + '&order_id=' + order_id));
+		this.response.setRedirect(await this.url.link('account/order+info', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'] + '&order_id=' + order_id));
 	}
 }

@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Catalog\Model\Account;
-/**
- *
- *
- * @package Opencart\Catalog\Model\Account
- */
-class GdprController extends Model {
+module.exports =class GdprModel extends Model {
 	/**
 	 * @param string code
 	 * @param string email
@@ -14,7 +7,7 @@ class GdprController extends Model {
 	 * @return void
 	 */
 	async addGdpr(code, email, action) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "gdpr` SET `store_id` = '" + this.db.escape(this.config.get('config_store_id')) + "', `language_id` = '" + this.db.escape(this.config.get('config_language_id')) + "', `code` = '" + this.db.escape(code) + "', `email` = '" + this.db.escape(email) + "', `action` = '" + this.db.escape(action) + "', `date_added` = NOW()");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "gdpr` SET `store_id` = " + this.db.escape(this.config.get('config_store_id')) + ", `language_id` = " + this.db.escape(this.config.get('config_language_id')) + ", `code` = " + this.db.escape(code) + ", `email` = " + this.db.escape(email) + ", `action` = " + this.db.escape(action) + ", `date_added` = NOW()");
 	}
 
 	/**
@@ -44,7 +37,7 @@ class GdprController extends Model {
 	 * @return array
 	 */
 	async getGdprByCode(code) {
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "gdpr` WHERE `code` = '" + this.db.escape(code) + "'");
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "gdpr` WHERE `code` = " + this.db.escape(code) + "");
 
 		return query.row;
 	}
@@ -55,7 +48,7 @@ class GdprController extends Model {
 	 * @return array
 	 */
 	async getGdprsByEmail(email) {
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "gdpr` WHERE `email` = '" + this.db.escape(email) + "'");
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "gdpr` WHERE `email` = " + this.db.escape(email) );
 
 		return query.rows;
 	}
@@ -64,7 +57,7 @@ class GdprController extends Model {
 	 * @return array
 	 */
 	async getExpires() {
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "gdpr` WHERE `status` = '2' AND DATE(`date_added`) <= DATE('" + this.db.escape(date('Y-m-d', strtotime('+' + this.config.get('config_gdpr_limit') + ' days'))) + "') ORDER BY `date_added` DESC");
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "gdpr` WHERE `status` = '2' AND DATE(`date_added`) <= DATE(" + this.db.escape(date('Y-m-d', strtotime('+' + this.config.get('config_gdpr_limit') + ' days'))) + ") ORDER BY `date_added` DESC");
 
 		return query.rows;
 	}

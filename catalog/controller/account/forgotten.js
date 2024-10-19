@@ -7,7 +7,7 @@ const data ={};
 		await this.load.language('account/forgotten');
 
 		if (await this.customer.isLogged()) {
-			this.response.redirect(await this.url.link('account/account', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token']));
+			this.response.setRedirect(await this.url.link('account/account', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token']));
 		}
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -58,7 +58,7 @@ const data ={};
 		if (!Object.keys(json).length) {
 			keys = ['email'];
 
-			for (keys as key) {
+			for (let key of keys) {
 				if (!(this.request.post[key])) {
 					this.request.post[key] = '';
 				}
@@ -104,7 +104,7 @@ const data ={};
 		}
 
 		if (await this.customer.isLogged()) {
-			this.response.redirect(await this.url.link('account/account', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token']));
+			this.response.setRedirect(await this.url.link('account/account', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token']));
 		}
 
 		this.load.model('account/customer');
@@ -116,7 +116,7 @@ const data ={};
 
 			this.session.data['error'] = this.language.get('error_code');
 
-			this.response.redirect(await this.url.link('account/login', 'language=' + this.config.get('config_language')));
+			this.response.setRedirect(await this.url.link('account/login', 'language=' + this.config.get('config_language')));
 		}
 
 		this.document.setTitle(this.language.get('heading_reset'));
@@ -202,7 +202,7 @@ const data ={};
 				'confirm'
 			];
 
-			for (keys as key) {
+			for (let key of keys) {
 				if (!(this.request.post[key])) {
 					this.request.post[key] = '';
 				}

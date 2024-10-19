@@ -1,4 +1,4 @@
-module.exports = class CurrencyController extends Model {
+module.exports = class CurrencyModel extends Model {
 	/**
 	 * @param string code
 	 * @param  value

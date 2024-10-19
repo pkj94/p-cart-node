@@ -9,6 +9,7 @@ module.exports = {
     'db_password': DB_PASSWORD,
     'db_database': DB_DATABASE,
     'db_port': DB_PORT,
+    'db_debug': DB_DEBUG,
     // Session
     'session_autostart': true,
     'session_engine': 'db', // db or file

@@ -1,16 +1,9 @@
-<?php
-namespace Opencart\Catalog\Controller\Api\Localisation;
-/**
- *
- *
- * @package Opencart\Catalog\Controller\Api\Localisation
- */
-class CurrencyController extends Controller {
+module.exports = class CurrencyController extends Controller {
 	/**
 	 * @return void
 	 */
 	async index() {
-const data ={};
+		const data = {};
 		await this.load.language('api/localisation/currency');
 
 		const json = {};
@@ -21,7 +14,7 @@ const data ={};
 			currency = '';
 		}
 
-		this.load.model('localisation/currency',this);
+		this.load.model('localisation/currency', this);
 
 		currency_info = await this.model_localisation_currency.getCurrencyByCode(currency);
 
@@ -34,7 +27,7 @@ const data ={};
 
 			json['success'] = this.language.get('text_success');
 		}
-
+		await this.session.save(this.session.data);
 		this.response.addHeader('Content-Type: application/json');
 		this.response.setOutput(json);
 	}

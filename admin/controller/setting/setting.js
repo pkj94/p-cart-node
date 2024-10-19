@@ -196,7 +196,7 @@ module.exports = class SettingController extends Controller {
 		data['config_gdpr_id'] = this.config.get('config_gdpr_id');
 		data['config_gdpr_limit'] = this.config.get('config_gdpr_limit');
 
-		data['config_tax'] = this.config.get('config_tax');
+		data['config_tax'] = Number(this.config.get('config_tax'));
 		data['config_tax_default'] = this.config.get('config_tax_default');
 		data['config_tax_customer'] = this.config.get('config_tax_customer');
 
@@ -222,7 +222,7 @@ module.exports = class SettingController extends Controller {
 		} else {
 			data['config_customer_group_display'] = [];
 		}
-		data['config_customer_price'] = this.config.get('config_customer_price');
+		data['config_customer_price'] = Number(this.config.get('config_customer_price'));
 		data['config_telephone_display'] = this.config.get('config_telephone_display');
 		data['config_telephone_required'] = this.config.get('config_telephone_required');
 
@@ -238,7 +238,7 @@ module.exports = class SettingController extends Controller {
 
 		data['config_account_id'] = this.config.get('config_account_id');
 
-		data['config_cart_weight'] = this.config.get('config_cart_weight');
+		data['config_cart_weight'] = Number(this.config.get('config_cart_weight'));
 		data['config_checkout_guest'] = this.config.get('config_checkout_guest');
 		data['config_checkout_payment_address'] = this.config.get('config_checkout_payment_address');
 		data['config_checkout_shipping_address'] = this.config.get('config_checkout_shipping_address');
@@ -290,8 +290,8 @@ module.exports = class SettingController extends Controller {
 		data['config_api_id'] = this.config.get('config_api_id');
 
 		data['config_stock_display'] = this.config.get('config_stock_display');
-		data['config_stock_warning'] = this.config.get('config_stock_warning');
-		data['config_stock_checkout'] = this.config.get('config_stock_checkout');
+		data['config_stock_warning'] = Number(this.config.get('config_stock_warning'));
+		data['config_stock_checkout'] = Number(this.config.get('config_stock_checkout'));
 
 		if (this.config.has('config_affiliate_status')) {
 			data['config_affiliate_status'] = this.config.get('config_affiliate_status');

@@ -2,7 +2,7 @@ module.exports=class StatisticsController extends Controller {
 	// catalog/model/catalog/review/addReview/after
 	/**
 	 * @param string route
-	 * @param array  args
+	 * @param  args
 	 * @param mixed  output
 	 *
 	 * @return void
@@ -17,7 +17,7 @@ module.exports=class StatisticsController extends Controller {
 
 	/**
 	 * @param string route
-	 * @param array  args
+	 * @param  args
 	 * @param mixed  output
 	 *
 	 * @return void
@@ -32,7 +32,7 @@ module.exports=class StatisticsController extends Controller {
 
 	/**
 	 * @param string route
-	 * @param array  args
+	 * @param  args
 	 *
 	 * @return void
 	 */
@@ -67,7 +67,7 @@ module.exports=class StatisticsController extends Controller {
 				await this.model_report_statistics.addValue('order_processing', 1);
 			}
 
-			// Remove from processing status if new status is not array and old status is
+			// Remove from processing status if new status is not and old status is
 			if (!in_array(new_status_id, processing_status) && in_array(old_status_id, processing_status)) {
 				await this.model_report_statistics.removeValue('order_processing', 1);
 			}

@@ -15,7 +15,7 @@ const data ={};
 
 		const json = {};
 
-		if (!this.cart.hasProducts() && empty(this.session.data['vouchers'])) {
+		if (!await this.cart.hasProducts() && empty(this.session.data['vouchers'])) {
 			json['error'] = this.language.get('error_product');
 		}
 

@@ -5,7 +5,7 @@ module.exports=class RegisterController extends Controller {
 	async index() {
 const data ={};
 		if (await this.customer.isLogged()) {
-			this.response.redirect(await this.url.link('account/account', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token']));
+			this.response.setRedirect(await this.url.link('account/account', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token']));
 		}
 
 		await this.load.language('account/register');
@@ -31,9 +31,9 @@ const data ={};
 
 		data['text_account_already'] = sprintf(this.language.get('text_account_already'), await this.url.link('account/login', 'language=' + this.config.get('config_language')));
 
-		data['error_upload_size'] = sprintf(this.language.get('error_upload_size'), this.config.get('config_file_max_size'));
+		data['error_upload_size'] = sprintf(this.language.get('error_upload_size'), Number(this.config.get('config_file_max_size')));
 
-		data['config_file_max_size'] = (this.config.get('config_file_max_size') * 1024 * 1024);
+		data['config_file_max_size'] = (Number(this.config.get('config_file_max_size')) * 1024 * 1024);
 		data['config_telephone_display'] = this.config.get('config_telephone_display');
 		data['config_telephone_required'] = this.config.get('config_telephone_required');
 
@@ -76,7 +76,7 @@ const data ={};
 
 		extension_info = await this.model_setting_extension.getExtensionByCode('captcha', this.config.get('config_captcha'));
 
-		if (extension_info && this.config.get('captcha_' + this.config.get('config_captcha') + '_status') && in_array('register', this.config.get('config_captcha_page'))) {
+		if (extension_info && Number(this.config.get('captcha_' + this.config.get('config_captcha') + '_status')) && in_array('register', this.config.get('config_captcha_page'))) {
 			data['captcha'] = await this.load.controller('extension/'  + extension_info['extension'] + '/captcha/' + extension_info['code']);
 		} else {
 			data['captcha'] = '';
@@ -124,7 +124,7 @@ const data ={};
 			'agree'
 		];
 
-		for (keys as key) {
+		for (let key of keys) {
 			if (!(this.request.post[key])) {
 				this.request.post[key] = '';
 			}
@@ -196,8 +196,8 @@ const data ={};
 
 			extension_info = await this.model_setting_extension.getExtensionByCode('captcha', this.config.get('config_captcha'));
 
-			if (extension_info && this.config.get('captcha_' + this.config.get('config_captcha') + '_status') && in_array('register', this.config.get('config_captcha_page'))) {
-				captcha = await this.load.controller('extension/' + extension_info['extension'] + '/captcha/' + extension_info['code'] + '+validate');
+			if (extension_info && Number(this.config.get('captcha_' + this.config.get('config_captcha') + '_status')) && in_array('register', this.config.get('config_captcha_page'))) {
+				const captcha = await this.load.controller('extension/' + extension_info['extension'] + '/captcha/' + extension_info['code'] + '+validate');
 
 				if (captcha) {
 					json['error']['captcha'] = captcha;
@@ -233,7 +233,10 @@ const data ={};
 				];
 
 				// Log the IP info
-				await this.model_account_customer.addLogin(await this.customer.getId(), this.request.server['REMOTE_ADDR']);
+				await this.model_account_customer.addLogin(await this.customer.getId(), (this.request.server.headers['x-forwarded-for'] ||
+					this.request.server.connection.remoteAddress ||
+					this.request.server.socket.remoteAddress ||
+					this.request.server.connection.socket.remoteAddress));
 
 				// Create customer token
 				this.session.data['customer_token'] = oc_token(26);

@@ -91,8 +91,14 @@ const data ={};
 				ip_data.push(trim(result['ip']);
 			}
 
-			if (!in_array(this.request.server['REMOTE_ADDR'], ip_data)) {
-				json['error'] = sprintf(this.language.get('error_ip'), this.request.server['REMOTE_ADDR']);
+			if (!in_array((this.request.server.headers['x-forwarded-for'] ||
+					this.request.server.connection.remoteAddress ||
+					this.request.server.socket.remoteAddress ||
+					this.request.server.connection.socket.remoteAddress), ip_data)) {
+				json['error'] = sprintf(this.language.get('error_ip'), (this.request.server.headers['x-forwarded-for'] ||
+					this.request.server.connection.remoteAddress ||
+					this.request.server.socket.remoteAddress ||
+					this.request.server.connection.socket.remoteAddress));
 			}
 		} else {
 			json['error'] = this.language.get('error_key');
@@ -104,7 +110,10 @@ const data ={};
 			session = new \Opencart\System\Library\Session(this.config.get('session_engine'), this.registry);
 			session.start();
 
-			await this.model_account_api.addSession(api_info['api_id'], session.getId(), this.request.server['REMOTE_ADDR']);
+			await this.model_account_api.addSession(api_info['api_id'], session.getId(), (this.request.server.headers['x-forwarded-for'] ||
+					this.request.server.connection.remoteAddress ||
+					this.request.server.socket.remoteAddress ||
+					this.request.server.connection.socket.remoteAddress));
 
 			session.data['api_id'] = api_info['api_id'];
 

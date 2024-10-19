@@ -1,4 +1,4 @@
-module.exports=class SubscriptionPlanController extends Model {
+module.exports=class SubscriptionPlanModel extends Model {
 	/**
 	 * @param subscription_plan_id
 	 *
@@ -11,7 +11,7 @@ module.exports=class SubscriptionPlanController extends Model {
 	}
 
 	/**
-	 * @param array data
+	 * @param data
 	 *
 	 * @return array
 	 */
@@ -19,12 +19,12 @@ module.exports=class SubscriptionPlanController extends Model {
 		const sql = "SELECT * FROM `" + DB_PREFIX + "subscription_plan` `sp` LEFT JOIN `" + DB_PREFIX + "subscription_plan_description` `spd` ON (`sp`.`subscription_plan_id` = `spd`.`subscription_plan_id`) WHERE `spd`.`language_id` = '" + this.config.get('config_language_id') + "'";
 
 		if ((data['filter_name'])) {
-			sql += " AND spd.`name` LIKE '" + this.db.escape(data['filter_name'] + '%') + "'";
+			sql += " AND spd.`name` LIKE " + this.db.escape(data['filter_name'] + '%') ;
 		}
 
 		sort_data = [
 			'spd+name',
-			'sp+sort_order'
+			'sp.sort_order'
 		];
 
 		if ((data['sort']) && sort_data.includes(data['sort'])) {
