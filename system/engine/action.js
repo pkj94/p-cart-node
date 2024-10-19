@@ -26,7 +26,7 @@ module.exports = class Action {
             if (!fs.existsSync(className)) {
                 // console.log('className----===',className)
                 let classT = this.class.split('opencart/')[1].split('/').reverse().map(a => ucfirst(a)).join('');
-                // console.log('classT----===',classT)
+                // console.log('classT----===', classT, typeof global[classT + 'Controller'])
                 if (global[classT + 'Controller']) {
                     try {
                         let controller = new (global[classT + 'Controller'])(registry);
@@ -34,19 +34,21 @@ module.exports = class Action {
                         if (typeof controller[this.method] == 'function') {
                             resolve(await controller[this.method](...args));
                         } else {
-                            resolve('')
+                            resolve('');
                         }
                     } catch (e) {
                         console.log('errror', classT, e)
                         reject(new Error(`Error: Could not call route ${this.route}!`));
                     }
+                } else {
+                    resolve('');
                 }
             } else {
                 try {
                     const ControllerClass = require(`${className}`);
                     const controller = new ControllerClass(registry);
                     // if (this.route.indexOf('theme') >= 0)
-                    //     console.log(className)
+                    // console.log(className)
                     if (typeof controller[this.method] == 'function') {
                         resolve(await controller[this.method](...args));
                     } else {

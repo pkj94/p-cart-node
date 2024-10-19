@@ -9,7 +9,7 @@ module.exports = class ShippingController extends Controller {
 	 */
 	async index() {
 		const data = {};
-		if (this.config.get('total_shipping_status') && this.config.get('total_shipping_estimator') && await this.cart.hasShipping()) {
+		if (Number(this.config.get('total_shipping_status')) && Number(this.config.get('total_shipping_estimator')) && await this.cart.hasShipping()) {
 			await this.load.language('extension/opencart/total/shipping');
 
 			if ((this.session.data['shipping_address'])) {
@@ -46,7 +46,7 @@ module.exports = class ShippingController extends Controller {
 	async quote() {
 		await this.load.language('extension/opencart/total/shipping');
 
-		const json = {};
+		const json = {error:{}};
 
 		let keys = [
 			'postcode',
@@ -84,7 +84,7 @@ module.exports = class ShippingController extends Controller {
 			json['error']['zone'] = this.language.get('error_zone');
 		}
 
-		if (!json.error) {
+		if (!Object.keys(json.error).length) {
 			let country = '';
 			let iso_code_2 = '';
 			let iso_code_3 = '';

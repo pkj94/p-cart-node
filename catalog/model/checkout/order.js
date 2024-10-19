@@ -181,13 +181,13 @@ module.exports=class OrderModel extends Model {
 		if (order_query.num_rows) {
 			order_data = order_query.row;
 
-			this.load.model('localisation/country');
-			this.load.model('localisation/zone');
+			this.load.model('localisation/country',this);
+			this.load.model('localisation/zone',this);
 
 			order_data['custom_field'] = JSON.parse(order_query.row['custom_field'], true);
 
 			for (['payment', 'shipping'] as column) {
-				country_info = await this.model_localisation_country.getCountry(order_query.row[column + '_country_id']);
+				const country_info = await this.model_localisation_country.getCountry(order_query.row[column + '_country_id']);
 
 				if (country_info) {
 					order_data[column + '_iso_code_2'] = country_info['iso_code_2'];

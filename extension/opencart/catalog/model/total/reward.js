@@ -19,7 +19,7 @@ module.exports = class RewardModel extends Model {
 
 				let points_total = 0;
 
-				for (let product of await this.cart.getProducts()) {
+				for (let [cart_id,product] of Object.entries(await this.cart.getProducts())) {
 					if (product['points']) {
 						points_total += product['points'];
 					}
@@ -27,7 +27,7 @@ module.exports = class RewardModel extends Model {
 
 				points = Math.min(points, points_total);
 
-				for (let product of await this.cart.getProducts()) {
+				for (let [cart_id,product] of Object.entries(await this.cart.getProducts())) {
 					let discount = 0;
 
 					if (product['points']) {

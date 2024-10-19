@@ -30,6 +30,7 @@
     "express-fileupload": "^1.5.1",
     "express-http-proxy": "^2.0.0",
     "express-session": "^1.18.0",
+    "glob": "^11.0.0",
     "html-entities": "^2.5.2",
     "locutus": "^2.0.32",
     "memcache": "^0.3.0",

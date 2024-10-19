@@ -62,7 +62,7 @@ module.exports = class CartCommonController extends Controller {
 				}
 
 				let cycle = product['subscription']['cycle'];
-				frequency = this.language.get('text_' + product['subscription']['frequency']);
+				let frequency = this.language.get('text_' + product['subscription']['frequency']);
 				let duration = product['subscription']['duration'];
 
 				if (duration) {

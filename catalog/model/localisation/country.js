@@ -39,7 +39,7 @@ module.exports =class CountryModel extends Model {
 	async getCountryByIsoCode3(iso_code_3) {
 		const sql = "SELECT * FROM `" + DB_PREFIX + "country` WHERE `iso_code_3` = '" + this.db.escape(iso_code_3) + "' AND `status` = '1'";
 
-		country_data = await this.cache.get('country+'+ md5(sql));
+		let country_data = await this.cache.get('country+'+ md5(sql));
 
 		if (!country_data) {
 			const query = await this.db.query(sql);
@@ -58,7 +58,7 @@ module.exports =class CountryModel extends Model {
 	async getCountries() {
 		const sql = "SELECT *, c.`name` FROM `" + DB_PREFIX + "country` c LEFT JOIN `" + DB_PREFIX + "address_format` `af` ON (c.`address_format_id` = af.`address_format_id`) WHERE `c`.`status` = '1' ORDER BY `c`.`name` ASC";
 
-		country_data = await this.cache.get('country+'+ md5(sql));
+		let country_data = await this.cache.get('country+'+ md5(sql));
 
 		if (!country_data) {
 			const query = await this.db.query(sql);

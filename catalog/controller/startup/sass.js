@@ -7,7 +7,7 @@ module.exports = class SassController extends Controller {
 	 * @throws \ScssPhp\ScssPhp\Exception\SassException
 	 */
 	async index() {
-		let files = fs.globSync(DIR_APPLICATION + 'view/stylesheet/*.scss');
+		let files = require('glob').sync(DIR_APPLICATION + 'view/stylesheet/*.scss');
 		if (files.length) {
 			for (let file of files) {
 				// Get the filename

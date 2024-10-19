@@ -21,7 +21,6 @@ module.exports = class CartController extends Controller {
 			'text': this.language.get('heading_title'),
 			'href': await this.url.link('checkout/cart', 'language=' + this.config.get('config_language'))
 		});
-
 		if (await this.cart.hasProducts() || (this.session.data['vouchers'] && this.session.data['vouchers'].length)) {
 			if (!await this.cart.hasStock() && (!Number(this.config.get('config_stock_checkout')) || Number(this.config.get('config_stock_warning')))) {
 				data['error_warning'] = this.language.get('error_stock');
@@ -53,18 +52,16 @@ module.exports = class CartController extends Controller {
 				data['weight'] = '';
 			}
 
-			data['list'] = await this.load.controller('checkout/cart.getList');
+			data['list'] = await this.getList();
 
 			data['modules'] = [];
 
 			this.load.model('setting/extension', this);
 
 			const extensions = await this.model_setting_extension.getExtensionsByType('total');
-
 			for (let extension of extensions) {
 				const result = await this.load.controller('extension/' + extension['extension'] + '/total/' + extension['code']);
-
-				if (!result instanceof Exception) {
+				if (result) {
 					data['modules'].push(result);
 				}
 			}
@@ -131,7 +128,6 @@ module.exports = class CartController extends Controller {
 		this.load.model('checkout/cart', this);
 
 		let products = await this.model_checkout_cart.getProducts();
-
 		for (let product of products) {
 			if (!product['minimum']) {
 				data['error_warning'] = sprintf(this.language.get('error_minimum'), product['name'], product['minimum']);
@@ -144,8 +140,7 @@ module.exports = class CartController extends Controller {
 			}
 
 			let description = '';
-
-			if (product['subscription']) {
+			if (product['subscription'].subscription_plan_id) {
 				if (product['subscription']['trial_status']) {
 					let trial_price = this.currency.format(this.tax.calculate(product['subscription']['trial_price'], product['tax_class_id'], Number(Number(this.config.get('config_tax')))), this.session.data['currency']);
 					let trial_cycle = product['subscription']['trial_cycle'];
@@ -203,11 +198,12 @@ module.exports = class CartController extends Controller {
 		let totals = [];
 		let taxes = await this.cart.getTaxes();
 		let total = 0;
-
 		// Display prices
 		if (await this.customer.isLogged() || !Number(this.config.get('config_customer_price'))) {
-			await this.model_checkout_cart.getTotals(totals, taxes, total);
-
+			let totalData = await this.model_checkout_cart.getTotals(totals, taxes, total);
+			total = totalData.total;
+			taxes = totalData.taxes;
+			totals = totalData.totals;
 			for (let result of totals) {
 				data['totals'].push({
 					'title': result['title'],
@@ -335,7 +331,7 @@ module.exports = class CartController extends Controller {
 			// Handles single item update
 			await this.cart.update(key, quantity);
 
-			if (await this.cart.hasProducts()(this.session.data['vouchers'] && this.session.data['vouchers'].length)) {
+			if (await this.cart.hasProducts() || (this.session.data['vouchers'] && this.session.data['vouchers'].length)) {
 				json['success'] = this.language.get('text_edit');
 			} else {
 				json['redirect'] = await this.url.link('checkout/cart', 'language=' + this.config.get('config_language'), true);
@@ -372,7 +368,7 @@ module.exports = class CartController extends Controller {
 		if (!Object.keys(json).length) {
 			await this.cart.remove(key);
 
-			if (await this.cart.hasProducts()(this.session.data['vouchers'] && this.session.data['vouchers'].length)) {
+			if (await this.cart.hasProducts() || (this.session.data['vouchers'] && this.session.data['vouchers'].length)) {
 				json['success'] = this.language.get('text_remove');
 			} else {
 				json['redirect'] = await this.url.link('checkout/cart', 'language=' + this.config.get('config_language'), true);

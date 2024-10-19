@@ -10,7 +10,6 @@ module.exports = class SubTotalModel extends Model {
 		await this.load.language('extension/opencart/total/sub_total');
 
 		let sub_total = await this.cart.getSubTotal();
-		console.log('sub_total---', sub_total)
 		if (this.session.data['vouchers'] && this.session.data['vouchers'].length) {
 			for (let voucher of this.session.data['vouchers']) {
 				sub_total += voucher['amount'];

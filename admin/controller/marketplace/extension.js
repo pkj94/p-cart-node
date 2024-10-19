@@ -32,7 +32,7 @@ module.exports = class ExtensionController extends Controller {
 
 		this.load.model('setting/extension', this);
 
-		let files = fs.globSync(DIR_APPLICATION + 'controller/extension/*.js');
+		let files = require('glob').sync(DIR_APPLICATION + 'controller/extension/*.js');
 		for (let file of files) {
 			let extension = expressPath.basename(file,'.js');
 			await this.load.language('extension/' + extension, extension);

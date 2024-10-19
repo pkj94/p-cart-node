@@ -1,3 +1,5 @@
+const sprintf = require("locutus/php/strings/sprintf");
+
 module.exports = class CouponModel extends Model {
 	/**
 	 * @param totals

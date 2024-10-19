@@ -96,7 +96,7 @@ module.exports = class DeveloperCommonController extends Controller {
 				fs.unlinkSync(file);
 			}
 			 
-			files = fs.globSync(DIR_CATALOG  + 'view/theme/*/stylesheet/scss/bootstrap.scss');
+			files = require('glob').sync(DIR_CATALOG  + 'view/theme/*/stylesheet/scss/bootstrap.scss');
 			 
 			for (files of file) {
 				file = substr(file, 0, -20) + '/bootstrap.css';

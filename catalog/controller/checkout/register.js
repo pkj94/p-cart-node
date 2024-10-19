@@ -123,7 +123,7 @@ const data ={};
 			data['shipping_custom_field'] = [];
 		}
 
-		this.load.model('localisation/country');
+		this.load.model('localisation/country',this);
 
 		data['countries'] = await this.model_localisation_country.getCountries();
 
@@ -299,7 +299,7 @@ const data ={};
 					json['error']['payment_city'] = this.language.get('error_city');
 				}
 
-				this.load.model('localisation/country');
+				this.load.model('localisation/country',this);
 
 				payment_country_info = await this.model_localisation_country.getCountry(this.request.post['payment_country_id']);
 
@@ -347,7 +347,7 @@ const data ={};
 					json['error']['shipping_city'] = this.language.get('error_city');
 				}
 
-				this.load.model('localisation/country');
+				this.load.model('localisation/country',this);
 
 				shipping_country_info = await this.model_localisation_country.getCountry(this.request.post['shipping_country_id']);
 
@@ -455,7 +455,7 @@ const data ={};
 					address_format = '';
 				}
 
-				this.load.model('localisation/zone');
+				this.load.model('localisation/zone',this);
 
 				zone_info = await this.model_localisation_zone.getZone(this.request.post['payment_zone_id']);
 
@@ -534,7 +534,7 @@ const data ={};
 						address_format = '';
 					}
 
-					this.load.model('localisation/zone');
+					this.load.model('localisation/zone',this);
 
 					zone_info = await this.model_localisation_zone.getZone(this.request.post['shipping_zone_id']);
 

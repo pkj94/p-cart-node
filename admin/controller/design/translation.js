@@ -358,12 +358,12 @@ module.exports = class TranslationController extends Controller {
 				}
 			}
 
-			path = fs.globSync(DIR_EXTENSION + '*/catalog/language/' + language_info['code'] + '/*');
+			path = require('glob').sync(DIR_EXTENSION + '*/catalog/language/' + language_info['code'] + '/*');
 
 			while (path.length != 0) {
 				next = path.shift();
 
-				for (let file of fs.globSync(next + '/*')) {
+				for (let file of require('glob').sync(next + '/*')) {
 					if (fs.lstatSync(file).isDirectory()) {
 						path.push(file);
 					}

@@ -16,7 +16,7 @@ module.exports = class FlatModel extends Model {
 		} else {
 			status = false;
 		}
-
+		console.log('status---',status,query)
 		let method_data = {};
 
 		if (status) {

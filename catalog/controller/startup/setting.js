@@ -28,7 +28,7 @@ module.exports = class SettingController extends Controller {
 
 		// Settings
 		this.load.model('setting/setting', this);
-
+		console.log(this.model_setting_setting);
 		const results = await this.model_setting_setting.getSettings(this.config.get('config_store_id'));
 		for (let result of results) {
 			if (!result['serialized']) {

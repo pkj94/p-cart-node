@@ -12,7 +12,7 @@ module.exports = class TaxModel extends Model {
 				totals.push({
 					'extension': 'opencart',
 					'code': 'tax',
-					'title': this.tax.getRateName(key),
+					'title': await this.tax.getRateName(key),
 					'value': Number(value),
 					'sort_order': this.config.get('total_tax_sort_order')
 				});

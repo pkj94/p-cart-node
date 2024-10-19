@@ -1,4 +1,4 @@
-module.exports =class ZoneModel extends Model {
+module.exports = class ZoneModel extends Model {
 	/**
 	 * @param zone_id
 	 *
@@ -18,7 +18,7 @@ module.exports =class ZoneModel extends Model {
 	async getZonesByCountryId(country_id) {
 		const sql = "SELECT * FROM `" + DB_PREFIX + "zone` WHERE `country_id` = '" + country_id + "' AND `status` = '1' ORDER BY `name`";
 
-		zone_data = await this.cache.get('zone+' + md5(sql));
+		let zone_data = await this.cache.get('zone+' + md5(sql));
 
 		if (!zone_data) {
 			const query = await this.db.query(sql);

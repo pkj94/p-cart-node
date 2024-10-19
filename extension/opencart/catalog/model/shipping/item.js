@@ -22,7 +22,7 @@ module.exports = class ItemModel extends Model {
 		if (status) {
 			let items = 0;
 
-			for (let product of await this.cart.getProducts()) {
+			for (let [cart_id,product] of Object.entries(await this.cart.getProducts())) {
 				if (product['shipping']) {
 					items += product['quantity'];
 				}

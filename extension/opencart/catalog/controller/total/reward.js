@@ -12,7 +12,7 @@ module.exports = class RewardController extends Controller {
 
 			let points_total = 0;
 
-			for (let product of await this.cart.getProducts()) {
+			for (let [cart_id,product] of Object.entries(await this.cart.getProducts())) {
 				if (product['points']) {
 					points_total += product['points'];
 				}
@@ -59,7 +59,7 @@ module.exports = class RewardController extends Controller {
 
 		let points_total = 0;
 
-		for (let product of await this.cart.getProducts()) {
+		for (let [cart_id,product] of Object.entries(await this.cart.getProducts())) {
 			if (product['points']) {
 				points_total += product['points'];
 			}

@@ -32,8 +32,8 @@ module.exports = class ShippingTotalController extends Controller {
 		data['save'] = await this.url.link('extension/opencart/total/shipping.save', 'user_token=' + this.session.data['user_token']);
 		data['back'] = await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=total');
 
-		data['total_shipping_estimator'] = this.config.get('total_shipping_estimator');
-		data['total_shipping_status'] = this.config.get('total_shipping_status');
+		data['total_shipping_estimator'] = Number(this.config.get('total_shipping_estimator'));
+		data['total_shipping_status'] = Number(this.config.get('total_shipping_status'));
 		data['total_shipping_sort_order'] = this.config.get('total_shipping_sort_order');
 
 		data['header'] = await this.load.controller('common/header');

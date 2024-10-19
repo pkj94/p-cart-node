@@ -303,8 +303,8 @@ module.exports = class ProductController extends Controller {
 			for (let result of results) {
 				if (result['image'] && fs.existsSync(DIR_IMAGE + html_entity_decode(result['image']))) {
 					data['images'].push({
-						'popup': this.model_tool_image.resize(html_entity_decode(result['image']), Number(this.config.get('config_image_popup_width')), Number(this.config.get('config_image_popup_height'))),
-						'thumb': this.model_tool_image.resize(html_entity_decode(result['image']), Number(this.config.get('config_image_additional_width')), Number(this.config.get('config_image_additional_height')))
+						'popup': await this.model_tool_image.resize(html_entity_decode(result['image']), Number(this.config.get('config_image_popup_width')), Number(this.config.get('config_image_popup_height'))),
+						'thumb': await this.model_tool_image.resize(html_entity_decode(result['image']), Number(this.config.get('config_image_additional_width')), Number(this.config.get('config_image_additional_height')))
 					});
 				}
 			}

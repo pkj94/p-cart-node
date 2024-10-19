@@ -40,7 +40,7 @@ module.exports = class LogController extends Controller {
 
 		data['logs'] = [];
 
-		let files = fs.globSync(DIR_LOGS + '*.log');
+		let files = require('glob').sync(DIR_LOGS + '*.log');
 
 		for (let file of files) {
 			let error = '';

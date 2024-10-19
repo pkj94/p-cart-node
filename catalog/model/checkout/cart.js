@@ -21,9 +21,9 @@ module.exports = class CartModel extends Model {
 				if (option['type'] != 'file') {
 					value = option['value'];
 				} else {
-					upload_info = await this.model_tool_upload.getUploadByCode(option['value']);
+					const upload_info = await this.model_tool_upload.getUploadByCode(option['value']);
 
-					if (upload_info) {
+					if (upload_info.upload_id) {
 						value = upload_info['name'];
 					} else {
 						value = '';
@@ -105,9 +105,7 @@ module.exports = class CartModel extends Model {
 	async getTotals(totals, taxes, total) {
 		this.load.model('setting/extension', this);
 		let results = await this.registry.get('model_setting_extension').getExtensionsByType('total');
-		// console.log(results)
 		results = results.sort((a, b) => a['total_' + a['code'] + '_sort_order'] - b['total_' + b['code'] + '_sort_order']);
-
 		for (let result of results) {
 			if (this.config.get('total_' + result['code'] + '_status')) {
 				this.load.model('extension/' + result['extension'] + '/total/' + result['code'], this);

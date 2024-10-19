@@ -77,7 +77,7 @@ module.exports = class BackupController extends Controller {
 
 		data['histories'] = [];
 
-		let files = fs.globSync(DIR_STORAGE + 'backup/*.sql');
+		let files = require('glob').sync(DIR_STORAGE + 'backup/*.sql');
 
 		for (let file of files) {
 			let size = fs.lstatSync(file).size;

@@ -255,7 +255,7 @@ module.exports = class UserPermissionController extends Controller {
 		while (path.length != 0) {
 			let next = path.shift();
 
-			for (let file of fs.globSync(next + '/*')) {
+			for (let file of require('glob').sync(next + '/*')) {
 				// If directory add to path array
 				if (fs.lstatSync(file).isDirectory()) {
 					path.push(file);

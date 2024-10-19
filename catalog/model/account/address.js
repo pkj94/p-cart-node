@@ -50,9 +50,9 @@ module.exports =class AddressModel extends Model {
 		address_query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "address` WHERE `address_id` = '" + address_id + "' AND `customer_id` = '" + customer_id + "'");
 
 		if (address_query.num_rows) {
-			this.load.model('localisation/country');
+			this.load.model('localisation/country',this);
 
-			country_info = await this.model_localisation_country.getCountry(address_query.row['country_id']);
+			const country_info = await this.model_localisation_country.getCountry(address_query.row['country_id']);
 
 			if (country_info) {
 				country = country_info['name'];
@@ -66,7 +66,7 @@ module.exports =class AddressModel extends Model {
 				address_format = '';
 			}
 
-			this.load.model('localisation/zone');
+			this.load.model('localisation/zone',this);
 
 			zone_info = await this.model_localisation_zone.getZone(address_query.row['zone_id']);
 

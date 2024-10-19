@@ -59,5 +59,6 @@ module.exports = class SessionController extends Controller {
 
 		this.response.addHeader('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
 		this.response.response.cookie(this.config.get('session_name'), session.getId(), option);
+		return true;
 	}
 }

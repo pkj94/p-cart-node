@@ -236,7 +236,7 @@ const data ={};
 			data['zone_id'] = '';
 		}
 
-		this.load.model('localisation/country');
+		this.load.model('localisation/country',this);
 
 		data['countries'] = await this.model_localisation_country.getCountries();
 
@@ -327,9 +327,9 @@ const data ={};
 				json['error']['city'] = this.language.get('error_city');
 			}
 
-			this.load.model('localisation/country');
+			this.load.model('localisation/country',this);
 
-			country_info = await this.model_localisation_country.getCountry(this.request.post['country_id']);
+			const country_info = await this.model_localisation_country.getCountry(this.request.post['country_id']);
 
 			if (country_info && country_info['postcode_required'] && (oc_strlen(this.request.post['postcode']) < 2 || oc_strlen(this.request.post['postcode']) > 10)) {
 				json['error']['postcode'] = this.language.get('error_postcode');
