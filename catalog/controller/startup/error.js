@@ -11,6 +11,7 @@ module.exports = class ErrorController extends Controller {
 		process.on('warning', (warning) => {
 			this.error('Warning', warning.message, warning.fileName, warning.lineNumber);
 		});
+		return true;
 	}
 
 	error(code, message, file, line) {

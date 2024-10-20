@@ -105,7 +105,7 @@ module.exports = class StoreModel extends Model {
 		registry.set('cache', this.cache);
 
 		// Session
-		session = new SessionLibrary(registry);
+		session = new SessionLibrary(this.request.server.session);
 		session.start(this.request.server.sessionID)
 		registry.set('session', session);
 

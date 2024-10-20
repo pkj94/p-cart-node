@@ -4,7 +4,7 @@ module.exports = class StartupController extends Controller {
 	}
 	async index() {
 		// Load startup actions
-		await this.load.model('setting/startup', this);
+		this.load.model('setting/startup', this);
 
 		const results = await this.model_setting_startup.getStartups();
 		// console.log(results)

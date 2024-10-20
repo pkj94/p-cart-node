@@ -7,7 +7,7 @@ module.exports = class LanguageController extends Controller {
 
 	async index() {
 		let code = this.request.cookie.language || this.config.get('config_language_admin');
-		await this.load.model('localisation/language', this);
+		this.load.model('localisation/language', this);
 
 		this.languages = await this.model_localisation_language.getLanguages();
 
@@ -21,7 +21,7 @@ module.exports = class LanguageController extends Controller {
 			this.config.set('config_language_id', language_info.language_id);
 			this.config.set('config_language_admin', language_info.code);
 
-			this.language.load('default');
+			await this.language.load('default');
 		}
 	}
 

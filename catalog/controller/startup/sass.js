@@ -20,5 +20,6 @@ module.exports = class SassController extends Controller {
 				}
 			}
 		}
+		return true;
 	}
 }

@@ -76,13 +76,14 @@ module.exports = class Framework {
         }
         // Session
         if (global.config.get('session_autostart')) {
-            let session = new SessionLibrary(registry);
+            let session = new SessionLibrary(req.session);
             session.start(req.sessionID)
             registry.set('session', session);
 
         }
         // Cache
-        registry.set('cache', new CacheLibrary(global.config.get('cache_engine'), global.config.get('cache_expire')));
+        let cache = new CacheLibrary(global.config.get('cache_engine'), global.config.get('cache_expire'));
+        registry.set('cache', cache);
         // Template
         let template = new TemplateLibrary(global.config.get('template_engine'));
         registry.set('template', template);

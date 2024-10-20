@@ -55,5 +55,6 @@ module.exports = class ExtensionController extends Controller {
 			if (fs.existsSync(`${DIR_EXTENSION}${result.extension}/system/config/`))
 				this.config.addPath(`extension/${result.extension}`, `${DIR_EXTENSION}${result.extension}/system/config/`);
 		}
+		return true;
 	}
 }

@@ -18,5 +18,6 @@ module.exports = class TaxController extends Controller {
 		}
 		// console.log(this.session.data,this.config.get('config_country_id'),this.config.get('config_zone_id'))
 		this.registry.get('tax').setStoreAddress(this.config.get('config_country_id'), this.config.get('config_zone_id'));
+		return true;
 	}
 }

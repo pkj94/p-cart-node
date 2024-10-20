@@ -27,6 +27,8 @@ module.exports = class LanguageController extends Controller {
 
 			await this.load.language('default');
 		}
+
+		return true;
 	}
 
 	// Override the language default values
@@ -61,7 +63,7 @@ module.exports = class LanguageController extends Controller {
 			}
 
 			// Use this.language.load so it's not triggering infinite loops
-			this.language.load(path + route, prefix, code);
+			await this.language.load(path + route, prefix, code);
 		}
 	}
 }

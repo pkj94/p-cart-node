@@ -833,7 +833,7 @@ module.exports = class SettingController extends Controller {
 		this.load.model('setting/extension', this);
 
 		const extension_info = await this.model_setting_extension.getExtensionByCode('theme', theme);
-		console.log(extension_info)
+		// console.log(extension_info)
 		if (extension_info.extension_id) {
 			this.response.setOutput(HTTP_CATALOG + 'extension/' + extension_info['extension'] + '/admin/view/image/' + extension_info['code'] + '.png');
 		} else {

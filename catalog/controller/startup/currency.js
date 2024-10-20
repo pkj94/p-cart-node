@@ -39,5 +39,6 @@ module.exports = class CurrencyController extends Controller {
 
 		await this.session.save(this.session.data);
 		this.registry.set('currency', new (require(DIR_SYSTEM + 'library/cart/currency'))(this.registry));
+		return true;
 	}
 }

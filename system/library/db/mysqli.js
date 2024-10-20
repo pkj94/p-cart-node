@@ -13,17 +13,17 @@ module.exports = class MySQLiDBLibrary {
             debug: debug
         });
 
-        this.insertId=0;
+        this.insertId = 0;
     }
     connect() {
         return new Promise((resolve, reject) => {
-            this.connection.connect((err) => {
+            this.connection.connect(async (err) => {
                 if (err) {
                     reject(new Error(this.error + err.message));
                 } else {
-                    this.query("SET SESSION sql_mode = 'NO_ZERO_IN_DATE,NO_ENGINE_SUBSTITUTION'");
-                    this.query("SET FOREIGN_KEY_CHECKS = 0");
-                    this.query(`SET time_zone = '${date('P')}'`);
+                    await this.query("SET SESSION sql_mode = 'NO_ZERO_IN_DATE,NO_ENGINE_SUBSTITUTION'");
+                    await this.query("SET FOREIGN_KEY_CHECKS = 0");
+                    await this.query(`SET time_zone = '${date('P')}'`);
                     resolve(this.connection)
                 }
             });
@@ -43,9 +43,9 @@ module.exports = class MySQLiDBLibrary {
                         };
                         resolve(result);
                     } else {
-                        if(results.insertId)
+                        if (results.insertId)
                             this.insertId = results.insertId;
-                        resolve(results.insertId||true);
+                        resolve(results.insertId || true);
                     }
                 }
             });

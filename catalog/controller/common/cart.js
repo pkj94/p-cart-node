@@ -7,7 +7,6 @@ module.exports = class CartCommonController extends Controller {
 	async index() {
 		const data = {};
 		await this.load.language('common/cart');
-		console.log('session common cart---', this.session.session_id)
 		let totals = [];
 		let taxes = await this.cart.getTaxes();
 		let total = 0;

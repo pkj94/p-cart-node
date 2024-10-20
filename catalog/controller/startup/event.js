@@ -20,5 +20,6 @@ module.exports = class EventController extends Controller {
 				this.event.register(result.trigger, new Action(result.action), result.sort_order);
 			}
 		}
+		return true;
 	}
 }

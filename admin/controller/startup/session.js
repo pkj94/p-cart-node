@@ -3,7 +3,7 @@ module.exports = class SessionController extends Controller {
 		super(registry)
 	}
 	async index() {
-		const session = new SessionLibrary(this.registry);
+		const session = new SessionLibrary(this.request.server.session);
 		session.start(this.request.server.sessionID)
 		this.registry.set('session', session);
 

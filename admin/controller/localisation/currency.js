@@ -334,7 +334,7 @@ module.exports = class CurrencyController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			console.log('extension/' + extension_info['extension'] + '/currency/' + extension_info['code'] + '.currencyConvert', this.config.get('config_currency'))
+			// console.log('extension/' + extension_info['extension'] + '/currency/' + extension_info['code'] + '.currencyConvert', this.config.get('config_currency'))
 
 			await this.load.controller('extension/' + extension_info['extension'] + '/currency/' + extension_info['code'] + '.currencyConvert', this.config.get('config_currency'));
 

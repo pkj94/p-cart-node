@@ -306,11 +306,11 @@ $(document).on('submit', 'form', function (e) {
         console.log($(element).serialize());
 
         // https://github.com/opencart/opencart/issues/9690
-        if (typeof CKEDITOR != 'undefined') {
-            for (instance in CKEDITOR.instances) {
-                CKEDITOR.instances[instance].updateElement();
-            }
-        }
+        // if (typeof CKEDITOR != 'undefined') {
+        //     for (instance in CKEDITOR.instances) {
+        //         CKEDITOR.instances[instance].updateElement();
+        //     }
+        // }
 
         $.ajax({
             url: action.replaceAll('&amp;', '&'),

@@ -727,7 +727,7 @@ module.exports = class OrderController extends Controller {
 
 		// Delete any old session
 		if ((this.session.data['api_session'])) {
-			let session = new SessionLibrary(this.registry);
+			let session = new SessionLibrary(this.request.server.session);
 			session.start(this.session.data['api_session']);
 			session.destroy();
 		}

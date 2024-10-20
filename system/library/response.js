@@ -18,7 +18,7 @@ module.exports = class ResponseLibrary {
     return this.headers;
   }
   setRedirect(url, status = 302) {
-    console.log(url)
+    // console.log(url)
     this.redirect = (url.replace(/&amp;/g, '&').replace(/\n|\r/g, ''));
   }
   setCompression(level) {

@@ -18,21 +18,22 @@ module.exports = class Loader {
             while (action) {
                 route = action.getId();
                 let result = await this.registry.get('event').trigger(`controller/${route}/before`, [route, args]);
-                if (result instanceof Action) {
+                if (result && result instanceof Action) {
                     action = result;
                 }
                 result = await action.execute(this.registry, args);
                 // console.log('result',result,args)
 
                 action = null;
-                if (result instanceof Action) {
+                if (result && result instanceof Action) {
                     action = result;
                 }
                 if (!action) {
                     output = result;
                 }
                 result = await this.registry.get('event').trigger(`controller/${route}/after`, [route, args, output]);
-                if (result instanceof Action) {
+                
+                if (result && result instanceof Action) {
                     action = result;
                 }
             }

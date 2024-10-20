@@ -11,5 +11,6 @@ module.exports = class ApplicationController extends Controller {
 
 		// Cart
 		this.registry.set('cart', new (require(DIR_SYSTEM + 'library/cart/cart'))(this.registry));
+		return true;
 	}
 }

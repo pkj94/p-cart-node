@@ -4,7 +4,7 @@ module.exports = class SessionController extends Controller {
 	 * @throws \Exception
 	 */
 	async index() {
-		let session = new SessionLibrary(this.registry);
+		let session = new SessionLibrary(this.request.server.session);
 		session.start(this.request.server.sessionID)
 		this.registry.set('session', session);
 

@@ -168,7 +168,7 @@ module.exports = class StoreSettingModel extends Model {
 
 		// Session
 		// let session = new SessionLibrary(config.get('session_engine'), registry);
-		let session = new SessionLibrary(registry);
+		let session = new SessionLibrary(this.request.server.session);
 		session.start(this.request.server.sessionID)
 		registry.set('session', session);
 

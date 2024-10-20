@@ -27,6 +27,7 @@ module.exports = class SeoUrlController extends Controller {
 				}
 			}
 		}
+		return true;
 	}
 
 	/**

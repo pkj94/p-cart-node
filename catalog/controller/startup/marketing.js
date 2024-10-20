@@ -53,5 +53,6 @@ module.exports = class MarketingController extends Controller {
 				}
 			}
 		}
+		return true;
 	}
 }

@@ -3,7 +3,7 @@ module.exports = class SettingController extends Controller {
 		super(registry)
 	}
 	async index() {
-		await this.load.model('setting/setting', this);
+		this.load.model('setting/setting', this);
 
 		// Settings
 		const results = await this.model_setting_setting.getSettings(0);
