@@ -8,7 +8,6 @@ module.exports = class CartLibrary {
         this.weight = registry.get('weight');
         this.request = registry.get('request');
         this.data = {};
-        this.init();
     }
     async init() {
         await this.db.query(`DELETE FROM \`${DB_PREFIX}cart\` WHERE (api_id > 0 OR customer_id = '0') AND date_added < DATE_SUB(NOW(), INTERVAL 1 HOUR)`);
@@ -41,10 +40,10 @@ module.exports = class CartLibrary {
 
                     let option_data = [];
 
-                    let product_options = cart['option']?JSON.parse(cart['option']):{};
+                    let product_options = cart['option'] ? JSON.parse(cart['option']) : {};
 
                     // Merge variant code with options
-                    let variant = product_query.row['variant']?JSON.parse(product_query.row['variant']):{};
+                    let variant = product_query.row['variant'] ? JSON.parse(product_query.row['variant']) : {};
 
                     if (variant) {
                         for (let [key, value] of Object.entries(variant)) {
@@ -236,7 +235,6 @@ module.exports = class CartLibrary {
                     }
 
                     let subscription_data = {};
-
                     const subscription_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_subscription` ps LEFT JOIN `" + DB_PREFIX + "subscription_plan` sp ON (ps.`subscription_plan_id` = sp.`subscription_plan_id`) LEFT JOIN `" + DB_PREFIX + "subscription_plan_description` spd ON (sp.`subscription_plan_id` = spd.`subscription_plan_id`) WHERE ps.`product_id` = '" + cart['product_id'] + "' AND ps.`subscription_plan_id` = '" + cart['subscription_plan_id'] + "' AND ps.`customer_group_id` = '" + this.config.get('config_customer_group_id') + "' AND spd.`language_id` = '" + this.config.get('config_language_id') + "' AND sp.`status` = '1'");
 
                     if (subscription_query.num_rows) {

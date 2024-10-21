@@ -25,12 +25,8 @@ module.exports = class Event {
             // if (event.indexOf('model/setting/startup/after') >= 0)
             //     console.log('1---', event, triggerRegex.test(event), '^' + value.trigger.replace(/\*|\?/g, match => (match === '*' ? '.*' : '.')))
             if (triggerRegex.test(event)) {
-                // if (event.indexOf('model/setting/startup/after') >= 0)
-                //     console.log('2-----', event, triggerRegex.test(event), value)
                 try {
                     const result = await value.action.execute(this.registry, args);
-                    // if (event.indexOf('model/setting/startup/after') >= 0)
-                    //     console.log('3-----', event, result)
                     if (result && result !== null && !(result instanceof Error)) {
                         return result;
                     }

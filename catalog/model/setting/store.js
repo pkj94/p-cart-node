@@ -131,7 +131,6 @@ module.exports = class StoreModel extends Model {
 		}
 
 		let languageLib = new LanguageLibrary(this.config.get('config_language'));
-		registry.set('language', languageLib);
 
 		if (!language_info['extension']) {
 			languageLib.addPath(DIR_LANGUAGE);
@@ -140,7 +139,8 @@ module.exports = class StoreModel extends Model {
 		}
 
 		// Load default language file
-		languageLib.load('default');
+		await languageLib.load('default');
+		registry.set('language', languageLib);
 
 		// Url
 		registry.set('url', new UrlLibrary(config.get('site_url')));

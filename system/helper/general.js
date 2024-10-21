@@ -64,7 +64,7 @@ global.trim = (string) => {
 global.preg_match = (patern, keyword) => {
     return new RegExp(patern).test(keyword);
 }
-global.str_replace = (find, replace, string='') => {
+global.str_replace = (find, replace, string = '') => {
     if (Array.isArray(find)) {
         for (let f of find)
             string = string.replace(f, replace || '');
@@ -190,4 +190,12 @@ global.createStream = (file, position) => {
             reject(err);
         });
     })
+}
+global.getAllMethods = (obj) => {
+    let properties = new Set();
+    let currentObj = obj;
+    do {
+        Object.getOwnPropertyNames(currentObj).map(item => properties.add(item))
+    } while ((currentObj = Object.getPrototypeOf(currentObj)))
+    return [...properties.keys()].filter(item => typeof obj[item] === 'function')
 }

@@ -1,5 +1,4 @@
 const fs = require('fs');
-const Language = require('../../../system/library/language');
 module.exports = class LanguageController extends Controller {
     constructor(registry) {
         super(registry);
@@ -16,7 +15,7 @@ module.exports = class LanguageController extends Controller {
             .filter(dirent => dirent.isDirectory())
             .map(dirent => dirent.name);
         for (const code of languages) {
-            const language = new Language(code);
+            const language = new LanguageLibrary(code);
             language.addPath(DIR_LANGUAGE);
             await language.load(code);
             data.languages.push({

@@ -1,6 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-const Language = require('../../../system/library/language');
 module.exports = class Install extends Controller {
     constructor(registry) {
         super(registry)
@@ -25,7 +24,7 @@ module.exports = class Install extends Controller {
                 this.config.set('language_code', this.request.get.language);
             }
         }
-        const language = new Language(this.config.get('language_code'));
+        const language = new LanguageLibrary(this.config.get('language_code'));
         language.addPath(DIR_LANGUAGE);
         await language.load(this.config.get('language_code'));
         this.registry.set('language', language);

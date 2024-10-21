@@ -108,7 +108,7 @@ module.exports = class Framework {
         // console.log('framework', global.config.get('action_pre_action'))
         for (let pre_action of global.config.get('action_pre_action')) {
             let preActionInstance = new Action(pre_action);
-            let result = await preActionInstance.execute(registry);
+            let result = await preActionInstance.execute(global.registry);
             if (result instanceof Action) {
                 action = result;
                 break;
@@ -140,7 +140,7 @@ module.exports = class Framework {
                 action = result;
             }
             // Execute the action.
-            result = await action.execute(registry, args);
+            result = await action.execute(global.registry, args);
             action = '';
             if (result instanceof Action) {
                 action = result;
@@ -162,9 +162,9 @@ module.exports = class Framework {
         }
         // Output
         // console.log('outputData', response.level)
-        if (global.config.get('db_autostart')) {
-            await registry.get('db').close();
-        }
+        // if (global.config.get('db_autostart')) {
+        //     await registry.get('db').close();
+        // }
         return response.output();
     }
 }

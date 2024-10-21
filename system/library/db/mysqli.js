@@ -11,8 +11,10 @@ module.exports = class MySQLiDBLibrary {
             port: port,
             charset: 'utf8mb4',
             debug: debug
+        }).on('error', async (err, result) => {
+            console.log('error occurred. Reconneting...'.purple);
+            await this.connect();
         });
-
         this.insertId = 0;
     }
     connect() {
@@ -29,26 +31,32 @@ module.exports = class MySQLiDBLibrary {
             });
         });
     }
-    query(sql) {
-        return new Promise((resolve, reject) => {
-            this.connection.query(sql, (error, results) => {
-                if (error) {
-                    reject(new Error(`Error: ${error.message}\nSQL: ${sql}`));
-                } else {
-                    if (Array.isArray(results)) {
-                        const result = {
-                            num_rows: results.length,
-                            row: results[0] || {},
-                            rows: results
-                        };
-                        resolve(result);
+    async query(sql) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                this.connection.query(sql, (error, results) => {
+                    if (error) {
+                        reject(new Error(`Error: ${error.message}\nSQL: ${sql}`));
                     } else {
-                        if (results.insertId)
-                            this.insertId = results.insertId;
-                        resolve(results.insertId || true);
+                        if (Array.isArray(results)) {
+                            const result = {
+                                num_rows: results.length,
+                                row: results[0] || {},
+                                rows: results
+                            };
+                            resolve(result);
+                        } else {
+                            if (results.insertId)
+                                this.insertId = results.insertId;
+                            resolve(results.insertId || true);
+                        }
                     }
-                }
-            });
+                });
+            } catch (e) {
+                console.log('e------', e)
+                await this.connect();
+                resolve(this.query(sql))
+            }
         });
     }
 
@@ -71,7 +79,7 @@ module.exports = class MySQLiDBLibrary {
     close() {
         if (this.connection) {
             this.connection.end();
-            this.connection = null;
+            // this.connection = null;
         }
     }
 }

@@ -10,7 +10,9 @@ module.exports = class ApplicationController extends Controller {
 		this.registry.set('length', new (require(DIR_SYSTEM + 'library/cart/length'))(this.registry));
 
 		// Cart
-		this.registry.set('cart', new (require(DIR_SYSTEM + 'library/cart/cart'))(this.registry));
+		let cart = new (require(DIR_SYSTEM + 'library/cart/cart'))(this.registry);
+		await cart.init();
+		this.registry.set('cart', cart);
 		return true;
 	}
 }

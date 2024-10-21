@@ -32,7 +32,7 @@ module.exports = class Loader {
                     output = result;
                 }
                 result = await this.registry.get('event').trigger(`controller/${route}/after`, [route, args, output]);
-                
+
                 if (result && result instanceof Action) {
                     action = result;
                 }
@@ -63,7 +63,7 @@ module.exports = class Loader {
 
                 const proxy = new Proxy();
 
-                for (const method of Object.getOwnPropertyNames(ModelClass.prototype).filter(method => method !== 'constructor')) {
+                for (const method of getAllMethods(model).filter(method => method !== 'constructor')) {
                     if (!method.startsWith('__') && typeof model[method] === 'function') {
                         proxy[method] = async (...args) => {
                             route = `${route}/${method}`;
@@ -122,9 +122,10 @@ module.exports = class Loader {
 
                 output = await this.registry.get('template').render(route, data, code);
             }
+            // if (route.indexOf('sub_total') >= 0)
+            //     console.log('load view', route, result)
             result = await this.registry.get('event').trigger(`view/${route}/after`, [route, data, output]);
-            // if (route.indexOf('header') >= 0)
-            //     console.log('load view', route,result)
+
             if (result) {
                 output = result;
             }

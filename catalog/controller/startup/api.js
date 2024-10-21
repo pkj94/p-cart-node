@@ -1,4 +1,7 @@
 module.exports = class ApiController extends Controller {
+	constructor(registry) {
+		super(registry);
+	}
 	/**
 	 * @return object|Action|null
 	 */

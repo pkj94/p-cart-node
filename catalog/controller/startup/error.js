@@ -51,7 +51,7 @@ module.exports = class ErrorController extends Controller {
 	}
 
 	exception(error) {
-		// console.log(error)
+		console.log(error)
 		if (this.config.get('config_error_log')) {
 			const logMessage = `${error.code}: ${error.message}\nFile: ${error.fileName}\nLine: ${error.lineNumber}\n`;
 			this.registry.get('log').write(logMessage);
