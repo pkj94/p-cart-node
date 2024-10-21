@@ -22,7 +22,7 @@ module.exports = class Event {
     async trigger(event, args = []) {
         for (let value of this.data) {
             const triggerRegex = new RegExp('^' + value.trigger.replace(/\*|\?/g, match => (match === '*' ? '.*' : '.')));
-            // if (event.indexOf('view/account/account/before') >= 0)
+            // if (event.indexOf('language/account/account/after') >= 0)
             //     console.log('1---', event, triggerRegex.test(event), '^' + value.trigger.replace(/\*|\?/g, match => (match === '*' ? '.*' : '.')))
             if (triggerRegex.test(event)) {
                 try {

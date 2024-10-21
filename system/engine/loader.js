@@ -32,7 +32,8 @@ module.exports = class Loader {
                     output = result;
                 }
                 result = await this.registry.get('event').trigger(`controller/${route}/after`, [route, args, output]);
-
+                if (route == 'account/account')
+                    console.log('controller result----', route, result)
                 if (result && result instanceof Action) {
                     action = result;
                 }
@@ -137,6 +138,7 @@ module.exports = class Loader {
             route = route.replace(/[^a-zA-Z0-9_\-\/]/g, '');
             let output = {};
             let result = await this.registry.get('event').trigger(`language/${route}/before`, [route, prefix, code]);
+
             if (result) {
                 output = result;
             }
@@ -144,6 +146,7 @@ module.exports = class Loader {
                 output = await this.registry.get('language').load(route, prefix, code);
             }
             result = await this.registry.get('event').trigger(`language/${route}/after`, [route, prefix, code, output]);
+            
             if (result) {
                 output = result;
             }
