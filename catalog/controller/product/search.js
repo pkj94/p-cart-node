@@ -404,9 +404,9 @@ if ((this.request.get['limit']) && this.request.get['limit']) {
 				this.load.model('account/search');
 
 				if (await this.customer.isLogged()) {
-					customer_id = await this.customer.getId();
+					const customer_id = await this.customer.getId();
 				} else {
-					customer_id = 0;
+					const customer_id = 0;
 				}
 
 				if (((this.request.server.headers['x-forwarded-for'] ||

@@ -64,7 +64,7 @@ const data ={};
 				}
 			}
 
-			this.load.model('account/customer');
+			this.load.model('account/customer',this);
 
 			customer_info = await this.model_account_customer.getCustomerByEmail(this.request.post['email']);
 
@@ -107,7 +107,7 @@ const data ={};
 			this.response.setRedirect(await this.url.link('account/account', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token']));
 		}
 
-		this.load.model('account/customer');
+		this.load.model('account/customer',this);
 
 		customer_info = await this.model_account_customer.getCustomerByEmail(email);
 
@@ -138,7 +138,7 @@ const data ={};
 			'href' : await this.url.link('account/forgotten+reset', 'language=' + this.config.get('config_language'))
 		];
 
-		this.session.data['reset_token'] = substr(bin2hex(openssl_random_pseudo_bytes(26)), 0, 26);
+		this.session.data['reset_token'] = bin2hex(26);
 
 		data['save'] = await this.url.link('account/forgotten+password', 'language=' + this.config.get('config_language') + '&email=' + encodeURIComponent(email) + '&code=' + code + '&reset_token=' + this.session.data['reset_token']);
 		data['back'] = await this.url.link('account/login', 'language=' + this.config.get('config_language'));
@@ -183,7 +183,7 @@ const data ={};
 			json['redirect'] = await this.url.link('account/forgotten', 'language=' + this.config.get('config_language'), true);
 		}
 
-		this.load.model('account/customer');
+		this.load.model('account/customer',this);
 
 		customer_info = await this.model_account_customer.getCustomerByEmail(email);
 

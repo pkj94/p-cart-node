@@ -1,26 +1,25 @@
-module.exports =class CustomerModel extends Model {
+module.exports = class CustomerModel extends Model {
 	/**
 	 * @param data
 	 *
 	 * @return int
 	 */
 	async addCustomer(data) {
-		if ((data['customer_group_id']) && is_array(this.config.get('config_customer_group_display')) && in_array(data['customer_group_id'], this.config.get('config_customer_group_display'))) {
+		let customer_group_id = this.config.get('config_customer_group_id');
+		if ((data['customer_group_id']) && Array.isArray(this.config.get('config_customer_group_display')) && in_array(data['customer_group_id'], this.config.get('config_customer_group_display'))) {
 			customer_group_id = data['customer_group_id'];
-		} else {
-			customer_group_id = this.config.get('config_customer_group_id');
 		}
 
-		this.load.model('account/customer_group');
+		this.load.model('account/customer_group', this);
 
-		customer_group_info = await this.model_account_customer_group.getCustomerGroup(customer_group_id);
+		const customer_group_info = await this.registry.get('model_account_customer_group').getCustomerGroup(customer_group_id);
 
 		await this.db.query("INSERT INTO `" + DB_PREFIX + "customer` SET `customer_group_id` = '" + customer_group_id + "', `store_id` = '" + this.config.get('config_store_id') + "', `language_id` = '" + this.config.get('config_language_id') + "', `firstname` = " + this.db.escape(data['firstname']) + ", `lastname` = " + this.db.escape(data['lastname']) + ", `email` = " + this.db.escape(data['email']) + ", `telephone` = " + this.db.escape(data['telephone']) + ", `custom_field` = " + this.db.escape((data['custom_field']) ? json_encode(data['custom_field']) : '') + ", `password` = " + this.db.escape(await password_hash(html_entity_decode(data['password']))) + ", `newsletter` = '" + ((data['newsletter']) ? data['newsletter'] : 0) + "', `ip` = " + this.db.escape((this.request.server.headers['x-forwarded-for'] ||
-					this.request.server.connection.remoteAddress ||
-					this.request.server.socket.remoteAddress ||
-					this.request.server.connection.socket.remoteAddress)) + ", `status` = '" + !customer_group_info['approval'] + "', `date_added` = NOW()");
+			this.request.server.connection.remoteAddress ||
+			this.request.server.socket.remoteAddress ||
+			this.request.server.connection.socket.remoteAddress)) + ", `status` = '" + !customer_group_info['approval'] + "', `date_added` = NOW()");
 
-		customer_id = this.db.getLastId();
+		const customer_id = this.db.getLastId();
 
 		if (customer_group_info['approval']) {
 			await this.db.query("INSERT INTO `" + DB_PREFIX + "customer_approval` SET `customer_id` = '" + customer_id + "', `type` = 'customer', `date_added` = NOW()");
@@ -46,7 +45,7 @@ module.exports =class CustomerModel extends Model {
 	 * @return void
 	 */
 	async editPassword(email, password) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "customer` SET `password` = " + this.db.escape(await password_hash(html_entity_decode(password))) + ", `code` = '' WHERE LCASE(`email`) = " + this.db.escape(oc_strtolower(email)) );
+		await this.db.query("UPDATE `" + DB_PREFIX + "customer` SET `password` = " + this.db.escape(await password_hash(html_entity_decode(password))) + ", `code` = '' WHERE LCASE(`email`) = " + this.db.escape(oc_strtolower(email)));
 	}
 
 	/**
@@ -70,11 +69,11 @@ module.exports =class CustomerModel extends Model {
 	}
 
 	/**
-	 * @param bool newsletter
+	 * @param newsletter
 	 *
 	 * @return void
 	 */
-	async editNewsletter(bool newsletter) {
+	async editNewsletter(newsletter) {
 		await this.db.query("UPDATE `" + DB_PREFIX + "customer` SET `newsletter` = '" + newsletter + "' WHERE `customer_id` = '" + await this.customer.getId() + "'");
 	}
 
@@ -182,7 +181,7 @@ module.exports =class CustomerModel extends Model {
 	 *
 	 * @return float
 	 */
-	async getTransactionTotal(customer_id): {
+	async getTransactionTotal(customer_id) {
 		const query = await this.db.query("SELECT SUM(`amount`) AS `total` FROM `" + DB_PREFIX + "customer_transaction` WHERE `customer_id` = '" + customer_id + "'");
 
 		return query.row['total'];
@@ -250,15 +249,15 @@ module.exports =class CustomerModel extends Model {
 	 */
 	async addLoginAttempt(email) {
 		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "customer_login` WHERE LCASE(`email`) = " + this.db.escape(oc_strtolower(email)) + " AND `ip` = " + this.db.escape((this.request.server.headers['x-forwarded-for'] ||
-					this.request.server.connection.remoteAddress ||
-					this.request.server.socket.remoteAddress ||
-					this.request.server.connection.socket.remoteAddress)) + "");
+			this.request.server.connection.remoteAddress ||
+			this.request.server.socket.remoteAddress ||
+			this.request.server.connection.socket.remoteAddress)) + "");
 
 		if (!query.num_rows) {
 			await this.db.query("INSERT INTO `" + DB_PREFIX + "customer_login` SET `email` = " + this.db.escape(oc_strtolower(email)) + ", `ip` = " + this.db.escape((this.request.server.headers['x-forwarded-for'] ||
-					this.request.server.connection.remoteAddress ||
-					this.request.server.socket.remoteAddress ||
-					this.request.server.connection.socket.remoteAddress)) + ", `total` = '1', `date_added` = " + this.db.escape(date('Y-m-d H:i:s')) + ", `date_modified` = " + this.db.escape(date('Y-m-d H:i:s')) + "");
+				this.request.server.connection.remoteAddress ||
+				this.request.server.socket.remoteAddress ||
+				this.request.server.connection.socket.remoteAddress)) + ", `total` = '1', `date_added` = " + this.db.escape(date('Y-m-d H:i:s')) + ", `date_modified` = " + this.db.escape(date('Y-m-d H:i:s')) + "");
 		} else {
 			await this.db.query("UPDATE `" + DB_PREFIX + "customer_login` SET `total` = (`total` + 1), `date_modified` = " + this.db.escape(date('Y-m-d H:i:s')) + " WHERE `customer_login_id` = '" + query.row['customer_login_id'] + "'");
 		}

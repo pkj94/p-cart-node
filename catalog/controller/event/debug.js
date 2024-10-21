@@ -31,7 +31,7 @@ module.exports=class DebugController extends Controller {
 	 *
 	 * @return void
 	 */
-	async after(route, args, mixed &output) {
+	async after(route, args, output) {
 		// add the route you want to test
 		/*
 		if (route == 'common/home') {

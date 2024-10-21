@@ -62,9 +62,9 @@ module.exports=class OrderModel extends Model {
 		// 1+ Void the order first
 		this.addHistory(order_id, 0);
 
-		order_info = this.getOrder(order_id);
+		const order_info = this.getOrder(order_id);
 
-		if (order_info) {
+		if (order_info.order_id) {
 			// 2+ Merge the old order data with the new data
 			for (order_info as key : value) {
 				if (!(data[key])) {
@@ -176,7 +176,7 @@ module.exports=class OrderModel extends Model {
 	 * @return array
 	 */
 	async getOrder(order_id) {
-		order_query = await this.db.query("SELECT *, (SELECT `os`.`name` FROM `" + DB_PREFIX + "order_status` `os` WHERE `os`.`order_status_id` = `o`.`order_status_id` AND `os`.`language_id` = `o`.`language_id`) AS order_status FROM `" + DB_PREFIX + "order` `o` WHERE `o`.`order_id` = '" + order_id + "'");
+		const order_query = await this.db.query("SELECT *, (SELECT `os`.`name` FROM `" + DB_PREFIX + "order_status` `os` WHERE `os`.`order_status_id` = `o`.`order_status_id` AND `os`.`language_id` = `o`.`language_id`) AS order_status FROM `" + DB_PREFIX + "order` `o` WHERE `o`.`order_id` = '" + order_id + "'");
 
 		if (order_query.num_rows) {
 			order_data = order_query.row;
@@ -358,11 +358,11 @@ module.exports=class OrderModel extends Model {
 	 * @return void
 	 */
 	async addHistory(order_id, order_status_id, comment = '', bool notify = false, bool override = false) {
-		order_info = this.getOrder(order_id);
+		const order_info = this.getOrder(order_id);
 
-		if (order_info) {
+		if (order_info.order_id) {
 			// Load subscription model
-			this.load.model('account/customer');
+			this.load.model('account/customer',this);
 
 			customer_info = await this.model_account_customer.getCustomer(order_info['customer_id']);
 
@@ -427,9 +427,10 @@ module.exports=class OrderModel extends Model {
 						await this.db.query("UPDATE `" + DB_PREFIX + "product` SET `quantity` = (`quantity` - " + order_product['quantity'] + ") WHERE `product_id` = '" + order_product['master_id'] + "' AND `subtract` = '1'");
 					}
 
-					order_options = this.getOptions(order_id, order_product['order_product_id']);
+					const 
+ order_options = this.getOptions(order_id, order_product['order_product_id']);
 
-					for (order_options as order_option) {
+					for (let order_option of order_options) {
 						await this.db.query("UPDATE `" + DB_PREFIX + "product_option_value` SET `quantity` = (`quantity` - " + order_product['quantity'] + ") WHERE `product_option_value_id` = '" + order_option['product_option_value_id'] + "' AND `subtract` = '1'");
 					}
 				}
@@ -440,7 +441,7 @@ module.exports=class OrderModel extends Model {
 				// Affiliate add commission if complete status
 				if (order_info['affiliate_id'] && this.config.get('config_affiliate_auto')) {
 					// Add commission if sale is linked to affiliate referral+
-					this.load.model('account/customer');
+					this.load.model('account/customer',this);
 
 					if (!await this.model_account_customer.getTotalTransactionsByOrderId(order_id)) {
 						await this.model_account_customer.addTransaction(order_info['affiliate_id'], this.language.get('text_order_id') + ' #' + order_id, order_info['commission'], order_id);
@@ -456,9 +457,9 @@ module.exports=class OrderModel extends Model {
 
 					if (order_subscription_info) {
 						// Add subscription if one is not setup
-						subscription_info = await this.model_checkout_subscription.getSubscriptionByOrderProductId(order_id, order_product['order_product_id']);
+						const subscription_info = await this.model_checkout_subscription.getSubscriptionByOrderProductId(order_id, order_product['order_product_id']);
 
-						if (subscription_info) {
+						if (subscription_info.subscription_id) {
 							subscription_id = subscription_info['subscription_id'];
 						} else {
 							subscription_id = await this.model_checkout_subscription.addSubscription(array_merge(order_subscription_info, order_product, order_info));
@@ -481,9 +482,10 @@ module.exports=class OrderModel extends Model {
 						await this.db.query("UPDATE `" + DB_PREFIX + "product` SET `quantity` = (`quantity` + " + order_product['quantity'] + ") WHERE `product_id` = '" + order_product['master_id'] + "' AND `subtract` = '1'");
 					}
 
-					order_options = this.getOptions(order_id, order_product['order_product_id']);
+					const 
+ order_options = this.getOptions(order_id, order_product['order_product_id']);
 
-					for (order_options as order_option) {
+					for (let order_option of order_options) {
 						await this.db.query("UPDATE `" + DB_PREFIX + "product_option_value` SET `quantity` = (`quantity` + " + order_product['quantity'] + ") WHERE `product_option_value_id` = '" + order_option['product_option_value_id'] + "' AND `subtract` = '1'");
 					}
 				}
@@ -505,9 +507,9 @@ module.exports=class OrderModel extends Model {
 
 				for (order_products as order_product) {
 					// Subscription status set to suspend
-					subscription_info = await this.model_checkout_subscription.getSubscriptionByOrderProductId(order_id, order_product['order_product_id']);
+					const subscription_info = await this.model_checkout_subscription.getSubscriptionByOrderProductId(order_id, order_product['order_product_id']);
 
-					if (subscription_info) {
+					if (subscription_info.subscription_id) {
 						// Add history and set suspended subscription
 						await this.model_checkout_subscription.addHistory(subscription_info['subscription_id'], this.config.get('config_subscription_suspended_status_id'));
 					}
@@ -515,7 +517,7 @@ module.exports=class OrderModel extends Model {
 
 				// Affiliate remove commission+
 				if (order_info['affiliate_id']) {
-					this.load.model('account/customer');
+					this.load.model('account/customer',this);
 
 					await this.model_account_customer.deleteTransactionByOrderId(order_id);
 				}

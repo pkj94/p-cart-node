@@ -15,14 +15,14 @@ class TransactionController extends Controller {
 	 * @return void
 	 * @throws \Exception
 	 */
-	async index(&route, args, mixed &output) {
+	async index(&route, args, output) {
 		await this.load.language('mail/transaction');
 
-		this.load.model('account/customer');
+		this.load.model('account/customer',this);
 
 		customer_info = await this.model_account_customer.getCustomer(args[0]);
 
-		if (customer_info) {
+		if (customer_info.customer_id) {
 			this.load.model('setting/store',this);
 
 			const store_info = await this.model_setting_store.getStore(customer_info['store_id']);
@@ -61,7 +61,7 @@ class TransactionController extends Controller {
 			data['text_received'] = sprintf(this.language.get('mail_text_received'), store_name);
 
 			data['amount'] = this.currency.format(args[2], this.config.get('config_currency'));
-			data['total'] = this.currency.format(this.model_account_customer.getTransactionTotal(args[0]), this.config.get('config_currency'));
+			data['total'] = this.currency.format(await this.model_account_customer.getTransactionTotal(args[0]), this.config.get('config_currency'));
 
 			data['store'] = store_name;
 			data['store_url'] = store_url;

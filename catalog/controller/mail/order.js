@@ -38,9 +38,9 @@ class OrderController extends Controller {
 		}
 
 		// We need to grab the old order status ID
-		order_info = await this.model_checkout_order.getOrder(order_id);
+		const order_info = await this.model_checkout_order.getOrder(order_id);
 
-		if (order_info) {
+		if (order_info.order_id) {
 			// If the order status returns 0, then it becomes greater than 0+ Therefore, we send the default html email
 			if (!order_info['order_status_id'] && order_status_id) {
 				this.add(order_info, order_status_id, comment, notify);
@@ -93,7 +93,7 @@ class OrderController extends Controller {
 		if (store_info) {
 			this.load.model('setting/setting',this);
 
-			store_logo = html_entity_decode(this.model_setting_setting.getValue('config_logo', store_info['store_id']));
+			store_logo = html_entity_decode(await this.model_setting_setting.getValue('config_logo', store_info['store_id']));
 			store_name = html_entity_decode(store_info['name']);
 			store_url = store_info['url'];
 		}
@@ -137,7 +137,7 @@ class OrderController extends Controller {
 		data['store_url'] = order_info['store_url'];
 
 		data['customer_id'] = order_info['customer_id'];
-		data['link'] = order_info['store_url'] + 'account/order+info&order_id=' + order_info['order_id'];
+		data['link'] = order_info['store_url'] + 'account/order.info&order_id=' + order_info['order_id'];
 
 		if (download_status) {
 			data['download'] = order_info['store_url'] + 'account/download';
@@ -247,7 +247,7 @@ class OrderController extends Controller {
 
 			order_options = await this.model_checkout_order.getOptions(order_info['order_id'], order_product['order_product_id']);
 
-			for (order_options as order_option) {
+			for (let order_option of order_options) {
 				if (order_option['type'] != 'file') {
 					value = order_option['value'];
 				} else {
@@ -272,7 +272,7 @@ class OrderController extends Controller {
 
 			subscription_info = await this.model_checkout_order.getSubscription(order_info['order_id'], order_product['order_product_id']);
 
-			if (subscription_info) {
+			if (subscription_info.subscription_id) {
 				if (subscription_info['trial_status']) {
 					trial_price = this.currency.format(subscription_info['trial_price'] + (Number(Number(this.config.get('config_tax'))) ? subscription_info['trial_tax'] : 0), order_info['currency_code'], order_info['currency_value']);
 					trial_cycle = subscription_info['trial_cycle'];
@@ -420,7 +420,7 @@ class OrderController extends Controller {
 		}
 
 		if (order_info['customer_id']) {
-			data['link'] = order_info['store_url'] + 'account/order+info&order_id=' + order_info['order_id'];
+			data['link'] = order_info['store_url'] + 'account/order.info&order_id=' + order_info['order_id'];
 		} else {
 			data['link'] = '';
 		}
@@ -492,7 +492,7 @@ class OrderController extends Controller {
 			notify = '';
 		}
 
-		order_info = await this.model_checkout_order.getOrder(order_id);
+		const order_info = await this.model_checkout_order.getOrder(order_id);
 
 		if (order_info && !order_info['order_status_id'] && order_status_id && in_array('order', this.config.get('config_mail_alert'))) {
 			await this.load.language('mail/order_alert');
@@ -521,7 +521,7 @@ class OrderController extends Controller {
 
 				order_options = await this.model_checkout_order.getOptions(order_info['order_id'], order_product['order_product_id']);
 
-				for (order_options as order_option) {
+				for (let order_option of order_options) {
 					if (order_option['type'] != 'file') {
 						value = order_option['value'];
 					} else {
@@ -544,9 +544,9 @@ class OrderController extends Controller {
 
 				this.load.model('checkout/subscription');
 
-				subscription_info = await this.model_checkout_order.getSubscription(order_info['order_id'], order_product['order_product_id']);
+				const subscription_info = await this.model_checkout_order.getSubscription(order_info['order_id'], order_product['order_product_id']);
 
-				if (subscription_info) {
+				if (subscription_info.subscription_id) {
 					if (subscription_info['trial_status']) {
 						trial_price = this.currency.format(subscription_info['trial_price'] + (Number(Number(this.config.get('config_tax'))) ? subscription_info['trial_tax'] : 0), this.session.data['currency']);
 						trial_cycle = subscription_info['trial_cycle'];

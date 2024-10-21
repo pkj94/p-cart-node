@@ -207,14 +207,14 @@ if ((this.request.get['page'])) {
 			'href' : await this.url.link('account/returns.add', 'language=' + this.config.get('config_language'))
 		];
 
-		this.session.data['return_token'] = substr(bin2hex(openssl_random_pseudo_bytes(26)), 0, 26);
+		this.session.data['return_token'] = bin2hex(26);
 
 		data['save'] = await this.url.link('account/returns.save', 'language=' + this.config.get('config_language') + '&return_token=' + this.session.data['return_token']);
 
 		this.load.model('account/order',this);
 
 		if ((this.request.get['order_id'])) {
-			order_info = await this.model_account_order.getOrder(this.request.get['order_id']);
+			const order_info = await this.model_account_order.getOrder(this.request.get['order_id']);
 		}
 
 		this.load.model('catalog/product',this);
@@ -284,7 +284,7 @@ if ((this.request.get['page'])) {
 		// Captcha
 		this.load.model('setting/extension',this);
 
-		extension_info = await this.model_setting_extension.getExtensionByCode('captcha', this.config.get('config_captcha'));
+		const extension_info = await this.model_setting_extension.getExtensionByCode('captcha', this.config.get('config_captcha'));
 
 		if (extension_info && Number(this.config.get('captcha_' + this.config.get('config_captcha') + '_status')) && in_array('returns', this.config.get('config_captcha_page'))) {
 			data['captcha'] = await this.load.controller('extension/'  + extension_info['extension'] + '/captcha/' + extension_info['code']);
@@ -294,10 +294,10 @@ if ((this.request.get['page'])) {
 
 		this.load.model('catalog/information',this);
 
-		information_info = await this.model_catalog_information.getInformation(this.config.get('config_return_id'));
+		const information_info = await this.model_catalog_information.getInformation(this.config.get('config_return_id'));
 
 		if (information_info) {
-			data['text_agree'] = sprintf(this.language.get('text_agree'), await this.url.link('information/information+info', 'language=' + this.config.get('config_language') + '&information_id=' + this.config.get('config_return_id')), information_info['title']);
+			data['text_agree'] = sprintf(this.language.get('text_agree'), await this.url.link('information/information.info', 'language=' + this.config.get('config_language') + '&information_id=' + this.config.get('config_return_id')), information_info['title']);
 		} else {
 			data['text_agree'] = '';
 		}
@@ -380,10 +380,10 @@ if ((this.request.get['page'])) {
 			// Captcha
 			this.load.model('setting/extension',this);
 
-			extension_info = await this.model_setting_extension.getExtensionByCode('captcha', this.config.get('config_captcha'));
+			const extension_info = await this.model_setting_extension.getExtensionByCode('captcha', this.config.get('config_captcha'));
 
 			if (extension_info && Number(this.config.get('captcha_' + this.config.get('config_captcha') + '_status')) && in_array('return', this.config.get('config_captcha_page'))) {
-				const captcha = await this.load.controller('extension/' + extension_info['extension'] + '/captcha/' + extension_info['code'] + '+validate');
+				const captcha = await this.load.controller('extension/' + extension_info['extension'] + '/captcha/' + extension_info['code'] + '.validate');
 
 				if (captcha) {
 					json['error']['captcha'] = captcha;
@@ -393,7 +393,7 @@ if ((this.request.get['page'])) {
 			if (this.config.get('config_return_id')) {
 				this.load.model('catalog/information',this);
 
-				information_info = await this.model_catalog_information.getInformation(this.config.get('config_return_id'));
+				const information_info = await this.model_catalog_information.getInformation(this.config.get('config_return_id'));
 
 				if (information_info && !(this.request.post['agree'])) {
 					json['error']['warning'] = sprintf(this.language.get('error_agree'), information_info['title']);

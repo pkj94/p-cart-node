@@ -26,7 +26,7 @@ const data ={};
 
 		this.load.model('checkout/cart',this);
 
-		(this.model_checkout_cart.getTotals)(totals, taxes, total);
+		(await this.model_checkout_cart.getTotals)(totals, taxes, total);
 
 		json['products'] = [];
 

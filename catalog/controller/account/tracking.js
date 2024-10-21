@@ -2,7 +2,7 @@ module.exports=class TrackingController extends Controller {
 	/**
 	 * @return void
 	 */
-	public function index() {
+	async index() {
 		if (!await this.customer.isLogged() || (!(this.request.get['customer_token']) || !(this.session.data['customer_token']) || (this.request.get['customer_token'] != this.session.data['customer_token']))) {
 			this.session.data['redirect'] = await this.url.link('account/tracking', 'language=' + this.config.get('config_language'));
 
@@ -65,7 +65,7 @@ module.exports=class TrackingController extends Controller {
 	/**
 	 * @return void
 	 */
-	public function autocomplete() {
+	async autocomplete() {
 		const json = {};
 
 		if ((this.request.get['search'])) {

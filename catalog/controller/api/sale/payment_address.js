@@ -67,11 +67,11 @@ const data ={};
 		}
 
 		// Custom field validation
-		this.load.model('account/custom_field');
+		this.load.model('account/custom_field',this);
 
-		custom_fields = await this.model_account_custom_field.getCustomFields(this.config.get('config_customer_group_id'));
+		const custom_fields = await this.model_account_custom_field.getCustomFields(this.config.get('config_customer_group_id'));
 
-		for (custom_fields as custom_field) {
+		for (let custom_field of custom_fields) {
 			if (custom_field['location'] == 'address') {
 				if (custom_field['required'] && empty(this.request.post['custom_field'][custom_field['custom_field_id']])) {
 					json['error']['custom_field_' + custom_field['custom_field_id']] = sprintf(this.language.get('error_custom_field'), custom_field['name']);

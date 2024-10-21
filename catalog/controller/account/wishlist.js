@@ -2,7 +2,7 @@ module.exports=class WishListController extends Controller {
 	/**
 	 * @return void
 	 */
-	public function index() {
+	async index() {
 		await this.load.language('account/wishlist');
 
 		if (!await this.customer.isLogged() || (!(this.request.get['customer_token']) || !(this.session.data['customer_token']) || (this.request.get['customer_token'] != this.session.data['customer_token']))) {
@@ -55,7 +55,7 @@ module.exports=class WishListController extends Controller {
 	/**
 	 * @return void
 	 */
-	public function list() {
+	async list() {
 		await this.load.language('account/wishlist');
 
 		this.response.setOutput(await this.getList());
@@ -64,7 +64,7 @@ module.exports=class WishListController extends Controller {
 	/**
 	 * @return string
 	 */
-	public function getList() {
+	async getList() {
 		data['wishlist'] = await this.url.link('account/wishlist.list', 'language=' + this.config.get('config_language') + ((this.session.data['customer_token']) ? '&customer_token=' + this.session.data['customer_token'] : ''));
 		data['add_to_cart'] = await this.url.link('checkout/cart.add', 'language=' + this.config.get('config_language'));
 		data['remove'] = await this.url.link('account/wishlist.remove', 'language=' + this.config.get('config_language') + ((this.session.data['customer_token']) ? '&customer_token=' + this.session.data['customer_token'] : ''));
@@ -129,7 +129,7 @@ module.exports=class WishListController extends Controller {
 	/**
 	 * @return void
 	 */
-	public function add() {
+	async add() {
 		await this.load.language('account/wishlist');
 
 		const json = {};
@@ -166,7 +166,7 @@ module.exports=class WishListController extends Controller {
 
 				json['success'] = sprintf(this.language.get('text_success'), await this.url.link('product/product', 'language=' + this.config.get('config_language') + '&product_id=' + product_id), product_info['name'], await this.url.link('account/wishlist', 'language=' + this.config.get('config_language') + ((this.session.data['customer_token']) ? '&customer_token=' + this.session.data['customer_token'] : '')));
 
-				json['total'] = sprintf(this.language.get('text_wishlist'), this.model_account_wishlist.getTotalWishlist());
+				json['total'] = sprintf(this.language.get('text_wishlist'), await this.model_account_wishlist.getTotalWishlist());
 			} else {
 				json['success'] = sprintf(this.language.get('text_login'), await this.url.link('account/login', 'language=' + this.config.get('config_language')), await this.url.link('account/register', 'language=' + this.config.get('config_language')), await this.url.link('product/product', 'language=' + this.config.get('config_language') + '&product_id=' + product_id), product_info['name'], await this.url.link('account/wishlist', 'language=' + this.config.get('config_language') + ((this.session.data['customer_token']) ? '&customer_token=' + this.session.data['customer_token'] : '')));
 
@@ -181,7 +181,7 @@ module.exports=class WishListController extends Controller {
 	/**
 	 * @return void
 	 */
-	public function remove() {
+	async remove() {
 		await this.load.language('account/wishlist');
 
 		const json = {};

@@ -15,7 +15,7 @@ class ReviewController extends Controller {
 	 * @return void
 	 * @throws \Exception
 	 */
-	async index(&route, args, mixed &output) {
+	async index(&route, args, output) {
 		if (in_array('review', this.config.get('config_mail_alert'))) {
 			await this.load.language('mail/review');
 

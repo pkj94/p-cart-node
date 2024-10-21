@@ -12,7 +12,7 @@ const data ={};
 
 		data['upload'] = await this.url.link('tool/upload', 'language=' + this.config.get('config_language'));
 
-		this.load.model('account/address');
+		this.load.model('account/address',this);
 
 		data['addresses'] = await this.model_account_address.getAddresses(await this.customer.getId());
 
@@ -39,11 +39,11 @@ const data ={};
 		// Custom Fields
 		data['custom_fields'] = [];
 
-		this.load.model('account/custom_field');
+		this.load.model('account/custom_field',this);
 
-		custom_fields = await this.model_account_custom_field.getCustomFields(await this.customer.getGroupId());
+		const custom_fields = await this.model_account_custom_field.getCustomFields(await this.customer.getGroupId());
 
-		for (custom_fields as custom_field) {
+		for (let custom_field of custom_fields) {
 			if (custom_field['location'] == 'address') {
 				data['custom_fields'].push(custom_field;
 			}
@@ -141,11 +141,11 @@ const data ={};
 			}
 
 			// Custom field validation
-			this.load.model('account/custom_field');
+			this.load.model('account/custom_field',this);
 
-			custom_fields = await this.model_account_custom_field.getCustomFields(await this.customer.getGroupId());
+			const custom_fields = await this.model_account_custom_field.getCustomFields(await this.customer.getGroupId());
 
-			for (custom_fields as custom_field) {
+			for (let custom_field of custom_fields) {
 				if (custom_field['location'] == 'address') {
 					if (custom_field['required'] && empty(this.request.post['custom_field'][custom_field['custom_field_id']])) {
 						json['error']['custom_field_' + custom_field['custom_field_id']] = sprintf(this.language.get('error_custom_field'), custom_field['name']);
@@ -164,7 +164,7 @@ const data ={};
 				this.request.post['default'] = 1;
 			}
 
-			this.load.model('account/address');
+			this.load.model('account/address',this);
 
 			json['address_id'] = await this.model_account_address.addAddress(await this.customer.getId(), this.request.post);
 
@@ -226,7 +226,7 @@ const data ={};
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('account/address');
+			this.load.model('account/address',this);
 
 			address_info = await this.model_account_address.getAddress(await this.customer.getId(), address_id);
 

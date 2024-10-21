@@ -413,10 +413,10 @@ if ((this.request.get['page'])) {
 		// Captcha
 		this.load.model('setting/extension',this);
 
-		extension_info = await this.model_setting_extension.getExtensionByCode('captcha', this.config.get('config_captcha'));
+		const extension_info = await this.model_setting_extension.getExtensionByCode('captcha', this.config.get('config_captcha'));
 
 		if (extension_info && Number(this.config.get('captcha_' + this.config.get('config_captcha') + '_status')) && in_array('comment', this.config.get('config_captcha_page'))) {
-			const captcha = await this.load.controller('extension/'  + extension_info['extension'] + '/captcha/' + extension_info['code'] + '+validate');
+			const captcha = await this.load.controller('extension/'  + extension_info['extension'] + '/captcha/' + extension_info['code'] + '.validate');
 
 			if (captcha) {
 				json['error']['captcha'] = captcha;

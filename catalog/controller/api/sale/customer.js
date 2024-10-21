@@ -31,7 +31,7 @@ const data ={};
 			}
 		}
 
-		this.load.model('account/customer');
+		this.load.model('account/customer',this);
 
 		if (this.request.post['customer_id']) {
 			customer_info = await this.model_account_customer.getCustomer(this.request.post['customer_id']);
@@ -48,7 +48,7 @@ const data ={};
 			customer_group_id = this.config.get('config_customer_group_id');
 		}
 
-		this.load.model('account/customer_group');
+		this.load.model('account/customer_group',this);
 
 		customer_group_info = await this.model_account_customer_group.getCustomerGroup(customer_group_id);
 
@@ -68,16 +68,16 @@ const data ={};
 			json['error']['email'] = this.language.get('error_email');
 		}
 
-		if (this.config.get('config_telephone_required') && (oc_strlen(this.request.post['telephone']) < 3) || (oc_strlen(this.request.post['telephone']) > 32)) {
+		if (Number(this.config.get('config_telephone_required')) && (oc_strlen(this.request.post['telephone']) < 3) || (oc_strlen(this.request.post['telephone']) > 32)) {
 			json['error']['telephone'] = this.language.get('error_telephone');
 		}
 
 		// Custom field validation
-		this.load.model('account/custom_field');
+		this.load.model('account/custom_field',this);
 
-		custom_fields = await this.model_account_custom_field.getCustomFields(customer_group_id);
+		const custom_fields = await this.model_account_custom_field.getCustomFields(customer_group_id);
 
-		for (custom_fields as custom_field) {
+		for (let custom_field of custom_fields) {
 			if (custom_field['location'] == 'account') {
 				if (custom_field['required'] && empty(this.request.post['custom_field'][custom_field['custom_field_id']])) {
 					json['error']['custom_field_' + custom_field['custom_field_id']] = sprintf(this.language.get('error_custom_field'), custom_field['name']);
@@ -95,7 +95,7 @@ const data ={};
 				'lastname'          : this.request.post['lastname'],
 				'email'             : this.request.post['email'],
 				'telephone'         : this.request.post['telephone'],
-				'custom_field'      : (this.request.post['custom_field']) && is_array(this.request.post['custom_field']) ? this.request.post['custom_field'] : []
+				'custom_field'      : (this.request.post['custom_field']) && Array.isArray(this.request.post['custom_field']) ? this.request.post['custom_field'] : []
 			];
 
 			json['success'] = this.language.get('text_success');

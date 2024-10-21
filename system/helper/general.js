@@ -199,3 +199,6 @@ global.getAllMethods = (obj) => {
     } while ((currentObj = Object.getPrototypeOf(currentObj)))
     return [...properties.keys()].filter(item => typeof obj[item] === 'function')
 }
+global.bin2hex = (length = 26) => {
+    return crypto.randomBytes(26).toString('hex').substring(0, length);
+}

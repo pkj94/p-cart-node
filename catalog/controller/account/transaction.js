@@ -2,7 +2,7 @@ module.exports=class TransactionController extends Controller {
 	/**
 	 * @return void
 	 */
-	public function index() {
+	async index() {
 		await this.load.language('account/transaction');
 
 		if (!await this.customer.isLogged() || (!(this.request.get['customer_token']) || !(this.session.data['customer_token']) || (this.request.get['customer_token'] != this.session.data['customer_token']))) {

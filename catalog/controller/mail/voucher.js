@@ -14,10 +14,10 @@ class VoucherController extends Controller {
 	 * @return void
 	 * @throws \Exception
 	 */
-	async index(&route, args, mixed &output) {
+	async index(&route, args, output) {
 		this.load.model('checkout/order');
 
-		order_info = await this.model_checkout_order.getOrder(args[0]);
+		const order_info = await this.model_checkout_order.getOrder(args[0]);
 
 		// If order status in the complete range create any vouchers that where in the order need to be made available+
 		if (order_info && in_array(order_info['order_status_id'], this.config.get('config_complete_status'))) {

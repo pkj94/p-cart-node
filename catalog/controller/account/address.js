@@ -1,9 +1,12 @@
-module.exports=class AddressController extends Controller {
+const sprintf = require("locutus/php/strings/sprintf");
+const trim = require("locutus/php/strings/trim");
+
+module.exports = class AddressController extends Controller {
 	/**
 	 * @return void
 	 */
 	async index() {
-const data ={};
+		const data = {};
 		await this.load.language('account/address');
 
 		if (!await this.customer.isLogged() || (!(this.request.get['customer_token']) || !(this.session.data['customer_token']) || (this.request.get['customer_token'] != this.session.data['customer_token']))) {
@@ -11,36 +14,36 @@ const data ={};
 
 			this.response.setRedirect(await this.url.link('account/login', 'language=' + this.config.get('config_language')));
 		}
-
+		data['breadcrumbs'] = [];
 		this.document.setTitle(this.language.get('heading_title'));
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/home', 'language=' + this.config.get('config_language'))
-		];
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/home', 'language=' + this.config.get('config_language'))
+		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_account'),
-			'href' : await this.url.link('account/account', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'])
-		];
+			'text': this.language.get('text_account'),
+			'href': await this.url.link('account/account', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'])
+		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('account/address', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'])
-		];
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('account/address', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'])
+		});
 
 		if ((this.session.data['success'])) {
 			data['success'] = this.session.data['success'];
 
-			delete (this.session.data['success']);
+			delete this.session.data['success'];
 		} else {
 			data['success'] = '';
 		}
 
-		data['add'] = await this.url.link('account/address+form', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token']);
+		data['add'] = await this.url.link('account/address.form', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token']);
 		data['back'] = await this.url.link('account/account', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token']);
 
-		data['list'] = this.getList();
+		data['list'] = await this.getList();
 
 		data['language'] = this.config.get('config_language');
 
@@ -52,7 +55,7 @@ const data ={};
 		data['content_bottom'] = await this.load.controller('common/content_bottom');
 		data['footer'] = await this.load.controller('common/footer');
 		data['header'] = await this.load.controller('common/header');
-
+		await this.session.save(this.session.data);
 		this.response.setOutput(await this.load.view('account/address', data));
 	}
 
@@ -74,15 +77,16 @@ const data ={};
 	/**
 	 * @return string
 	 */
-	protected function getList() {
+	async getList() {
+		const data = {};
 		data['addresses'] = [];
 
-		this.load.model('account/address');
+		this.load.model('account/address', this);
 
 		const results = await this.model_account_address.getAddresses(await this.customer.getId());
-
-		for (let result of results) {
-			find = [
+		console.log(results);
+		for (let [address_id, result] of Object.entries(results)) {
+			let find = [
 				'{firstname}',
 				'{lastname}',
 				'{company}',
@@ -95,27 +99,32 @@ const data ={};
 				'{country}'
 			];
 
-			replace = [
-				'firstname' : result['firstname'],
-				'lastname'  : result['lastname'],
-				'company'   : result['company'],
-				'address_1' : result['address_1'],
-				'address_2' : result['address_2'],
-				'city'      : result['city'],
-				'postcode'  : result['postcode'],
-				'zone'      : result['zone'],
-				'zone_code' : result['zone_code'],
-				'country'   : result['country']
-			];
+			let replace = {
+				'firstname': result['firstname'],
+				'lastname': result['lastname'],
+				'company': result['company'],
+				'address_1': result['address_1'],
+				'address_2': result['address_2'],
+				'city': result['city'],
+				'postcode': result['postcode'],
+				'zone': result['zone'],
+				'zone_code': result['zone_code'],
+				'country': result['country']
+			};
+			let address = result.address_format;
+			find.forEach((item, index) => {
+				address = address.replace(new RegExp(item, 'g'), replace[Object.keys(replace)[index]]);
+			});
+
+			address = address.replace(/[\r\n]+/g, '<br/>').replace(/\s{2,}|\r{2,}|\n{2,}/g, '<br/>').trim();
 
 			data['addresses'].push({
-				'address_id' : result['address_id'],
-				'address'    : str_replace(["\r\n", "\r", "\n"], '<br/>', preg_replace(["/\s\s+/", "/\r\r+/", "/\n\n+/"], '<br/>', trim(str_replace(find, replace, result['address_format'])))),
-				'edit'       : await this.url.link('account/address+form', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'] + '&address_id=' + result['address_id']),
-				'delete'     : await this.url.link('account/address+delete', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'] + '&address_id=' + result['address_id'])
-			];
+				'address_id': result['address_id'],
+				'address': address,
+				'edit': await this.url.link('account/address.form', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'] + '&address_id=' + result['address_id']),
+				'delete': await this.url.link('account/address.delete', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'] + '&address_id=' + result['address_id'])
+			});
 		}
-
 		return await this.load.view('account/address_list', data);
 	}
 
@@ -123,6 +132,7 @@ const data ={};
 	 * @return void
 	 */
 	async form() {
+		const data = {};
 		await this.load.language('account/address');
 
 		if (!await this.customer.isLogged() || (!(this.request.get['customer_token']) || !(this.session.data['customer_token']) || (this.request.get['customer_token'] != this.session.data['customer_token']))) {
@@ -142,118 +152,118 @@ const data ={};
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/home', 'language=' + this.config.get('config_language'))
-		];
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/home', 'language=' + this.config.get('config_language'))
+		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_account'),
-			'href' : await this.url.link('account/account', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'])
-		];
+			'text': this.language.get('text_account'),
+			'href': await this.url.link('account/account', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'])
+		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('account/address', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'])
-		];
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('account/address', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'])
+		});
 
 		if (!(this.request.get['address_id'])) {
 			data['breadcrumbs'].push({
-				'text' : this.language.get('text_address_add'),
-				'href' : await this.url.link('account/address+form', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'])
-			];
+				'text': this.language.get('text_address_add'),
+				'href': await this.url.link('account/address.form', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'])
+			});
 		} else {
 			data['breadcrumbs'].push({
-				'text' : this.language.get('text_address_edit'),
-				'href' : await this.url.link('account/address+form', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'] + '&address_id=' + this.request.get['address_id'])
-			];
+				'text': this.language.get('text_address_edit'),
+				'href': await this.url.link('account/address.form', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'] + '&address_id=' + this.request.get['address_id'])
+			});
 		}
 
 		if (!(this.request.get['address_id'])) {
-			data['save'] = await this.url.link('account/address+save', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token']);
+			data['save'] = await this.url.link('account/address.save', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token']);
 		} else {
-			data['save'] = await this.url.link('account/address+save', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'] + '&address_id=' + this.request.get['address_id']);
+			data['save'] = await this.url.link('account/address.save', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'] + '&address_id=' + this.request.get['address_id']);
 		}
 
 		data['upload'] = await this.url.link('tool/upload', 'language=' + this.config.get('config_language'));
-
+		let address_info;
 		if ((this.request.get['address_id'])) {
-			this.load.model('account/address');
+			this.load.model('account/address', this);
 
 			address_info = await this.model_account_address.getAddress(await this.customer.getId(), this.request.get['address_id']);
 		}
 
-		if ((address_info)) {
+		if (address_info && address_info.address_id) {
 			data['firstname'] = address_info['firstname'];
 		} else {
 			data['firstname'] = '';
 		}
 
-		if ((address_info)) {
+		if (address_info && address_info.address_id) {
 			data['lastname'] = address_info['lastname'];
 		} else {
 			data['lastname'] = '';
 		}
 
-		if ((address_info)) {
+		if (address_info && address_info.address_id) {
 			data['company'] = address_info['company'];
 		} else {
 			data['company'] = '';
 		}
 
-		if ((address_info)) {
+		if (address_info && address_info.address_id) {
 			data['address_1'] = address_info['address_1'];
 		} else {
 			data['address_1'] = '';
 		}
 
-		if ((address_info)) {
+		if (address_info && address_info.address_id) {
 			data['address_2'] = address_info['address_2'];
 		} else {
 			data['address_2'] = '';
 		}
 
-		if ((address_info)) {
+		if (address_info && address_info.address_id) {
 			data['postcode'] = address_info['postcode'];
 		} else {
 			data['postcode'] = '';
 		}
 
-		if ((address_info)) {
+		if (address_info && address_info.address_id) {
 			data['city'] = address_info['city'];
 		} else {
 			data['city'] = '';
 		}
 
-		if ((address_info)) {
+		if (address_info && address_info.address_id) {
 			data['country_id'] = address_info['country_id'];
 		} else {
 			data['country_id'] = this.config.get('config_country_id');
 		}
 
-		if ((address_info)) {
+		if (address_info && address_info.address_id) {
 			data['zone_id'] = address_info['zone_id'];
 		} else {
 			data['zone_id'] = '';
 		}
 
-		this.load.model('localisation/country',this);
+		this.load.model('localisation/country', this);
 
 		data['countries'] = await this.model_localisation_country.getCountries();
 
 		// Custom fields
 		data['custom_fields'] = [];
 
-		this.load.model('account/custom_field');
+		this.load.model('account/custom_field', this);
 
-		custom_fields = await this.model_account_custom_field.getCustomFields(await this.customer.getGroupId());
+		const custom_fields = await this.model_account_custom_field.getCustomFields(await this.customer.getGroupId());
 
-		for (custom_fields as custom_field) {
+		for (let custom_field of custom_fields) {
 			if (custom_field['location'] == 'address') {
-				data['custom_fields'].push(custom_field;
+				data['custom_fields'].push(custom_field);
 			}
 		}
 
-		if ((address_info)) {
+		if (address_info && address_info.address_id) {
 			data['address_custom_field'] = address_info['custom_field'];
 		} else {
 			data['address_custom_field'] = [];
@@ -285,7 +295,7 @@ const data ={};
 	async save() {
 		await this.load.language('account/address');
 
-		const json = {};
+		const json = { error: {} };
 
 		if (!await this.customer.isLogged() || (!(this.request.get['customer_token']) || !(this.session.data['customer_token']) || (this.request.get['customer_token'] != this.session.data['customer_token']))) {
 			this.session.data['redirect'] = await this.url.link('account/address', 'language=' + this.config.get('config_language'));
@@ -293,8 +303,8 @@ const data ={};
 			json['redirect'] = await this.url.link('account/login', 'language=' + this.config.get('config_language'), true);
 		}
 
-		if (!Object.keys(json).length) {
-			keys = [
+		if (!json['redirect']) {
+			let keys = [
 				'firstname',
 				'lastname',
 				'address_1',
@@ -327,11 +337,11 @@ const data ={};
 				json['error']['city'] = this.language.get('error_city');
 			}
 
-			this.load.model('localisation/country',this);
+			this.load.model('localisation/country', this);
 
 			const country_info = await this.model_localisation_country.getCountry(this.request.post['country_id']);
 
-			if (country_info && country_info['postcode_required'] && (oc_strlen(this.request.post['postcode']) < 2 || oc_strlen(this.request.post['postcode']) > 10)) {
+			if (country_info.country_id && country_info['postcode_required'] && (oc_strlen(this.request.post['postcode']) < 2 || oc_strlen(this.request.post['postcode']) > 10)) {
 				json['error']['postcode'] = this.language.get('error_postcode');
 			}
 
@@ -344,11 +354,11 @@ const data ={};
 			}
 
 			// Custom field validation
-			this.load.model('account/custom_field');
+			this.load.model('account/custom_field', this);
 
-			custom_fields = await this.model_account_custom_field.getCustomFields(await this.customer.getGroupId());
+			const custom_fields = await this.model_account_custom_field.getCustomFields(await this.customer.getGroupId());
 
-			for (custom_fields as custom_field) {
+			for (let custom_field of custom_fields) {
 				if (custom_field['location'] == 'address') {
 					if (custom_field['required'] && empty(this.request.post['custom_field'][custom_field['custom_field_id']])) {
 						json['error']['custom_field_' + custom_field['custom_field_id']] = sprintf(this.language.get('error_custom_field'), custom_field['name']);
@@ -363,8 +373,8 @@ const data ={};
 			}
 		}
 
-		if (!Object.keys(json).length) {
-			this.load.model('account/address');
+		if (!Object.keys(json.error).length) {
+			this.load.model('account/address', this);
 
 			// Add Address
 			if (!(this.request.get['address_id'])) {
@@ -381,20 +391,20 @@ const data ={};
 				if ((this.session.data['shipping_address']) && (this.session.data['shipping_address']['address_id'] == this.request.get['address_id'])) {
 					this.session.data['shipping_address'] = await this.model_account_address.getAddress(await this.customer.getId(), this.request.get['address_id']);
 
-					delete (this.session.data['shipping_method']);
-					delete (this.session.data['shipping_methods']);
-					delete (this.session.data['payment_method']);
-					delete (this.session.data['payment_methods']);
+					delete this.session.data['shipping_method'];
+					delete this.session.data['shipping_methods'];
+					delete this.session.data['payment_method'];
+					delete this.session.data['payment_methods'];
 				}
 
 				// If address is in session update it+
 				if ((this.session.data['payment_address']) && (this.session.data['payment_address']['address_id'] == this.request.get['address_id'])) {
 					this.session.data['payment_address'] = await this.model_account_address.getAddress(await this.customer.getId(), this.request.get['address_id']);
 
-					delete (this.session.data['shipping_method']);
-					delete (this.session.data['shipping_methods']);
-					delete (this.session.data['payment_method']);
-					delete (this.session.data['payment_methods']);
+					delete this.session.data['shipping_method'];
+					delete this.session.data['shipping_methods'];
+					delete this.session.data['payment_method'];
+					delete this.session.data['payment_methods'];
 				}
 
 				this.session.data['success'] = this.language.get('text_edit');
@@ -402,7 +412,7 @@ const data ={};
 
 			json['redirect'] = await this.url.link('account/address', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'], true);
 		}
-
+		await this.session.save(this.session.data);
 		this.response.addHeader('Content-Type: application/json');
 		this.response.setOutput(json);
 	}
@@ -414,11 +424,9 @@ const data ={};
 		await this.load.language('account/address');
 
 		const json = {};
-
+		let address_id = 0;
 		if ((this.request.get['address_id'])) {
 			address_id = this.request.get['address_id'];
-		} else {
-			address_id = 0;
 		}
 
 		if (!await this.customer.isLogged() || (!(this.request.get['customer_token']) || !(this.session.data['customer_token']) || (this.request.get['customer_token'] != this.session.data['customer_token']))) {
@@ -432,15 +440,15 @@ const data ={};
 				json['error'] = this.language.get('error_default');
 			}
 
-			this.load.model('account/address');
+			this.load.model('account/address', this);
 
-			if (this.model_account_address.getTotalAddresses(await this.customer.getId()) == 1) {
+			if (await this.model_account_address.getTotalAddresses(await this.customer.getId()) == 1) {
 				json['error'] = this.language.get('error_delete');
 			}
 
-			this.load.model('account/subscription');
+			this.load.model('account/subscription', this);
 
-			subscription_total = await this.model_account_subscription.getTotalSubscriptionByShippingAddressId(address_id);
+			let subscription_total = await this.model_account_subscription.getTotalSubscriptionByShippingAddressId(address_id);
 
 			if (subscription_total) {
 				json['error'] = sprintf(this.language.get('error_subscription'), subscription_total);
@@ -459,25 +467,25 @@ const data ={};
 
 			// Delete address from session+
 			if ((this.session.data['shipping_address']['address_id']) && (this.session.data['shipping_address']['address_id'] == address_id)) {
-				delete (this.session.data['shipping_address']);
-				delete (this.session.data['shipping_method']);
-				delete (this.session.data['shipping_methods']);
-				delete (this.session.data['payment_method']);
-				delete (this.session.data['payment_methods']);
+				delete this.session.data['shipping_address'];
+				delete this.session.data['shipping_method'];
+				delete this.session.data['shipping_methods'];
+				delete this.session.data['payment_method'];
+				delete this.session.data['payment_methods'];
 			}
 
 			// Delete address from session+
 			if ((this.session.data['payment_address']['address_id']) && (this.session.data['payment_address']['address_id'] == address_id)) {
-				delete (this.session.data['payment_address']);
-				delete (this.session.data['shipping_method']);
-				delete (this.session.data['shipping_methods']);
-				delete (this.session.data['payment_method']);
-				delete (this.session.data['payment_methods']);
+				delete this.session.data['payment_address'];
+				delete this.session.data['shipping_method'];
+				delete this.session.data['shipping_methods'];
+				delete this.session.data['payment_method'];
+				delete this.session.data['payment_methods'];
 			}
 
 			json['success'] = this.language.get('text_delete');
 		}
-
+		await this.session.save(this.session.data);
 		this.response.addHeader('Content-Type: application/json');
 		this.response.setOutput(json);
 	}

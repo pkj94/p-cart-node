@@ -11,7 +11,7 @@ module.exports = class ReviewController extends Controller {
 
 		data['text_login'] = sprintf(this.language.get('text_login'), await this.url.link('account/login', 'language=' + this.config.get('config_language')), await this.url.link('account/register', 'language=' + this.config.get('config_language')));
 
-		data['list'] = this.getList();
+		data['list'] = await this.getList();
 
 		if ((this.request.get['product_id'])) {
 			data['product_id'] = this.request.get['product_id'];
@@ -119,7 +119,7 @@ module.exports = class ReviewController extends Controller {
 		const extension_info = await this.model_setting_extension.getExtensionByCode('captcha', this.config.get('config_captcha'));
 
 		if (extension_info.extension_id && Number(this.config.get('captcha_' + this.config.get('config_captcha') + '_status')) && this.config.get('config_captcha_page').includes('review')) {
-			const captcha = await this.load.controller('extension/' + extension_info['extension'] + '/captcha/' + extension_info['code'] + '+validate');
+			const captcha = await this.load.controller('extension/' + extension_info['extension'] + '/captcha/' + extension_info['code'] + '.validate');
 
 			if (captcha) {
 				json['error']['captcha'] = captcha;

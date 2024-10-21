@@ -22,10 +22,10 @@ const data ={};
 
 		this.load.model('catalog/information',this);
 
-		information_info = await this.model_catalog_information.getInformation(this.config.get('config_checkout_id'));
+		const information_info = await this.model_catalog_information.getInformation(this.config.get('config_checkout_id'));
 
 		if (information_info) {
-			data['text_agree'] = sprintf(this.language.get('text_agree'), await this.url.link('information/information+info', 'language=' + this.config.get('config_language') + '&information_id=' + this.config.get('config_checkout_id')), information_info['title']);
+			data['text_agree'] = sprintf(this.language.get('text_agree'), await this.url.link('information/information.info', 'language=' + this.config.get('config_language') + '&information_id=' + this.config.get('config_checkout_id')), information_info['title']);
 		} else {
 			data['text_agree'] = '';
 		}
@@ -192,9 +192,9 @@ const data ={};
 
 			this.load.model('checkout/order');
 
-			order_info = await this.model_checkout_order.getOrder(order_id);
+			const order_info = await this.model_checkout_order.getOrder(order_id);
 
-			if (order_info) {
+			if (order_info.order_id) {
 				await this.model_checkout_order.editComment(order_id, this.request.post['comment']);
 			}
 

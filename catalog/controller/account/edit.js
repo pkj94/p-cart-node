@@ -1,9 +1,11 @@
-module.exports=class EditController extends Controller {
+const sprintf = require("locutus/php/strings/sprintf");
+
+module.exports = class EditController extends Controller {
 	/**
 	 * @return void
 	 */
 	async index() {
-const data ={};
+		const data = {};
 		await this.load.language('account/edit');
 
 		if (!await this.customer.isLogged() || (!(this.request.get['customer_token']) || !(this.session.data['customer_token']) || (this.request.get['customer_token'] != this.session.data['customer_token']))) {
@@ -17,32 +19,32 @@ const data ={};
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/home', 'language=' + this.config.get('config_language'))
-		];
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/home', 'language=' + this.config.get('config_language'))
+		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_account'),
-			'href' : await this.url.link('account/account', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'])
-		];
+			'text': this.language.get('text_account'),
+			'href': await this.url.link('account/account', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'])
+		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_edit'),
-			'href' : await this.url.link('account/edit', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'])
-		];
+			'text': this.language.get('text_edit'),
+			'href': await this.url.link('account/edit', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'])
+		});
 
 		data['error_upload_size'] = sprintf(this.language.get('error_upload_size'), Number(this.config.get('config_file_max_size')));
 
 		data['config_file_max_size'] = (Number(this.config.get('config_file_max_size')) * 1024 * 1024);
-		data['config_telephone_display'] = this.config.get('config_telephone_display');
-		data['config_telephone_required'] = this.config.get('config_telephone_required');
+		data['config_telephone_display'] = Number(this.config.get('config_telephone_display'));
+		data['config_telephone_required'] = Number(this.config.get('config_telephone_required'));
 
-		data['save'] = await this.url.link('account/edit+save', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token']);
+		data['save'] = await this.url.link('account/edit.save', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token']);
 		data['upload'] = await this.url.link('tool/upload', 'language=' + this.config.get('config_language'));
 
-		this.load.model('account/customer');
+		this.load.model('account/customer', this);
 
-		customer_info = await this.model_account_customer.getCustomer(await this.customer.getId());
+		const customer_info = await this.model_account_customer.getCustomer(await this.customer.getId());
 
 		data['firstname'] = customer_info['firstname'];
 		data['lastname'] = customer_info['lastname'];
@@ -52,20 +54,20 @@ const data ={};
 		// Custom Fields
 		data['custom_fields'] = [];
 
-		this.load.model('account/custom_field');
+		this.load.model('account/custom_field', this);
 
-		custom_fields = await this.model_account_custom_field.getCustomFields(await this.customer.getGroupId());
+		const custom_fields = await this.model_account_custom_field.getCustomFields(await this.customer.getGroupId());
 
-		for (custom_fields as custom_field) {
+		for (let custom_field of custom_fields) {
 			if (custom_field['location'] == 'account') {
-				data['custom_fields'].push(custom_field;
+				data['custom_fields'].push(custom_field);
 			}
 		}
 
-		if ((customer_info)) {
-			data['account_custom_field'] = JSON.parse(customer_info['custom_field'], true);
+		if ((customer_info.custom_field)) {
+			data['account_custom_field'] = JSON.parse(customer_info['custom_field']);
 		} else {
-			data['account_custom_field'] = [];
+			data['account_custom_field'] = {};
 		}
 
 		data['back'] = await this.url.link('account/account', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token']);
@@ -88,7 +90,7 @@ const data ={};
 	async save() {
 		await this.load.language('account/edit');
 
-		const json = {};
+		const json = { error: {} };
 
 		if (!await this.customer.isLogged() || (!(this.request.get['customer_token']) || !(this.session.data['customer_token']) || (this.request.get['customer_token'] != this.session.data['customer_token']))) {
 			this.session.data['redirect'] = await this.url.link('account/edit', 'language=' + this.config.get('config_language'));
@@ -96,8 +98,8 @@ const data ={};
 			json['redirect'] = await this.url.link('account/login', 'language=' + this.config.get('config_language'), true);
 		}
 
-		if (!Object.keys(json).length) {
-			keys = [
+		if (!json.redirect) {
+			let keys = [
 				'firstname',
 				'lastname',
 				'email',
@@ -118,26 +120,26 @@ const data ={};
 				json['error']['lastname'] = this.language.get('error_lastname');
 			}
 
-			if ((oc_strlen(this.request.post['email']) > 96) || !filter_var(this.request.post['email'], FILTER_VALIDATE_EMAIL)) {
+			if ((oc_strlen(this.request.post['email']) > 96) || !isEmailValid(this.request.post['email'])) {
 				json['error']['email'] = this.language.get('error_email');
 			}
 
-			this.load.model('account/customer');
+			this.load.model('account/customer', this);
 
-			if ((await this.customer.getEmail() != this.request.post['email']) && this.model_account_customer.getTotalCustomersByEmail(this.request.post['email'])) {
+			if ((await this.customer.getEmail() != this.request.post['email']) && await this.model_account_customer.getTotalCustomersByEmail(this.request.post['email'])) {
 				json['error']['warning'] = this.language.get('error_exists');
 			}
 
-			if (this.config.get('config_telephone_required') && (oc_strlen(this.request.post['telephone']) < 3) || (oc_strlen(this.request.post['telephone']) > 32)) {
+			if (Number(this.config.get('config_telephone_required')) && (oc_strlen(this.request.post['telephone']) < 3) || (oc_strlen(this.request.post['telephone']) > 32)) {
 				json['error']['telephone'] = this.language.get('error_telephone');
 			}
 
 			// Custom field validation
-			this.load.model('account/custom_field');
+			this.load.model('account/custom_field', this);
 
-			custom_fields = await this.model_account_custom_field.getCustomFields(await this.customer.getGroupId());
+			const custom_fields = await this.model_account_custom_field.getCustomFields(await this.customer.getGroupId());
 
-			for (custom_fields as custom_field) {
+			for (let custom_field of custom_fields) {
 				if (custom_field['location'] == 'account') {
 					if (custom_field['required'] && empty(this.request.post['custom_field'][custom_field['custom_field_id']])) {
 						json['error']['custom_field_' + custom_field['custom_field_id']] = sprintf(this.language.get('error_custom_field'), custom_field['name']);
@@ -148,31 +150,31 @@ const data ={};
 			}
 		}
 
-		if (!Object.keys(json).length) {
+		if (!Object.keys(json.error).length) {
 			// Update customer in db
 			await this.model_account_customer.editCustomer(await this.customer.getId(), this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
 
 			// Update customer session details
-			this.session.data['customer'] = [
-				'customer_id'       : await this.customer.getId(),
-				'customer_group_id' : await this.customer.getGroupId(),
-				'firstname'         : this.request.post['firstname'],
-				'lastname'          : this.request.post['lastname'],
-				'email'             : this.request.post['email'],
-				'telephone'         : this.request.post['telephone'],
-				'custom_field'      : (this.request.post['custom_field']) ? this.request.post['custom_field'] : []
-			];
+			this.session.data['customer'] = {
+				'customer_id': await this.customer.getId(),
+				'customer_group_id': await this.customer.getGroupId(),
+				'firstname': this.request.post['firstname'],
+				'lastname': this.request.post['lastname'],
+				'email': this.request.post['email'],
+				'telephone': this.request.post['telephone'],
+				'custom_field': (this.request.post['custom_field']) ? this.request.post['custom_field'] : []
+			};
 
-			delete (this.session.data['shipping_method']);
-			delete (this.session.data['shipping_methods']);
-			delete (this.session.data['payment_method']);
-			delete (this.session.data['payment_methods']);
+			delete this.session.data['shipping_method'];
+			delete this.session.data['shipping_methods'];
+			delete this.session.data['payment_method'];
+			delete this.session.data['payment_methods'];
 
 			json['redirect'] = await this.url.link('account/account', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'], true);
 		}
-
+		await this.session.save(this.session.data);
 		this.response.addHeader('Content-Type: application/json');
 		this.response.setOutput(json);
 	}

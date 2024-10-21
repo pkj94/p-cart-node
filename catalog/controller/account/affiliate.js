@@ -111,11 +111,11 @@ const data ={};
 		}
 
 		// Custom Fields
-		this.load.model('account/custom_field');
+		this.load.model('account/custom_field',this);
 
-		custom_fields = await this.model_account_custom_field.getCustomFields(this.config.get('config_customer_group_id'));
+		const custom_fields = await this.model_account_custom_field.getCustomFields(this.config.get('config_customer_group_id'));
 
-		for (custom_fields as custom_field) {
+		for (let custom_field of custom_fields) {
 			if (custom_field['location'] == 'affiliate') {
 				data['custom_fields'].push(custom_field;
 			}
@@ -132,10 +132,10 @@ const data ={};
 		if (!affiliate_info && this.config.get('config_affiliate_id')) {
 			this.load.model('catalog/information',this);
 
-			information_info = await this.model_catalog_information.getInformation(this.config.get('config_affiliate_id'));
+			const information_info = await this.model_catalog_information.getInformation(this.config.get('config_affiliate_id'));
 
 			if (information_info) {
-				data['text_agree'] = sprintf(this.language.get('text_agree'), await this.url.link('information/information+info', 'language=' + this.config.get('config_language') + '&information_id=' + this.config.get('config_affiliate_id')), information_info['title']);
+				data['text_agree'] = sprintf(this.language.get('text_agree'), await this.url.link('information/information.info', 'language=' + this.config.get('config_language') + '&information_id=' + this.config.get('config_affiliate_id')), information_info['title']);
 			} else {
 				data['text_agree'] = '';
 			}
@@ -211,11 +211,11 @@ const data ={};
 			}
 
 			// Custom field validation
-			this.load.model('account/custom_field');
+			this.load.model('account/custom_field',this);
 
-			custom_fields = await this.model_account_custom_field.getCustomFields(this.config.get('config_customer_group_id'));
+			const custom_fields = await this.model_account_custom_field.getCustomFields(this.config.get('config_customer_group_id'));
 
-			for (custom_fields as custom_field) {
+			for (let custom_field of custom_fields) {
 				if (custom_field['location'] == 'affiliate') {
 					if (custom_field['required'] && empty(this.request.post['custom_field'][custom_field['custom_field_id']])) {
 						json['error']['custom_field_' + custom_field['custom_field_id']] = sprintf(this.language.get('error_custom_field'), custom_field['name']);
@@ -233,7 +233,7 @@ const data ={};
 			if (!affiliate_info) {
 				this.load.model('catalog/information',this);
 
-				information_info = await this.model_catalog_information.getInformation(this.config.get('config_affiliate_id'));
+				const information_info = await this.model_catalog_information.getInformation(this.config.get('config_affiliate_id'));
 
 				if (information_info && !this.request.post['agree']) {
 					json['error']['warning'] = sprintf(this.language.get('error_agree'), information_info['title']);

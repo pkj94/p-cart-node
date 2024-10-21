@@ -1,8 +1,12 @@
-module.exports=class SuccessController extends Controller {
+const sprintf = require("locutus/php/strings/sprintf");
+
+module.exports = class SuccessController extends Controller {
 	/**
 	 * @return void
 	 */
-	public function index() {
+	async index() {
+		console.log(this.session.data)
+		const data = {};
 		await this.load.language('account/success');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -10,19 +14,19 @@ module.exports=class SuccessController extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/home', 'language=' + this.config.get('config_language'))
-		];
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/home', 'language=' + this.config.get('config_language'))
+		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_account'),
-			'href' : await this.url.link('account/account', 'language=' + this.config.get('config_language') + ((this.session.data['customer_token']) ? '&customer_token=' + this.session.data['customer_token'] : ''))
-		];
+			'text': this.language.get('text_account'),
+			'href': await this.url.link('account/account', 'language=' + this.config.get('config_language') + ((this.session.data['customer_token']) ? '&customer_token=' + this.session.data['customer_token'] : ''))
+		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('account/success', 'language=' + this.config.get('config_language') + ((this.session.data['customer_token']) ? '&customer_token=' + this.session.data['customer_token'] : ''))
-		];
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('account/success', 'language=' + this.config.get('config_language') + ((this.session.data['customer_token']) ? '&customer_token=' + this.session.data['customer_token'] : ''))
+		});
 
 		if (await this.customer.isLogged()) {
 			data['text_message'] = sprintf(this.language.get('text_success'), await this.url.link('information/contact', 'language=' + this.config.get('config_language')));

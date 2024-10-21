@@ -80,7 +80,7 @@ const data ={};
 
 		data['informations'] = [];
 
-		for (this.model_catalog_information.getInformations() as result) {
+		for (await this.model_catalog_information.getInformations() as result) {
 			data['informations'].push({
 				'title' : result['title'],
 				'href'  : await this.url.link('information/information', 'language=' + this.config.get('config_language') + '&information_id=' + result['information_id'])

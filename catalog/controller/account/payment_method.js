@@ -37,7 +37,7 @@ const data ={};
 			data['success'] = '';
 		}
 
-		data['list'] = this.getList();
+		data['list'] = await this.getList();
 
 		data['continue'] = await this.url.link('account/account', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token']);
 
@@ -73,7 +73,7 @@ const data ={};
 	/**
 	 * @return string
 	 */
-	protected function getList() {
+	async getList() {
 		data['payment_methods'] = [];
 
 		this.load.model('account/payment_method');
@@ -102,7 +102,7 @@ const data ={};
 				'image'       : result['image'],
 				'type'        : result['type'],
 				'date_expire' : date('m-Y', new Date(result['date_expire'])),
-				'delete'      : await this.url.link('account/payment_method+delete', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'] + '&customer_payment_id=' + result['customer_payment_id'])
+				'delete'      : await this.url.link('account/payment_method.delete', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'] + '&customer_payment_id=' + result['customer_payment_id'])
 			];
 		}
 

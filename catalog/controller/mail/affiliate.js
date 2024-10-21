@@ -14,7 +14,7 @@ class AffiliateController extends Controller {
 	 * @return void
 	 * @throws \Exception
 	 */
-	async index(&route, args, mixed &output) {
+	async index(&route, args, output) {
 		await this.load.language('mail/affiliate');
 
 		store_name = html_entity_decode(this.config.get('config_name'));
@@ -23,7 +23,7 @@ class AffiliateController extends Controller {
 
 		data['text_welcome'] = sprintf(this.language.get('text_welcome'), store_name);
 
-		this.load.model('account/customer_group');
+		this.load.model('account/customer_group',this);
 
 		if (await this.customer.isLogged()) {
 			customer_group_id = await this.customer.getGroupId();
@@ -78,7 +78,7 @@ class AffiliateController extends Controller {
 	 * @return void
 	 * @throws \Exception
 	 */
-	async alert(&route, args, mixed &output) {
+	async alert(&route, args, output) {
 		// Send to main admin email if new affiliate email is enabled
 		if (in_array('affiliate', this.config.get('config_mail_alert'))) {
 			await this.load.language('mail/affiliate');
@@ -106,9 +106,9 @@ class AffiliateController extends Controller {
 			data['website'] = html_entity_decode(args[1]['website']);
 			data['company'] = args[1]['company'];
 
-			this.load.model('account/customer_group');
+			this.load.model('account/customer_group',this);
 
-			customer_group_info = await this.model_account_customer_group.getCustomerGroup(customer_group_id);
+			const customer_group_info = await this.model_account_customer_group.getCustomerGroup(customer_group_id);
 
 			if (customer_group_info) {
 				data['customer_group'] = customer_group_info['name'];

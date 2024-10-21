@@ -35,7 +35,7 @@ class SubscriptionController extends Controller {
         results = await this.model_checkout_subscription.getSubscriptions(filter_data);
 
 		for (let result of results) {
-			order_info = await this.model_checkout_order.getOrder(result['order_id']);
+			const order_info = await this.model_checkout_order.getOrder(result['order_id']);
 
 			// Check the there is an order and the order status is complete and subscription status is active
 			if (order_info && in_array(order_info['order_status_id'], this.config.get('config_complete_status'))) {
@@ -66,9 +66,9 @@ class SubscriptionController extends Controller {
 					store = await this.model_setting_store.createStoreInstance(result['store_id'], language_info['code']);
 
 					// Login
-					this.load.model('account/customer');
+					this.load.model('account/customer',this);
 
-					customer_info = await this.model_account_customer.getCustomer(result['customer_id']);
+					const customer_info = await this.model_account_customer.getCustomer(result['customer_id']);
 
 					if (customer_info && await this.customer.login(customer_info['email'], '', true)) {
 						// Add customer details into session
@@ -95,9 +95,10 @@ class SubscriptionController extends Controller {
 					if (product_info.product_id) {
 						let option_data = [];
 
-						order_options = await this.model_account_order.getOptions(result['order_id'], result['order_product_id']);
+						const 
+ order_options = await this.model_account_order.getOptions(result['order_id'], result['order_product_id']);
 
-						for (order_options as order_option) {
+						for (let order_option of order_options) {
 							if (order_option['type'] == 'select' || order_option['type'] == 'radio' || order_option['type'] == 'image') {
 								option_data[order_option['product_option_id']] = order_option['product_option_value_id'];
 							} else if (order_option['type'] == 'checkbox') {
@@ -117,7 +118,7 @@ class SubscriptionController extends Controller {
 
 				// 5+ Add Shipping Address
 				if (!error && store.cart.hasShipping()) {
-					this.load.model('account/address');
+					this.load.model('account/address',this);
 
 					shipping_address_info = await this.model_account_address.getAddress(result['customer_id'], result['shipping_address_id']);
 
@@ -152,7 +153,7 @@ class SubscriptionController extends Controller {
 				payment_address = [];
 
 				if (!error && this.config.get('config_checkout_payment_address')) {
-					this.load.model('account/address');
+					this.load.model('account/address',this);
 
 					payment_address_info = await this.model_account_address.getAddress(order_info['customer_id'], result['payment_address_id']);
 
@@ -308,7 +309,7 @@ class SubscriptionController extends Controller {
 					order_data['vouchers'] = [];
 
 					// Order Totals
-					totals = [];
+					const totals = [];
 					taxes = store.cart.getTaxes();
 					total = 0;
 
@@ -431,9 +432,9 @@ class SubscriptionController extends Controller {
 						// order ID; only as a new order ID added by an extension
 						for (let subscription of subscriptions) {
 							if (subscription['customer_id'] == result['customer_id'] && (subscription['subscription_id'] != result['subscription_id']) && (subscription['order_id'] != result['order_id']) && (subscription['order_product_id'] != result['order_product_id'])) {
-								subscription_info = await this.model_account_subscription.getSubscription(subscription['subscription_id']);
+								const subscription_info = await this.model_account_subscription.getSubscription(subscription['subscription_id']);
 
-								if (subscription_info) {
+								if (subscription_info.subscription_id) {
 									// this.model_account_subscription.addTransaction(subscription['subscription_id'], subscription['order_id'], this.language.get('text_success'), amount, subscription_info['type'], subscription_info['payment_method'], subscription_info['payment_code']);
 								}
 							}

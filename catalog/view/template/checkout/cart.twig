@@ -63,19 +63,19 @@ $('#shopping-cart').on('submit', 'form', function (e) {
 
             if (json['redirect']) {
                 location = json['redirect'];
-            }
+            }else{
+              if (json['error']) {
+                  $('#alert').prepend('<div class="alert alert-danger alert-dismissible"><i class="fa-solid fa-circle-exclamation"></i> ' + json['error'] + ' <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
+              }
 
-            if (json['error']) {
-                $('#alert').prepend('<div class="alert alert-danger alert-dismissible"><i class="fa-solid fa-circle-exclamation"></i> ' + json['error'] + ' <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
-            }
+              if (json['success']) {
+                  $('#alert').prepend('<div class="alert alert-success alert-dismissible"><i class="fa-solid fa-circle-exclamation"></i> ' + json['success'] + ' <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
+              }
 
-            if (json['success']) {
-                $('#alert').prepend('<div class="alert alert-success alert-dismissible"><i class="fa-solid fa-circle-exclamation"></i> ' + json['success'] + ' <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
+              $('#shopping-cart').load('?route=checkout/cart.list&language={{ language }}', {}, function () {
+                  $('#header-cart').load('?route=common/cart.info&language={{ language }}');
+              });
             }
-
-            $('#shopping-cart').load('?route=checkout/cart.list&language={{ language }}', {}, function () {
-                $('#header-cart').load('?route=common/cart.info&language={{ language }}');
-            });
         },
         error: function (xhr, ajaxOptions, thrownError) {
             console.log(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);

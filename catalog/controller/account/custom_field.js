@@ -13,11 +13,11 @@ const data ={};
 			customer_group_id = this.config.get('config_customer_group_id');
 		}
 
-		this.load.model('account/custom_field');
+		this.load.model('account/custom_field',this);
 
-		custom_fields = await this.model_account_custom_field.getCustomFields(customer_group_id);
+		const custom_fields = await this.model_account_custom_field.getCustomFields(customer_group_id);
 
-		for (custom_fields as custom_field) {
+		for (let custom_field of custom_fields) {
 			json.push({
 				'custom_field_id' : custom_field['custom_field_id'],
 				'required'        : custom_field['required']

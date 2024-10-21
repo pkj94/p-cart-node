@@ -7,9 +7,9 @@ module.exports = class ActivityModel extends Model {
 	 */
 	async addActivity(key, data) {
 		if ((data['customer_id'])) {
-			customer_id = data['customer_id'];
+			const customer_id = data['customer_id'];
 		} else {
-			customer_id = 0;
+			const customer_id = 0;
 		}
 
 		await this.db.query("INSERT INTO `" + DB_PREFIX + "customer_activity` SET `customer_id` = '" + customer_id + "', `key` = " + this.db.escape(key) + ", `data` = " + this.db.escape(json_encode(data)) + ", `ip` = " + this.db.escape((this.request.server.headers['x-forwarded-for'] ||

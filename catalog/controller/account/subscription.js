@@ -2,7 +2,7 @@ module.exports=class SubscriptionController extends Controller {
 	/**
 	 * @return void
 	 */
-	public function index() {
+	async index() {
 		await this.load.language('account/subscription');
 
 		if (!await this.customer.isLogged() || (!(this.request.get['customer_token']) || !(this.session.data['customer_token']) || (this.request.get['customer_token'] != this.session.data['customer_token']))) {
@@ -45,7 +45,7 @@ if ((this.request.get['page'])) {
 
 		data['subscriptions'] = [];
 
-		this.load.model('account/subscription');
+		this.load.model('account/subscription',this);
 		this.load.model('account/order',this);
 		this.load.model('catalog/product',this);
 		this.load.model('localisation/currency',this);
@@ -134,7 +134,7 @@ if ((this.request.get['page'])) {
 	/**
 	 * @return void
 	 */
-	public function info() {
+	async info() {
 		await this.load.language('account/subscription');
 
 		if (!await this.customer.isLogged() || (!(this.request.get['customer_token']) || !(this.session.data['customer_token']) || (this.request.get['customer_token'] != this.session.data['customer_token']))) {
@@ -149,12 +149,12 @@ if ((this.request.get['page'])) {
 			subscription_id = 0;
 		}
 
-		this.load.model('account/subscription');
+		this.load.model('account/subscription',this);
 
 		subscription_info = await this.model_account_subscription.getSubscription(subscription_id);
 
-		if (subscription_info) {
-			heading_title = sprintf(this.language.get('text_subscription'), subscription_info['subscription_id']);
+		if (subscription_info.subscription_id) {
+			const heading_title = sprintf(this.language.get('text_subscription'), subscription_info['subscription_id']);
 
 			this.document.setTitle(heading_title);
 
@@ -210,7 +210,7 @@ if ((this.request.get['page'])) {
 				payment_address_id = 0;
 			}
 
-			this.load.model('account/address');
+			this.load.model('account/address',this);
 
 			address_info = await this.model_account_address.getAddress(await this.customer.getId(), payment_address_id);
 
@@ -259,7 +259,7 @@ if ((this.request.get['page'])) {
 				shipping_address_id = 0;
 			}
 
-			this.load.model('account/address');
+			this.load.model('account/address',this);
 
 			address_info = await this.model_account_address.getAddress(await this.customer.getId(), shipping_address_id);
 
@@ -369,7 +369,7 @@ if ((this.request.get['page'])) {
 			data['history'] = this.getHistory();
 			data['order'] = this.getOrder();
 
-			//data['order'] = await this.url.link('account/order+info', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'] + '&order_id=' + subscription_info['order_id']);
+			//data['order'] = await this.url.link('account/order.info', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'] + '&order_id=' + subscription_info['order_id']);
 			data['product'] = await this.url.link('product/product', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'] + '&product_id=' + subscription_info['product_id']);
 
 			data['column_left'] = await this.load.controller('common/column_left');
@@ -390,7 +390,7 @@ if ((this.request.get['page'])) {
 	/**
 	 * @return void
 	 */
-	public function history() {
+	async history() {
 		await this.load.language('account/subscription');
 
 		this.response.setOutput(this.getHistory());
@@ -399,14 +399,14 @@ if ((this.request.get['page'])) {
 	/**
 	 * @return string
 	 */
-	public function getHistory() {
+	async getHistory() {
 		if ((this.request.get['subscription_id'])) {
 			subscription_id = this.request.get['subscription_id'];
 		} else {
 			subscription_id = 0;
 		}
 
-		if ((this.request.get['page']) && this.request.get['route'] == 'account/subscription+history') {
+		if ((this.request.get['page']) && this.request.get['route'] == 'account/subscription.history') {
 			page = Number(this.request.get['page']);
 		} else {
 			page = 1;
@@ -416,7 +416,7 @@ if ((this.request.get['page'])) {
 
 		data['histories'] = [];
 
-		this.load.model('account/subscription');
+		this.load.model('account/subscription',this);
 
 		const results = await this.model_account_subscription.getHistories(subscription_id, (page - 1) * limit, limit);
 
@@ -434,7 +434,7 @@ if ((this.request.get['page'])) {
 			'total' : subscription_total,
 			'page'  : page,
 			'limit' : limit,
-			'url'   : await this.url.link('account/subscription+history', 'customer_token=' + this.session.data['customer_token'] + '&subscription_id=' + subscription_id + '&page={page}')
+			'url'   : await this.url.link('account/subscription.history', 'customer_token=' + this.session.data['customer_token'] + '&subscription_id=' + subscription_id + '&page={page}')
 		]);
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (subscription_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (subscription_total - limit)) ? subscription_total : (((page - 1) * limit) + limit), subscription_total, Math.ceil(subscription_total / limit));
@@ -445,7 +445,7 @@ if ((this.request.get['page'])) {
 	/**
 	 * @return void
 	 */
-	public function order() {
+	async order() {
 		await this.load.language('account/subscription');
 
 		this.response.setOutput(this.getOrder());
@@ -454,7 +454,7 @@ if ((this.request.get['page'])) {
 	/**
 	 * @return string
 	 */
-	public function getOrder() {
+	async getOrder() {
 		if ((this.request.get['subscription_id'])) {
 			subscription_id = this.request.get['subscription_id'];
 		} else {

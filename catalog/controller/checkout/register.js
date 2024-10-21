@@ -15,8 +15,8 @@ const data ={};
 		data['config_checkout_payment_address'] = this.config.get('config_checkout_payment_address');
 		data['config_checkout_guest'] = (this.config.get('config_checkout_guest') && !Number(this.config.get('config_customer_price')) && !this.cart.hasDownload() && !this.cart.hasSubscription());
 		data['config_file_max_size'] = (Number(this.config.get('config_file_max_size')) * 1024 * 1024);
-		data['config_telephone_display'] = this.config.get('config_telephone_display');
-		data['config_telephone_required'] = this.config.get('config_telephone_required');
+		data['config_telephone_display'] = Number(this.config.get('config_telephone_display'));
+		data['config_telephone_required'] = Number(this.config.get('config_telephone_required'));
 
 		data['shipping_required'] = await this.cart.hasShipping();
 
@@ -24,13 +24,13 @@ const data ={};
 
 		data['customer_groups'] = [];
 
-		if (is_array(this.config.get('config_customer_group_display'))) {
-			this.load.model('account/customer_group');
+		if (Array.isArray(this.config.get('config_customer_group_display'))) {
+			this.load.model('account/customer_group',this);
 
-			customer_groups = await this.model_account_customer_group.getCustomerGroups();
+			const customer_groups = await this.model_account_customer_group.getCustomerGroups();
 
 			for (customer_groups  as customer_group) {
-				if (in_array(customer_group['customer_group_id'], this.config.get('config_customer_group_display'))) {
+				if (this.config.get('config_customer_group_display').includes(customer_group['customer_group_id'])) {
 					data['customer_groups'].push(customer_group;
 				}
 			}
@@ -128,14 +128,14 @@ const data ={};
 		data['countries'] = await this.model_localisation_country.getCountries();
 
 		// Custom Fields
-		this.load.model('account/custom_field');
+		this.load.model('account/custom_field',this);
 
 		data['custom_fields'] = await this.model_account_custom_field.getCustomFields();
 
 		// Captcha
 		this.load.model('setting/extension',this);
 
-		extension_info = await this.model_setting_extension.getExtensionByCode('captcha', this.config.get('config_captcha'));
+		const extension_info = await this.model_setting_extension.getExtensionByCode('captcha', this.config.get('config_captcha'));
 
 		if (extension_info && Number(this.config.get('captcha_' + this.config.get('config_captcha') + '_status')) && in_array('register', this.config.get('config_captcha_page'))) {
 			data['captcha'] = await this.load.controller('extension/'  + extension_info['extension'] + '/captcha/' + extension_info['code']);
@@ -145,10 +145,10 @@ const data ={};
 
 		this.load.model('catalog/information',this);
 
-		information_info = await this.model_catalog_information.getInformation(this.config.get('config_account_id'));
+		const information_info = await this.model_catalog_information.getInformation(this.config.get('config_account_id'));
 
 		if (information_info) {
-			data['text_agree'] = sprintf(this.language.get('text_agree'), await this.url.link('information/information+info', 'language=' + this.config.get('config_language') + '&information_id=' + this.config.get('config_account_id')), information_info['title']);
+			data['text_agree'] = sprintf(this.language.get('text_agree'), await this.url.link('information/information.info', 'language=' + this.config.get('config_language') + '&information_id=' + this.config.get('config_account_id')), information_info['title']);
 		} else {
 			data['text_agree'] = '';
 		}
@@ -236,9 +236,9 @@ const data ={};
 				customer_group_id = this.config.get('config_customer_group_id');
 			}
 
-			this.load.model('account/customer_group');
+			this.load.model('account/customer_group',this);
 
-			customer_group_info = await this.model_account_customer_group.getCustomerGroup(customer_group_id);
+			const customer_group_info = await this.model_account_customer_group.getCustomerGroup(customer_group_id);
 
 			if (!customer_group_info || !in_array(customer_group_id, this.config.get('config_customer_group_display'))) {
 				json['error']['warning'] = this.language.get('error_customer_group');
@@ -256,31 +256,31 @@ const data ={};
 				json['error']['email'] = this.language.get('error_email');
 			}
 
-			this.load.model('account/customer');
+			this.load.model('account/customer',this);
 
-			if (this.request.post['account'] && this.model_account_customer.getTotalCustomersByEmail(this.request.post['email'])) {
+			if (this.request.post['account'] && await this.model_account_customer.getTotalCustomersByEmail(this.request.post['email'])) {
 				json['error']['warning'] = this.language.get('error_exists');
 			}
 
 			// Logged
 			if (await this.customer.isLogged()) {
-				customer_info = await this.model_account_customer.getCustomerByEmail(this.request.post['email']);
+				const customer_info = await this.model_account_customer.getCustomerByEmail(this.request.post['email']);
 
 				if (customer_info['customer_id'] != await this.customer.getId()) {
 					json['error']['warning'] = this.language.get('error_exists');
 				}
 			}
 
-			if (this.config.get('config_telephone_required') && (oc_strlen(this.request.post['telephone']) < 3) || (oc_strlen(this.request.post['telephone']) > 32)) {
+			if (Number(this.config.get('config_telephone_required')) && (oc_strlen(this.request.post['telephone']) < 3) || (oc_strlen(this.request.post['telephone']) > 32)) {
 				json['error']['telephone'] = this.language.get('error_telephone');
 			}
 
 			// Custom field validation
-			this.load.model('account/custom_field');
+			this.load.model('account/custom_field',this);
 
-			custom_fields = await this.model_account_custom_field.getCustomFields(customer_group_id);
+			const custom_fields = await this.model_account_custom_field.getCustomFields(customer_group_id);
 
-			for (custom_fields as custom_field) {
+			for (let custom_field of custom_fields) {
 				if (custom_field['location'] == 'account') {
 					if (custom_field['required'] && empty(this.request.post['custom_field'][custom_field['location']][custom_field['custom_field_id']])) {
 						json['error']['custom_field_' + custom_field['custom_field_id']] = sprintf(this.language.get('error_custom_field'), custom_field['name']);
@@ -316,7 +316,7 @@ const data ={};
 				}
 
 				// Custom field validation
-				for (custom_fields as custom_field) {
+				for (let custom_field of custom_fields) {
 					if (custom_field['location'] == 'address') {
 						if (custom_field['required'] && empty(this.request.post['payment_custom_field'][custom_field['location']][custom_field['custom_field_id']])) {
 							json['error']['payment_custom_field_' + custom_field['custom_field_id']] = sprintf(this.language.get('error_custom_field'), custom_field['name']);
@@ -364,7 +364,7 @@ const data ={};
 				}
 
 				// Custom field validation
-				for (custom_fields as custom_field) {
+				for (let custom_field of custom_fields) {
 					if (custom_field['location'] == 'address') {
 						if (custom_field['required'] && empty(this.request.post['shipping_custom_field'][custom_field['location']][custom_field['custom_field_id']])) {
 							json['error']['shipping_custom_field_' + custom_field['custom_field_id']] = sprintf(this.language.get('error_custom_field'), custom_field['name']);
@@ -383,7 +383,7 @@ const data ={};
 			if (this.request.post['account']) {
 				this.load.model('catalog/information',this);
 
-				information_info = await this.model_catalog_information.getInformation(this.config.get('config_account_id'));
+				const information_info = await this.model_catalog_information.getInformation(this.config.get('config_account_id'));
 
 				if (information_info && !this.request.post['agree']) {
 					json['error']['warning'] = sprintf(this.language.get('error_agree'), information_info['title']);
@@ -394,10 +394,10 @@ const data ={};
 			this.load.model('setting/extension',this);
 
 			if (!await this.customer.isLogged()) {
-				extension_info = await this.model_setting_extension.getExtensionByCode('captcha', this.config.get('config_captcha'));
+				const extension_info = await this.model_setting_extension.getExtensionByCode('captcha', this.config.get('config_captcha'));
 
 				if (extension_info && Number(this.config.get('captcha_' + this.config.get('config_captcha') + '_status')) && in_array('register', this.config.get('config_captcha_page'))) {
-					const captcha = await this.load.controller('extension/' + extension_info['extension'] + '/captcha/' + extension_info['code'] + '+validate');
+					const captcha = await this.load.controller('extension/' + extension_info['extension'] + '/captcha/' + extension_info['code'] + '.validate');
 
 					if (captcha) {
 						json['error']['captcha'] = captcha;
@@ -433,7 +433,7 @@ const data ={};
 				this.session.data['customer'] = customer_data;
 			}
 
-			this.load.model('account/address');
+			this.load.model('account/address',this);
 
 			// Payment Address
 			if (this.config.get('config_checkout_payment_address')) {

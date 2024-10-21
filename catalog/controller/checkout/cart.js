@@ -203,7 +203,7 @@ module.exports = class CartController extends Controller {
 			let totalData = await this.model_checkout_cart.getTotals(totals, taxes, total);
 			total = totalData.total;
 			taxes = totalData.taxes;
-			totals = totalData.totals;
+			const totals = totalData.totals;
 			for (let result of totals) {
 				data['totals'].push({
 					'title': result['title'],
@@ -367,7 +367,6 @@ module.exports = class CartController extends Controller {
 		// Remove
 		if (!Object.keys(json).length) {
 			await this.cart.remove(key);
-
 			if (await this.cart.hasProducts() || (this.session.data['vouchers'] && this.session.data['vouchers'].length)) {
 				json['success'] = this.language.get('text_remove');
 			} else {

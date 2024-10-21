@@ -62,7 +62,7 @@ const data ={};
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('account/customer');
+			this.load.model('account/customer',this);
 
 			await this.model_account_customer.editNewsletter(this.request.post['newsletter']);
 

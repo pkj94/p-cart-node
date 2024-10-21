@@ -14,7 +14,7 @@ module.exports = class CookieController extends Controller {
 			if (information_info.information_id) {
 				await this.load.language('common/cookie');
 
-				data['text_cookie'] = sprintf(this.language.get('text_cookie'), await this.url.link('information/information+info', 'language=' + this.config.get('config_language') + '&information_id=' + information_info['information_id']));
+				data['text_cookie'] = sprintf(this.language.get('text_cookie'), await this.url.link('information/information.info', 'language=' + this.config.get('config_language') + '&information_id=' + information_info['information_id']));
 
 				data['agree'] = await this.url.link('common/cookie+confirm', 'language=' + this.config.get('config_language') + '&agree=1');
 				data['disagree'] = await this.url.link('common/cookie+confirm', 'language=' + this.config.get('config_language') + '&agree=0');

@@ -25,7 +25,7 @@ class OrderController extends Controller {
 
 		this.load.model('checkout/order');
 
-		order_info = await this.model_checkout_order.getOrder(order_id);
+		const order_info = await this.model_checkout_order.getOrder(order_id);
 
 		if (!order_info) {
 			json['error'] = this.language.get('error_order');
@@ -109,9 +109,9 @@ class OrderController extends Controller {
 			for (let product of products) {
 				let option_data = [];
 
-				options = await this.model_checkout_order.getOptions(order_id, product['order_product_id']);
+				const options = await this.model_checkout_order.getOptions(order_id, product['order_product_id']);
 
-				for (options as option) {
+				for (let option of options) {
 					if (option['type'] == 'text' || option['type'] == 'textarea' || option['type'] == 'file' || option['type'] == 'date' || option['type'] == 'datetime' || option['type'] == 'time') {
 						option_data[option['product_option_id']] = option['value'];
 					} else if (option['type'] == 'select' || option['type'] == 'radio') {
@@ -121,9 +121,9 @@ class OrderController extends Controller {
 					}
 				}
 
-				subscription_info = await this.model_checkout_order.getSubscription(order_id, product['order_product_id']);
+				const subscription_info = await this.model_checkout_order.getSubscription(order_id, product['order_product_id']);
 
-				if (subscription_info) {
+				if (subscription_info.subscription_id) {
 					subscription_plan_id = subscription_info['subscription_plan_id'];
 				} else {
 					subscription_plan_id = 0;
@@ -136,9 +136,9 @@ class OrderController extends Controller {
 
 			this.load.model('checkout/voucher');
 
-			vouchers = await this.model_checkout_order.getVouchers(order_id);
+			const vouchers = await this.model_checkout_order.getVouchers(order_id);
 
-			for (vouchers as voucher) {
+			for (let voucher of vouchers) {
 				this.session.data['vouchers'].push({
 					'code'             : voucher['code'],
 					'description'      : sprintf(this.language.get('text_for'), this.currency.format(voucher['amount'], this.session.data['currency'], 1+0), voucher['to_name']),
@@ -430,13 +430,13 @@ class OrderController extends Controller {
 			}
 
 			// Order Totals
-			totals = [];
+			const totals = [];
 			taxes = await this.cart.getTaxes();
 			total = 0;
 
 			this.load.model('checkout/cart',this);
 
-			(this.model_checkout_cart.getTotals)(totals, taxes, total);
+			(await this.model_checkout_cart.getTotals)(totals, taxes, total);
 
 			total_data = [
 				'totals' : totals,
@@ -504,9 +504,9 @@ class OrderController extends Controller {
 			if (!(this.session.data['order_id'])) {
 				this.session.data['order_id'] = await this.model_checkout_order.addOrder(order_data);
 			} else {
-				order_info = await this.model_checkout_order.getOrder(this.session.data['order_id']);
+				const order_info = await this.model_checkout_order.getOrder(this.session.data['order_id']);
 
-				if (order_info) {
+				if (order_info.order_id) {
 					await this.model_checkout_order.editOrder(this.session.data['order_id'], order_data);
 				}
 			}
@@ -556,9 +556,9 @@ class OrderController extends Controller {
 		for (selected as order_id) {
 			this.load.model('checkout/order');
 
-			order_info = await this.model_checkout_order.getOrder(order_id);
+			const order_info = await this.model_checkout_order.getOrder(order_id);
 
-			if (order_info) {
+			if (order_info.order_id) {
 				await this.model_checkout_order.deleteOrder(order_id);
 			}
 		}
@@ -594,7 +594,7 @@ class OrderController extends Controller {
 
 		this.load.model('checkout/order');
 
-		order_info = await this.model_checkout_order.getOrder(this.request.post['order_id']);
+		const order_info = await this.model_checkout_order.getOrder(this.request.post['order_id']);
 
 		if (!order_info) {
 			json['error'] = this.language.get('error_order');

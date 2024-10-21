@@ -55,7 +55,7 @@ module.exports = class HeaderController extends Controller {
 		if (await this.customer.isLogged()) {
 			this.load.model('account/wishlist', this);
 
-			data['text_wishlist'] = sprintf(this.language.get('text_wishlist'), this.model_account_wishlist.getTotalWishlist());
+			data['text_wishlist'] = sprintf(this.language.get('text_wishlist'), await this.model_account_wishlist.getTotalWishlist());
 		} else {
 			data['text_wishlist'] = sprintf(this.language.get('text_wishlist'), ((this.session.data['wishlist']) ? this.session.data['wishlist'].length : 0));
 		}

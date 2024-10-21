@@ -1,3 +1,5 @@
+const bcrypt = require('bcrypt');
+const crypto = require('crypto');
 module.exports = class CustomerLibrary {
     constructor(registry) {
         this.db = registry.get('db');
@@ -11,74 +13,72 @@ module.exports = class CustomerLibrary {
         this.email = '';
         this.telephone = '';
         this.newsletter = false;
-        this.init();
     }
     async init() {
-        if (this.session.customer_id) {
-            const customer_query = await this.db.query(`SELECT * FROM ${DB_PREFIX}customer WHERE customer_id = ${this.session.customer_id} AND status = '1'`);
-            if (customer_query.length) {
-                this.customer_id = customer_query[0].customer_id;
-                this.firstname = customer_query[0].firstname;
-                this.lastname = customer_query[0].lastname;
-                this.customer_group_id = customer_query[0].customer_group_id;
-                this.email = customer_query[0].email;
-                this.telephone = customer_query[0].telephone;
-                this.newsletter = customer_query[0].newsletter;
+        if (this.session.data.customer_id) {
+            const customer_query = await this.db.query(`SELECT * FROM ${DB_PREFIX}customer WHERE customer_id = ${this.session.data.customer_id} AND status = '1'`);
+            if (customer_query.num_rows) {
+                this.customer_id = customer_query.row.customer_id;
+                this.firstname = customer_query.row.firstname;
+                this.lastname = customer_query.row.lastname;
+                this.customer_group_id = customer_query.row.customer_group_id;
+                this.email = customer_query.row.email;
+                this.telephone = customer_query.row.telephone;
+                this.newsletter = customer_query.row.newsletter;
 
-                await this.db.query(`UPDATE customer SET language_id = ${this.config.get('config_language_id')}, ip = '${this.request.server.headers['x-forwarded-for'] || (
+                await this.db.query(`UPDATE ${DB_PREFIX}customer SET language_id = ${this.config.get('config_language_id')}, ip = '${this.request.server.headers['x-forwarded-for'] || (
                     this.request.server.connection ? (this.request.server.connection.remoteAddress ||
                         this.request.server.socket.remoteAddress ||
-                        this.request.server.connection.socket.remoteAddress):'')}' WHERE customer_id = ${this.customer_id}`);
+                        this.request.server.connection.socket.remoteAddress) : '')}' WHERE customer_id = ${this.customer_id}`);
             } else {
                 this.logout();
             }
         }
     }
     async login(email, password, override = false) {
-        const customer_query = await this.db.query(`SELECT * FROM ${DB_PREFIX}customer WHERE LOWER(email) = '${email.toLowerCase()}' AND status = '1'`);
+        const customer_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "customer` WHERE LCASE(`email`) = " + this.db.escape(oc_strtolower(email)) + " AND `status` = '1'");
 
-        if (customer_query.length) {
-            let rehash = false;
-
+        if (customer_query.num_rows) {
             if (!override) {
-                if (await bcrypt.compare(password, customer_query[0].password)) {
-                    rehash = bcrypt.getRounds(customer_query[0].password) < 10;
-                } else if (customer_query[0].salt && customer_query[0].password === sha1(customer_query[0].salt + sha1(customer_query[0].salt + sha1(password)))) {
+                let rehash;
+                if (await bcrypt.compare(password, customer_query.row['password'])) {
+                    rehash = bcrypt.getRounds(customer_query.row['password']) < 10;
+                } else if (customer_query.row['salt'] && customer_query.row['password'] == crypto.createHash('sha1').update(customer_query.row.salt + crypto.createHash('sha1').update(customer_query.row.salt + crypto.createHash('sha1').update(password).digest('hex')).digest('hex')).digest('hex')) {
                     rehash = true;
-                } else if (customer_query[0].password === md5(password)) {
+                } else if (customer_query.row['password'] == md5(password)) {
                     rehash = true;
                 } else {
                     return false;
                 }
 
                 if (rehash) {
-                    await this.db.query(`UPDATE customer SET password = '${await bcrypt.hash(password, 10)}' WHERE customer_id = ${customer_query[0].customer_id}`);
+                    await this.db.query("UPDATE `" + DB_PREFIX + "customer` SET `password` = " + this.db.escape(password_hash(password)) + " WHERE `customer_id` = '" + customer_query.row['customer_id'] + "'");
                 }
             }
 
-            this.session.customer_id = customer_query[0].customer_id;
+            this.session.data['customer_id'] = customer_query.row['customer_id'];
 
-            this.customer_id = customer_query[0].customer_id;
-            this.firstname = customer_query[0].firstname;
-            this.lastname = customer_query[0].lastname;
-            this.customer_group_id = customer_query[0].customer_group_id;
-            this.email = customer_query[0].email;
-            this.telephone = customer_query[0].telephone;
-            this.newsletter = customer_query[0].newsletter;
+            this.customer_id = customer_query.row['customer_id'];
+            this.firstname = customer_query.row['firstname'];
+            this.lastname = customer_query.row['lastname'];
+            this.customer_group_id = customer_query.row['customer_group_id'];
+            this.email = customer_query.row['email'];
+            this.telephone = customer_query.row['telephone'];
+            this.newsletter = customer_query.row['newsletter'];
 
-            await this.db.query(`UPDATE customer SET language_id = ${this.config.get('config_language_id')}, ip = '${this.request.server.headers['x-forwarded-for'] || (
+            await this.db.query("UPDATE `" + DB_PREFIX + "customer` SET `language_id` = '" + this.config.get('config_language_id') + "', `ip` = " + this.db.escape((
                 this.request.server.connection ? (this.request.server.connection.remoteAddress ||
                     this.request.server.socket.remoteAddress ||
-                    this.request.server.connection.socket.remoteAddress):'')}' WHERE customer_id = ${this.customer_id}`);
+                    this.request.server.connection.socket.remoteAddress) : '')) + " WHERE `customer_id` = '" + this.customer_id + "'");
 
             return true;
+        } else {
+            return false;
         }
-
-        return false;
     }
 
     logout() {
-        delete this.session.customer_id;
+        delete this.session.data.customer_id;
 
         this.customer_id = 0;
         this.firstname = '';
@@ -131,21 +131,21 @@ module.exports = class CustomerLibrary {
 
     async getAddressId() {
         await this.init();
-        const query = await this.db.query(`SELECT * FROM ${DB_PREFIX}address WHERE customer_id = ${this.customer_id} AND default = '1'`);
+        const query = await this.db.query(`SELECT * FROM ${DB_PREFIX}address WHERE customer_id = ${this.customer_id} AND \`default\` = '1'`);
 
-        return query.length ? query[0].address_id : 0;
+        return query.row.address_id || 0;
     }
 
     async getBalance() {
         await this.init();
         const query = await this.db.query(`SELECT SUM(amount) AS total FROM ${DB_PREFIX}customer_transaction WHERE customer_id = ${this.customer_id}`);
-        return query.length ? query[0].total : 0;
+        return query.row.total || 0;
     }
 
     async getRewardPoints() {
         await this.init();
         const query = await this.db.query(`SELECT SUM(points) AS total FROM ${DB_PREFIX}customer_reward WHERE customer_id = ${this.customer_id}`);
-        return query.length ? query[0].total : 0;
+        return query.row.total || 0;
     }
 }
 

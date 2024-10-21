@@ -7,7 +7,7 @@ module.exports=class StatisticsController extends Controller {
 	 *
 	 * @return void
 	 */
-	async addReview(&route, args, mixed &output) {
+	async addReview(&route, args, output) {
 		this.load.model('report/statistics');
 
 		this.model_report_statistics.addValue('review', 1);	
@@ -22,7 +22,7 @@ module.exports=class StatisticsController extends Controller {
 	 *
 	 * @return void
 	 */
-	async addReturn(&route, args, mixed &output) {
+	async addReturn(&route, args, output) {
 		this.load.model('report/statistics');
 
 		this.model_report_statistics.addValue('returns', 1);
@@ -39,9 +39,9 @@ module.exports=class StatisticsController extends Controller {
 	async addHistory(&route, args) {
 		this.load.model('checkout/order');
 				
-		order_info = await this.model_checkout_order.getOrder(args[0]);
+		const order_info = await this.model_checkout_order.getOrder(args[0]);
 
-		if (order_info) {
+		if (order_info.order_id) {
 			this.load.model('report/statistics');
 
 			old_status_id = order_info['order_status_id'];

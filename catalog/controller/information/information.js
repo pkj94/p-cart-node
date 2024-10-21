@@ -21,7 +21,7 @@ const data ={};
 
 		this.load.model('catalog/information',this);
 
-		information_info = await this.model_catalog_information.getInformation(information_id);
+		const information_info = await this.model_catalog_information.getInformation(information_id);
 
 		if (information_info) {
 			this.document.setTitle(information_info['meta_title']);
@@ -73,7 +73,7 @@ const data ={};
 
 		this.load.model('catalog/information',this);
 
-		information_info = await this.model_catalog_information.getInformation(information_id);
+		const information_info = await this.model_catalog_information.getInformation(information_id);
 
 		if (information_info) {
 			data['title'] = information_info['title'];

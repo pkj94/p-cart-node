@@ -13,7 +13,7 @@ class GdprController extends Controller {
 const data ={};
 		this.load.model('catalog/information',this);
 
-		information_info = await this.model_catalog_information.getInformation(this.config.get('config_gdpr_id'));
+		const information_info = await this.model_catalog_information.getInformation(this.config.get('config_gdpr_id'));
 
 		if (information_info) {
 			await this.load.language('information/gdpr');

@@ -15,13 +15,13 @@ class ForgottenController extends Controller {
 	 * @return void
 	 * @throws \Exception
 	 */
-	async index(&route, args, mixed &output) {
+	async index(&route, args, output) {
 		if (args[0] && args[1]) {
-			this.load.model('account/customer');
+			this.load.model('account/customer',this);
 
 			customer_info = await this.model_account_customer.getCustomerByEmail(args[0]);
 
-			if (customer_info) {
+			if (customer_info.customer_id) {
 				await this.load.language('mail/forgotten');
 
 				store_name = html_entity_decode(this.config.get('config_name'));

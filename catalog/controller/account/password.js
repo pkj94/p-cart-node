@@ -1,9 +1,9 @@
-module.exports=class PasswordController extends Controller {
+module.exports = class PasswordController extends Controller {
 	/**
 	 * @return void
 	 */
 	async index() {
-const data ={};
+		const data = {};
 		await this.load.language('account/password');
 
 		if (!await this.customer.isLogged() || (!(this.request.get['customer_token']) || !(this.session.data['customer_token']) || (this.request.get['customer_token'] != this.session.data['customer_token']))) {
@@ -17,21 +17,21 @@ const data ={};
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/home', 'language=' + this.config.get('config_language'))
-		];
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/home', 'language=' + this.config.get('config_language'))
+		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_account'),
-			'href' : await this.url.link('account/account', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'])
-		];
+			'text': this.language.get('text_account'),
+			'href': await this.url.link('account/account', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'])
+		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('account/password', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'])
-		];
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('account/password', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'])
+		});
 
-		data['save'] = await this.url.link('account/password+save', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token']);
+		data['save'] = await this.url.link('account/password.save', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token']);
 		data['back'] = await this.url.link('account/account', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token']);
 
 		data['column_left'] = await this.load.controller('common/column_left');
@@ -50,7 +50,7 @@ const data ={};
 	async save() {
 		await this.load.language('account/password');
 
-		const json = {};
+		const json = {error:{}};
 
 		if (!await this.customer.isLogged() || (!(this.request.get['customer_token']) || !(this.session.data['customer_token']) || (this.request.get['customer_token'] != this.session.data['customer_token']))) {
 			this.session.data['redirect'] = await this.url.link('account/password', 'language=' + this.config.get('config_language'));
@@ -58,8 +58,8 @@ const data ={};
 			json['redirect'] = await this.url.link('account/login', 'language=' + this.config.get('config_language'), true);
 		}
 
-		if (!Object.keys(json).length) {
-			keys = [
+		if (!json['redirect']) {
+			let keys = [
 				'password',
 				'confirm'
 			];
@@ -79,8 +79,8 @@ const data ={};
 			}
 		}
 
-		if (!Object.keys(json).length) {
-			this.load.model('account/customer');
+		if (!Object.keys(json.error).length) {
+			this.load.model('account/customer', this);
 
 			await this.model_account_customer.editPassword(await this.customer.getEmail(), this.request.post['password']);
 
@@ -88,7 +88,7 @@ const data ={};
 
 			json['redirect'] = await this.url.link('account/account', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'], true);
 		}
-
+		await this.session.save(this.session.data);
 		this.response.addHeader('Content-Type: application/json');
 		this.response.setOutput(json);
 	}

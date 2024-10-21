@@ -15,7 +15,7 @@ class GdprController extends Controller {
 	 * @return void
 	 * @throws \Exception
 	 */
-	async index(&route, args, mixed &output) {
+	async index(&route, args, output) {
 		// args[0] code
 		// args[1] email
 		// args[2] action
@@ -92,7 +92,7 @@ class GdprController extends Controller {
 	 * @return void
 	 * @throws \Exception
 	 */
-	async remove(&route, args, mixed &output) {
+	async remove(&route, args, output) {
 		if ((args[0])) {
 			gdpr_id = args[0];
 		} else {
@@ -117,7 +117,7 @@ class GdprController extends Controller {
 			if (store_info) {
 				this.load.model('setting/setting',this);
 
-				store_logo = html_entity_decode(this.model_setting_setting.getValue('config_logo', store_info['store_id']));
+				store_logo = html_entity_decode(await this.model_setting_setting.getValue('config_logo', store_info['store_id']));
 				store_name = html_entity_decode(store_info['name']);
 				store_url = store_info['url'];
 			} else {
@@ -158,11 +158,11 @@ class GdprController extends Controller {
 				data['logo'] = '';
 			}
 
-			this.load.model('account/customer');
+			this.load.model('account/customer',this);
 
 			customer_info = await this.model_account_customer.getCustomerByEmail(gdpr_info['email']);
 
-			if (customer_info) {
+			if (customer_info.customer_id) {
 				data['text_hello'] = sprintf(this.language.get('mail_text_hello'), html_entity_decode(customer_info['firstname']));
 			} else {
 				data['text_hello'] = sprintf(this.language.get('mail_text_hello'), this.language.get('mail_text_user'));

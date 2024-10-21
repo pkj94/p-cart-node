@@ -15,7 +15,7 @@ class RegisterController extends Controller {
 	 * @return void
 	 * @throws \Exception
 	 */
-	async index(&route, args, mixed &output) {
+	async index(&route, args, output) {
 		await this.load.language('mail/register');
 
 		store_name = html_entity_decode(this.config.get('config_name'));
@@ -24,7 +24,7 @@ class RegisterController extends Controller {
 
 		data['text_welcome'] = sprintf(this.language.get('text_welcome'), store_name);
 
-		this.load.model('account/customer_group');
+		this.load.model('account/customer_group',this);
 
 		if ((args[0]['customer_group_id'])) {
 			customer_group_id = args[0]['customer_group_id'];
@@ -75,7 +75,7 @@ class RegisterController extends Controller {
 	 * @return void
 	 * @throws \Exception
 	 */
-	async alert(&route, args, mixed &output) {
+	async alert(&route, args, output) {
 		// Send to main admin email if new account email is enabled
 		if (in_array('account', this.config.get('config_mail_alert'))) {
 			await this.load.language('mail/register');
@@ -89,7 +89,7 @@ class RegisterController extends Controller {
 
 			data['login'] = await this.url.link('account/login', 'language=' + this.config.get('config_language'), true);
 
-			this.load.model('account/customer_group');
+			this.load.model('account/customer_group',this);
 
 			if ((args[0]['customer_group_id'])) {
 				customer_group_id = args[0]['customer_group_id'];
@@ -97,7 +97,7 @@ class RegisterController extends Controller {
 				customer_group_id = this.config.get('config_customer_group_id');
 			}
 
-			customer_group_info = await this.model_account_customer_group.getCustomerGroup(customer_group_id);
+			const customer_group_info = await this.model_account_customer_group.getCustomerGroup(customer_group_id);
 
 			if (customer_group_info) {
 				data['customer_group'] = customer_group_info['name'];

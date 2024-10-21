@@ -13,7 +13,7 @@ const data ={};
 
 		this.load.model('checkout/cart',this);
 
-		(this.model_checkout_cart.getTotals)(totals, taxes, total);
+		(await this.model_checkout_cart.getTotals)(totals, taxes, total);
 
 		status = (await this.customer.isLogged() || !Number(this.config.get('config_customer_price')));
 
@@ -307,7 +307,7 @@ const data ={};
 			if (!(this.session.data['order_id'])) {
 				this.session.data['order_id'] = await this.model_checkout_order.addOrder(order_data);
 			} else {
-				order_info = await this.model_checkout_order.getOrder(this.session.data['order_id']);
+				const order_info = await this.model_checkout_order.getOrder(this.session.data['order_id']);
 
 				if (order_info && !order_info['order_status_id']) {
 					await this.model_checkout_order.editOrder(this.session.data['order_id'], order_data);
@@ -377,7 +377,7 @@ const data ={};
 
 		vouchers = await this.model_checkout_cart.getVouchers();
 
-		for (vouchers as voucher) {
+		for (let voucher of vouchers) {
 			data['vouchers'].push({
 				'description' : voucher['description'],
 				'amount'      : this.currency.format(voucher['amount'], this.session.data['currency'])
@@ -400,7 +400,7 @@ const data ={};
 			code = '';
 		}
 
-		extension_info = await this.model_setting_extension.getExtensionByCode('payment', code);
+		const extension_info = await this.model_setting_extension.getExtensionByCode('payment', code);
 
 		if (status && extension_info) {
 			data['payment'] = await this.load.controller('extension/' + extension_info['extension'] + '/payment/' + extension_info['code']);

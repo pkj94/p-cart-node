@@ -67,7 +67,7 @@ class SubscriptionController extends Controller {
 		}
 
 		// Subscription
-		this.load.model('account/subscription');
+		this.load.model('account/subscription',this);
 
 		filter_data = [
 			'filter_subscription_id' : subscription_id,
@@ -140,9 +140,9 @@ class SubscriptionController extends Controller {
 								// Orders
 								this.load.model('checkout/order');
 
-								order_info = await this.model_checkout_order.getOrder(value['order_id']);
+								const order_info = await this.model_checkout_order.getOrder(value['order_id']);
 
-								if (order_info) {
+								if (order_info.order_id) {
 									// Stores
 									this.load.model('setting/store',this);
 
@@ -152,7 +152,7 @@ class SubscriptionController extends Controller {
 									const store_info = await this.model_setting_store.getStore(order_info['store_id']);
 
 									if (store_info) {
-										store_logo = html_entity_decode(this.model_setting_setting.getValue('config_logo', store_info['store_id']));
+										store_logo = html_entity_decode(await this.model_setting_setting.getValue('config_logo', store_info['store_id']));
 										store_name = html_entity_decode(store_info['name']);
 
 										store_url = store_info['url'];
@@ -250,7 +250,7 @@ class SubscriptionController extends Controller {
 									data['price'] = this.currency.format(order_product['price'], order_info['currency_code'], order_info['currency_value']);
 									data['total'] = this.currency.format(order_product['total'], order_info['currency_code'], order_info['currency_value']);
 
-									data['order'] = await this.url.link('account/order+info', 'order_id=' + value['order_id']);
+									data['order'] = await this.url.link('account/order.info', 'order_id=' + value['order_id']);
 									data['product'] = await this.url.link('product/product', 'product_id=' + value['product_id']);
 
 									// Settings
@@ -274,14 +274,14 @@ class SubscriptionController extends Controller {
 											}
 
 											if (config_subscription_active_status_id == subscription_status_id) {
-												subscription_info = await this.model_account_subscription.getSubscription(value['subscription_id']);
+												const subscription_info = await this.model_account_subscription.getSubscription(value['subscription_id']);
 
 												// Validate the latest subscription values with the ones edited
 												// by promotional extensions
 												if (subscription_info && subscription_info['status'] && subscription_info['customer_id'] == value['customer_id'] && subscription_info['order_id'] == value['order_id'] && subscription_info['order_product_id'] == value['order_product_id']) {
-													this.load.model('account/customer');
+													this.load.model('account/customer',this);
 
-													customer_info = await this.model_account_customer.getCustomer(subscription_info['customer_id']);
+													const customer_info = await this.model_account_customer.getCustomer(subscription_info['customer_id']);
 
 													frequencies = [
 														'day',

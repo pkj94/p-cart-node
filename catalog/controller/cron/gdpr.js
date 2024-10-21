@@ -17,7 +17,7 @@ class GdprController extends Controller {
 	 */
 	async index(cron_id, code, cycle, date_added, date_modified) {
 		this.load.model('account/gdpr');
-		this.load.model('account/customer');
+		this.load.model('account/customer',this);
 
 		const results = await this.model_account_gdpr.getExpires();
 
@@ -26,7 +26,7 @@ class GdprController extends Controller {
 
 			customer_info = await this.model_account_customer.getCustomerByEmail(result['email']);
 
-			if (customer_info) {
+			if (customer_info.customer_id) {
 				await this.model_account_customer.deleteCustomer(customer_info['customer_id']);
 			}
 		}
