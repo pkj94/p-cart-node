@@ -2,18 +2,16 @@ const fs = require('fs');
 // Helper
 module.exports = class Framework {
     async init(req, res, next) {
+        require('../system/startup');
 
-        //Autoload Helper
-        fs.readdirSync(DIR_SYSTEM + 'helper').forEach((helper) => {
-            require(DIR_SYSTEM + 'helper/' + helper)
-        });
-        //Autoload Library
-        fs.readdirSync(DIR_SYSTEM + 'library').forEach((library) => {
-            if (fs.lstatSync(DIR_SYSTEM + 'library/' + library).isFile()) {
-                let name = ucfirst(library).replace('.js', '') + 'Library';
-                global[name] = require(DIR_SYSTEM + 'library/' + library);
-            }
-        });
+        const autoloader = new global['\Opencart\System\Engine\Autoloader']();
+        autoloader.register(`Opencart\\${APPLICATION}`, DIR_APPLICATION);
+        autoloader.register('Opencart\\Extension', DIR_EXTENSION);
+        autoloader.register('Opencart\\System', DIR_SYSTEM);
+        // Registry
+        global.registry = new (global['\Opencart\System\Engine\Registry'])();
+        global.config = new (global['\Opencart\System\Engine\Config'])();
+        registry.set('config', global.config);
         global.config.addPath(DIR_CONFIG);
         // Load the default config
         await global.config.load('default');
@@ -26,7 +24,8 @@ module.exports = class Framework {
         let dateTimezone = global.config.get('date_timezone');
         Intl.DateTimeFormat().resolvedOptions().timeZone = dateTimezone;
         // Logging
-        global.log = new LogLibrary(global.config.get('error_filename'));
+        console.log(global['\Opencart\System\Library\Log'])
+        global.log = new (global['\Opencart\System\Library\Log'])(global.config.get('error_filename'));
         registry.set('log', global.log);
         // Event
         let event = new Event(registry);

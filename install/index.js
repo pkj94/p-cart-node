@@ -10,7 +10,7 @@ module.exports = function () {
         // HTTP
         global.HTTP_SERVER = `${protocol}${req.get('host') + req.route.path.replace(/\/+$/, '')}/`;
         global.HTTP_OPENCART = `${protocol}${req.get('host') + req.route.path.replace(/\/+$/, '').replace(/install\/?$/, '')}`;
-        console.log('HTTP_OPENCART',HTTP_OPENCART)
+        console.log('HTTP_OPENCART', HTTP_OPENCART)
         // DIR
         global.DIR_OPENCART = path.join(__dirname, '..', '/').replace(/\\/g, '/');
         global.DIR_APPLICATION = DIR_OPENCART + 'install/';
@@ -32,10 +32,7 @@ module.exports = function () {
         app.use('/install/view/image', express.static(DIR_APPLICATION + 'view/image'));
         app.use('/install/language', express.static(DIR_APPLICATION + '/language'));
 
-        // Registry
-        global.registry = new Registry();
-        global.config = new Config();
-        registry.set('config', global.config);
+
         new Framework().init(req, res, next).then(output => {
             if (registry.get('response').redirect) {
                 res.redirect(registry.get('response').redirect);
@@ -67,18 +64,18 @@ module.exports = function () {
                     break;
             }
 
-            if (global.config.get('error_log')) {
+            if (global.config && global.config.get('error_log')) {
                 log.write('JavaScript ' + errorType + ':  ' + error.toString());
             }
 
-            if (global.config.get('error_display')) {
+            if (global.config && global.config.get('error_display')) {
                 res.status(200).send('<b>' + errorType + '</b>: ' + error.toString());
-            } else {
+            } else if (global.config){
                 console.log(global.config.get('error_page'))
                 res.redirect(config.get('error_page'));
             }
 
-            return res.status(200).send(registry.get('response').outputData);
+            return res.status(200).send(global.registry.get('response').outputData);
         });
     }
     app.all('/install', loadInstall)
