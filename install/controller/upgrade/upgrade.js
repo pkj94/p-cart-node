@@ -1,11 +1,5 @@
 const fs = require('fs');
-
-/**
- * Class Upgrade
- *
- * @package Opencart\Install\Controller\Upgrade
- */
-module.exports = class UpgradeController extends Controller {
+class Upgrade extends global['\Opencart\System\Engine\Controller'] {
 
 	constructor(registry) {
 		super(registry);
@@ -37,7 +31,7 @@ module.exports = class UpgradeController extends Controller {
 
 		const server = HTTP_SERVER.trim('/');
 
-		data.server = substr(server, 0, strrpos(server, '/')) + '/';
+		data.server = server.substring(0, server.indexOf('/')) + '/';
 		data.total = fs.readdirSync(DIR_APPLICATION + 'controller/upgrade/').filter(a => a.indexOf('upgrade_')).length;
 
 		data.header = await this.load.controller('common/header');
@@ -48,3 +42,4 @@ module.exports = class UpgradeController extends Controller {
 	}
 }
 
+global['\Opencart\Install\Controller\Upgrade\Upgrade'] = Upgrade;
