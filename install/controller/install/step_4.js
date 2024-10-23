@@ -1,4 +1,4 @@
-module.exports = class Step4 extends Controller {
+global['\Opencart\Install\Controller\Install\Step4'] = class Step4 extends global['\Opencart\System\Engine\Controller'] {
     constructor(registry) {
         super(registry);
     }

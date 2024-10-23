@@ -1,12 +1,11 @@
-module.exports = class MailLibrary {
+module.exports = class Mail {
     constructor(adaptor = 'mail', option = {}) {
-        const AdaptorClass = require(`./mail/${adaptor}`);
+        let className = 'Opencart\System\Library\Mail' + ucfirst(adaptor);
 
-        if (AdaptorClass) {
-            this.option = option;
-            this.adaptor = new AdaptorClass(option);
+        if (global[className]) {
+            this.adaptor = new global[className](option);
         } else {
-            throw new Error(`Error: Could not load mail adaptor ${adaptor}!`);
+            throw new Error(`Error: Could not load template adaptor ${adaptor}!`);
         }
     }
 

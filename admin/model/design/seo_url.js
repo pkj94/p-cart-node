@@ -1,4 +1,4 @@
-module.exports = class SeoUrlDesignModel extends Model {
+module.exports = class SeoUrlDesignModel extends global['\Opencart\System\Engine\Model'] {
 	constructor(registry) {
 		super(registry)
 	}

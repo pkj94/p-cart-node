@@ -1,17 +1,17 @@
-module.exports=class OrderModel extends Model {
+module.exports = class Order extends global['\Opencart\System\Engine\Model'] {
 	/**
 	 * @param data
 	 *
 	 * @return int
 	 */
 	async addOrder(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "order` SET `invoice_prefix` = " + this.db.escape(data['invoice_prefix']) + ", `store_id` = '" + data['store_id'] + "', `store_name` = " + this.db.escape(data['store_name']) + ", `store_url` = " + this.db.escape(data['store_url']) + ", `customer_id` = '" + data['customer_id'] + "', `customer_group_id` = '" + data['customer_group_id'] + "', `firstname` = " + this.db.escape(data['firstname']) + ", `lastname` = " + this.db.escape(data['lastname']) + ", `email` = " + this.db.escape(data['email']) + ", `telephone` = " + this.db.escape(data['telephone']) + ", `custom_field` = " + this.db.escape((data['custom_field']) ? json_encode(data['custom_field']) : '') + ", `payment_address_id` = '" + data['payment_address_id'] + "', `payment_firstname` = " + this.db.escape(data['payment_firstname']) + ", `payment_lastname` = " + this.db.escape(data['payment_lastname']) + ", `payment_company` = " + this.db.escape(data['payment_company']) + ", `payment_address_1` = " + this.db.escape(data['payment_address_1']) + ", `payment_address_2` = " + this.db.escape(data['payment_address_2']) + ", `payment_city` = " + this.db.escape(data['payment_city']) + ", `payment_postcode` = " + this.db.escape(data['payment_postcode']) + ", `payment_country` = " + this.db.escape(data['payment_country']) + ", `payment_country_id` = '" + data['payment_country_id'] + "', `payment_zone` = " + this.db.escape(data['payment_zone']) + ", `payment_zone_id` = '" + data['payment_zone_id'] + "', `payment_address_format` = " + this.db.escape(data['payment_address_format']) + ", `payment_custom_field` = " + this.db.escape((data['payment_custom_field']) ? json_encode(data['payment_custom_field']) : '') + ", `payment_method` = " + this.db.escape(data['payment_method'] ? json_encode(data['payment_method']) : '') + ", `shipping_address_id` = '" + data['shipping_address_id'] + "', `shipping_firstname` = " + this.db.escape(data['shipping_firstname']) + ", `shipping_lastname` = " + this.db.escape(data['shipping_lastname']) + ", `shipping_company` = " + this.db.escape(data['shipping_company']) + ", `shipping_address_1` = " + this.db.escape(data['shipping_address_1']) + ", `shipping_address_2` = " + this.db.escape(data['shipping_address_2']) + ", `shipping_city` = " + this.db.escape(data['shipping_city']) + ", `shipping_postcode` = " + this.db.escape(data['shipping_postcode']) + ", `shipping_country` = " + this.db.escape(data['shipping_country']) + ", `shipping_country_id` = '" + data['shipping_country_id'] + "', `shipping_zone` = " + this.db.escape(data['shipping_zone']) + ", `shipping_zone_id` = '" + data['shipping_zone_id'] + "', `shipping_address_format` = " + this.db.escape(data['shipping_address_format']) + ", `shipping_custom_field` = " + this.db.escape((data['shipping_custom_field']) ? json_encode(data['shipping_custom_field']) : '') + ", `shipping_method` = " + this.db.escape(data['shipping_method'] ? json_encode(data['shipping_method']) : '') + ", `comment` = " + this.db.escape(data['comment']) + ", `total` = '" + data['total'] + "', `affiliate_id` = '" + data['affiliate_id'] + "', `commission` = '" + data['commission'] + "', `marketing_id` = '" + data['marketing_id'] + "', `tracking` = " + this.db.escape(data['tracking']) + ", `language_id` = '" + data['language_id'] + "', `currency_id` = '" + data['currency_id'] + "', `currency_code` = " + this.db.escape(data['currency_code']) + ", `currency_value` = '" + data['currency_value'] + "', `ip` = " + this.db.escape(data['ip']) + ", `forwarded_ip` = '" +  this.db.escape(data['forwarded_ip']) + "', `user_agent` = " + this.db.escape(data['user_agent']) + ", `accept_language` = " + this.db.escape(data['accept_language']) + ", `date_added` = NOW(), `date_modified` = NOW()");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "order` SET `invoice_prefix` = " + this.db.escape(data['invoice_prefix']) + ", `store_id` = '" + data['store_id'] + "', `store_name` = " + this.db.escape(data['store_name']) + ", `store_url` = " + this.db.escape(data['store_url']) + ", `customer_id` = '" + data['customer_id'] + "', `customer_group_id` = '" + data['customer_group_id'] + "', `firstname` = " + this.db.escape(data['firstname']) + ", `lastname` = " + this.db.escape(data['lastname']) + ", `email` = " + this.db.escape(data['email']) + ", `telephone` = " + this.db.escape(data['telephone']) + ", `custom_field` = " + this.db.escape((data['custom_field']) ? json_encode(data['custom_field']) : '') + ", `payment_address_id` = '" + data['payment_address_id'] + "', `payment_firstname` = " + this.db.escape(data['payment_firstname']) + ", `payment_lastname` = " + this.db.escape(data['payment_lastname']) + ", `payment_company` = " + this.db.escape(data['payment_company']) + ", `payment_address_1` = " + this.db.escape(data['payment_address_1']) + ", `payment_address_2` = " + this.db.escape(data['payment_address_2']) + ", `payment_city` = " + this.db.escape(data['payment_city']) + ", `payment_postcode` = " + this.db.escape(data['payment_postcode']) + ", `payment_country` = " + this.db.escape(data['payment_country']) + ", `payment_country_id` = '" + data['payment_country_id'] + "', `payment_zone` = " + this.db.escape(data['payment_zone']) + ", `payment_zone_id` = '" + data['payment_zone_id'] + "', `payment_address_format` = " + this.db.escape(data['payment_address_format']) + ", `payment_custom_field` = " + this.db.escape((data['payment_custom_field']) ? json_encode(data['payment_custom_field']) : '') + ", `payment_method` = " + this.db.escape(data['payment_method'] ? json_encode(data['payment_method']) : '') + ", `shipping_address_id` = '" + data['shipping_address_id'] + "', `shipping_firstname` = " + this.db.escape(data['shipping_firstname']) + ", `shipping_lastname` = " + this.db.escape(data['shipping_lastname']) + ", `shipping_company` = " + this.db.escape(data['shipping_company']) + ", `shipping_address_1` = " + this.db.escape(data['shipping_address_1']) + ", `shipping_address_2` = " + this.db.escape(data['shipping_address_2']) + ", `shipping_city` = " + this.db.escape(data['shipping_city']) + ", `shipping_postcode` = " + this.db.escape(data['shipping_postcode']) + ", `shipping_country` = " + this.db.escape(data['shipping_country']) + ", `shipping_country_id` = '" + data['shipping_country_id'] + "', `shipping_zone` = " + this.db.escape(data['shipping_zone']) + ", `shipping_zone_id` = '" + data['shipping_zone_id'] + "', `shipping_address_format` = " + this.db.escape(data['shipping_address_format']) + ", `shipping_custom_field` = " + this.db.escape((data['shipping_custom_field']) ? json_encode(data['shipping_custom_field']) : '') + ", `shipping_method` = " + this.db.escape(data['shipping_method'] ? json_encode(data['shipping_method']) : '') + ", `comment` = " + this.db.escape(data['comment']) + ", `total` = '" + data['total'] + "', `affiliate_id` = '" + data['affiliate_id'] + "', `commission` = '" + data['commission'] + "', `marketing_id` = '" + data['marketing_id'] + "', `tracking` = " + this.db.escape(data['tracking']) + ", `language_id` = '" + data['language_id'] + "', `currency_id` = '" + data['currency_id'] + "', `currency_code` = " + this.db.escape(data['currency_code']) + ", `currency_value` = '" + data['currency_value'] + "', `ip` = " + this.db.escape(data['ip']) + ", `forwarded_ip` = '" + this.db.escape(data['forwarded_ip']) + "', `user_agent` = " + this.db.escape(data['user_agent']) + ", `accept_language` = " + this.db.escape(data['accept_language']) + ", `date_added` = NOW(), `date_modified` = NOW()");
 
 		order_id = this.db.getLastId();
 
 		// Products
 		if ((data['products'])) {
-			for (data['products'] as product) {
+			for (let product of data['products']) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "order_product` SET `order_id` = '" + order_id + "', `product_id` = '" + product['product_id'] + "', `master_id` = '" + product['master_id'] + "', `name` = " + this.db.escape(product['name']) + ", `model` = " + this.db.escape(product['model']) + ", `quantity` = '" + product['quantity'] + "', `price` = '" + product['price'] + "', `total` = '" + product['total'] + "', `tax` = '" + product['tax'] + "', `reward` = '" + product['reward'] + "'");
 
 				order_product_id = this.db.getLastId();
@@ -31,7 +31,7 @@ module.exports=class OrderModel extends Model {
 		if ((data['vouchers'])) {
 			this.load.model('checkout/voucher');
 
-			for (data['vouchers'] as voucher) {
+			for (let voucher of data['vouchers']) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "order_voucher` SET `order_id` = '" + order_id + "', `description` = " + this.db.escape(voucher['description']) + ", `code` = " + this.db.escape(voucher['code']) + ", `from_name` = " + this.db.escape(voucher['from_name']) + ", `from_email` = " + this.db.escape(voucher['from_email']) + ", `to_name` = " + this.db.escape(voucher['to_name']) + ", `to_email` = " + this.db.escape(voucher['to_email']) + ", `voucher_theme_id` = '" + voucher['voucher_theme_id'] + "', `message` = " + this.db.escape(voucher['message']) + ", `amount` = '" + voucher['amount'] + "'");
 
 				order_voucher_id = this.db.getLastId();
@@ -44,7 +44,7 @@ module.exports=class OrderModel extends Model {
 
 		// Totals
 		if ((data['totals'])) {
-			for (data['totals'] as total) {
+			for (let total of data['totals']) {
 				await this.db.query("INSERT INTO `" + DB_PREFIX + "order_total` SET `order_id` = '" + order_id + "', `extension` = " + this.db.escape(total['extension']) + ", `code` = " + this.db.escape(total['code']) + ", `title` = " + this.db.escape(total['title']) + ", `value` = '" + total['value'] + "', `sort_order` = '" + total['sort_order'] + "'");
 			}
 		}
@@ -66,7 +66,7 @@ module.exports=class OrderModel extends Model {
 
 		if (order_info.order_id) {
 			// 2+ Merge the old order data with the new data
-			for (order_info as key : value) {
+			for (let [key, value] of Object.entries(order_info)) {
 				if (!(data[key])) {
 					data[key] = value;
 				}
@@ -80,7 +80,7 @@ module.exports=class OrderModel extends Model {
 
 			// Products
 			if ((data['products'])) {
-				for (data['products'] as product) {
+				for (let product of data['products']) {
 					await this.db.query("INSERT INTO `" + DB_PREFIX + "order_product` SET `order_id` = '" + order_id + "', `product_id` = '" + product['product_id'] + "', `master_id` = '" + product['master_id'] + "', `name` = " + this.db.escape(product['name']) + ", `model` = " + this.db.escape(product['model']) + ", `quantity` = '" + product['quantity'] + "', `price` = '" + product['price'] + "', `total` = '" + product['total'] + "', `tax` = '" + product['tax'] + "', `reward` = '" + product['reward'] + "'");
 
 					order_product_id = this.db.getLastId();
@@ -104,7 +104,7 @@ module.exports=class OrderModel extends Model {
 			await this.db.query("DELETE FROM `" + DB_PREFIX + "order_voucher` WHERE `order_id` = '" + order_id + "'");
 
 			if ((data['vouchers'])) {
-				for (data['vouchers'] as voucher) {
+				for (let voucher of data['vouchers']) {
 					await this.db.query("INSERT INTO `" + DB_PREFIX + "order_voucher` SET `order_id` = '" + order_id + "', `description` = " + this.db.escape(voucher['description']) + ", `code` = " + this.db.escape(voucher['code']) + ", `from_name` = " + this.db.escape(voucher['from_name']) + ", `from_email` = " + this.db.escape(voucher['from_email']) + ", `to_name` = " + this.db.escape(voucher['to_name']) + ", `to_email` = " + this.db.escape(voucher['to_email']) + ", `voucher_theme_id` = '" + voucher['voucher_theme_id'] + "', `message` = " + this.db.escape(voucher['message']) + ", `amount` = '" + voucher['amount'] + "'");
 
 					order_voucher_id = this.db.getLastId();
@@ -119,7 +119,7 @@ module.exports=class OrderModel extends Model {
 			await this.db.query("DELETE FROM `" + DB_PREFIX + "order_total` WHERE `order_id` = '" + order_id + "'");
 
 			if ((data['totals'])) {
-				for (data['totals'] as total) {
+				for (let total of data['totals']) {
 					await this.db.query("INSERT INTO `" + DB_PREFIX + "order_total` SET `order_id` = '" + order_id + "', `extension` = " + this.db.escape(total['extension']) + ", `code` = " + this.db.escape(total['code']) + ", `title` = " + this.db.escape(total['title']) + ", `value` = '" + total['value'] + "', `sort_order` = '" + total['sort_order'] + "'");
 				}
 			}
@@ -181,12 +181,12 @@ module.exports=class OrderModel extends Model {
 		if (order_query.num_rows) {
 			order_data = order_query.row;
 
-			this.load.model('localisation/country',this);
-			this.load.model('localisation/zone',this);
+			this.load.model('localisation/country', this);
+			this.load.model('localisation/zone', this);
 
 			order_data['custom_field'] = JSON.parse(order_query.row['custom_field'], true);
 
-			for (['payment', 'shipping'] as column) {
+			for (let column of ['payment', 'shipping']) {
 				const country_info = await this.model_localisation_country.getCountry(order_query.row[column + '_country_id']);
 
 				if (country_info) {
@@ -277,11 +277,11 @@ module.exports=class OrderModel extends Model {
 		implode = [];
 
 		if ((data['filter_date_next'])) {
-			implode.push("DATE(`date_next`) <= DATE(" + this.db.escape(data['filter_date_next']) + ")";
+			implode.push("DATE(`date_next`) <= DATE(" + this.db.escape(data['filter_date_next']) + ")");
 		}
 
 		if ((data['filter_subscription_status_id'])) {
-			implode.push("`subscription_status_id` = '" + data['filter_subscription_status_id'] + "'";
+			implode.push("`subscription_status_id` = '" + data['filter_subscription_status_id'] + "'");
 		}
 
 		if (implode) {
@@ -357,12 +357,12 @@ module.exports=class OrderModel extends Model {
 	 *
 	 * @return void
 	 */
-	async addHistory(order_id, order_status_id, comment = '', bool notify = false, bool override = false) {
+	async addHistory(order_id, order_status_id, comment = '', notify = false, override = false) {
 		const order_info = this.getOrder(order_id);
 
 		if (order_info.order_id) {
 			// Load subscription model
-			this.load.model('account/customer',this);
+			this.load.model('account/customer', this);
 
 			customer_info = await this.model_account_customer.getCustomer(order_info['customer_id']);
 
@@ -376,7 +376,7 @@ module.exports=class OrderModel extends Model {
 			// Only do the fraud check if the customer is not on the safe list and the order status is changing into the complete or process order status
 			if (!safe && !override && in_array(order_status_id, array_merge(this.config.get('config_processing_status'), this.config.get('config_complete_status')))) {
 				// Anti-Fraud
-				this.load.model('setting/extension',this);
+				this.load.model('setting/extension', this);
 
 				extensions = await this.model_setting_extension.getExtensionsByType('fraud');
 
@@ -384,8 +384,8 @@ module.exports=class OrderModel extends Model {
 					if (this.config.get('fraud_' + extension['code'] + '_status')) {
 						this.load.model('extension/' + extension['extension'] + '/fraud/' + extension['code']);
 
-						if ((this.{'model_extension_' + extension['extension'] + '_fraud_' + extension['code']}.check)) {
-							fraud_status_id = this.{'model_extension_' + extension['extension'] + '_fraud_' + extension['code']}.check(order_info);
+						if ((this['model_extension_' + extension['extension'] + '_fraud_' + extension['code']].check)) {
+							fraud_status_id = this['model_extension_' + extension['extension'] + '_fraud_' + extension['code']].check(order_info);
 
 							if (fraud_status_id) {
 								order_status_id = fraud_status_id;
@@ -404,12 +404,12 @@ module.exports=class OrderModel extends Model {
 			// If current order status is not processing or complete but new status is processing or complete then commence completing the order
 			if (!in_array(order_info['order_status_id'], array_merge(this.config.get('config_processing_status'), this.config.get('config_complete_status'))) && in_array(order_status_id, array_merge(this.config.get('config_processing_status'), this.config.get('config_complete_status')))) {
 				// Redeem coupon, vouchers and reward points
-				for (order_totals as order_total) {
+				for (let order_total of order_totals) {
 					this.load.model('extension/' + order_total['extension'] + '/total/' + order_total['code']);
 
-					if ((this.{'model_extension_' + order_total['extension'] + '_total_' + order_total['code']}.confirm)) {
+					if ((this['model_extension_' + order_total['extension'] + '_total_' + order_total['code']].confirm)) {
 						// Confirm coupon, vouchers and reward points
-						fraud_status_id = this.{'model_extension_' + order_total['extension'] + '_total_' + order_total['code']}.confirm(order_info, order_total);
+						fraud_status_id = this['model_extension_' + order_total['extension'] + '_total_' + order_total['code']].confirm(order_info, order_total);
 
 						// If the balance on the coupon, vouchers and reward points is not enough to cover the transaction or has already been used then the fraud order status is returned+
 						if (fraud_status_id) {
@@ -418,7 +418,7 @@ module.exports=class OrderModel extends Model {
 					}
 				}
 
-				for (order_products as order_product) {
+				for (let order_product of order_products) {
 					// Stock subtraction
 					await this.db.query("UPDATE `" + DB_PREFIX + "product` SET `quantity` = (`quantity` - " + order_product['quantity'] + ") WHERE `product_id` = '" + order_product['product_id'] + "' AND `subtract` = '1'");
 
@@ -427,8 +427,8 @@ module.exports=class OrderModel extends Model {
 						await this.db.query("UPDATE `" + DB_PREFIX + "product` SET `quantity` = (`quantity` - " + order_product['quantity'] + ") WHERE `product_id` = '" + order_product['master_id'] + "' AND `subtract` = '1'");
 					}
 
-					const 
- order_options = this.getOptions(order_id, order_product['order_product_id']);
+					const
+						order_options = this.getOptions(order_id, order_product['order_product_id']);
 
 					for (let order_option of order_options) {
 						await this.db.query("UPDATE `" + DB_PREFIX + "product_option_value` SET `quantity` = (`quantity` - " + order_product['quantity'] + ") WHERE `product_option_value_id` = '" + order_option['product_option_value_id'] + "' AND `subtract` = '1'");
@@ -441,7 +441,7 @@ module.exports=class OrderModel extends Model {
 				// Affiliate add commission if complete status
 				if (order_info['affiliate_id'] && this.config.get('config_affiliate_auto')) {
 					// Add commission if sale is linked to affiliate referral+
-					this.load.model('account/customer',this);
+					this.load.model('account/customer', this);
 
 					if (!await this.model_account_customer.getTotalTransactionsByOrderId(order_id)) {
 						await this.model_account_customer.addTransaction(order_info['affiliate_id'], this.language.get('text_order_id') + ' #' + order_id, order_info['commission'], order_id);
@@ -451,7 +451,7 @@ module.exports=class OrderModel extends Model {
 				// Add subscription
 				this.load.model('checkout/subscription');
 
-				for (order_products as order_product) {
+				for (let order_product of order_products) {
 					// Subscription
 					order_subscription_info = this.getSubscription(order_id, order_product['order_product_id']);
 
@@ -474,7 +474,7 @@ module.exports=class OrderModel extends Model {
 			// If old order status is the processing or complete status but new status is not then commence restock, and remove coupon, voucher and reward history
 			if (in_array(order_info['order_status_id'], array_merge(this.config.get('config_processing_status'), this.config.get('config_complete_status'))) && !in_array(order_status_id, array_merge(this.config.get('config_processing_status'), this.config.get('config_complete_status')))) {
 				// Restock
-				for (order_products as order_product) {
+				for (let order_product of order_products) {
 					await this.db.query("UPDATE `" + DB_PREFIX + "product` SET `quantity` = (`quantity` + " + order_product['quantity'] + ") WHERE `product_id` = '" + order_product['product_id'] + "' AND `subtract` = '1'");
 
 					// Restock the master product stock level if product is a variant
@@ -482,8 +482,8 @@ module.exports=class OrderModel extends Model {
 						await this.db.query("UPDATE `" + DB_PREFIX + "product` SET `quantity` = (`quantity` + " + order_product['quantity'] + ") WHERE `product_id` = '" + order_product['master_id'] + "' AND `subtract` = '1'");
 					}
 
-					const 
- order_options = this.getOptions(order_id, order_product['order_product_id']);
+					const
+						order_options = this.getOptions(order_id, order_product['order_product_id']);
 
 					for (let order_option of order_options) {
 						await this.db.query("UPDATE `" + DB_PREFIX + "product_option_value` SET `quantity` = (`quantity` + " + order_product['quantity'] + ") WHERE `product_option_value_id` = '" + order_option['product_option_value_id'] + "' AND `subtract` = '1'");
@@ -491,11 +491,11 @@ module.exports=class OrderModel extends Model {
 				}
 
 				// Remove coupon, vouchers and reward points history
-				for (order_totals as order_total) {
+				for (let order_total of order_totals) {
 					this.load.model('extension/' + order_total['extension'] + '/total/' + order_total['code']);
 
-					if ((this.{'model_extension_' + order_total['extension'] + '_total_' + order_total['code']}.unconfirm)) {
-						this.{'model_extension_' + order_total['extension'] + '_total_' + order_total['code']}.unconfirm(order_id);
+					if ((this['model_extension_' + order_total['extension'] + '_total_' + order_total['code']].unconfirm)) {
+						this['model_extension_' + order_total['extension'] + '_total_' + order_total['code']].unconfirm(order_id);
 					}
 				}
 			}
@@ -505,7 +505,7 @@ module.exports=class OrderModel extends Model {
 				// Suspend subscription
 				this.load.model('checkout/subscription');
 
-				for (order_products as order_product) {
+				for (let order_product of order_products) {
 					// Subscription status set to suspend
 					const subscription_info = await this.model_checkout_subscription.getSubscriptionByOrderProductId(order_id, order_product['order_product_id']);
 
@@ -517,7 +517,7 @@ module.exports=class OrderModel extends Model {
 
 				// Affiliate remove commission+
 				if (order_info['affiliate_id']) {
-					this.load.model('account/customer',this);
+					this.load.model('account/customer', this);
 
 					await this.model_account_customer.deleteTransactionByOrderId(order_id);
 				}

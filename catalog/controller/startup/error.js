@@ -1,10 +1,10 @@
-module.exports = class ErrorController extends Controller {
+module.exports = class Error extends global['\Opencart\System\Engine\Controller'] {
 	constructor(registry) {
 		super(registry)
 	}
 
 	async index() {
-		this.registry.set('log', new LogLibrary(this.config.get('config_error_filename') || this.config.get('error_filename')));
+		this.registry.set('log', new global['\Opencart\System\Library\Log'](this.config.get('config_error_filename') || this.config.get('error_filename')));
 
 		process.on('uncaughtException', this.exception.bind(this));
 		process.on('unhandledRejection', this.exception.bind(this));

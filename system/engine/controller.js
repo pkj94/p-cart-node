@@ -1,4 +1,4 @@
-module.exports = class Controller {
+class Controller {
     constructor(registry) {
         Object.keys(registry.data).map(a => {
             this[a] = registry.data[a];
@@ -25,3 +25,4 @@ module.exports = class Controller {
         })
     }
 }
+global['\Opencart\System\Engine\Controller'] = Controller

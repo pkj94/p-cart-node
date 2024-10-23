@@ -1,4 +1,4 @@
-module.exports = class ActivityReportModel extends Model {
+global['Opencart\Admin\Model\Extension\Opencart\Report\Activity'] = class Activity extends global['\Opencart\System\Engine\Model']  {
 	/**
 	 * @return array
 	 */

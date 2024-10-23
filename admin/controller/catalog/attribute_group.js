@@ -1,6 +1,6 @@
 const sprintf = require("locutus/php/strings/sprintf");
 
-module.exports = class AttributeGroupCatalogController extends Controller {
+module.exports = class AttributeGroupCatalogController extends global['\Opencart\System\Engine\Controller'] {
 	constructor(registry) {
 		super(registry)
 	}
@@ -248,6 +248,7 @@ module.exports = class AttributeGroupCatalogController extends Controller {
 		}
 
 		for (let [language_id, value] of Object.entries(this.request.post['attribute_group_description'])) {
+			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 			if ((oc_strlen(trim(value['name'])) < 1) || (oc_strlen(value['name']) > 64)) {
 				json['error']['name_' + language_id] = this.language.get('error_name');
 			}

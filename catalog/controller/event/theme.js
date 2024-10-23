@@ -1,4 +1,4 @@
-module.exports = class ThemeController extends Controller {
+module.exports = class Theme extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @param string route
 	 * @param  args

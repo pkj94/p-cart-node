@@ -1,4 +1,4 @@
-const fs = require('fs');
+
 module.exports = function () {
     const loadAdminControllers = async (req, res, next) => {
         // console.log('-=-=-=-=-=-',req.params)
@@ -15,10 +15,6 @@ module.exports = function () {
         app.use('/admin/view/image', express.static(DIR_APPLICATION + 'view/image'));
         app.use('/admin/language', express.static(DIR_APPLICATION + '/language'));
 
-        // Registry
-        global.registry = new Registry();
-        global.config = new Config();
-        registry.set('config', global.config);
         new Framework().init(req, res, next).then(output => {
             if (registry.get('response').end) {
                 global.registry.get('response').headers.forEach(header => {

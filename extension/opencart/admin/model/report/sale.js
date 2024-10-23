@@ -1,6 +1,6 @@
 const mktime = require("locutus/php/datetime/mktime");
 
-module.exports = class SaleReportModel extends Model {
+global['Opencart\Admin\Model\Extension\Opencart\Report\Sale'] = class Sale extends global['\Opencart\System\Engine\Model']  {
 	/**
 	 * @param array data
 	 *

@@ -2,7 +2,7 @@ const strtotime = require("locutus/php/datetime/strtotime");
 const nl2br = require("locutus/php/strings/nl2br");
 const sprintf = require("locutus/php/strings/sprintf");
 
-module.exports = class ReturnsController extends Controller {
+module.exports = class ReturnsController extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */

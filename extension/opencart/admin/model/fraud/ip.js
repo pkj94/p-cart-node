@@ -1,4 +1,4 @@
-module.exports = class IpFraudModel extends Model {
+global['Opencart\Admin\Model\Extension\Opencart\Fraud\Ip'] = class Ip extends global['\Opencart\System\Engine\Model']  {
 	/**
 	 * @return void
 	 */

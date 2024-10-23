@@ -1,8 +1,9 @@
-module.exports = class ForgottenController extends Controller {
+module.exports = class ForgottenController extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */
 	async index() {
+		const data = {};
 		await this.load.language('common/forgotten');
 
 		if (await this.user.isLogged() || !this.config.get('config_mail_engine')) {
@@ -14,13 +15,13 @@ module.exports = class ForgottenController extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard')
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard')
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('common/forgotten')
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('common/forgotten')
 		});
 
 		data['confirm'] = await this.url.link('common/forgotten.confirm');
@@ -53,11 +54,11 @@ module.exports = class ForgottenController extends Controller {
 			}
 		}
 
-		this.load.model('user/user',this);
+		this.load.model('user/user', this);
 
 		const user_info = await this.model_user_user.getUserByEmail(this.request.post['email']);
 
-		if (!user_info) {
+		if (!user_info.user_id) {
 			json['error'] = this.language.get('error_email');
 		}
 
@@ -68,7 +69,7 @@ module.exports = class ForgottenController extends Controller {
 
 			json['redirect'] = await this.url.link('common/login', '', true);
 		}
-
+		await this.session.save(this.session.data);
 		this.response.addHeader('Content-Type: application/json');
 		this.response.setOutput(json);
 	}
@@ -77,29 +78,26 @@ module.exports = class ForgottenController extends Controller {
 	 * @return void
 	 */
 	async reset() {
+		const data = {};
 		await this.load.language('common/forgotten');
-
+		let email = '';
 		if ((this.request.get['email'])) {
 			email = this.request.get['email'];
-		} else {
-			email = '';
 		}
-
+		let code = '';
 		if ((this.request.get['code'])) {
 			code = this.request.get['code'];
-		} else {
-			code = '';
 		}
 
 		if (await this.user.isLogged() || !this.config.get('config_mail_engine')) {
 			this.response.setRedirect(await this.url.link('common/login', '', true));
 		}
 
-		this.load.model('user/user',this);
+		this.load.model('user/user', this);
 
 		const user_info = await this.model_user_user.getUserByEmail(email);
 
-		if (!user_info || !user_info['code'] || user_info['code'] !== code) {
+		if (!user_info.user_id || !user_info['code'] || user_info['code'] !== code) {
 			await this.model_user_user.editCode(email, '');
 
 			this.session.data['error'] = this.language.get('error_code');
@@ -112,13 +110,13 @@ module.exports = class ForgottenController extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard')
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard')
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('common/forgotten.reset')
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('common/forgotten.reset')
 		});
 
 		this.session.data['reset_token'] = substr(bin2hex(openssl_random_pseudo_bytes(26)), 0, 26);
@@ -128,7 +126,7 @@ module.exports = class ForgottenController extends Controller {
 
 		data['header'] = await this.load.controller('common/header');
 		data['footer'] = await this.load.controller('common/footer');
-
+		await this.session.save(this.session.data);
 		this.response.setOutput(await this.load.view('common/forgotten_reset', data));
 	}
 
@@ -139,23 +137,18 @@ module.exports = class ForgottenController extends Controller {
 		await this.load.language('common/forgotten');
 
 		const json = {};
-
+		let email = '';
 		if ((this.request.get['email'])) {
 			email = this.request.get['email'];
-		} else {
-			email = '';
 		}
-
+		let code = '';
 		if ((this.request.get['code'])) {
 			code = this.request.get['code'];
-		} else {
-			code = '';
 		}
-
-		keys = [
+		let keys = [
 			'password',
 			'confirm'
-		});
+		];
 
 		for (keys of key) {
 			if (!(this.request.post[key])) {
@@ -169,11 +162,11 @@ module.exports = class ForgottenController extends Controller {
 			json['redirect'] = await this.url.link('account/forgotten', true);
 		}
 
-		this.load.model('user/user',this);
+		this.load.model('user/user', this);
 
 		const user_info = await this.model_user_user.getUserByEmail(email);
 
-		if (!user_info || !user_info['code'] || user_info['code'] !== code) {
+		if (!user_info.user_id || !user_info['code'] || user_info['code'] !== code) {
 			await this.model_user_user.editCode(email, '');
 
 			this.session.data['error'] = this.language.get('error_code');
@@ -183,10 +176,12 @@ module.exports = class ForgottenController extends Controller {
 
 		if (!Object.keys(json).length) {
 			if ((oc_strlen(html_entity_decode(this.request.post['password'])) < 4) || (oc_strlen(html_entity_decode(this.request.post['password'])) > 40)) {
+				json['error'] = json['error'] || {};
 				json['error']['password'] = this.language.get('error_password');
 			}
 
 			if (this.request.post['confirm'] != this.request.post['password']) {
+				json['error'] = json['error'] || {};
 				json['error']['confirm'] = this.language.get('error_confirm');
 			}
 		}
@@ -196,11 +191,11 @@ module.exports = class ForgottenController extends Controller {
 
 			this.session.data['success'] = this.language.get('text_reset');
 
-			delete (this.session.data['reset_token']);
+			delete this.session.data['reset_token'];
 
 			json['redirect'] = await this.url.link('common/login', '', true);
 		}
-
+		await this.session.save(this.session.data);
 		this.response.addHeader('Content-Type: application/json');
 		this.response.setOutput(json);
 	}

@@ -1,13 +1,11 @@
-const axios = require('axios');
-
-module.exports = class NotificationController extends Controller {
+module.exports = class NotificationController extends global['\Opencart\System\Engine\Controller'] {
 	constructor(registry) {
 		super(registry)
 	}
 	async index() {
 		if (!this.request.cookie.notification) {
 			try {
-				const response = await axios.get(`${OPENCART_SERVER}?route=api/notification`, {
+				const response = await require('axios').get(`${OPENCART_SERVER}?route=api/notification`, {
 					timeout: 30000, // 30 seconds timeout
 					httpsAgent: new (require('https').Agent)({ rejectUnauthorized: false }) // for CURLOPT_SSL_VERIFYPEER = 0
 				});

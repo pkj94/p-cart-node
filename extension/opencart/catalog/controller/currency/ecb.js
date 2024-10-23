@@ -1,6 +1,6 @@
-const axios = require("axios");
 
-module.exports = class ECBController extends Controller {
+
+global['\Opencart\Catalog\Controller\Extension\Opencart\Currency\Ecb'] = class ECB extends global['\Opencart\System\Engine\Controller'] {
 	constructor(registry) {
 		super(registry)
 	}
@@ -12,7 +12,7 @@ module.exports = class ECBController extends Controller {
 	async currency(default_ = '') {
 		if (this.config.get('currency_ecb_status')) {
 			try {
-				const response = await axios.get('https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml', {
+				const response = await require("axios").get('https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml', {
 					timeout: 30000
 				});
 				if (response.status === 200) {

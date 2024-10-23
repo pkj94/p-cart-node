@@ -1,4 +1,4 @@
-module.exports = class ApiController extends Controller {
+module.exports = class Api extends global['\Opencart\System\Engine\Controller'] {
 	constructor(registry) {
 		super(registry);
 	}
@@ -12,7 +12,7 @@ module.exports = class ApiController extends Controller {
 		}
 
 		if (route.substring(0, 4) == 'api/' && route !== 'api/account/login' && !(this.session.data['api_id'])) {
-			return new Action('error/permission');
+			return new global['\Opencart\System\Engine\Action']('error/permission');
 		}
 
 		return null;

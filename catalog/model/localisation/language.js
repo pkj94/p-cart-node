@@ -1,4 +1,4 @@
-module.exports = class LanguageModel extends Model {
+module.exports = class Language extends global['\Opencart\System\Engine\Model'] {
 	constructor(registry) {
 		super(registry);
 		this.data = {};

@@ -1,16 +1,9 @@
-<?php
-namespace Opencart\Catalog\Controller\Cron;
-/**
- *
- *
- * @package Opencart\Catalog\Controller\Cron
- */
-class CronController extends Controller {
+module.exports = class Cron extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */
 	async index() {
-const data ={};
+		const data = {};
 		time = new Date();
 
 		this.load.model('setting/cron');

@@ -1,4 +1,4 @@
-module.exports = class TaxModel extends Model {
+global['\Opencart\Catalog\Model\Extension\Opencart\Total\Tax'] = class Tax extends global['\Opencart\System\Engine\Model'] {
 	/**
 	 * @param totals
 	 * @param taxes

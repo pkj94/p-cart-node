@@ -1,7 +1,7 @@
 const nl2br = require("locutus/php/strings/nl2br");
 const sprintf = require("locutus/php/strings/sprintf");
 
-module.exports = class OrderController extends Controller {
+module.exports = class OrderController extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */
@@ -727,7 +727,7 @@ module.exports = class OrderController extends Controller {
 
 		// Delete any old session
 		if ((this.session.data['api_session'])) {
-			let session = new SessionLibrary(this.request.server.session);
+			let session = new global['\Opencart\System\Library\Session'](this.request.server.session);
 			session.start(this.session.data['api_session']);
 			session.destroy();
 		}

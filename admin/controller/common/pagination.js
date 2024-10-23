@@ -1,4 +1,6 @@
-module.exports = class PaginationController extends Controller {
+const str_replace = require("locutus/php/strings/str_replace");
+
+module.exports = class PaginationController extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @param array setting
 	 *
@@ -8,8 +10,6 @@ module.exports = class PaginationController extends Controller {
 		let total = 0;
 		if ((setting['total'])) {
 			total = setting['total'];
-		} else {
-			total = 0;
 		}
 		let page = 1;
 		if ((setting['page']) && setting['page'] > 0) {
@@ -19,14 +19,14 @@ module.exports = class PaginationController extends Controller {
 		}
 		let limit = 10;
 		if ((setting['limit']) && setting['limit']) {
-			limit = setting['limit'];
+			limit = Number(setting['limit']);
 		} else {
-			let limit = 10;
+			limit = 10;
 		}
 		let url = '';
 		if ((setting['url'])) {
 			url = setting['url'].replace(new RegExp('%7Bpage%7D'), '{page}');
-		} 
+		}
 
 		let num_links = 8;
 		let num_pages = Math.ceil(total / limit);
@@ -89,7 +89,6 @@ module.exports = class PaginationController extends Controller {
 			data['next'] = '';
 			data['last'] = '';
 		}
-
 		if (num_pages > 1 || back) {
 			return await this.load.view('common/pagination', data);
 		} else {

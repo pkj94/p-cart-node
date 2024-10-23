@@ -1,16 +1,9 @@
-<?php
-namespace Opencart\Catalog\Controller\Information;
-/**
- *
- *
- * @package Opencart\Catalog\Controller\Information
- */
-class SitemapController extends Controller {
+module.exports = class Sitemap extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */
 	async index() {
-const data ={};
+		const data = {};
 		await this.load.language('information/sitemap');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -18,50 +11,50 @@ const data ={};
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/home', 'language=' + this.config.get('config_language'))
-		];
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/home', 'language=' + this.config.get('config_language'))
+		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('information/sitemap', 'language=' + this.config.get('config_language'))
-		];
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('information/sitemap', 'language=' + this.config.get('config_language'))
+		});
 
-		this.load.model('catalog/category',this);
+		this.load.model('catalog/category', this);
 
 		data['categories'] = [];
 
 		categories_1 = await this.model_catalog_category.getCategories(0);
 
-		for (categories_1 as category_1) {
+		for (let category_1 of categories_1) {
 			level_2_data = [];
 
 			categories_2 = await this.model_catalog_category.getCategories(category_1['category_id']);
 
-			for (categories_2 as category_2) {
+			for (let category_2 of categories_2) {
 				level_3_data = [];
 
 				categories_3 = await this.model_catalog_category.getCategories(category_2['category_id']);
 
-				for (categories_3 as category_3) {
+				for (let category_3 of categories_3) {
 					level_3_data.push({
-						'name' : category_3['name'],
-						'href' : await this.url.link('product/category', 'language=' + this.config.get('config_language') + '&path=' + category_1['category_id'] + '_' + category_2['category_id'] + '_' + category_3['category_id'])
-					];
+						'name': category_3['name'],
+						'href': await this.url.link('product/category', 'language=' + this.config.get('config_language') + '&path=' + category_1['category_id'] + '_' + category_2['category_id'] + '_' + category_3['category_id'])
+					});
 				}
 
 				level_2_data.push({
-					'name'     : category_2['name'],
-					'children' : level_3_data,
-					'href'     : await this.url.link('product/category', 'language=' + this.config.get('config_language') + '&path=' + category_1['category_id'] + '_' + category_2['category_id'])
-				];
+					'name': category_2['name'],
+					'children': level_3_data,
+					'href': await this.url.link('product/category', 'language=' + this.config.get('config_language') + '&path=' + category_1['category_id'] + '_' + category_2['category_id'])
+				});
 			}
 
 			data['categories'].push({
-				'name'     : category_1['name'],
-				'children' : level_2_data,
-				'href'     : await this.url.link('product/category', 'language=' + this.config.get('config_language') + '&path=' + category_1['category_id'])
-			];
+				'name': category_1['name'],
+				'children': level_2_data,
+				'href': await this.url.link('product/category', 'language=' + this.config.get('config_language') + '&path=' + category_1['category_id'])
+			});
 		}
 
 		data['special'] = await this.url.link('product/special', 'language=' + this.config.get('config_language'));
@@ -76,15 +69,15 @@ const data ={};
 		data['search'] = await this.url.link('product/search', 'language=' + this.config.get('config_language'));
 		data['contact'] = await this.url.link('information/contact', 'language=' + this.config.get('config_language'));
 
-		this.load.model('catalog/information',this);
+		this.load.model('catalog/information', this);
 
 		data['informations'] = [];
 
-		for (await this.model_catalog_information.getInformations() as result) {
+		for (let result of await this.model_catalog_information.getInformations()) {
 			data['informations'].push({
-				'title' : result['title'],
-				'href'  : await this.url.link('information/information', 'language=' + this.config.get('config_language') + '&information_id=' + result['information_id'])
-			];
+				'title': result['title'],
+				'href': await this.url.link('information/information', 'language=' + this.config.get('config_language') + '&information_id=' + result['information_id'])
+			});
 		}
 
 		data['column_left'] = await this.load.controller('common/column_left');

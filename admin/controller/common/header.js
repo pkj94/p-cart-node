@@ -1,5 +1,5 @@
-const fs = require('fs');
-module.exports = class HeaderController extends Controller {
+
+module.exports = class HeaderController extends global['\Opencart\System\Engine\Controller'] {
     constructor(registry) {
         super(registry)
     }

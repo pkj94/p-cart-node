@@ -1,47 +1,36 @@
-module.exports = class Event {
+global['\Opencart\System\Engine\Event'] = class Event {
     constructor(registry) {
         this.registry = registry;
         this.data = [];
     }
+
     register(trigger, action, priority = 0) {
         this.data.push({ trigger, action, priority });
         this.data.sort((a, b) => a.priority - b.priority);
     }
-    trigger_old(event, args = []) {
 
+    async trigger(event, args = []) {
         for (const { trigger, action } of this.data) {
-            if (new RegExp('^' + trigger.replace(/[\*\?]/g, (m) => ({ '*': '.*', '?': '.' }[m])) + '$').test(event)) {
-                const result = action.execute(this.registry, args);
-                if (result !== null && !(result instanceof Error)) {
+            const pattern = new RegExp(`^${trigger.replace(/\*/g, '.*').replace(/\?/g, '.')}$`);
+            // if (event.indexOf('view/common/header/before') >= 0)
+            //     console.log('1---', event, pattern.test(event), '^' + trigger.replace(/\*/g, '.*').replace(/\?/g, '.'))
+
+            if (pattern.test(event)) {
+                const result = await action.execute(this.registry, args);
+                if (result && result !== null && !(result instanceof Error)) {
                     return result;
                 }
             }
         }
-        return '';
-    }
-    async trigger(event, args = []) {
-        for (let value of this.data) {
-            const triggerRegex = new RegExp('^' + value.trigger.replace(/\*|\?/g, match => (match === '*' ? '.*' : '.')));
-            // if (event.indexOf('language/account/account/after') >= 0)
-            //     console.log('1---', event, triggerRegex.test(event), '^' + value.trigger.replace(/\*|\?/g, match => (match === '*' ? '.*' : '.')))
-            if (triggerRegex.test(event)) {
-                try {
-                    const result = await value.action.execute(this.registry, args);
-                    if (result && result !== null && !(result instanceof Error)) {
-                        return result;
-                    }
-                } catch (e) {
-                    // Handle exception if needed
-                }
-            }
-        }
-        return '';
+        return null;
     }
 
     unregister(trigger, route) {
-        this.data = this.data.filter((item) => !(item.trigger === trigger && item.action.getId() === route));
+        this.data = this.data.filter(({ trigger: t, action }) => !(t === trigger && action.name === route));
     }
+
     clear(trigger) {
-        this.data = this.data.filter((item) => item.trigger !== trigger);
+        this.data = this.data.filter(({ trigger: t }) => t !== trigger);
     }
-};
+}
+

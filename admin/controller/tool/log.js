@@ -1,7 +1,7 @@
-const fs = require('fs');
+
 const sprintf = require('locutus/php/strings/sprintf');
 const expressPath = require('path');
-module.exports = class LogController extends Controller {
+module.exports = class LogController extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */

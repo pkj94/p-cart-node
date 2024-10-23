@@ -1,16 +1,9 @@
-<?php
-namespace Opencart\Catalog\Controller\Information;
-/**
- *
- *
- * @package Opencart\Catalog\Controller\Information
- */
-class ContactController extends Controller {
+module.exports = class Contact extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */
 	async index() {
-const data ={};
+		const data = {};
 		await this.load.language('information/contact');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -18,18 +11,18 @@ const data ={};
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/home', 'language=' + this.config.get('config_language'))
-		];
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/home', 'language=' + this.config.get('config_language'))
+		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('information/contact', 'language=' + this.config.get('config_language'))
-		];
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('information/contact', 'language=' + this.config.get('config_language'))
+		});
 
 		data['send'] = await this.url.link('information/contact+send', 'language=' + this.config.get('config_language'));
 
-		this.load.model('tool/image',this);
+		this.load.model('tool/image', this);
 
 		if (this.config.get('config_image')) {
 			data['image'] = await this.model_tool_image.resize(html_entity_decode(this.config.get('config_image')), this.config.get('config_image_location_width'), this.config.get('config_image_location_height'));
@@ -49,7 +42,7 @@ const data ={};
 
 		this.load.model('localisation/location');
 
-		for (this.config.get('config_location') as location_id) {
+		for (let location_id of this.config.get('config_location')) {
 			location_info = await this.model_localisation_location.getLocation(location_id);
 
 			if (location_info) {
@@ -60,15 +53,15 @@ const data ={};
 				}
 
 				data['locations'].push({
-					'location_id' : location_info['location_id'],
-					'name'        : location_info['name'],
-					'address'     : nl2br(location_info['address']),
-					'geocode'     : location_info['geocode'],
-					'telephone'   : location_info['telephone'],
-					'image'       : image,
-					'open'        : nl2br(location_info['open']),
-					'comment'     : location_info['comment']
-				];
+					'location_id': location_info['location_id'],
+					'name': location_info['name'],
+					'address': nl2br(location_info['address']),
+					'geocode': location_info['geocode'],
+					'telephone': location_info['telephone'],
+					'image': image,
+					'open': nl2br(location_info['open']),
+					'comment': location_info['comment']
+				});
 			}
 		}
 
@@ -76,7 +69,7 @@ const data ={};
 		data['email'] = await this.customer.getEmail();
 
 		// Captcha
-		this.load.model('setting/extension',this);
+		this.load.model('setting/extension', this);
 
 		const extension_info = await this.model_setting_extension.getExtensionByCode('captcha', this.config.get('config_captcha'));
 
@@ -130,7 +123,7 @@ const data ={};
 		}
 
 		// Captcha
-		this.load.model('setting/extension',this);
+		this.load.model('setting/extension', this);
 
 		const extension_info = await this.model_setting_extension.getExtensionByCode('captcha', this.config.get('config_captcha'));
 
@@ -144,16 +137,16 @@ const data ={};
 
 		if (!Object.keys(json).length) {
 			if (this.config.get('config_mail_engine')) {
-				mail_option = [
-					'parameter'     : this.config.get('config_mail_parameter'),
-					'smtp_hostname' : this.config.get('config_mail_smtp_hostname'),
-					'smtp_username' : this.config.get('config_mail_smtp_username'),
-					'smtp_password' : html_entity_decode(this.config.get('config_mail_smtp_password')),
-					'smtp_port'     : this.config.get('config_mail_smtp_port'),
-					'smtp_timeout'  : this.config.get('config_mail_smtp_timeout')
-				];
+				mail_option = {
+					'parameter': this.config.get('config_mail_parameter'),
+					'smtp_hostname': this.config.get('config_mail_smtp_hostname'),
+					'smtp_username': this.config.get('config_mail_smtp_username'),
+					'smtp_password': html_entity_decode(this.config.get('config_mail_smtp_password')),
+					'smtp_port': this.config.get('config_mail_smtp_port'),
+					'smtp_timeout': this.config.get('config_mail_smtp_timeout')
+				};
 
-				mail = new MailLibrary(this.config.get('config_mail_engine'), mail_option);
+				const mail = new global['\Opencart\System\Library\Mail'](this.config.get('config_mail_engine'), mail_option);
 				mail.setTo(this.config.get('config_email'));
 				// Less spam and fix bug when using SMTP like sendgrid+
 				mail.setFrom(this.config.get('config_email'));
@@ -182,14 +175,14 @@ const data ={};
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/home', 'language=' + this.config.get('config_language'))
-		];
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/home', 'language=' + this.config.get('config_language'))
+		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('information/contact', 'language=' + this.config.get('config_language'))
-		];
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('information/contact', 'language=' + this.config.get('config_language'))
+		});
 
 		data['text_message'] = this.language.get('text_message');
 

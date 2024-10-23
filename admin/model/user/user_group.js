@@ -1,6 +1,6 @@
 const array_diff = require("locutus/php/array/array_diff");
 
-module.exports = class UserGroupUserModel extends Model {
+module.exports = class UserGroupUserModel extends global['\Opencart\System\Engine\Model'] {
 	/**
 	 * @param data
 	 *

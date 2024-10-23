@@ -1,4 +1,4 @@
-module.exports = class ProductViewedReportModel extends Model {
+global['Opencart\Admin\Model\Extension\Opencart\Report\ProductViewed'] = class ProductViewed extends global['\Opencart\System\Engine\Model']  {
 	/**
 	 * @return void
 	 */

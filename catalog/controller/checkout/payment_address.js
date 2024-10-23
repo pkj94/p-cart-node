@@ -1,9 +1,9 @@
-module.exports = class PaymentAddressController extends Controller {
+module.exports = class PaymentAddress extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return string
 	 */
 	async index() {
-const data ={};
+		const data = {};
 		await this.load.language('checkout/payment_address');
 
 		data['error_upload_size'] = sprintf(this.language.get('error_upload_size'), Number(this.config.get('config_file_max_size')));
@@ -11,7 +11,7 @@ const data ={};
 
 		data['upload'] = await this.url.link('tool/upload', 'language=' + this.config.get('config_language'));
 
-		this.load.model('account/address',this);
+		this.load.model('account/address', this);
 
 		data['addresses'] = await this.model_account_address.getAddresses(await this.customer.getId());
 
@@ -21,20 +21,20 @@ const data ={};
 			data['address_id'] = 0;
 		}
 
-		this.load.model('localisation/country',this);
+		this.load.model('localisation/country', this);
 
 		data['countries'] = await this.model_localisation_country.getCountries();
 
 		// Custom Fields
 		data['custom_fields'] = [];
 
-		this.load.model('account/custom_field',this);
+		this.load.model('account/custom_field', this);
 
 		const custom_fields = await this.model_account_custom_field.getCustomFields(await this.customer.getGroupId());
 
 		for (let custom_field of custom_fields) {
 			if (custom_field['location'] == 'address') {
-				data['custom_fields'].push(custom_field;
+				data['custom_fields'].push(custom_field);
 			}
 		}
 
@@ -113,7 +113,7 @@ const data ={};
 				json['error']['city'] = this.language.get('error_city');
 			}
 
-			this.load.model('localisation/country',this);
+			this.load.model('localisation/country', this);
 
 			const country_info = await this.model_localisation_country.getCountry(this.request.post['country_id']);
 
@@ -130,7 +130,7 @@ const data ={};
 			}
 
 			// Custom field validation
-			this.load.model('account/custom_field',this);
+			this.load.model('account/custom_field', this);
 
 			const custom_fields = await this.model_account_custom_field.getCustomFields(await this.customer.getGroupId());
 
@@ -153,7 +153,7 @@ const data ={};
 				this.request.post['default'] = 1;
 			}
 
-			this.load.model('account/address',this);
+			this.load.model('account/address', this);
 
 			json['address_id'] = await this.model_account_address.addAddress(await this.customer.getId(), this.request.post);
 
@@ -219,7 +219,7 @@ const data ={};
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('account/address',this);
+			this.load.model('account/address', this);
 
 			address_info = await this.model_account_address.getAddress(await this.customer.getId(), address_id);
 

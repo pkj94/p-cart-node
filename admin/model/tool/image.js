@@ -1,8 +1,8 @@
-const fs = require('fs');
+
 const sharp = require('sharp');
 const ico = require("sharp-ico");
 const expressPath = require('path');
-module.exports = class ImageToolModel extends Model {
+module.exports = class ImageToolModel extends global['\Opencart\System\Engine\Model'] {
 	constructor(registry) {
 		super(registry)
 	}
@@ -61,7 +61,7 @@ module.exports = class ImageToolModel extends Model {
 			}
 
 			if (width != width_new || height != height_new) {
-				let image = new ImageLibrary(DIR_IMAGE + image_old);
+				let image = new global['\Opencart\System\Library\Image'](DIR_IMAGE + image_old);
 				await image.load();
 				await image.resize(width_new, height_new);
 				await image.save(DIR_IMAGE + image_new);

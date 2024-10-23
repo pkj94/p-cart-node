@@ -1,6 +1,6 @@
 const sprintf = require("locutus/php/strings/sprintf");
 
-module.exports = class ReturnStatusController extends Controller {
+module.exports = class ReturnStatusController extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */

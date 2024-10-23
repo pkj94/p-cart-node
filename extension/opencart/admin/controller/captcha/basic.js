@@ -1,7 +1,4 @@
-module.exports = class BasicCaptchaController extends Controller {
-    constructor(registry) {
-        super(registry)
-    }
+global['\Opencart\Admin\Controller\Extension\Opencart\Captcha\Basic'] = class Basic extends global['\Opencart\System\Engine\Controller'] {
     async index() {
         await this.load.language('extension/opencart/captcha/basic');
 
@@ -33,7 +30,7 @@ module.exports = class BasicCaptchaController extends Controller {
         data.header = await this.load.controller('common/header');
         data.column_left = await this.load.controller('common/column_left');
         data.footer = await this.load.controller('common/footer');
-
+        
         this.response.setOutput(await this.load.view('extension/opencart/captcha/basic', data));
     }
 
@@ -47,7 +44,7 @@ module.exports = class BasicCaptchaController extends Controller {
         }
 
         if (!json.error) {
-            this.load.model('setting/setting',this);
+            this.load.model('setting/setting', this);
 
             await this.model_setting_setting.editSetting('captcha_basic', this.request.post);
 

@@ -1,4 +1,4 @@
-module.exports = class SubTotalTotalController extends Controller {
+global['\Opencart\Admin\Controller\Extension\Opencart\Total\SubTotal'] = class SubTotal extends global['\Opencart\System\Engine\Controller'] {
 	constructor(registry) {
 		super(registry)
 	}

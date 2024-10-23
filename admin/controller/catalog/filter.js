@@ -1,6 +1,6 @@
 const sprintf = require("locutus/php/strings/sprintf");
 
-module.exports = class FilterController extends Controller {
+module.exports = class FilterController extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */
@@ -253,6 +253,7 @@ module.exports = class FilterController extends Controller {
 		}
 
 		for (let [language_id, value] of Object.entries(this.request.post['filter_group_description'])) {
+			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 			if ((oc_strlen(trim(value['name'])) < 1) || (oc_strlen(value['name']) > 64)) {
 				json['error']['group_' + language_id] = this.language.get('error_group');
 			}
@@ -261,6 +262,8 @@ module.exports = class FilterController extends Controller {
 		if ((this.request.post['filter'])) {
 			for (let [key, filter] of Object.entries(this.request.post['filter'])) {
 				for (let [language_id, filter_description] of Object.entries(filter['filter_description'])) {
+					language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
+
 					if ((oc_strlen(trim(filter_description['name'])) < 1) || (oc_strlen(filter_description['name']) > 64)) {
 						json['error']['filter_' + key + '_' + language_id] = this.language.get('error_name');
 					}

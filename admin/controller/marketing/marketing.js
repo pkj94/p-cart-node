@@ -2,7 +2,7 @@ const strtotime = require("locutus/php/datetime/strtotime");
 const uniqid = require("locutus/php/misc/uniqid");
 const sprintf = require("locutus/php/strings/sprintf");
 
-module.exports = class MarketingController extends Controller {
+module.exports = class MarketingController extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */

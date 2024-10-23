@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Catalog\Controller\Cron;
-/**
- *
- *
- * @package Opencart\Catalog\Controller\Cron
- */
-class CurrencyController extends Controller {
+module.exports = class Currency extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @param    cron_id
 	 * @param string code

@@ -1,5 +1,5 @@
 
-module.exports = class MapDashboardController extends Controller {
+global['\Opencart\Admin\Controller\Extension\Opencart\Dashboard\Map'] = class Map extends global['\Opencart\System\Engine\Controller'] {
 	constructor(registry) {
 		super(registry)
 	}

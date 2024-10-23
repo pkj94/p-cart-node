@@ -1,4 +1,4 @@
-module.exports=class RewardController extends Controller {
+module.exports = class RewardController extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @param string route
 	 * @param array  args
@@ -7,7 +7,7 @@ module.exports=class RewardController extends Controller {
 	 * @return void
 	 * @throws \Exception
 	 */
-	async index(string route, array args, mixed output) {
+	async index(route, args, output) {
 		if ((args[0])) {
 			customer_id = args[0];
 		} else {
@@ -32,14 +32,14 @@ module.exports=class RewardController extends Controller {
 			order_id = 0;
 		}
 
-		this.load.model('customer/customer',this);
+		this.load.model('customer/customer', this);
 
 		const customer_info = await this.model_customer_customer.getCustomer(customer_id);
 
 		if (customer_info) {
 			await this.load.language('mail/reward');
 
-			this.load.model('setting/store',this);
+			this.load.model('setting/store', this);
 
 			const store_info = await this.model_setting_store.getStore(customer_info['store_id']);
 
@@ -51,14 +51,13 @@ module.exports=class RewardController extends Controller {
 				store_url = HTTP_CATALOG;
 			}
 
-			this.load.model('localisation/language',this);
+			this.load.model('localisation/language', this);
 
 			const language_info = await this.model_localisation_language.getLanguage(customer_info['language_id']);
 
+			let language_code = this.config.get('config_language');
 			if (language_info) {
 				language_code = language_info['code'];
-			} else {
-				language_code = this.config.get('config_language');
 			}
 
 			await this.load.language('default', 'mail', language_code);
@@ -73,22 +72,22 @@ module.exports=class RewardController extends Controller {
 			data['store_url'] = store_url;
 
 			if (this.config.get('config_mail_engine')) {
-				mail_option = [
-					'parameter'     : this.config.get('config_mail_parameter'),
-					'smtp_hostname' : this.config.get('config_mail_smtp_hostname'),
-					'smtp_username' : this.config.get('config_mail_smtp_username'),
-					'smtp_password' : html_entity_decode(this.config.get('config_mail_smtp_password')),
-					'smtp_port'     : this.config.get('config_mail_smtp_port'),
-					'smtp_timeout'  : this.config.get('config_mail_smtp_timeout')
-				];
+				let mail_option = {
+					'parameter': this.config.get('config_mail_parameter'),
+					'smtp_hostname': this.config.get('config_mail_smtp_hostname'),
+					'smtp_username': this.config.get('config_mail_smtp_username'),
+					'smtp_password': html_entity_decode(this.config.get('config_mail_smtp_password')),
+					'smtp_port': this.config.get('config_mail_smtp_port'),
+					'smtp_timeout': this.config.get('config_mail_smtp_timeout')
+				};
 
-				mail = new MailLibrary(this.config.get('config_mail_engine'), mail_option);
+				const mail = new global['\Opencart\System\Library\Mail'](this.config.get('config_mail_engine'), mail_option);
 				mail.setTo(customer_info['email']);
 				mail.setFrom(this.config.get('config_email'));
 				mail.setSender(store_name);
 				mail.setSubject(subject);
 				mail.setHtml(await this.load.view('mail/reward', data));
-				mail.send();
+				await mail.send();
 			}
 		}
 	}

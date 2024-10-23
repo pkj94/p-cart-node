@@ -1,4 +1,4 @@
-module.exports=class NewsletterController extends Controller {
+module.exports=class Newsletter extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */
@@ -19,17 +19,17 @@ const data ={};
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/home', 'language=' + this.config.get('config_language'))
-		];
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_account'),
 			'href' : await this.url.link('account/account', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'])
-		];
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_newsletter'),
 			'href' : await this.url.link('account/newsletter', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'])
-		];
+		});
 
 		data['save'] = await this.url.link('account/newsletter+save', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token']);
 

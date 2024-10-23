@@ -1,6 +1,5 @@
-const fs = require('fs');
-const Action = require('./action');
-module.exports = class Loader {
+
+global['\Opencart\System\Engine\Loader'] = class Loader {
     constructor(registry) {
         this.registry = registry;
     }
@@ -10,103 +9,94 @@ module.exports = class Loader {
     set(key, value) {
         this.registry.set(key, value);
     }
-    controller(route, ...args) {
-        return new Promise(async (resolve, reject) => {
-            // route = route.replace(/[^a-zA-Z0-9_|\/\.]/g, '').replace(/\|/g, '.');
-            let output = '';
-            let action = new Action(route);
-            while (action) {
-                route = action.getId();
-                let result = await this.registry.get('event').trigger(`controller/${route}/before`, [route, args]);
-                if (result && result instanceof Action) {
-                    action = result;
-                }
-                result = await action.execute(this.registry, args);
-                // console.log('result',result,args)
 
-                action = null;
-                if (result && result instanceof Action) {
-                    action = result;
-                }
-                if (!action) {
-                    output = result;
-                }
-                result = await this.registry.get('event').trigger(`controller/${route}/after`, [route, args, output]);
-                if (route == 'account/account')
-                    console.log('controller result----', route, result)
-                if (result && result instanceof Action) {
-                    action = result;
-                }
+    async controller(route, ...args) {
+        route = route.replace(/[^a-zA-Z0-9_/.]/g, '').replace(/\|/g, '.');
+        let output = '';
+        let action = new global['\Opencart\System\Engine\Action'](route);
+        // console.log('---',action)
+        while (action) {
+            route = action.getId();
+
+            // Trigger the pre events
+            let result = await this.registry.get('event').trigger('controller/' + route + '/before', [route, args]);
+            if (result && result instanceof global['\Opencart\System\Engine\Action']) {
+                action = result;
             }
-            resolve(output);
-        })
+
+            // Execute action
+            result = await action.execute(this.registry, args);
+            // if (route.indexOf('Module/Banner') != -1)
+            //     console.log('---',args,action, result)
+
+            // Reset action to prevent infinite loop
+            action = null;
+
+            // If an action object is returned, continue looping
+            if (result && result instanceof global['\Opencart\System\Engine\Action']) {
+                action = result;
+            }
+
+            // If not an action, it's the output
+            if (!action) {
+                output = result;
+            }
+
+            // Trigger the post events
+            result = await this.registry.get('event').trigger('controller/' + route + '/after', [route, args, output]);
+            if (result instanceof global['\Opencart\System\Engine\Action']) {
+                action = result;
+            }
+        }
+
+        return output;
     }
     model(route, registry) {
-        // Sanitize the call
-        // route = route.replace(/[^a-zA-Z0-9_\/]/g, '');
+        route = route.replace(/[^a-zA-Z0-9_/]/g, '')
+        const key = `model_${route.replace(/\//g, '_')}`;
+        const className = `Opencart${this.registry.get('config').get('application')}Model${route.split('/').map(a => ucfirst(a)).join('/').split('_').map(a => ucfirst(a)).join('').replace(/[_/]/g, '')}`;
 
-        // Converting a route path to a class name
-        let className = DIR_OPENCART + `${this.registry.data.config.get('application').toLowerCase()}/model/${route}.js`;
-        // Create a key to store the model object
-        const key = `model_${route.replaceAll('/', '_')}`;
-        if (!fs.existsSync(className)) {
-            // console.log('route----===', route)
-            let classT = route.split('opencart/')[1];
-            // console.log(classT);
-            className = DIR_EXTENSION + `opencart/${this.registry.data.config.get('application').toLowerCase()}/model/${classT}.js`
-            // console.log(className);
-        }
-        // Check if the requested model is already stored in the registry.
         if (!this.registry.has(key)) {
+            let model;
             try {
-                const ModelClass = require(`${className}`);
-                const model = new ModelClass(this.registry);
-
-                const proxy = new Proxy();
-
-                for (const method of getAllMethods(model).filter(method => method !== 'constructor')) {
-                    if (!method.startsWith('__') && typeof model[method] === 'function') {
-                        proxy[method] = async (...args) => {
-                            route = `${route}/${method}`;
-
-                            let output = '';
-
-                            // Trigger the pre events
-                            let result = await this.registry.get('event').trigger(`model/${route}/before`, [route, args]);
-                            // if (route.indexOf('design/layout') >= 0)
-                            //     console.log('load model', route,result)
-                            if (result) {
-                                output = result;
-                            }
-
-                            if (!output) {
-                                try {
-                                    output = model[method](...args);
-                                } catch (error) {
-                                    console.log(error)
-                                    throw new Error(`Error: Could not call model/${route}!`);
-                                }
-                            }
-
-                            // Trigger the post events
-                            result = await this.registry.get('event').trigger(`model/${route}/after`, [route, args, output]);
-
-                            if (result) {
-                                output = result;
-                            }
-
-                            return output;
-                        };
-                    }
-                }
-                // console.log(key,proxy,route)
-                registry.set(key, proxy);
-                this.registry.set(key, proxy);
+                let ModelClass = global[className];
+                model = new ModelClass(this.registry);
             } catch (error) {
-                console.log(error)
+                console.log(className, error)
                 throw new Error(`Error: Could not load model ${className}!`);
             }
 
+
+            const proxy = {};
+
+            for (const method of Object.getOwnPropertyNames(Object.getPrototypeOf(model))) {
+                if (method !== 'constructor' && typeof model[method] === 'function') {
+                    proxy[method] = async (...args) => {
+                        let result;
+                        const eventRoute = `model/${route}/${method}`;
+                        let output = ''
+                        // Trigger pre events
+                        result = await this.registry.get('event').trigger(`${eventRoute}/before`, [route, args]);
+                        if (result) {
+                            output = result;
+                        }
+                        if (!result) {
+                            output = await model[method](...args);
+                        }
+
+                        // Trigger post events
+                        result = await this.registry.get('event').trigger(`${eventRoute}/after`, [route, args, result]);
+                        if (result) {
+                            output = result;
+                        }
+                        return output;
+                    };
+                }
+            }
+            // console.log(key)
+            this.registry.set(key, proxy);
+            registry.set(key, proxy);
+            registry[key] = proxy;
         }
     }
 
@@ -115,21 +105,22 @@ module.exports = class Loader {
             route = route.replace(/[^a-zA-Z0-9_\/]/g, '');
             let output = '';
             let result = await this.registry.get('event').trigger(`view/${route}/before`, [route, data, code]);
-
+            // if (route.indexOf('header'))
+            //     console.log('event header---', result);
             if (result) {
                 output = result;
             }
             if (!output) {
-
                 output = await this.registry.get('template').render(route, data, code);
             }
-            // if (route.indexOf('sub_total') >= 0)
-            //     console.log('load view', route, result)
+
             result = await this.registry.get('event').trigger(`view/${route}/after`, [route, data, output]);
 
             if (result) {
                 output = result;
             }
+            // if (route.indexOf('captcha/basic') >= 0)
+            //     console.log('load view', route, result, output)
             resolve(output);
         });
     }
@@ -146,7 +137,7 @@ module.exports = class Loader {
                 output = await this.registry.get('language').load(route, prefix, code);
             }
             result = await this.registry.get('event').trigger(`language/${route}/after`, [route, prefix, code, output]);
-            
+
             if (result) {
                 output = result;
             }

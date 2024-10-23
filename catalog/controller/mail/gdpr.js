@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Catalog\Controller\Mail;
-/**
- *
- *
- * @package Opencart\Catalog\Controller\Mail
- */
-class GdprController extends Controller {
+module.exports = class Gdpr extends global['\Opencart\System\Engine\Controller'] {
 	// catalog/model/account/gdpr/addGdpr
 	/**
 	 * @param string route
@@ -15,7 +8,7 @@ class GdprController extends Controller {
 	 * @return void
 	 * @throws \Exception
 	 */
-	async index(&route, args, output) {
+	async index(route, args, output) {
 		// args[0] code
 		// args[1] email
 		// args[2] action
@@ -55,24 +48,24 @@ class GdprController extends Controller {
 		data['confirm'] = await this.url.link('information/gdpr+success', 'language=' + this.config.get('config_language') + '&code=' + code, true);
 
 		data['ip'] = (this.request.server.headers['x-forwarded-for'] ||
-					this.request.server.connection.remoteAddress ||
-					this.request.server.socket.remoteAddress ||
-					this.request.server.connection.socket.remoteAddress);
+			this.request.server.connection.remoteAddress ||
+			this.request.server.socket.remoteAddress ||
+			this.request.server.connection.socket.remoteAddress);
 
 		data['store_name'] = store_name;
 		data['store_url'] = this.config.get('config_url');
 
 		if (this.config.get('config_mail_engine') && email) {
-			mail_option = [
-				'parameter'     : this.config.get('config_mail_parameter'),
-				'smtp_hostname' : this.config.get('config_mail_smtp_hostname'),
-				'smtp_username' : this.config.get('config_mail_smtp_username'),
-				'smtp_password' : html_entity_decode(this.config.get('config_mail_smtp_password')),
-				'smtp_port'     : this.config.get('config_mail_smtp_port'),
-				'smtp_timeout'  : this.config.get('config_mail_smtp_timeout')
-			];
+			let mail_option = {
+				'parameter': this.config.get('config_mail_parameter'),
+				'smtp_hostname': this.config.get('config_mail_smtp_hostname'),
+				'smtp_username': this.config.get('config_mail_smtp_username'),
+				'smtp_password': html_entity_decode(this.config.get('config_mail_smtp_password')),
+				'smtp_port': this.config.get('config_mail_smtp_port'),
+				'smtp_timeout': this.config.get('config_mail_smtp_timeout')
+			};
 
-			mail = new MailLibrary(this.config.get('config_mail_engine'), mail_option);
+			const mail = new global['\Opencart\System\Library\Mail'](this.config.get('config_mail_engine'), mail_option);
 			mail.setTo(email);
 			mail.setFrom(this.config.get('config_email'));
 			mail.setSender(store_name);
@@ -92,7 +85,7 @@ class GdprController extends Controller {
 	 * @return void
 	 * @throws \Exception
 	 */
-	async remove(&route, args, output) {
+	async remove(route, args, output) {
 		if ((args[0])) {
 			gdpr_id = args[0];
 		} else {
@@ -110,12 +103,12 @@ class GdprController extends Controller {
 		gdpr_info = await this.model_account_gdpr.getGdpr(gdpr_id);
 
 		if (gdpr_info && gdpr_info['action'] == 'remove' && status == 3) {
-			this.load.model('setting/store',this);
+			this.load.model('setting/store', this);
 
 			const store_info = await this.model_setting_store.getStore(gdpr_info['store_id']);
 
 			if (store_info) {
-				this.load.model('setting/setting',this);
+				this.load.model('setting/setting', this);
 
 				store_logo = html_entity_decode(await this.model_setting_setting.getValue('config_logo', store_info['store_id']));
 				store_name = html_entity_decode(store_info['name']);
@@ -127,7 +120,7 @@ class GdprController extends Controller {
 			}
 
 			// Send the email in the correct language
-			this.load.model('localisation/language',this);
+			this.load.model('localisation/language', this);
 
 			const language_info = await this.model_localisation_language.getLanguage(gdpr_info['language_id']);
 
@@ -144,13 +137,13 @@ class GdprController extends Controller {
 			// Add language vars to the template folder
 			const results = this.language.all('mail');
 
-			for (results as key : value) {
+			for (let [key, value] of Object.entries(results)) {
 				data[key] = value;
 			}
 
 			subject = sprintf(this.language.get('mail_text_subject'), store_name);
 
-			this.load.model('tool/image',this);
+			this.load.model('tool/image', this);
 
 			if (is_file(DIR_IMAGE + store_logo)) {
 				data['logo'] = store_url + 'image/' + store_logo;
@@ -158,7 +151,7 @@ class GdprController extends Controller {
 				data['logo'] = '';
 			}
 
-			this.load.model('account/customer',this);
+			this.load.model('account/customer', this);
 
 			customer_info = await this.model_account_customer.getCustomerByEmail(gdpr_info['email']);
 
@@ -173,16 +166,16 @@ class GdprController extends Controller {
 			data['contact'] = store_url + 'information/contact';
 
 			if (this.config.get('config_mail_engine')) {
-				mail_option = [
-					'parameter'     : this.config.get('config_mail_parameter'),
-					'smtp_hostname' : this.config.get('config_mail_smtp_hostname'),
-					'smtp_username' : this.config.get('config_mail_smtp_username'),
-					'smtp_password' : html_entity_decode(this.config.get('config_mail_smtp_password')),
-					'smtp_port'     : this.config.get('config_mail_smtp_port'),
-					'smtp_timeout'  : this.config.get('config_mail_smtp_timeout')
-				];
+				let mail_option = {
+					'parameter': this.config.get('config_mail_parameter'),
+					'smtp_hostname': this.config.get('config_mail_smtp_hostname'),
+					'smtp_username': this.config.get('config_mail_smtp_username'),
+					'smtp_password': html_entity_decode(this.config.get('config_mail_smtp_password')),
+					'smtp_port': this.config.get('config_mail_smtp_port'),
+					'smtp_timeout': this.config.get('config_mail_smtp_timeout')
+				};
 
-				mail = new MailLibrary(this.config.get('config_mail_engine'), mail_option);
+				const mail = new global['\Opencart\System\Library\Mail'](this.config.get('config_mail_engine'), mail_option);
 				mail.setTo(gdpr_info['email']);
 				mail.setFrom(this.config.get('config_email'));
 				mail.setSender(store_name);

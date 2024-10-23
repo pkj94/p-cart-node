@@ -1,4 +1,4 @@
-module.exports = class ProductPurchasedReportModel extends Model {
+global['Opencart\Admin\Model\Extension\Opencart\Report\ProductPurchased'] = class ProductPurchased extends global['\Opencart\System\Engine\Model']  {
 	/**
 	 * @param array data
 	 *

@@ -1,5 +1,5 @@
-const fs = require('fs');
-module.exports = class LanguageController extends Controller {
+
+global['\Opencart\Install\Controller\Common\Language'] = class Language extends global['\Opencart\System\Engine\Controller'] {
     constructor(registry) {
         super(registry);
     }
@@ -15,7 +15,7 @@ module.exports = class LanguageController extends Controller {
             .filter(dirent => dirent.isDirectory())
             .map(dirent => dirent.name);
         for (const code of languages) {
-            const language = new LanguageLibrary(code);
+            const language = new global['\Opencart\System\Library\Language'](code);
             language.addPath(DIR_LANGUAGE);
             await language.load(code);
             data.languages.push({

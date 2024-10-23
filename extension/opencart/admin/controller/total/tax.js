@@ -1,4 +1,4 @@
-module.exports = class TaxTotalController extends Controller {
+global['\Opencart\Admin\Controller\Extension\Opencart\Total\Tax'] = class Tax extends global['\Opencart\System\Engine\Controller'] {
 	constructor(registry) {
 		super(registry);
 		this.array = [];

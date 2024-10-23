@@ -1,4 +1,4 @@
-module.exports = class ChequePaymentController extends Controller {
+global['\Opencart\Admin\Controller\Extension\Opencart\Payment\Cheque'] = class Cheque extends global['\Opencart\System\Engine\Controller'] {
 	constructor(registry) {
 		super(registry)
 	}

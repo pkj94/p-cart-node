@@ -1,16 +1,9 @@
-<?php
-namespace Opencart\Catalog\Controller\Tool;
-/**
- *
- *
- * @package Opencart\Catalog\Controller\Tool
- */
-class UploadController extends Controller {
+module.exports = class Upload extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */
 	async index() {
-const data ={};
+		const data = {};
 		await this.load.language('tool/upload');
 
 		const json = {};
@@ -31,8 +24,8 @@ const data ={};
 
 			filetypes = explode("\n", extension_allowed);
 
-			for (filetypes as filetype) {
-				allowed.push(trim(filetype);
+			for (let filetype of filetypes) {
+				allowed.push(trim(filetype));
 			}
 
 			if (!in_array(strtolower(substr(strrchr(filename, '+'), 1)), allowed)) {
@@ -46,8 +39,8 @@ const data ={};
 
 			filetypes = explode("\n", mime_allowed);
 
-			for (filetypes as filetype) {
-				allowed.push(trim(filetype);
+			for (let filetype of filetypes) {
+				allowed.push(trim(filetype));
 			}
 
 			if (!in_array(this.request.files['file']['type'], allowed)) {
@@ -68,7 +61,7 @@ const data ={};
 			move_uploaded_file(this.request.files['file']['tmp_name'], DIR_UPLOAD + file);
 
 			// Hide the uploaded file name so people cannot link to it directly+
-			this.load.model('tool/upload',this);
+			this.load.model('tool/upload', this);
 
 			json['code'] = await this.model_tool_upload.addUpload(filename, file);
 

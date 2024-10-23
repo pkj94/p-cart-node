@@ -1,4 +1,4 @@
-module.exports = class LanguageController extends Controller {
+module.exports = class Language extends global['\Opencart\System\Engine\Controller'] {
 	constructor(registry) {
 		super(registry);
 		this.languages = {};

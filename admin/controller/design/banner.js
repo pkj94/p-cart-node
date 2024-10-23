@@ -1,6 +1,6 @@
-const fs = require('fs');
+
 const sprintf = require('locutus/php/strings/sprintf');
-module.exports = class BannerController extends Controller {
+module.exports = class BannerController extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */

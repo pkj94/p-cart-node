@@ -1,6 +1,6 @@
 const sprintf = require("locutus/php/strings/sprintf");
 const fs = require('fs')
-module.exports = class OptionController extends Controller {
+module.exports = class OptionController extends global['\Opencart\System\Engine\Controller'] {
 
 	/**
 	 * @return void
@@ -278,6 +278,7 @@ module.exports = class OptionController extends Controller {
 		}
 
 		for (let [language_id, value] of Object.entries(this.request.post['option_description'])) {
+			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 			if ((oc_strlen(trim(value['name'])) < 1) || (oc_strlen(value['name']) > 128)) {
 				json['error']['name_' + language_id] = this.language.get('error_name');
 			}
@@ -312,6 +313,8 @@ module.exports = class OptionController extends Controller {
 		if ((this.request.post['option_value'])) {
 			for (let [option_value_id, option_value] of Object.entries(this.request.post['option_value'])) {
 				for (let [language_id, option_value_description] of Object.entries(option_value['option_value_description'])) {
+					language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
+
 					if ((oc_strlen(trim(option_value_description['name'])) < 1) || (oc_strlen(option_value_description['name']) > 128)) {
 						json['error']['option_value_' + option_value_id + '_' + language_id] = this.language.get('error_option_value');
 					}

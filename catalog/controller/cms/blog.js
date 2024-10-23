@@ -1,16 +1,9 @@
-<?php
-namespace Opencart\Catalog\Controller\Cms;
-/**
- *
- *
- * @package Opencart\Catalog\Controller\Cms
- */
-class BlogController extends Controller {
+module.exports = class Blog extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */
 	async index() {
-const data ={};
+		const data = {};
 		await this.load.language('cms/blog');
 
 		if ((this.request.get['search'])) {
@@ -32,16 +25,16 @@ const data ={};
 		}
 
 		let page = 1;
-if ((this.request.get['page'])) {
+		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
-		} 
+		}
 
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/home', 'language=' + this.config.get('config_language'))
-		];
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/home', 'language=' + this.config.get('config_language'))
+		});
 
 		let url = '';
 
@@ -58,9 +51,9 @@ if ((this.request.get['page'])) {
 		}
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_blog'),
-			'href' : await this.url.link('cms/blog', 'language=' + this.config.get('config_language') + url)
-		];
+			'text': this.language.get('text_blog'),
+			'href': await this.url.link('cms/blog', 'language=' + this.config.get('config_language') + url)
+		});
 
 		this.load.model('cms/topic');
 
@@ -86,12 +79,12 @@ if ((this.request.get['page'])) {
 			}
 
 			data['breadcrumbs'].push({
-				'text' : topic_info['name'],
-				'href' : await this.url.link('cms/blog', 'language=' + this.config.get('config_language') + url)
-			];
+				'text': topic_info['name'],
+				'href': await this.url.link('cms/blog', 'language=' + this.config.get('config_language') + url)
+			});
 		}
 
-		this.load.model('tool/image',this);
+		this.load.model('tool/image', this);
 
 		if (topic_info && is_file(DIR_IMAGE + html_entity_decode(topic_info['image']))) {
 			data['thumb'] = await this.model_tool_image.resize(html_entity_decode(topic_info['image']), this.config.get('config_image_blog_width'), this.config.get('config_image_blog_height'));
@@ -121,13 +114,13 @@ if ((this.request.get['page'])) {
 
 		data['articles'] = [];
 
-		filter_data = [
-			'filter_search'   : search,
-			'filter_topic_id' : topic_id,
-			'filter_author'   : author,
-			'start'           : (page - 1) * limit,
-			'limit'           : limit
-		];
+		filter_data = {
+			'filter_search': search,
+			'filter_topic_id': topic_id,
+			'filter_author': author,
+			'start': (page - 1) * limit,
+			'limit': limit
+		};
 
 		this.load.model('cms/article');
 
@@ -143,18 +136,18 @@ if ((this.request.get['page'])) {
 			}
 
 			data['articles'].push({
-				'article_id'    : result['article_id'],
-				'image'         : image,
-				'name'          : result['name'],
-				'description'   : oc_substr(trim(strip_tags(html_entity_decode(result['description']))), 0, this.config.get('config_article_description_length')) + '++',
-				'author'        : result['author'],
-				'comment_total' : await this.model_cms_article.getTotalComments(result['article_id']),
-				'date_added'    : date(this.language.get('date_format_short'), new Date(result['date_added'])),
-				'href'          : await this.url.link('cms/blog.info', 'language=' + this.config.get('config_language') + '&article_id=' + result['article_id'] + url)
-			];
+				'article_id': result['article_id'],
+				'image': image,
+				'name': result['name'],
+				'description': oc_substr(trim(strip_tags(html_entity_decode(result['description']))), 0, this.config.get('config_article_description_length')) + '++',
+				'author': result['author'],
+				'comment_total': await this.model_cms_article.getTotalComments(result['article_id']),
+				'date_added': date(this.language.get('date_format_short'), new Date(result['date_added'])),
+				'href': await this.url.link('cms/blog.info', 'language=' + this.config.get('config_language') + '&article_id=' + result['article_id'] + url)
+			});
 		}
 
-		let url = '';
+		url = '';
 
 		if ((this.request.get['search'])) {
 			url += '&search=' + this.request.get['search'];
@@ -169,11 +162,11 @@ if ((this.request.get['page'])) {
 		}
 
 		data['pagination'] = await this.load.controller('common/pagination', {
-			'total' : article_total,
-			'page'  : page,
-			'limit' : limit,
-			'url'   : await this.url.link('cms/blog', 'language=' + this.config.get('config_language') + url + '&page={page}')
-		]);
+			'total': article_total,
+			'page': page,
+			'limit': limit,
+			'url': await this.url.link('cms/blog', 'language=' + this.config.get('config_language') + url + '&page={page}')
+		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (article_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (article_total - limit)) ? article_total : (((page - 1) * limit) + limit), article_total, Math.ceil(article_total / limit));
 
@@ -181,15 +174,15 @@ if ((this.request.get['page'])) {
 		if (page == 1) {
 			this.document.addLink(await this.url.link('cms/blog', 'language=' + this.config.get('config_language')), 'canonical');
 		} else {
-			this.document.addLink(await this.url.link('cms/blog', 'language=' + this.config.get('config_language') + '&page='+ page), 'canonical');
+			this.document.addLink(await this.url.link('cms/blog', 'language=' + this.config.get('config_language') + '&page=' + page), 'canonical');
 		}
 
 		if (page > 1) {
-			this.document.addLink(await this.url.link('cms/blog', 'language=' + this.config.get('config_language') + ((page - 2) ? '&page='+ (page - 1) : '')), 'prev');
+			this.document.addLink(await this.url.link('cms/blog', 'language=' + this.config.get('config_language') + ((page - 2) ? '&page=' + (page - 1) : '')), 'prev');
 		}
 
 		if (ceil(article_total / limit) > page) {
-			this.document.addLink(await this.url.link('cms/blog', 'language=' + this.config.get('config_language') + '&page='+ (page + 1)), 'next');
+			this.document.addLink(await this.url.link('cms/blog', 'language=' + this.config.get('config_language') + '&page=' + (page + 1)), 'next');
 		}
 
 		data['search'] = search;
@@ -198,17 +191,17 @@ if ((this.request.get['page'])) {
 		data['topics'] = [];
 
 		data['topics'].push({
-			'name' : this.language.get('text_all'),
-			'href' : await this.url.link('cms/blog', 'language=' + this.config.get('config_language'))
-		];
+			'name': this.language.get('text_all'),
+			'href': await this.url.link('cms/blog', 'language=' + this.config.get('config_language'))
+		});
 
-		const results = await this.model_cms_topic.getTopics();
+		const topics = await this.model_cms_topic.getTopics();
 
-		for (let result of results) {
+		for (let result of topics) {
 			data['topics'].push({
-				'name' : result['name'],
-				'href' : await this.url.link('cms/blog', 'language=' + this.config.get('config_language') + '&topic_id='+ result['topic_id'])
-			];
+				'name': result['name'],
+				'href': await this.url.link('cms/blog', 'language=' + this.config.get('config_language') + '&topic_id=' + result['topic_id'])
+			});
 		}
 
 		data['column_left'] = await this.load.controller('common/column_left');
@@ -248,14 +241,14 @@ if ((this.request.get['page'])) {
 			data['breadcrumbs'] = [];
 
 			data['breadcrumbs'].push({
-				'text' : this.language.get('text_home'),
-				'href' : await this.url.link('common/home', 'language=' + this.config.get('config_language'))
-			];
+				'text': this.language.get('text_home'),
+				'href': await this.url.link('common/home', 'language=' + this.config.get('config_language'))
+			});
 
 			data['breadcrumbs'].push({
-				'text' : this.language.get('text_blog'),
-				'href' : await this.url.link('cms/blog', 'language=' + this.config.get('config_language'))
-			];
+				'text': this.language.get('text_blog'),
+				'href': await this.url.link('cms/blog', 'language=' + this.config.get('config_language'))
+			});
 
 			let url = '';
 
@@ -277,15 +270,15 @@ if ((this.request.get['page'])) {
 
 			if (topic_info) {
 				data['breadcrumbs'].push({
-					'text' : topic_info['name'],
-					'href' : await this.url.link('cms/article', 'language=' + this.config.get('config_language') + url)
-				];
+					'text': topic_info['name'],
+					'href': await this.url.link('cms/article', 'language=' + this.config.get('config_language') + url)
+				});
 			}
 
 			data['breadcrumbs'].push({
-				'text' : article_info['name'],
-				'href' : await this.url.link('cms/article+info', 'language=' + this.config.get('config_language') + '&article_id=' +  article_id + url)
-			];
+				'text': article_info['name'],
+				'href': await this.url.link('cms/article+info', 'language=' + this.config.get('config_language') + '&article_id=' + article_id + url)
+			});
 
 			data['heading_title'] = article_info['name'];
 
@@ -306,7 +299,7 @@ if ((this.request.get['page'])) {
 
 			this.response.setOutput(await this.load.view('cms/blog_info', data));
 		} else {
-			return new Action('error/not_found');
+			return new global['\Opencart\System\Engine\Action']('error/not_found');
 		}
 
 		return null;
@@ -332,9 +325,9 @@ if ((this.request.get['page'])) {
 		}
 
 		let page = 1;
-if ((this.request.get['page'])) {
+		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
-		} 
+		}
 
 		data['articles'] = [];
 
@@ -346,18 +339,18 @@ if ((this.request.get['page'])) {
 
 		for (let result of results) {
 			data['articles'].push({
-				'text'       : nl2br(result['text']),
-				'author'     : result['author'],
-				'date_added' : date(this.language.get('date_format_short'), new Date(result['date_added']))
-			];
+				'text': nl2br(result['text']),
+				'author': result['author'],
+				'date_added': date(this.language.get('date_format_short'), new Date(result['date_added']))
+			});
 		}
 
 		data['pagination'] = await this.load.controller('common/pagination', {
-			'total' : comment_total,
-			'page'  : page,
-			'limit' : 5,
-			'url'   : await this.url.link('cms/blog+comment', 'language=' + this.config.get('config_language') + '&article_id=' + article_id + '&page={page}')
-		]);
+			'total': comment_total,
+			'page': page,
+			'limit': 5,
+			'url': await this.url.link('cms/blog+comment', 'language=' + this.config.get('config_language') + '&article_id=' + article_id + '&page={page}')
+		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (comment_total) ? ((page - 1) * 5) + 1 : 0, (((page - 1) * 5) > (comment_total - 5)) ? comment_total : (((page - 1) * 5) + 5), comment_total, Math.ceil(comment_total / 5));
 
@@ -411,12 +404,12 @@ if ((this.request.get['page'])) {
 		}
 
 		// Captcha
-		this.load.model('setting/extension',this);
+		this.load.model('setting/extension', this);
 
 		const extension_info = await this.model_setting_extension.getExtensionByCode('captcha', this.config.get('config_captcha'));
 
 		if (extension_info && Number(this.config.get('captcha_' + this.config.get('config_captcha') + '_status')) && in_array('comment', this.config.get('config_captcha_page'))) {
-			const captcha = await this.load.controller('extension/'  + extension_info['extension'] + '/captcha/' + extension_info['code'] + '.validate');
+			const captcha = await this.load.controller('extension/' + extension_info['extension'] + '/captcha/' + extension_info['code'] + '.validate');
 
 			if (captcha) {
 				json['error']['captcha'] = captcha;
@@ -437,7 +430,7 @@ if ((this.request.get['page'])) {
 				status = 1;
 			}
 
-			await this.model_cms_article.addComment(article_id, this.request.post + ['status' : status]);
+			await this.model_cms_article.addComment(article_id, { ...this.request.post, ...{ 'status': status } });
 
 			if (!status) {
 				json['success'] = this.language.get('text_queue');

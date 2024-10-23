@@ -1,4 +1,4 @@
-class Upgrade2 extends global['\Opencart\System\Engine\Controller'] {
+global['\Opencart\Install\Controller\Upgrade\Upgrade2'] = class Upgrade2 extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */
@@ -142,4 +142,3 @@ class Upgrade2 extends global['\Opencart\System\Engine\Controller'] {
 		this.response.setOutput(json_encode(json));
 	}
 }
-global['\Opencart\Install\Controller\Upgrade\Upgrade2'] = Upgrade2;

@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Catalog\Controller\Cron;
-/**
- *
- *
- * @package Opencart\Catalog\Controller\Cron
- */
-class GdprController extends Controller {
+module.exports = class Gdpr extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @param    cron_id
 	 * @param string code

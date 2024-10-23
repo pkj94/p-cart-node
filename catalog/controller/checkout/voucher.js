@@ -1,4 +1,4 @@
-module.exports = class VoucherController extends Controller {
+module.exports = class Voucher extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */
@@ -17,17 +17,17 @@ const data ={};
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/home', 'language=' + this.config.get('config_language'))
-		];
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_account'),
 			'href' : await this.url.link('account/account', 'language=' + this.config.get('config_language'))
-		];
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_voucher'),
 			'href' : await this.url.link('checkout/voucher', 'language=' + this.config.get('config_language'))
-		];
+		});
 
 		data['help_amount'] = sprintf(this.language.get('help_amount'), this.currency.format(this.config.get('config_voucher_min'), this.session.data['currency']), this.currency.format(this.config.get('config_voucher_max'), this.session.data['currency']));
 
@@ -132,7 +132,7 @@ const data ={};
 				'voucher_theme_id' : this.request.post['voucher_theme_id'],
 				'message'          : this.request.post['message'],
 				'amount'           : this.currency.convert(this.request.post['amount'], this.session.data['currency'], this.config.get('config_currency'))
-			];
+			});
 
 			delete (this.session.data['shipping_method']);
 			delete (this.session.data['shipping_methods']);
@@ -197,12 +197,12 @@ const data ={};
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/home', 'language=' + this.config.get('config_language'))
-		];
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('checkout/voucher', 'language=' + this.config.get('config_language'))
-		];
+		});
 
 		data['continue'] = await this.url.link('checkout/cart', 'language=' + this.config.get('config_language'));
 

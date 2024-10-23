@@ -1,4 +1,4 @@
-module.exports = class AccountController extends Controller {
+module.exports = class Account extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */

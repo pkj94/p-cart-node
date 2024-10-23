@@ -1,4 +1,4 @@
-module.exports=class TransactionController extends Controller {
+module.exports = class Transaction extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */
@@ -16,39 +16,39 @@ module.exports=class TransactionController extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/home', 'language=' + this.config.get('config_language'))
-		];
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/home', 'language=' + this.config.get('config_language'))
+		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_account'),
-			'href' : await this.url.link('account/account', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'])
-		];
+			'text': this.language.get('text_account'),
+			'href': await this.url.link('account/account', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'])
+		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_transaction'),
-			'href' : await this.url.link('account/transaction', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'])
-		];
+			'text': this.language.get('text_transaction'),
+			'href': await this.url.link('account/transaction', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'])
+		});
 
 		this.load.model('account/transaction');
-		
+
 		data['column_amount'] = sprintf(this.language.get('column_amount'), this.config.get('config_currency'));
 
 		let page = 1;
-if ((this.request.get['page'])) {
+		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
-		} 
+		}
 
 		let limit = 10;
 
 		data['transactions'] = [];
 
-		filter_data = [
-			'sort'  : 'date_added',
-			'order' : 'DESC',
-			'start' : (page - 1) * limit,
-			'limit' : limit
-		];
+		filter_data = {
+			'sort': 'date_added',
+			'order': 'DESC',
+			'start': (page - 1) * limit,
+			'limit': limit
+		};
 
 		transaction_total = await this.model_account_transaction.getTotalTransactions();
 
@@ -56,18 +56,18 @@ if ((this.request.get['page'])) {
 
 		for (let result of results) {
 			data['transactions'].push({
-				'amount'      : this.currency.format(result['amount'], this.config.get('config_currency')),
-				'description' : result['description'],
-				'date_added'  : date(this.language.get('date_format_short'), new Date(result['date_added']))
-			];
+				'amount': this.currency.format(result['amount'], this.config.get('config_currency')),
+				'description': result['description'],
+				'date_added': date(this.language.get('date_format_short'), new Date(result['date_added']))
+			});
 		}
 
 		data['pagination'] = await this.load.controller('common/pagination', {
-			'total' : transaction_total,
-			'page'  : page,
-			'limit' : limit,
-			'url'   : await this.url.link('account/transaction', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'] + '&page={page}')
-		]);
+			'total': transaction_total,
+			'page': page,
+			'limit': limit,
+			'url': await this.url.link('account/transaction', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'] + '&page={page}')
+		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (transaction_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (transaction_total - limit)) ? transaction_total : (((page - 1) * limit) + limit), transaction_total, Math.ceil(transaction_total / limit));
 

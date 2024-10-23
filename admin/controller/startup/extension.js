@@ -1,5 +1,5 @@
-const fs = require('fs');
-module.exports = class ExtensionController extends Controller {
+
+module.exports = class ExtensionController extends global['\Opencart\System\Engine\Controller'] {
 	constructor(registry) {
 		super(registry)
 	}
@@ -14,30 +14,11 @@ module.exports = class ExtensionController extends Controller {
 
 			// Register controllers, models and system extension folders
 			if (fs.existsSync(`${DIR_EXTENSION}${result.code}/admin/controller/`))
-				fs.readdirSync(`${DIR_EXTENSION}${result.code}/admin/controller/`).forEach((folder) => {
-					fs.readdirSync(`${DIR_EXTENSION}${result.code}/admin/controller/${folder}`).forEach((controller) => {
-						if (controller.indexOf('.html') == -1) {
-							let name = ucfirst(controller).replace('.js', '') + ucfirst(folder) + 'Controller';
-							global[name] = require(DIR_EXTENSION + result.code + '/admin/controller/' + folder + '/' + controller);
-						}
-					})
-				});
-
-			// this.autoloader.register(`Opencart\Admin\Controller\Extension\\${extension}`, `${DIR_EXTENSION}${result.code}/admin/controller/`);
+				this.autoloader.register(`Opencart\Admin\Controller\Extension${extension}`, `${DIR_EXTENSION}${result.code}/admin/controller/`);
 			if (fs.existsSync(`${DIR_EXTENSION}${result.code}/admin/model/`))
-				fs.readdirSync(`${DIR_EXTENSION}${result.code}/admin/model/`).forEach((folder) => {
-					fs.readdirSync(`${DIR_EXTENSION}${result.code}/admin/model/${folder}`).forEach((model) => {
-						let name = ucfirst(model).replace('.js', '') + ucfirst(folder) + 'Model';
-						global[name] = require(DIR_EXTENSION + result.code + '/admin/model/' + folder + '/' + model)
-					})
-				});
-			// this.autoloader.register(`Opencart\Admin\Model\Extension\\${extension}`, `${DIR_EXTENSION}${result.code}/admin/model/`);
+				this.autoloader.register(`Opencart\Admin\Model\Extension${extension}`, `${DIR_EXTENSION}${result.code}/admin/model/`);
 			if (fs.existsSync(`${DIR_EXTENSION}${result.code}/system/library/`))
-				fs.readdirSync(`${DIR_EXTENSION}${result.code}/system/library/`).forEach((library) => {
-					let name = ucfirst(library).replace('.js', '') + 'Library';
-					global[name] = require(DIR_EXTENSION + result.code + '/system/library/' + '/' + library);
-				});
-			// this.autoloader.register(`Opencart\System\Library\Extension\\${extension}`, `${DIR_EXTENSION}${result.code}/system/library/`);
+				this.autoloader.register(`Opencart\System\Library\Extension${extension}`, `${DIR_EXTENSION}${result.code}/system/library/`);
 
 			// Template directory
 			if (fs.existsSync(`${DIR_EXTENSION}${result.code}/admin/view/template/`))

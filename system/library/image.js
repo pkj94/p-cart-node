@@ -1,4 +1,4 @@
-const fs = require('fs');
+
 const sharp = require('sharp');
 
 module.exports = class ImageLibrary {

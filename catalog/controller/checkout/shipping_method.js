@@ -1,9 +1,9 @@
-module.exports = class ShippingMethodController extends Controller {
+module.exports = class ShippingMethod extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return string
 	 */
 	async index() {
-const data ={};
+		const data = {};
 		await this.load.language('checkout/shipping_method');
 
 		if ((this.session.data['shipping_method'])) {

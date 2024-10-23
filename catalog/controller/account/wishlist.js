@@ -1,4 +1,4 @@
-module.exports=class WishListController extends Controller {
+module.exports=class WishList extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */
@@ -18,17 +18,17 @@ module.exports=class WishListController extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/home', 'language=' + this.config.get('config_language'))
-		];
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_account'),
 			'href' : await this.url.link('account/account', 'language=' + this.config.get('config_language') + ((this.session.data['customer_token']) ? '&customer_token=' + this.session.data['customer_token'] : ''))
-		];
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('account/wishlist', 'language=' + this.config.get('config_language') + ((this.session.data['customer_token']) ? '&customer_token=' + this.session.data['customer_token'] : ''))
-		];
+		});
 
 		if ((this.session.data['success'])) {
 			data['success'] = this.session.data['success'];
@@ -117,7 +117,7 @@ module.exports=class WishListController extends Controller {
 					'special'    : special,
 					'minimum'    : product_info['minimum'] > 0 ? product_info['minimum'] : 1,
 					'href'       : await this.url.link('product/product', 'language=' + this.config.get('config_language') + '&product_id=' + product_info['product_id'])
-				];
+				});
 			} else {
 				await this.model_account_wishlist.deleteWishlist(result['product_id']);
 			}
@@ -153,7 +153,7 @@ module.exports=class WishListController extends Controller {
 				this.session.data['wishlist'] = [];
 			}
 
-			this.session.data['wishlist'].push(product_id;
+			this.session.data['wishlist'].push(product_id);
 
 			this.session.data['wishlist'] = array_unique(this.session.data['wishlist']);
 

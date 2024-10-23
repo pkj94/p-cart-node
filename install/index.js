@@ -1,7 +1,6 @@
 const path = require('path');
+require('../system/startup');
 const Framework = require('../system/framework');
-const Config = require('../system/engine/config');
-const Registry = require('../system/engine/registry');
 module.exports = function () {
     const loadInstall = async (req, res, next) => {
         let protocol = req.protocol + '://';
@@ -10,7 +9,7 @@ module.exports = function () {
         // HTTP
         global.HTTP_SERVER = `${protocol}${req.get('host') + req.route.path.replace(/\/+$/, '')}/`;
         global.HTTP_OPENCART = `${protocol}${req.get('host') + req.route.path.replace(/\/+$/, '').replace(/install\/?$/, '')}`;
-        console.log('HTTP_OPENCART', HTTP_OPENCART)
+        // console.log('HTTP_OPENCART', HTTP_OPENCART)
         // DIR
         global.DIR_OPENCART = path.join(__dirname, '..', '/').replace(/\\/g, '/');
         global.DIR_APPLICATION = DIR_OPENCART + 'install/';
@@ -70,7 +69,7 @@ module.exports = function () {
 
             if (global.config && global.config.get('error_display')) {
                 res.status(200).send('<b>' + errorType + '</b>: ' + error.toString());
-            } else if (global.config){
+            } else if (global.config) {
                 console.log(global.config.get('error_page'))
                 res.redirect(config.get('error_page'));
             }

@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Catalog\Controller\Mail;
-/**
- *
- *
- * @package Opencart\Catalog\Controller\Mail
- */
-class TransactionController extends Controller {
+module.exports = class Transaction extends global['\Opencart\System\Engine\Controller'] {
 	// catalog/model/account/customer/addTransaction/after
 	/**
 	 * @param string route
@@ -15,7 +8,7 @@ class TransactionController extends Controller {
 	 * @return void
 	 * @throws \Exception
 	 */
-	async index(&route, args, output) {
+	async index(route, args, output) {
 		await this.load.language('mail/transaction');
 
 		this.load.model('account/customer',this);
@@ -52,7 +45,7 @@ class TransactionController extends Controller {
 			// Add language vars to the template folder
 			const results = this.language.all('mail');
 
-			for (results as key : value) {
+			for (let [key , value] of Object.entries(results)) {
 				data[key] = value;
 			}
 
@@ -67,16 +60,16 @@ class TransactionController extends Controller {
 			data['store_url'] = store_url;
 
 			if (this.config.get('config_mail_engine')) {
-				mail_option = [
+					let mail_option = {
 					'parameter'     : this.config.get('config_mail_parameter'),
 					'smtp_hostname' : this.config.get('config_mail_smtp_hostname'),
 					'smtp_username' : this.config.get('config_mail_smtp_username'),
 					'smtp_password' : html_entity_decode(this.config.get('config_mail_smtp_password')),
 					'smtp_port'     : this.config.get('config_mail_smtp_port'),
 					'smtp_timeout'  : this.config.get('config_mail_smtp_timeout')
-				];
+					};
 
-				mail = new MailLibrary(this.config.get('config_mail_engine'), mail_option);
+				const mail = new global['\Opencart\System\Library\Mail'](this.config.get('config_mail_engine'), mail_option);
 				mail.setTo(customer_info['email']);
 				mail.setFrom(this.config.get('config_email'));
 				mail.setSender(store_name);

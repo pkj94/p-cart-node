@@ -1,4 +1,4 @@
-module.exports =class StockStatusModel extends Model {
+module.exports =class StockStatus extends global['\Opencart\System\Engine\Model'] {
 	/**
 	 * @param stock_status_id
 	 *

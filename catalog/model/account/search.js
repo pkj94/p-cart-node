@@ -1,4 +1,4 @@
-module.exports =class SearchModel extends Model {
+module.exports =class Search extends global['\Opencart\System\Engine\Model'] {
 	/**
 	 * @param data
 	 *

@@ -1,10 +1,10 @@
-const fs = require('fs');
+
 const expressPath = require('path');
 const AdmZip = require('adm-zip');
 const sprintf = require('locutus/php/strings/sprintf');
 
 
-module.exports = class InstallerMarketplaceController extends Controller {
+module.exports = class InstallerMarketplaceController extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */
@@ -322,9 +322,9 @@ module.exports = class InstallerMarketplaceController extends Controller {
 		this.load.model('setting/extension', this);
 
 		const extension_install_info = await this.model_setting_extension.getInstall(extension_install_id);
-
+		let file, total = 0, start = 0, end = 0,limit = 200;
 		if (extension_install_info) {
-			const file = DIR_STORAGE + 'marketplace/' + extension_install_info['code'] + '.ocmod.zip';
+			file = DIR_STORAGE + 'marketplace/' + extension_install_info['code'] + '.ocmod.zip';
 
 			if (!fs.lstatSync(file).isFile()) {
 				json['error'] = sprintf(this.language.get('error_file'), extension_install_info['code'] + '.ocmod.zip');
@@ -345,15 +345,15 @@ module.exports = class InstallerMarketplaceController extends Controller {
 			// Unzip the files
 			const zip = new AdmZip(file);
 
-			let total = zip.getEntryCount;
-			let limit = 200;
+			total = zip.getEntryCount();
+			limit = 200;
 
-			let start = (page - 1) * limit;
-			let end = start > (total - limit) ? total : (start + limit);
+			start = (page - 1) * limit;
+			end = start > (total - limit) ? total : (start + limit);
 
 			// Check if any of the files already exist.
 			for (let i = start; i < end; i++) {
-				const zipEntry = zip.getEntryByIndex(i);
+				const zipEntry = zip.getEntry(i);
 				if (zipEntry) {
 					const source = zipEntry.entryName;
 
@@ -474,7 +474,7 @@ module.exports = class InstallerMarketplaceController extends Controller {
 			while (directory.length != 0) {
 				let next = directory.shift();
 
-				if (fs.lstatSync(next).isDirectory()) {
+				if (fs.existsSync(next) && fs.lstatSync(next).isDirectory()) {
 					for (let file of fs.existsSync(rtrim(next, '/'))) {
 						// If directory add to path array
 						directory.push(file);
@@ -490,18 +490,18 @@ module.exports = class InstallerMarketplaceController extends Controller {
 
 			for (let file of files) {
 				// If file just delete
-				if (fs.lstatSync(file).isFile()) {
+				if (fs.existsSync(file) && fs.lstatSync(file).isFile()) {
 					fs.unlinkSync(file);
 				}
 
 				// If directory use the remove directory function
-				if (fs.lstatSync(file).isDirectory()) {
+				if (fs.existsSync(file) && fs.lstatSync(file).isDirectory()) {
 					fs.rmdirSync(file);
 				}
 			}
 
 			// Remove extension directory and files
-			const results = await this.model_setting_extension.getPathsByExtensionInstallId(extension_install_id);
+			let results = await this.model_setting_extension.getPathsByExtensionInstallId(extension_install_id);
 
 			results = results.reverse();
 
@@ -522,11 +522,11 @@ module.exports = class InstallerMarketplaceController extends Controller {
 				const path_total = await this.model_setting_extension.getTotalPaths(result['path']);
 
 				if (path_total < 2) {
-					if (fs.lstatSync(path).isFile()) {
+					if (fs.existsSync(path) && fs.lstatSync(path).isFile()) {
 						fs.unlinkSync(path);
 					}
 
-					if (fs.lstatSync(path).isDirectory()) {
+					if (fs.existsSync(path) && fs.lstatSync(path).isDirectory()) {
 						fs.rmdirSync(path);
 					}
 				}
@@ -567,7 +567,7 @@ module.exports = class InstallerMarketplaceController extends Controller {
 			// Generate php autoload file
 			let code = 'module.export=' + "\n";
 
-			let files = fs.readdirSync(DIR_STORAGE + 'vendor/*/*/composer.json');
+			// let files = fs.readdirSync(DIR_STORAGE + 'vendor/*/*/composer.json');
 
 			// for (files of file) {
 			// 	output = JSON.parse(file_get_contents(file), true);

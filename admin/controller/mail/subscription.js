@@ -1,14 +1,14 @@
-module.exports=class SubscriptionController extends Controller {
+module.exports = class SubscriptionController extends global['\Opencart\System\Engine\Controller'] {
     // admin/controller/sale/subscription/addHistory/after
-	/**
-	 * @param string route
-	 * @param array  args
-	 * @param mixed  output
-	 *
-	 * @return void
-	 * @throws \Exception
-	 */
-	async history(string &route, array &args, mixed &output) {
+    /**
+     * @param string route
+     * @param array  args
+     * @param mixed  output
+     *
+     * @return void
+     * @throws \Exception
+     */
+    async history(route, args, output) {
         if ((args[0])) {
             subscription_id = args[0];
         } else {
@@ -34,47 +34,47 @@ module.exports=class SubscriptionController extends Controller {
         }
 
         // Subscription
-        this.load.model('sale/subscription',this);
+        this.load.model('sale/subscription', this);
 
-        filter_data = [
+        filter_data = {
             'filter_subscription_id'        : subscription_id,
             'filter_subscription_status_id' : subscription_status_id,
             'filter_date_next'              : date('Y-m-d H:i:s')
-        ];
+        };
 
-        subscriptions await this.model_checkout_subscription.getSubscriptions(filter_data);
+        const subscriptions = await this.model_checkout_subscription.getSubscriptions(filter_data);
 
         if (subscriptions) {
             for (subscriptions of subscription) {
                 // Subscription histories
-                history_total await this.model_sale_subscription.getTotalHistoriesBySubscriptionStatusId(subscription_status_id);
+                const history_total = await this.model_sale_subscription.getTotalHistoriesBySubscriptionStatusId(subscription_status_id);
 
                 // The charge() method handles the subscription statuses in the cron/subscription
                 // controller from the catalog whereas an extension needs to return the active subscription status
                 if (history_total && subscription['subscription_status_id'] == subscription_status_id) {
                     // Subscription Statuses
-                    this.load.model('localisation/subscription_status',this);
+                    this.load.model('localisation/subscription_status', this);
 
-                    subscription_status_info await this.model_localisation_subscription_status.getSubscriptionStatus(subscription_status_id);
+                    const subscription_status_info = await this.model_localisation_subscription_status.getSubscriptionStatus(subscription_status_id);
 
                     if (subscription_status_info) {
                         // Customers
-                        this.load.model('customer/customer',this);
+                        this.load.model('customer/customer', this);
 
                         // Customer payment
-                        customer_payment_info await this.model_customer_customer.getPaymentMehod(subscription['customer_id'], subscription['customer_payment_id']);
+                        const customer_payment_info = await this.model_customer_customer.getPaymentMehod(subscription['customer_id'], subscription['customer_payment_id']);
 
                         if (customer_payment_info) {
                             // Since the customer payment is integrated into the customer/customer page,
                             // we need to gather the customer's information rather than the order
-                            customer_info await this.model_customer_customer.getCustomer(subscription['customer_id']);
+                            const customer_info = await this.model_customer_customer.getCustomer(subscription['customer_id']);
 
                             if (customer_info) {
                                 // Settings
-                                this.load.model('setting/setting',this);
+                                this.load.model('setting/setting', this);
 
                                 // Store
-                                store_info await this.model_setting_setting.getSetting('config', customer_info['store_id']);
+                                const store_info = await this.model_setting_setting.getSetting('config', customer_info['store_id']);
 
                                 if (store_info && store_info.store_id) {
                                     from = store_info['config_email'];
@@ -89,9 +89,9 @@ module.exports=class SubscriptionController extends Controller {
                                 }
 
                                 // Languages
-                                this.load.model('localisation/language',this);
+                                this.load.model('localisation/language', this);
 
-                                language_info await this.model_localisation_language.getLanguage(customer_info['language_id']);
+                                let language_info = await this.model_localisation_language.getLanguage(customer_info['language_id']);
 
                                 if (language_info) {
                                     if (comment && notify) {
@@ -103,9 +103,9 @@ module.exports=class SubscriptionController extends Controller {
                                     data['subscription_status'] = subscription_status_info['name'];
 
                                     // Languages
-                                    this.load.model('localisation/language',this);
+                                    this.load.model('localisation/language', this);
 
-                                    language_info await this.model_localisation_language.getLanguage(customer_info['language_id']);
+                                    language_info = await this.model_localisation_language.getLanguage(customer_info['language_id']);
 
                                     if (language_info) {
                                         language_code = language_info['code'];
@@ -126,7 +126,7 @@ module.exports=class SubscriptionController extends Controller {
                                     data['text_subscription_status'] = this.language.get('mail_text_subscription_status');
 
                                     if (this.config.get('config_mail_engine')) {
-                                        mail = new MailLibrary(this.config.get('config_mail_engine'));
+                                        mail = new global['\Opencart\System\Library\Mail'](this.config.get('config_mail_engine'));
                                         mail.parameter = this.config.get('config_mail_parameter');
                                         mail.smtp_hostname = this.config.get('config_mail_smtp_hostname');
                                         mail.smtp_username = this.config.get('config_mail_smtp_username');
@@ -152,15 +152,15 @@ module.exports=class SubscriptionController extends Controller {
 
     // admin/controller/sale/subscription/addTransaction/after
 
-	/**
-	 * @param string route
-	 * @param array  args
-	 * @param mixed  output
-	 *
-	 * @return void
-	 * @throws \Exception
-	 */
-	async transaction(string &route, array &args, mixed &output) {
+    /**
+     * @param string route
+     * @param array  args
+     * @param mixed  output
+     *
+     * @return void
+     * @throws \Exception
+     */
+    async transaction(route, args, output) {
         if ((args[0])) {
             subscription_id = args[0];
         } else {
@@ -204,25 +204,25 @@ module.exports=class SubscriptionController extends Controller {
         }
 
         // Subscription
-        this.load.model('sale/subscription',this);
+        this.load.model('sale/subscription', this);
 
-        filter_data = [
+        filter_data = {
             'filter_subscription_id'        : subscription_id,
             'filter_subscription_status_id' : this.config.get('config_subscription_canceled_status_id'),
             'filter_date_next'              : date('Y-m-d H:i:s')
-        ];
+        };
 
-        subscriptions await this.model_checkout_subscription.getSubscriptions(filter_data);
+        const subscriptions = await this.model_checkout_subscription.getSubscriptions(filter_data);
 
         if (subscriptions) {
             for (subscriptions of subscription) {
-                transaction_total await this.model_sale_subscription.getTotalTransactions(subscription_id);
+                const transaction_total = await this.model_sale_subscription.getTotalTransactions(subscription_id);
 
                 if (transaction_total) {
                     // Orders
-                    this.load.model('sale/order',this);
+                    this.load.model('sale/order', this);
 
-                    order_info await this.model_sale_order.getOrder(order_id);
+                    const order_info = await this.model_sale_order.getOrder(order_id);
 
                     // In this case, since we're canceling a subscription,
                     // the order ID needs to be identical
@@ -252,7 +252,7 @@ module.exports=class SubscriptionController extends Controller {
                                 data['date_added'] = date(this.language.get('date_format_short'), subscription['date_added']);
 
                                 if (this.config.get('config_mail_engine')) {
-                                    mail = new MailLibrary(this.config.get('config_mail_engine'));
+                                    mail = new global['\Opencart\System\Library\Mail'](this.config.get('config_mail_engine'));
                                     mail.parameter = this.config.get('config_mail_parameter');
                                     mail.smtp_hostname = this.config.get('config_mail_smtp_hostname');
                                     mail.smtp_username = this.config.get('config_mail_smtp_username');

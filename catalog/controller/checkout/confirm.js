@@ -1,9 +1,9 @@
-module.exports = class ConfirmController extends Controller {
+module.exports = class Confirm extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return string
 	 */
 	async index() {
-const data ={};
+		const data = {};
 		await this.load.language('checkout/confirm');
 
 		// Order Totals
@@ -11,7 +11,7 @@ const data ={};
 		taxes = await this.cart.getTaxes();
 		total = 0;
 
-		this.load.model('checkout/cart',this);
+		this.load.model('checkout/cart', this);
 
 		(await this.model_checkout_cart.getTotals)(totals, taxes, total);
 
@@ -168,11 +168,11 @@ const data ={};
 				order_data['comment'] = '';
 			}
 
-			total_data = [
-				'totals' : totals,
-				'taxes'  : taxes,
-				'total'  : total
-			];
+			total_data = {
+				'totals': totals,
+				'taxes': taxes,
+				'total': total
+			};
 
 			order_data = array_merge(order_data, total_data);
 
@@ -186,7 +186,7 @@ const data ={};
 
 				// Affiliate
 				if (this.config.get('config_affiliate_status')) {
-					this.load.model('account/affiliate',this);
+					this.load.model('account/affiliate', this);
 
 					affiliate_info = await this.model_account_affiliate.getAffiliateByTracking(this.session.data['tracking']);
 
@@ -197,7 +197,7 @@ const data ={};
 					}
 				}
 
-				this.load.model('marketing/marketing',this);
+				this.load.model('marketing/marketing', this);
 
 				marketing_info = await this.model_marketing_marketing.getMarketingByCode(this.session.data['tracking']);
 
@@ -215,9 +215,9 @@ const data ={};
 			order_data['currency_value'] = this.currency.getValue(this.session.data['currency']);
 
 			order_data['ip'] = (this.request.server.headers['x-forwarded-for'] ||
-					this.request.server.connection.remoteAddress ||
-					this.request.server.socket.remoteAddress ||
-					this.request.server.connection.socket.remoteAddress);
+				this.request.server.connection.remoteAddress ||
+				this.request.server.socket.remoteAddress ||
+				this.request.server.connection.socket.remoteAddress);
 
 			if ((this.request.server['HTTP_X_FORWARDED_FOR'])) {
 				order_data['forwarded_ip'] = this.request.server['HTTP_X_FORWARDED_FOR'];
@@ -247,52 +247,52 @@ const data ={};
 
 				for (let option of product['option']) {
 					option_data.push({
-						'product_option_id'       : option['product_option_id'],
-						'product_option_value_id' : option['product_option_value_id'],
-						'option_id'               : option['option_id'],
-						'option_value_id'         : option['option_value_id'],
-						'name'                    : option['name'],
-						'value'                   : option['value'],
-						'type'                    : option['type']
-					];
+						'product_option_id': option['product_option_id'],
+						'product_option_value_id': option['product_option_value_id'],
+						'option_id': option['option_id'],
+						'option_value_id': option['option_value_id'],
+						'name': option['name'],
+						'value': option['value'],
+						'type': option['type']
+					});
 				}
 
 				subscription_data = [];
 
 				if (product['subscription']) {
-					subscription_data = [
-						'subscription_plan_id' : product['subscription']['subscription_plan_id'],
-						'name'                 : product['subscription']['name'],
-						'trial_price'          : product['subscription']['trial_price'],
-						'trial_tax'            : this.tax.getTax(product['subscription']['trial_price'], product['tax_class_id']),
-						'trial_frequency'      : product['subscription']['trial_frequency'],
-						'trial_cycle'          : product['subscription']['trial_cycle'],
-						'trial_duration'       : product['subscription']['trial_duration'],
-						'trial_remaining'      : product['subscription']['trial_remaining'],
-						'trial_status'         : product['subscription']['trial_status'],
-						'price'                : product['subscription']['price'],
-						'tax'                  : this.tax.getTax(product['subscription']['price'], product['tax_class_id']),
-						'frequency'            : product['subscription']['frequency'],
-						'cycle'                : product['subscription']['cycle'],
-						'duration'             : product['subscription']['duration']
-					];
+					subscription_data = {
+						'subscription_plan_id': product['subscription']['subscription_plan_id'],
+						'name': product['subscription']['name'],
+						'trial_price': product['subscription']['trial_price'],
+						'trial_tax': this.tax.getTax(product['subscription']['trial_price'], product['tax_class_id']),
+						'trial_frequency': product['subscription']['trial_frequency'],
+						'trial_cycle': product['subscription']['trial_cycle'],
+						'trial_duration': product['subscription']['trial_duration'],
+						'trial_remaining': product['subscription']['trial_remaining'],
+						'trial_status': product['subscription']['trial_status'],
+						'price': product['subscription']['price'],
+						'tax': this.tax.getTax(product['subscription']['price'], product['tax_class_id']),
+						'frequency': product['subscription']['frequency'],
+						'cycle': product['subscription']['cycle'],
+						'duration': product['subscription']['duration']
+					};
 				}
 
 				order_data['products'].push({
-					'product_id'   : product['product_id'],
-					'master_id'    : product['master_id'],
-					'name'         : product['name'],
-					'model'        : product['model'],
-					'option'       : option_data,
-					'subscription' : subscription_data,
-					'download'     : product['download'],
-					'quantity'     : product['quantity'],
-					'subtract'     : product['subtract'],
-					'price'        : product['price'],
-					'total'        : product['total'],
-					'tax'          : this.tax.getTax(product['price'], product['tax_class_id']),
-					'reward'       : product['reward']
-				];
+					'product_id': product['product_id'],
+					'master_id': product['master_id'],
+					'name': product['name'],
+					'model': product['model'],
+					'option': option_data,
+					'subscription': subscription_data,
+					'download': product['download'],
+					'quantity': product['quantity'],
+					'subtract': product['subtract'],
+					'price': product['price'],
+					'total': product['total'],
+					'tax': this.tax.getTax(product['price'], product['tax_class_id']),
+					'reward': product['reward']
+				});
 			}
 
 			// Gift Voucher
@@ -322,13 +322,13 @@ const data ={};
 			price_status = false;
 		}
 
-		this.load.model('tool/upload',this);
+		this.load.model('tool/upload', this);
 
 		data['products'] = [];
 
 		for (let product of products) {
 			if (product['option']) {
-				for (let [key , option] of Object.entries(product['option'])) {
+				for (let [key, option] of Object.entries(product['option'])) {
 					product['option'][key]['value'] = (oc_strlen(option['value']) > 20 ? oc_substr(option['value'], 0, 20) + '++' : option['value']);
 				}
 			}
@@ -358,18 +358,18 @@ const data ={};
 			}
 
 			data['products'].push({
-				'cart_id'      : product['cart_id'],
-				'product_id'   : product['product_id'],
-				'name'         : product['name'],
-				'model'        : product['model'],
-				'option'       : product['option'],
-				'subscription' : description,
-				'quantity'     : product['quantity'],
-				'price'        : price_status ? this.currency.format(this.tax.calculate(product['price'], product['tax_class_id'], Number(Number(this.config.get('config_tax')))), this.session.data['currency']) : '',
-				'total'        : price_status ? this.currency.format(this.tax.calculate(product['total'], product['tax_class_id'], Number(Number(this.config.get('config_tax')))), this.session.data['currency']) : '',
-				'reward'       : product['reward'],
-				'href'         : await this.url.link('product/product', 'language=' + this.config.get('config_language') + '&product_id=' + product['product_id'])
-			];
+				'cart_id': product['cart_id'],
+				'product_id': product['product_id'],
+				'name': product['name'],
+				'model': product['model'],
+				'option': product['option'],
+				'subscription': description,
+				'quantity': product['quantity'],
+				'price': price_status ? this.currency.format(this.tax.calculate(product['price'], product['tax_class_id'], Number(Number(this.config.get('config_tax')))), this.session.data['currency']) : '',
+				'total': price_status ? this.currency.format(this.tax.calculate(product['total'], product['tax_class_id'], Number(Number(this.config.get('config_tax')))), this.session.data['currency']) : '',
+				'reward': product['reward'],
+				'href': await this.url.link('product/product', 'language=' + this.config.get('config_language') + '&product_id=' + product['product_id'])
+			});
 		}
 
 		// Gift Voucher
@@ -379,18 +379,18 @@ const data ={};
 
 		for (let voucher of vouchers) {
 			data['vouchers'].push({
-				'description' : voucher['description'],
-				'amount'      : this.currency.format(voucher['amount'], this.session.data['currency'])
-			];
+				'description': voucher['description'],
+				'amount': this.currency.format(voucher['amount'], this.session.data['currency'])
+			});
 		}
 
 		data['totals'] = [];
 
 		for (let total of totals) {
 			data['totals'].push({
-				'title' : total['title'],
-				'text'  : this.currency.format(total['value'], this.session.data['currency'])
-			];
+				'title': total['title'],
+				'text': this.currency.format(total['value'], this.session.data['currency'])
+			});
 		}
 
 		// Validate if payment method has been set+

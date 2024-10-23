@@ -1,4 +1,4 @@
-module.exports = class CurrencyController extends Controller {
+module.exports = class Currency extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return string
 	 */

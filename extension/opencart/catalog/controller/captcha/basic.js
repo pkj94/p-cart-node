@@ -1,6 +1,5 @@
-const substr = require("locutus/php/strings/substr");
 const { createCanvas } = require('canvas');
-module.exports = class BasicController extends Controller {
+global['\Opencart\Catalog\Controller\Extension\Opencart\Captcha\Basic'] = class Basic extends global['\Opencart\System\Engine\Controller'] {
 	constructor(registry) {
 		super(registry)
 	}
@@ -13,8 +12,9 @@ module.exports = class BasicController extends Controller {
 
 		data['route'] = this.request.get['route'];
 
-		this.session.data['captcha'] = substr(oc_token(100), Math.rand(0, 94), 6);
-
+		this.session.data['captcha'] = oc_token(100).substring(Math.random(0, 94), 6);
+		data['captcha'] = await this.captcha(this.session.data['captcha']);
+		await this.session.save(this.session.data);
 		return await this.load.view('extension/opencart/captcha/basic', data);
 	}
 
@@ -34,7 +34,7 @@ module.exports = class BasicController extends Controller {
 	/**
 	 * @return void
 	 */
-	async captcha() {
+	async captcha(code = '') {
 		const width = 150;
 		const height = 35;
 
@@ -78,9 +78,10 @@ module.exports = class BasicController extends Controller {
 		ctx.font = '20px Arial';
 		ctx.textAlign = 'center';
 		ctx.textBaseline = 'middle';
-		ctx.fillText(session.captcha, width / 2, height / 2);
-		this.response.addHeader('Content-Type: image/jpeg');
-		this.response.addHeader('Cache-Control: no-cache');
-		this.response.setOuput(canvas.toBuffer('image/jpeg'));
+		ctx.fillText(code || Math.floor(100000 + Math.random() * 900000), width / 2, height / 2);
+		return canvas.toDataURL();
+		// this.response.addHeader('Content-Type: image/jpeg');
+		// this.response.addHeader('Cache-Control: no-cache');
+		// this.response.setOutput(canvas.toBuffer('image/jpeg'));
 	}
 }

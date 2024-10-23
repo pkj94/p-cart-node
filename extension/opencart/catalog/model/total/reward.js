@@ -1,6 +1,6 @@
 const sprintf = require("locutus/php/strings/sprintf");
 
-module.exports = class RewardModel extends Model {
+global['\Opencart\Catalog\Model\Extension\Opencart\Total\Reward'] = class Reward extends global['\Opencart\System\Engine\Model'] {
 	/**
 	 * @param totals
 	 * @param taxes

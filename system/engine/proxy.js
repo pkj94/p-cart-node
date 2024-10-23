@@ -1,4 +1,4 @@
-module.exports = class Proxy {
+global['\Opencart\System\Engine\Proxy'] = class Proxy {
     constructor() {
         this.data = {};
     }

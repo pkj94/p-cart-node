@@ -1,9 +1,9 @@
-module.exports = class SuccessController extends Controller {
+module.exports = class Success extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */
 	async index() {
-const data ={};
+		const data = {};
 		await this.load.language('checkout/success');
 
 		if ((this.session.data['order_id'])) {
@@ -27,27 +27,27 @@ const data ={};
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/home', 'language=' + this.config.get('config_language'))
-		];
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/home', 'language=' + this.config.get('config_language'))
+		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_basket'),
-			'href' : await this.url.link('checkout/cart', 'language=' + this.config.get('config_language'))
-		];
+			'text': this.language.get('text_basket'),
+			'href': await this.url.link('checkout/cart', 'language=' + this.config.get('config_language'))
+		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_checkout'),
-			'href' : await this.url.link('checkout/checkout', 'language=' + this.config.get('config_language'))
-		];
+			'text': this.language.get('text_checkout'),
+			'href': await this.url.link('checkout/checkout', 'language=' + this.config.get('config_language'))
+		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_success'),
-			'href' : await this.url.link('checkout/success', 'language=' + this.config.get('config_language'))
-		];
+			'text': this.language.get('text_success'),
+			'href': await this.url.link('checkout/success', 'language=' + this.config.get('config_language'))
+		});
 
 		if (await this.customer.isLogged()) {
-			data['text_message'] = sprintf(this.language.get('text_customer'), await this.url.link('account/account', 'language=' + this.config.get('config_language') +  '&customer_token=' + this.session.data['customer_token']), await this.url.link('account/order', 'language=' + this.config.get('config_language') +  '&customer_token=' + this.session.data['customer_token']), await this.url.link('account/download', 'language=' + this.config.get('config_language') +  '&customer_token=' + this.session.data['customer_token']), await this.url.link('information/contact', 'language=' + this.config.get('config_language')));
+			data['text_message'] = sprintf(this.language.get('text_customer'), await this.url.link('account/account', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token']), await this.url.link('account/order', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token']), await this.url.link('account/download', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token']), await this.url.link('information/contact', 'language=' + this.config.get('config_language')));
 		} else {
 			data['text_message'] = sprintf(this.language.get('text_guest'), await this.url.link('information/contact', 'language=' + this.config.get('config_language')));
 		}

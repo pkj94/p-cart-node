@@ -1,4 +1,4 @@
-module.exports=class StatisticsController extends Controller {
+module.exports=class Statistics extends global['\Opencart\System\Engine\Controller'] {
 	// catalog/model/catalog/review/addReview/after
 	/**
 	 * @param string route
@@ -7,7 +7,7 @@ module.exports=class StatisticsController extends Controller {
 	 *
 	 * @return void
 	 */
-	async addReview(&route, args, output) {
+	async addReview(route, args, output) {
 		this.load.model('report/statistics');
 
 		this.model_report_statistics.addValue('review', 1);	
@@ -22,7 +22,7 @@ module.exports=class StatisticsController extends Controller {
 	 *
 	 * @return void
 	 */
-	async addReturn(&route, args, output) {
+	async addReturn(route, args, output) {
 		this.load.model('report/statistics');
 
 		this.model_report_statistics.addValue('returns', 1);
@@ -36,7 +36,7 @@ module.exports=class StatisticsController extends Controller {
 	 *
 	 * @return void
 	 */
-	async addHistory(&route, args) {
+	async addHistory(route, args) {
 		this.load.model('checkout/order');
 				
 		const order_info = await this.model_checkout_order.getOrder(args[0]);

@@ -1,4 +1,4 @@
-module.exports = class OrderSaleModel extends Model {
+module.exports = class OrderSaleModel extends global['\Opencart\System\Engine\Model'] {
 	/**
 	 * @param order_id
 	 *
@@ -66,11 +66,10 @@ module.exports = class OrderSaleModel extends Model {
 
 			let language_info = await this.model_localisation_language.getLanguage(order_query.row['language_id']);
 
-			if (language_info) {
+			let language_code = this.config.get('config_language');
+if (language_info) {
 				language_code = language_info['code'];
-			} else {
-				language_code = this.config.get('config_language');
-			}
+			} 
 
 			return {
 				'order_id': order_query.row['order_id'],

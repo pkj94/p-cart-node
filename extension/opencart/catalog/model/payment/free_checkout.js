@@ -1,4 +1,4 @@
-module.exports = class FreeCheckoutModel extends Model {
+global['\Opencart\Catalog\Model\Extension\Opencart\Payment\FreeCheckout'] = class FreeCheckout extends global['\Opencart\System\Engine\Model'] {
 	/**
 	 * @param address
 	 *

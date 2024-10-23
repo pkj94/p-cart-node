@@ -1,4 +1,4 @@
-module.exports = class StoreSettingModel extends Model {
+module.exports = class StoreSettingModel extends global['\Opencart\System\Engine\Model'] {
     constructor(registry) {
         super(registry)
     }
@@ -137,7 +137,7 @@ module.exports = class StoreSettingModel extends Model {
 		if (config.has('action_event')) {
 			for (let [key, value] of Object.entries(config.get('action_event'))) {
                 for (let [priority, action] of Object.entries(value)) {
-					event.register(key, new Action(action), priority);
+					event.register(key, new global['\Opencart\System\Engine\Action'](action), priority);
 				}
 			}
 		}
@@ -167,8 +167,8 @@ module.exports = class StoreSettingModel extends Model {
 		registry.set('cache', this.cache);
 
 		// Session
-		// let session = new SessionLibrary(config.get('session_engine'), registry);
-		let session = new SessionLibrary(this.request.server.session);
+		// let session = new global['\Opencart\System\Library\Session'](config.get('session_engine'), registry);
+		let session = new global['\Opencart\System\Library\Session'](this.request.server.session);
 		session.start(this.request.server.sessionID)
 		registry.set('session', session);
 
@@ -190,7 +190,7 @@ module.exports = class StoreSettingModel extends Model {
 		registry.set('language', languageLib);
 
 		// Url
-		registry.set('url', new UrlLibrary(config.get('site_url')));
+		registry.set('url', new global['\Opencart\System\Library\Url'](config.get('site_url')));
 
 		// Document
 		registry.set('document', new DocumentLibrary(registry));

@@ -1,4 +1,4 @@
-module.exports = class MapDashboardModel extends Model {
+global['Opencart\Admin\Model\Extension\Opencart\Dashboard\Map'] = class Map extends global['\Opencart\System\Engine\Model']  {
 	/**
 	 * @return array
 	 */

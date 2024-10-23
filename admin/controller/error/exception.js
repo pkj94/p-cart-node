@@ -1,20 +1,14 @@
-<?php
-namespace Opencart\Admin\Controller\Error;
-/**
- * 
- *
- * @package Opencart\Admin\Controller\Error
- */
-class ExceptionController extends Controller {
+module.exports = class ExceptionController extends global['\Opencart\System\Engine\Controller'] {
 	/**
-	 * @param string message
-	 * @param string code
-	 * @param string file
-	 * @param string line
+	 * @param message
+	 * @param code
+	 * @param file
+	 * @param line
 	 *
 	 * @return void
 	 */
-	async index(string message, string code, string file, string line) {
+	async index(message, code, file, line) {
+		const data = {};
 		await this.load.language('error/exception');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -22,13 +16,13 @@ class ExceptionController extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('error/exception', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('error/exception', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['header'] = await this.load.controller('common/header');

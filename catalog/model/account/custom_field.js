@@ -1,4 +1,4 @@
-module.exports = class CustomFieldModel extends Model {
+module.exports = class CustomField extends global['\Opencart\System\Engine\Model'] {
 	/**
 	 * @param custom_field_id
 	 *

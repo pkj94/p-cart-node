@@ -1,9 +1,9 @@
-module.exports = class PaymentMethodController extends Controller {
+module.exports = class PaymentMethod extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return string
 	 */
 	async index() {
-const data ={};
+		const data = {};
 		await this.load.language('checkout/payment_method');
 
 		if ((this.session.data['payment_method'])) {
@@ -20,7 +20,7 @@ const data ={};
 			data['comment'] = '';
 		}
 
-		this.load.model('catalog/information',this);
+		this.load.model('catalog/information', this);
 
 		const information_info = await this.model_catalog_information.getInformation(this.config.get('config_checkout_id'));
 

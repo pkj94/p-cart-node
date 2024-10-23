@@ -1,5 +1,5 @@
-const fs = require('fs');
-module.exports = class ProfileController extends Controller {
+
+module.exports = class ProfileController extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */

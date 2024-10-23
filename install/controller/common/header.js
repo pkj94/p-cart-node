@@ -1,4 +1,4 @@
-module.exports = class Header extends Controller {
+global['\Opencart\Install\Controller\Common\Header'] = class Header extends global['\Opencart\System\Engine\Controller'] {
     constructor(registry) {
         super(registry);
     }

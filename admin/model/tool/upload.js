@@ -1,4 +1,4 @@
-module.exports = class UploadModel extends Model {
+module.exports = class UploadModel extends global['\Opencart\System\Engine\Model'] {
 	constructor(registry) {
 		super(registry)
 	}

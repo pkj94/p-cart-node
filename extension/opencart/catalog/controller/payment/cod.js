@@ -1,4 +1,4 @@
-module.exports = class CodController extends Controller {
+global['\Opencart\Catalog\Controller\Extension\Opencart\Payment\Cod'] = class Cod extends global['\Opencart\System\Engine\Controller'] {
 	constructor(registry) {
 		super(registry)
 	}

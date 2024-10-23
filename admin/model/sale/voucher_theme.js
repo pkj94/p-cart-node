@@ -1,4 +1,4 @@
-module.exports = class VoucherThemeSaleModel extends Model {
+module.exports = class VoucherThemeSaleModel extends global['\Opencart\System\Engine\Model'] {
 	constructor(registry) {
 		super(registry)
 	}

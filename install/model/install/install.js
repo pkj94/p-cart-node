@@ -1,7 +1,6 @@
-const Model = require('../../../system/engine/model');
 const bcrypt = require('bcrypt');
 
-module.exports = class Install extends Model {
+global['\Opencart\Install\Model\Install\Install'] = class Install extends global['\Opencart\System\Engine\Model'] {
     constructor(regisstry) {
         super(regisstry);
         this.db = null;
@@ -10,7 +9,7 @@ module.exports = class Install extends Model {
     database(data) {
         return new Promise(async (resolve, reject) => {
             try {
-                this.db = new DbLibrary(
+                this.db = new global['\Opencart\System\Library\Db'](
                     data.db_driver,
                     decodeHTMLEntities(data.db_hostname),
                     decodeHTMLEntities(data.db_username),
@@ -60,7 +59,7 @@ module.exports = class Install extends Model {
                 }
 
                 // Data
-                const fs = require('fs');
+                
                 const lines = fs.readFileSync(DIR_APPLICATION + 'opencart.sql', 'utf8').toString().split('\n');
                 let sql = '';
                 let start = false;

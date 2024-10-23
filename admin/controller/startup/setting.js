@@ -1,4 +1,4 @@
-module.exports = class SettingController extends Controller {
+module.exports = class SettingController extends global['\Opencart\System\Engine\Controller'] {
 	constructor(registry) {
 		super(registry)
 	}
@@ -7,7 +7,6 @@ module.exports = class SettingController extends Controller {
 
 		// Settings
 		const results = await this.model_setting_setting.getSettings(0);
-
 		results.forEach(result => {
 			if (!result.serialized) {
 				this.config.set(result.key, result.value);

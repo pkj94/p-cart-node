@@ -1,4 +1,4 @@
-module.exports = class CartModel extends Model {
+module.exports = class Cart extends global['\Opencart\System\Engine\Model'] {
 
 	async getProducts() {
 		this.load.model('tool/image', this);

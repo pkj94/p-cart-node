@@ -1,9 +1,9 @@
-module.exports=class LogoutController extends Controller {
+module.exports = class Logout extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */
 	async index() {
-const data ={};
+		const data = {};
 		if (await this.customer.isLogged()) {
 			await this.customer.logout();
 
@@ -32,19 +32,19 @@ const data ={};
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/home', 'language=' + this.config.get('config_language'))
-		];
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/home', 'language=' + this.config.get('config_language'))
+		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_account'),
-			'href' : await this.url.link('account/account', 'language=' + this.config.get('config_language'))
-		];
+			'text': this.language.get('text_account'),
+			'href': await this.url.link('account/account', 'language=' + this.config.get('config_language'))
+		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_logout'),
-			'href' : await this.url.link('account/logout', 'language=' + this.config.get('config_language'))
-		];
+			'text': this.language.get('text_logout'),
+			'href': await this.url.link('account/logout', 'language=' + this.config.get('config_language'))
+		});
 
 		data['continue'] = await this.url.link('common/home', 'language=' + this.config.get('config_language'));
 

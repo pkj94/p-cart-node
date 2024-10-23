@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Catalog\Controller\Cron;
-/**
- *
- *
- * @package Opencart\Catalog\Controller\Cron
- */
-class SubscriptionController extends Controller {
+module.exports = class Subscription extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * Index
 	 *
@@ -18,33 +11,33 @@ class SubscriptionController extends Controller {
 	 * @return void
 	 */
 	async index(cron_id, code, cycle, date_added, date_modified) {
-        this.load.language('cron/subscription');
+		this.load.language('cron/subscription');
 
 		// Check the there is an order and the order status is complete and subscription status is active
-		filter_data = [
-			'filter_date_next'              : date('Y-m-d H:i:s'),
-			'filter_subscription_status_id' : this.config.get('config_subscription_active_status_id'),
-			'start'                         : 0,
-			'limit'                         : 10
-		];
+		filter_data = {
+			'filter_date_next': date('Y-m-d H:i:s'),
+			'filter_subscription_status_id': this.config.get('config_subscription_active_status_id'),
+			'start': 0,
+			'limit': 10
+		};
 
 		// Get all
 		this.load.model('checkout/subscription');
 		this.load.model('checkout/order');
 
-        results = await this.model_checkout_subscription.getSubscriptions(filter_data);
+		results = await this.model_checkout_subscription.getSubscriptions(filter_data);
 
 		for (let result of results) {
 			const order_info = await this.model_checkout_order.getOrder(result['order_id']);
 
 			// Check the there is an order and the order status is complete and subscription status is active
 			if (order_info && in_array(order_info['order_status_id'], this.config.get('config_complete_status'))) {
-				this.load.model('setting/store',this);
+				this.load.model('setting/store', this);
 
 				error = '';
 
 				// 1+ Language
-				this.load.model('localisation/language',this);
+				this.load.model('localisation/language', this);
 
 				const language_info = await this.model_localisation_language.getLanguage(result['language_id']);
 
@@ -53,7 +46,7 @@ class SubscriptionController extends Controller {
 				}
 
 				// 2+ Currency
-				this.load.model('localisation/currency',this);
+				this.load.model('localisation/currency', this);
 
 				currency_info = await this.model_localisation_currency.getCurrency(result['currency_id']);
 
@@ -66,21 +59,21 @@ class SubscriptionController extends Controller {
 					store = await this.model_setting_store.createStoreInstance(result['store_id'], language_info['code']);
 
 					// Login
-					this.load.model('account/customer',this);
+					this.load.model('account/customer', this);
 
 					const customer_info = await this.model_account_customer.getCustomer(result['customer_id']);
 
 					if (customer_info && await this.customer.login(customer_info['email'], '', true)) {
 						// Add customer details into session
-						store.session.data['customer'] = [
-							'customer_id'       : customer_info['customer_id'],
-							'customer_group_id' : customer_info['customer_group_id'],
-							'firstname'         : customer_info['firstname'],
-							'lastname'          : customer_info['lastname'],
-							'email'             : customer_info['email'],
-							'telephone'         : customer_info['telephone'],
-							'custom_field'      : customer_info['custom_field']
-						];
+						store.session.data['customer'] = {
+							'customer_id': customer_info['customer_id'],
+							'customer_group_id': customer_info['customer_group_id'],
+							'firstname': customer_info['firstname'],
+							'lastname': customer_info['lastname'],
+							'email': customer_info['email'],
+							'telephone': customer_info['telephone'],
+							'custom_field': customer_info['custom_field']
+						};
 					} else {
 						error = this.language.get('error_customer');
 					}
@@ -88,21 +81,21 @@ class SubscriptionController extends Controller {
 
 				// 4+ Add product
 				if (!error) {
-					this.load.model('catalog/product',this);
+					this.load.model('catalog/product', this);
 
 					const product_info = await this.model_checkout_order.getProduct(result['product_id']);
 
 					if (product_info.product_id) {
 						let option_data = [];
 
-						const 
- order_options = await this.model_account_order.getOptions(result['order_id'], result['order_product_id']);
+						const
+							order_options = await this.model_account_order.getOptions(result['order_id'], result['order_product_id']);
 
 						for (let order_option of order_options) {
 							if (order_option['type'] == 'select' || order_option['type'] == 'radio' || order_option['type'] == 'image') {
 								option_data[order_option['product_option_id']] = order_option['product_option_value_id'];
 							} else if (order_option['type'] == 'checkbox') {
-								option_data[order_option['product_option_id']].push(order_option['product_option_value_id'];
+								option_data[order_option['product_option_id']].push(order_option['product_option_value_id']);
 							} else if (order_option['type'] == 'text' || order_option['type'] == 'textarea' || order_option['type'] == 'date' || order_option['type'] == 'datetime' || order_option['type'] == 'time') {
 								option_data[order_option['product_option_id']] = order_option['value'];
 							} else if (order_option['type'] == 'file') {
@@ -118,7 +111,7 @@ class SubscriptionController extends Controller {
 
 				// 5+ Add Shipping Address
 				if (!error && store.cart.hasShipping()) {
-					this.load.model('account/address',this);
+					this.load.model('account/address', this);
 
 					shipping_address_info = await this.model_account_address.getAddress(result['customer_id'], result['shipping_address_id']);
 
@@ -153,7 +146,7 @@ class SubscriptionController extends Controller {
 				payment_address = [];
 
 				if (!error && this.config.get('config_checkout_payment_address')) {
-					this.load.model('account/address',this);
+					this.load.model('account/address', this);
 
 					payment_address_info = await this.model_account_address.getAddress(order_info['customer_id'], result['payment_address_id']);
 
@@ -185,7 +178,7 @@ class SubscriptionController extends Controller {
 				}
 
 				if (!error) {
-					this.load.model('marketing/marketing',this);
+					this.load.model('marketing/marketing', this);
 
 					marketing_info = await this.model_marketing_marketing.getMarketingByCode(this.session.data['tracking']);
 					order_data['language_id'] = this.config.get('config_language_id');
@@ -289,20 +282,20 @@ class SubscriptionController extends Controller {
 
 					for (let product of products) {
 						order_data['products'].push({
-							'product_id'   : product['product_id'],
-							'master_id'    : product['master_id'],
-							'name'         : product['name'],
-							'model'        : product['model'],
-							'option'       : product['option'],
-							'subscription' : [],
-							'download'     : product['download'],
-							'quantity'     : product['quantity'],
-							'subtract'     : product['subtract'],
-							'price'        : product['price'],
-							'total'        : product['total'],
-							'tax'          : this.tax.getTax(product['price'], product['tax_class_id']),
-							'reward'       : product['reward']
-						];
+							'product_id': product['product_id'],
+							'master_id': product['master_id'],
+							'name': product['name'],
+							'model': product['model'],
+							'option': product['option'],
+							'subscription': [],
+							'download': product['download'],
+							'quantity': product['quantity'],
+							'subtract': product['subtract'],
+							'price': product['price'],
+							'total': product['total'],
+							'tax': this.tax.getTax(product['price'], product['tax_class_id']),
+							'reward': product['reward']
+						});
 					}
 
 					// Vouchers can not be in subscriptions
@@ -317,11 +310,11 @@ class SubscriptionController extends Controller {
 
 					(store.model_checkout_cart.getTotals)(totals, taxes, total);
 
-					total_data = [
-						'totals' : totals,
-						'taxes' : taxes,
-						'total' : total
-					];
+					total_data = {
+						'totals': totals,
+						'taxes': taxes,
+						'total': total
+					};
 
 					order_data = array_merge(order_data, total_data);
 
@@ -335,7 +328,7 @@ class SubscriptionController extends Controller {
 
 						// Affiliate
 						if (this.config.get('config_affiliate_status')) {
-							this.load.model('account/affiliate',this);
+							this.load.model('account/affiliate', this);
 
 							affiliate_info = await this.model_account_affiliate.getAffiliateByTracking(this.session.data['tracking']);
 
@@ -346,7 +339,7 @@ class SubscriptionController extends Controller {
 							}
 						}
 
-						this.load.model('marketing/marketing',this);
+						this.load.model('marketing/marketing', this);
 
 						marketing_info = await this.model_marketing_marketing.getMarketingByCode(this.session.data['tracking']);
 
@@ -417,12 +410,12 @@ class SubscriptionController extends Controller {
 						date_next = date('Y-m-d', strtotime('+' + result['cycle'] + ' ' + result['frequency']));
 					}
 
-					filter_data = [
+					filter_data = {
 						'filter_date_next' : date_next,
 						'filter_subscription_status_id' : subscription_status_id,
 						'start' : 0,
 						'limit' : 1
-					];
+					};
 
 					subscriptions = await this.model_account_subscription.getSubscriptions(filter_data);
 
@@ -477,5 +470,5 @@ class SubscriptionController extends Controller {
 			}
 		}
 		*/
-    }
+	}
 }

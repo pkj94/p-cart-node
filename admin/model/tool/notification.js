@@ -1,4 +1,4 @@
-module.exports = class NotificationToolModel  extends Model {
+module.exports = class NotificationToolModel  extends global['\Opencart\System\Engine\Model'] {
 	constructor(registry){
 		super(registry)
 	}

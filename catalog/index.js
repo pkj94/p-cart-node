@@ -1,4 +1,4 @@
-const fs = require('fs');
+
 module.exports = function () {
     const loadControllers = async (req, res, next) => {
         // console.log('params=======', req.params)
@@ -10,12 +10,6 @@ module.exports = function () {
         if (typeof DIR_APPLICATION == 'undefined')
             return res.redirect('/install');
         // console.log(typeof DIR_APPLICATION == 'undefined')
-
-
-        // Registry
-        global.registry = new Registry();
-        global.config = new Config();
-        registry.set('config', global.config);
         new Framework().init(req, res, next).then(output => {
             if (registry.get('response').redirect) {
                 res.redirect(registry.get('response').redirect);

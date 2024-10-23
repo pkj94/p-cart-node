@@ -1,6 +1,6 @@
 const nodemailer = require('nodemailer');
 
-module.exports = class MailMailLibrary {
+module.exports = class Mail {
     constructor(option = {}) {
         this.option = option;
         this.transporter = nodemailer.createTransport({

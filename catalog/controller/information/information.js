@@ -1,16 +1,9 @@
-<?php
-namespace Opencart\Catalog\Controller\Information;
-/**
- *
- *
- * @package Opencart\Catalog\Controller\Information
- */
-class InformationController extends Controller {
+module.exports = class Information extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */
 	async index() {
-const data ={};
+		const data = {};
 		await this.load.language('information/information');
 
 		if ((this.request.get['information_id'])) {
@@ -19,7 +12,7 @@ const data ={};
 			information_id = 0;
 		}
 
-		this.load.model('catalog/information',this);
+		this.load.model('catalog/information', this);
 
 		const information_info = await this.model_catalog_information.getInformation(information_id);
 
@@ -31,14 +24,14 @@ const data ={};
 			data['breadcrumbs'] = [];
 
 			data['breadcrumbs'].push({
-				'text' : this.language.get('text_home'),
-				'href' : await this.url.link('common/home', 'language=' + this.config.get('config_language'))
-			];
+				'text': this.language.get('text_home'),
+				'href': await this.url.link('common/home', 'language=' + this.config.get('config_language'))
+			});
 
 			data['breadcrumbs'].push({
-				'text' : information_info['title'],
-				'href' : await this.url.link('information/information', 'language=' + this.config.get('config_language') + '&information_id=' +  information_id)
-			];
+				'text': information_info['title'],
+				'href': await this.url.link('information/information', 'language=' + this.config.get('config_language') + '&information_id=' + information_id)
+			});
 
 			data['heading_title'] = information_info['title'];
 
@@ -55,7 +48,7 @@ const data ={};
 
 			this.response.setOutput(await this.load.view('information/information', data));
 		} else {
-			return new Action('error/not_found');
+			return new global['\Opencart\System\Engine\Action']('error/not_found');
 		}
 
 		return null;
@@ -71,7 +64,7 @@ const data ={};
 			information_id = 0;
 		}
 
-		this.load.model('catalog/information',this);
+		this.load.model('catalog/information', this);
 
 		const information_info = await this.model_catalog_information.getInformation(information_id);
 

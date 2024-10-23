@@ -1,4 +1,4 @@
-module.exports = class FreeModel extends Model {
+global['\Opencart\Catalog\Model\Extension\Opencart\Shipping\Free'] = class Free extends global['\Opencart\System\Engine\Model'] {
 	/**
 	 * @param address
 	 *

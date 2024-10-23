@@ -1,4 +1,4 @@
-module.exports = class ProductCatalogModel extends Model {
+module.exports = class ProductCatalogModel extends global['\Opencart\System\Engine\Model'] {
 	constructor(registry) {
 		super(registry)
 	}

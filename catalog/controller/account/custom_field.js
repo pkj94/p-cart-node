@@ -1,9 +1,9 @@
-module.exports=class CustomFieldController extends Controller {
+module.exports = class CustomField extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */
 	async index() {
-const data ={};
+		const data = {};
 		const json = {};
 
 		// Customer Group
@@ -13,15 +13,15 @@ const data ={};
 			customer_group_id = this.config.get('config_customer_group_id');
 		}
 
-		this.load.model('account/custom_field',this);
+		this.load.model('account/custom_field', this);
 
 		const custom_fields = await this.model_account_custom_field.getCustomFields(customer_group_id);
 
 		for (let custom_field of custom_fields) {
 			json.push({
-				'custom_field_id' : custom_field['custom_field_id'],
-				'required'        : custom_field['required']
-			];
+				'custom_field_id': custom_field['custom_field_id'],
+				'required': custom_field['required']
+			});
 		}
 
 		this.response.addHeader('Content-Type: application/json');

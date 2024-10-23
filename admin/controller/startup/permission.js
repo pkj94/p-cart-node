@@ -1,4 +1,4 @@
-module.exports = class PermissionController extends Controller {
+module.exports = class PermissionController extends global['\Opencart\System\Engine\Controller'] {
 	constructor(registry) {
 		super(registry)
 	}
@@ -26,7 +26,7 @@ module.exports = class PermissionController extends Controller {
 			];
 
 			if (!ignore.includes(route) && !await this.user.hasPermission('access', route)) {
-				return await new Action('error/permission');
+				return await new global['\Opencart\System\Engine\Action']('error/permission');
 			}
 		}
 

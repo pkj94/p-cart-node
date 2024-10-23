@@ -1,4 +1,4 @@
-module.exports = class ShippingMethodController extends Controller {
+module.exports = class ShippingMethodController extends global['\Opencart\System\Engine\Model'] {
 	/**
 	 * @param shipping_address
 	 *

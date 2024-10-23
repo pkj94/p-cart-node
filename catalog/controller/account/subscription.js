@@ -1,4 +1,4 @@
-module.exports=class SubscriptionController extends Controller {
+module.exports = class Subscription extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */
@@ -22,33 +22,33 @@ module.exports=class SubscriptionController extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/home', 'language=' + this.config.get('config_language'))
-		];
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/home', 'language=' + this.config.get('config_language'))
+		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_account'),
-			'href' : await this.url.link('account/account', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'])
-		];
+			'text': this.language.get('text_account'),
+			'href': await this.url.link('account/account', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'])
+		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('account/subscription', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'] + url)
-		];
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('account/subscription', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'] + url)
+		});
 
 		let page = 1;
-if ((this.request.get['page'])) {
+		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
-		} 
+		}
 
 		let limit = 10;
 
 		data['subscriptions'] = [];
 
-		this.load.model('account/subscription',this);
-		this.load.model('account/order',this);
-		this.load.model('catalog/product',this);
-		this.load.model('localisation/currency',this);
+		this.load.model('account/subscription', this);
+		this.load.model('account/order', this);
+		this.load.model('catalog/product', this);
+		this.load.model('localisation/currency', this);
 		this.load.model('localisation/subscription_status');
 
 		subscription_total = await this.model_account_subscription.getTotalSubscriptions();
@@ -98,24 +98,24 @@ if ((this.request.get['page'])) {
 				}
 
 				data['subscriptions'].push({
-					'subscription_id' : result['subscription_id'],
-					'product_id'      : result['product_id'],
-					'product_name'    : product_info['name'],
-					'description'     : description,
-					'product'         : await this.url.link('product/product', 'language=' + this.config.get('config_language') + '&product_id=' + result['product_id']),
-					'status'          : subscription_status,
-					'date_added'      : date(this.language.get('date_format_short'), new Date(result['date_added'])),
-					'view'            : await this.url.link('account/subscription+info', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'] + '&subscription_id=' + result['subscription_id'])
-				];
+					'subscription_id': result['subscription_id'],
+					'product_id': result['product_id'],
+					'product_name': product_info['name'],
+					'description': description,
+					'product': await this.url.link('product/product', 'language=' + this.config.get('config_language') + '&product_id=' + result['product_id']),
+					'status': subscription_status,
+					'date_added': date(this.language.get('date_format_short'), new Date(result['date_added'])),
+					'view': await this.url.link('account/subscription+info', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'] + '&subscription_id=' + result['subscription_id'])
+				});
 			}
 		}
 
 		data['pagination'] = await this.load.controller('common/pagination', {
-			'total' : subscription_total,
-			'page'  : page,
-			'limit' : limit,
-			'url'   : await this.url.link('account/subscription', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'] + '&page={page}')
-		]);
+			'total': subscription_total,
+			'page': page,
+			'limit': limit,
+			'url': await this.url.link('account/subscription', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'] + '&page={page}')
+		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (subscription_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (subscription_total - limit)) ? subscription_total : (((page - 1) * limit) + limit), subscription_total, Math.ceil(subscription_total / limit));
 
@@ -149,7 +149,7 @@ if ((this.request.get['page'])) {
 			subscription_id = 0;
 		}
 
-		this.load.model('account/subscription',this);
+		this.load.model('account/subscription', this);
 
 		subscription_info = await this.model_account_subscription.getSubscription(subscription_id);
 
@@ -169,24 +169,24 @@ if ((this.request.get['page'])) {
 			data['breadcrumbs'] = [];
 
 			data['breadcrumbs'].push({
-				'text' : this.language.get('text_home'),
-				'href' : await this.url.link('common/home', 'language=' + this.config.get('config_language'))
-			];
+				'text': this.language.get('text_home'),
+				'href': await this.url.link('common/home', 'language=' + this.config.get('config_language'))
+			});
 
 			data['breadcrumbs'].push({
-				'text' : this.language.get('text_account'),
-				'href' : await this.url.link('account/account', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'])
-			];
+				'text': this.language.get('text_account'),
+				'href': await this.url.link('account/account', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'])
+			});
 
 			data['breadcrumbs'].push({
-				'text' : this.language.get('heading_title'),
-				'href' : await this.url.link('account/subscription', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'] + url)
-			];
+				'text': this.language.get('heading_title'),
+				'href': await this.url.link('account/subscription', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'] + url)
+			});
 
 			data['breadcrumbs'].push({
-				'text' : heading_title,
-				'href' : await this.url.link('account/subscription+info', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'] + '&subscription_id=' + this.request.get['subscription_id'] + url)
-			];
+				'text': heading_title,
+				'href': await this.url.link('account/subscription+info', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'] + '&subscription_id=' + this.request.get['subscription_id'] + url)
+			});
 
 			data['subscription_id'] = subscription_info['subscription_id'];
 			data['order_id'] = subscription_info['order_id'];
@@ -210,7 +210,7 @@ if ((this.request.get['page'])) {
 				payment_address_id = 0;
 			}
 
-			this.load.model('account/address',this);
+			this.load.model('account/address', this);
 
 			address_info = await this.model_account_address.getAddress(await this.customer.getId(), payment_address_id);
 
@@ -234,18 +234,18 @@ if ((this.request.get['page'])) {
 					'{country}'
 				];
 
-				replace = [
-					'firstname' : address_info['firstname'],
-					'lastname'  : address_info['lastname'],
-					'company'   : address_info['company'],
-					'address_1' : address_info['address_1'],
-					'address_2' : address_info['address_2'],
-					'city'      : address_info['city'],
-					'postcode'  : address_info['postcode'],
-					'zone'      : address_info['zone'],
-					'zone_code' : address_info['zone_code'],
-					'country'   : address_info['country']
-				];
+				replace = {
+					'firstname': address_info['firstname'],
+					'lastname': address_info['lastname'],
+					'company': address_info['company'],
+					'address_1': address_info['address_1'],
+					'address_2': address_info['address_2'],
+					'city': address_info['city'],
+					'postcode': address_info['postcode'],
+					'zone': address_info['zone'],
+					'zone_code': address_info['zone_code'],
+					'country': address_info['country']
+				};
 
 				data['payment_address'] = str_replace(["\r\n", "\r", "\n"], '<br/>', preg_replace(["/\s\s+/", "/\r\r+/", "/\n\n+/"], '<br/>', trim(str_replace(find, replace, format))));
 			} else {
@@ -259,7 +259,7 @@ if ((this.request.get['page'])) {
 				shipping_address_id = 0;
 			}
 
-			this.load.model('account/address',this);
+			this.load.model('account/address', this);
 
 			address_info = await this.model_account_address.getAddress(await this.customer.getId(), shipping_address_id);
 
@@ -283,18 +283,18 @@ if ((this.request.get['page'])) {
 					'{country}'
 				];
 
-				replace = [
-					'firstname' : address_info['firstname'],
-					'lastname'  : address_info['lastname'],
-					'company'   : address_info['company'],
-					'address_1' : address_info['address_1'],
-					'address_2' : address_info['address_2'],
-					'city'      : address_info['city'],
-					'postcode'  : address_info['postcode'],
-					'zone'      : address_info['zone'],
-					'zone_code' : address_info['zone_code'],
-					'country'   : address_info['country']
-				];
+				replace = {
+					'firstname': address_info['firstname'],
+					'lastname': address_info['lastname'],
+					'company': address_info['company'],
+					'address_1': address_info['address_1'],
+					'address_2': address_info['address_2'],
+					'city': address_info['city'],
+					'postcode': address_info['postcode'],
+					'zone': address_info['zone'],
+					'zone_code': address_info['zone_code'],
+					'country': address_info['country']
+				};
 
 				data['shipping_address'] = str_replace(["\r\n", "\r", "\n"], '<br/>', preg_replace(["/\s\s+/", "/\r\r+/", "/\n\n+/"], '<br/>', trim(str_replace(find, replace, format))));
 			} else {
@@ -313,7 +313,7 @@ if ((this.request.get['page'])) {
 				data['payment_method'] = '';
 			}
 
-			this.load.model('catalog/product',this);
+			this.load.model('catalog/product', this);
 
 			const product_info = await this.model_catalog_product.getProduct(subscription_info['product_id']);
 
@@ -381,7 +381,7 @@ if ((this.request.get['page'])) {
 
 			this.response.setOutput(await this.load.view('account/subscription_info', data));
 		} else {
-			return new Action('error/not_found');
+			return new global['\Opencart\System\Engine\Action']('error/not_found');
 		}
 
 		return null;
@@ -416,26 +416,26 @@ if ((this.request.get['page'])) {
 
 		data['histories'] = [];
 
-		this.load.model('account/subscription',this);
+		this.load.model('account/subscription', this);
 
 		const results = await this.model_account_subscription.getHistories(subscription_id, (page - 1) * limit, limit);
 
 		for (let result of results) {
 			data['histories'].push({
-				'status'     : result['status'],
-				'comment'    : nl2br(result['comment']),
-				'date_added' : date(this.language.get('date_format_short'), new Date(result['date_added']))
-			];
+				'status': result['status'],
+				'comment': nl2br(result['comment']),
+				'date_added': date(this.language.get('date_format_short'), new Date(result['date_added']))
+			});
 		}
 
 		subscription_total = await this.model_account_subscription.getTotalHistories(subscription_id);
 
 		data['pagination'] = await this.load.controller('common/pagination', {
-			'total' : subscription_total,
-			'page'  : page,
-			'limit' : limit,
-			'url'   : await this.url.link('account/subscription.history', 'customer_token=' + this.session.data['customer_token'] + '&subscription_id=' + subscription_id + '&page={page}')
-		]);
+			'total': subscription_total,
+			'page': page,
+			'limit': limit,
+			'url': await this.url.link('account/subscription.history', 'customer_token=' + this.session.data['customer_token'] + '&subscription_id=' + subscription_id + '&page={page}')
+		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (subscription_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (subscription_total - limit)) ? subscription_total : (((page - 1) * limit) + limit), subscription_total, Math.ceil(subscription_total / limit));
 
@@ -471,28 +471,28 @@ if ((this.request.get['page'])) {
 
 		data['orders'] = [];
 
-		this.load.model('account/order',this);
+		this.load.model('account/order', this);
 
 		const results = await this.model_account_order.getOrdersBySubscriptionId(subscription_id, (page - 1) * limit, limit);
 
 		for (let result of results) {
 			data['orders'].push({
-				'order_id'   : result['order_id'],
-				'status'     : result['status'],
-				'total'      : this.currency.format(result['total'], result['currency_code'], result['currency_value']),
-				'date_added' : date(this.language.get('date_format_short'), new Date(result['date_added'])),
-				'view'       : await this.url.link('sale/subscription+order', 'customer_token=' + this.session.data['customer_token'] + '&order_id=' + result['order_id'] + '&page={page}')
-			];
+				'order_id': result['order_id'],
+				'status': result['status'],
+				'total': this.currency.format(result['total'], result['currency_code'], result['currency_value']),
+				'date_added': date(this.language.get('date_format_short'), new Date(result['date_added'])),
+				'view': await this.url.link('sale/subscription+order', 'customer_token=' + this.session.data['customer_token'] + '&order_id=' + result['order_id'] + '&page={page}')
+			});
 		}
 
 		const order_total = await this.model_account_order.getTotalOrdersBySubscriptionId(subscription_id);
 
 		data['pagination'] = await this.load.controller('common/pagination', {
-			'total' : order_total,
-			'page'  : page,
-			'limit' : limit,
-			'url'   : await this.url.link('sale/subscription+order', 'customer_token=' + this.session.data['customer_token'] + '&subscription_id=' + subscription_id + '&page={page}')
-		]);
+			'total': order_total,
+			'page': page,
+			'limit': limit,
+			'url': await this.url.link('sale/subscription+order', 'customer_token=' + this.session.data['customer_token'] + '&subscription_id=' + subscription_id + '&page={page}')
+		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (order_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (order_total - limit)) ? order_total : (((page - 1) * limit) + limit), order_total, Math.ceil(order_total / limit));
 

@@ -1,4 +1,4 @@
-module.exports = class AntispamModel extends Model {
+module.exports = class AntispamModel extends global['\Opencart\System\Engine\Model'] {
 	constructor(registry) {
 		super(registry)
 	}

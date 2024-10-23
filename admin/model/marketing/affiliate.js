@@ -1,4 +1,4 @@
-module.exports = class AffiliateModel extends Model {
+module.exports = class AffiliateModel extends global['\Opencart\System\Engine\Model'] {
 	constructor(registry) {
 		super(registry)
 	}

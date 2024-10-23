@@ -1,16 +1,9 @@
-<?php
-namespace Opencart\Catalog\Controller\Error;
-/**
- *
- *
- * @package Opencart\Catalog\Controller\Error
- */
-class NotFoundController extends Controller {
+module.exports = class NotFound extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */
 	async index() {
-const data ={};
+		const data = {};
 		await this.load.language('error/not_found');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -18,9 +11,9 @@ const data ={};
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/home', 'language=' + this.config.get('config_language'))
-		];
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/home', 'language=' + this.config.get('config_language'))
+		});
 
 		if ((this.request.get['route'])) {
 			url_data = this.request.get;
@@ -36,9 +29,9 @@ const data ={};
 			}
 
 			data['breadcrumbs'].push({
-				'text' : this.language.get('heading_title'),
-				'href' : await this.url.link(route, url)
-			];
+				'text': this.language.get('heading_title'),
+				'href': await this.url.link(route, url)
+			});
 		}
 
 		data['continue'] = await this.url.link('common/home', 'language=' + this.config.get('config_language'));

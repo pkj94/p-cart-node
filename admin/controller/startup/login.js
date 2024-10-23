@@ -1,4 +1,4 @@
-module.exports = class LoginController extends Controller {
+module.exports = class LoginController extends global['\Opencart\System\Engine\Controller'] {
 	constructor(registry) {
 		super(registry)
 	}
@@ -24,7 +24,7 @@ module.exports = class LoginController extends Controller {
 		// console.log('statup/login',  this.request.get.user_token, this.session.data.user_token, this.session.data,this.request.get)
 
 		if (!await this.user.isLogged() && !ignore.includes(route)) {
-			return new Action('common/login');
+			return new global['\Opencart\System\Engine\Action']('common/login');
 		}
 
 		const ignorePages = [
@@ -37,7 +37,7 @@ module.exports = class LoginController extends Controller {
 		];
 		// console.log('statup/login', ignorePages.includes(route), this.request.get.user_token, this.session.data.user_token, this.session.data,this.request.get)
 		if (!ignorePages.includes(route) && (!this.request.get.user_token || !this.session.data.user_token || this.request.get.user_token !== this.session.data.user_token)) {
-			return new Action('common/login');
+			return new global['\Opencart\System\Engine\Action']('common/login');
 		}
 
 		return null;

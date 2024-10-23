@@ -1,7 +1,6 @@
-const axios = require("axios");
 const nl2br = require("locutus/php/strings/nl2br");
 
-module.exports = class UpgradeController extends Controller {
+module.exports = class UpgradeController extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */
@@ -27,7 +26,7 @@ module.exports = class UpgradeController extends Controller {
 		data['upgrade'] = false;
 		let response_info = {}
 		try {
-			const curl = await axios.get(OPENCART_SERVER + 'index.php?route=api/upgrade');
+			const curl = await require("axios").get(OPENCART_SERVER + 'index.php?route=api/upgrade');
 			response_info = curl.data;
 		} catch (e) {
 

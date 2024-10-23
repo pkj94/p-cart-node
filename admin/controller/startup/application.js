@@ -1,11 +1,11 @@
-module.exports = class ApplicationController extends Controller {
+module.exports = class ApplicationController extends global['\Opencart\System\Engine\Controller'] {
 	constructor(registry) {
 		super(registry)
 	}
 
 	async index() {
 		// Url
-		this.registry.set('url', new UrlLibrary(this.config.get('site_url')));
+		this.registry.set('url', new global['\Opencart\System\Library\Url'](this.config.get('site_url')));
 
 		// Customer
 		this.registry.set('customer', new (require(DIR_SYSTEM + 'library/cart/customer'))(this.registry));

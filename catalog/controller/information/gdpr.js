@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Catalog\Controller\Information;
-/**
- *
- *
- * @package Opencart\Catalog\Controller\Information
- */
-class GdprController extends Controller {
+module.exports = class Gdpr extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return object|Action|null
 	 */
@@ -25,12 +18,12 @@ const data ={};
 			data['breadcrumbs'].push({
 				'text' : this.language.get('text_home'),
 				'href' : await this.url.link('common/home', 'language=' + this.config.get('config_language'))
-			];
+			});
 
 			data['breadcrumbs'].push({
 				'text' : this.language.get('heading_title'),
 				'href' : await this.url.link('information/gdpr', 'language=' + this.config.get('config_language'))
-			];
+			});
 
 			data['action'] = await this.url.link('information/gdpr+action', 'language=' + this.config.get('config_language'));
 
@@ -55,7 +48,7 @@ const data ={};
 
 			return null;
 		} else {
-			return new Action('error/not_found');
+			return new global['\Opencart\System\Engine\Action']('error/not_found');
 		}
 	}
 
@@ -168,17 +161,17 @@ const data ={};
 			data['breadcrumbs'].push({
 				'text' : this.language.get('text_home'),
 				'href' : await this.url.link('common/home', 'language=' + this.config.get('config_language'))
-			];
+			});
 
 			data['breadcrumbs'].push({
 				'text' : this.language.get('text_account'),
 				'href' : await this.url.link('information/gdpr', 'language=' + this.config.get('config_language'))
-			];
+			});
 
 			data['breadcrumbs'].push({
 				'text' : this.language.get('heading_title'),
 				'href' : await this.url.link('information/gdpr+success', 'language=' + this.config.get('config_language'))
-			];
+			});
 
 			if (gdpr_info['status'] == 0) {
 				await this.model_account_gdpr.editStatus(gdpr_info['gdpr_id'], 1);
@@ -201,7 +194,7 @@ const data ={};
 
 			return null;
 		} else {
-			return new Action('error/not_found');
+			return new global['\Opencart\System\Engine\Action']('error/not_found');
 		}
 	}
 }

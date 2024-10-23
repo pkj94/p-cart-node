@@ -1,11 +1,11 @@
-module.exports=class DebugController extends Controller {
+module.exports = class Debug extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @param string route
 	 * @param  args
 	 *
 	 * @return void
 	 */
-	async index(&route, args) {
+	async index(route, args) {
 		//echo route;
 	}
 
@@ -15,7 +15,7 @@ module.exports=class DebugController extends Controller {
 	 *
 	 * @return void
 	 */
-	async before(&route, args) {
+	async before(route, args) {
 		// add the route you want to test
 		/*
 		if (route == 'common/home') {
@@ -36,14 +36,14 @@ module.exports=class DebugController extends Controller {
 		/*
 		if (route == 'common/home') {
 			if ((this.session.data['debug'][route])) {
-				log_data = [
+				log_data = {
 					'route' : route,
 					'time'  : microtime(true) - this.session.data['debug'][route]
-				];
+				};
 				
 				this.log.write(log_data);
 			}
 		}
 		*/
-	}	
+	}
 }

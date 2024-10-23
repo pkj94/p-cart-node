@@ -1,5 +1,5 @@
-const fs = require('fs');
-module.exports = class Config {
+
+global['\Opencart\System\Engine\Config'] = class Config {
     directory = '';
     path = {};
     data = {};

@@ -1,7 +1,7 @@
 const sprintf = require("locutus/php/strings/sprintf");
-const fs = require('fs');
+
 const strip_tags = require("locutus/php/strings/strip_tags");
-module.exports = class CategoryController extends Controller {
+module.exports = class Category extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */
@@ -414,7 +414,7 @@ module.exports = class CategoryController extends Controller {
 
 			this.response.setOutput(await this.load.view('product/category', data));
 		} else {
-			return new Action('error/not_found');
+			return new global['\Opencart\System\Engine\Action']('error/not_found');
 		}
 
 		return null;

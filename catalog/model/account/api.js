@@ -1,4 +1,4 @@
-module.exports =class ApiModel extends Model {
+module.exports =class Api extends global['\Opencart\System\Engine\Model'] {
 	/**
 	 * @param string username
 	 * @param string key

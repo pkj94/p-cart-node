@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Catalog\Controller\Mail;
-/**
- *
- *
- * @package Opencart\Catalog\Controller\Mail
- */
-class VoucherController extends Controller {
+module.exports = class Voucher extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @param string route
 	 * @param  args
@@ -14,7 +7,7 @@ class VoucherController extends Controller {
 	 * @return void
 	 * @throws \Exception
 	 */
-	async index(&route, args, output) {
+	async index(route, args, output) {
 		this.load.model('checkout/order');
 
 		const order_info = await this.model_checkout_order.getOrder(args[0]);
@@ -43,23 +36,23 @@ class VoucherController extends Controller {
 				// Add language vars to the template folder
 				const results = this.language.all('mail');
 
-				for (results as key : value) {
+				for (let [key , value] of Object.entries(results)) {
 					data[key] = value;
 				}
 
 				if (this.config.get('config_mail_engine')) {
-					mail_option = [
+					let mail_option = {
 						'parameter'     : this.config.get('config_mail_parameter'),
 						'smtp_hostname' : this.config.get('config_mail_smtp_hostname'),
 						'smtp_username' : this.config.get('config_mail_smtp_username'),
 						'smtp_password' : html_entity_decode(this.config.get('config_mail_smtp_password')),
 						'smtp_port'     : this.config.get('config_mail_smtp_port'),
 						'smtp_timeout'  : this.config.get('config_mail_smtp_timeout')
-					];
+					};
 
-					mail = new MailLibrary(this.config.get('config_mail_engine'), mail_option);
+					const mail = new global['\Opencart\System\Library\Mail'](this.config.get('config_mail_engine'), mail_option);
 
-					for (voucher_query.rows as voucher) {
+					for (let voucher of  voucher_query.rows) {
 						from_name = html_entity_decode(voucher['from_name']);
 
 						// HTML Mail

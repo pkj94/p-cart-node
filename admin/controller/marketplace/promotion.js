@@ -1,6 +1,5 @@
-const { default: axios } = require("axios");
 
-module.exports = class PromotionController extends Controller {
+module.exports = class PromotionController extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return string
 	 */
@@ -27,7 +26,8 @@ module.exports = class PromotionController extends Controller {
 
 		if (!promotion) {
 			try {
-				const curl = await axios.get(OPENCART_SERVER + 'index.php?route=api/recommended&type=' + type + '&version=' + VERSION);
+				console.log('test----')
+				const curl = await require("axios").get(OPENCART_SERVER + 'index.php?route=api/recommended&type=' + type + '&version=' + VERSION);
 
 				let response = curl.data;
 				if (response) {

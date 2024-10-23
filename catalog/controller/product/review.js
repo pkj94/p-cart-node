@@ -1,7 +1,7 @@
 const nl2br = require("locutus/php/strings/nl2br");
 const sprintf = require("locutus/php/strings/sprintf");
 
-module.exports = class ReviewController extends Controller {
+module.exports = class Review extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return string
 	 */

@@ -1,7 +1,7 @@
 const expressPath = require('path');
 const fs= require('fs');
 const sprintf = require('locutus/php/strings/sprintf');
-module.exports = class ModuleController extends Controller {
+module.exports = class ModuleController extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */
@@ -142,27 +142,11 @@ module.exports = class ModuleController extends Controller {
 
 
 			// Register controllers, models and system extension folders
-			if (fs.existsSync(`${DIR_EXTENSION}${extension}/admin/controller/`))
-				fs.readdirSync(`${DIR_EXTENSION}${extension}/admin/controller/`).forEach((folder) => {
-					fs.readdirSync(`${DIR_EXTENSION}${extension}/admin/controller/${folder}`).forEach((controller) => {
-						if (controller.indexOf('.html') == -1) {
-							let name = ucfirst(controller).replace('.js', '') + ucfirst(folder) + 'Controller';
-							global[name] = require(DIR_EXTENSION + extension + '/admin/controller/' + folder + '/' + controller);
-						}
-					})
-				});
-			if (fs.existsSync(`${DIR_EXTENSION}${extension}/admin/model/`))
-				fs.readdirSync(`${DIR_EXTENSION}${extension}/admin/model/`).forEach((folder) => {
-					fs.readdirSync(`${DIR_EXTENSION}${extension}/admin/model/${folder}`).forEach((model) => {
-						let name = ucfirst(model).replace('.js', '') + ucfirst(folder) + 'Model';
-						global[name] = require(DIR_EXTENSION + extension + '/admin/model/' + folder + '/' + model)
-					})
-				});
-			if (fs.existsSync(`${DIR_EXTENSION}${extension}/system/library/`))
-				fs.readdirSync(`${DIR_EXTENSION}${extension}/system/library/`).forEach((library) => {
-					let name = ucfirst(library).replace('.js', '') + 'Library';
-					global[name] = require(DIR_EXTENSION + extension + '/system/library/' + '/' + library);
-				});
+			let namespace = str_replace(['_', '/'], ['', '\\'], ucfirst(extension, '_/'));
+
+this.autoloader.register('Opencart\Admin\Controller\Extension\\' +namespace, DIR_EXTENSION + extension + '/admin/controller/');
+			this.autoloader.register('Opencart\Admin\Model\Extension\\' + namespace, DIR_EXTENSION + extension + '/admin/model/');
+			this.autoloader.register('Opencart\System\Extension\\' + namespace, DIR_EXTENSION + extension + '/system/');
 
 			// Template directory
 			if (fs.existsSync(`${DIR_EXTENSION}${extension}/admin/view/template/`))

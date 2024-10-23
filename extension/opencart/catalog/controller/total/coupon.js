@@ -1,4 +1,4 @@
-module.exports = class CouponController extends Controller {
+global['\Opencart\Catalog\Controller\Extension\Opencart\Total\Coupon'] = class Coupon extends global['\Opencart\System\Engine\Controller'] {
 	constructor(registry) {
 		super(registry)
 	}

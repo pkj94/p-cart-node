@@ -1,4 +1,4 @@
-module.exports = class ChequeModel extends Model {
+global['\Opencart\Catalog\Model\Extension\Opencart\Payment\Cheque'] = class Cheque extends global['\Opencart\System\Engine\Model'] {
 	/**
 	 * @param address
 	 *

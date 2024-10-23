@@ -1,8 +1,8 @@
-const fs = require('fs');
+
 const expressPath = require('path');
 const sprintf = require('locutus/php/strings/sprintf');
 
-module.exports = class DownloadController extends Controller {
+module.exports = class DownloadController extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */
@@ -261,6 +261,7 @@ module.exports = class DownloadController extends Controller {
 		}
 
 		for (let [language_id, value] of Object.entries(this.request.post['download_description'])) {
+			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 			if ((oc_strlen(trim(value['name'])) < 3) || (oc_strlen(value['name']) > 64)) {
 				json['error']['name_' + language_id] = this.language.get('error_name');
 			}

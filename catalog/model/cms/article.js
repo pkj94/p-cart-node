@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Catalog\Model\Cms;
-/**
- *
- *
- * @package Opencart\Catalog\Model\Cms
- */
-class ArticleModel extends Model {
+module.exports = class Article extends global['\Opencart\System\Engine\Model'] {
 	/**
 	 * @param article_id
 	 *
@@ -14,14 +7,14 @@ class ArticleModel extends Model {
 	async getArticle(article_id) {
 		const sql = "SELECT DISTINCT * FROM `" + DB_PREFIX + "article` `a` LEFT JOIN `" + DB_PREFIX + "article_description` `ad` ON (`a`.`article_id` = `ad`.`article_id`) LEFT JOIN `" + DB_PREFIX + "article_to_store` `a2s` ON (`a`.`article_id` = `a2s`.`article_id`) WHERE `a`.`article_id` = '" + article_id + "' AND `ad`.`language_id` = '" + this.config.get('config_language_id') + "' AND `a2s`.`store_id` = '" + this.config.get('config_store_id') + "'";
 
-		article_data = await this.cache.get('article+'+ md5(sql));
+		article_data = await this.cache.get('article+' + md5(sql));
 
 		if (!article_data) {
 			const query = await this.db.query(sql);
 
 			article_data = query.row;
 
-			await this.cache.set('article+'+ md5(sql), article_data);
+			await this.cache.set('article+' + md5(sql), article_data);
 		}
 
 		return article_data;
@@ -43,7 +36,7 @@ class ArticleModel extends Model {
 			words = explode(' ', trim(preg_replace('/\s+/', ' ', data['filter_search'])));
 
 			for (let word of words) {
-				implode.push("`bd`.`name` LIKE '" + this.db.escape('%' + word + '%') + "'";
+				implode.push("`bd`.`name` LIKE '" + this.db.escape('%' + word + '%') + "'");
 			}
 
 			if (implode) {
@@ -55,7 +48,7 @@ class ArticleModel extends Model {
 			implode = [];
 
 			for (let word of words) {
-				implode.push("`bd`.`tag` LIKE '" + this.db.escape('%' + word + '%') + "'";
+				implode.push("`bd`.`tag` LIKE '" + this.db.escape('%' + word + '%') + "'");
 			}
 
 			if (implode) {
@@ -87,14 +80,14 @@ class ArticleModel extends Model {
 			sql += " LIMIT " + data['start'] + "," + data['limit'];
 		}
 
-		article_data = await this.cache.get('article+'+ md5(sql));
+		article_data = await this.cache.get('article+' + md5(sql));
 
 		if (!article_data) {
 			const query = await this.db.query(sql);
 
 			article_data = query.rows;
 
-			await this.cache.set('article+'+ md5(sql), article_data);
+			await this.cache.set('article+' + md5(sql), article_data);
 		}
 
 		return article_data;
@@ -114,7 +107,7 @@ class ArticleModel extends Model {
 			words = explode(' ', trim(preg_replace('/\s+/', ' ', data['filter_search'])));
 
 			for (let word of words) {
-				implode.push("`ad`.`name` LIKE '" + this.db.escape('%' + word + '%') + "'";
+				implode.push("`ad`.`name` LIKE '" + this.db.escape('%' + word + '%') + "'");
 			}
 
 			if (implode) {
@@ -126,7 +119,7 @@ class ArticleModel extends Model {
 			implode = [];
 
 			for (let word of words) {
-				implode.push("`ad`.`tag` LIKE '" + this.db.escape('%' + word + '%') + "'";
+				implode.push("`ad`.`tag` LIKE '" + this.db.escape('%' + word + '%') + "'");
 			}
 
 			if (implode) {
@@ -192,14 +185,14 @@ class ArticleModel extends Model {
 
 		const sql = "SELECT * FROM `" + DB_PREFIX + "article_comment` WHERE `article_id` = '" + article_id + "' AND `status` = '1' ORDER BY `date_added` DESC LIMIT " + start + "," + limit;
 
-		comment_data = await this.cache.get('comment+'+ md5(sql));
+		comment_data = await this.cache.get('comment+' + md5(sql));
 
 		if (!comment_data) {
 			const query = await this.db.query(sql);
 
 			comment_data = query.rows;
 
-			await this.cache.set('comment+'+ md5(sql), comment_data);
+			await this.cache.set('comment+' + md5(sql), comment_data);
 		}
 
 		return comment_data;

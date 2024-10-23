@@ -1,16 +1,9 @@
-<?php
-namespace Opencart\Catalog\Controller\Api\Sale;
-/**
- *
- *
- * @package Opencart\Catalog\Controller\Api\Sale
- */
-class AffiliateController extends Controller {
+module.exports = class Affiliate extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */
 	async index() {
-const data ={};
+		const data = {};
 		await this.load.language('api/sale/affiliate');
 
 		const json = {};
@@ -22,7 +15,7 @@ const data ={};
 		}
 
 		if (affiliate_id) {
-			this.load.model('account/affiliate',this);
+			this.load.model('account/affiliate', this);
 
 			affiliate_info = await this.model_account_affiliate.getAffiliate(affiliate_id);
 

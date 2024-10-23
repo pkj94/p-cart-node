@@ -1,14 +1,14 @@
-module.exports = class SearchController extends Controller {
+module.exports = class Search extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */
 	async index() {
-const data ={};
+		const data = {};
 		await this.load.language('product/search');
 
-		this.load.model('catalog/category',this);
-		this.load.model('catalog/product',this);
-		this.load.model('tool/image',this);
+		this.load.model('catalog/category', this);
+		this.load.model('catalog/product', this);
+		this.load.model('tool/image', this);
 
 		if ((this.request.get['search'])) {
 			search = this.request.get['search'];
@@ -49,24 +49,24 @@ const data ={};
 		}
 
 		let order = 'ASC';
-if ((this.request.get['order'])) {
+		if ((this.request.get['order'])) {
 			order = this.request.get['order'];
-		} 
+		}
 
 		let page = 1;
-if ((this.request.get['page'])) {
+		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
-		} 
+		}
 
 		let limit = this.config.get('config_pagination');
-if ((this.request.get['limit']) && this.request.get['limit']) {
+		if ((this.request.get['limit']) && this.request.get['limit']) {
 			limit = this.request.get['limit'];
 		}
 
 		if ((this.request.get['search'])) {
-			this.document.setTitle(this.language.get('heading_title') +  ' - ' + this.request.get['search']);
+			this.document.setTitle(this.language.get('heading_title') + ' - ' + this.request.get['search']);
 		} else if ((this.request.get['tag'])) {
-			this.document.setTitle(this.language.get('heading_title') +  ' - ' + this.language.get('heading_tag') + this.request.get['tag']);
+			this.document.setTitle(this.language.get('heading_title') + ' - ' + this.language.get('heading_tag') + this.request.get['tag']);
 		} else {
 			this.document.setTitle(this.language.get('heading_title'));
 		}
@@ -74,9 +74,9 @@ if ((this.request.get['limit']) && this.request.get['limit']) {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/home', 'language=' + this.config.get('config_language'))
-		];
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/home', 'language=' + this.config.get('config_language'))
+		});
 
 		let url = '';
 
@@ -117,12 +117,12 @@ if ((this.request.get['limit']) && this.request.get['limit']) {
 		}
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('product/search', 'language=' + this.config.get('config_language') + url)
-		];
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('product/search', 'language=' + this.config.get('config_language') + url)
+		});
 
 		if ((this.request.get['search'])) {
-			data['heading_title'] = this.language.get('heading_title') +  ' - ' + this.request.get['search'];
+			data['heading_title'] = this.language.get('heading_title') + ' - ' + this.request.get['search'];
 		} else {
 			data['heading_title'] = this.language.get('heading_title');
 		}
@@ -131,58 +131,58 @@ if ((this.request.get['limit']) && this.request.get['limit']) {
 
 		data['compare'] = await this.url.link('product/compare', 'language=' + this.config.get('config_language'));
 
-		this.load.model('catalog/category',this);
+		this.load.model('catalog/category', this);
 
 		// 3 Level Category Search
 		data['categories'] = [];
 
 		categories_1 = await this.model_catalog_category.getCategories(0);
 
-		for (categories_1 as category_1) {
+		for (let category_1 of categories_1) {
 			level_2_data = [];
 
 			categories_2 = await this.model_catalog_category.getCategories(category_1['category_id']);
 
-			for (categories_2 as category_2) {
+			for (let category_2 of categories_2) {
 				level_3_data = [];
 
 				categories_3 = await this.model_catalog_category.getCategories(category_2['category_id']);
 
-				for (categories_3 as category_3) {
+				for (let category_3 of categories_3) {
 					level_3_data.push({
-						'category_id' : category_3['category_id'],
-						'name'        : category_3['name'],
-					];
+						'category_id': category_3['category_id'],
+						'name': category_3['name'],
+					});
 				}
 
 				level_2_data.push({
-					'category_id' : category_2['category_id'],
-					'name'        : category_2['name'],
-					'children'    : level_3_data
-				];
+					'category_id': category_2['category_id'],
+					'name': category_2['name'],
+					'children': level_3_data
+				});
 			}
 
 			data['categories'].push({
-				'category_id' : category_1['category_id'],
-				'name'        : category_1['name'],
-				'children'    : level_2_data
-			];
+				'category_id': category_1['category_id'],
+				'name': category_1['name'],
+				'children': level_2_data
+			});
 		}
 
 		data['products'] = [];
 
 		if (search || tag) {
-			filter_data = [
-				'filter_search'       : search,
-				'filter_tag'          : tag,
-				'filter_description'  : description,
-				'filter_category_id'  : category_id,
-				'filter_sub_category' : sub_category,
-				'sort'                : sort,
-				'order'               : order,
-				'start'               : (page - 1) * limit,
-				'limit'               : limit
-			];
+			filter_data = {
+				'filter_search': search,
+				'filter_tag': tag,
+				'filter_description': description,
+				'filter_category_id': category_id,
+				'filter_sub_category': sub_category,
+				'sort': sort,
+				'order': order,
+				'start': (page - 1) * limit,
+				'limit': limit
+			};
 
 			const product_total = await this.model_catalog_product.getTotalProducts(filter_data);
 
@@ -214,22 +214,22 @@ if ((this.request.get['limit']) && this.request.get['limit']) {
 				}
 
 				let product_data = {
-					'product_id'  : result['product_id'],
-					'thumb'       : image,
-					'name'        : result['name'],
-					'description' : oc_substr(trim(strip_tags(html_entity_decode(result['description']))), 0, Number(this.config.get('config_product_description_length'))) + '++',
-					'price'       : price,
-					'special'     : special,
-					'tax'         : tax,
-					'minimum'     : result['minimum'] > 0 ? result['minimum'] : 1,
-					'rating'      : result['rating'],
-					'href'        : await this.url.link('product/product', 'language=' + this.config.get('config_language') + '&product_id=' + result['product_id'] + url)
-				];
+					'product_id': result['product_id'],
+					'thumb': image,
+					'name': result['name'],
+					'description': oc_substr(trim(strip_tags(html_entity_decode(result['description']))), 0, Number(this.config.get('config_product_description_length'))) + '++',
+					'price': price,
+					'special': special,
+					'tax': tax,
+					'minimum': result['minimum'] > 0 ? result['minimum'] : 1,
+					'rating': result['rating'],
+					'href': await this.url.link('product/product', 'language=' + this.config.get('config_language') + '&product_id=' + result['product_id'] + url)
+				};
 
-				data['products'].push(await this.load.controller('product/thumb', product_data);
+				data['products'].push(await this.load.controller('product/thumb', product_data));
 			}
 
-			let url = '';
+			url = '';
 
 			if ((this.request.get['search'])) {
 				url += '&search=' + encodeURIComponent(html_entity_decode(this.request.get['search']));
@@ -258,62 +258,62 @@ if ((this.request.get['limit']) && this.request.get['limit']) {
 			data['sorts'] = [];
 
 			data['sorts'].push({
-				'text'  : this.language.get('text_default'),
-				'value' : 'p.sort_order-ASC',
-				'href'  : await this.url.link('product/search', 'language=' + this.config.get('config_language') + '&sort=p.sort_order&order=ASC' + url)
-			];
+				'text': this.language.get('text_default'),
+				'value': 'p.sort_order-ASC',
+				'href': await this.url.link('product/search', 'language=' + this.config.get('config_language') + '&sort=p.sort_order&order=ASC' + url)
+			});
 
 			data['sorts'].push({
-				'text'  : this.language.get('text_name_asc'),
-				'value' : 'pd+name-ASC',
-				'href'  : await this.url.link('product/search', 'language=' + this.config.get('config_language') + '&sort=pd+name&order=ASC' + url)
-			];
+				'text': this.language.get('text_name_asc'),
+				'value': 'pd+name-ASC',
+				'href': await this.url.link('product/search', 'language=' + this.config.get('config_language') + '&sort=pd+name&order=ASC' + url)
+			});
 
 			data['sorts'].push({
-				'text'  : this.language.get('text_name_desc'),
-				'value' : 'pd+name-DESC',
-				'href'  : await this.url.link('product/search', 'language=' + this.config.get('config_language') + '&sort=pd+name&order=DESC' + url)
-			];
+				'text': this.language.get('text_name_desc'),
+				'value': 'pd+name-DESC',
+				'href': await this.url.link('product/search', 'language=' + this.config.get('config_language') + '&sort=pd+name&order=DESC' + url)
+			});
 
 			data['sorts'].push({
-				'text'  : this.language.get('text_price_asc'),
-				'value' : 'p+price-ASC',
-				'href'  : await this.url.link('product/search', 'language=' + this.config.get('config_language') + '&sort=p+price&order=ASC' + url)
-			];
+				'text': this.language.get('text_price_asc'),
+				'value': 'p+price-ASC',
+				'href': await this.url.link('product/search', 'language=' + this.config.get('config_language') + '&sort=p+price&order=ASC' + url)
+			});
 
 			data['sorts'].push({
-				'text'  : this.language.get('text_price_desc'),
-				'value' : 'p+price-DESC',
-				'href'  : await this.url.link('product/search', 'language=' + this.config.get('config_language') + '&sort=p+price&order=DESC' + url)
-			];
+				'text': this.language.get('text_price_desc'),
+				'value': 'p+price-DESC',
+				'href': await this.url.link('product/search', 'language=' + this.config.get('config_language') + '&sort=p+price&order=DESC' + url)
+			});
 
 			if (Number(this.config.get('config_review_status'))) {
 				data['sorts'].push({
-					'text'  : this.language.get('text_rating_desc'),
-					'value' : 'rating-DESC',
-					'href'  : await this.url.link('product/search', 'language=' + this.config.get('config_language') + '&sort=rating&order=DESC' + url)
-				];
+					'text': this.language.get('text_rating_desc'),
+					'value': 'rating-DESC',
+					'href': await this.url.link('product/search', 'language=' + this.config.get('config_language') + '&sort=rating&order=DESC' + url)
+				});
 
 				data['sorts'].push({
-					'text'  : this.language.get('text_rating_asc'),
-					'value' : 'rating-ASC',
-					'href'  : await this.url.link('product/search', 'language=' + this.config.get('config_language') + '&sort=rating&order=ASC' + url)
-				];
+					'text': this.language.get('text_rating_asc'),
+					'value': 'rating-ASC',
+					'href': await this.url.link('product/search', 'language=' + this.config.get('config_language') + '&sort=rating&order=ASC' + url)
+				});
 			}
 
 			data['sorts'].push({
-				'text'  : this.language.get('text_model_asc'),
-				'value' : 'p+model-ASC',
-				'href'  : await this.url.link('product/search', 'language=' + this.config.get('config_language') + '&sort=p+model&order=ASC' + url)
-			];
+				'text': this.language.get('text_model_asc'),
+				'value': 'p+model-ASC',
+				'href': await this.url.link('product/search', 'language=' + this.config.get('config_language') + '&sort=p+model&order=ASC' + url)
+			});
 
 			data['sorts'].push({
-				'text'  : this.language.get('text_model_desc'),
-				'value' : 'p+model-DESC',
-				'href'  : await this.url.link('product/search', 'language=' + this.config.get('config_language') + '&sort=p+model&order=DESC' + url)
-			];
+				'text': this.language.get('text_model_desc'),
+				'value': 'p+model-DESC',
+				'href': await this.url.link('product/search', 'language=' + this.config.get('config_language') + '&sort=p+model&order=DESC' + url)
+			});
 
-			let url = '';
+			url = '';
 
 			if ((this.request.get['search'])) {
 				url += '&search=' + encodeURIComponent(html_entity_decode(this.request.get['search']));
@@ -351,10 +351,10 @@ if ((this.request.get['limit']) && this.request.get['limit']) {
 
 			for (let value of limits) {
 				data['limits'].push({
-					'text'  : value,
-					'value' : value,
-					'href'  : await this.url.link('product/search', 'language=' + this.config.get('config_language') + url + '&limit=' + value)
-				];
+					'text': value,
+					'value': value,
+					'href': await this.url.link('product/search', 'language=' + this.config.get('config_language') + url + '&limit=' + value)
+				});
 			}
 
 			let url = '';
@@ -392,11 +392,11 @@ if ((this.request.get['limit']) && this.request.get['limit']) {
 			}
 
 			data['pagination'] = await this.load.controller('common/pagination', {
-				'total' : product_total,
-				'page'  : page,
-				'limit' : limit,
-				'url'   : await this.url.link('product/search', 'language=' + this.config.get('config_language') + url + '&page={page}')
-			]);
+				'total': product_total,
+				'page': page,
+				'limit': limit,
+				'url': await this.url.link('product/search', 'language=' + this.config.get('config_language') + url + '&page={page}')
+			});
 
 			data['results'] = sprintf(this.language.get('text_pagination'), (product_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (product_total - limit)) ? product_total : (((page - 1) * limit) + limit), product_total, Math.ceil(product_total / limit));
 
@@ -414,22 +414,22 @@ if ((this.request.get['limit']) && this.request.get['limit']) {
 					this.request.server.socket.remoteAddress ||
 					this.request.server.connection.socket.remoteAddress))) {
 					ip = (this.request.server.headers['x-forwarded-for'] ||
-					this.request.server.connection.remoteAddress ||
-					this.request.server.socket.remoteAddress ||
-					this.request.server.connection.socket.remoteAddress);
+						this.request.server.connection.remoteAddress ||
+						this.request.server.socket.remoteAddress ||
+						this.request.server.connection.socket.remoteAddress);
 				} else {
 					ip = '';
 				}
 
-				search_data = [
-					'keyword'      : search,
-					'category_id'  : category_id,
-					'sub_category' : sub_category,
-					'description'  : description,
-					'products'     : product_total,
-					'customer_id'  : customer_id,
-					'ip'           : ip
-				];
+				search_data = {
+					'keyword': search,
+					'category_id': category_id,
+					'sub_category': sub_category,
+					'description': description,
+					'products': product_total,
+					'customer_id': customer_id,
+					'ip': ip
+				};
 
 				await this.model_account_search.addSearch(search_data);
 			}

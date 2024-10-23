@@ -1,5 +1,5 @@
-const fs = require('fs');
-module.exports = class DeveloperCommonController extends Controller {
+
+module.exports = class DeveloperCommonController extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */

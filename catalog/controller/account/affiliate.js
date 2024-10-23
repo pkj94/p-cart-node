@@ -1,9 +1,9 @@
-module.exports=class AffiliateController extends Controller {
+module.exports = class Affiliate extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */
 	async index() {
-const data ={};
+		const data = {};
 		await this.load.language('account/affiliate');
 
 		if (!await this.customer.isLogged() || (!(this.request.get['customer_token']) || !(this.session.data['customer_token']) || (this.request.get['customer_token'] != this.session.data['customer_token']))) {
@@ -23,24 +23,24 @@ const data ={};
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/home', 'language=' + this.config.get('config_language'))
-		];
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/home', 'language=' + this.config.get('config_language'))
+		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_account'),
-			'href' : await this.url.link('account/account', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'])
-		];
+			'text': this.language.get('text_account'),
+			'href': await this.url.link('account/account', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'])
+		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_affiliate'),
-			'href' : await this.url.link('account/affiliate', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'])
-		];
+			'text': this.language.get('text_affiliate'),
+			'href': await this.url.link('account/affiliate', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'])
+		});
 
 		data['save'] = await this.url.link('account/affiliate+save', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token']);
 		data['upload'] = await this.url.link('tool/upload', 'language=' + this.config.get('config_language'));
 
-		this.load.model('account/affiliate',this);
+		this.load.model('account/affiliate', this);
 
 		affiliate_info = await this.model_account_affiliate.getAffiliate(await this.customer.getId());
 
@@ -111,13 +111,13 @@ const data ={};
 		}
 
 		// Custom Fields
-		this.load.model('account/custom_field',this);
+		this.load.model('account/custom_field', this);
 
 		const custom_fields = await this.model_account_custom_field.getCustomFields(this.config.get('config_customer_group_id'));
 
 		for (let custom_field of custom_fields) {
 			if (custom_field['location'] == 'affiliate') {
-				data['custom_fields'].push(custom_field;
+				data['custom_fields'].push(custom_field);
 			}
 		}
 
@@ -130,7 +130,7 @@ const data ={};
 		affiliate_info = await this.model_account_affiliate.getAffiliate(await this.customer.getId());
 
 		if (!affiliate_info && this.config.get('config_affiliate_id')) {
-			this.load.model('catalog/information',this);
+			this.load.model('catalog/information', this);
 
 			const information_info = await this.model_catalog_information.getInformation(this.config.get('config_affiliate_id'));
 
@@ -211,7 +211,7 @@ const data ={};
 			}
 
 			// Custom field validation
-			this.load.model('account/custom_field',this);
+			this.load.model('account/custom_field', this);
 
 			const custom_fields = await this.model_account_custom_field.getCustomFields(this.config.get('config_customer_group_id'));
 
@@ -226,12 +226,12 @@ const data ={};
 			}
 
 			// Validate agree only if customer not already an affiliate
-			this.load.model('account/affiliate',this);
+			this.load.model('account/affiliate', this);
 
 			affiliate_info = await this.model_account_affiliate.getAffiliate(await this.customer.getId());
 
 			if (!affiliate_info) {
-				this.load.model('catalog/information',this);
+				this.load.model('catalog/information', this);
 
 				const information_info = await this.model_catalog_information.getInformation(this.config.get('config_affiliate_id'));
 

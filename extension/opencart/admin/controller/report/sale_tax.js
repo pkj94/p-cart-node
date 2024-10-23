@@ -1,7 +1,7 @@
 const strtotime = require("locutus/php/datetime/strtotime");
 const sprintf = require("locutus/php/strings/sprintf");
 
-module.exports = class SaleTaxReportController extends Controller {
+global['\Opencart\Admin\Controller\Extension\Opencart\Report\SaleTax'] = class SaleTax extends global['\Opencart\System\Engine\Controller'] {
 	constructor(registry) {
 		super(registry)
 	}

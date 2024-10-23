@@ -1,4 +1,4 @@
-module.exports = class CustomerTransactionReportModel extends Model {
+global['Opencart\Admin\Model\Extension\Opencart\Report\CustomerTransaction'] = class CustomerTransaction extends global['\Opencart\System\Engine\Model']  {
 	/**
 	 * @param data
 	 *

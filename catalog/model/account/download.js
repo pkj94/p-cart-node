@@ -1,4 +1,4 @@
-module.exports =class DownloadModel extends Model {
+module.exports = class Download extends global['\Opencart\System\Engine\Model'] {
 	/**
 	 * @param download_id
 	 *
@@ -9,8 +9,8 @@ module.exports =class DownloadModel extends Model {
 
 		order_statuses = this.config.get('config_complete_status');
 
-		for (order_statuses as order_status_id) {
-			implode.push("o.`order_status_id` = '" + order_status_id + "'";
+		for (let order_status_id of order_statuses) {
+			implode.push("o.`order_status_id` = '" + order_status_id + "'");
 		}
 
 		if (implode) {
@@ -41,8 +41,8 @@ module.exports =class DownloadModel extends Model {
 
 		order_statuses = this.config.get('config_complete_status');
 
-		for (order_statuses as order_status_id) {
-			implode.push("o.`order_status_id` = '" + order_status_id + "'";
+		for (let order_status_id of order_statuses) {
+			implode.push("o.`order_status_id` = '" + order_status_id + "'");
 		}
 
 		if (implode) {
@@ -62,8 +62,8 @@ module.exports =class DownloadModel extends Model {
 
 		order_statuses = this.config.get('config_complete_status');
 
-		for (order_statuses as order_status_id) {
-			implode.push("o.`order_status_id` = '" + order_status_id + "'";
+		for (let order_status_id of order_statuses) {
+			implode.push("o.`order_status_id` = '" + order_status_id + "'");
 		}
 
 		if (implode) {

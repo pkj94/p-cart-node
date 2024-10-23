@@ -1,8 +1,8 @@
-module.exports = class Model {
-    constructor(registry) {
+global['\Opencart\System\Engine\Model'] = class Model {
+    constructor(registry={}) {
         this.registry = registry;
-        Object.keys(registry.data).map(a => {
-            this[a] = registry.data[a];
+        Object.keys(this.registry.data||[]).map(a => {
+            this[a] = this.registry.data[a];
             return a;
         })
     }

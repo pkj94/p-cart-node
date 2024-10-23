@@ -1,16 +1,9 @@
-<?php
-namespace Opencart\Catalog\Controller\Api\Sale;
-/**
- *
- *
- * @package Opencart\Catalog\Controller\Api\Sale
- */
-class CustomerController extends Controller {
+module.exports = class Customer extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */
 	async index() {
-const data ={};
+		const data = {};
 		await this.load.language('api/sale/customer');
 
 		const json = {};
@@ -31,7 +24,7 @@ const data ={};
 			}
 		}
 
-		this.load.model('account/customer',this);
+		this.load.model('account/customer', this);
 
 		if (this.request.post['customer_id']) {
 			customer_info = await this.model_account_customer.getCustomer(this.request.post['customer_id']);
@@ -48,7 +41,7 @@ const data ={};
 			customer_group_id = this.config.get('config_customer_group_id');
 		}
 
-		this.load.model('account/customer_group',this);
+		this.load.model('account/customer_group', this);
 
 		customer_group_info = await this.model_account_customer_group.getCustomerGroup(customer_group_id);
 
@@ -73,7 +66,7 @@ const data ={};
 		}
 
 		// Custom field validation
-		this.load.model('account/custom_field',this);
+		this.load.model('account/custom_field', this);
 
 		const custom_fields = await this.model_account_custom_field.getCustomFields(customer_group_id);
 
@@ -88,15 +81,15 @@ const data ={};
 		}
 
 		if (!Object.keys(json).length) {
-			this.session.data['customer'] = [
-				'customer_id'       : this.request.post['customer_id'],
-				'customer_group_id' : this.request.post['customer_group_id'],
-				'firstname'         : this.request.post['firstname'],
-				'lastname'          : this.request.post['lastname'],
-				'email'             : this.request.post['email'],
-				'telephone'         : this.request.post['telephone'],
-				'custom_field'      : (this.request.post['custom_field']) && Array.isArray(this.request.post['custom_field']) ? this.request.post['custom_field'] : []
-			];
+			this.session.data['customer'] = {
+				'customer_id': this.request.post['customer_id'],
+				'customer_group_id': this.request.post['customer_group_id'],
+				'firstname': this.request.post['firstname'],
+				'lastname': this.request.post['lastname'],
+				'email': this.request.post['email'],
+				'telephone': this.request.post['telephone'],
+				'custom_field': (this.request.post['custom_field']) && Array.isArray(this.request.post['custom_field']) ? this.request.post['custom_field'] : []
+			};
 
 			json['success'] = this.language.get('text_success');
 

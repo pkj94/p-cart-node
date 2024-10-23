@@ -1,15 +1,15 @@
-module.exports = class CompareController extends Controller {
+module.exports = class Compare extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */
 	async index() {
-const data ={};
+		const data = {};
 		await this.load.language('product/compare');
 
-		this.load.model('catalog/product',this);
-		this.load.model('catalog/manufacturer',this);
+		this.load.model('catalog/product', this);
+		this.load.model('catalog/manufacturer', this);
 		this.load.model('localisation/stock_status');
-		this.load.model('tool/image',this);
+		this.load.model('tool/image', this);
 
 		if (!(this.session.data['compare'])) {
 			this.session.data['compare'] = [];
@@ -32,14 +32,14 @@ const data ={};
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/home', 'language=' + this.config.get('config_language'))
-		];
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/home', 'language=' + this.config.get('config_language'))
+		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('product/compare', 'language=' + this.config.get('config_language'))
-		];
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('product/compare', 'language=' + this.config.get('config_language'))
+		});
 
 		data['add_to_cart'] = await this.url.link('checkout/cart.add', 'language=' + this.config.get('config_language'));
 		data['cart'] = await this.url.link('common/cart.info', 'language=' + this.config.get('config_language'));
@@ -56,7 +56,7 @@ const data ={};
 
 		data['attribute_groups'] = [];
 
-		for (this.session.data['compare'] as key : product_id) {
+		for (let [key, product_id] of Object.entries(this.session.data['compare'])) {
 			const product_info = await this.model_catalog_product.getProduct(product_id);
 
 			if (product_info.product_id) {
@@ -78,7 +78,7 @@ const data ={};
 					special = false;
 				}
 
-				const manufacturer_info  = await this.model_catalog_manufacturer.getManufacturer(product_info['manufacturer_id']);
+				const manufacturer_info = await this.model_catalog_manufacturer.getManufacturer(product_info['manufacturer_id']);
 
 				if (manufacturer_info.manufacturer_id) {
 					manufacturer = manufacturer_info['name'];
@@ -104,38 +104,38 @@ const data ={};
 
 				attribute_groups = await this.model_catalog_product.getAttributes(product_id);
 
-				for (attribute_groups as attribute_group) {
-					for (attribute_group['attribute'] as attribute) {
+				for (let attribute_group of attribute_groups) {
+					for (let attribute of attribute_group['attribute']) {
 						attribute_data[attribute['attribute_id']] = attribute['text'];
 					}
 				}
 
-				data['products'][product_id] = [
-					'product_id'   : product_info['product_id'],
-					'name'         : product_info['name'],
-					'thumb'        : image,
-					'price'        : price,
-					'special'      : special,
-					'description'  : oc_substr(strip_tags(html_entity_decode(product_info['description'])), 0, 200) + '++',
-					'model'        : product_info['model'],
-					'manufacturer' : manufacturer,
-					'availability' : availability,
-					'minimum'      : product_info['minimum'] > 0 ? product_info['minimum'] : 1,
-					'rating'       : product_info['rating'],
-					'reviews'      : sprintf(this.language.get('text_reviews'), product_info['reviews']),
-					'weight'       : this.weight.format(product_info['weight'], product_info['weight_class_id'], this.language.get('decimal_point'), this.language.get('thousand_point')),
-					'length'       : this.length.format(product_info['length'], product_info['length_class_id'], this.language.get('decimal_point'), this.language.get('thousand_point')),
-					'width'        : this.length.format(product_info['width'], product_info['length_class_id'], this.language.get('decimal_point'), this.language.get('thousand_point')),
-					'height'       : this.length.format(product_info['height'], product_info['length_class_id'], this.language.get('decimal_point'), this.language.get('thousand_point')),
-					'attribute'    : attribute_data,
-					'href'         : await this.url.link('product/product', 'language=' + this.config.get('config_language') + '&product_id=' + product_id),
-					'remove'       : await this.url.link('product/compare', 'language=' + this.config.get('config_language') + '&remove=' + product_id)
-				];
+				data['products'][product_id] = {
+					'product_id': product_info['product_id'],
+					'name': product_info['name'],
+					'thumb': image,
+					'price': price,
+					'special': special,
+					'description': oc_substr(strip_tags(html_entity_decode(product_info['description'])), 0, 200) + '++',
+					'model': product_info['model'],
+					'manufacturer': manufacturer,
+					'availability': availability,
+					'minimum': product_info['minimum'] > 0 ? product_info['minimum'] : 1,
+					'rating': product_info['rating'],
+					'reviews': sprintf(this.language.get('text_reviews'), product_info['reviews']),
+					'weight': this.weight.format(product_info['weight'], product_info['weight_class_id'], this.language.get('decimal_point'), this.language.get('thousand_point')),
+					'length': this.length.format(product_info['length'], product_info['length_class_id'], this.language.get('decimal_point'), this.language.get('thousand_point')),
+					'width': this.length.format(product_info['width'], product_info['length_class_id'], this.language.get('decimal_point'), this.language.get('thousand_point')),
+					'height': this.length.format(product_info['height'], product_info['length_class_id'], this.language.get('decimal_point'), this.language.get('thousand_point')),
+					'attribute': attribute_data,
+					'href': await this.url.link('product/product', 'language=' + this.config.get('config_language') + '&product_id=' + product_id),
+					'remove': await this.url.link('product/compare', 'language=' + this.config.get('config_language') + '&remove=' + product_id)
+				};
 
-				for (attribute_groups as attribute_group) {
+				for (let attribute_group of attribute_groups) {
 					data['attribute_groups'][attribute_group['attribute_group_id']]['name'] = attribute_group['name'];
 
-					for (attribute_group['attribute'] as attribute) {
+					for (let attribute of attribute_group['attribute']) {
 						data['attribute_groups'][attribute_group['attribute_group_id']]['attribute'][attribute['attribute_id']]['name'] = attribute['name'];
 					}
 				}
@@ -174,7 +174,7 @@ const data ={};
 			product_id = 0;
 		}
 
-		this.load.model('catalog/product',this);
+		this.load.model('catalog/product', this);
 
 		const product_info = await this.model_catalog_product.getProduct(product_id);
 
@@ -195,7 +195,7 @@ const data ={};
 				array_shift(this.session.data['compare']);
 			}
 
-			this.session.data['compare'].push(this.request.post['product_id'];
+			this.session.data['compare'].push(this.request.post['product_id']);
 
 			json['success'] = sprintf(this.language.get('text_success'), await this.url.link('product/product', 'language=' + this.config.get('config_language') + '&product_id=' + this.request.post['product_id']), product_info['name'], await this.url.link('product/compare', 'language=' + this.config.get('config_language')));
 

@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Catalog\Controller\Api\Sale;
-/**
- *
- *
- * @package Opencart\Catalog\Controller\Api\Sale
- */
-class OrderController extends Controller {
+module.exports = class Order extends global['\Opencart\System\Engine\Controller'] {
 	/*
 	 * Loads order info
 	 */
@@ -35,37 +28,37 @@ class OrderController extends Controller {
 			this.session.data['order_id'] = order_id;
 
 			// Customer Details
-			this.session.data['customer'] = [
-				'customer_id'       : order_info['customer_id'],
-				'customer_group_id' : order_info['customer_group_id'],
-				'firstname'         : order_info['firstname'],
-				'lastname'          : order_info['lastname'],
-				'email'             : order_info['email'],
-				'telephone'         : order_info['telephone'],
-				'custom_field'      : order_info['custom_field']
-			];
+			this.session.data['customer'] = {
+				'customer_id': order_info['customer_id'],
+				'customer_group_id': order_info['customer_group_id'],
+				'firstname': order_info['firstname'],
+				'lastname': order_info['lastname'],
+				'email': order_info['email'],
+				'telephone': order_info['telephone'],
+				'custom_field': order_info['custom_field']
+			};
 
 			// Payment Details
 			if (this.config.get('config_checkout_payment_address')) {
-				this.session.data['payment_address'] = [
-					'address_id'     : order_info['payment_address_id'],
-					'firstname'      : order_info['payment_firstname'],
-					'lastname'       : order_info['payment_lastname'],
-					'company'        : order_info['payment_company'],
-					'address_1'      : order_info['payment_address_1'],
-					'address_2'      : order_info['payment_address_2'],
-					'postcode'       : order_info['payment_postcode'],
-					'city'           : order_info['payment_city'],
-					'zone_id'        : order_info['payment_zone_id'],
-					'zone'           : order_info['payment_zone'],
-					'zone_code'      : order_info['payment_zone_code'],
-					'country_id'     : order_info['payment_country_id'],
-					'country'        : order_info['payment_country'],
-					'iso_code_2'     : order_info['payment_iso_code_2'],
-					'iso_code_3'     : order_info['payment_iso_code_3'],
-					'address_format' : order_info['payment_address_format'],
-					'custom_field'   : order_info['payment_custom_field']
-				];
+				this.session.data['payment_address'] = {
+					'address_id': order_info['payment_address_id'],
+					'firstname': order_info['payment_firstname'],
+					'lastname': order_info['payment_lastname'],
+					'company': order_info['payment_company'],
+					'address_1': order_info['payment_address_1'],
+					'address_2': order_info['payment_address_2'],
+					'postcode': order_info['payment_postcode'],
+					'city': order_info['payment_city'],
+					'zone_id': order_info['payment_zone_id'],
+					'zone': order_info['payment_zone'],
+					'zone_code': order_info['payment_zone_code'],
+					'country_id': order_info['payment_country_id'],
+					'country': order_info['payment_country'],
+					'iso_code_2': order_info['payment_iso_code_2'],
+					'iso_code_3': order_info['payment_iso_code_3'],
+					'address_format': order_info['payment_address_format'],
+					'custom_field': order_info['payment_custom_field']
+				};
 			} else {
 				delete (this.session.data['payment_address']);
 			}
@@ -73,25 +66,25 @@ class OrderController extends Controller {
 			this.session.data['payment_method'] = order_info['payment_method'];
 
 			if (order_info['shipping_method']) {
-				this.session.data['shipping_address'] = [
-					'address_id'     : order_info['shipping_address_id'],
-					'firstname'      : order_info['shipping_firstname'],
-					'lastname'       : order_info['shipping_lastname'],
-					'company'        : order_info['shipping_company'],
-					'address_1'      : order_info['shipping_address_1'],
-					'address_2'      : order_info['shipping_address_2'],
-					'postcode'       : order_info['shipping_postcode'],
-					'city'           : order_info['shipping_city'],
-					'zone_id'        : order_info['shipping_zone_id'],
-					'zone'           : order_info['shipping_zone'],
-					'zone_code'      : order_info['shipping_zone_code'],
-					'country_id'     : order_info['shipping_country_id'],
-					'country'        : order_info['shipping_country'],
-					'iso_code_2'     : order_info['shipping_iso_code_2'],
-					'iso_code_3'     : order_info['shipping_iso_code_3'],
-					'address_format' : order_info['shipping_address_format'],
-					'custom_field'   : order_info['shipping_custom_field']
-				];
+				this.session.data['shipping_address'] = {
+					'address_id': order_info['shipping_address_id'],
+					'firstname': order_info['shipping_firstname'],
+					'lastname': order_info['shipping_lastname'],
+					'company': order_info['shipping_company'],
+					'address_1': order_info['shipping_address_1'],
+					'address_2': order_info['shipping_address_2'],
+					'postcode': order_info['shipping_postcode'],
+					'city': order_info['shipping_city'],
+					'zone_id': order_info['shipping_zone_id'],
+					'zone': order_info['shipping_zone'],
+					'zone_code': order_info['shipping_zone_code'],
+					'country_id': order_info['shipping_country_id'],
+					'country': order_info['shipping_country'],
+					'iso_code_2': order_info['shipping_iso_code_2'],
+					'iso_code_3': order_info['shipping_iso_code_3'],
+					'address_format': order_info['shipping_address_format'],
+					'custom_field': order_info['shipping_custom_field']
+				};
 
 				this.session.data['shipping_method'] = order_info['shipping_method'];
 			}
@@ -117,7 +110,7 @@ class OrderController extends Controller {
 					} else if (option['type'] == 'select' || option['type'] == 'radio') {
 						option_data[option['product_option_id']] = option['product_option_value_id'];
 					} else if (option['type'] == 'checkbox') {
-						option_data[option['product_option_id']].push(option['product_option_value_id'];
+						option_data[option['product_option_id']].push(option['product_option_value_id']);
 					}
 				}
 
@@ -140,16 +133,16 @@ class OrderController extends Controller {
 
 			for (let voucher of vouchers) {
 				this.session.data['vouchers'].push({
-					'code'             : voucher['code'],
-					'description'      : sprintf(this.language.get('text_for'), this.currency.format(voucher['amount'], this.session.data['currency'], 1+0), voucher['to_name']),
-					'to_name'          : voucher['to_name'],
-					'to_email'         : voucher['to_email'],
-					'from_name'        : voucher['from_name'],
-					'from_email'       : voucher['from_email'],
-					'voucher_theme_id' : voucher['voucher_theme_id'],
-					'message'          : voucher['message'],
-					'amount'           : this.currency.convert(voucher['amount'], this.session.data['currency'], this.config.get('config_currency'))
-				];
+					'code': voucher['code'],
+					'description': sprintf(this.language.get('text_for'), this.currency.format(voucher['amount'], this.session.data['currency'], 1 + 0), voucher['to_name']),
+					'to_name': voucher['to_name'],
+					'to_email': voucher['to_email'],
+					'from_name': voucher['from_name'],
+					'from_email': voucher['from_email'],
+					'voucher_theme_id': voucher['voucher_theme_id'],
+					'message': voucher['message'],
+					'amount': this.currency.convert(voucher['amount'], this.session.data['currency'], this.config.get('config_currency'))
+				});
 			}
 
 			if (order_info['affiliate_id']) {
@@ -159,7 +152,7 @@ class OrderController extends Controller {
 			// Coupon, Voucher, Reward
 			order_totals = await this.model_checkout_order.getTotals(order_id);
 
-			for (order_totals as order_total) {
+			for (let order_total of order_totals) {
 				// If coupon, voucher or reward points
 				start = strpos(order_total['title'], '(') + 1;
 				end = strrpos(order_total['title'], ')');
@@ -207,7 +200,7 @@ class OrderController extends Controller {
 		const json = {};
 
 		// Validate cart has products and has stock+
-		if ((await this.cart.hasProducts() (this.session.data['vouchers'] && this.session.data['vouchers'].length))) {
+		if ((await this.cart.hasProducts()(this.session.data['vouchers'] && this.session.data['vouchers'].length))) {
 			if (!await this.cart.hasStock() && !Number(this.config.get('config_stock_checkout'))) {
 				json['error']['stock'] = this.language.get('error_stock');
 			}
@@ -353,53 +346,53 @@ class OrderController extends Controller {
 			// Products
 			order_data['products'] = [];
 
-			for (await this.cart.getProducts() as product) {
+			for (let product of await this.cart.getProducts()) {
 				let option_data = [];
 
 				for (let option of product['option']) {
 					option_data.push({
-						'product_option_id'       : option['product_option_id'],
-						'product_option_value_id' : option['product_option_value_id'],
-						'option_id'               : option['option_id'],
-						'option_value_id'         : option['option_value_id'],
-						'name'                    : option['name'],
-						'value'                   : option['value'],
-						'type'                    : option['type']
-					];
+						'product_option_id': option['product_option_id'],
+						'product_option_value_id': option['product_option_value_id'],
+						'option_id': option['option_id'],
+						'option_value_id': option['option_value_id'],
+						'name': option['name'],
+						'value': option['value'],
+						'type': option['type']
+					});
 				}
 
 				subscription_data = [];
 
 				if (product['subscription']) {
-					subscription_data = [
-						'subscription_plan_id' : product['subscription']['subscription_plan_id'],
-						'name'                 : product['subscription']['name'],
-						'trial_frequency'      : product['subscription']['trial_frequency'],
-						'trial_cycle'          : product['subscription']['trial_cycle'],
-						'trial_duration'       : product['subscription']['trial_duration'],
-						'trial_remaining'      : product['subscription']['trial_remaining'],
-						'trial_status'         : product['subscription']['trial_status'],
-						'frequency'            : product['subscription']['frequency'],
-						'cycle'                : product['subscription']['cycle'],
-						'duration'             : product['subscription']['duration']
-					];
+					subscription_data = {
+						'subscription_plan_id': product['subscription']['subscription_plan_id'],
+						'name': product['subscription']['name'],
+						'trial_frequency': product['subscription']['trial_frequency'],
+						'trial_cycle': product['subscription']['trial_cycle'],
+						'trial_duration': product['subscription']['trial_duration'],
+						'trial_remaining': product['subscription']['trial_remaining'],
+						'trial_status': product['subscription']['trial_status'],
+						'frequency': product['subscription']['frequency'],
+						'cycle': product['subscription']['cycle'],
+						'duration': product['subscription']['duration']
+					};
 				}
 
 				order_data['products'].push({
-					'product_id'   : product['product_id'],
-					'master_id'    : product['master_id'],
-					'name'         : product['name'],
-					'model'        : product['model'],
-					'option'       : option_data,
-					'subscription' : subscription_data,
-					'download'     : product['download'],
-					'quantity'     : product['quantity'],
-					'subtract'     : product['subtract'],
-					'price'        : product['price'],
-					'total'        : product['total'],
-					'tax'          : this.tax.getTax(product['price'], product['tax_class_id']),
-					'reward'       : product['reward']
-				];
+					'product_id': product['product_id'],
+					'master_id': product['master_id'],
+					'name': product['name'],
+					'model': product['model'],
+					'option': option_data,
+					'subscription': subscription_data,
+					'download': product['download'],
+					'quantity': product['quantity'],
+					'subtract': product['subtract'],
+					'price': product['price'],
+					'total': product['total'],
+					'tax': this.tax.getTax(product['price'], product['tax_class_id']),
+					'reward': product['reward']
+				});
 
 				points += product['reward'];
 			}
@@ -410,16 +403,16 @@ class OrderController extends Controller {
 			if ((this.session.data['vouchers'])) {
 				for (let voucher of this.session.data['vouchers']) {
 					order_data['vouchers'].push({
-						'description'      : voucher['description'],
-						'code'             : oc_token(10),
-						'to_name'          : voucher['to_name'],
-						'to_email'         : voucher['to_email'],
-						'from_name'        : voucher['from_name'],
-						'from_email'       : voucher['from_email'],
-						'voucher_theme_id' : voucher['voucher_theme_id'],
-						'message'          : voucher['message'],
-						'amount'           : voucher['amount']
-					];
+						'description': voucher['description'],
+						'code': oc_token(10),
+						'to_name': voucher['to_name'],
+						'to_email': voucher['to_email'],
+						'from_name': voucher['from_name'],
+						'from_email': voucher['from_email'],
+						'voucher_theme_id': voucher['voucher_theme_id'],
+						'message': voucher['message'],
+						'amount': voucher['amount']
+					});
 				}
 			}
 
@@ -434,15 +427,15 @@ class OrderController extends Controller {
 			taxes = await this.cart.getTaxes();
 			total = 0;
 
-			this.load.model('checkout/cart',this);
+			this.load.model('checkout/cart', this);
 
 			(await this.model_checkout_cart.getTotals)(totals, taxes, total);
 
-			total_data = [
-				'totals' : totals,
-				'taxes'  : taxes,
-				'total'  : total
-			];
+			total_data = {
+				'totals': totals,
+				'taxes': taxes,
+				'total': total
+			};
 
 			order_data = array_merge(order_data, total_data);
 
@@ -455,7 +448,7 @@ class OrderController extends Controller {
 				subtotal = await this.cart.getSubTotal();
 
 				// Affiliate
-				this.load.model('account/affiliate',this);
+				this.load.model('account/affiliate', this);
 
 				affiliate_info = await this.model_account_affiliate.getAffiliate(this.session.data['affiliate_id']);
 
@@ -475,9 +468,9 @@ class OrderController extends Controller {
 			order_data['currency_value'] = this.currency.getValue(this.session.data['currency']);
 
 			order_data['ip'] = (this.request.server.headers['x-forwarded-for'] ||
-					this.request.server.connection.remoteAddress ||
-					this.request.server.socket.remoteAddress ||
-					this.request.server.connection.socket.remoteAddress);
+				this.request.server.connection.remoteAddress ||
+				this.request.server.socket.remoteAddress ||
+				this.request.server.connection.socket.remoteAddress);
 
 			if ((this.request.server['HTTP_X_FORWARDED_FOR'])) {
 				order_data['forwarded_ip'] = this.request.server['HTTP_X_FORWARDED_FOR'];
@@ -550,10 +543,10 @@ class OrderController extends Controller {
 		}
 
 		if ((this.request.get['order_id'])) {
-			selected.push(this.request.get['order_id'];
+			selected.push(this.request.get['order_id']);
 		}
 
-		for (selected as order_id) {
+		for (let order_id of selected) {
 			this.load.model('checkout/order');
 
 			const order_info = await this.model_checkout_order.getOrder(order_id);

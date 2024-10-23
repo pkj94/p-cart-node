@@ -1,7 +1,7 @@
-const fs = require('fs');
+
 const expressPath = require('path');
 const sass = require('sass');
-module.exports = class SassController extends Controller {
+module.exports = class Sass extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 * @throws \ScssPhp\ScssPhp\Exception\SassException

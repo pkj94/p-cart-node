@@ -1,4 +1,4 @@
-module.exports = class FailureController extends Controller {
+module.exports = class Failure extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */
@@ -13,22 +13,22 @@ const data ={};
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/home', 'language=' + this.config.get('config_language'))
-		];
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_basket'),
 			'href' : await this.url.link('checkout/cart', 'language=' + this.config.get('config_language'))
-		];
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_checkout'),
 			'href' : await this.url.link('checkout/checkout', 'language=' + this.config.get('config_language'))
-		];
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_failure'),
 			'href' : await this.url.link('checkout/failure', 'language=' + this.config.get('config_language'))
-		];
+		});
 
 		data['text_message'] = sprintf(this.language.get('text_message'), await this.url.link('information/contact', 'language=' + this.config.get('config_language')));
 

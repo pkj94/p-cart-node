@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Catalog\Controller\Api\Account;
-/**
- *
- *
- * @package Opencart\Catalog\Controller\Api\Account
- */
-class LoginController extends Controller {
+module.exports = class Login extends global['\Opencart\System\Engine\Controller'] {
 	/*
 	 * Opencart\Catalog\Controller\Api\Account\Login+Index
 	 *
@@ -30,7 +23,7 @@ class LoginController extends Controller {
 	 * curl_setopt(curl, CURLOPT_POSTFIELDS, request_data);
 	 *
 	 * response = curl_exec(curl);
- 	 *
+	   *
 	 * status = curl_getinfo(curl, CURLINFO_HTTP_CODE);
 	 *
 	 * curl_close(curl);
@@ -67,7 +60,7 @@ class LoginController extends Controller {
 	 *
 	 */
 	async index() {
-const data ={};
+		const data = {};
 		await this.load.language('api/account/login');
 
 		const json = {};
@@ -88,13 +81,13 @@ const data ={};
 			const results = await this.model_account_api.getIps(api_info['api_id']);
 
 			for (let result of results) {
-				ip_data.push(trim(result['ip']);
+				ip_data.push(trim(result['ip']));
 			}
 
 			if (!in_array((this.request.server.headers['x-forwarded-for'] ||
-					this.request.server.connection.remoteAddress ||
-					this.request.server.socket.remoteAddress ||
-					this.request.server.connection.socket.remoteAddress), ip_data)) {
+				this.request.server.connection.remoteAddress ||
+				this.request.server.socket.remoteAddress ||
+				this.request.server.connection.socket.remoteAddress), ip_data)) {
 				json['error'] = sprintf(this.language.get('error_ip'), (this.request.server.headers['x-forwarded-for'] ||
 					this.request.server.connection.remoteAddress ||
 					this.request.server.socket.remoteAddress ||
@@ -107,13 +100,13 @@ const data ={};
 		if (!Object.keys(json).length) {
 			json['success'] = this.language.get('text_success');
 
-			session = new \Opencart\System\Library\Session(this.config.get('session_engine'), this.registry);
+			session = new global['\Opencart\System\Library\Session'](this.config.get('session_engine'), this.registry);
 			session.start();
 
 			await this.model_account_api.addSession(api_info['api_id'], session.getId(), (this.request.server.headers['x-forwarded-for'] ||
-					this.request.server.connection.remoteAddress ||
-					this.request.server.socket.remoteAddress ||
-					this.request.server.connection.socket.remoteAddress));
+				this.request.server.connection.remoteAddress ||
+				this.request.server.socket.remoteAddress ||
+				this.request.server.connection.socket.remoteAddress));
 
 			session.data['api_id'] = api_info['api_id'];
 

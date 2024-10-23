@@ -1,4 +1,4 @@
-module.exports = class BestsellerModuleModel extends Model {
+global['Opencart\Admin\Model\Extension\Opencart\Module\Bestseller'] = class Bestseller extends global['\Opencart\System\Engine\Model']  {
 	/**
 	 * @return void
 	 */

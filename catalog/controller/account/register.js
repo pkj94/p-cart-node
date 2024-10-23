@@ -1,7 +1,7 @@
 const bin2hex = require("locutus/php/strings/bin2hex");
 const sprintf = require("locutus/php/strings/sprintf");
 
-module.exports = class RegisterController extends Controller {
+module.exports = class Register extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */
@@ -79,12 +79,11 @@ module.exports = class RegisterController extends Controller {
 
 		const extension_info = await this.model_setting_extension.getExtensionByCode('captcha', this.config.get('config_captcha'));
 
-		if (extension_info && Number(this.config.get('captcha_' + this.config.get('config_captcha') + '_status')) && this.config.get('config_captcha_page').includes('register')) {
+		if (extension_info.extension_id && Number(this.config.get('captcha_' + this.config.get('config_captcha') + '_status')) && this.config.get('config_captcha_page').includes('register')) {
 			data['captcha'] = await this.load.controller('extension/' + extension_info['extension'] + '/captcha/' + extension_info['code']);
 		} else {
 			data['captcha'] = '';
 		}
-
 		this.load.model('catalog/information', this);
 
 		const information_info = await this.model_catalog_information.getInformation(this.config.get('config_account_id'));
@@ -197,7 +196,7 @@ module.exports = class RegisterController extends Controller {
 
 			const extension_info = await this.model_setting_extension.getExtensionByCode('captcha', this.config.get('config_captcha'));
 
-			if (extension_info && Number(this.config.get('captcha_' + this.config.get('config_captcha') + '_status')) && in_array('register', this.config.get('config_captcha_page'))) {
+			if (extension_info && Number(this.config.get('captcha_' + this.config.get('config_captcha') + '_status')) && this.config.get('config_captcha_page').includes('register')) {
 				const captcha = await this.load.controller('extension/' + extension_info['extension'] + '/captcha/' + extension_info['code'] + '.validate');
 
 				if (captcha) {

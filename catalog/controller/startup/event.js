@@ -1,4 +1,4 @@
-module.exports = class EventController extends Controller {
+module.exports = class Event extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */
@@ -13,11 +13,11 @@ module.exports = class EventController extends Controller {
 
 			if (parts[0] == 'catalog') {
 				parts.shift();
-				this.event.register(parts.join('/'), new Action(result.action), result.sort_order);
+				this.event.register(parts.join('/'), new global['\Opencart\System\Engine\Action'](result.action), result.sort_order);
 			}
 
 			if (parts[0] == 'system') {
-				this.event.register(result.trigger, new Action(result.action), result.sort_order);
+				this.event.register(result.trigger, new global['\Opencart\System\Engine\Action'](result.action), result.sort_order);
 			}
 		}
 		return true;

@@ -1,9 +1,9 @@
-module.exports = class SessionController extends Controller {
+module.exports = class SessionController extends global['\Opencart\System\Engine\Controller'] {
 	constructor(registry) {
 		super(registry)
 	}
 	async index() {
-		const session = new SessionLibrary(this.request.server.session);
+		const session = new global['\Opencart\System\Library\Session'](this.request.server.session);
 		session.start(this.request.server.sessionID)
 		this.registry.set('session', session);
 

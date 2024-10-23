@@ -1,9 +1,9 @@
-module.exports = class RegisterController extends Controller {
+module.exports = class Register extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return string
 	 */
 	async index() {
-const data ={};
+		const data = {};
 		await this.load.language('checkout/register');
 
 		data['text_login'] = sprintf(this.language.get('text_login'), await this.url.link('account/login', 'language=' + this.config.get('config_language') + '&redirect=' + encodeURIComponent(await this.url.link('checkout/checkout', 'language=' + this.config.get('config_language'), true))));
@@ -25,13 +25,13 @@ const data ={};
 		data['customer_groups'] = [];
 
 		if (Array.isArray(this.config.get('config_customer_group_display'))) {
-			this.load.model('account/customer_group',this);
+			this.load.model('account/customer_group', this);
 
 			const customer_groups = await this.model_account_customer_group.getCustomerGroups();
 
-			for (customer_groups  as customer_group) {
+			for (let customer_group of customer_groups) {
 				if (this.config.get('config_customer_group_display').includes(customer_group['customer_group_id'])) {
-					data['customer_groups'].push(customer_group;
+					data['customer_groups'].push(customer_group);
 				}
 			}
 		}
@@ -123,27 +123,27 @@ const data ={};
 			data['shipping_custom_field'] = [];
 		}
 
-		this.load.model('localisation/country',this);
+		this.load.model('localisation/country', this);
 
 		data['countries'] = await this.model_localisation_country.getCountries();
 
 		// Custom Fields
-		this.load.model('account/custom_field',this);
+		this.load.model('account/custom_field', this);
 
 		data['custom_fields'] = await this.model_account_custom_field.getCustomFields();
 
 		// Captcha
-		this.load.model('setting/extension',this);
+		this.load.model('setting/extension', this);
 
 		const extension_info = await this.model_setting_extension.getExtensionByCode('captcha', this.config.get('config_captcha'));
 
 		if (extension_info && Number(this.config.get('captcha_' + this.config.get('config_captcha') + '_status')) && in_array('register', this.config.get('config_captcha_page'))) {
-			data['captcha'] = await this.load.controller('extension/'  + extension_info['extension'] + '/captcha/' + extension_info['code']);
+			data['captcha'] = await this.load.controller('extension/' + extension_info['extension'] + '/captcha/' + extension_info['code']);
 		} else {
 			data['captcha'] = '';
 		}
 
-		this.load.model('catalog/information',this);
+		this.load.model('catalog/information', this);
 
 		const information_info = await this.model_catalog_information.getInformation(this.config.get('config_account_id'));
 
@@ -236,7 +236,7 @@ const data ={};
 				customer_group_id = this.config.get('config_customer_group_id');
 			}
 
-			this.load.model('account/customer_group',this);
+			this.load.model('account/customer_group', this);
 
 			const customer_group_info = await this.model_account_customer_group.getCustomerGroup(customer_group_id);
 
@@ -256,7 +256,7 @@ const data ={};
 				json['error']['email'] = this.language.get('error_email');
 			}
 
-			this.load.model('account/customer',this);
+			this.load.model('account/customer', this);
 
 			if (this.request.post['account'] && await this.model_account_customer.getTotalCustomersByEmail(this.request.post['email'])) {
 				json['error']['warning'] = this.language.get('error_exists');
@@ -276,7 +276,7 @@ const data ={};
 			}
 
 			// Custom field validation
-			this.load.model('account/custom_field',this);
+			this.load.model('account/custom_field', this);
 
 			const custom_fields = await this.model_account_custom_field.getCustomFields(customer_group_id);
 
@@ -299,7 +299,7 @@ const data ={};
 					json['error']['payment_city'] = this.language.get('error_city');
 				}
 
-				this.load.model('localisation/country',this);
+				this.load.model('localisation/country', this);
 
 				payment_country_info = await this.model_localisation_country.getCountry(this.request.post['payment_country_id']);
 
@@ -347,7 +347,7 @@ const data ={};
 					json['error']['shipping_city'] = this.language.get('error_city');
 				}
 
-				this.load.model('localisation/country',this);
+				this.load.model('localisation/country', this);
 
 				shipping_country_info = await this.model_localisation_country.getCountry(this.request.post['shipping_country_id']);
 
@@ -381,7 +381,7 @@ const data ={};
 			}
 
 			if (this.request.post['account']) {
-				this.load.model('catalog/information',this);
+				this.load.model('catalog/information', this);
 
 				const information_info = await this.model_catalog_information.getInformation(this.config.get('config_account_id'));
 
@@ -391,7 +391,7 @@ const data ={};
 			}
 
 			// Captcha
-			this.load.model('setting/extension',this);
+			this.load.model('setting/extension', this);
 
 			if (!await this.customer.isLogged()) {
 				const extension_info = await this.model_setting_extension.getExtensionByCode('captcha', this.config.get('config_captcha'));
@@ -408,7 +408,7 @@ const data ={};
 
 		if (!Object.keys(json).length) {
 			// Add customer details into session
-			customer_data = [
+			customer_data = {
 				'customer_id'       : 0,
 				'customer_group_id' : customer_group_id,
 				'firstname'         : this.request.post['firstname'],
@@ -416,7 +416,7 @@ const data ={};
 				'email'             : this.request.post['email'],
 				'telephone'         : this.request.post['telephone'],
 				'custom_field'      : (this.request.post['custom_field']) ? this.request.post['custom_field'] : []
-			];
+			};
 
 			// Register
 			if (this.request.post['account']) {
@@ -433,7 +433,7 @@ const data ={};
 				this.session.data['customer'] = customer_data;
 			}
 
-			this.load.model('account/address',this);
+			this.load.model('account/address', this);
 
 			// Payment Address
 			if (this.config.get('config_checkout_payment_address')) {
@@ -455,7 +455,7 @@ const data ={};
 					address_format = '';
 				}
 
-				this.load.model('localisation/zone',this);
+				this.load.model('localisation/zone', this);
 
 				zone_info = await this.model_localisation_zone.getZone(this.request.post['payment_zone_id']);
 
@@ -467,7 +467,7 @@ const data ={};
 					zone_code = '';
 				}
 
-				payment_address_data = [
+				payment_address_data = {
 					'address_id'     : address_id,
 					'firstname'      : this.request.post['firstname'],
 					'lastname'       : this.request.post['lastname'],
@@ -485,7 +485,7 @@ const data ={};
 					'iso_code_3'     : iso_code_3,
 					'address_format' : address_format,
 					'custom_field'   : (this.request.post['payment_custom_field']) ? this.request.post['payment_custom_field'] : []
-				];
+				};
 
 				// Add
 				if (this.request.post['account']) {
@@ -534,7 +534,7 @@ const data ={};
 						address_format = '';
 					}
 
-					this.load.model('localisation/zone',this);
+					this.load.model('localisation/zone', this);
 
 					zone_info = await this.model_localisation_zone.getZone(this.request.post['shipping_zone_id']);
 
@@ -546,7 +546,7 @@ const data ={};
 						zone_code = '';
 					}
 
-					shipping_address_data = [
+					shipping_address_data = {
 						'address_id'     : address_id,
 						'firstname'      : firstname,
 						'lastname'       : lastname,
@@ -564,7 +564,7 @@ const data ={};
 						'iso_code_3'     : iso_code_3,
 						'address_format' : address_format,
 						'custom_field'   : (this.request.post['shipping_custom_field']) ? this.request.post['shipping_custom_field'] : []
-					];
+					};
 
 					// Add
 					if (this.request.post['account']) {

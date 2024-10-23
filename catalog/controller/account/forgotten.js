@@ -1,9 +1,9 @@
-module.exports=class ForgottenController extends Controller {
+module.exports = class Forgotten extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */
 	async index() {
-const data ={};
+		const data = {};
 		await this.load.language('account/forgotten');
 
 		if (await this.customer.isLogged()) {
@@ -15,19 +15,19 @@ const data ={};
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/home', 'language=' + this.config.get('config_language'))
-		];
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/home', 'language=' + this.config.get('config_language'))
+		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_account'),
-			'href' : await this.url.link('account/account', 'language=' + this.config.get('config_language'))
-		];
+			'text': this.language.get('text_account'),
+			'href': await this.url.link('account/account', 'language=' + this.config.get('config_language'))
+		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_forgotten'),
-			'href' : await this.url.link('account/forgotten', 'language=' + this.config.get('config_language'))
-		];
+			'text': this.language.get('text_forgotten'),
+			'href': await this.url.link('account/forgotten', 'language=' + this.config.get('config_language'))
+		});
 
 		data['confirm'] = await this.url.link('account/forgotten+confirm', 'language=' + this.config.get('config_language'));
 
@@ -64,7 +64,7 @@ const data ={};
 				}
 			}
 
-			this.load.model('account/customer',this);
+			this.load.model('account/customer', this);
 
 			customer_info = await this.model_account_customer.getCustomerByEmail(this.request.post['email']);
 
@@ -107,7 +107,7 @@ const data ={};
 			this.response.setRedirect(await this.url.link('account/account', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token']));
 		}
 
-		this.load.model('account/customer',this);
+		this.load.model('account/customer', this);
 
 		customer_info = await this.model_account_customer.getCustomerByEmail(email);
 
@@ -124,19 +124,19 @@ const data ={};
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/home', 'language=' + this.config.get('config_language'))
-		];
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/home', 'language=' + this.config.get('config_language'))
+		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_account'),
-			'href' : await this.url.link('account/account', 'language=' + this.config.get('config_language'))
-		];
+			'text': this.language.get('text_account'),
+			'href': await this.url.link('account/account', 'language=' + this.config.get('config_language'))
+		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('account/forgotten+reset', 'language=' + this.config.get('config_language'))
-		];
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('account/forgotten+reset', 'language=' + this.config.get('config_language'))
+		});
 
 		this.session.data['reset_token'] = bin2hex(26);
 
@@ -183,7 +183,7 @@ const data ={};
 			json['redirect'] = await this.url.link('account/forgotten', 'language=' + this.config.get('config_language'), true);
 		}
 
-		this.load.model('account/customer',this);
+		this.load.model('account/customer', this);
 
 		customer_info = await this.model_account_customer.getCustomerByEmail(email);
 

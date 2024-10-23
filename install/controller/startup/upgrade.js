@@ -1,6 +1,6 @@
-const fs = require('fs');
+
 const path = require('path');
-module.exports = class Upgrade extends Controller {
+global['\Opencart\Install\Controller\Startup\Upgrade'] = class Upgrade extends global['\Opencart\System\Engine\Controller'] {
     async index() {
         let upgrade = false;
         if (fs.existsSync(DIR_OPENCART + 'config.json') && fs.statSync(DIR_OPENCART + 'config.json').size > 0) {

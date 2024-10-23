@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Catalog\Model\Marketing;
-/**
- *
- *
- * @package Opencart\Catalog\Model\Marketing
- */
-class MarketingModel extends Model {
+module.exports = class Marketing extends global['\Opencart\System\Engine\Model'] {
 	/**
 	 * @param string code
 	 *

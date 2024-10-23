@@ -1,6 +1,6 @@
 const nl2br = require("locutus/php/strings/nl2br");
 
-module.exports = class BankTransferController extends Controller {
+global['\Opencart\Catalog\Controller\Extension\Opencart\Payment\BankTransfer'] = class BankTransfer extends global['\Opencart\System\Engine\Controller'] {
 	constructor(registry) {
 		super(registry)
 	}

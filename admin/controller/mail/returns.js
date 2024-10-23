@@ -1,4 +1,4 @@
-module.exports=class ReturnsController extends Controller {
+module.exports=class ReturnsController extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @param string route
 	 * @param array  args
@@ -7,7 +7,7 @@ module.exports=class ReturnsController extends Controller {
 	 * @return void
 	 * @throws \Exception
 	 */
-	async index(string &route, array &args, mixed &output) {
+	async index(route,args, output) {
 		if ((args[0])) {
 			return_id = args[0];
 		} else {
@@ -74,22 +74,22 @@ module.exports=class ReturnsController extends Controller {
 				data['store_url'] = store_url;
 
 				if (this.config.get('config_mail_engine')) {
-					mail_option = [
+					let mail_option = {
 						'parameter'     : this.config.get('config_mail_parameter'),
 						'smtp_hostname' : this.config.get('config_mail_smtp_hostname'),
 						'smtp_username' : this.config.get('config_mail_smtp_username'),
 						'smtp_password' : html_entity_decode(this.config.get('config_mail_smtp_password')),
 						'smtp_port'     : this.config.get('config_mail_smtp_port'),
 						'smtp_timeout'  : this.config.get('config_mail_smtp_timeout')
-					];
+					};
 
-					mail = new MailLibrary(this.config.get('config_mail_engine'), mail_option);
+					const mail = new global['\Opencart\System\Library\Mail'](this.config.get('config_mail_engine'), mail_option);
 					mail.setTo(return_info['email']);
 					mail.setFrom(this.config.get('config_email'));
 					mail.setSender(store_name);
 					mail.setSubject(subject);
 					mail.setHtml(await this.load.view('mail/returns', data));
-					mail.send();
+					await mail.send();
 				}
 			}
 		}

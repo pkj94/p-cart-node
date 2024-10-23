@@ -1,12 +1,12 @@
 module.exports = class DBLibrary {
     constructor(adaptor, hostname, username, password, database, port = '', debug = false) {
-        const AdaptorClass = require(`./db/${adaptor}`);
-
-        if (AdaptorClass) {
-            this.adaptor = new AdaptorClass(hostname, username, password, database, port, debug);
+        let className = 'Opencart\System\Library\Db' + ucfirst(adaptor);
+        if (global[className]) {
+            this.adaptor = new global[className](hostname, username, password, database, port, debug);
         } else {
             throw new Error(`Error: Could not load database adaptor ${adaptor}!`);
         }
+
     }
     async connect() {
         return await this.adaptor.connect()

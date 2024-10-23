@@ -1,4 +1,4 @@
-module.exports=class SearchController extends Controller {
+module.exports=class Search extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return string
 	 */

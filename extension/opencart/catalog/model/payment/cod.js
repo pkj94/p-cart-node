@@ -1,4 +1,4 @@
-module.exports = class CODModel extends Model {
+global['\Opencart\Catalog\Model\Extension\Opencart\Payment\Cod'] = class COD extends global['\Opencart\System\Engine\Model'] {
 	/**
 	 * @param address
 	 *

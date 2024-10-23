@@ -1,4 +1,4 @@
-module.exports = class FreeCheckoutPaymentController extends Controller {
+global['\Opencart\Admin\Controller\Extension\Opencart\Payment\FreeCheckout'] = class FreeCheckout extends global['\Opencart\System\Engine\Controller'] {
 	constructor(registry) {
 		super(registry)
 	}

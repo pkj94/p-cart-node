@@ -1,6 +1,6 @@
 const sprintf = require("locutus/php/strings/sprintf");
 
-module.exports = class ContactController extends Controller {
+module.exports = class ContactController extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */
@@ -224,7 +224,7 @@ module.exports = class ContactController extends Controller {
 						'smtp_timeout': this.config.get('config_mail_smtp_timeout')
 					};
 
-					const mail = new MailLibrary(this.config.get('config_mail_engine'), mail_option);
+					const mail = new global['\Opencart\System\Library\Mail'](this.config.get('config_mail_engine'), mail_option);
 
 					for (let email of emails) {
 						if (isEmailValid(email)) {

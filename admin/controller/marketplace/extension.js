@@ -1,6 +1,6 @@
-const fs = require('fs');
+
 const expressPath = require('path');
-module.exports = class ExtensionController extends Controller {
+module.exports = class ExtensionController extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */
@@ -33,7 +33,7 @@ module.exports = class ExtensionController extends Controller {
 		this.load.model('setting/extension', this);
 
 		let files = require('glob').sync(DIR_APPLICATION + 'controller/extension/*.js');
-		for (let file of files) {
+		for (let file of files.reverse()) {
 			let extension = expressPath.basename(file,'.js');
 			await this.load.language('extension/' + extension, extension);
 

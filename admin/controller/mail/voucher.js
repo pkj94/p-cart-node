@@ -1,7 +1,7 @@
 const sprintf = require("locutus/php/strings/sprintf");
-const fs = require('fs');
+
 const nl2br = require("locutus/php/strings/nl2br");
-module.exports = class VoucherController extends Controller {
+module.exports = class VoucherController extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @param int voucher_id
 	 *
@@ -111,7 +111,7 @@ module.exports = class VoucherController extends Controller {
 					'smtp_timeout': this.config.get('config_mail_smtp_timeout')
 				};
 				// console.log(this.config.get('config_mail_engine'), mail_option);
-				const mail = new MailLibrary(this.config.get('config_mail_engine'), mail_option);
+				const mail = new global['\Opencart\System\Library\Mail'](this.config.get('config_mail_engine'), mail_option);
 				mail.setTo(voucher_info['to_email']);
 				mail.setFrom(this.config.get('config_email'));
 				mail.setSender(store_name);

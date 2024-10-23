@@ -1,4 +1,4 @@
-module.exports = class PickupModel extends Model {
+global['\Opencart\Catalog\Model\Extension\Opencart\Shipping\Pickup'] = class Pickup extends global['\Opencart\System\Engine\Model'] {
 	/**
 	 * @param address
 	 *

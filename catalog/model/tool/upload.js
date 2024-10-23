@@ -1,4 +1,4 @@
-module.exports = class UploadModel extends Model {
+module.exports = class Upload extends global['\Opencart\System\Engine\Model'] {
 	/**
 	 * @param string name
 	 * @param string filename

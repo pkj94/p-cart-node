@@ -1,4 +1,4 @@
-module.exports = class Registry {
+global['\Opencart\System\Engine\Registry'] = class Registry {
     data = {};
     get(key) {
         return this.data[key] || null;

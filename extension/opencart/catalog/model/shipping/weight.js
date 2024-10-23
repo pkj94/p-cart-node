@@ -1,4 +1,4 @@
-module.exports = class WeightModel extends Model {
+global['\Opencart\Catalog\Model\Extension\Opencart\Shipping\Weight'] = class Weight extends global['\Opencart\System\Engine\Model'] {
 	/**
 	 * @param address
 	 *

@@ -1,4 +1,4 @@
-module.exports = class ApiMarketplaceController extends Controller {
+module.exports = class ApiMarketplaceController extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */

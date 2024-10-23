@@ -1,4 +1,4 @@
-module.exports = class BankTransferModel extends Model {
+global['\Opencart\Catalog\Model\Extension\Opencart\Payment\BankTransfer'] = class BankTransfer extends global['\Opencart\System\Engine\Model'] {
 	/**
 	 * @param address
 	 *

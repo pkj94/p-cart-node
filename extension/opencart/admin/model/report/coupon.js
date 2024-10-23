@@ -1,4 +1,4 @@
-module.exports = class CouponReportModel extends Model {
+global['Opencart\Admin\Model\Extension\Opencart\Report\Coupon'] = class Coupon extends global['\Opencart\System\Engine\Model']  {
 	/**
 	 * @param array data
 	 *

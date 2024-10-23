@@ -1,4 +1,4 @@
-module.exports = class CronSettingModel extends Model {
+module.exports = class CronSettingModel extends global['\Opencart\System\Engine\Model'] {
 	/**
 	 * @param code
 	 * @param description

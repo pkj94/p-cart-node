@@ -1,4 +1,4 @@
-module.exports = class ThemeModel extends Model {
+module.exports = class Theme extends global['\Opencart\System\Engine\Model'] {
 	/**
 	 * @param string route
 	 *

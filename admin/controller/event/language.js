@@ -1,4 +1,4 @@
-module.exports = class LanguageController extends Controller {
+module.exports = class LanguageController extends global['\Opencart\System\Engine\Controller'] {
     index(route, args) {
         const languageData = this.language.all();
 

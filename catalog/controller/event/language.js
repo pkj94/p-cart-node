@@ -1,4 +1,4 @@
-module.exports = class LanguageController extends Controller {
+module.exports = class Language extends global['\Opencart\System\Engine\Controller'] {
 	async index(route, args) {
 		for (let [key, value] of Object.entries(this.language.all())) {
 			if (!(args[key])) {
@@ -17,7 +17,6 @@ module.exports = class LanguageController extends Controller {
 	 */
 	async before(route, args) {
 		let data = this.language.all();
-
 		if (data) {
 			this.language.set('backup', data);
 		}

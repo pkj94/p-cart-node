@@ -1,6 +1,6 @@
-const fs = require('fs');
+
 const html_entity_decode = require('locutus/php/strings/html_entity_decode');
-module.exports = class Step3Controller extends Controller {
+global['\Opencart\Install\Controller\Install\Step3'] = class Step3 extends global['\Opencart\System\Engine\Controller'] {
     constructor(registry) {
         super(registry);
         this.error = {};
@@ -188,7 +188,7 @@ module.exports = class Step3Controller extends Controller {
             this.error['db_driver'] = this.language.get('error_db_driver');
         } else {
             try {
-                const db = await new DbLibrary(this.request.post['db_driver'], this.html_entity_decode(this.request.post['db_hostname']), this.html_entity_decode(this.request.post['db_username']), this.html_entity_decode(this.request.post['db_password']), this.html_entity_decode(this.request.post['db_database']), this.request.post['db_port']).connect();
+                const db = await new global['\Opencart\System\Library\Db'](this.request.post['db_driver'], this.html_entity_decode(this.request.post['db_hostname']), this.html_entity_decode(this.request.post['db_username']), this.html_entity_decode(this.request.post['db_password']), this.html_entity_decode(this.request.post['db_database']), this.request.post['db_port']).connect();
             } catch (e) {
                 console.log('e----------', e)
                 this.error['warning'] = e.message;

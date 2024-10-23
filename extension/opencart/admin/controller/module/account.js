@@ -1,4 +1,4 @@
-module.exports = class AccountModuleController extends Controller {
+global['\Opencart\Admin\Controller\Extension\Opencart\Module\Account'] = class Account extends global['\Opencart\System\Engine\Controller'] {
 	constructor(registry) {
 		super(registry)
 	}

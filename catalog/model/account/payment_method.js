@@ -1,19 +1,19 @@
-module.exports =class PaymentMethodModel extends Model {
+module.exports =class PaymentMethod extends global['\Opencart\System\Engine\Model'] {
 	/**
 	 * @param data
 	 *
 	 * @return void
 	 */
 	async addPaymentMethod(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "customer_payment` SET 
-		`customer_id` = '" + await this.customer.getId() + "', 
-		`name` = '" + await this.customer.getId() + "', 
-		`image` = " + this.db.escape(data['image']) + ", 
-		`type` = " + this.db.escape(data['type']) + ", 
-		`extension` = " + this.db.escape(data['extension']) + ", 
-		`code` = " + this.db.escape(data['code']) + ", 
-		`token` = " + this.db.escape(data['token']) + ", 
-		`date_expire` = " + this.db.escape(data['date_expire']) + ", `default` = '" + data['default'] + "', `status` = '1', `date_added` = NOW()");
+		await this.db.query(`INSERT INTO \`` + DB_PREFIX + `customer_payment\` SET 
+		\`customer_id\` = '` + await this.customer.getId() + `', 
+		\`name\` = '` + await this.customer.getId() + `', 
+		\`image\` = ` + this.db.escape(data['image']) + `, 
+		\`type\` = ` + this.db.escape(data['type']) + `, 
+		\`extension\` = ` + this.db.escape(data['extension']) + `, 
+		\`code\` = ` + this.db.escape(data['code']) + `, 
+		\`token\` = ` + this.db.escape(data['token']) + `, 
+		\`date_expire\` = ` + this.db.escape(data['date_expire']) + `, \`default\` = '` + data['default'] + `', \`status\` = '1', \`date_added\` = NOW()`);
 	}
 
 	/**

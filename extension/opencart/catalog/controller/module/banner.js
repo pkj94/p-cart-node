@@ -1,5 +1,5 @@
-const fs = require('fs');
-module.exports = class BannerController extends Controller {
+
+global['\Opencart\Catalog\Controller\Extension\Opencart\Module\Banner'] = class Banner extends global['\Opencart\System\Engine\Controller'] {
 	constructor(registry) {
 		super(registry)
 	}

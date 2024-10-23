@@ -1,6 +1,6 @@
-const fs = require('fs');
+
 const pathExpress = require('path');
-module.exports = class SecurityController extends Controller {
+module.exports = class SecurityController extends global['\Opencart\System\Engine\Controller'] {
     constructor(registry) {
         super(registry);
     }

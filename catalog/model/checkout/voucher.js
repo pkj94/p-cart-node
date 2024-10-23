@@ -1,4 +1,4 @@
-module.exports=class VoucherModel extends Model {
+module.exports = class Voucher extends global['\Opencart\System\Engine\Model'] {
 	/**
 	 * @param   order_id
 	 * @param data
@@ -34,8 +34,8 @@ module.exports=class VoucherModel extends Model {
 			if (voucher_query.row['order_id']) {
 				let implode = [];
 
-				for (this.config.get('config_complete_status') as order_status_id) {
-					implode.push("'" + order_status_id + "'";
+				for (let order_status_id of this.config.get('config_complete_status')) {
+					implode.push("'" + order_status_id + "'");
 				}
 
 				const order_query = await this.db.query("SELECT `order_id` FROM `" + DB_PREFIX + "order` WHERE `order_id` = '" + voucher_query.row['order_id'] + "' AND `order_status_id` IN(" + implode(",", implode) + ")");
@@ -67,23 +67,23 @@ module.exports=class VoucherModel extends Model {
 		}
 
 		if (status) {
-			return [
-				'voucher_id'       : voucher_query.row['voucher_id'],
-				'code'             : voucher_query.row['code'],
-				'from_name'        : voucher_query.row['from_name'],
-				'from_email'       : voucher_query.row['from_email'],
-				'to_name'          : voucher_query.row['to_name'],
-				'to_email'         : voucher_query.row['to_email'],
-				'voucher_theme_id' : voucher_query.row['voucher_theme_id'],
-				'theme'            : voucher_query.row['theme'],
-				'message'          : voucher_query.row['message'],
-				'image'            : voucher_query.row['image'],
-				'amount'           : amount,
-				'status'           : voucher_query.row['status'],
-				'date_added'       : voucher_query.row['date_added']
-			];
+			return {
+				'voucher_id': voucher_query.row['voucher_id'],
+				'code': voucher_query.row['code'],
+				'from_name': voucher_query.row['from_name'],
+				'from_email': voucher_query.row['from_email'],
+				'to_name': voucher_query.row['to_name'],
+				'to_email': voucher_query.row['to_email'],
+				'voucher_theme_id': voucher_query.row['voucher_theme_id'],
+				'theme': voucher_query.row['theme'],
+				'message': voucher_query.row['message'],
+				'image': voucher_query.row['image'],
+				'amount': amount,
+				'status': voucher_query.row['status'],
+				'date_added': voucher_query.row['date_added']
+			};
 		} else {
-			return [];
+			return {};
 		}
 	}
 

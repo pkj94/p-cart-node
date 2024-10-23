@@ -1,23 +1,18 @@
-<?php
-namespace Opencart\Admin\Controller\Cms;
-/**
- * 
- *
- * @package Opencart\Admin\Controller\Cms
- */
-class AntispamController extends Controller {
+const sprintf = require("locutus/php/strings/sprintf");
+
+module.exports = class AntispamController extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */
 	async index() {
+		const data = {};
 		await this.load.language('cms/antispam');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
+		let filter_keyword = '';
 		if ((this.request.get['filter_keyword'])) {
 			filter_keyword = this.request.get['filter_keyword'];
-		} else {
-			filter_keyword = '';
 		}
 
 		let url = '';
@@ -37,13 +32,13 @@ class AntispamController extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('cms/antispam', 'user_token=' + this.session.data['user_token'] + url)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('cms/antispam', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
 		data['add'] = await this.url.link('cms/antispam.form', 'user_token=' + this.session.data['user_token'] + url);
@@ -75,21 +70,19 @@ class AntispamController extends Controller {
 	 * @return string
 	 */
 	async getList() {
+		let filter_keyword = '';
 		if ((this.request.get['filter_keyword'])) {
 			filter_keyword = this.request.get['filter_keyword'];
-		} else {
-			filter_keyword = '';
 		}
 
-		if ((this.request.get['sort'])) {
-			sort = this.request.get['sort'];
-		} else {
-			sort = 'keyword';
+		let sort = 'keyword';
+		if ((this.request.get['sort '])) {
+			sort = this.request.get['sort '];
 		}
 
-		let order= 'ASC';
+		let order = 'ASC';
 		if ((this.request.get['order'])) {
-			order= this.request.get['order'];
+			order = this.request.get['order'];
 		}
 
 		let page = 1;
@@ -120,28 +113,28 @@ class AntispamController extends Controller {
 		data['antispams'] = [];
 
 		let filter_data = {
-			'filter_keyword' : filter_keyword,
-			'sort'           : sort,
-			'order'          : order,
-			'start'          : (page - 1) * Number(this.config.get('config_pagination_admin')),
-			'limit'          : this.config.get('config_pagination_admin')
-		});
+			'filter_keyword': filter_keyword,
+			'sort': sort,
+			'order': order,
+			'start': (page - 1) * Number(this.config.get('config_pagination_admin')),
+			'limit': this.config.get('config_pagination_admin')
+		};
 
-		this.load.model('cms/antispam');
+		this.load.model('cms/antispam', this);
 
-		antispam_total await this.model_cms_antispam.getTotalAntispams(filter_data);
+		const antispam_total = await this.model_cms_antispam.getTotalAntispams(filter_data);
 
 		const results = await this.model_cms_antispam.getAntispams(filter_data);
 
 		for (let result of results) {
 			data['antispams'].push({
-				'antispam_id' : result['antispam_id'],
-				'keyword'     : result['keyword'],
-				'edit'        : await this.url.link('cms/antispam.form', 'user_token=' + this.session.data['user_token'] + '&antispam_id=' + result['antispam_id'] + url)
-			];
+				'antispam_id': result['antispam_id'],
+				'keyword': result['keyword'],
+				'edit': await this.url.link('cms/antispam.form', 'user_token=' + this.session.data['user_token'] + '&antispam_id=' + result['antispam_id'] + url)
+			});
 		}
 
-		let url = '';
+		url = '';
 
 		if ((this.request.get['filter_keyword'])) {
 			url += '&filter_keyword=' + encodeURIComponent(html_entity_decode(this.request.get['filter_keyword']));
@@ -155,7 +148,7 @@ class AntispamController extends Controller {
 
 		data['sort_keyword'] = await this.url.link('cms/antispam.list', 'user_token=' + this.session.data['user_token'] + '&sort=keyword' + url);
 
-		let url = '';
+		url = '';
 
 		if ((this.request.get['filter_keyword'])) {
 			url += '&filter_keyword=' + encodeURIComponent(html_entity_decode(this.request.get['filter_keyword']));
@@ -170,11 +163,11 @@ class AntispamController extends Controller {
 		}
 
 		data['pagination'] = await this.load.controller('common/pagination', {
-			'total' : antispam_total,
-			'page'  : page,
-			'limit' : this.config.get('config_pagination_admin'),
-			'url'   : await this.url.link('cms/antispam.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
-		]);
+			'total': antispam_total,
+			'page': page,
+			'limit': this.config.get('config_pagination_admin'),
+			'url': await this.url.link('cms/antispam.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
+		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (antispam_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (antispam_total - this.config.get('config_pagination_admin'))) ? antispam_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), antispam_total, Math.ceil(antispam_total / this.config.get('config_pagination_admin')));
 
@@ -188,6 +181,7 @@ class AntispamController extends Controller {
 	 * @return void
 	 */
 	async form() {
+		const data = {};
 		await this.load.language('cms/antispam');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -215,22 +209,22 @@ class AntispamController extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('cms/antispam', 'user_token=' + this.session.data['user_token'] + url)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('cms/antispam', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
 		data['save'] = await this.url.link('cms/antispam.save', 'user_token=' + this.session.data['user_token']);
 		data['back'] = await this.url.link('cms/antispam', 'user_token=' + this.session.data['user_token'] + url);
-
+		let antispam_info;
 		if ((this.request.get['antispam_id'])) {
-			this.load.model('cms/antispam');
+			this.load.model('cms/antispam', this);
 
-			antispam_info await this.model_cms_antispam.getAntispam(this.request.get['antispam_id']);
+			antispam_info = await this.model_cms_antispam.getAntispam(this.request.get['antispam_id']);
 		}
 
 		if ((this.request.get['antispam_id'])) {
@@ -258,7 +252,7 @@ class AntispamController extends Controller {
 	async save() {
 		await this.load.language('cms/antispam');
 
-		const json = {};
+		const json = { error: {} };
 
 		if (!await this.user.hasPermission('modify', 'cms/antispam')) {
 			json['error']['warning'] = this.language.get('error_permission');
@@ -268,8 +262,8 @@ class AntispamController extends Controller {
 			json['error']['keyword'] = this.language.get('error_keyword');
 		}
 
-		if (!Object.keys(json).length) {
-			this.load.model('cms/antispam');
+		if (!Object.keys(json.error).length) {
+			this.load.model('cms/antispam', this);
 
 			if (!this.request.post['antispam_id']) {
 				json['antispam_id'] = await this.model_cms_antispam.addAntispam(this.request.post);
@@ -293,7 +287,7 @@ class AntispamController extends Controller {
 		const json = {};
 
 		let selected = [];
-                 if ((this.request.post['selected'])) {
+		if ((this.request.post['selected'])) {
 			selected = this.request.post['selected'];
 		}
 
@@ -302,9 +296,9 @@ class AntispamController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('cms/antispam');
+			this.load.model('cms/antispam', this);
 
-			for (selected of antispam_id) {
+			for (let antispam_id of selected) {
 				await this.model_cms_antispam.deleteAntispam(antispam_id);
 			}
 

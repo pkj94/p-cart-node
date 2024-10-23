@@ -1,6 +1,7 @@
+const str_replace = require('locutus/php/strings/str_replace');
 const expressPath = require('path');
-const fs = require('fs');
-module.exports = class CaptchaController extends Controller {
+
+module.exports = class CaptchaController extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */
@@ -98,27 +99,11 @@ module.exports = class CaptchaController extends Controller {
 
 
 			// Register controllers, models and system extension folders
-			if (fs.existsSync(`${DIR_EXTENSION}${extension}/admin/controller/`))
-				fs.readdirSync(`${DIR_EXTENSION}${extension}/admin/controller/`).forEach((folder) => {
-					fs.readdirSync(`${DIR_EXTENSION}${extension}/admin/controller/${folder}`).forEach((controller) => {
-						if (controller.indexOf('.html') == -1) {
-							let name = ucfirst(controller).replace('.js', '') + ucfirst(folder) + 'Controller';
-							global[name] = require(DIR_EXTENSION + extension + '/admin/controller/' + folder + '/' + controller);
-						}
-					})
-				});
-			if (fs.existsSync(`${DIR_EXTENSION}${extension}/admin/model/`))
-				fs.readdirSync(`${DIR_EXTENSION}${extension}/admin/model/`).forEach((folder) => {
-					fs.readdirSync(`${DIR_EXTENSION}${extension}/admin/model/${folder}`).forEach((model) => {
-						let name = ucfirst(model).replace('.js', '') + ucfirst(folder) + 'Model';
-						global[name] = require(DIR_EXTENSION + extension + '/admin/model/' + folder + '/' + model)
-					})
-				});
-			if (fs.existsSync(`${DIR_EXTENSION}${extension}/system/library/`))
-				fs.readdirSync(`${DIR_EXTENSION}${extension}/system/library/`).forEach((library) => {
-					let name = ucfirst(library).replace('.js', '') + 'Library';
-					global[name] = require(DIR_EXTENSION + extension + '/system/library/' + '/' + library);
-				});
+			let namespace = str_replace(['_', '/'], ['', '\\'], ucfirst(extension, '_/'));
+
+			this.autoloader.register('Opencart\Admin\Controller\Extension\\' + namespace, DIR_EXTENSION + extension + '/admin/controller/');
+			this.autoloader.register('Opencart\Admin\Model\Extension\\' + namespace, DIR_EXTENSION + extension + '/admin/model/');
+			this.autoloader.register('Opencart\System\Extension\\' + namespace, DIR_EXTENSION + extension + '/system/');
 
 			// Template directory
 			if (fs.existsSync(`${DIR_EXTENSION}${extension}/admin/view/template/`))
@@ -135,8 +120,11 @@ module.exports = class CaptchaController extends Controller {
 				this.language.addPath(`extension/${extension}`, `${DIR_EXTENSION}${extension}/system/config/`);
 
 			// Call install method if it exists
-			await this.load.controller('extension/' + extension + '/captcha/' + code + '.install');
-
+			try {
+				await this.load.controller('extension/' + extension + '/captcha/' + code + '.install');
+			} catch (e) {
+				console.log('captcha install', e)
+			}
 			json['success'] = this.language.get('text_success');
 		}
 
@@ -162,8 +150,11 @@ module.exports = class CaptchaController extends Controller {
 			await this.model_setting_extension.uninstall('captcha', this.request.get['code']);
 
 			// Call uninstall method if it exists
-			await this.load.controller('extension/' + this.request.get['extension'] + '/captcha/' + this.request.get['code'] + '.uninstall');
-
+			try {
+				await this.load.controller('extension/' + this.request.get['extension'] + '/captcha/' + this.request.get['code'] + '.uninstall');
+			} catch (e) {
+				console.log('captcha uninstall', e)
+			}
 			json['success'] = this.language.get('text_success');
 		}
 

@@ -1,6 +1,6 @@
-const axios = require("axios");
 
-module.exports = class FixerController extends Controller {
+
+global['\Opencart\Catalog\Controller\Extension\Opencart\Currency\Fixer'] = class Fixer extends global['\Opencart\System\Engine\Controller'] {
 	constructor(registry) {
 		super(registry)
 	}
@@ -12,7 +12,7 @@ module.exports = class FixerController extends Controller {
 	async currency(default_ = '') {
 		if (this.config.get('currency_fixer_status')) {
 			try {
-				const response = await axios.get(`http://data.fixer.io/api/latest?access_key=${this.config.get('currency_fixer_api')}`, {
+				const response = await require("axios").get(`http://data.fixer.io/api/latest?access_key=${this.config.get('currency_fixer_api')}`, {
 					timeout: 30000
 				});
 

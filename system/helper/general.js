@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt');
 const htmlEntity = require('html-entities');
 // Import required libraries
 const crypto = require('crypto');
-const fs = require('fs');
+
 // String
 global.oc_strlen = (string) => {
     return string.length;
@@ -201,4 +201,7 @@ global.getAllMethods = (obj) => {
 }
 global.bin2hex = (length = 26) => {
     return crypto.randomBytes(26).toString('hex').substring(0, length);
+}
+global.is_file = (file) => {
+    return fs.existSync(file)
 }

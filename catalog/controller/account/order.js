@@ -2,7 +2,7 @@ const nl2br = require("locutus/php/strings/nl2br");
 const sprintf = require("locutus/php/strings/sprintf");
 const str_replace = require("locutus/php/strings/str_replace");
 
-module.exports = class OrderController extends Controller {
+module.exports = class Order extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */
@@ -382,7 +382,7 @@ module.exports = class OrderController extends Controller {
 
 			this.response.setOutput(await this.load.view('account/order_info', data));
 		} else {
-			return new Action('error/not_found');
+			return new global['\Opencart\System\Engine\Action']('error/not_found');
 		}
 	}
 

@@ -1,4 +1,4 @@
-module.exports = class DebugController extends Controller {
+module.exports = class DebugController extends global['\Opencart\System\Engine\Controller'] {
     constructor(registry) {
         super(registry)
     }

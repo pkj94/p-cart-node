@@ -1,9 +1,9 @@
-module.exports=class ReturnsController extends Controller {
+module.exports = class Returns extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */
 	async index() {
-const data ={};
+		const data = {};
 		await this.load.language('account/returns');
 
 		if (!await this.customer.isLogged() || (!(this.request.get['customer_token']) || !(this.session.data['customer_token']) || (this.request.get['customer_token'] != this.session.data['customer_token']))) {
@@ -13,9 +13,9 @@ const data ={};
 		}
 
 		let page = 1;
-if ((this.request.get['page'])) {
+		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
-		} 
+		}
 
 		let limit = 10;
 
@@ -24,14 +24,14 @@ if ((this.request.get['page'])) {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/home', 'language=' + this.config.get('config_language'))
-		];
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/home', 'language=' + this.config.get('config_language'))
+		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_account'),
-			'href' : await this.url.link('account/account', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'])
-		];
+			'text': this.language.get('text_account'),
+			'href': await this.url.link('account/account', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'])
+		});
 
 		let url = '';
 
@@ -40,9 +40,9 @@ if ((this.request.get['page'])) {
 		}
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('account/returns', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'] + url)
-		];
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('account/returns', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'] + url)
+		});
 
 		data['returns'] = [];
 
@@ -54,21 +54,21 @@ if ((this.request.get['page'])) {
 
 		for (let result of results) {
 			data['returns'].push({
-				'return_id'  : result['return_id'],
-				'order_id'   : result['order_id'],
-				'name'       : result['firstname'] + ' ' + result['lastname'],
-				'status'     : result['status'],
-				'date_added' : date(this.language.get('date_format_short'), new Date(result['date_added'])),
-				'href'       : await this.url.link('account/returns.info', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'] + '&return_id=' + result['return_id'] + url)
-			];
+				'return_id': result['return_id'],
+				'order_id': result['order_id'],
+				'name': result['firstname'] + ' ' + result['lastname'],
+				'status': result['status'],
+				'date_added': date(this.language.get('date_format_short'), new Date(result['date_added'])),
+				'href': await this.url.link('account/returns.info', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'] + '&return_id=' + result['return_id'] + url)
+			});
 		}
 
 		data['pagination'] = await this.load.controller('common/pagination', {
-			'total' : return_total,
-			'page'  : page,
-			'limit' : limit,
-			'url'   : await this.url.link('account/returns', 'language=' + this.config.get('config_language') + '&page={page}')
-		]);
+			'total': return_total,
+			'page': page,
+			'limit': limit,
+			'url': await this.url.link('account/returns', 'language=' + this.config.get('config_language') + '&page={page}')
+		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (return_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (return_total - limit)) ? return_total : (((page - 1) * limit) + limit), return_total, Math.ceil(return_total / limit));
 
@@ -112,14 +112,14 @@ if ((this.request.get['page'])) {
 			data['breadcrumbs'] = [];
 
 			data['breadcrumbs'].push({
-				'text' : this.language.get('text_home'),
-				'href' : await this.url.link('common/home', 'language=' + this.config.get('config_language'))
-			];
+				'text': this.language.get('text_home'),
+				'href': await this.url.link('common/home', 'language=' + this.config.get('config_language'))
+			});
 
 			data['breadcrumbs'].push({
-				'text' : this.language.get('text_account'),
-				'href' : await this.url.link('account/account', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'])
-			];
+				'text': this.language.get('text_account'),
+				'href': await this.url.link('account/account', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'])
+			});
 
 			let url = '';
 
@@ -128,14 +128,14 @@ if ((this.request.get['page'])) {
 			}
 
 			data['breadcrumbs'].push({
-				'text' : this.language.get('heading_title'),
-				'href' : await this.url.link('account/returns', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'] + url)
-			];
+				'text': this.language.get('heading_title'),
+				'href': await this.url.link('account/returns', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'] + url)
+			});
 
 			data['breadcrumbs'].push({
-				'text' : this.language.get('text_return'),
-				'href' : await this.url.link('account/returns.info', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'] + '&return_id=' + this.request.get['return_id'] + url)
-			];
+				'text': this.language.get('text_return'),
+				'href': await this.url.link('account/returns.info', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'] + '&return_id=' + this.request.get['return_id'] + url)
+			});
 
 			data['return_id'] = return_info['return_id'];
 			data['order_id'] = return_info['order_id'];
@@ -159,10 +159,10 @@ if ((this.request.get['page'])) {
 
 			for (let result of results) {
 				data['histories'].push({
-					'date_added' : date(this.language.get('date_format_short'), new Date(result['date_added'])),
-					'status'     : result['status'],
-					'comment'    : nl2br(result['comment'])
-				];
+					'date_added': date(this.language.get('date_format_short'), new Date(result['date_added'])),
+					'status': result['status'],
+					'comment': nl2br(result['comment'])
+				});
 			}
 
 			data['continue'] = await this.url.link('account/returns', 'language=' + this.config.get('config_language') + url);
@@ -176,7 +176,7 @@ if ((this.request.get['page'])) {
 
 			this.response.setOutput(await this.load.view('account/returns_info', data));
 		} else {
-			return new Action('error/not_found');
+			return new global['\Opencart\System\Engine\Action']('error/not_found');
 		}
 
 		return null;
@@ -193,31 +193,31 @@ if ((this.request.get['page'])) {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/home', 'language=' + this.config.get('config_language'))
-		];
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/home', 'language=' + this.config.get('config_language'))
+		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_account'),
-			'href' : await this.url.link('account/account', 'language=' + this.config.get('config_language'))
-		];
+			'text': this.language.get('text_account'),
+			'href': await this.url.link('account/account', 'language=' + this.config.get('config_language'))
+		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('account/returns.add', 'language=' + this.config.get('config_language'))
-		];
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('account/returns.add', 'language=' + this.config.get('config_language'))
+		});
 
 		this.session.data['return_token'] = bin2hex(26);
 
 		data['save'] = await this.url.link('account/returns.save', 'language=' + this.config.get('config_language') + '&return_token=' + this.session.data['return_token']);
 
-		this.load.model('account/order',this);
+		this.load.model('account/order', this);
 
 		if ((this.request.get['order_id'])) {
 			const order_info = await this.model_account_order.getOrder(this.request.get['order_id']);
 		}
 
-		this.load.model('catalog/product',this);
+		this.load.model('catalog/product', this);
 
 		if ((this.request.get['product_id'])) {
 			const product_info = await this.model_catalog_product.getProduct(this.request.get['product_id']);
@@ -282,17 +282,17 @@ if ((this.request.get['page'])) {
 		data['return_reasons'] = await this.model_localisation_return_reason.getReturnReasons();
 
 		// Captcha
-		this.load.model('setting/extension',this);
+		this.load.model('setting/extension', this);
 
 		const extension_info = await this.model_setting_extension.getExtensionByCode('captcha', this.config.get('config_captcha'));
 
 		if (extension_info && Number(this.config.get('captcha_' + this.config.get('config_captcha') + '_status')) && in_array('returns', this.config.get('config_captcha_page'))) {
-			data['captcha'] = await this.load.controller('extension/'  + extension_info['extension'] + '/captcha/' + extension_info['code']);
+			data['captcha'] = await this.load.controller('extension/' + extension_info['extension'] + '/captcha/' + extension_info['code']);
 		} else {
 			data['captcha'] = '';
 		}
 
-		this.load.model('catalog/information',this);
+		this.load.model('catalog/information', this);
 
 		const information_info = await this.model_catalog_information.getInformation(this.config.get('config_return_id'));
 
@@ -378,7 +378,7 @@ if ((this.request.get['page'])) {
 			}
 
 			// Captcha
-			this.load.model('setting/extension',this);
+			this.load.model('setting/extension', this);
 
 			const extension_info = await this.model_setting_extension.getExtensionByCode('captcha', this.config.get('config_captcha'));
 
@@ -391,7 +391,7 @@ if ((this.request.get['page'])) {
 			}
 
 			if (this.config.get('config_return_id')) {
-				this.load.model('catalog/information',this);
+				this.load.model('catalog/information', this);
 
 				const information_info = await this.model_catalog_information.getInformation(this.config.get('config_return_id'));
 
@@ -424,14 +424,14 @@ if ((this.request.get['page'])) {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/home', 'language=' + this.config.get('config_language'))
-		];
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/home', 'language=' + this.config.get('config_language'))
+		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('account/returns.add', 'language=' + this.config.get('config_language'))
-		];
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('account/returns.add', 'language=' + this.config.get('config_language'))
+		});
 
 		data['continue'] = await this.url.link('common/home', 'language=' + this.config.get('config_language'));
 

@@ -1,5 +1,4 @@
-const fs = require('fs');
-class Upgrade extends global['\Opencart\System\Engine\Controller'] {
+global['\Opencart\Install\Controller\Upgrade\Upgrade'] = class Upgrade extends global['\Opencart\System\Engine\Controller'] {
 
 	constructor(registry) {
 		super(registry);
@@ -41,5 +40,3 @@ class Upgrade extends global['\Opencart\System\Engine\Controller'] {
 		this.response.setOutput(await this.load.view('upgrade/upgrade', data));
 	}
 }
-
-global['\Opencart\Install\Controller\Upgrade\Upgrade'] = Upgrade;

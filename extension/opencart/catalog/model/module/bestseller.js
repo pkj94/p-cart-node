@@ -1,4 +1,4 @@
-module.exports =class BestsellerModel extends Model {
+global['\Opencart\Catalog\Model\Extension\Opencart\Module\Bestseller'] = class Bestseller extends global['\Opencart\System\Engine\Model'] {
 	/**
 	 * @param int limit
 	 *

@@ -1,18 +1,11 @@
-<?php
-namespace Opencart\Catalog\Controller\Mail;
-/**
- *
- *
- * @package Opencart\Catalog\Controller\Mail
- */
-class OrderController extends Controller {
+module.exports = class Order extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @param string route
 	 * @param  args
 	 *
 	 * @return void
 	 */
-	async index(&route, args) {
+	async index(route, args) {
 		if ((args[0])) {
 			order_id = args[0];
 		} else {
@@ -62,13 +55,13 @@ class OrderController extends Controller {
 	 * @return void
 	 * @throws \Exception
 	 */
-	async add(order_info, order_status_id, comment, bool notify) {
+	async add(order_info, order_status_id, comment, notify) {
 		// Check for any downloadable products
 		download_status = false;
 
 		order_products = await this.model_checkout_order.getProducts(order_info['order_id']);
 
-		for (order_products as order_product) {
+		for (let order_product of order_products) {
 			// Check if there are any linked downloads
 			product_download_query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "product_to_download` WHERE `product_id` = '" + order_product['product_id'] + "'");
 
@@ -86,19 +79,19 @@ class OrderController extends Controller {
 			store_url = HTTP_CATALOG;
 		}
 
-		this.load.model('setting/store',this);
+		this.load.model('setting/store', this);
 
 		const store_info = await this.model_setting_store.getStore(order_info['store_id']);
 
 		if (store_info) {
-			this.load.model('setting/setting',this);
+			this.load.model('setting/setting', this);
 
 			store_logo = html_entity_decode(await this.model_setting_setting.getValue('config_logo', store_info['store_id']));
 			store_name = html_entity_decode(store_info['name']);
 			store_url = store_info['url'];
 		}
 
-		this.load.model('localisation/language',this);
+		this.load.model('localisation/language', this);
 
 		const language_info = await this.model_localisation_language.getLanguage(order_info['language_id']);
 
@@ -115,13 +108,13 @@ class OrderController extends Controller {
 		// Add language vars to the template folder
 		const results = this.language.all('mail');
 
-		for (results as key : value) {
+		for (let [key, value] of Object.entries(results)) {
 			data[key] = value;
 		}
 
 		subject = sprintf(this.language.get('mail_text_subject'), store_name, order_info['order_id']);
 
-		this.load.model('tool/image',this);
+		this.load.model('tool/image', this);
 
 		if (is_file(DIR_IMAGE + store_logo)) {
 			data['logo'] = store_url + 'image/' + store_logo;
@@ -187,18 +180,18 @@ class OrderController extends Controller {
 			'{country}'
 		];
 
-		replace = [
-			'firstname' : order_info['payment_firstname'],
-			'lastname'  : order_info['payment_lastname'],
-			'company'   : order_info['payment_company'],
-			'address_1' : order_info['payment_address_1'],
-			'address_2' : order_info['payment_address_2'],
-			'city'      : order_info['payment_city'],
-			'postcode'  : order_info['payment_postcode'],
-			'zone'      : order_info['payment_zone'],
-			'zone_code' : order_info['payment_zone_code'],
-			'country'   : order_info['payment_country']
-		];
+		replace = {
+			'firstname': order_info['payment_firstname'],
+			'lastname': order_info['payment_lastname'],
+			'company': order_info['payment_company'],
+			'address_1': order_info['payment_address_1'],
+			'address_2': order_info['payment_address_2'],
+			'city': order_info['payment_city'],
+			'postcode': order_info['payment_postcode'],
+			'zone': order_info['payment_zone'],
+			'zone_code': order_info['payment_zone_code'],
+			'country': order_info['payment_country']
+		};
 
 		data['payment_address'] = str_replace(["\r\n", "\r", "\n"], '<br/>', preg_replace(["/\s\s+/", "/\r\r+/", "/\n\n+/"], '<br/>', trim(str_replace(find, replace, format))));
 
@@ -222,27 +215,27 @@ class OrderController extends Controller {
 			'{country}'
 		];
 
-		replace = [
-			'firstname' : order_info['shipping_firstname'],
-			'lastname'  : order_info['shipping_lastname'],
-			'company'   : order_info['shipping_company'],
-			'address_1' : order_info['shipping_address_1'],
-			'address_2' : order_info['shipping_address_2'],
-			'city'      : order_info['shipping_city'],
-			'postcode'  : order_info['shipping_postcode'],
-			'zone'      : order_info['shipping_zone'],
-			'zone_code' : order_info['shipping_zone_code'],
-			'country'   : order_info['shipping_country']
-		];
+		replace = {
+			'firstname': order_info['shipping_firstname'],
+			'lastname': order_info['shipping_lastname'],
+			'company': order_info['shipping_company'],
+			'address_1': order_info['shipping_address_1'],
+			'address_2': order_info['shipping_address_2'],
+			'city': order_info['shipping_city'],
+			'postcode': order_info['shipping_postcode'],
+			'zone': order_info['shipping_zone'],
+			'zone_code': order_info['shipping_zone_code'],
+			'country': order_info['shipping_country']
+		};
 
 		data['shipping_address'] = str_replace(["\r\n", "\r", "\n"], '<br/>', preg_replace(["/\s\s+/", "/\r\r+/", "/\n\n+/"], '<br/>', trim(str_replace(find, replace, format))));
 
-		this.load.model('tool/upload',this);
+		this.load.model('tool/upload', this);
 
 		// Products
 		data['products'] = [];
 
-		for (order_products as order_product) {
+		for (let order_product of order_products) {
 			let option_data = [];
 
 			order_options = await this.model_checkout_order.getOptions(order_info['order_id'], order_product['order_product_id']);
@@ -261,9 +254,9 @@ class OrderController extends Controller {
 				}
 
 				option_data.push({
-					'name'  : order_option['name'],
-					'value' : (oc_strlen(value) > 20 ? oc_substr(value, 0, 20) + '++' : value)
-				];
+					'name': order_option['name'],
+					'value': (oc_strlen(value) > 20 ? oc_substr(value, 0, 20) + '++' : value)
+				});
 			}
 
 			description = '';
@@ -295,15 +288,15 @@ class OrderController extends Controller {
 			}
 
 			data['products'].push({
-				'name'         : order_product['name'],
-				'model'        : order_product['model'],
-				'option'       : option_data,
-				'subscription' : description,
-				'quantity'     : order_product['quantity'],
-				'price'        : this.currency.format(order_product['price'] + (Number(Number(this.config.get('config_tax'))) ? order_product['tax'] : 0), order_info['currency_code'], order_info['currency_value']),
-				'total'        : this.currency.format(order_product['total'] + (Number(Number(this.config.get('config_tax'))) ? (order_product['tax'] * order_product['quantity']) : 0), order_info['currency_code'], order_info['currency_value']),
-				'reward'       : order_product['reward']
-			];
+				'name': order_product['name'],
+				'model': order_product['model'],
+				'option': option_data,
+				'subscription': description,
+				'quantity': order_product['quantity'],
+				'price': this.currency.format(order_product['price'] + (Number(Number(this.config.get('config_tax'))) ? order_product['tax'] : 0), order_info['currency_code'], order_info['currency_value']),
+				'total': this.currency.format(order_product['total'] + (Number(Number(this.config.get('config_tax'))) ? (order_product['tax'] * order_product['quantity']) : 0), order_info['currency_code'], order_info['currency_value']),
+				'reward': order_product['reward']
+			});
 		}
 
 		// Vouchers
@@ -311,11 +304,11 @@ class OrderController extends Controller {
 
 		order_vouchers = await this.model_checkout_order.getVouchers(order_info['order_id']);
 
-		for (order_vouchers as order_voucher) {
+		for (let order_voucher of order_vouchers) {
 			data['vouchers'].push({
-				'description' : order_voucher['description'],
-				'amount'      : this.currency.format(order_voucher['amount'], order_info['currency_code'], order_info['currency_value']),
-			];
+				'description': order_voucher['description'],
+				'amount': this.currency.format(order_voucher['amount'], order_info['currency_code'], order_info['currency_value']),
+			});
 		}
 
 		// Order Totals
@@ -323,14 +316,14 @@ class OrderController extends Controller {
 
 		order_totals = await this.model_checkout_order.getTotals(order_info['order_id']);
 
-		for (order_totals as order_total) {
+		for (let order_total of order_totals) {
 			data['totals'].push({
-				'title' : order_total['title'],
-				'text'  : this.currency.format(order_total['value'], order_info['currency_code'], order_info['currency_value']),
-			];
+				'title': order_total['title'],
+				'text': this.currency.format(order_total['value'], order_info['currency_code'], order_info['currency_value']),
+			});
 		}
 
-		this.load.model('setting/setting',this);
+		this.load.model('setting/setting', this);
 
 		from = await this.model_setting_setting.getValue('config_email', order_info['store_id']);
 
@@ -339,16 +332,16 @@ class OrderController extends Controller {
 		}
 
 		if (this.config.get('config_mail_engine')) {
-			mail_option = [
-				'parameter'     : this.config.get('config_mail_parameter'),
-				'smtp_hostname' : this.config.get('config_mail_smtp_hostname'),
-				'smtp_username' : this.config.get('config_mail_smtp_username'),
-				'smtp_password' : html_entity_decode(this.config.get('config_mail_smtp_password')),
-				'smtp_port'     : this.config.get('config_mail_smtp_port'),
-				'smtp_timeout'  : this.config.get('config_mail_smtp_timeout')
-			];
+			let mail_option = {
+				'parameter': this.config.get('config_mail_parameter'),
+				'smtp_hostname': this.config.get('config_mail_smtp_hostname'),
+				'smtp_username': this.config.get('config_mail_smtp_username'),
+				'smtp_password': html_entity_decode(this.config.get('config_mail_smtp_password')),
+				'smtp_port': this.config.get('config_mail_smtp_port'),
+				'smtp_timeout': this.config.get('config_mail_smtp_timeout')
+			};
 
-			mail = new MailLibrary(this.config.get('config_mail_engine'), mail_option);
+			const mail = new global['\Opencart\System\Library\Mail'](this.config.get('config_mail_engine'), mail_option);
 			mail.setTo(order_info['email']);
 			mail.setFrom(from);
 			mail.setSender(store_name);
@@ -367,7 +360,7 @@ class OrderController extends Controller {
 	 * @return void
 	 * @throws \Exception
 	 */
-	async edit(order_info, order_status_id, comment, bool notify) {
+	async edit(order_info, order_status_id, comment, notify) {
 		store_name = html_entity_decode(this.config.get('config_name'));
 
 		if (!defined('HTTP_CATALOG')) {
@@ -376,7 +369,7 @@ class OrderController extends Controller {
 			store_url = HTTP_CATALOG;
 		}
 
-		this.load.model('setting/store',this);
+		this.load.model('setting/store', this);
 
 		const store_info = await this.model_setting_store.getStore(order_info['store_id']);
 
@@ -385,7 +378,7 @@ class OrderController extends Controller {
 			store_url = store_info['url'];
 		}
 
-		this.load.model('localisation/language',this);
+		this.load.model('localisation/language', this);
 
 		const language_info = await this.model_localisation_language.getLanguage(order_info['language_id']);
 
@@ -402,7 +395,7 @@ class OrderController extends Controller {
 		// Add language vars to the template folder
 		const results = this.language.all('mail');
 
-		for (results as key : value) {
+		for (let [key, value] of Object.entries(results)) {
 			data[key] = value;
 		}
 
@@ -430,7 +423,7 @@ class OrderController extends Controller {
 		data['store'] = store_name;
 		data['store_url'] = store_url;
 
-		this.load.model('setting/setting',this);
+		this.load.model('setting/setting', this);
 
 		from = await this.model_setting_setting.getValue('config_email', order_info['store_id']);
 
@@ -439,16 +432,16 @@ class OrderController extends Controller {
 		}
 
 		if (this.config.get('config_mail_engine')) {
-			mail_option = [
-				'parameter'     : this.config.get('config_mail_parameter'),
-				'smtp_hostname' : this.config.get('config_mail_smtp_hostname'),
-				'smtp_username' : this.config.get('config_mail_smtp_username'),
-				'smtp_password' : html_entity_decode(this.config.get('config_mail_smtp_password')),
-				'smtp_port'     : this.config.get('config_mail_smtp_port'),
-				'smtp_timeout'  : this.config.get('config_mail_smtp_timeout')
-			];
+			let mail_option = {
+				'parameter': this.config.get('config_mail_parameter'),
+				'smtp_hostname': this.config.get('config_mail_smtp_hostname'),
+				'smtp_username': this.config.get('config_mail_smtp_username'),
+				'smtp_password': html_entity_decode(this.config.get('config_mail_smtp_password')),
+				'smtp_port': this.config.get('config_mail_smtp_port'),
+				'smtp_timeout': this.config.get('config_mail_smtp_timeout')
+			};
 
-			mail = new MailLibrary(this.config.get('config_mail_engine'), mail_option);
+			const mail = new global['\Opencart\System\Library\Mail'](this.config.get('config_mail_engine'), mail_option);
 			mail.setTo(order_info['email']);
 			mail.setFrom(from);
 			mail.setSender(store_name);
@@ -467,7 +460,7 @@ class OrderController extends Controller {
 	 * @return void
 	 * @throws \Exception
 	 */
-	async alert(&route, args) {
+	async alert(route, args) {
 		if ((args[0])) {
 			order_id = args[0];
 		} else {
@@ -510,13 +503,13 @@ class OrderController extends Controller {
 				data['order_status'] = '';
 			}
 
-			this.load.model('tool/upload',this);
+			this.load.model('tool/upload', this);
 
 			data['products'] = [];
 
 			order_products = await this.model_checkout_order.getProducts(order_id);
 
-			for (order_products as order_product) {
+			for (let order_product of order_products) {
 				let option_data = [];
 
 				order_options = await this.model_checkout_order.getOptions(order_info['order_id'], order_product['order_product_id']);
@@ -535,9 +528,9 @@ class OrderController extends Controller {
 					}
 
 					option_data.push({
-						'name'  : order_option['name'],
-						'value' : (oc_strlen(value) > 20 ? oc_substr(value, 0, 20) + '++' : value)
-					];
+						'name': order_option['name'],
+						'value': (oc_strlen(value) > 20 ? oc_substr(value, 0, 20) + '++' : value)
+					});
 				}
 
 				description = '';
@@ -569,35 +562,35 @@ class OrderController extends Controller {
 				}
 
 				data['products'].push({
-					'name'         : order_product['name'],
-					'model'        : order_product['model'],
-					'quantity'     : order_product['quantity'],
-					'option'       : option_data,
-					'subscription' : description,
-					'total'        : html_entity_decode(this.currency.format(order_product['total'] + (Number(Number(this.config.get('config_tax'))) ? order_product['tax'] * order_product['quantity'] : 0), order_info['currency_code'], order_info['currency_value']), ENT_NOQUOTES, 'UTF-8')
-				];
+					'name': order_product['name'],
+					'model': order_product['model'],
+					'quantity': order_product['quantity'],
+					'option': option_data,
+					'subscription': description,
+					'total': html_entity_decode(this.currency.format(order_product['total'] + (Number(Number(this.config.get('config_tax'))) ? order_product['tax'] * order_product['quantity'] : 0), order_info['currency_code'], order_info['currency_value']), ENT_NOQUOTES, 'UTF-8')
+				});
 			}
 
 			data['vouchers'] = [];
 
 			order_vouchers = await this.model_checkout_order.getVouchers(order_id);
 
-			for (order_vouchers as order_voucher) {
+			for (let order_voucher of order_vouchers) {
 				data['vouchers'].push({
-					'description' : order_voucher['description'],
-					'amount'      : html_entity_decode(this.currency.format(order_voucher['amount'], order_info['currency_code'], order_info['currency_value']), ENT_NOQUOTES, 'UTF-8')
-				];
+					'description': order_voucher['description'],
+					'amount': html_entity_decode(this.currency.format(order_voucher['amount'], order_info['currency_code'], order_info['currency_value']), ENT_NOQUOTES, 'UTF-8')
+				});
 			}
 
 			data['totals'] = [];
 
 			order_totals = await this.model_checkout_order.getTotals(order_id);
 
-			for (order_totals as order_total) {
+			for (let order_total of order_totals) {
 				data['totals'].push({
-					'title' : order_total['title'],
-					'value' : html_entity_decode(this.currency.format(order_total['value'], order_info['currency_code'], order_info['currency_value']), ENT_NOQUOTES, 'UTF-8')
-				];
+					'title': order_total['title'],
+					'value': html_entity_decode(this.currency.format(order_total['value'], order_info['currency_code'], order_info['currency_value']), ENT_NOQUOTES, 'UTF-8')
+				});
 			}
 
 			data['comment'] = nl2br(order_info['comment']);
@@ -606,16 +599,16 @@ class OrderController extends Controller {
 			data['store_url'] = order_info['store_url'];
 
 			if (this.config.get('config_mail_engine')) {
-				mail_option = [
-					'parameter'     : this.config.get('config_mail_parameter'),
-					'smtp_hostname' : this.config.get('config_mail_smtp_hostname'),
-					'smtp_username' : this.config.get('config_mail_smtp_username'),
-					'smtp_password' : html_entity_decode(this.config.get('config_mail_smtp_password')),
-					'smtp_port'     : this.config.get('config_mail_smtp_port'),
-					'smtp_timeout'  : this.config.get('config_mail_smtp_timeout')
-				];
+				let mail_option = {
+					'parameter': this.config.get('config_mail_parameter'),
+					'smtp_hostname': this.config.get('config_mail_smtp_hostname'),
+					'smtp_username': this.config.get('config_mail_smtp_username'),
+					'smtp_password': html_entity_decode(this.config.get('config_mail_smtp_password')),
+					'smtp_port': this.config.get('config_mail_smtp_port'),
+					'smtp_timeout': this.config.get('config_mail_smtp_timeout')
+				};
 
-				mail = new MailLibrary(this.config.get('config_mail_engine'), mail_option);
+				const mail = new global['\Opencart\System\Library\Mail'](this.config.get('config_mail_engine'), mail_option);
 				mail.setTo(this.config.get('config_email'));
 				mail.setFrom(this.config.get('config_email'));
 				mail.setSender(html_entity_decode(order_info['store_name']));
@@ -626,7 +619,7 @@ class OrderController extends Controller {
 				// Send to additional alert emails
 				emails = explode(',', this.config.get('config_mail_alert_email'));
 
-				for (emails as email) {
+				for (let email of emails) {
 					if (email && filter_var(email, FILTER_VALIDATE_EMAIL)) {
 						mail.setTo(trim(email));
 						mail.send();

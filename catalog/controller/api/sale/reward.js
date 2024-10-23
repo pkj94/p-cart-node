@@ -1,16 +1,9 @@
-<?php
-namespace Opencart\Catalog\Controller\Api\Sale;
-/**
- *
- *
- * @package Opencart\Catalog\Controller\Api\Sale
- */
-class RewardController extends Controller {
+module.exports = class Reward extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */
 	async index() {
-const data ={};
+		const data = {};
 		await this.load.language('api/sale/reward');
 
 		const json = {};
@@ -25,7 +18,7 @@ const data ={};
 
 		points_total = 0;
 
-		for (await this.cart.getProducts() as product) {
+		for (let product of await this.cart.getProducts()) {
 			if (product['points']) {
 				points_total += product['points'];
 			}
@@ -67,7 +60,7 @@ const data ={};
 
 		json['maximum'] = 0;
 
-		for (await this.cart.getProducts() as product) {
+		for (let product of await this.cart.getProducts()) {
 			if (product['points']) {
 				json['maximum'] += product['points'];
 			}
@@ -82,6 +75,6 @@ const data ={};
 	 */
 	async available() {
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(json_encode(['points' : await this.customer.getRewardPoints()]));
+		this.response.setOutput({ 'points': await this.customer.getRewardPoints() });
 	}
 }

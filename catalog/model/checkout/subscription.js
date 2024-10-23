@@ -1,4 +1,4 @@
-module.exports=class SubscriptionModel extends Model {
+module.exports = class Subscription extends global['\Opencart\System\Engine\Model'] {
 	/**
 	 * @param data
 	 *
@@ -22,43 +22,7 @@ module.exports=class SubscriptionModel extends Model {
 			date_next = date('Y-m-d', strtotime('+' + data['cycle'] + ' ' + data['frequency']));
 		}
 
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "subscription` SET 
-			`order_product_id` = '" + data['order_product_id'] + "', 
-			`order_id` = '" + data['order_id'] + "',
-			`store_id` = '" + data['store_id'] + "', 
-			`customer_id` = '" + data['customer_id'] + "', 
-			`payment_address_id` = '" + data['payment_address_id'] + "', 
-			`payment_method` = " + this.db.escape(data['payment_method'] ? json_encode(data['payment_method']) : '') + ", 
-			`shipping_address_id` = '" + data['shipping_address_id'] + "', 
-			`shipping_method` = " + this.db.escape(data['shipping_method'] ? json_encode(data['shipping_method']) : '') + ", 
-			`product_id` = '" + data['product_id'] + "', 
-			`quantity` = '" + data['quantity'] + "', 
-			`subscription_plan_id` = '" + data['subscription_plan_id'] + "', 
-			`trial_price` = '" + data['trial_price'] + "', 
-			`trial_frequency` = " + this.db.escape(data['trial_frequency']) + ", 
-			`trial_cycle` = '" + data['trial_cycle'] + "', 
-			`trial_duration` = '" + data['trial_duration'] + "', 
-			`trial_remaining` = '" + trial_remaining + "', 
-			`trial_status` = '" + data['trial_status'] + "', 
-			`price` = '" + data['price'] + "', 
-			`frequency` = " + this.db.escape(data['frequency']) + ", 
-			`cycle` = '" + data['cycle'] + "', 
-			`duration` = '" + data['duration'] + "', 
-			`remaining` = '" + trial_remaining + "', 
-			`date_next` = " + this.db.escape(date_next) + ", 
-			`comment` = " + this.db.escape(data['comment']) + ", 
-			`affiliate_id` = '" + data['affiliate_id'] + "', 
-			`marketing_id` = '" + data['marketing_id'] + "', 
-			`tracking` = " + this.db.escape(data['tracking']) + ", 
-			`language_id` = '" + data['language_id'] + "', 
-			`currency_id` = '" + data['currency_id'] + "', 
-			`ip` = " + this.db.escape(data['ip']) + ", 
-			`forwarded_ip` = " + this.db.escape(data['forwarded_ip']) + ", 
-			`user_agent` = " + this.db.escape(data['user_agent']) + ", 
-			`accept_language` = " + this.db.escape(data['accept_language']) + ", 
-			`date_added` = NOW(), 
-			`date_modified` = NOW()
-		");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "subscription` SET `order_product_id` = '" + data['order_product_id'] + "', `order_id` = '" + data['order_id'] + "', `store_id` = '" + data['store_id'] + "', `customer_id` = '" + data['customer_id'] + "', `payment_address_id` = '" + data['payment_address_id'] + "', `payment_method` = " + this.db.escape(data['payment_method'] ? json_encode(data['payment_method']) : '') + ", `shipping_address_id` = '" + data['shipping_address_id'] + "', `shipping_method` = " + this.db.escape(data['shipping_method'] ? json_encode(data['shipping_method']) : '') + ", `product_id` = '" + data['product_id'] + "', `quantity` = '" + data['quantity'] + "', `subscription_plan_id` = '" + data['subscription_plan_id'] + "', 			`trial_price` = '" + data['trial_price'] + "', 			`trial_frequency` = " + this.db.escape(data['trial_frequency']) + ", 			`trial_cycle` = '" + data['trial_cycle'] + "', 			`trial_duration` = '" + data['trial_duration'] + "', 			`trial_remaining` = '" + trial_remaining + "', 			`trial_status` = '" + data['trial_status'] + "', 			`price` = '" + data['price'] + "', 			`frequency` = " + this.db.escape(data['frequency']) + ", 			`cycle` = '" + data['cycle'] + "', 			`duration` = '" + data['duration'] + "', 			`remaining` = '" + trial_remaining + "', 			`date_next` = " + this.db.escape(date_next) + ", 			`comment` = " + this.db.escape(data['comment']) + ", 			`affiliate_id` = '" + data['affiliate_id'] + "', 			`marketing_id` = '" + data['marketing_id'] + "', 			`tracking` = " + this.db.escape(data['tracking']) + ", 			`language_id` = '" + data['language_id'] + "', 			`currency_id` = '" + data['currency_id'] + "', 			`ip` = " + this.db.escape(data['ip']) + ", 			`forwarded_ip` = " + this.db.escape(data['forwarded_ip']) + ", 			`user_agent` = " + this.db.escape(data['user_agent']) + ", 			`accept_language` = " + this.db.escape(data['accept_language']) + ", 			`date_added` = NOW(), 			`date_modified` = NOW() 		");
 
 		return this.db.getLastId();
 	}
@@ -87,42 +51,7 @@ module.exports=class SubscriptionModel extends Model {
 			date_next = date('Y-m-d', strtotime('+' + data['cycle'] + ' ' + data['frequency']));
 		}
 
-		await this.db.query("UPDATE `" + DB_PREFIX + "subscription` SET 
-			`order_product_id` = '" + data['order_product_id'] + "', 
-			`order_id` = '" + data['order_id'] + "', 
-			`store_id` = '" + data['store_id'] + "', 
-			`customer_id` = '" + data['customer_id'] + "', 
-			`payment_address_id` = '" + data['payment_address_id'] + "', 
-			`payment_method` = " + this.db.escape(data['payment_method'] ? json_encode(data['payment_method']) : '') + ", 
-			`shipping_address_id` = '" + data['shipping_address_id'] + "', 
-			`shipping_method` = " + this.db.escape(data['shipping_method'] ? json_encode(data['shipping_method']) :  '') + ",
-			`product_id` = '" + data['product_id'] + "', 
-			`subscription_plan_id` = '" + data['subscription_plan_id'] + "', 
-			`trial_price` = '" + data['trial_price'] + "', 
-			`trial_frequency` = " + this.db.escape(data['trial_frequency']) + ", 
-			`trial_cycle` = '" + data['trial_cycle'] + "', 
-			`trial_duration` = '" + data['trial_duration'] + "', 
-			`trial_remaining` = '" + trial_remaining + "', 
-			`trial_status` = '" + data['trial_status'] + "', 
-			`price` = '" + data['price'] + "', 
-			`frequency` = " + this.db.escape(data['frequency']) + ", 
-			`cycle` = '" + data['cycle'] + "', 
-			`duration` = '" + data['duration'] + "', 
-			`remaining` = '" + remaining + "', 
-			`date_next` = " + this.db.escape(date_next) + ", 
-			`comment` = " + this.db.escape(data['comment']) + ", 
-			`affiliate_id` = '" + data['affiliate_id'] + "', 
-			`marketing_id` = '" + data['marketing_id'] + "', 
-			`tracking` = " + this.db.escape(data['tracking']) + ", 
-			`language_id` = '" + data['language_id'] + "', 
-			`currency_id` = '" + data['currency_id'] + "', 
-			`ip` = " + this.db.escape(data['ip']) + ", 
-			`forwarded_ip` = " + this.db.escape(data['forwarded_ip']) + ", 
-			`user_agent` = " + this.db.escape(data['user_agent']) + ", 
-			`accept_language` = " + this.db.escape(data['accept_language']) + ", 
-			`date_modified` = NOW()
-			WHERE `subscription_id` = '" + subscription_id + "'
-		");
+		await this.db.query("UPDATE `" + DB_PREFIX + "subscription` SET  			`order_product_id` = '" + data['order_product_id'] + "', 			`order_id` = '" + data['order_id'] + "', 			`store_id` = '" + data['store_id'] + "', 			`customer_id` = '" + data['customer_id'] + "', 			`payment_address_id` = '" + data['payment_address_id'] + "', 			`payment_method` = " + this.db.escape(data['payment_method'] ? json_encode(data['payment_method']) : '') + ", 			`shipping_address_id` = '" + data['shipping_address_id'] + "', 			`shipping_method` = " + this.db.escape(data['shipping_method'] ? json_encode(data['shipping_method']) : '') + ", 			`product_id` = '" + data['product_id'] + "', 			`subscription_plan_id` = '" + data['subscription_plan_id'] + "', 			`trial_price` = '" + data['trial_price'] + "', 			`trial_frequency` = " + this.db.escape(data['trial_frequency']) + ", 			`trial_cycle` = '" + data['trial_cycle'] + "', 			`trial_duration` = '" + data['trial_duration'] + "', 			`trial_remaining` = '" + trial_remaining + "', 			`trial_status` = '" + data['trial_status'] + "', 			`price` = '" + data['price'] + "', 			`frequency` = " + this.db.escape(data['frequency']) + ", 			`cycle` = '" + data['cycle'] + "', 			`duration` = '" + data['duration'] + "', 			`remaining` = '" + remaining + "', 			`date_next` = " + this.db.escape(date_next) + ", 			`comment` = " + this.db.escape(data['comment']) + ", 			`affiliate_id` = '" + data['affiliate_id'] + "', 			`marketing_id` = '" + data['marketing_id'] + "', 			`tracking` = " + this.db.escape(data['tracking']) + ", 			`language_id` = '" + data['language_id'] + "', 			`currency_id` = '" + data['currency_id'] + "', 			`ip` = " + this.db.escape(data['ip']) + ", 			`forwarded_ip` = " + this.db.escape(data['forwarded_ip']) + ", 			`user_agent` = " + this.db.escape(data['user_agent']) + ", 			`accept_language` = " + this.db.escape(data['accept_language']) + ", 			`date_modified` = NOW() 			WHERE`subscription_id` = '" + subscription_id + "' 		");
 	}
 
 	/**
@@ -163,7 +92,7 @@ module.exports=class SubscriptionModel extends Model {
 	 *
 	 * @return void
 	 */
-	async addHistory(subscription_id, subscription_status_id, comment = '', bool notify = false) {
+	async addHistory(subscription_id, subscription_status_id, comment = '', notify = false) {
 		await this.db.query("INSERT INTO `" + DB_PREFIX + "subscription_history` SET `subscription_id` = '" + subscription_id + "', `subscription_status_id` = '" + subscription_status_id + "', `comment` = " + this.db.escape(comment) + ", `notify` = '" + notify + "', `date_added` = NOW()");
 
 		await this.db.query("UPDATE `" + DB_PREFIX + "subscription` SET `subscription_status_id` = '" + subscription_status_id + "' WHERE `subscription_id` = '" + subscription_id + "'");
@@ -175,7 +104,7 @@ module.exports=class SubscriptionModel extends Model {
 	 *
 	 * @return void
 	 */
-	async editSubscriptionStatus(subscription_id, bool subscription_status_id) {
+	async editSubscriptionStatus(subscription_id, subscription_status_id) {
 		await this.db.query("UPDATE `" + DB_PREFIX + "subscription` SET `subscription_status_id` = '" + subscription_status_id + "' WHERE `subscription_id` = '" + subscription_id + "'");
 	}
 

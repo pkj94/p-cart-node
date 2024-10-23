@@ -1,4 +1,4 @@
-module.exports=class ForgottenController extends Controller {
+module.exports = class ForgottenController extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 *
 	 * admin/model/user/user/editCode/after
@@ -10,7 +10,7 @@ module.exports=class ForgottenController extends Controller {
 	 * @return void
 	 * @throws \Exception
 	 */
-	async index(string &route, array &args, mixed &output) {
+	async index(route, args, output) {
 		if ((this.request.get['route'])) {
 			route = this.request.get['route'];
 		} else {
@@ -40,30 +40,30 @@ module.exports=class ForgottenController extends Controller {
 
 			data['reset'] = await this.url.link('common/forgotten.reset', 'email=' + email + '&code=' + code, true);
 			data['ip'] = this.request.server.headers['x-forwarded-for'] || (
-                    this.request.server.connection ? (this.request.server.connection.remoteAddress ||
-                        this.request.server.socket.remoteAddress ||
-                        this.request.server.connection.socket.remoteAddress) : '');
+				this.request.server.connection ? (this.request.server.connection.remoteAddress ||
+					this.request.server.socket.remoteAddress ||
+					this.request.server.connection.socket.remoteAddress) : '');
 
 			data['store'] = store_name;
 			data['store_url'] = this.config.get('config_store_url');
 
 			if (this.config.get('config_mail_engine')) {
-				mail_option = [
-					'parameter'     : this.config.get('config_mail_parameter'),
-					'smtp_hostname' : this.config.get('config_mail_smtp_hostname'),
-					'smtp_username' : this.config.get('config_mail_smtp_username'),
-					'smtp_password' : html_entity_decode(this.config.get('config_mail_smtp_password')),
-					'smtp_port'     : this.config.get('config_mail_smtp_port'),
-					'smtp_timeout'  : this.config.get('config_mail_smtp_timeout')
-				];
+				let mail_option = {
+					'parameter': this.config.get('config_mail_parameter'),
+					'smtp_hostname': this.config.get('config_mail_smtp_hostname'),
+					'smtp_username': this.config.get('config_mail_smtp_username'),
+					'smtp_password': html_entity_decode(this.config.get('config_mail_smtp_password')),
+					'smtp_port': this.config.get('config_mail_smtp_port'),
+					'smtp_timeout': this.config.get('config_mail_smtp_timeout')
+				};
 
-				mail = new MailLibrary(this.config.get('config_mail_engine'), mail_option);
+				const mail = new global['\Opencart\System\Library\Mail'](this.config.get('config_mail_engine'), mail_option);
 				mail.setTo(email);
 				mail.setFrom(this.config.get('config_email'));
 				mail.setSender(store_name);
 				mail.setSubject(subject);
 				mail.setHtml(await this.load.view('mail/forgotten', data));
-				mail.send();
+				await mail.send();
 			}
 		}
 	}

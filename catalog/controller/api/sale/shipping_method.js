@@ -1,16 +1,9 @@
-<?php
-namespace Opencart\Catalog\Controller\Api\Sale;
-/**
- *
- *
- * @package Opencart\Catalog\Controller\Api\Sale
- */
-class ShippingMethodController extends Controller {
+module.exports = class ShippingMethod extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */
 	async index() {
-const data ={};
+		const data = {};
 		await this.load.language('api/sale/shipping_method');
 
 		const json = {};

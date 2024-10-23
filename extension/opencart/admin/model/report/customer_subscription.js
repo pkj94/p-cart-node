@@ -1,4 +1,4 @@
-module.exports = class CustomerSubscriptionReportModel extends Model {
+global['Opencart\Admin\Model\Extension\Opencart\Report\CustomerSubscription'] = class CustomerSubscription extends global['\Opencart\System\Engine\Model']  {
 	/**
 	 * @param data
 	 *

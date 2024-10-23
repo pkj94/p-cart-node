@@ -1,7 +1,7 @@
 const strtotime = require("locutus/php/datetime/strtotime");
 const sprintf = require("locutus/php/strings/sprintf");
 
-module.exports = class AffiliateController extends Controller {
+module.exports = class AffiliateController extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */
@@ -856,7 +856,7 @@ module.exports = class AffiliateController extends Controller {
 			this.response.addHeader('Content-Length', Buffer.byteLength(csv));
 			this.response.setEnd(csv);
 		} else {
-			return new Action('error/permission');
+			return new global['\Opencart\System\Engine\Action']('error/permission');
 		}
 	}
 

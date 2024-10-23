@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Catalog\Model\Report;
-/**
- *
- *
- * @package Opencart\Catalog\Model\Report
- */
-class StatisticsModel extends Model {
+module.exports = class Statistics extends global['\Opencart\System\Engine\Model'] {
 	/**
 	 * @return array
 	 */
@@ -20,7 +13,7 @@ class StatisticsModel extends Model {
 	 *
 	 * @return float
 	 */
-	async getValue(code): {
+	async getValue(code) {
 		const query = await this.db.query("SELECT `value` FROM `" + DB_PREFIX + "statistics` WHERE `code` = " + this.db.escape(code) + "");
 
 		if (query.num_rows) {
@@ -58,5 +51,5 @@ class StatisticsModel extends Model {
 	 */
 	async editValue(code, value) {
 		await this.db.query("UPDATE `" + DB_PREFIX + "statistics` SET `value` = '" + value + "' WHERE `code` = " + this.db.escape(code) + "");
-	}	
+	}
 }

@@ -1,4 +1,4 @@
-module.exports = class MenuController extends Controller {
+module.exports = class Menu extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return string
 	 */

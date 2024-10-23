@@ -1,16 +1,9 @@
-<?php
-namespace Opencart\Catalog\Controller\Api\Sale;
-/**
- *
- *
- * @package Opencart\Catalog\Controller\Api\Sale
- */
-class CartController extends Controller {
+module.exports = class Cart extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */
 	async index() {
-const data ={};
+		const data = {};
 		await this.load.language('api/sale/cart');
 
 		const json = {};
@@ -24,7 +17,7 @@ const data ={};
 		taxes = await this.cart.getTaxes();
 		total = 0;
 
-		this.load.model('checkout/cart',this);
+		this.load.model('checkout/cart', this);
 
 		(await this.model_checkout_cart.getTotals)(totals, taxes, total);
 
@@ -58,40 +51,40 @@ const data ={};
 			}
 
 			json['products'].push({
-				'cart_id'      : product['cart_id'],
-				'product_id'   : product['product_id'],
-				'name'         : product['name'],
-				'model'        : product['model'],
-				'option'       : product['option'],
-				'subscription' : description,
-				'quantity'     : product['quantity'],
-				'stock'        : product['stock'],
-				'minimum'      : product['minimum'],
-				'reward'       : product['reward'],
-				'price'        : this.currency.format(this.tax.calculate(product['price'], product['tax_class_id'], Number(Number(this.config.get('config_tax')))), this.session.data['currency']),
-				'total'        : this.currency.format(this.tax.calculate(product['price'], product['tax_class_id'], Number(Number(this.config.get('config_tax')))) * product['quantity'], this.session.data['currency']),
-			];
+				'cart_id': product['cart_id'],
+				'product_id': product['product_id'],
+				'name': product['name'],
+				'model': product['model'],
+				'option': product['option'],
+				'subscription': description,
+				'quantity': product['quantity'],
+				'stock': product['stock'],
+				'minimum': product['minimum'],
+				'reward': product['reward'],
+				'price': this.currency.format(this.tax.calculate(product['price'], product['tax_class_id'], Number(Number(this.config.get('config_tax')))), this.session.data['currency']),
+				'total': this.currency.format(this.tax.calculate(product['price'], product['tax_class_id'], Number(Number(this.config.get('config_tax')))) * product['quantity'], this.session.data['currency']),
+			});
 		}
 
 		json['vouchers'] = [];
 
 		vouchers = await this.model_checkout_cart.getVouchers();
 
-		for (let [key , voucher] of Object.entries(vouchers)) {
+		for (let [key, voucher] of Object.entries(vouchers)) {
 			json['vouchers'].push({
-				'key'         : key,
-				'description' : sprintf(this.language.get('text_for'), this.currency.format(voucher['amount'], this.session.data['currency']), voucher['to_name']),
-				'amount'      : this.currency.format(voucher['amount'], this.session.data['currency'])
-			];
+				'key': key,
+				'description': sprintf(this.language.get('text_for'), this.currency.format(voucher['amount'], this.session.data['currency']), voucher['to_name']),
+				'amount': this.currency.format(voucher['amount'], this.session.data['currency'])
+			});
 		}
 
 		json['totals'] = [];
 
 		for (let total of totals) {
 			json['totals'].push({
-				'title' : total['title'],
-				'text'  : this.currency.format(total['value'], this.session.data['currency'])
-			];
+				'title': total['title'],
+				'text': this.currency.format(total['value'], this.session.data['currency'])
+			});
 		}
 
 		json['shipping_required'] = await this.cart.hasShipping();
@@ -132,7 +125,7 @@ const data ={};
 			subscription_plan_id = 0;
 		}
 
-		this.load.model('catalog/product',this);
+		this.load.model('catalog/product', this);
 
 		const product_info = await this.model_catalog_product.getProduct(product_id);
 
@@ -143,8 +136,8 @@ const data ={};
 			}
 
 			// Merge variant code with options
-			for (let [key , value] of 
- Object.entries(product_info['variant'])) {
+			for (let [key, value] of
+				Object.entries(product_info['variant'])) {
 				option[key] = value;
 			}
 
@@ -164,7 +157,7 @@ const data ={};
 				subscription_plan_ids = [];
 
 				for (let subscription of subscriptions) {
-					subscription_plan_ids.push(subscription['subscription_plan_id'];
+					subscription_plan_ids.push(subscription['subscription_plan_id']);
 				}
 
 				if (!in_array(subscription_plan_id, subscription_plan_ids)) {

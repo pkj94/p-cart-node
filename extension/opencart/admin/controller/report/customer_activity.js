@@ -2,7 +2,7 @@ const sprintf = require("locutus/php/strings/sprintf");
 const str_replace = require("locutus/php/strings/str_replace");
 const vsprintf = require("locutus/php/strings/vsprintf");
 
-module.exports = class CustomerActivityReportController extends Controller {
+global['\Opencart\Admin\Controller\Extension\Opencart\Report\CustomerActivity'] = class CustomerActivity extends global['\Opencart\System\Engine\Controller'] {
 	constructor(registry) {
 		super(registry)
 	}

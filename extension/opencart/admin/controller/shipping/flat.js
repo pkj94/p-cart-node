@@ -1,4 +1,4 @@
-module.exports = class FlatShippingController extends Controller {
+global['\Opencart\Admin\Controller\Extension\Opencart\Shipping\Flat'] = class Flat extends global['\Opencart\System\Engine\Controller'] {
 	constructor(registry) {
 		super(registry)
 	}

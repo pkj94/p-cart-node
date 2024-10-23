@@ -1,4 +1,4 @@
-module.exports = class SeoUrlController extends Controller {
+module.exports = class SeoUrl extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */

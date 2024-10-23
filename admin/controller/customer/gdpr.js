@@ -1,7 +1,7 @@
 const strtotime = require("locutus/php/datetime/strtotime");
 const sprintf = require("locutus/php/strings/sprintf");
 
-module.exports = class GdprController extends Controller {
+module.exports = class GdprController extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */

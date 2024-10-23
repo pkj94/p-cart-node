@@ -1,9 +1,6 @@
-const axios = require("axios");
 const timeFun = require("locutus/php/datetime/time");
 const expressPath = require('path');
-const fs = require('fs');
-
-module.exports = class MarketplaceMarketplaceController extends Controller {
+module.exports = class MarketplaceMarketplaceController extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */
@@ -139,7 +136,8 @@ module.exports = class MarketplaceMarketplaceController extends Controller {
 		if ((this.request.get['page'])) {
 			url += '&page=' + this.request.get['page'];
 		}
-		let curl = await axios.get(OPENCART_SERVER + 'index.php?route=api/marketplace' + url);
+		console.log('test----')
+		let curl = await require("axios").get(OPENCART_SERVER + 'index.php?route=api/marketplace' + url);
 
 		let response = curl.data;
 
@@ -529,7 +527,7 @@ module.exports = class MarketplaceMarketplaceController extends Controller {
 		url += '&time=' + time;
 		url += '&signature=' + encodeURIComponent(signature);
 
-		let curl = await axios.post(OPENCART_SERVER + 'index.php?route=api/marketplace/info' + url);
+		let curl = await require("axios").post(OPENCART_SERVER + 'index.php?route=api/marketplace/info' + url);
 		let response = curl.data;
 		let status = curl.status;
 		let response_info = response;
@@ -654,7 +652,7 @@ module.exports = class MarketplaceMarketplaceController extends Controller {
 
 			return null;
 		} else {
-			return new Action('error/not_found');
+			return new global['\Opencart\System\Engine\Action']('error/not_found');
 		}
 	}
 
@@ -766,7 +764,7 @@ module.exports = class MarketplaceMarketplaceController extends Controller {
 			url += '&time=' + time;
 			url += '&signature=' + encodeURIComponent(signature);
 
-			let curl = await axios.post(OPENCART_SERVER + 'index.php?route=api/marketplace/purchase' + url);
+			let curl = await require("axios").post(OPENCART_SERVER + 'index.php?route=api/marketplace/purchase' + url);
 
 			let response = curl.data;
 
@@ -835,7 +833,7 @@ module.exports = class MarketplaceMarketplaceController extends Controller {
 			url += '&time=' + time;
 			url += '&signature=' + encodeURIComponent(signature);
 
-			let curl = await axios.get(OPENCART_SERVER + 'index.php?route=api/marketplace/download&extension_download_id=' + extension_download_id + url);
+			let curl = await require("axios").get(OPENCART_SERVER + 'index.php?route=api/marketplace/download&extension_download_id=' + extension_download_id + url);
 
 			let response = curl.data;
 
@@ -921,7 +919,7 @@ module.exports = class MarketplaceMarketplaceController extends Controller {
 			url += '&time=' + time;
 			url += '&signature=' + encodeURIComponent(signature);
 
-			let curl = await axios.post(OPENCART_SERVER + 'index.php?route=api/marketplace/addcomment&extension_id=' + extension_id + url, { comment: this.request.post['comment'] });
+			let curl = await require("axios").post(OPENCART_SERVER + 'index.php?route=api/marketplace/addcomment&extension_id=' + extension_id + url, { comment: this.request.post['comment'] });
 			let response = curl.data;
 			let response_info = response;
 
@@ -957,7 +955,7 @@ module.exports = class MarketplaceMarketplaceController extends Controller {
 		data['button_more'] = this.language.get('button_more');
 		data['button_reply'] = this.language.get('button_reply');
 
-		let curl = await axios.get(OPENCART_SERVER + 'index.php?route=api/marketplace/comment&extension_id=' + extension_id + '&page=' + page);
+		let curl = await require("axios").get(OPENCART_SERVER + 'index.php?route=api/marketplace/comment&extension_id=' + extension_id + '&page=' + page);
 
 		let response = curl.data;
 
@@ -1022,7 +1020,7 @@ module.exports = class MarketplaceMarketplaceController extends Controller {
 			page = Number(this.request.get['page']);
 		}
 
-		let curl = await axios.get(OPENCART_SERVER + 'index.php?route=api/marketplace/comment&extension_id=' + extension_id + '&parent_id=' + parent_id + '&page=' + page);
+		let curl = await require("axios").get(OPENCART_SERVER + 'index.php?route=api/marketplace/comment&extension_id=' + extension_id + '&parent_id=' + parent_id + '&page=' + page);
 		let response = curl.data;
 
 		let json = JSON.parse(response);

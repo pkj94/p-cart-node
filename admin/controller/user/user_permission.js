@@ -1,7 +1,7 @@
 const sprintf = require("locutus/php/strings/sprintf");
-const fs = require('fs');
+
 const { error } = require("console");
-module.exports = class UserPermissionController extends Controller {
+module.exports = class UserPermissionController extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */

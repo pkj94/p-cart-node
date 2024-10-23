@@ -3,7 +3,7 @@
  *
  * @package Opencart\Admin\Controller\Extension\Opencart\Dashboard
  */
-module.exports = class OnlineDashboardController extends Controller {
+global['\Opencart\Admin\Controller\Extension\Opencart\Dashboard\Online'] = class Online extends global['\Opencart\System\Engine\Controller'] {
 	constructor(registry) {
 		super(registry)
 	}

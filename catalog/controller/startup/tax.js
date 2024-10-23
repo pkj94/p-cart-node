@@ -1,4 +1,4 @@
-module.exports = class TaxController extends Controller {
+module.exports = class Tax extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */

@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Catalog\Controller\Mail;
-/**
- *
- *
- * @package Opencart\Catalog\Controller\Mail
- */
-class SubscriptionController extends Controller {
+module.exports = class Subscription extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @param string route
 	 * @param  args
@@ -13,7 +6,7 @@ class SubscriptionController extends Controller {
 	 *
 	 * @return void
 	 */
-	async index(&route, args, &output) {
+	async index(route, args, output) {
 		if ((args[0])) {
 			subscription_id = args[0];
 		} else {
@@ -191,7 +184,7 @@ class SubscriptionController extends Controller {
 									// Add language vars to the template folder
 									const results = this.language.all('mail');
 
-									for (results as key : value) {
+									for (let [key , value] of Object.entries(results)) {
 										data[key] = value;
 									}
 
@@ -228,11 +221,11 @@ class SubscriptionController extends Controller {
 
 									order_totals = await this.model_checkout_order.getTotals(subscription['order_id']);
 
-									for (order_totals as order_total) {
+									for (let order_total of order_totals) {
 										data['totals'].push({
 											'title' : order_total['title'],
 											'text' : this.currency.format(order_total['value'], order_info['currency_code'], order_info['currency_value']),
-										];
+										});
 									}
 
 									// Subscription
@@ -347,16 +340,16 @@ class SubscriptionController extends Controller {
 
 									// Mail
 									if (this.config.get('config_mail_engine')) {
-										mail_option = [
+										let mail_option = {
 											'parameter' : this.config.get('config_mail_parameter'),
 											'smtp_hostname' : this.config.get('config_mail_smtp_hostname'),
 											'smtp_username' : this.config.get('config_mail_smtp_username'),
 											'smtp_password' : html_entity_decode(this.config.get('config_mail_smtp_password')),
 											'smtp_port' : this.config.get('config_mail_smtp_port'),
 											'smtp_timeout' : this.config.get('config_mail_smtp_timeout')
-										];
+										};
 
-										mail = new MailLibrary(this.config.get('config_mail_engine'), mail_option);
+										const mail = new global['\Opencart\System\Library\Mail'](this.config.get('config_mail_engine'), mail_option);
 										mail.setTo(order_info['email']);
 										mail.setFrom(from);
 										mail.setSender(store_name);

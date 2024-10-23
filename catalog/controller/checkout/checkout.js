@@ -1,9 +1,9 @@
-module.exports = class CheckoutController extends Controller {
+module.exports = class Checkout extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */
 	async index() {
-const data ={};
+		const data = {};
 		// Validate cart has products and has stock+
 		if ((!await this.cart.hasProducts() && empty(this.session.data['vouchers'])) || (!await this.cart.hasStock() && !Number(this.config.get('config_stock_checkout')))) {
 			this.response.setRedirect(await this.url.link('checkout/cart', 'language=' + this.config.get('config_language')));
@@ -27,19 +27,19 @@ const data ={};
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/home', 'language=' + this.config.get('config_language'))
-		];
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/home', 'language=' + this.config.get('config_language'))
+		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_cart'),
-			'href' : await this.url.link('checkout/cart', 'language=' + this.config.get('config_language'))
-		];
+			'text': this.language.get('text_cart'),
+			'href': await this.url.link('checkout/cart', 'language=' + this.config.get('config_language'))
+		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('checkout/checkout', 'language=' + this.config.get('config_language'))
-		];
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('checkout/checkout', 'language=' + this.config.get('config_language'))
+		});
 
 		if (!await this.customer.isLogged()) {
 			data['register'] = await this.load.controller('checkout/register');
@@ -55,13 +55,13 @@ const data ={};
 
 		if (await this.customer.isLogged() && this.cart.hasShipping()) {
 			data['shipping_address'] = await this.load.controller('checkout/shipping_address');
-		}  else {
+		} else {
 			data['shipping_address'] = '';
 		}
 
 		if (await this.cart.hasShipping()) {
 			data['shipping_method'] = await this.load.controller('checkout/shipping_method');
-		}  else {
+		} else {
 			data['shipping_method'] = '';
 		}
 

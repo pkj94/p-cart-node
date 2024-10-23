@@ -1,12 +1,9 @@
 module.exports = class TemplateLibrary {
     constructor(adaptor) {
-        if (adaptor) {
-            const AdaptorClass = require(`./template/${adaptor}`);
-            if (AdaptorClass) {
-                this.adaptor = new AdaptorClass();
-            } else {
-                throw new Error(`Error: Could not load template adaptor ${adaptor}!`);
-            }
+        let className = 'Opencart\System\Library\Template' + ucfirst(adaptor);
+
+        if (global[className]) {
+            this.adaptor = new global[className]();
         } else {
             throw new Error(`Error: Could not load template adaptor ${adaptor}!`);
         }

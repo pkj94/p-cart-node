@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Catalog\Controller\Error;
-/**
- *
- *
- * @package Opencart\Catalog\Controller\Error
- */
-class ExceptionController extends Controller {
+module.exports = class Exception extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @param string message
 	 * @param string code
@@ -24,12 +17,12 @@ class ExceptionController extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
-		];
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('error/exception', 'user_token=' + this.session.data['user_token'])
-		];
+		});
 
 		data['header'] = await this.load.controller('common/header');
 		data['column_left'] = await this.load.controller('common/column_left');

@@ -1,4 +1,4 @@
-module.exports = class EventSettingModel extends Model {
+module.exports = class EventSettingModel extends global['\Opencart\System\Engine\Model'] {
     constructor(registry) {
         super(registry);
     }

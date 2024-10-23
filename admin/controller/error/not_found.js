@@ -1,11 +1,4 @@
-<?php
-namespace Opencart\Admin\Controller\Error;
-/**
- * 
- *
- * @package Opencart\Admin\Controller\Error
- */
-class NotFoundController extends Controller {
+module.exports = class NotFoundController extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */

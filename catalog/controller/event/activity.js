@@ -1,4 +1,4 @@
-module.exports = class ActivityController extends Controller {
+module.exports = class Activity extends global['\Opencart\System\Engine\Controller'] {
 	// catalog/model/account/customer/addCustomer/after
 	/**
 	 * @param string route

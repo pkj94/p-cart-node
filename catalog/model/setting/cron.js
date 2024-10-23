@@ -1,4 +1,4 @@
-module.exports =class CronModel extends Model {
+module.exports = class Cron extends global['\Opencart\System\Engine\Model'] {
 	/**
 	 * @param cron_id
 	 *
@@ -14,7 +14,7 @@ module.exports =class CronModel extends Model {
 	 *
 	 * @return void
 	 */
-	async editStatus(cron_id, bool status) {
+	async editStatus(cron_id, status) {
 		await this.db.query("UPDATE `" + DB_PREFIX + "cron` SET `status` = '" + status + "' WHERE `cron_id` = '" + cron_id + "'");
 	}
 

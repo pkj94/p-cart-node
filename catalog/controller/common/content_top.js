@@ -1,4 +1,4 @@
-module.exports = class ContentTopController extends Controller {
+module.exports = class ContentTop extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return string
 	 */
@@ -17,9 +17,9 @@ module.exports = class ContentTopController extends Controller {
 
 			let path = (Array.isArray(this.request.get['path']) ? this.request.get['path'][this.request.get['path'].length - 1] : this.request.get['path']).split('_');
 
-			layout_id = await this.model_catalog_category.getLayoutId(path[path.length-1]);
+			layout_id = await this.model_catalog_category.getLayoutId(path[path.length - 1]);
 		}
-		
+
 		if (route == 'product/product' && (this.request.get['product_id'])) {
 			this.load.model('catalog/product', this);
 
@@ -70,9 +70,9 @@ module.exports = class ContentTopController extends Controller {
 			}
 			if ((part[2])) {
 				const setting_info = await this.model_setting_module.getModule(part[2]);
+				
 				if (setting_info.name && Number(setting_info['status'])) {
 					const output = await this.load.controller('extension/' + part[0] + '/module/' + part[1], setting_info);
-					
 
 					if (output.length) {
 						data['modules'].push(output);

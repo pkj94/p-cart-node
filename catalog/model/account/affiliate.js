@@ -1,4 +1,4 @@
-module.exports =class AffiliateModel extends Model {
+module.exports =class Affiliate extends global['\Opencart\System\Engine\Model'] {
 	/**
 	 * @param   customer_id
 	 * @param data

@@ -1,7 +1,7 @@
 const nl2br = require("locutus/php/strings/nl2br");
 const sprintf = require("locutus/php/strings/sprintf");
 
-module.exports = class AddressFormatController extends Controller {
+module.exports = class AddressFormatController extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */

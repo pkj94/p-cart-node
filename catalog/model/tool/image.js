@@ -1,8 +1,8 @@
-const fs = require('fs');
+
 const sharp = require('sharp');
 const ico = require("sharp-ico");
 const expressPath = require('path');
-module.exports = class ImageToolModel extends Model {
+module.exports = class ImageTool extends global['\Opencart\System\Engine\Model'] {
 	constructor(registry) {
 		super(registry)
 	}

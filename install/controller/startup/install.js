@@ -1,14 +1,14 @@
-const fs = require('fs');
+
 const path = require('path');
-module.exports = class Install extends Controller {
+global['\Opencart\Install\Controller\Startup\Install'] = class Install extends global['\Opencart\System\Engine\Controller'] {
     constructor(registry) {
         super(registry)
     }
     async index() {
         // Document
-        this.registry.set('document', new DocumentLibrary(HTTP_SERVER));
+        this.registry.set('document', new global['\Opencart\System\Library\Document'](HTTP_SERVER));
         // URL
-        this.registry.set('url', new UrlLibrary(HTTP_SERVER));
+        this.registry.set('url', new global['\Opencart\System\Library\Url'](HTTP_SERVER));
         // Language
         if (this.request && this.request.get.language && this.request.get.language !== this.config.get('language_code')) {
             const languageData = [];
@@ -24,7 +24,7 @@ module.exports = class Install extends Controller {
                 this.config.set('language_code', this.request.get.language);
             }
         }
-        const language = new LanguageLibrary(this.config.get('language_code'));
+        const language = new global['\Opencart\System\Library\Language'](this.config.get('language_code'));
         language.addPath(DIR_LANGUAGE);
         await language.load(this.config.get('language_code'));
         this.registry.set('language', language);

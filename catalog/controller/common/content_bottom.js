@@ -1,4 +1,4 @@
-module.exports = class ContentBottomController extends Controller {
+module.exports = class ContentBottom extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return string
 	 */

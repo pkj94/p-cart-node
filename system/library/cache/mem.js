@@ -1,6 +1,6 @@
-const memcache = require('memcache');
 module.exports = class CacheMemLibrary {
     constructor(expire = 3600) {
+        const memcache = require('memcache');
         this.expire = expire;
         this.memcache = new memcache.Client();
         this.memcache.connect(CACHE_HOSTNAME, CACHE_PORT, (err) => {

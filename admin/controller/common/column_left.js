@@ -1,4 +1,4 @@
-module.exports = class ColumnLeftCommonController extends Controller {
+module.exports = class ColumnLeftCommonController extends global['\Opencart\System\Engine\Controller'] {
     constructor(registry) {
         super(registry);
     }

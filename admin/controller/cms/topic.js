@@ -1,15 +1,12 @@
-<?php
-namespace Opencart\Admin\Controller\Cms;
-/**
- * 
- *
- * @package Opencart\Admin\Controller\Cms
- */
-class TopicController extends Controller {
+const sprintf = require("locutus/php/strings/sprintf");
+const trim = require("locutus/php/strings/trim");
+
+module.exports = class TopicController extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */
 	async index() {
+		const data = {};
 		await this.load.language('cms/topic');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -31,13 +28,13 @@ class TopicController extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('cms/topic', 'user_token=' + this.session.data['user_token'] + url)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('cms/topic', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
 		data['add'] = await this.url.link('cms/topic.form', 'user_token=' + this.session.data['user_token'] + url);
@@ -67,15 +64,14 @@ class TopicController extends Controller {
 	 * @return string
 	 */
 	async getList() {
+		const data = {};
+		let sort = 't.sort_order';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
-		} else {
-			sort = 't.sort_order';
 		}
-
-		let order= 'ASC';
+		let order = 'ASC';
 		if ((this.request.get['order'])) {
-			order= this.request.get['order'];
+			order = this.request.get['order'];
 		}
 
 		let page = 1;
@@ -102,29 +98,29 @@ class TopicController extends Controller {
 		data['topics'] = [];
 
 		let filter_data = {
-			'sort'  : sort,
-			'order' : order,
-			'start' : (page - 1) * Number(this.config.get('config_pagination_admin')),
-			'limit' : this.config.get('config_pagination_admin')
-		});
+			'sort': sort,
+			'order': order,
+			'start': (page - 1) * Number(this.config.get('config_pagination_admin')),
+			'limit': this.config.get('config_pagination_admin')
+		};
 
-		this.load.model('cms/topic');
+		this.load.model('cms/topic', this);
 
-		topic_total await this.model_cms_topic.getTotalTopics();
+		const topic_total = await this.model_cms_topic.getTotalTopics();
 
 		const results = await this.model_cms_topic.getTopics(filter_data);
 
 		for (let result of results) {
 			data['topics'].push({
-				'topic_id'   : result['topic_id'],
-				'name'       : result['name'],
-				'status'     : result['status'],
-				'sort_order' : result['sort_order'],
-				'edit'       : await this.url.link('cms/topic.form', 'user_token=' + this.session.data['user_token'] + '&topic_id=' + result['topic_id'] + url)
-			];
+				'topic_id': result['topic_id'],
+				'name': result['name'],
+				'status': result['status'],
+				'sort_order': result['sort_order'],
+				'edit': await this.url.link('cms/topic.form', 'user_token=' + this.session.data['user_token'] + '&topic_id=' + result['topic_id'] + url)
+			});
 		}
 
-		let url = '';
+		url = '';
 
 		if (order == 'ASC') {
 			url += '&order=DESC';
@@ -135,7 +131,7 @@ class TopicController extends Controller {
 		data['sort_name'] = await this.url.link('cms/topic.list', 'user_token=' + this.session.data['user_token'] + '&sort=bcd.name' + url);
 		data['sort_sort_order'] = await this.url.link('cms/topic.list', 'user_token=' + this.session.data['user_token'] + '&sort=bc.sort_order' + url);
 
-		let url = '';
+		url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -146,11 +142,11 @@ class TopicController extends Controller {
 		}
 
 		data['pagination'] = await this.load.controller('common/pagination', {
-			'total' : topic_total,
-			'page'  : page,
-			'limit' : this.config.get('config_pagination_admin'),
-			'url'   : await this.url.link('cms/topic.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
-		]);
+			'total': topic_total,
+			'page': page,
+			'limit': this.config.get('config_pagination_admin'),
+			'url': await this.url.link('cms/topic.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
+		});
 
 		data['results'] = sprintf(this.language.get('text_pagination'), (topic_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (topic_total - this.config.get('config_pagination_admin'))) ? topic_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), topic_total, Math.ceil(topic_total / this.config.get('config_pagination_admin')));
 
@@ -164,11 +160,12 @@ class TopicController extends Controller {
 	 * @return void
 	 */
 	async form() {
+		const data = {};
 		await this.load.language('cms/topic');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		
+
 
 		data['text_form'] = !(this.request.get['topic_id']) ? this.language.get('text_add') : this.language.get('text_edit');
 
@@ -189,22 +186,22 @@ class TopicController extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('cms/topic', 'user_token=' + this.session.data['user_token'] + url)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('cms/topic', 'user_token=' + this.session.data['user_token'] + url)
 		});
 
 		data['save'] = await this.url.link('cms/topic.save', 'user_token=' + this.session.data['user_token']);
 		data['back'] = await this.url.link('cms/topic', 'user_token=' + this.session.data['user_token'] + url);
-
+		let topic_info;
 		if ((this.request.get['topic_id'])) {
-			this.load.model('cms/topic');
+			this.load.model('cms/topic', this);
 
-			topic_info await this.model_cms_topic.getTopic(this.request.get['topic_id']);
+			topic_info = await this.model_cms_topic.getTopic(this.request.get['topic_id']);
 		}
 
 		if ((this.request.get['topic_id'])) {
@@ -213,11 +210,11 @@ class TopicController extends Controller {
 			data['topic_id'] = 0;
 		}
 
-		this.load.model('localisation/language',this);
+		this.load.model('localisation/language', this);
 
 		data['languages'] = await this.model_localisation_language.getLanguages();
 
-		this.load.model('tool/image',this);
+		this.load.model('tool/image', this);
 
 		data['placeholder'] = await this.model_tool_image.resize('no_image.png', 100, 100);
 
@@ -226,10 +223,10 @@ class TopicController extends Controller {
 		if ((this.request.get['topic_id'])) {
 			const results = await this.model_cms_topic.getDescriptions(this.request.get['topic_id']);
 
-			for (results of key : result) {
+			for (let [key, result] of Object.entries(results)) {
 				data['topic_description'][key] = result;
 
-				if (is_file(DIR_IMAGE + html_entity_decode(result['image']))) {
+				if (result['image'] && findSeries.existSync(DIR_IMAGE + html_entity_decode(result['image']))) {
 					data['topic_description'][key]['thumb'] = await this.model_tool_image.resize(html_entity_decode(result['image']), 100, 100);
 				} else {
 					data['topic_description'][key]['thumb'] = data['placeholder'];
@@ -240,19 +237,19 @@ class TopicController extends Controller {
 		data['stores'] = [];
 
 		data['stores'].push({
-			'store_id' : 0,
-			'name'     : this.language.get('text_default')
+			'store_id': 0,
+			'name': this.language.get('text_default')
 		});
 
-		this.load.model('setting/store',this);
+		this.load.model('setting/store', this);
 
 		let stores = await this.model_setting_store.getStores();
 
 		for (let store of stores) {
 			data['stores'].push({
-				'store_id' : store['store_id'],
-				'name'     : store['name']
-			];
+				'store_id': store['store_id'],
+				'name': store['name']
+			});
 		}
 
 		if ((this.request.get['topic_id'])) {
@@ -300,7 +297,8 @@ class TopicController extends Controller {
 			json['error']['warning'] = this.language.get('error_permission');
 		}
 
-		for (this.request.post['topic_description'] of language_id : value) {
+		for (let [language_id, value] of Object.entries(this.request.post['topic_description'])) {
+			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 			if ((oc_strlen(trim(value['name'])) < 1) || (oc_strlen(value['name']) > 255)) {
 				json['error']['name_' + language_id] = this.language.get('error_name');
 			}
@@ -311,10 +309,12 @@ class TopicController extends Controller {
 		}
 
 		if (this.request.post['topic_seo_url']) {
-			this.load.model('design/seo_url',this);
+			this.load.model('design/seo_url', this);
 
-			for (this.request.post['topic_seo_url'] of store_id : language) {
-				for (let [language_id , keyword] of language ) {
+			for (let [store_id, language] of Object.entries(this.request.post['topic_seo_url'])) {
+				store_id = store_id.indexOf('store') >= 0 ? store_id.split('-')[1] : store_id;
+
+				for (let [language_id, keyword] of Object.entries(language)) {
 					language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 					if ((oc_strlen(trim(keyword)) < 1) || (oc_strlen(keyword) > 64)) {
 						json['error']['keyword_' + store_id + '_' + language_id] = this.language.get('error_keyword');
@@ -324,7 +324,7 @@ class TopicController extends Controller {
 						json['error']['keyword_' + store_id + '_' + language_id] = this.language.get('error_keyword_character');
 					}
 
-					let seo_url_info =  await this.model_design_seo_url.getSeoUrlByKeyword(keyword, store_id);
+					let seo_url_info = await this.model_design_seo_url.getSeoUrlByKeyword(keyword, store_id);
 
 					if (seo_url_info.key && (!(this.request.post['topic_id']) || seo_url_info['key'] != 'topic_id' || seo_url_info['value'] != this.request.post['topic_id'])) {
 						json['error']['keyword_' + store_id + '_' + language_id] = this.language.get('error_keyword_exists');
@@ -338,7 +338,7 @@ class TopicController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('cms/topic');
+			this.load.model('cms/topic', this);
 
 			if (!this.request.post['topic_id']) {
 				json['topic_id'] = await this.model_cms_topic.addTopic(this.request.post);
@@ -362,7 +362,7 @@ class TopicController extends Controller {
 		const json = {};
 
 		let selected = [];
-                 if ((this.request.post['selected'])) {
+		if ((this.request.post['selected'])) {
 			selected = this.request.post['selected'];
 		}
 
@@ -371,9 +371,9 @@ class TopicController extends Controller {
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('cms/topic');
+			this.load.model('cms/topic', this);
 
-			for (selected of topic_id) {
+			for (let topic_id of selected) {
 				await this.model_cms_topic.deleteTopic(topic_id);
 			}
 

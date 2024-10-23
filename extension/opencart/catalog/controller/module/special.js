@@ -1,7 +1,7 @@
 const strip_tags = require("locutus/php/strings/strip_tags");
 const trim = require("locutus/php/strings/trim");
 
-module.exports = class SpecialController extends Controller {
+global['\Opencart\Catalog\Controller\Extension\Opencart\Module\Special'] = class Special extends global['\Opencart\System\Engine\Controller'] {
 	constructor(registry) {
 		super(registry)
 	}

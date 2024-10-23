@@ -1,7 +1,7 @@
 const mktime = require("locutus/php/datetime/mktime");
 const strtotime = require("locutus/php/datetime/strtotime");
 
-module.exports = class ChartDashboardController extends Controller {
+global['\Opencart\Admin\Controller\Extension\Opencart\Dashboard\Chart'] = class Chart extends global['\Opencart\System\Engine\Controller'] {
 	constructor(registry) {
 		super(registry)
 	}

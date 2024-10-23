@@ -1,4 +1,4 @@
-module.exports =class CustomerGroupModel extends Model {
+module.exports =class CustomerGroup extends global['\Opencart\System\Engine\Model'] {
 	/**
 	 * @param customer_group_id
 	 *

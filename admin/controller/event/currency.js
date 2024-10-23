@@ -1,4 +1,4 @@
-module.exports = class CurrencyController extends Controller {
+module.exports = class CurrencyController extends global['\Opencart\System\Engine\Controller'] {
     constructor(registry) {
         super(registry)
     }
@@ -15,8 +15,8 @@ module.exports = class CurrencyController extends Controller {
         this.load.model('setting/extension', this);
         const extension_info = await this.model_setting_extension.getExtensionByCode('currency', this.config.get('config_currency_engine'));
 
-        if (extension_info) {
-            await this.load.controller('extension/' + extension_info['extension'] + '/currency/' + extension_info['code'] + '.currency', currency);
+        if (extension_info.extension_id) {
+            await this.load.controller('extension/' + extension_info['extension'] + '/currency/' + extension_info['code'] + '.currencyConvert', currency);
         }
     }
 }

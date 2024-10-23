@@ -1,4 +1,4 @@
-module.exports = class WeightClassLocalisationModel extends Model {
+module.exports = class WeightClassLocalisationModel extends global['\Opencart\System\Engine\Model'] {
 	constructor(registry) {
 		super(registry);
 	}

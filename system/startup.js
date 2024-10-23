@@ -61,6 +61,7 @@ if (process.env.HTTP_X_FORWARDED_FOR) {
 // dotenv.config({ path: path.join(__dirname, 'config.env') });
 
 // Autoloader equivalent in Node.js
-require('./engine/autoloader');
-global.Config = require('./engine/config');
 require('./helper/general');
+
+require('./engine/autoloader');
+require('./engine/config');

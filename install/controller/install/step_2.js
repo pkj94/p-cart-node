@@ -1,6 +1,6 @@
-const fs = require('fs');
 
-module.exports = class Step2 extends Controller {
+
+global['\Opencart\Install\Controller\Install\Step2'] = class Step2 extends global['\Opencart\System\Engine\Controller'] {
     constructor(registry) {
         super(registry);
         this.error = {};

@@ -1,5 +1,5 @@
 const sprintf = require('locutus/php/strings/sprintf')
-module.exports = class FooterController extends Controller {
+module.exports = class FooterController extends global['\Opencart\System\Engine\Controller'] {
     /**
      * @return string
      */

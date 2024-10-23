@@ -1,16 +1,9 @@
-<?php
-namespace Opencart\Catalog\Controller\Api\Sale;
-/**
- *
- *
- * @package Opencart\Catalog\Controller\Api\Sale
- */
-class ShippingAddressController extends Controller {
+module.exports = class ShippingAddress extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */
 	async index() {
-const data ={};
+		const data = {};
 		await this.load.language('api/sale/shipping_address');
 
 		const json = {};
@@ -51,7 +44,7 @@ const data ={};
 				json['error']['city'] = this.language.get('error_city');
 			}
 
-			this.load.model('localisation/country',this);
+			this.load.model('localisation/country', this);
 
 			const country_info = await this.model_localisation_country.getCountry(this.request.post['country_id']);
 
@@ -68,7 +61,7 @@ const data ={};
 			}
 
 			// Custom field validation
-			this.load.model('account/custom_field',this);
+			this.load.model('account/custom_field', this);
 
 			const custom_fields = await this.model_account_custom_field.getCustomFields(this.config.get('config_customer_group_id'));
 
@@ -98,7 +91,7 @@ const data ={};
 				address_format = '';
 			}
 
-			this.load.model('localisation/zone',this);
+			this.load.model('localisation/zone', this);
 
 			zone_info = await this.model_localisation_zone.getZone(this.request.post['zone_id']);
 
@@ -110,25 +103,25 @@ const data ={};
 				zone_code = '';
 			}
 
-			this.session.data['shipping_address'] = [
-				'address_id'     : this.request.post['shipping_address_id'],
-				'firstname'      : this.request.post['firstname'],
-				'lastname'       : this.request.post['lastname'],
-				'company'        : this.request.post['company'],
-				'address_1'      : this.request.post['address_1'],
-				'address_2'      : this.request.post['address_2'],
-				'postcode'       : this.request.post['postcode'],
-				'city'           : this.request.post['city'],
-				'zone_id'        : this.request.post['zone_id'],
-				'zone'           : zone,
-				'zone_code'      : zone_code,
-				'country_id'     : this.request.post['country_id'],
-				'country'        : country,
-				'iso_code_2'     : iso_code_2,
-				'iso_code_3'     : iso_code_3,
-				'address_format' : address_format,
-				'custom_field'   : (this.request.post['custom_field']) ? this.request.post['custom_field'] : []
-			];
+			this.session.data['shipping_address'] = {
+				'address_id': this.request.post['shipping_address_id'],
+				'firstname': this.request.post['firstname'],
+				'lastname': this.request.post['lastname'],
+				'company': this.request.post['company'],
+				'address_1': this.request.post['address_1'],
+				'address_2': this.request.post['address_2'],
+				'postcode': this.request.post['postcode'],
+				'city': this.request.post['city'],
+				'zone_id': this.request.post['zone_id'],
+				'zone': zone,
+				'zone_code': zone_code,
+				'country_id': this.request.post['country_id'],
+				'country': country,
+				'iso_code_2': iso_code_2,
+				'iso_code_3': iso_code_3,
+				'address_format': address_format,
+				'custom_field': (this.request.post['custom_field']) ? this.request.post['custom_field'] : []
+			};
 
 			json['success'] = this.language.get('text_success');
 		}

@@ -1,9 +1,9 @@
-module.exports=class PaymentMethodController extends Controller {
+module.exports = class PaymentMethod extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */
 	async index() {
-const data ={};
+		const data = {};
 		await this.load.language('account/payment_method');
 
 		if (!await this.customer.isLogged() || (!(this.request.get['customer_token']) || !(this.session.data['customer_token']) || (this.request.get['customer_token'] != this.session.data['customer_token']))) {
@@ -15,19 +15,19 @@ const data ={};
 		this.document.setTitle(this.language.get('heading_title'));
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/home', 'language=' + this.config.get('config_language'))
-		];
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/home', 'language=' + this.config.get('config_language'))
+		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_account'),
-			'href' : await this.url.link('account/account', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'])
-		];
+			'text': this.language.get('text_account'),
+			'href': await this.url.link('account/account', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'])
+		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('account/payment_method', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'])
-		];
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('account/payment_method', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'])
+		});
 
 		if ((this.session.data['success'])) {
 			data['success'] = this.session.data['success'];
@@ -78,7 +78,7 @@ const data ={};
 
 		this.load.model('account/payment_method');
 
-		this.load.model('setting/extension',this);
+		this.load.model('setting/extension', this);
 
 		const results = await this.model_setting_extension.getExtensionsByType('payment');
 
@@ -97,13 +97,13 @@ const data ={};
 
 		for (let result of results) {
 			data['payment_methods'].push({
-				'code'        : result['code'],
-				'name'        : result['name'],
-				'image'       : result['image'],
-				'type'        : result['type'],
-				'date_expire' : date('m-Y', new Date(result['date_expire'])),
-				'delete'      : await this.url.link('account/payment_method.delete', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'] + '&customer_payment_id=' + result['customer_payment_id'])
-			];
+				'code': result['code'],
+				'name': result['name'],
+				'image': result['image'],
+				'type': result['type'],
+				'date_expire': date('m-Y', new Date(result['date_expire'])),
+				'delete': await this.url.link('account/payment_method.delete', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'] + '&customer_payment_id=' + result['customer_payment_id'])
+			});
 		}
 
 		return await this.load.view('account/payment_method_list', data);
@@ -142,7 +142,7 @@ const data ={};
 		if (!Object.keys(json).length) {
 			this.load.model('extension/' + payment_method_info['extension'] + '/payment/' + payment_method_info['code']);
 
-			if (this.{'model_extension_' + payment_method_info['extension'] + '_payment_' + payment_method_info['code']}.delete(customer_payment_id)) {
+			if (this['model_extension_' + payment_method_info['extension'] + '_payment_' + payment_method_info['code']].delete(customer_payment_id)) {
 
 			}
 

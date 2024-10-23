@@ -1,4 +1,4 @@
-module.exports = class SessionLibrary {
+module.exports = class Session {
     constructor(session) {
         this.data = session || {};
         this.session = session;
