@@ -14,14 +14,14 @@ module.exports = class LanguageController extends global['\Opencart\System\Engin
             const data = this.language.all();
 
             if (data) {
-                this.language.set('backup', JSON.stringify(data));
+                this.language.set('backup', data);
             }
         }
     }
 
     after(route, args, output) {
         if (this.language) {
-            const data = JSON.parse(this.language.get('backup'));
+            const data = this.language.get('backup');
 
             if (Array.isArray(data)) {
                 this.language.clear();

@@ -23,7 +23,7 @@ module.exports = class AuthorizeController extends global['\Opencart\System\Engi
 			code = '';
 		}
 
-		if (email && code && (route == 'common/authorize.send') && filter_var(email, FILTER_VALIDATE_EMAIL)) {
+		if (email && code && (route == 'common/authorize.send') && isEmailValid(email)) {
 			await this.load.language('mail/authorize');
 
 			data['username'] = this.user.getUsername();
@@ -84,7 +84,7 @@ module.exports = class AuthorizeController extends global['\Opencart\System\Engi
 			code = '';
 		}
 
-		if (email && code && (route == 'common/authorize.confirm') && filter_var(email, FILTER_VALIDATE_EMAIL)) {
+		if (email && code && (route == 'common/authorize.confirm') && isEmailValid(email)) {
 			await this.load.language('mail/authorize_reset');
 
 			data['username'] = this.user.getUsername();

@@ -15,7 +15,7 @@ global['\Opencart\System\Engine\Action'] = class Action {
         return this.route;
     }
 
-    async execute(registry, args=[]) {
+    async execute(registry, args = []) {
         // Stop any magical methods being called
         if (this.method.startsWith('__')) {
             throw new Error('Error: Calls to magic methods are not allowed!');
@@ -27,17 +27,17 @@ global['\Opencart\System\Engine\Action'] = class Action {
         let controller, namespace;
         try {
             namespace = `Opencart${application}${this.class}`;
-            let ControllerClass = global[namespace];
             // console.log(namespace, this.method)
-            controller = new ControllerClass(registry);
+            controller = new global[namespace](registry);
+            if (typeof controller[this.method] === 'function') {
+                return controller[this.method](...args);
+            } else {
+                throw new Error(`Error: Could not call route ${this.route}!`);
+            }
         } catch (e) {
-            console.log(namespace, this)
+            console.log(namespace, this, e)
             throw new Error(`Error: Could not call route ${this.route}!`);
         }
-        if (typeof controller[this.method] === 'function') {
-            return controller[this.method](...args);
-        } else {
-            throw new Error(`Error: Could not call route ${this.route}!`);
-        }
+
     }
 }

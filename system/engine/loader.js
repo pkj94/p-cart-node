@@ -144,17 +144,17 @@ global['\Opencart\System\Engine\Loader'] = class Loader {
             resolve(output);
         });
     }
-    config(route) {
+    async config(route) {
         route = route.replace(/[^a-zA-Z0-9_\-\/]/g, '');
         let output = {};
-        let result = this.registry.get('event').trigger(`config/${route}/before`, [route]);
+        let result = await this.registry.get('event').trigger(`config/${route}/before`, [route]);
         if (result) {
             output = result;
         }
         if (Object.keys(output).length === 0) {
             output = this.config.load(route);
         }
-        result = this.registry.get('event').trigger(`config/${route}/after`, [route, output]);
+        result = await this.registry.get('event').trigger(`config/${route}/after`, [route, output]);
         if (result) {
             output = result;
         }

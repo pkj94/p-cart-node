@@ -142,7 +142,7 @@ module.exports = class Login extends global['\Opencart\System\Engine\Controller'
 			}
 		}
 
-		if (!Object.keys(json.error).length) {
+		if (!Object.keys(json.error).length && customer_info) {
 			// Add customer details into session
 			this.session.data['customer'] = {
 				'customer_id': customer_info['customer_id'],

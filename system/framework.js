@@ -11,27 +11,27 @@ module.exports = class Framework {
         global.registry = new (global['\Opencart\System\Engine\Registry'])();
         registry.set('autoloader', autoloader);
         global.config = new (global['\Opencart\System\Engine\Config'])();
-        registry.set('config', global.config);
-        global.config.addPath(DIR_CONFIG);
+        registry.set('config', config);
+        config.addPath(DIR_CONFIG);
         // Load the default config
-        await global.config.load('default');
-        await global.config.load(oc_strtolower(APPLICATION));
-        // console.log('config--', global.config)
+        await config.load('default');
+        await config.load(oc_strtolower(APPLICATION));
+        // console.log('config--', config)
 
         // Set the default application
-        global.config.set('application', APPLICATION);
+        config.set('application', APPLICATION);
         // Set the default time zone
-        let dateTimezone = global.config.get('date_timezone');
+        let dateTimezone = config.get('date_timezone');
         Intl.DateTimeFormat().resolvedOptions().timeZone = dateTimezone;
         // Logging
-        global.log = new global['\Opencart\System\Library\Log'](global.config.get('error_filename'));
-        registry.set('log', global.log);
+        global.log = new global['\Opencart\System\Library\Log'](config.get('error_filename'));
+        registry.set('log', log);
         // Event
         let event = new global['\Opencart\System\Engine\Event'](registry);
         registry.set('event', event);
         // Event Register
-        if (global.config.has('action_event')) {
-            let actionEvents = global.config.get('action_event');
+        if (config.has('action_event')) {
+            let actionEvents = config.get('action_event');
             for (let key in actionEvents) {
                 let value = actionEvents[key];
                 for (let priority in value) {
@@ -52,9 +52,9 @@ module.exports = class Framework {
             request.get['route'] = request.get['route'].replace('%7C', '|');
         }
         // Response
-        let response = new global['\Opencart\System\Library\Response'](res, req);
-        registry.set('response', response);
-        for (let header of global.config.get('response_header') || []) {
+        global.response = new global['\Opencart\System\Library\Response'](res, req);
+        // registry.set('response', response);
+        for (let header of config.get('response_header') || []) {
             response.addHeader(header);
         }
         response.addHeader('Access-Control-Allow-Origin: *');
@@ -64,49 +64,50 @@ module.exports = class Framework {
         response.addHeader('Access-Control-Allow-Methods: PUT, POST, GET, OPTIONS, DELETE');
         response.addHeader('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
         response.addHeader('Pragma: no-cache');
-        response.setCompression(global.config.get('response_compression'));
+        response.setCompression(config.get('response_compression'));
+        registry.set('response', response);
         // Database
-        if (global.config.get('db_autostart')) {
+        if (config.get('db_autostart')) {
             let db = new global['\Opencart\System\Library\Db'](config.get('db_engine'), config.get('db_hostname'), config.get('db_username'), config.get('db_password'), config.get('db_database'), config.get('db_port'), config.get('db_debug'));
             await db.connect();
             // console.log('db=--=', db)
             registry.set('db', db);
         }
         // Session
-        if (global.config.get('session_autostart')) {
+        if (config.get('session_autostart')) {
             let session = new global['\Opencart\System\Library\Session'](req.session);
             session.start(req.sessionID)
             registry.set('session', session);
 
         }
         // Cache
-        let cache = new global['\Opencart\System\Library\Cache'](global.config.get('cache_engine'), global.config.get('cache_expire'));
+        let cache = new global['\Opencart\System\Library\Cache'](config.get('cache_engine'), config.get('cache_expire'));
         registry.set('cache', cache);
         // Template
-        let template = new global['\Opencart\System\Library\Template'](global.config.get('template_engine'));
+        let template = new global['\Opencart\System\Library\Template'](config.get('template_engine'));
         registry.set('template', template);
-        // console.log('config template', global.config.get('template_engine'))
+        // console.log('config template', config.get('template_engine'))
         template.addPath(DIR_TEMPLATE);
         // Language
-        let language = new global['\Opencart\System\Library\Language'](global.config.get('language_code'));
+        let language = new global['\Opencart\System\Library\Language'](config.get('language_code'));
         language.addPath(DIR_LANGUAGE);
         await language.load('default');
         registry.set('language', language);
         // Url
-        // console.log("global.config.get('site_url')==================",global.config.get('site_url'))
-        registry.set('url', new global['\Opencart\System\Library\Url'](global.config.get('site_url')));
+        // console.log("config.get('site_url')==================",config.get('site_url'))
+        registry.set('url', new global['\Opencart\System\Library\Url'](config.get('site_url')));
         // Document
         registry.set('document', new global['\Opencart\System\Library\Document']());
         // Action error object to execute if any other actions cannot be executed.
         let action = '';
         let args = [];
         let output = '';
-        let error = new global['\Opencart\System\Engine\Action'](global.config.get('action_error'));
+        let error = new global['\Opencart\System\Engine\Action'](config.get('action_error'));
         // Pre Actions
-        // console.log('framework', global.config.get('action_pre_action'))
-        for (let pre_action of global.config.get('action_pre_action')) {
+        // console.log('framework', config.get('action_pre_action'))
+        for (let pre_action of config.get('action_pre_action')) {
             let preActionInstance = new global['\Opencart\System\Engine\Action'](pre_action);
-            let result = await preActionInstance.execute(global.registry);
+            let result = await preActionInstance.execute(registry);
             if (result instanceof global['\Opencart\System\Engine\Action']) {
                 action = result;
                 break;
@@ -124,7 +125,7 @@ module.exports = class Framework {
             if (request.get.route) {
                 action = new global['\Opencart\System\Engine\Action'](request.get.route);
             } else {
-                action = new global['\Opencart\System\Engine\Action'](global.config.get('action_default'));
+                action = new global['\Opencart\System\Engine\Action'](config.get('action_default'));
             }
         }
         // Dispatch
@@ -138,7 +139,7 @@ module.exports = class Framework {
                 action = result;
             }
             // Execute the action.
-            result = await action.execute(global.registry, args);
+            result = await action.execute(registry, args);
             action = '';
             if (result instanceof global['\Opencart\System\Engine\Action']) {
                 action = result;
@@ -160,10 +161,10 @@ module.exports = class Framework {
         }
         // Output
         // console.log('outputData', response.level)
-        // if (global.config.get('db_autostart')) {
+        // if (config.get('db_autostart')) {
         //     await registry.get('db').close();
         // }
-        // console.log(response.outputData)
+
         return response.output();
     }
 }

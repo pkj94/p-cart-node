@@ -3,6 +3,7 @@ module.exports = class Mail {
         let className = 'Opencart\System\Library\Mail' + ucfirst(adaptor);
 
         if (global[className]) {
+            this.option = option;
             this.adaptor = new global[className](option);
         } else {
             throw new Error(`Error: Could not load template adaptor ${adaptor}!`);

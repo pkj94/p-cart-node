@@ -1,3 +1,4 @@
+const Framework = require("../system/framework");
 
 module.exports = function () {
     const loadControllers = async (req, res, next) => {
@@ -20,6 +21,7 @@ module.exports = function () {
                     res.header(header.split(':')[0].trim(), header.split(':')[1].trim());
                 });
                 res.status(global.registry.get('response').status || 200).send(output);
+                console.log('request send---', new Date().toISOString())
             }
         }).catch(error => {
             // Error Handler

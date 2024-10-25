@@ -1,4 +1,7 @@
 module.exports = class Setting extends global['\Opencart\System\Engine\Controller'] {
+	constructor(registry) {
+		super(registry);
+	}
 	/**
 	 * @return void
 	 */

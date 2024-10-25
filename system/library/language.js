@@ -1,5 +1,4 @@
-
-module.exports = class LanguageLibrary {
+module.exports = class Language {
     constructor(code) {
         this.code = code;
         this.directory = '';
@@ -7,6 +6,7 @@ module.exports = class LanguageLibrary {
         this.data = {};
         this.cache = {};
     }
+
     addPath(namespace, directory = '') {
         if (!directory) {
             this.directory = namespace;
@@ -14,12 +14,15 @@ module.exports = class LanguageLibrary {
             this.path[namespace] = directory;
         }
     }
+
     get(key) {
-        return this.data[key] || key;
+        return this.data[key] !== undefined ? this.data[key] : key;
     }
+
     set(key, value) {
         this.data[key] = value;
     }
+
     all(prefix = '') {
         if (!prefix) {
             return this.data;
@@ -33,58 +36,50 @@ module.exports = class LanguageLibrary {
         }
         return result;
     }
+
     clear() {
         this.data = {};
     }
+
     load(filename, prefix = '', code = '') {
-        return new Promise((resolve, reject) => {
-            if (!code) {
-                code = this.code;
-            }
-            if (!this.cache[code]) {
-                this.cache[code] = {};
-            }
-            let fileContent = {};
-            if (!this.cache[code][filename]) {
-                const filePath = `${this.directory}${code}/${filename}.js`;
-                const namespaceParts = filename.split('/');
-                let namespace = '';
-                // console.log('namespaceParts-----', namespaceParts, namespace)
-                for (const part of namespaceParts) {
-                    if (!namespace) {
-                        namespace += part;
-                    } else {
-                        namespace += '/' + part;
-                    }
-                    // console.log('namespace-----', namespace, this.path)
+        code = code || this.code;
 
-                    if (this.path[namespace]) {
-                        const nsFilePath = `${this.path[namespace]}${code}${filename.slice(namespace.length)}.js`;
-                        // console.log('nsFilePath----', nsFilePath)
-                        if (fs.existsSync(nsFilePath)) {
-                            let _language = require(nsFilePath);
-                            fileContent = _language;
-                        }
-                    }
-                }
+        if (!this.cache[code]) {
+            this.cache[code] = {};
+        }
 
-                if (fs.existsSync(filePath)) {
-                    let _language = require(filePath);
-                    fileContent = _language;
+        let data = {};
+        if (!this.cache[code][filename]) {
+            let filePath = `${this.directory}${code}/${filename}.js`;
+
+            // Handle namespace paths
+            let namespace = '';
+            const parts = filename.split('/');
+            for (const part of parts) {
+                namespace = namespace ? `${namespace}/${part}` : part;
+                if (this.path[namespace]) {
+                    filePath = `${this.path[namespace]}${code}${filename.slice(namespace.length)}.js`;
                 }
-                this.cache[code][filename] = fileContent;
-            } else {
-                fileContent = this.cache[code][filename];
             }
-            if (prefix) {
-                const prefixedContent = {};
-                for (const [key, value] of Object.entries(fileContent)) {
-                    prefixedContent[`${prefix}_${key}`] = value;
-                }
-                fileContent = prefixedContent;
+
+            if (fs.existsSync(filePath)) {
+                data = require(filePath); // Assuming the language files export an object
             }
-            this.data = { ...this.data, ...fileContent };
-            resolve(this.data);
-        });
+
+            this.cache[code][filename] = data;
+        } else {
+            data = this.cache[code][filename];
+        }
+
+        if (prefix) {
+            const prefixedData = {};
+            for (const [key, value] of Object.entries(data)) {
+                prefixedData[`${prefix}_${key}`] = value;
+            }
+            data = prefixedData;
+        }
+
+        this.data = { ...this.data, ...data };
+        return this.data;
     }
 }

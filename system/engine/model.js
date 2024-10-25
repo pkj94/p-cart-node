@@ -1,17 +1,26 @@
+const proxy = Proxy;
 global['\Opencart\System\Engine\Model'] = class Model {
     constructor(registry={}) {
         this.registry = registry;
-        Object.keys(this.registry.data||[]).map(a => {
-            this[a] = this.registry.data[a];
-            return a;
-        })
+        return new proxy(this, {
+            get: (target, key) => {
+                if (key in target) {
+                    return target[key];
+                }
+                return target.get(key);
+            },
+            set: (target, key, value) => {
+                if (key in target) {
+                    target[key] = value;
+                } else {
+                    target.set(key, value);
+                }
+                return true;
+            }
+        });
     }
 
     get(key) {
-        Object.keys(registry.data).map(a => {
-            this[a] = registry.data[a];
-            return a;
-        })
         if (this.registry.has(key)) {
             return this.registry.get(key);
         } else {
@@ -21,9 +30,5 @@ global['\Opencart\System\Engine\Model'] = class Model {
 
     set(key, value) {
         this.registry.set(key, value);
-        Object.keys(registry.data).map(a => {
-            this[a] = registry.data[a];
-            return a;
-        })
     }
 }

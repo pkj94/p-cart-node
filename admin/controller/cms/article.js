@@ -287,7 +287,7 @@ module.exports = class ArticleController extends global['\Opencart\System\Engine
 
 		data['placeholder'] = await this.model_tool_image.resize('no_image.png', 100, 100);
 
-		if (data['image'] && fs.existSync(DIR_IMAGE + html_entity_decode(data['image']))) {
+		if (data['image'] && fs.existsSync(DIR_IMAGE + html_entity_decode(data['image']))) {
 			data['thumb'] = await this.model_tool_image.resize(html_entity_decode(data['image']), 100, 100);
 		} else {
 			data['thumb'] = data['placeholder'];

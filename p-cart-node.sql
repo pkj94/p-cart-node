@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 19, 2024 at 12:31 PM
+-- Generation Time: Oct 22, 2024 at 10:53 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.0.28
 
@@ -42,6 +42,13 @@ CREATE TABLE `pc_address` (
   `custom_field` text NOT NULL,
   `default` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+
+--
+-- Dumping data for table `pc_address`
+--
+
+INSERT INTO `pc_address` (`address_id`, `customer_id`, `firstname`, `lastname`, `company`, `address_1`, `address_2`, `city`, `postcode`, `country_id`, `zone_id`, `custom_field`, `default`) VALUES
+(2, 11, 'Pradeep', 'Kumar', 'test', 'dsfdfds', 'Teh. Bawani Khera', 'Delhi', '2213213', 99, 1475, '', 1);
 
 -- --------------------------------------------------------
 
@@ -370,16 +377,6 @@ CREATE TABLE `pc_cart` (
   `price` decimal(15,4) NOT NULL,
   `date_added` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
-
---
--- Dumping data for table `pc_cart`
---
-
-INSERT INTO `pc_cart` (`cart_id`, `api_id`, `customer_id`, `session_id`, `product_id`, `subscription_plan_id`, `option`, `quantity`, `override`, `price`, `date_added`) VALUES
-(46, 0, 0, 'fdESs4a23bQYBFJs-TIfCVnDCsbuNG05', 40, 0, '[]', 1, 0, 0.0000, '2024-10-19 09:41:01'),
-(47, 0, 0, 'TWUqST3dyjhnfnhl0Zn1Lb28HZuQaOqM', 40, 0, '[]', 1, 0, 0.0000, '2024-10-19 09:49:13'),
-(48, 0, 0, '35KpkDEXacTU81XzNxthPYAvy_2qfZR3', 40, 0, '[]', 1, 0, 0.0000, '2024-10-19 09:49:39'),
-(49, 0, 0, 'xSbStcpUrRBM-_YtkAd8FsvLh2iKeSTp', 40, 0, '[]', 1, 0, 0.0000, '2024-10-19 09:50:25');
 
 -- --------------------------------------------------------
 
@@ -1099,6 +1096,13 @@ CREATE TABLE `pc_customer` (
   `date_added` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
+--
+-- Dumping data for table `pc_customer`
+--
+
+INSERT INTO `pc_customer` (`customer_id`, `customer_group_id`, `store_id`, `language_id`, `firstname`, `lastname`, `email`, `telephone`, `password`, `custom_field`, `newsletter`, `ip`, `status`, `safe`, `token`, `code`, `date_added`) VALUES
+(11, 1, 0, 1, 'Pradeep', 'Kumar', 'pradeep@cqs.in', '', '$2b$10$yhB6RiCxvMWZ6tb0a/.VhujVFOJ8OFaeWexRPM7P0MloIR8lqu9L.', '', 0, '::1', 1, 0, '', '', '2024-10-21 10:52:11');
+
 -- --------------------------------------------------------
 
 --
@@ -1186,7 +1190,7 @@ CREATE TABLE `pc_customer_group` (
 --
 
 INSERT INTO `pc_customer_group` (`customer_group_id`, `approval`, `sort_order`) VALUES
-(1, 0, 1);
+(1, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -1236,6 +1240,66 @@ CREATE TABLE `pc_customer_ip` (
   `date_added` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
+--
+-- Dumping data for table `pc_customer_ip`
+--
+
+INSERT INTO `pc_customer_ip` (`customer_ip_id`, `customer_id`, `store_id`, `ip`, `country`, `date_added`) VALUES
+(3, 11, 0, '::1', '', '2024-10-21 11:01:40'),
+(4, 11, 0, '::1', '', '2024-10-21 11:01:51'),
+(5, 11, 0, '::1', '', '2024-10-21 11:04:47'),
+(6, 11, 0, '::1', '', '2024-10-21 11:06:09'),
+(7, 11, 0, '::1', '', '2024-10-21 11:09:49'),
+(8, 11, 0, '::1', '', '2024-10-21 11:10:14'),
+(9, 11, 0, '::1', '', '2024-10-21 11:12:24'),
+(10, 11, 0, '::1', '', '2024-10-21 11:13:25'),
+(11, 11, 0, '::1', '', '2024-10-21 11:14:06'),
+(12, 11, 0, '::1', '', '2024-10-21 11:14:32'),
+(13, 11, 0, '::1', '', '2024-10-21 11:16:25'),
+(14, 11, 0, '::1', '', '2024-10-21 11:40:41'),
+(15, 11, 0, '::1', '', '2024-10-21 11:45:55'),
+(16, 11, 0, '::1', '', '2024-10-21 11:46:53'),
+(17, 11, 0, '::1', '', '2024-10-21 11:51:25'),
+(18, 11, 0, '::1', '', '2024-10-21 12:05:59'),
+(19, 11, 0, '::1', '', '2024-10-21 12:06:43'),
+(20, 11, 0, '::1', '', '2024-10-21 12:11:51'),
+(21, 11, 0, '::1', '', '2024-10-21 12:20:40'),
+(22, 11, 0, '::1', '', '2024-10-21 12:22:11'),
+(23, 11, 0, '::1', '', '2024-10-21 12:23:35'),
+(24, 11, 0, '::1', '', '2024-10-21 12:24:30'),
+(25, 11, 0, '::1', '', '2024-10-21 12:29:39'),
+(26, 11, 0, '::1', '', '2024-10-21 12:32:09'),
+(27, 11, 0, '::1', '', '2024-10-21 12:32:59'),
+(28, 11, 0, '::1', '', '2024-10-21 12:33:55'),
+(29, 11, 0, '::1', '', '2024-10-21 12:34:23'),
+(30, 11, 0, '::1', '', '2024-10-21 12:35:01'),
+(31, 11, 0, '::1', '', '2024-10-21 12:52:42'),
+(32, 11, 0, '::1', '', '2024-10-21 12:53:10'),
+(33, 11, 0, '::1', '', '2024-10-21 13:16:11'),
+(34, 11, 0, '::1', '', '2024-10-21 13:17:43'),
+(35, 11, 0, '::1', '', '2024-10-21 13:18:40'),
+(36, 11, 0, '::1', '', '2024-10-21 13:20:47'),
+(37, 11, 0, '::1', '', '2024-10-21 13:21:21'),
+(38, 11, 0, '::1', '', '2024-10-21 13:21:56'),
+(39, 11, 0, '::1', '', '2024-10-21 13:22:26'),
+(40, 11, 0, '::1', '', '2024-10-21 13:23:40'),
+(41, 11, 0, '::1', '', '2024-10-21 13:24:31'),
+(42, 11, 0, '::1', '', '2024-10-21 13:25:17'),
+(43, 11, 0, '::1', '', '2024-10-21 13:26:28'),
+(44, 11, 0, '::1', '', '2024-10-21 13:27:11'),
+(45, 11, 0, '::1', '', '2024-10-21 13:34:40'),
+(46, 11, 0, '::1', '', '2024-10-21 13:34:52'),
+(47, 11, 0, '::1', '', '2024-10-21 14:43:52'),
+(48, 11, 0, '::1', '', '2024-10-21 14:44:45'),
+(49, 11, 0, '::1', '', '2024-10-21 14:45:19'),
+(50, 11, 0, '::1', '', '2024-10-21 14:46:10'),
+(51, 11, 0, '::1', '', '2024-10-21 15:05:04'),
+(52, 11, 0, '::1', '', '2024-10-21 15:07:42'),
+(53, 11, 0, '::1', '', '2024-10-21 15:15:21'),
+(54, 11, 0, '::1', '', '2024-10-21 15:16:14'),
+(55, 11, 0, '::1', '', '2024-10-21 15:17:42'),
+(56, 11, 0, '::1', '', '2024-10-21 15:27:33');
+
 -- --------------------------------------------------------
 
 --
@@ -1250,6 +1314,13 @@ CREATE TABLE `pc_customer_login` (
   `date_added` datetime NOT NULL,
   `date_modified` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+
+--
+-- Dumping data for table `pc_customer_login`
+--
+
+INSERT INTO `pc_customer_login` (`customer_login_id`, `email`, `ip`, `total`, `date_added`, `date_modified`) VALUES
+(1, 'admin', '::1', 2, '2024-10-21 11:06:05', '2024-10-21 13:16:06');
 
 -- --------------------------------------------------------
 
@@ -1270,8 +1341,8 @@ CREATE TABLE `pc_customer_online` (
 --
 
 INSERT INTO `pc_customer_online` (`ip`, `customer_id`, `url`, `referer`, `date_added`) VALUES
-('::1', 0, 'http://localhost:8080/?route=checkout/cart&language=en-gb', 'http://localhost:8080/', '2024-10-19 09:50:34'),
-('::ffff:127.0.0.1', 0, 'http://localhost:8080/', '', '2024-10-19 08:42:09');
+('::1', 11, 'http://localhost:8080/?route=account/account&language=en-gb&customer_token=9558a4bfc76116cd8a0860620a', 'http://localhost:8080/?route=account/login&language=en-gb', '2024-10-21 15:27:33'),
+('::ffff:127.0.0.1', 0, 'http://localhost:8080/?route=account/login&language=en-gb', 'http://localhost:8080/?route=account/address.form&language=en-gb&customer_token=7fccb60ff0fde4b0750a675ce4', '2024-10-21 12:12:48');
 
 -- --------------------------------------------------------
 
@@ -1726,7 +1797,8 @@ INSERT INTO `pc_extension` (`extension_id`, `extension`, `type`, `code`) VALUES
 (42, 'opencart', 'currency', 'ecb'),
 (43, 'opencart', 'report', 'marketing'),
 (44, 'opencart', 'report', 'customer_subscription'),
-(45, 'opencart', 'report', 'customer');
+(45, 'opencart', 'report', 'customer'),
+(46, 'opencart', 'module', 'account');
 
 -- --------------------------------------------------------
 
@@ -4029,7 +4101,8 @@ INSERT INTO `pc_setting` (`setting_id`, `store_id`, `code`, `key`, `value`, `ser
 (346, 0, 'config', 'config_file_mime_allowed', 'text/plain\r\nimage/png\r\nimage/webp\r\nimage/jpeg\r\nimage/gif\r\nimage/bmp\r\nimage/tiff\r\nimage/svg+xml\r\napplication/zip\r\napplication/x-zip\r\napplication/x-zip-compressed\r\napplication/rar\r\napplication/x-rar\r\napplication/x-rar-compressed\r\napplication/octet-stream\r\naudio/mpeg\r\nvideo/mp4\r\nvideo/quicktime\r\napplication/pdf', 0),
 (347, 0, 'config', 'config_error_display', '1', 0),
 (348, 0, 'config', 'config_error_log', '1', 0),
-(349, 0, 'config', 'config_error_filename', 'error.log', 0);
+(349, 0, 'config', 'config_error_filename', 'error.log', 0),
+(350, 0, 'module_account', 'module_account_status', '1', 0);
 
 -- --------------------------------------------------------
 
@@ -4474,7 +4547,7 @@ CREATE TABLE `pc_user_group` (
 --
 
 INSERT INTO `pc_user_group` (`user_group_id`, `name`, `permission`) VALUES
-(1, 'Administrator', '{\"access\":[\"catalog\\/attribute\",\"catalog\\/attribute_group\",\"catalog\\/category\",\"catalog\\/download\",\"catalog\\/filter\",\"catalog\\/information\",\"catalog\\/manufacturer\",\"catalog\\/option\",\"catalog\\/product\",\"catalog\\/review\",\"catalog\\/subscription_plan\",\"common\\/column_left\",\"common\\/developer\",\"common\\/filemanager\",\"common\\/pagination\",\"common\\/security\",\"cron\\/cron\",\"cron\\/currency\",\"cron\\/gdpr\",\"cron\\/subscription\",\"customer\\/custom_field\",\"customer\\/customer\",\"customer\\/customer_approval\",\"customer\\/customer_group\",\"customer\\/gdpr\",\"design\\/banner\",\"design\\/layout\",\"design\\/seo_url\",\"design\\/theme\",\"design\\/translation\",\"error\\/exception\",\"extension\\/analytics\",\"extension\\/captcha\",\"extension\\/currency\",\"extension\\/dashboard\",\"extension\\/feed\",\"extension\\/fraud\",\"extension\\/language\",\"extension\\/marketplace\",\"extension\\/module\",\"extension\\/other\",\"extension\\/payment\",\"extension\\/report\",\"extension\\/shipping\",\"extension\\/theme\",\"extension\\/total\",\"localisation\\/address_format\",\"localisation\\/country\",\"localisation\\/currency\",\"localisation\\/geo_zone\",\"localisation\\/language\",\"localisation\\/length_class\",\"localisation\\/location\",\"localisation\\/order_status\",\"localisation\\/return_action\",\"localisation\\/return_reason\",\"localisation\\/return_status\",\"localisation\\/stock_status\",\"localisation\\/subscription_status\",\"localisation\\/tax_class\",\"localisation\\/tax_rate\",\"localisation\\/weight_class\",\"localisation\\/zone\",\"mail\\/affiliate\",\"mail\\/authorize\",\"mail\\/customer\",\"mail\\/forgotten\",\"mail\\/gdpr\",\"mail\\/returns\",\"mail\\/reward\",\"mail\\/subscription\",\"mail\\/transaction\",\"mail\\/voucher\",\"marketing\\/affiliate\",\"marketing\\/contact\",\"marketing\\/coupon\",\"marketing\\/marketing\",\"marketplace\\/api\",\"marketplace\\/cron\",\"marketplace\\/event\",\"marketplace\\/extension\",\"marketplace\\/installer\",\"marketplace\\/marketplace\",\"marketplace\\/promotion\",\"marketplace\\/startup\",\"report\\/online\",\"report\\/report\",\"report\\/statistics\",\"sale\\/order\",\"sale\\/returns\",\"sale\\/subscription\",\"sale\\/voucher\",\"sale\\/voucher_theme\",\"setting\\/setting\",\"setting\\/store\",\"startup\\/authorize\",\"tool\\/backup\",\"tool\\/log\",\"tool\\/notification\",\"tool\\/upgrade\",\"tool\\/upload\",\"user\\/api\",\"user\\/profile\",\"user\\/user\",\"user\\/user_permission\",\"extension\\/opencart\\/captcha\\/basic\",\"extension\\/opencart\\/currency\\/ecb\",\"extension\\/opencart\\/currency\\/fixer\",\"extension\\/opencart\\/dashboard\\/activity\",\"extension\\/opencart\\/dashboard\\/chart\",\"extension\\/opencart\\/dashboard\\/customer\",\"extension\\/opencart\\/dashboard\\/map\",\"extension\\/opencart\\/dashboard\\/online\",\"extension\\/opencart\\/dashboard\\/order\",\"extension\\/opencart\\/dashboard\\/recent\",\"extension\\/opencart\\/dashboard\\/sale\",\"extension\\/opencart\\/fraud\\/ip\",\"extension\\/opencart\\/module\\/account\",\"extension\\/opencart\\/module\\/banner\",\"extension\\/opencart\\/module\\/bestseller\",\"extension\\/opencart\\/module\\/category\",\"extension\\/opencart\\/module\\/featured\",\"extension\\/opencart\\/module\\/filter\",\"extension\\/opencart\\/module\\/html\",\"extension\\/opencart\\/module\\/information\",\"extension\\/opencart\\/module\\/latest\",\"extension\\/opencart\\/module\\/special\",\"extension\\/opencart\\/module\\/store\",\"extension\\/opencart\\/payment\\/bank_transfer\",\"extension\\/opencart\\/payment\\/cheque\",\"extension\\/opencart\\/payment\\/cod\",\"extension\\/opencart\\/payment\\/free_checkout\",\"extension\\/opencart\\/report\\/customer\",\"extension\\/opencart\\/report\\/customer_activity\",\"extension\\/opencart\\/report\\/customer_order\",\"extension\\/opencart\\/report\\/customer_reward\",\"extension\\/opencart\\/report\\/customer_search\",\"extension\\/opencart\\/report\\/customer_transaction\",\"extension\\/opencart\\/report\\/customer_subscription\",\"extension\\/opencart\\/report\\/marketing\",\"extension\\/opencart\\/report\\/product_purchased\",\"extension\\/opencart\\/report\\/product_viewed\",\"extension\\/opencart\\/report\\/sale_coupon\",\"extension\\/opencart\\/report\\/sale_order\",\"extension\\/opencart\\/report\\/sale_return\",\"extension\\/opencart\\/report\\/sale_shipping\",\"extension\\/opencart\\/report\\/sale_tax\",\"extension\\/opencart\\/shipping\\/flat\",\"extension\\/opencart\\/shipping\\/free\",\"extension\\/opencart\\/shipping\\/item\",\"extension\\/opencart\\/shipping\\/pickup\",\"extension\\/opencart\\/shipping\\/weight\",\"extension\\/opencart\\/theme\\/basic\",\"extension\\/opencart\\/total\\/coupon\",\"extension\\/opencart\\/total\\/credit\",\"extension\\/opencart\\/total\\/handling\",\"extension\\/opencart\\/total\\/low_order_fee\",\"extension\\/opencart\\/total\\/reward\",\"extension\\/opencart\\/total\\/shipping\",\"extension\\/opencart\\/total\\/sub_total\",\"extension\\/opencart\\/total\\/tax\",\"extension\\/opencart\\/total\\/total\",\"extension\\/opencart\\/total\\/voucher\"],\"modify\":[\"catalog\\/attribute\",\"catalog\\/attribute_group\",\"catalog\\/category\",\"catalog\\/download\",\"catalog\\/filter\",\"catalog\\/information\",\"catalog\\/manufacturer\",\"catalog\\/option\",\"catalog\\/product\",\"catalog\\/review\",\"catalog\\/subscription_plan\",\"common\\/column_left\",\"common\\/developer\",\"common\\/filemanager\",\"common\\/pagination\",\"common\\/security\",\"cron\\/cron\",\"cron\\/currency\",\"cron\\/gdpr\",\"cron\\/subscription\",\"customer\\/custom_field\",\"customer\\/customer\",\"customer\\/customer_approval\",\"customer\\/customer_group\",\"customer\\/gdpr\",\"design\\/banner\",\"design\\/layout\",\"design\\/seo_url\",\"design\\/theme\",\"design\\/translation\",\"error\\/exception\",\"extension\\/analytics\",\"extension\\/captcha\",\"extension\\/currency\",\"extension\\/dashboard\",\"extension\\/feed\",\"extension\\/fraud\",\"extension\\/language\",\"extension\\/marketplace\",\"extension\\/module\",\"extension\\/other\",\"extension\\/payment\",\"extension\\/report\",\"extension\\/shipping\",\"extension\\/theme\",\"extension\\/total\",\"localisation\\/address_format\",\"localisation\\/country\",\"localisation\\/currency\",\"localisation\\/geo_zone\",\"localisation\\/language\",\"localisation\\/length_class\",\"localisation\\/location\",\"localisation\\/order_status\",\"localisation\\/return_action\",\"localisation\\/return_reason\",\"localisation\\/return_status\",\"localisation\\/stock_status\",\"localisation\\/subscription_status\",\"localisation\\/tax_class\",\"localisation\\/tax_rate\",\"localisation\\/weight_class\",\"localisation\\/zone\",\"mail\\/affiliate\",\"mail\\/authorize\",\"mail\\/customer\",\"mail\\/forgotten\",\"mail\\/gdpr\",\"mail\\/returns\",\"mail\\/reward\",\"mail\\/subscription\",\"mail\\/transaction\",\"mail\\/voucher\",\"marketing\\/affiliate\",\"marketing\\/contact\",\"marketing\\/coupon\",\"marketing\\/marketing\",\"marketplace\\/api\",\"marketplace\\/cron\",\"marketplace\\/event\",\"marketplace\\/extension\",\"marketplace\\/installer\",\"marketplace\\/marketplace\",\"marketplace\\/promotion\",\"marketplace\\/startup\",\"report\\/online\",\"report\\/report\",\"report\\/statistics\",\"sale\\/order\",\"sale\\/returns\",\"sale\\/subscription\",\"sale\\/voucher\",\"sale\\/voucher_theme\",\"setting\\/setting\",\"setting\\/store\",\"startup\\/authorize\",\"tool\\/backup\",\"tool\\/log\",\"tool\\/notification\",\"tool\\/upgrade\",\"tool\\/upload\",\"user\\/api\",\"user\\/profile\",\"user\\/user\",\"user\\/user_permission\",\"extension\\/opencart\\/captcha\\/basic\",\"extension\\/opencart\\/currency\\/ecb\",\"extension\\/opencart\\/currency\\/fixer\",\"extension\\/opencart\\/dashboard\\/activity\",\"extension\\/opencart\\/dashboard\\/chart\",\"extension\\/opencart\\/dashboard\\/customer\",\"extension\\/opencart\\/dashboard\\/map\",\"extension\\/opencart\\/dashboard\\/online\",\"extension\\/opencart\\/dashboard\\/order\",\"extension\\/opencart\\/dashboard\\/recent\",\"extension\\/opencart\\/dashboard\\/sale\",\"extension\\/opencart\\/fraud\\/ip\",\"extension\\/opencart\\/module\\/account\",\"extension\\/opencart\\/module\\/banner\",\"extension\\/opencart\\/module\\/bestseller\",\"extension\\/opencart\\/module\\/category\",\"extension\\/opencart\\/module\\/featured\",\"extension\\/opencart\\/module\\/filter\",\"extension\\/opencart\\/module\\/html\",\"extension\\/opencart\\/module\\/information\",\"extension\\/opencart\\/module\\/latest\",\"extension\\/opencart\\/module\\/special\",\"extension\\/opencart\\/module\\/store\",\"extension\\/opencart\\/payment\\/bank_transfer\",\"extension\\/opencart\\/payment\\/cheque\",\"extension\\/opencart\\/payment\\/cod\",\"extension\\/opencart\\/payment\\/free_checkout\",\"extension\\/opencart\\/report\\/customer\",\"extension\\/opencart\\/report\\/customer_activity\",\"extension\\/opencart\\/report\\/customer_order\",\"extension\\/opencart\\/report\\/customer_reward\",\"extension\\/opencart\\/report\\/customer_search\",\"extension\\/opencart\\/report\\/customer_transaction\",\"extension\\/opencart\\/report\\/customer_subscription\",\"extension\\/opencart\\/report\\/marketing\",\"extension\\/opencart\\/report\\/product_purchased\",\"extension\\/opencart\\/report\\/product_viewed\",\"extension\\/opencart\\/report\\/sale_coupon\",\"extension\\/opencart\\/report\\/sale_order\",\"extension\\/opencart\\/report\\/sale_return\",\"extension\\/opencart\\/report\\/sale_shipping\",\"extension\\/opencart\\/report\\/sale_tax\",\"extension\\/opencart\\/shipping\\/flat\",\"extension\\/opencart\\/shipping\\/free\",\"extension\\/opencart\\/shipping\\/item\",\"extension\\/opencart\\/shipping\\/pickup\",\"extension\\/opencart\\/shipping\\/weight\",\"extension\\/opencart\\/theme\\/basic\",\"extension\\/opencart\\/total\\/coupon\",\"extension\\/opencart\\/total\\/credit\",\"extension\\/opencart\\/total\\/handling\",\"extension\\/opencart\\/total\\/low_order_fee\",\"extension\\/opencart\\/total\\/reward\",\"extension\\/opencart\\/total\\/shipping\",\"extension\\/opencart\\/total\\/sub_total\",\"extension\\/opencart\\/total\\/tax\",\"extension\\/opencart\\/total\\/total\",\"extension\\/opencart\\/total\\/voucher\"]}'),
+(1, 'Administrator', '{\"access\":[\"catalog/attribute\",\"catalog/attribute_group\",\"catalog/category\",\"catalog/download\",\"catalog/filter\",\"catalog/information\",\"catalog/manufacturer\",\"catalog/option\",\"catalog/product\",\"catalog/review\",\"catalog/subscription_plan\",\"common/column_left\",\"common/developer\",\"common/filemanager\",\"common/pagination\",\"common/security\",\"cron/cron\",\"cron/currency\",\"cron/gdpr\",\"cron/subscription\",\"customer/custom_field\",\"customer/customer\",\"customer/customer_approval\",\"customer/customer_group\",\"customer/gdpr\",\"design/banner\",\"design/layout\",\"design/seo_url\",\"design/theme\",\"design/translation\",\"error/exception\",\"extension/analytics\",\"extension/captcha\",\"extension/currency\",\"extension/dashboard\",\"extension/feed\",\"extension/fraud\",\"extension/language\",\"extension/marketplace\",\"extension/module\",\"extension/other\",\"extension/payment\",\"extension/report\",\"extension/shipping\",\"extension/theme\",\"extension/total\",\"localisation/address_format\",\"localisation/country\",\"localisation/currency\",\"localisation/geo_zone\",\"localisation/language\",\"localisation/length_class\",\"localisation/location\",\"localisation/order_status\",\"localisation/return_action\",\"localisation/return_reason\",\"localisation/return_status\",\"localisation/stock_status\",\"localisation/subscription_status\",\"localisation/tax_class\",\"localisation/tax_rate\",\"localisation/weight_class\",\"localisation/zone\",\"mail/affiliate\",\"mail/authorize\",\"mail/customer\",\"mail/forgotten\",\"mail/gdpr\",\"mail/returns\",\"mail/reward\",\"mail/subscription\",\"mail/transaction\",\"mail/voucher\",\"marketing/affiliate\",\"marketing/contact\",\"marketing/coupon\",\"marketing/marketing\",\"marketplace/api\",\"marketplace/cron\",\"marketplace/event\",\"marketplace/extension\",\"marketplace/installer\",\"marketplace/marketplace\",\"marketplace/promotion\",\"marketplace/startup\",\"report/online\",\"report/report\",\"report/statistics\",\"sale/order\",\"sale/returns\",\"sale/subscription\",\"sale/voucher\",\"sale/voucher_theme\",\"setting/setting\",\"setting/store\",\"startup/authorize\",\"tool/backup\",\"tool/log\",\"tool/notification\",\"tool/upgrade\",\"tool/upload\",\"user/api\",\"user/profile\",\"user/user\",\"user/user_permission\",\"extension/opencart/captcha/basic\",\"extension/opencart/currency/ecb\",\"extension/opencart/currency/fixer\",\"extension/opencart/dashboard/activity\",\"extension/opencart/dashboard/chart\",\"extension/opencart/dashboard/customer\",\"extension/opencart/dashboard/map\",\"extension/opencart/dashboard/online\",\"extension/opencart/dashboard/order\",\"extension/opencart/dashboard/recent\",\"extension/opencart/dashboard/sale\",\"extension/opencart/fraud/ip\",\"extension/opencart/module/account\",\"extension/opencart/module/banner\",\"extension/opencart/module/bestseller\",\"extension/opencart/module/category\",\"extension/opencart/module/featured\",\"extension/opencart/module/filter\",\"extension/opencart/module/html\",\"extension/opencart/module/information\",\"extension/opencart/module/latest\",\"extension/opencart/module/special\",\"extension/opencart/module/store\",\"extension/opencart/payment/bank_transfer\",\"extension/opencart/payment/cheque\",\"extension/opencart/payment/cod\",\"extension/opencart/payment/free_checkout\",\"extension/opencart/report/customer\",\"extension/opencart/report/customer_activity\",\"extension/opencart/report/customer_order\",\"extension/opencart/report/customer_reward\",\"extension/opencart/report/customer_search\",\"extension/opencart/report/customer_transaction\",\"extension/opencart/report/customer_subscription\",\"extension/opencart/report/marketing\",\"extension/opencart/report/product_purchased\",\"extension/opencart/report/product_viewed\",\"extension/opencart/report/sale_coupon\",\"extension/opencart/report/sale_order\",\"extension/opencart/report/sale_return\",\"extension/opencart/report/sale_shipping\",\"extension/opencart/report/sale_tax\",\"extension/opencart/shipping/flat\",\"extension/opencart/shipping/free\",\"extension/opencart/shipping/item\",\"extension/opencart/shipping/pickup\",\"extension/opencart/shipping/weight\",\"extension/opencart/theme/basic\",\"extension/opencart/total/coupon\",\"extension/opencart/total/credit\",\"extension/opencart/total/handling\",\"extension/opencart/total/low_order_fee\",\"extension/opencart/total/reward\",\"extension/opencart/total/shipping\",\"extension/opencart/total/sub_total\",\"extension/opencart/total/tax\",\"extension/opencart/total/total\",\"extension/opencart/total/voucher\",\"extension/opencart/module/account\"],\"modify\":[\"catalog/attribute\",\"catalog/attribute_group\",\"catalog/category\",\"catalog/download\",\"catalog/filter\",\"catalog/information\",\"catalog/manufacturer\",\"catalog/option\",\"catalog/product\",\"catalog/review\",\"catalog/subscription_plan\",\"common/column_left\",\"common/developer\",\"common/filemanager\",\"common/pagination\",\"common/security\",\"cron/cron\",\"cron/currency\",\"cron/gdpr\",\"cron/subscription\",\"customer/custom_field\",\"customer/customer\",\"customer/customer_approval\",\"customer/customer_group\",\"customer/gdpr\",\"design/banner\",\"design/layout\",\"design/seo_url\",\"design/theme\",\"design/translation\",\"error/exception\",\"extension/analytics\",\"extension/captcha\",\"extension/currency\",\"extension/dashboard\",\"extension/feed\",\"extension/fraud\",\"extension/language\",\"extension/marketplace\",\"extension/module\",\"extension/other\",\"extension/payment\",\"extension/report\",\"extension/shipping\",\"extension/theme\",\"extension/total\",\"localisation/address_format\",\"localisation/country\",\"localisation/currency\",\"localisation/geo_zone\",\"localisation/language\",\"localisation/length_class\",\"localisation/location\",\"localisation/order_status\",\"localisation/return_action\",\"localisation/return_reason\",\"localisation/return_status\",\"localisation/stock_status\",\"localisation/subscription_status\",\"localisation/tax_class\",\"localisation/tax_rate\",\"localisation/weight_class\",\"localisation/zone\",\"mail/affiliate\",\"mail/authorize\",\"mail/customer\",\"mail/forgotten\",\"mail/gdpr\",\"mail/returns\",\"mail/reward\",\"mail/subscription\",\"mail/transaction\",\"mail/voucher\",\"marketing/affiliate\",\"marketing/contact\",\"marketing/coupon\",\"marketing/marketing\",\"marketplace/api\",\"marketplace/cron\",\"marketplace/event\",\"marketplace/extension\",\"marketplace/installer\",\"marketplace/marketplace\",\"marketplace/promotion\",\"marketplace/startup\",\"report/online\",\"report/report\",\"report/statistics\",\"sale/order\",\"sale/returns\",\"sale/subscription\",\"sale/voucher\",\"sale/voucher_theme\",\"setting/setting\",\"setting/store\",\"startup/authorize\",\"tool/backup\",\"tool/log\",\"tool/notification\",\"tool/upgrade\",\"tool/upload\",\"user/api\",\"user/profile\",\"user/user\",\"user/user_permission\",\"extension/opencart/captcha/basic\",\"extension/opencart/currency/ecb\",\"extension/opencart/currency/fixer\",\"extension/opencart/dashboard/activity\",\"extension/opencart/dashboard/chart\",\"extension/opencart/dashboard/customer\",\"extension/opencart/dashboard/map\",\"extension/opencart/dashboard/online\",\"extension/opencart/dashboard/order\",\"extension/opencart/dashboard/recent\",\"extension/opencart/dashboard/sale\",\"extension/opencart/fraud/ip\",\"extension/opencart/module/account\",\"extension/opencart/module/banner\",\"extension/opencart/module/bestseller\",\"extension/opencart/module/category\",\"extension/opencart/module/featured\",\"extension/opencart/module/filter\",\"extension/opencart/module/html\",\"extension/opencart/module/information\",\"extension/opencart/module/latest\",\"extension/opencart/module/special\",\"extension/opencart/module/store\",\"extension/opencart/payment/bank_transfer\",\"extension/opencart/payment/cheque\",\"extension/opencart/payment/cod\",\"extension/opencart/payment/free_checkout\",\"extension/opencart/report/customer\",\"extension/opencart/report/customer_activity\",\"extension/opencart/report/customer_order\",\"extension/opencart/report/customer_reward\",\"extension/opencart/report/customer_search\",\"extension/opencart/report/customer_transaction\",\"extension/opencart/report/customer_subscription\",\"extension/opencart/report/marketing\",\"extension/opencart/report/product_purchased\",\"extension/opencart/report/product_viewed\",\"extension/opencart/report/sale_coupon\",\"extension/opencart/report/sale_order\",\"extension/opencart/report/sale_return\",\"extension/opencart/report/sale_shipping\",\"extension/opencart/report/sale_tax\",\"extension/opencart/shipping/flat\",\"extension/opencart/shipping/free\",\"extension/opencart/shipping/item\",\"extension/opencart/shipping/pickup\",\"extension/opencart/shipping/weight\",\"extension/opencart/theme/basic\",\"extension/opencart/total/coupon\",\"extension/opencart/total/credit\",\"extension/opencart/total/handling\",\"extension/opencart/total/low_order_fee\",\"extension/opencart/total/reward\",\"extension/opencart/total/shipping\",\"extension/opencart/total/sub_total\",\"extension/opencart/total/tax\",\"extension/opencart/total/total\",\"extension/opencart/total/voucher\",\"extension/opencart/module/account\"]}'),
 (2, 'Demonstration', '');
 
 -- --------------------------------------------------------
@@ -4506,7 +4579,17 @@ INSERT INTO `pc_user_login` (`user_login_id`, `user_id`, `ip`, `user_agent`, `da
 (8, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-18 09:17:42'),
 (9, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-18 10:26:16'),
 (10, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-19 07:27:26'),
-(11, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-19 09:00:59');
+(11, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-19 09:00:59'),
+(12, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-21 10:20:16'),
+(13, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-21 10:23:30'),
+(14, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-21 10:25:24'),
+(15, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-21 10:33:13'),
+(16, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-21 10:35:28'),
+(17, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-21 10:46:38'),
+(18, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-21 10:48:20'),
+(19, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-21 10:50:16'),
+(20, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-21 10:57:19'),
+(21, 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', '2024-10-21 13:09:54');
 
 -- --------------------------------------------------------
 
@@ -9859,7 +9942,7 @@ ALTER TABLE `pc_zone_to_geo_zone`
 -- AUTO_INCREMENT for table `pc_address`
 --
 ALTER TABLE `pc_address`
-  MODIFY `address_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `address_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `pc_address_format`
@@ -9931,7 +10014,7 @@ ALTER TABLE `pc_banner_image`
 -- AUTO_INCREMENT for table `pc_cart`
 --
 ALTER TABLE `pc_cart`
-  MODIFY `cart_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
+  MODIFY `cart_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=120;
 
 --
 -- AUTO_INCREMENT for table `pc_category`
@@ -9979,7 +10062,7 @@ ALTER TABLE `pc_currency`
 -- AUTO_INCREMENT for table `pc_customer`
 --
 ALTER TABLE `pc_customer`
-  MODIFY `customer_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `customer_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `pc_customer_activity`
@@ -9997,7 +10080,7 @@ ALTER TABLE `pc_customer_affiliate_report`
 -- AUTO_INCREMENT for table `pc_customer_approval`
 --
 ALTER TABLE `pc_customer_approval`
-  MODIFY `customer_approval_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `customer_approval_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `pc_customer_group`
@@ -10015,13 +10098,13 @@ ALTER TABLE `pc_customer_history`
 -- AUTO_INCREMENT for table `pc_customer_ip`
 --
 ALTER TABLE `pc_customer_ip`
-  MODIFY `customer_ip_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `customer_ip_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
 
 --
 -- AUTO_INCREMENT for table `pc_customer_login`
 --
 ALTER TABLE `pc_customer_login`
-  MODIFY `customer_login_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `customer_login_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `pc_customer_reward`
@@ -10075,7 +10158,7 @@ ALTER TABLE `pc_event`
 -- AUTO_INCREMENT for table `pc_extension`
 --
 ALTER TABLE `pc_extension`
-  MODIFY `extension_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
+  MODIFY `extension_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
 
 --
 -- AUTO_INCREMENT for table `pc_extension_install`
@@ -10339,7 +10422,7 @@ ALTER TABLE `pc_seo_url`
 -- AUTO_INCREMENT for table `pc_setting`
 --
 ALTER TABLE `pc_setting`
-  MODIFY `setting_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=350;
+  MODIFY `setting_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=351;
 
 --
 -- AUTO_INCREMENT for table `pc_startup`
@@ -10453,7 +10536,7 @@ ALTER TABLE `pc_user_group`
 -- AUTO_INCREMENT for table `pc_user_login`
 --
 ALTER TABLE `pc_user_login`
-  MODIFY `user_login_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `user_login_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `pc_voucher`

@@ -73,7 +73,7 @@ module.exports = class Affiliate extends global['\Opencart\System\Engine\Control
 	 */
 	async alert(route, args, output) {
 		// Send to main admin email if new affiliate email is enabled
-		if (in_array('affiliate', this.config.get('config_mail_alert'))) {
+		if (this.config.get('config_mail_alert').includes('affiliate')) {
 			await this.load.language('mail/affiliate');
 
 			store_name = html_entity_decode(this.config.get('config_name'));
@@ -131,10 +131,10 @@ module.exports = class Affiliate extends global['\Opencart\System\Engine\Control
 				mail.send();
 
 				// Send to additional alert emails if new affiliate email is enabled
-				emails = explode(',', this.config.get('config_mail_alert_email'));
+				emails = this.config.get('config_mail_alert_email').split(',');
 
 				for (let email of emails) {
-					if (oc_strlen(email) > 0 && filter_var(email, FILTER_VALIDATE_EMAIL)) {
+					if (oc_strlen(email) > 0 && isEmailValid(email)) {
 						mail.setTo(trim(email));
 						mail.send();
 					}

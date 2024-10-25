@@ -29,7 +29,7 @@ module.exports = class ForgottenController extends global['\Opencart\System\Engi
 			code = '';
 		}
 
-		if (email && code && (route == 'common/forgotten.confirm') && filter_var(email, FILTER_VALIDATE_EMAIL)) {
+		if (email && code && (route == 'common/forgotten.confirm') && isEmailValid(email)) {
 			await this.load.language('mail/forgotten');
 
 			store_name = html_entity_decode(this.config.get('config_name'));

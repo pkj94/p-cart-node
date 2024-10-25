@@ -48,10 +48,10 @@ module.exports = class Review extends global['\Opencart\System\Engine\Controller
 					mail.send();
 
 					// Send to additional alert emails
-					emails = explode(',', this.config.get('config_mail_alert_email'));
+					emails = this.config.get('config_mail_alert_email').split(',');
 
 					for (let email of emails) {
-						if (email && filter_var(email, FILTER_VALIDATE_EMAIL)) {
+						if (email && isEmailValid(email)) {
 							mail.setTo(trim(email));
 							mail.send();
 						}

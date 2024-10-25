@@ -96,7 +96,7 @@ const data ={};
 		}
 
 		// Validate E-Mail
-		if ((oc_strlen(email) > 96) || !filter_var(email, FILTER_VALIDATE_EMAIL)) {
+		if ((oc_strlen(email) > 96) || !isEmailValid(email)) {
 			json['error']['email'] = this.language.get('error_email');
 		}
 

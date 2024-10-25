@@ -49,7 +49,7 @@ module.exports = class Session extends global['\Opencart\System\Engine\Controlle
 		// session.start(session_id);
 
 		let option = {
-			'expires': new Date(Date.now() + (parseInt(config.get('config_session_expire')) * 1000)),
+			'expires': new Date(Date.now() + (parseInt(this.config.get('config_session_expire')) * 1000)),
 			'path': this.config.get('session_path'),
 			'secure': this.request.server['protocol'].toLowerCase() == 'https' ? true : false,
 			'httponly': false,

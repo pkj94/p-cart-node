@@ -24,7 +24,6 @@ module.exports = class PermissionController extends global['\Opencart\System\Eng
 				'error/not_found',
 				'error/permission'
 			];
-
 			if (!ignore.includes(route) && !await this.user.hasPermission('access', route)) {
 				return await new global['\Opencart\System\Engine\Action']('error/permission');
 			}

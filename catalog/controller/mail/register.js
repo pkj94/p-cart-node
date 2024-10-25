@@ -1,4 +1,5 @@
 const sprintf = require("locutus/php/strings/sprintf");
+const trim = require("locutus/php/strings/trim");
 
 module.exports = class Register extends global['\Opencart\System\Engine\Controller'] {
 	// catalog/model/account/customer/addCustomer/after
@@ -24,7 +25,7 @@ module.exports = class Register extends global['\Opencart\System\Engine\Controll
 		let customer_group_id = this.config.get('config_customer_group_id');
 		if ((args[0]['customer_group_id'])) {
 			customer_group_id = args[0]['customer_group_id'];
-		} 
+		}
 
 		const customer_group_info = await this.model_account_customer_group.getCustomerGroup(customer_group_id);
 
@@ -55,7 +56,7 @@ module.exports = class Register extends global['\Opencart\System\Engine\Controll
 			mail.setSender(store_name);
 			mail.setSubject(subject);
 			mail.setHtml(await this.load.view('mail/register', data));
-			mail.send();
+			await mail.send();
 		}
 	}
 
@@ -71,12 +72,12 @@ module.exports = class Register extends global['\Opencart\System\Engine\Controll
 	 */
 	async alert(route, args, output) {
 		// Send to main admin email if new account email is enabled
-		if (in_array('account', this.config.get('config_mail_alert'))) {
+		if (this.config.get('config_mail_alert').includes('account')) {
 			await this.load.language('mail/register');
 
-			store_name = html_entity_decode(this.config.get('config_name'));
+			let store_name = html_entity_decode(this.config.get('config_name'));
 
-			subject = this.language.get('text_new_customer');
+			let subject = this.language.get('text_new_customer');
 
 			data['firstname'] = args[0]['firstname'];
 			data['lastname'] = args[0]['lastname'];
@@ -84,11 +85,9 @@ module.exports = class Register extends global['\Opencart\System\Engine\Controll
 			data['login'] = await this.url.link('account/login', 'language=' + this.config.get('config_language'), true);
 
 			this.load.model('account/customer_group', this);
-
+			let customer_group_id = this.config.get('config_customer_group_id');
 			if ((args[0]['customer_group_id'])) {
 				customer_group_id = args[0]['customer_group_id'];
-			} else {
-				customer_group_id = this.config.get('config_customer_group_id');
 			}
 
 			const customer_group_info = await this.model_account_customer_group.getCustomerGroup(customer_group_id);
@@ -121,15 +120,15 @@ module.exports = class Register extends global['\Opencart\System\Engine\Controll
 				mail.setSender(store_name);
 				mail.setSubject(subject);
 				mail.setHtml(await this.load.view('mail/register_alert', data));
-				mail.send();
+				await mail.send();
 
 				// Send to additional alert emails if new account email is enabled
-				emails = explode(',', this.config.get('config_mail_alert_email'));
+				let emails = this.config.get('config_mail_alert_email').split(',');
 
 				for (let email of emails) {
-					if (oc_strlen(email) > 0 && filter_var(email, FILTER_VALIDATE_EMAIL)) {
+					if (oc_strlen(email) > 0 && isEmailValid(email)) {
 						mail.setTo(trim(email));
-						mail.send();
+						await mail.send();
 					}
 				}
 			}

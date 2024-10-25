@@ -1,7 +1,6 @@
 global.VERSION = '4.0.2.3';
 global.APPROOT = __dirname;
 global.date = require('php-date-format');
-global.Framework = require('./system/framework');
 global.fs = require('fs');
 global.expressPath = require('path');
 
@@ -89,6 +88,7 @@ global.APP = async () => {
         return obj;
     }
     app.all('*', (req, res, next) => {
+        console.log('request start---', new Date().toISOString())
         // console.log('decoded before---', req.body)
         req.body = decodeObject(req.body);
         // console.log('decoded---', req.body)

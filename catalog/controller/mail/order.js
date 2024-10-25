@@ -487,7 +487,7 @@ module.exports = class Order extends global['\Opencart\System\Engine\Controller'
 
 		const order_info = await this.model_checkout_order.getOrder(order_id);
 
-		if (order_info && !order_info['order_status_id'] && order_status_id && in_array('order', this.config.get('config_mail_alert'))) {
+		if (order_info && !order_info['order_status_id'] && order_status_id && this.config.get('config_mail_alert').includes('order')) {
 			await this.load.language('mail/order_alert');
 
 			subject = html_entity_decode(sprintf(this.language.get('text_subject'), this.config.get('config_name'), order_info['order_id']));
@@ -617,10 +617,10 @@ module.exports = class Order extends global['\Opencart\System\Engine\Controller'
 				mail.send();
 
 				// Send to additional alert emails
-				emails = explode(',', this.config.get('config_mail_alert_email'));
+				emails = this.config.get('config_mail_alert_email').split(',');
 
 				for (let email of emails) {
-					if (email && filter_var(email, FILTER_VALIDATE_EMAIL)) {
+					if (email && isEmailValid(email)) {
 						mail.setTo(trim(email));
 						mail.send();
 					}

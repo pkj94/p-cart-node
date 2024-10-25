@@ -90,14 +90,13 @@ global['\Opencart\Admin\Controller\Extension\Opencart\Dashboard\Map'] = class Ma
 	 * @return void
 	 */
 	async map() {
-		const json = {};
+		let json = {};
 
 		this.load.model('extension/opencart/dashboard/map', this);
 
 		let results = await this.model_extension_opencart_dashboard_map.getTotalOrdersByCountry();
-
 		for (let result of results) {
-			json[strtolower(result['iso_code_2'])] = {
+			json[oc_strtolower(result['iso_code_2'])] = {
 				'total': result['total'],
 				'amount': this.currency.format(result['amount'], this.config.get('config_currency'))
 			};

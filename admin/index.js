@@ -1,3 +1,4 @@
+const Framework = require('../system/framework');
 
 module.exports = function () {
     const loadAdminControllers = async (req, res, next) => {

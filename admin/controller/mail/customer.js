@@ -1,3 +1,5 @@
+const sprintf = require("locutus/php/strings/sprintf");
+
 module.exports = class CustomerController extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @param string route
@@ -9,17 +11,16 @@ module.exports = class CustomerController extends global['\Opencart\System\Engin
 	 */
 	async approve(route, args, output) {
 		const data = {};
+		let customer_id = 0;
 		if ((args[0])) {
 			customer_id = args[0];
-		} else {
-			customer_id = 0;
 		}
 
 		this.load.model('customer/customer', this);
 
 		const customer_info = await this.model_customer_customer.getCustomer(customer_id);
 
-		if (customer_info) {
+		if (customer_info.customer_id) {
 			this.load.model('setting/store', this);
 
 			const store_info = await this.model_setting_store.getStore(customer_info['store_id']);
@@ -56,13 +57,13 @@ module.exports = class CustomerController extends global['\Opencart\System\Engin
 
 			this.load.model('tool/image', this);
 
-			if (is_file(DIR_IMAGE + store_logo)) {
+			if (store_logo && is_file(DIR_IMAGE + store_logo)) {
 				data['logo'] = store_url + 'image/' + store_logo;
 			} else {
 				data['logo'] = '';
 			}
 
-			subject = sprintf(this.language.get('mail_text_subject'), store_name);
+			let subject = sprintf(this.language.get('mail_text_subject'), store_name);
 
 			data['text_welcome'] = sprintf(this.language.get('mail_text_welcome'), store_name);
 
@@ -101,31 +102,28 @@ module.exports = class CustomerController extends global['\Opencart\System\Engin
 	 * @throws \Exception
 	 */
 	async deny(route, args, output) {
+		let customer_id = 0;
 		if ((args[0])) {
 			customer_id = args[0];
-		} else {
-			customer_id = 0;
 		}
 
 		this.load.model('customer/customer', this);
 
 		const customer_info = await this.model_customer_customer.getCustomer(customer_id);
 
-		if (customer_info) {
+		if (customer_info.customer_id) {
 			this.load.model('setting/store', this);
 
 			const store_info = await this.model_setting_store.getStore(customer_info['store_id']);
-
+			let store_logo = html_entity_decode(this.config.get('config_logo'));
+			let store_name = html_entity_decode(this.config.get('config_name'));
+			let store_url = HTTP_CATALOG;
 			if (store_info && store_info.store_id) {
 				this.load.model('setting/setting', this);
 
 				store_logo = html_entity_decode(this.model_setting_setting.getValue('config_logo', customer_info['store_id']));
 				store_name = html_entity_decode(store_info['name']);
 				store_url = store_info['url'];
-			} else {
-				store_logo = html_entity_decode(this.config.get('config_logo'));
-				store_name = html_entity_decode(this.config.get('config_name'));
-				store_url = HTTP_CATALOG;
 			}
 
 			this.load.model('localisation/language', this);
@@ -150,13 +148,13 @@ module.exports = class CustomerController extends global['\Opencart\System\Engin
 
 			this.load.model('tool/image', this);
 
-			if (is_file(DIR_IMAGE + store_logo)) {
+			if (store_logo && is_file(DIR_IMAGE + store_logo)) {
 				data['logo'] = store_url + 'image/' + store_logo;
 			} else {
 				data['logo'] = '';
 			}
 
-			subject = sprintf(this.language.get('mail_text_subject'), store_name);
+			let subject = sprintf(this.language.get('mail_text_subject'), store_name);
 
 			data['text_welcome'] = sprintf(this.language.get('mail_text_welcome'), store_name);
 
