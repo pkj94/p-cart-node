@@ -104,9 +104,9 @@ module.exports = class CartLibrary {
                                         'weight_prefix': option_value_query.row['weight_prefix']
                                     });
                                 }
-                            } else if (option_query.row['type'] == 'checkbox' && is_array(value)) {
-                                for (value of product_option_value_id) {
-                                    option_value_query = await this.db.query("SELECT pov.`option_value_id`, pov.`quantity`, pov.`subtract`, pov.`price`, pov.`price_prefix`, pov.`points`, pov.`points_prefix`, pov.`weight`, pov.`weight_prefix`, ovd.`name` FROM `" + DB_PREFIX + "product_option_value` `pov` LEFT JOIN `" + DB_PREFIX + "option_value_description` ovd ON (pov.`option_value_id` = ovd.option_value_id) WHERE pov.product_option_value_id = '" + product_option_value_id + "' AND pov.product_option_id = '" + product_option_id + "' AND ovd.language_id = '" + this.config.get('config_language_id') + "'");
+                            } else if (option_query.row['type'] == 'checkbox' && Array.isArray(value)) {
+                                for (let product_option_value_id of value) {
+                                    const option_value_query = await this.db.query("SELECT pov.`option_value_id`, pov.`quantity`, pov.`subtract`, pov.`price`, pov.`price_prefix`, pov.`points`, pov.`points_prefix`, pov.`weight`, pov.`weight_prefix`, ovd.`name` FROM `" + DB_PREFIX + "product_option_value` `pov` LEFT JOIN `" + DB_PREFIX + "option_value_description` ovd ON (pov.`option_value_id` = ovd.option_value_id) WHERE pov.product_option_value_id = '" + product_option_value_id + "' AND pov.product_option_id = '" + product_option_id + "' AND ovd.language_id = '" + this.config.get('config_language_id') + "'");
 
                                     if (option_value_query.num_rows) {
                                         if (option_value_query.row['price_prefix'] == '+') {

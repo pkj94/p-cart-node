@@ -1,12 +1,10 @@
-module.exports = class CacheLibrary {
+module.exports = class Cache {
     constructor(adaptor, expire = 3600) {
-        if (adaptor) {
-            const AdaptorClass = require(`./cache/${adaptor}`);
-            if (AdaptorClass) {
-                this.adaptor = new AdaptorClass(expire);
-            } else {
-                throw new Error(`Error: Could not load cache adaptor ${adaptor} cache!`);
-            }
+        let className = 'Opencart\System\Library\Cache' + ucfirst(adaptor);
+        if (global[className]) {
+            this.adaptor = new global[className](expire * 1000);
+        } else {
+            throw new Error(`Error: Could not load cache adaptor ${adaptor} cache!`);
         }
     }
     async get(key) {
@@ -17,5 +15,8 @@ module.exports = class CacheLibrary {
     }
     async delete(key) {
         return this.adaptor.delete(key);
+    }
+    cleanUp() {
+        return this.adaptor.cleanUp();
     }
 }  

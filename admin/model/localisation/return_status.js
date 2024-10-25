@@ -92,14 +92,14 @@ module.exports = class ReturnStatusLocalisationModel extends global['\Opencart\S
 			sql += " LIMIT " + data['start'] + "," + data['limit'];
 		}
 
-		let return_status_data = await this.cache.get('return_status+' + md5(sql));
+		let return_status_data = await this.cache.get('return_status.' + md5(sql));
 
 		if (!return_status_data) {
 			const query = await this.db.query(sql);
 
 			return_status_data = query.rows;
 
-			await this.cache.set('return_status+' + md5(sql), return_status_data);
+			await this.cache.set('return_status.' + md5(sql), return_status_data);
 		}
 
 		return return_status_data;

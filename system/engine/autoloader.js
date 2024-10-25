@@ -1,7 +1,7 @@
 
 const expressPath = require('path');
 
-global['\Opencart\System\Engine\Autoloader'] = class Autoloader {
+module.exports = class Autoloader {
     constructor() {
         this.paths = {};
         this.register('Opencart\System\Engine', __dirname.replace(/\\/g, '/'));

@@ -93,14 +93,14 @@ module.exports = class WeightClassLocalisationModel extends global['\Opencart\Sy
 			sql += " LIMIT " + data['start'] + "," + data['limit'];
 		}
 
-		let weight_class_data = await this.cache.get('weight_class+' + md5(sql));
+		let weight_class_data = await this.cache.get('weight_class.' + md5(sql));
 
 		if (!weight_class_data) {
 			const query = await this.db.query(sql);
 
 			weight_class_data = query.rows;
 
-			await this.cache.set('weight_class+' + md5(sql), weight_class_data);
+			await this.cache.set('weight_class.' + md5(sql), weight_class_data);
 		}
 
 		return weight_class_data;

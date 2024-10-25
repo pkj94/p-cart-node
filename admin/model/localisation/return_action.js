@@ -92,14 +92,14 @@ module.exports = class ReturnActionLocalisationModel extends global['\Opencart\S
 			sql += " LIMIT " + data['start'] + "," + data['limit'];
 		}
 
-		let return_action_data = await this.cache.get('return_action+' + md5(sql));
+		let return_action_data = await this.cache.get('return_action.' + md5(sql));
 
 		if (!return_action_data) {
 			const query = await this.db.query(sql);
 
 			return_action_data = query.rows;
 
-			await this.cache.set('return_action+' + md5(sql), return_action_data);
+			await this.cache.set('return_action.' + md5(sql), return_action_data);
 		}
 
 		return return_action_data;

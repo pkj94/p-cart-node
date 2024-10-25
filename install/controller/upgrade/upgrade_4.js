@@ -24,7 +24,7 @@ global['\Opencart\Install\Controller\Upgrade\Upgrade4'] = class Upgrade4 extends
 
 			for (query.rows of result) {
 				if (preg_match('/^(a:)/', result['value'])) {
-					this.db.query("UPDATE `" + DB_PREFIX + "setting` SET `value` = '" + this.db.escape(json_encode(unserialize(result['value']))) + "' WHERE `setting_id` = '" + result['setting_id'] + "'");
+					this.db.query("UPDATE `" + DB_PREFIX + "setting` SET `value` = " + this.db.escape(JSON.stringify(result['value'])) + " WHERE `setting_id` = '" + result['setting_id'] + "'");
 				}
 			}
 
@@ -313,13 +313,13 @@ global['\Opencart\Install\Controller\Upgrade\Upgrade4'] = class Upgrade4 extends
 
 			// Add missing keys and serialized values
 			for (missing of setting) {
-				query = this.db.query("SELECT setting_id FROM `" + DB_PREFIX + "setting` WHERE `store_id` = '0' AND `key` = '" + this.db.escape(setting['key']) + "'");
+				query = this.db.query("SELECT setting_id FROM `" + DB_PREFIX + "setting` WHERE `store_id` = '0' AND `key` = " + this.db.escape(setting['key']) );
 
 				if (!query.num_rows && !isset(settings[setting['key']])) {
 					if (!setting['serialized']) {
-						this.db.query("INSERT INTO `" + DB_PREFIX + "setting` SET `key` = '" + this.db.escape(setting['key']) + "', `value` = '" + this.db.escape(setting['value']) + "', `code` = '" + this.db.escape(setting['code']) + "', `serialized` = '0', `store_id` = '0'");
+						this.db.query("INSERT INTO `" + DB_PREFIX + "setting` SET `key` = " + this.db.escape(setting['key']) + ", `value` = " + this.db.escape(setting['value']) + ", `code` = " + this.db.escape(setting['code']) + ", `serialized` = '0', `store_id` = '0'");
 					} else {
-						this.db.query("INSERT INTO `" + DB_PREFIX + "setting` SET `key` = '" + this.db.escape(setting['key']) + "', `value` = '" + this.db.escape(json_encode(setting['value'])) + "', `code` = '" + this.db.escape(setting['code']) + "', `serialized` = '1', `store_id` = '0'");
+						this.db.query("INSERT INTO `" + DB_PREFIX + "setting` SET `key` = " + this.db.escape(setting['key']) + ", `value` = " + this.db.escape(JSON.stringify(setting['value'])) + ", `code` = " + this.db.escape(setting['code']) + ", `serialized` = '1', `store_id` = '0'");
 					}
 				}
 			}
@@ -337,7 +337,7 @@ global['\Opencart\Install\Controller\Upgrade\Upgrade4'] = class Upgrade4 extends
 					for (query.rows of result) {
 						//update old column name to adding prefix before the name
 						if (result['code'] == extension['code'] && result['code'] != extension['type'] + '_' + extension['code']) {
-							this.db.query("UPDATE `" + DB_PREFIX + "setting` SET `code` = '" + this.db.escape(extension['type'] + '_' + extension['code']) + "', `key` = '" + this.db.escape(extension['type'] + '_' + result['key']) + "', `value` = '" + this.db.escape(result['value']) + "' WHERE `setting_id` = '" + result['setting_id'] + "'");
+							this.db.query("UPDATE `" + DB_PREFIX + "setting` SET `code` = " + this.db.escape(extension['type'] + '_' + extension['code']) + ", `key` = " + this.db.escape(extension['type'] + '_' + result['key']) + ", `value` = " + this.db.escape(result['value']) + " WHERE `setting_id` = '" + result['setting_id'] + "'");
 						}
 					}
 				}
@@ -359,7 +359,7 @@ global['\Opencart\Install\Controller\Upgrade\Upgrade4'] = class Upgrade4 extends
 			];
 
 			for (remove of key) {
-				this.db.query("DELETE FROM `" + DB_PREFIX + "setting` WHERE `key` = '" + this.db.escape(key) + "'");
+				this.db.query("DELETE FROM `" + DB_PREFIX + "setting` WHERE `key` = " + this.db.escape(key) );
 			}
 
 			// List of default extension to add the opencart extension code to+
@@ -408,7 +408,7 @@ global['\Opencart\Install\Controller\Upgrade\Upgrade4'] = class Upgrade4 extends
 
 			for (query.rows of result) {
 				if (!result['extension'] && in_array(result['code'], extensions)) {
-					this.db.query("UPDATE `" + DB_PREFIX + "extension` SET `extension` = 'opencart' WHERE `code` = '" + this.db.escape(result['code']) + "'");
+					this.db.query("UPDATE `" + DB_PREFIX + "extension` SET `extension` = 'opencart' WHERE `code` = " + this.db.escape(result['code']));
 				}
 			}
 
@@ -446,6 +446,6 @@ global['\Opencart\Install\Controller\Upgrade\Upgrade4'] = class Upgrade4 extends
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(json_encode(json));
+		this.response.setOutput(JSON.stringify(json));
 	}
 }

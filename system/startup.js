@@ -62,6 +62,7 @@ if (process.env.HTTP_X_FORWARDED_FOR) {
 
 // Autoloader equivalent in Node.js
 require('./helper/general');
-
-require('./engine/autoloader');
-require('./engine/config');
+module.exports = {
+    '\Opencart\System\Engine\Autoloader': require('./engine/autoloader'),
+    '\Opencart\System\Engine\Config': require('./engine/config')
+};

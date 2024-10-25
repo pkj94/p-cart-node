@@ -1,7 +1,6 @@
 const path = require('path');
-require('../system/startup');
 const Framework = require('../system/framework');
-module.exports = function () {
+module.exports = function (registry) {
     const loadInstall = async (req, res, next) => {
         let protocol = req.protocol + '://';
         // APPLICATION
@@ -32,7 +31,7 @@ module.exports = function () {
         app.use('/install/language', express.static(DIR_APPLICATION + '/language'));
 
 
-        new Framework().init(req, res, next).then(output => {
+        new Framework(registry).init(req, res, next).then(output => {
             if (registry.get('response').redirect) {
                 res.redirect(registry.get('response').redirect);
             } else {

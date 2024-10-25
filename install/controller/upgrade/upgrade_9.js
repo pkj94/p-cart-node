@@ -27,7 +27,7 @@ global['\Opencart\Install\Controller\Upgrade\Upgrade9'] = class Upgrade9 extends
 							'code': result['payment_code']
 						};
 
-						this.db.query("UPDATE `" + DB_PREFIX + "order` SET `payment_custom_field` = '" + this.db.escape(json_encode(payment_method)) + "' WHERE `order_id` = '" + result['order_id'] + "'");
+						this.db.query("UPDATE `" + DB_PREFIX + "order` SET `payment_custom_field` = " + this.db.escape(JSON.stringify(payment_method)) + " WHERE `order_id` = '" + result['order_id'] + "'");
 					}
 
 					if (isset(result['shipping_code'])) {
@@ -41,7 +41,7 @@ global['\Opencart\Install\Controller\Upgrade\Upgrade9'] = class Upgrade9 extends
 								'text': result['shipping_method']
 							};
 
-							this.db.query("UPDATE `" + DB_PREFIX + "order` SET `shipping_method` = '" + this.db.escape(json_encode(shipping_method)) + "' WHERE `order_id` = '" + result['order_id'] + "'");
+							this.db.query("UPDATE `" + DB_PREFIX + "order` SET `shipping_method` = " + this.db.escape(JSON.stringify(shipping_method)) + " WHERE `order_id` = '" + result['order_id'] + "'");
 						}
 					}
 				}
@@ -85,6 +85,6 @@ global['\Opencart\Install\Controller\Upgrade\Upgrade9'] = class Upgrade9 extends
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(json_encode(json));
+		this.response.setOutput(JSON.stringify(json));
 	}
 }

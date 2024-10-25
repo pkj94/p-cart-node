@@ -93,14 +93,14 @@ module.exports = class LengthClassLocalisationModel extends global['\Opencart\Sy
 		sql += " LIMIT " + data['start'] + "," + data['limit'];
 	}
 
-	let length_class_data = await this.cache.get('length_class+' + md5(sql));
+	let length_class_data = await this.cache.get('length_class.' + md5(sql));
 
 	if (!length_class_data) {
 		const query = await this.db.query(sql);
 
 		length_class_data = query.rows;
 
-		await this.cache.set('length_class+' + md5(sql), length_class_data);
+		await this.cache.set('length_class.' + md5(sql), length_class_data);
 	}
 
 	return length_class_data;

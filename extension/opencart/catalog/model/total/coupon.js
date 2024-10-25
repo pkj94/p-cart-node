@@ -15,18 +15,17 @@ global['\Opencart\Catalog\Model\Extension\Opencart\Total\Coupon'] = class Coupon
 			this.load.model('marketing/coupon', this);
 
 			const coupon_info = await this.model_marketing_coupon.getCoupon(this.session.data['coupon']);
-
 			if (coupon_info.coupon_id) {
 				let discount_total = 0;
 
 				let products = await this.cart.getProducts();
 				let sub_total = 0;
-				if (!coupon_info['product']) {
+				if (!coupon_info['product'].length) {
 					sub_total = await this.cart.getSubTotal();
 				} else {
 					sub_total = 0;
 
-					for (let product of products) {
+					for (let [cart_id,product] of Object.entries(products)) {
 						if (coupon_info['product'].includes(product['product_id'])) {
 							sub_total += product['total'];
 						}
@@ -37,10 +36,10 @@ global['\Opencart\Catalog\Model\Extension\Opencart\Total\Coupon'] = class Coupon
 					coupon_info['discount'] = Math.min(coupon_info.discount, sub_total);
 				}
 
-				for (let product of products) {
+				for (let [cart_id,product] of Object.entries(products)) {
 					let discount = 0;
 					let status = false;
-					if (!coupon_info['product']) {
+					if (!coupon_info['product'].length) {
 						status = true;
 					} else {
 						status = coupon_info['product'].includes(product['product_id']);

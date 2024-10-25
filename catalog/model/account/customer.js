@@ -14,7 +14,7 @@ module.exports = class Customer extends global['\Opencart\System\Engine\Model'] 
 
 		const customer_group_info = await this.registry.get('model_account_customer_group').getCustomerGroup(customer_group_id);
 
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "customer` SET `customer_group_id` = '" + customer_group_id + "', `store_id` = '" + this.config.get('config_store_id') + "', `language_id` = '" + this.config.get('config_language_id') + "', `firstname` = " + this.db.escape(data['firstname']) + ", `lastname` = " + this.db.escape(data['lastname']) + ", `email` = " + this.db.escape(data['email']) + ", `telephone` = " + this.db.escape(data['telephone']) + ", `custom_field` = " + this.db.escape((data['custom_field']) ? json_encode(data['custom_field']) : '') + ", `password` = " + this.db.escape(await password_hash(html_entity_decode(data['password']))) + ", `newsletter` = '" + ((data['newsletter']) ? data['newsletter'] : 0) + "', `ip` = " + this.db.escape((this.request.server.headers['x-forwarded-for'] ||
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "customer` SET `customer_group_id` = '" + customer_group_id + "', `store_id` = '" + this.config.get('config_store_id') + "', `language_id` = '" + this.config.get('config_language_id') + "', `firstname` = " + this.db.escape(data['firstname']) + ", `lastname` = " + this.db.escape(data['lastname']) + ", `email` = " + this.db.escape(data['email']) + ", `telephone` = " + this.db.escape(data['telephone']) + ", `custom_field` = " + this.db.escape((data['custom_field']) ? JSON.stringify(data['custom_field']) : '') + ", `password` = " + this.db.escape(await password_hash(html_entity_decode(data['password']))) + ", `newsletter` = '" + ((data['newsletter']) ? data['newsletter'] : 0) + "', `ip` = " + this.db.escape((this.request.server.headers['x-forwarded-for'] ||
 			this.request.server.connection.remoteAddress ||
 			this.request.server.socket.remoteAddress ||
 			this.request.server.connection.socket.remoteAddress)) + ", `status` = '" + !customer_group_info['approval'] + "', `date_added` = NOW()");
@@ -35,7 +35,7 @@ module.exports = class Customer extends global['\Opencart\System\Engine\Model'] 
 	 * @return void
 	 */
 	async editCustomer(customer_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "customer` SET `firstname` = " + this.db.escape(data['firstname']) + ", `lastname` = " + this.db.escape(data['lastname']) + ", `email` = " + this.db.escape(data['email']) + ", `telephone` = " + this.db.escape(data['telephone']) + ", `custom_field` = " + this.db.escape((data['custom_field']) ? json_encode(data['custom_field']) : '') + " WHERE `customer_id` = '" + customer_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "customer` SET `firstname` = " + this.db.escape(data['firstname']) + ", `lastname` = " + this.db.escape(data['lastname']) + ", `email` = " + this.db.escape(data['email']) + ", `telephone` = " + this.db.escape(data['telephone']) + ", `custom_field` = " + this.db.escape((data['custom_field']) ? JSON.stringify(data['custom_field']) : '') + " WHERE `customer_id` = '" + customer_id + "'");
 	}
 
 	/**

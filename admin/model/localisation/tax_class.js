@@ -94,14 +94,14 @@ module.exports = class TaxClassLocalisationModel extends global['\Opencart\Syste
 			sql += " LIMIT " + data['start'] + "," + data['limit'];
 		}
 
-		let tax_class_data = await this.cache.get('tax_class+' + md5(sql));
+		let tax_class_data = await this.cache.get('tax_class.' + md5(sql));
 
 		if (!tax_class_data) {
 			const query = await this.db.query(sql);
 
 			tax_class_data = query.rows;
 
-			await this.cache.set('tax_class+' + md5(sql), tax_class_data);
+			await this.cache.set('tax_class.' + md5(sql), tax_class_data);
 		}
 
 		return tax_class_data;

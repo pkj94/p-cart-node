@@ -1,50 +1,54 @@
-
-const path = require('path');
-
-module.exports = class CacheFileLibrary {
+module.exports = class File {
     constructor(expire = 3600) {
         this.expire = expire;
+        this.cleanUp();
     }
+
     get(key) {
-        const filePath = this.getFilePath(key);
-        if (fs.existsSync(filePath)) {
-            return JSON.parse(fs.readFileSync(filePath, 'utf8'));
-        } else {
-            return null;
+        const files = fs.readdirSync(DIR_CACHE).filter(file => file.startsWith(`cache.${this.sanitizeKey(key)}.`));
+        if (files.length) {
+            const filePath = expressPath.join(DIR_CACHE, files[0]);
+            return JSON.parse(fs.readFileSync(filePath, 'utf-8'));
         }
+        return null;
     }
+
     set(key, value, expire = 0) {
         this.delete(key);
-        if (!expire) {
-            expire = this.expire;
-        }
-        const filePath = this.getFilePath(key, time() + expire);
-        fs.writeFileSync(filePath, JSON.stringify(value));
+        expire = expire || this.expire;
+        const filePath = expressPath.join(DIR_CACHE, `cache.${this.sanitizeKey(key)}.${Date.now() + expire}`);
+        fs.writeFileSync(filePath, JSON.stringify(value), 'utf-8');
     }
+
     delete(key) {
-        const files = this.getMatchingFiles(key);
-        for (const file of files) {
-            if(fs.existsSync(file))
-            fs.unlinkSync(file);
-        }
+        const files = fs.readdirSync(DIR_CACHE).filter(file => file.startsWith(`cache.${this.sanitizeKey(key)}.`));
+        files.forEach(file => {
+            const filePath = expressPath.join(DIR_CACHE, file);
+            try {
+                fs.unlinkSync(filePath);
+            } catch (err) {
+                // Handle error if necessary
+                clearTimeout(false, filePath);
+            }
+        });
     }
-    getFilePath(key, timestamp = null) {
-        return path.join(DIR_CACHE, 'cache', `cache.${key}.${timestamp ? timestamp : ''}`);
+
+    sanitizeKey(key) {
+        return key.replace(/[^A-Z0-9\._-]/gi, '');
     }
-    getMatchingFiles(key) {
-        if (!fs.existsSync(path.join(DIR_CACHE, 'cache')))
-            fs.mkdirSync(path.join(DIR_CACHE, 'cache'), { recursive: true });
-        return fs.readdirSync(path.join(DIR_CACHE, 'cache')).filter(file => file.startsWith(`cache.${key}.`));
-    }
-    destructor() {
-        const files = fs.readdirSync(path.join(DIR_CACHE, 'cache'));
-        if (Math.random() * 100 < 1) {
-            for (const file of files) {
-                const timestamp = parseInt(file.split('.').pop());
-                if (timestamp < Date.now() / 1000) {
-                    fs.unlinkSync(path.join(DIR_CACHE, 'cache', file));
+
+    cleanUp() {
+        const files = fs.readdirSync(DIR_CACHE).filter(file => file.startsWith('cache.'));
+        files.forEach(file => {
+            const time = parseInt(file.split('.').pop(), 10);
+            if (time < Date.now()) {
+                try {
+                    fs.unlinkSync(expressPath.join(DIR_CACHE, file));
+                } catch (err) {
+                    // Handle error if necessary
+                    clearTimeout(false, file);
                 }
             }
-        }
+        });
     }
 }

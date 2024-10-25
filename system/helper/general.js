@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const htmlEntity = require('html-entities');
 // Import required libraries
 const crypto = require('crypto');
+const md5 = require('locutus/php/strings/md5');
 
 // String
 global.oc_strlen = (string) => {
@@ -132,7 +133,7 @@ global.uploadFile = (file, save) => {
     })
 }
 global.md5 = (string) => {
-    return crypto.createHash('md5').update(string).digest('hex')
+    return md5(string)
 }
 global.strip_tags = (input, allowed) => {
     allowed = (((allowed || '') + '').toLowerCase().match(/<[a-z][a-z0-9]*>/g) || []).join('')

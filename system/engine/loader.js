@@ -55,49 +55,53 @@ global['\Opencart\System\Engine\Loader'] = class Loader {
         route = route.replace(/[^a-zA-Z0-9_/]/g, '')
         const key = `model_${route.replace(/\//g, '_')}`;
         const className = `Opencart${this.registry.get('config').get('application')}Model${route.split('/').map(a => ucfirst(a)).join('/').split('_').map(a => ucfirst(a)).join('').replace(/[_/]/g, '')}`;
-
-        if (!this.registry.has(key)) {
-            let model;
-            try {
-                let ModelClass = global[className];
-                model = new ModelClass(this.registry);
-            } catch (error) {
-                console.log(className, error)
-                throw new Error(`Error: Could not load model ${className}!`);
-            }
-
-
-            const proxy = {};
-
-            for (const method of Object.getOwnPropertyNames(Object.getPrototypeOf(model))) {
-                if (method !== 'constructor' && typeof model[method] === 'function') {
-                    proxy[method] = async (...args) => {
-                        let result;
-                        const eventRoute = `model/${route}/${method}`;
-                        let output = ''
-                        // Trigger pre events
-                        result = await this.registry.get('event').trigger(`${eventRoute}/before`, [route, args]);
-                        if (result) {
-                            output = result;
-                        }
-                        if (!result) {
-                            output = await model[method](...args);
-                        }
-
-                        // Trigger post events
-                        result = await this.registry.get('event').trigger(`${eventRoute}/after`, [route, args, result]);
-                        if (result) {
-                            output = result;
-                        }
-                        return output;
-                    };
-                }
-            }
-            // console.log(key)
-            this.registry.set(key, proxy);
-            registry.set(key, proxy);
-            registry[key] = proxy;
+        // console.log(key, this.registry.has(key), className, global[className])
+        // if (!this.registry.has(key)) {
+        let model;
+        try {
+            let ModelClass = global[className];
+            model = new ModelClass(this.registry);
+        } catch (error) {
+            console.log(className, error)
+            throw new Error(`Error: Could not load model ${className}!`);
         }
+
+
+        const proxy = {};
+
+        for (const method of Object.getOwnPropertyNames(Object.getPrototypeOf(model))) {
+            if (method !== 'constructor' && typeof model[method] === 'function') {
+                proxy[method] = async (...args) => {
+                    let result;
+                    const eventRoute = `model/${route}/${method}`;
+                    let output = ''
+                    // Trigger pre events
+                    result = await this.registry.get('event').trigger(`${eventRoute}/before`, [route, args]);
+                    if (result) {
+                        output = result;
+                    }
+                    if (!result) {
+                        output = await model[method](...args);
+                    }
+
+                    // Trigger post events
+                    result = await this.registry.get('event').trigger(`${eventRoute}/after`, [route, args, result]);
+                    if (result) {
+                        output = result;
+                    }
+                    return output;
+                };
+            }
+        }
+        // console.log(key, proxy)
+        this.registry.set(key, proxy);
+        registry.set(key, proxy);
+        registry[key] = proxy;
+        // } else {
+        //     console.log(this.registry.get(key));
+        //     registry.set(key, this.registry.get(key));
+        //     registry[key] = this.registry.get(key);
+        // }
     }
 
     view(route, data = {}, code = '') {

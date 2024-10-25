@@ -38,7 +38,7 @@ module.exports = class Setting extends global['\Opencart\System\Engine\Model'] {
 	 * @return string
 	 */
 	async getValue(key, store_id = 0) {
-		const query = await this.db.query("SELECT `value` FROM `" + DB_PREFIX + "setting` WHERE `store_id` = '" + store_id + "' AND `key` = '" + this.db.escape(key) + "'");
+		const query = await this.db.query("SELECT `value` FROM `" + DB_PREFIX + "setting` WHERE `store_id` = '" + store_id + "' AND `key` = " + this.db.escape(key) );
 
 		if (query.num_rows) {
 			return query.row['value'];

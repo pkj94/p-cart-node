@@ -36,14 +36,14 @@ module.exports = class VoucherTheme extends global['\Opencart\System\Engine\Mode
 			sql += " LIMIT " + data['start'] + "," + data['limit'];
 		}
 
-		voucher_theme_data = await this.cache.get('voucher_theme+' + md5(sql));
+		voucher_theme_data = await this.cache.get('voucher_theme.' + md5(sql));
 
 		if (!voucher_theme_data) {
 			const query = await this.db.query(sql);
 
 			voucher_theme_data = query.rows;
 
-			await this.cache.set('voucher_theme+' + md5(sql), voucher_theme_data);
+			await this.cache.set('voucher_theme.' + md5(sql), voucher_theme_data);
 		}
 
 		return voucher_theme_data;

@@ -27,14 +27,14 @@ module.exports = class Store extends global['\Opencart\System\Engine\Model'] {
 	async getStores() {
 		const sql = "SELECT * FROM `" + DB_PREFIX + "store` ORDER BY `url`";
 
-		let store_data = await this.cache.get('store+' + md5(sql));
+		let store_data = await this.cache.get('store.' + md5(sql));
 
 		if (!store_data) {
 			const query = await this.db.query(sql);
 
 			store_data = query.rows;
 
-			await this.cache.set('store+' + md5(sql), store_data);
+			await this.cache.set('store.' + md5(sql), store_data);
 		}
 
 		return store_data;

@@ -1,7 +1,7 @@
 
 const sharp = require('sharp');
 
-module.exports = class ImageLibrary {
+module.exports = class Image {
     constructor(file) {
         if (!fs.existsSync(file)) {
             throw new Error(`Error: Could not load image ${file}!`);

@@ -1,4 +1,4 @@
-module.exports =class StockStatus extends global['\Opencart\System\Engine\Model'] {
+module.exports = class StockStatus extends global['\Opencart\System\Engine\Model'] {
 	/**
 	 * @param stock_status_id
 	 *
@@ -36,14 +36,14 @@ module.exports =class StockStatus extends global['\Opencart\System\Engine\Model'
 			sql += " LIMIT " + data['start'] + "," + data['limit'];
 		}
 
-		stock_status_data = await this.cache.get('stock_status+'+ md5(sql));
+		stock_status_data = await this.cache.get('stock_status.' + md5(sql));
 
 		if (!stock_status_data) {
 			const query = await this.db.query(sql);
 
 			stock_status_data = query.rows;
 
-			await this.cache.set('stock_status+'+ md5(sql), stock_status_data);
+			await this.cache.set('stock_status.' + md5(sql), stock_status_data);
 		}
 
 		return stock_status_data;

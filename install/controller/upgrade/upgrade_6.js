@@ -14,7 +14,7 @@ global['\Opencart\Install\Controller\Upgrade\Upgrade6'] = class Upgrade6 extends
 
 			for (query.rows of result) {
 				if (preg_match('/^(a:)/', result['custom_field'])) {
-					this.db.query("UPDATE `" + DB_PREFIX + "customer` SET `custom_field` = '" + this.db.escape(json_encode(unserialize(result['custom_field']))) + "' WHERE `customer_id` = '" + result['customer_id'] + "'");
+					this.db.query("UPDATE `" + DB_PREFIX + "customer` SET `custom_field` = " + this.db.escape(JSON.stringify(result['custom_field'])) + "' WHERE `customer_id` = '" + result['customer_id'] + "'");
 				}
 			}
 
@@ -23,7 +23,7 @@ global['\Opencart\Install\Controller\Upgrade\Upgrade6'] = class Upgrade6 extends
 
 			for (query.rows of result) {
 				if (preg_match('/^(a:)/', result['data'])) {
-					this.db.query("UPDATE `" + DB_PREFIX + "customer_activity` SET `data` = '" + this.db.escape(json_encode(unserialize(result['data']))) + "' WHERE `customer_activity_id` = '" + result['customer_activity_id'] + "'");
+					this.db.query("UPDATE `" + DB_PREFIX + "customer_activity` SET `data` = " + this.db.escape(JSON.stringify(result['data'])) + " WHERE `customer_activity_id` = '" + result['customer_activity_id'] + "'");
 				}
 			}
 
@@ -32,7 +32,7 @@ global['\Opencart\Install\Controller\Upgrade\Upgrade6'] = class Upgrade6 extends
 
 			for (query.rows of result) {
 				if (preg_match('/^(a:)/', result['custom_field'])) {
-					this.db.query("UPDATE `" + DB_PREFIX + "address` SET `custom_field` = '" + this.db.escape(json_encode(unserialize(result['custom_field']))) + "' WHERE `address_id` = '" + result['address_id'] + "'");
+					this.db.query("UPDATE `" + DB_PREFIX + "address` SET `custom_field` = " + this.db.escape(JSON.stringify(result['custom_field'])) + "' WHERE `address_id` = '" + result['address_id'] + "'");
 				}
 			}
 
@@ -41,7 +41,7 @@ global['\Opencart\Install\Controller\Upgrade\Upgrade6'] = class Upgrade6 extends
 
 			for (query.rows of result) {
 				if (preg_match('/^(a:)/', result['setting'])) {
-					this.db.query("UPDATE `" + DB_PREFIX + "module` SET `setting` = '" + this.db.escape(json_encode(unserialize(result['setting']))) + "' WHERE `module_id` = '" + result['module_id'] + "'");
+					this.db.query("UPDATE `" + DB_PREFIX + "module` SET `setting` = " + this.db.escape(JSON.stringify(result['setting'])) + " WHERE `module_id` = '" + result['module_id'] + "'");
 				}
 			}
 
@@ -50,15 +50,15 @@ global['\Opencart\Install\Controller\Upgrade\Upgrade6'] = class Upgrade6 extends
 
 			for (query.rows of result) {
 				if (preg_match('/^(a:)/', result['custom_field'])) {
-					this.db.query("UPDATE `" + DB_PREFIX + "order` SET `custom_field` = '" + this.db.escape(json_encode(unserialize(result['custom_field']))) + "' WHERE `order_id` = '" + result['order_id'] + "'");
+					this.db.query("UPDATE `" + DB_PREFIX + "order` SET `custom_field` = " + this.db.escape(JSON.stringify(result['custom_field'])) + " WHERE `order_id` = '" + result['order_id'] + "'");
 				}
 
 				if (preg_match('/^(a:)/', result['payment_custom_field'])) {
-					this.db.query("UPDATE `" + DB_PREFIX + "order` SET `payment_custom_field` = '" + this.db.escape(json_encode(unserialize(result['payment_custom_field']))) + "' WHERE `order_id` = '" + result['order_id'] + "'");
+					this.db.query("UPDATE `" + DB_PREFIX + "order` SET `payment_custom_field` = " + this.db.escape(JSON.stringify((result['payment_custom_field']))) + "' WHERE `order_id` = '" + result['order_id'] + "'");
 				}
 
 				if (preg_match('/^(a:)/', result['shipping_custom_field'])) {
-					this.db.query("UPDATE `" + DB_PREFIX + "order` SET `shipping_custom_field` = '" + this.db.escape(json_encode(unserialize(result['shipping_custom_field']))) + "' WHERE `order_id` = '" + result['order_id'] + "'");
+					this.db.query("UPDATE `" + DB_PREFIX + "order` SET `shipping_custom_field` = " + this.db.escape(JSON.stringify((result['shipping_custom_field']))) + " WHERE `order_id` = '" + result['order_id'] + "'");
 				}
 			}
 
@@ -67,7 +67,7 @@ global['\Opencart\Install\Controller\Upgrade\Upgrade6'] = class Upgrade6 extends
 
 			for (query.rows of result) {
 				if (preg_match('/^(a:)/', result['permission'])) {
-					this.db.query("UPDATE `" + DB_PREFIX + "user_group` SET `permission` = '" + this.db.escape(json_encode(unserialize(result['permission']))) + "' WHERE `user_group_id` = '" + result['user_group_id'] + "'");
+					this.db.query("UPDATE `" + DB_PREFIX + "user_group` SET `permission` = " + this.db.escape(JSON.stringify((result['permission']))) + " WHERE `user_group_id` = '" + result['user_group_id'] + "'");
 				}
 			}
 		} catch ( exception) {
@@ -91,6 +91,6 @@ global['\Opencart\Install\Controller\Upgrade\Upgrade6'] = class Upgrade6 extends
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(json_encode(json));
+		this.response.setOutput(JSON.stringify(json));
 	}
 }

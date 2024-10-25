@@ -352,7 +352,7 @@ module.exports = class Product extends global['\Opencart\System\Engine\Controlle
 			const product_options = await this.model_catalog_product.getOptions(product_id);
 
 			for (let option of product_options) {
-				if (this.request.get['product_id'] && !(product_info['override']['variant'][option['product_option_id']])) {
+				if (this.request.get['product_id'] && !(product_info['override'] && product_info['override']['variant'] && product_info['override']['variant'][option['product_option_id']])) {
 					let product_option_value_data = [];
 
 					for (let option_value of option['product_option_value']) {

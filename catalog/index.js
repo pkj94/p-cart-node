@@ -1,26 +1,26 @@
 const Framework = require("../system/framework");
 
-module.exports = function () {
+module.exports = function (registry) {
     const loadControllers = async (req, res, next) => {
-        // console.log('params=======', req.params)
         if (fs.readFileSync(APPROOT + '/config.json').toString())
-            for (let [key, value] of Object.entries(require(APPROOT + '/config.json'))) {
+            for (let [key, value] of Object.entries(require('../config.json'))) {
                 global[key] = value;
             }
+        const config = registry.get('config');
         // console.log('DIR_APPLICATION', typeof DIR_APPLICATION)
         if (typeof DIR_APPLICATION == 'undefined')
             return res.redirect('/install');
         // console.log(typeof DIR_APPLICATION == 'undefined')
-        new Framework().init(req, res, next).then(output => {
+        new Framework(registry).init(req, res, next).then(output => {
             if (registry.get('response').redirect) {
                 res.redirect(registry.get('response').redirect);
             } else {
-                // console.log(global.registry.get('response').headers)
-                global.registry.get('response').headers.forEach(header => {
+                // console.log(registry.get('response').headers)
+                registry.get('response').headers.forEach(header => {
                     // console.log('header----', header)
                     res.header(header.split(':')[0].trim(), header.split(':')[1].trim());
                 });
-                res.status(global.registry.get('response').status || 200).send(output);
+                res.status(registry.get('response').status || 200).send(output);
                 console.log('request send---', new Date().toISOString())
             }
         }).catch(error => {
@@ -45,14 +45,14 @@ module.exports = function () {
                     break;
             }
 
-            if (global.config.get('error_log')) {
-                log.write('JavaScript ' + errorType + ':  ' + error.toString());
+            if (config.get('error_log')) {
+                registry.get('log').write('JavaScript ' + errorType + ':  ' + error.toString());
             }
 
-            if (global.config.get('error_display')) {
+            if (config.get('error_display')) {
                 res.status(200).send('<b>' + errorType + '</b>: ' + error.toString());
             } else {
-                console.log(global.config.get('error_page'))
+                registry.get('log')(config.get('error_page'))
                 res.redirect(config.get('error_page'));
             }
 

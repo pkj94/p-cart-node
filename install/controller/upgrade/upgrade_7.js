@@ -35,7 +35,7 @@ global['\Opencart\Install\Controller\Upgrade\Upgrade7'] = class Upgrade7 extends
 
 					if (product_query.num_rows) {
 						for (product_query.rows of product) {
-							this.db.query("UPDATE `" + DB_PREFIX + "product_description` SET `tag` = '" + this.db.escape(strtolower(product['tags'])) + "' WHERE `product_id` = '" + product['product_id'] + "' AND `language_id` = '" + language['language_id'] + "'");
+							this.db.query("UPDATE `" + DB_PREFIX + "product_description` SET `tag` = " + this.db.escape(strtolower(product['tags'])) + " WHERE `product_id` = '" + product['product_id'] + "' AND `language_id` = '" + language['language_id'] + "'");
 							this.db.query("DELETE FROM `" + DB_PREFIX + "product_tag` WHERE `product_id` = '" + product['product_id'] + "' AND `language_id` = '" + language['language_id'] + "'");
 						}
 					}
@@ -54,7 +54,7 @@ global['\Opencart\Install\Controller\Upgrade\Upgrade7'] = class Upgrade7 extends
 					banner_image_description_query = this.db.query("SELECT * FROM `" + DB_PREFIX + "banner_image_description` WHERE `banner_image_id` = '" + banner_image['banner_image_id'] + "'");
 
 					for (banner_image_description_query.rows of banner_image_description) {
-						this.db.query("INSERT INTO `" + DB_PREFIX + "banner_image` SET `banner_id` = '" + banner_image['banner_id'] + "', `language_id` = '" + banner_image_description['language_id'] + "', `title` = '" + this.db.escape(banner_image_description['title']) + "', `link` = '" + this.db.escape(banner_image['link']) + "', `image` = '" + this.db.escape(banner_image['image']) + "', `sort_order` = '" + banner_image['sort_order'] + "'");
+						this.db.query("INSERT INTO `" + DB_PREFIX + "banner_image` SET `banner_id` = '" + banner_image['banner_id'] + "', `language_id` = '" + banner_image_description['language_id'] + "', `title` = " + this.db.escape(banner_image_description['title']) + ", `link` = " + this.db.escape(banner_image['link']) + ", `image` = " + this.db.escape(banner_image['image']) + ", `sort_order` = '" + banner_image['sort_order'] + "'");
 					}
 				}
 			}
@@ -151,7 +151,7 @@ global['\Opencart\Install\Controller\Upgrade\Upgrade7'] = class Upgrade7 extends
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(json_encode(json));
+		this.response.setOutput(JSON.stringify(json));
 	}
 
 	// Function to repair any erroneous categories that are not in the category path table+

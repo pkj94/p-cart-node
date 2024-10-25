@@ -45,7 +45,6 @@ global['\Opencart\Catalog\Controller\Extension\Opencart\Total\Coupon'] = class C
 			this.load.model('marketing/coupon', this);
 
 			const coupon_info = await this.model_marketing_coupon.getCoupon(coupon);
-
 			if (!coupon_info.coupon_id) {
 				json['error'] = this.language.get('error_coupon');
 			}

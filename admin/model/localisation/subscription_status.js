@@ -92,14 +92,14 @@ module.exports = class SubscriptionStatusLocalisationModel extends global['\Open
 			sql += " LIMIT " + data['start'] + "," + data['limit'];
 		}
 
-		let subscription_status_data = await this.cache.get('subscription_status+' + md5(sql));
+		let subscription_status_data = await this.cache.get('subscription_status.' + md5(sql));
 
 		if (!subscription_status_data) {
 			const query = await this.db.query(sql);
 
 			subscription_status_data = query.rows;
 
-			await this.cache.set('subscription_status+' + md5(sql), subscription_status_data);
+			await this.cache.set('subscription_status.' + md5(sql), subscription_status_data);
 		}
 
 		return subscription_status_data;

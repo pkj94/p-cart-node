@@ -32,7 +32,7 @@ global['\Opencart\Install\Controller\Upgrade\Upgrade3'] = class Upgrade3 extends
 					sql = "CREATE TABLE `" + DB_PREFIX + table['name'] + "` (" + "\n";
 
 					for (let field of table['field']) {
-						sql += "  `" + field['name'] + "` " + field['type'] + (!empty(field['not_null']) ? " NOT NULL" : "") + (isset(field['default']) ? " DEFAULT '" + this.db.escape(field['default']) + "'" : "") + (!empty(field['auto_increment']) ? " AUTO_INCREMENT" : "") + ",\n";
+						sql += "  `" + field['name'] + "` " + field['type'] + (!empty(field['not_null']) ? " NOT NULL" : "") + (isset(field['default']) ? " DEFAULT " + this.db.escape(field['default'])  : "") + (!empty(field['auto_increment']) ? " AUTO_INCREMENT" : "") + ",\n";
 					}
 
 					if (isset(table['primary'])) {
@@ -198,6 +198,6 @@ global['\Opencart\Install\Controller\Upgrade\Upgrade3'] = class Upgrade3 extends
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(json_encode(json));
+		this.response.setOutput(JSON.stringify(json));
 	}
 }

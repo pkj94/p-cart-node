@@ -92,14 +92,14 @@ module.exports = class ReturnReasonLocalisationModel extends global['\Opencart\S
 			sql += " LIMIT " + data['start'] + "," + data['limit'];
 		}
 
-		let return_reason_data = await this.cache.get('return_reason+' + md5(sql));
+		let return_reason_data = await this.cache.get('return_reason.' + md5(sql));
 
 		if (!return_reason_data) {
 			const query = await this.db.query(sql);
 
 			return_reason_data = query.rows;
 
-			await this.cache.set('return_reason+' + md5(sql), return_reason_data);
+			await this.cache.set('return_reason.' + md5(sql), return_reason_data);
 		}
 
 		return return_reason_data;

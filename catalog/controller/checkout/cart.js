@@ -203,7 +203,7 @@ module.exports = class Cart extends global['\Opencart\System\Engine\Controller']
 			let totalData = await this.model_checkout_cart.getTotals(totals, taxes, total);
 			total = totalData.total;
 			taxes = totalData.taxes;
-			const totals = totalData.totals;
+			totals = totalData.totals;
 			for (let result of totals) {
 				data['totals'].push({
 					'title': result['title'],
@@ -221,7 +221,7 @@ module.exports = class Cart extends global['\Opencart\System\Engine\Controller']
 	async add() {
 		await this.load.language('checkout/cart');
 
-		const json = {};
+		const json = { error: {} };
 		let product_id = 0;
 		if ((this.request.post['product_id'])) {
 			product_id = this.request.post['product_id'];
@@ -230,9 +230,9 @@ module.exports = class Cart extends global['\Opencart\System\Engine\Controller']
 		if ((this.request.post['quantity'])) {
 			quantity = this.request.post['quantity'];
 		}
-		let option = [];
-		if ((this.request.post['option'] && this.request.post['option'].length)) {
-			option = this.request.post['option'].filter(a => a);
+		let option = {};
+		if ((this.request.post['option'] && Object.keys(this.request.post['option']).length)) {
+			option = this.request.post['option'];
 		}
 		let subscription_plan_id = 0;
 		if ((this.request.post['subscription_plan_id'])) {
@@ -242,7 +242,7 @@ module.exports = class Cart extends global['\Opencart\System\Engine\Controller']
 		this.load.model('catalog/product', this);
 
 		const product_info = await this.model_catalog_product.getProduct(product_id);
-
+		console.log(option,this.request.post['option'])
 		if (product_info.product_id) {
 			// If variant get master product
 			if (product_info['master_id']) {
@@ -264,9 +264,8 @@ module.exports = class Cart extends global['\Opencart\System\Engine\Controller']
 
 			// Validate options
 			const product_options = await this.model_catalog_product.getOptions(product_id);
-
 			for (let product_option of product_options) {
-				if (product_option['required'] && option[product_option['product_option_id']]) {
+				if (product_option['required'] && !option[product_option['product_option_id']]) {
 					json['error']['option_' + product_option['product_option_id']] = sprintf(this.language.get('error_required'), product_option['name']);
 				}
 			}
@@ -288,8 +287,7 @@ module.exports = class Cart extends global['\Opencart\System\Engine\Controller']
 		} else {
 			json['error']['warning'] = this.language.get('error_product');
 		}
-
-		if (!Object.keys(json).length) {
+		if (!Object.keys(json.error).length) {
 			await this.cart.add(product_id, quantity, option, subscription_plan_id);
 
 			json['success'] = sprintf(this.language.get('text_success'), await this.url.link('product/product', 'language=' + this.config.get('config_language') + '&product_id=' + product_id), product_info['name'], await this.url.link('checkout/cart', 'language=' + this.config.get('config_language')));

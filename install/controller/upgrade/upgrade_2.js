@@ -139,6 +139,6 @@ global['\Opencart\Install\Controller\Upgrade\Upgrade2'] = class Upgrade2 extends
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(json_encode(json));
+		this.response.setOutput(JSON.stringify(json));
 	}
 }

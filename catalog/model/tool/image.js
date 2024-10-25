@@ -61,7 +61,7 @@ module.exports = class ImageTool extends global['\Opencart\System\Engine\Model']
 			}
 
 			if (width != width_new || height != height_new) {
-				let image = new ImageLibrary(DIR_IMAGE + image_old);
+				let image = new global['\Opencart\System\Library\Image'](DIR_IMAGE + image_old);
 				await image.load();
 				await image.resize(width_new, height_new);
 				await image.save(DIR_IMAGE + image_new);

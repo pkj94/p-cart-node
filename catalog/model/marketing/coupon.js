@@ -5,16 +5,14 @@ module.exports = class Coupon extends global['\Opencart\System\Engine\Model'] {
 	 * @return array
 	 */
 	async getCoupon(code) {
-		status = true;
-
-		coupon_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "coupon` WHERE `code` = " + this.db.escape(code) + " AND ((`date_start` = '0000-00-00' OR `date_start` < NOW()) AND (`date_end` = '0000-00-00' OR `date_end` > NOW())) AND `status` = '1'");
-
+		let status = true;
+		const coupon_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "coupon` WHERE `code` = " + this.db.escape(code) + " AND ((`date_start` = '0000-00-00' OR `date_start` < NOW()) AND (`date_end` = '0000-00-00' OR `date_end` > NOW())) AND `status` = '1'");
+		let product_data = [];
 		if (coupon_query.num_rows) {
-			if (coupon_query.row['total'] > this.cart.getSubTotal()) {
+			if (coupon_query.row['total'] > await this.cart.getSubTotal()) {
 				status = false;
 			}
-
-			coupon_total = this.getTotalHistoriesByCoupon(code);
+			const coupon_total = await this.getTotalHistoriesByCoupon(code);
 
 			if (coupon_query.row['uses_total'] > 0 && (coupon_total >= coupon_query.row['uses_total'])) {
 				status = false;
@@ -25,7 +23,7 @@ module.exports = class Coupon extends global['\Opencart\System\Engine\Model'] {
 			}
 
 			if (await this.customer.getId()) {
-				customer_total = this.getTotalHistoriesByCustomerId(code, await this.customer.getId());
+				const customer_total = this.getTotalHistoriesByCustomerId(code, await this.customer.getId());
 
 				if (coupon_query.row['uses_customer'] > 0 && (customer_total >= coupon_query.row['uses_customer'])) {
 					status = false;
@@ -33,35 +31,35 @@ module.exports = class Coupon extends global['\Opencart\System\Engine\Model'] {
 			}
 
 			// Products
-			coupon_product_data = [];
+			let coupon_product_data = [];
 
-			coupon_product_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "coupon_product` WHERE `coupon_id` = '" + coupon_query.row['coupon_id'] + "'");
+			const coupon_product_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "coupon_product` WHERE `coupon_id` = '" + coupon_query.row['coupon_id'] + "'");
 
 			for (let product of coupon_product_query.rows) {
 				coupon_product_data.push(product['product_id']);
 			}
 
 			// Categories
-			coupon_category_data = [];
+			let coupon_category_data = [];
 
-			coupon_category_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "coupon_category` cc LEFT JOIN `" + DB_PREFIX + "category_path` cp ON (cc.`category_id` = cp.`path_id`) WHERE cc.`coupon_id` = '" + coupon_query.row['coupon_id'] + "'");
+			const coupon_category_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "coupon_category` cc LEFT JOIN `" + DB_PREFIX + "category_path` cp ON (cc.`category_id` = cp.`path_id`) WHERE cc.`coupon_id` = '" + coupon_query.row['coupon_id'] + "'");
 
 			for (let category of coupon_category_query.rows) {
 				coupon_category_data.push(category['category_id']);
 			}
 
-			let product_data = [];
 
-			if (coupon_product_data || coupon_category_data) {
+
+			if (coupon_product_data.length || coupon_category_data.length) {
 				for (let product of await this.cart.getProducts()) {
-					if (in_array(product['product_id'], coupon_product_data)) {
+					if (coupon_product_data.includes(product['product_id'])) {
 						product_data.push(product['product_id']);
 
 						continue;
 					}
 
 					for (let category_id of coupon_category_data) {
-						coupon_category_query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "product_to_category` WHERE `product_id` = '" + product['product_id'] + "' AND `category_id` = '" + category_id + "'");
+						const coupon_category_query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "product_to_category` WHERE `product_id` = '" + product['product_id'] + "' AND `category_id` = '" + category_id + "'");
 
 						if (coupon_category_query.row['total']) {
 							product_data.push(product['product_id']);
@@ -107,7 +105,7 @@ module.exports = class Coupon extends global['\Opencart\System\Engine\Model'] {
 	 * @return int
 	 */
 	async getTotalHistoriesByCoupon(coupon) {
-		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "coupon_history` ch LEFT JOIN `" + DB_PREFIX + "coupon` c ON (ch.`coupon_id` = c.`coupon_id`) WHERE c.`code` = '" + this.db.escape(coupon) + "'");
+		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "coupon_history` ch LEFT JOIN `" + DB_PREFIX + "coupon` c ON (ch.`coupon_id` = c.`coupon_id`) WHERE c.`code` = " + this.db.escape(coupon));
 
 		return query.row['total'];
 	}
@@ -119,7 +117,7 @@ module.exports = class Coupon extends global['\Opencart\System\Engine\Model'] {
 	 * @return int
 	 */
 	async getTotalHistoriesByCustomerId(coupon, customer_id) {
-		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "coupon_history` ch LEFT JOIN `" + DB_PREFIX + "coupon` c ON (ch.`coupon_id` = c.`coupon_id`) WHERE c.`code` = '" + this.db.escape(coupon) + "' AND ch.`customer_id` = '" + customer_id + "'");
+		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "coupon_history` ch LEFT JOIN `" + DB_PREFIX + "coupon` c ON (ch.`coupon_id` = c.`coupon_id`) WHERE c.`code` = " + this.db.escape(coupon) + " AND ch.`customer_id` = '" + customer_id + "'");
 
 		return query.row['total'];
 	}

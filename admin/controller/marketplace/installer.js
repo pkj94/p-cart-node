@@ -582,7 +582,7 @@ module.exports = class InstallerMarketplaceController extends global['\Opencart\
 			// 			autoload = output['autoload']['psr-4'];
 
 			// 			for (autoload of namespace : path) {
-			// 				if (!is_array(path)) {
+			// 				if (!Array.isArray(path)) {
 			// 					code += 'autoloader.register(\'' + rtrim(namespace, '\\') + '\', DIR_STORAGE + \'vendor/' + directory + '/' + rtrim(path, '/') + '/' + '\', true);' + "\n";
 			// 				} else {
 			// 					for (path of value) {
@@ -597,7 +597,7 @@ module.exports = class InstallerMarketplaceController extends global['\Opencart\
 			// 			autoload = output['autoload']['psr-0'];
 
 			// 			for (autoload of namespace : path) {
-			// 				if (!is_array(path)) {
+			// 				if (!Array.isArray(path)) {
 			// 					code += 'autoloader.register(\'' + rtrim(namespace, '\\') + '\', DIR_STORAGE + \'vendor/' + directory + '/' + rtrim(path, '/') + '/' + '\', true);' + "\n";
 			// 				} else {
 			// 					for (path of value) {

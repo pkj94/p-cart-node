@@ -92,14 +92,14 @@ module.exports = class OrderStatusLocalisationModel extends global['\Opencart\Sy
 			sql += " LIMIT " + data['start'] + "," + data['limit'];
 		}
 
-		let order_status_data = await this.cache.get('order_status+' + md5(sql));
+		let order_status_data = await this.cache.get('order_status.' + md5(sql));
 
 		if (!order_status_data) {
 			const query = await this.db.query(sql);
 
 			order_status_data = query.rows;
 
-			await this.cache.set('order_status+' + md5(sql), order_status_data);
+			await this.cache.set('order_status.' + md5(sql), order_status_data);
 		}
 
 		return order_status_data;

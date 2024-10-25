@@ -113,14 +113,14 @@ module.exports = class CurrencyLocalisationModel extends global['\Opencart\Syste
 			sql += " LIMIT " + data['start'] + "," + data['limit'];
 		}
 
-		let results = await this.cache.get('currency+' + md5(sql));
+		let results = await this.cache.get('currency.' + md5(sql));
 
 		if (!results) {
 			const query = await this.db.query(sql);
 
 			results = query.rows;
 
-			await this.cache.set('currency+' + md5(sql), results);
+			await this.cache.set('currency.' + md5(sql), results);
 		}
 
 		let currency_data = {};

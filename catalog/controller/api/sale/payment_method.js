@@ -55,7 +55,7 @@ module.exports = class PaymentMethod extends global['\Opencart\System\Engine\Con
 
 		// Payment Method
 		if ((this.request.post['payment_method']) && (this.session.data['payment_methods'])) {
-			payment = explode('+', this.request.post['payment_method']);
+			payment = explode('.', this.request.post['payment_method']);
 
 			if (!(payment[0]) || !(payment[1]) || !(this.session.data['payment_methods'][payment[0]]['option'][payment[1]])) {
 				json['error'] = this.language.get('error_payment_method');

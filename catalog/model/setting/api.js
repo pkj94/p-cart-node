@@ -6,7 +6,7 @@ module.exports =class Api extends global['\Opencart\System\Engine\Model'] {
 	 * @return array
 	 */
 	async login(username, key) {
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "api` a LEFT JOIN `" + DB_PREFIX + "api_ip` ai ON (a.`api_id` = ai.`api_id`) WHERE a.`username` = '" + this.db.escape(username) + "' AND a.`key` = '" + this.db.escape(key) + "'");
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "api` a LEFT JOIN `" + DB_PREFIX + "api_ip` ai ON (a.`api_id` = ai.`api_id`) WHERE a.`username` = " + this.db.escape(username) + " AND a.`key` = " + this.db.escape(key));
 
 		return query.row;
 	}

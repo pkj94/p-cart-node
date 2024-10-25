@@ -1,8 +1,8 @@
 const Framework = require('../system/framework');
 
-module.exports = function () {
+module.exports = function (registry) {
     const loadAdminControllers = async (req, res, next) => {
-        // console.log('-=-=-=-=-=-',req.params)
+        const config = registry.get('config');
         if (fs.readFileSync('./config.json').toString())
             for (let [key, value] of Object.entries(require('./config.json'))) {
                 global[key] = value;
@@ -16,22 +16,22 @@ module.exports = function () {
         app.use('/admin/view/image', express.static(DIR_APPLICATION + 'view/image'));
         app.use('/admin/language', express.static(DIR_APPLICATION + '/language'));
 
-        new Framework().init(req, res, next).then(output => {
+        new Framework(registry).init(req, res, next).then(output => {
             if (registry.get('response').end) {
-                global.registry.get('response').headers.forEach(header => {
+                registry.get('response').headers.forEach(header => {
                     res.header((header.split(':')[0] || '').trim(), (header.split(':')[1] || '').trim());
                 });
                 res.end(registry.get('response').end);
             } else if (registry.get('response').file) {
 
-                global.registry.get('response').headers.forEach(header => {
+                registry.get('response').headers.forEach(header => {
                     res.header((header.split(':')[0] || '').trim(), (header.split(':')[1] || '').trim());
                 });
                 res.sendFile(registry.get('response').file);
             } else if (registry.get('response').redirect) {
                 res.redirect(registry.get('response').redirect);
             } else {
-                global.registry.get('response').headers.forEach(header => {
+                registry.get('response').headers.forEach(header => {
                     res.header((header.split(':')[0] || '').trim(), (header.split(':')[1] || '').trim());
                 });
                 res.status(200).send(output);
@@ -58,14 +58,14 @@ module.exports = function () {
                     break;
             }
 
-            if (global.config.get('error_log')) {
-                log.write('JavaScript ' + errorType + ':  ' + error.toString());
+            if (config.get('error_log')) {
+                registry.get('log').write('JavaScript ' + errorType + ':  ' + error.toString());
             }
 
-            if (global.config.get('error_display')) {
+            if (config.get('error_display')) {
                 res.status(200).send('<b>' + errorType + '</b>: ' + error.toString());
             } else {
-                console.log(global.config.get('error_page'))
+                console.log(config.get('error_page'))
                 res.redirect(config.get('error_page'));
             }
 

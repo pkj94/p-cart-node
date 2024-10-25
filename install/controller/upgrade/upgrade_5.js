@@ -229,10 +229,10 @@ global['\Opencart\Install\Controller\Upgrade\Upgrade5'] = class Upgrade5 extends
 			});
 
 			for (events of event) {
-				query = this.db.query("SELECT * FROM `" + DB_PREFIX + "event` WHERE `code` = '" + this.db.escape(event['code']) + "'");
+				query = this.db.query("SELECT * FROM `" + DB_PREFIX + "event` WHERE `code` = " + this.db.escape(event['code']) );
 
 				if (!query.num_rows) {
-					this.db.query("INSERT INTO `" + DB_PREFIX + "event` SET `code` = '" + this.db.escape(event['code']) + "', `trigger` = '" + this.db.escape(event['trigger']) + "', `action` = '" + this.db.escape(event['action']) + "', `status` = '1', `sort_order` = '0'");
+					this.db.query("INSERT INTO `" + DB_PREFIX + "event` SET `code` = " + this.db.escape(event['code']) + ", `trigger` = " + this.db.escape(event['trigger']) + ", `action` = " + this.db.escape(event['action']) + ", `status` = '1', `sort_order` = '0'");
 				}
 			}
 
@@ -272,6 +272,6 @@ global['\Opencart\Install\Controller\Upgrade\Upgrade5'] = class Upgrade5 extends
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(json_encode(json));
+		this.response.setOutput(JSON.stringify(json));
 	}
 }

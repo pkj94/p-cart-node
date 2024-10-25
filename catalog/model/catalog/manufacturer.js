@@ -47,14 +47,14 @@ module.exports=class Manufacturer extends global['\Opencart\System\Engine\Model'
 			sql += " LIMIT " + data['start'] + "," + data['limit'];
 		}
 
-		manufacturer_data = await this.cache.get('manufacturer+' + md5(sql));
+		manufacturer_data = await this.cache.get('manufacturer.' + md5(sql));
 
 		if (!manufacturer_data) {
 			const query = await this.db.query(sql);
 
 			manufacturer_data = query.rows;
 
-			await this.cache.set('manufacturer+' + md5(sql), manufacturer_data);
+			await this.cache.set('manufacturer.' + md5(sql), manufacturer_data);
 		}
 
 		return manufacturer_data;

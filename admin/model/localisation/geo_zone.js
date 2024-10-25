@@ -109,14 +109,14 @@ module.exports = class GeoZoneLocalisationModel extends global['\Opencart\System
 			sql += " LIMIT " + data['start'] + "," + data['limit'];
 		}
 
-		let geo_zone_data = await this.cache.get('geo_zone+' + md5(sql));
+		let geo_zone_data = await this.cache.get('geo_zone.' + md5(sql));
 
 		if (!geo_zone_data) {
 			const query = await this.db.query(sql);
 
 			geo_zone_data = query.rows;
 
-			await this.cache.set('geo_zone+' + md5(sql), geo_zone_data);
+			await this.cache.set('geo_zone.' + md5(sql), geo_zone_data);
 		}
 
 		return geo_zone_data;

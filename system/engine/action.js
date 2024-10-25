@@ -28,11 +28,13 @@ global['\Opencart\System\Engine\Action'] = class Action {
         try {
             namespace = `Opencart${application}${this.class}`;
             // console.log(namespace, this.method)
-            controller = new global[namespace](registry);
-            if (typeof controller[this.method] === 'function') {
-                return controller[this.method](...args);
-            } else {
-                throw new Error(`Error: Could not call route ${this.route}!`);
+            if (global[namespace]) {
+                controller = new global[namespace](registry);
+                if (typeof controller[this.method] === 'function') {
+                    return controller[this.method](...args);
+                } else {
+                    throw new Error(`Error: Could not call route ${this.route}!`);
+                }
             }
         } catch (e) {
             console.log(namespace, this, e)
