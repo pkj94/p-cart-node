@@ -19,7 +19,7 @@ module.exports = class Image {
     }
     async save(file, quality = 90) {
         await this.image.toFile(file, { quality });
-        console.log('The file was created.');
+        // console.log('The file was created.');
     }
 
     async resize(width, height, defaultScale = '') {

@@ -17,7 +17,7 @@ global['\Opencart\Catalog\Model\Extension\Opencart\Total\Tax'] = class Tax exten
 					'sort_order': this.config.get('total_tax_sort_order')
 				});
 
-				total += Number(value);
+				total = total + Number(value);
 			}
 		}
 		return { totals, taxes, total }

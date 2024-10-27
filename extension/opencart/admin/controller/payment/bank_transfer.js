@@ -46,7 +46,7 @@ global['\Opencart\Admin\Controller\Extension\Opencart\Payment\BankTransfer'] = c
 
 		data.order_statuses = await this.model_localisation_order_status.getOrderStatuses();
 
-		data.payment_bank_transfer_geo_zone_id = this.config.get('payment_bank_transfer_geo_zone_id');
+		data.payment_bank_transfer_geo_zone_id = Number(this.config.get('payment_bank_transfer_geo_zone_id'));
 
 		this.load.model('localisation/geo_zone', this);
 

@@ -310,18 +310,18 @@ module.exports = class Product extends global['\Opencart\System\Engine\Controlle
 			}
 
 			if (await this.customer.isLogged() || !Number(this.config.get('config_customer_price'))) {
-				data['price'] = this.currency.format(this.tax.calculate(product_info['price'], product_info['tax_class_id'], Number(Number(this.config.get('config_tax')))), this.session.data['currency']);
+				data['price'] = this.currency.format(this.tax.calculate(product_info['price'], product_info['tax_class_id'], Number(this.config.get('config_tax'))), this.session.data['currency']);
 			} else {
 				data['price'] = false;
 			}
 
 			if (product_info['special']) {
-				data['special'] = this.currency.format(this.tax.calculate(product_info['special'], product_info['tax_class_id'], Number(Number(this.config.get('config_tax')))), this.session.data['currency']);
+				data['special'] = this.currency.format(this.tax.calculate(product_info['special'], product_info['tax_class_id'], Number(this.config.get('config_tax'))), this.session.data['currency']);
 			} else {
 				data['special'] = false;
 			}
 
-			if (Number(Number(this.config.get('config_tax')))) {
+			if (Number(this.config.get('config_tax'))) {
 				data['tax'] = this.currency.format(product_info['special'] ? product_info['special'] : product_info['price'], this.session.data['currency']);
 			} else {
 				data['tax'] = false;
@@ -335,7 +335,7 @@ module.exports = class Product extends global['\Opencart\System\Engine\Controlle
 				for (let discount of discounts) {
 					data['discounts'].push({
 						'quantity': discount['quantity'],
-						'price': this.currency.format(this.tax.calculate(discount['price'], product_info['tax_class_id'], Number(Number(this.config.get('config_tax')))), this.session.data['currency'])
+						'price': this.currency.format(this.tax.calculate(discount['price'], product_info['tax_class_id'], Number(this.config.get('config_tax'))), this.session.data['currency'])
 					});
 				}
 			}
@@ -359,7 +359,7 @@ module.exports = class Product extends global['\Opencart\System\Engine\Controlle
 						if (!option_value['subtract'] || (option_value['quantity'] > 0)) {
 							let price = false;
 							if (((Number(this.config.get('config_customer_price')) && await this.customer.isLogged()) || !Number(this.config.get('config_customer_price'))) && option_value['price']) {
-								price = this.currency.format(this.tax.calculate(option_value['price'], product_info['tax_class_id'], Number(Number(this.config.get('config_tax'))) ? 'P' : false), this.session.data['currency']);
+								price = this.currency.format(this.tax.calculate(option_value['price'], product_info['tax_class_id'], Number(this.config.get('config_tax')) ? 'P' : false), this.session.data['currency']);
 							}
 							let image = '';
 							if (option_value['image'] && fs.existsSync(DIR_IMAGE + html_entity_decode(option_value['image']))) {
@@ -398,7 +398,7 @@ module.exports = class Product extends global['\Opencart\System\Engine\Controlle
 				let description = '';
 
 				if (result['trial_status']) {
-					let trial_price = this.currency.format(this.tax.calculate(result['trial_price'], product_info['tax_class_id'], Number(Number(this.config.get('config_tax')))), this.session.data['currency']);
+					let trial_price = this.currency.format(this.tax.calculate(result['trial_price'], product_info['tax_class_id'], Number(this.config.get('config_tax'))), this.session.data['currency']);
 					let trial_cycle = result['trial_cycle'];
 					let trial_frequency = this.language.get('text_' + result['trial_frequency']);
 					let trial_duration = result['trial_duration'];
@@ -406,7 +406,7 @@ module.exports = class Product extends global['\Opencart\System\Engine\Controlle
 					description += sprintf(this.language.get('text_subscription_trial'), trial_price, trial_cycle, trial_frequency, trial_duration);
 				}
 
-				let price = this.currency.format(this.tax.calculate(result['price'], product_info['tax_class_id'], Number(Number(this.config.get('config_tax')))), this.session.data['currency']);
+				let price = this.currency.format(this.tax.calculate(result['price'], product_info['tax_class_id'], Number(this.config.get('config_tax'))), this.session.data['currency']);
 				let cycle = result['cycle'];
 				let frequency = this.language.get('text_' + result['frequency']);
 				let duration = result['duration'];
@@ -445,14 +445,14 @@ module.exports = class Product extends global['\Opencart\System\Engine\Controlle
 				}
 				let price = false;
 				if (await this.customer.isLogged() || !Number(this.config.get('config_customer_price'))) {
-					price = this.currency.format(this.tax.calculate(result['price'], result['tax_class_id'], Number(Number(this.config.get('config_tax')))), this.session.data['currency']);
+					price = this.currency.format(this.tax.calculate(result['price'], result['tax_class_id'], Number(this.config.get('config_tax'))), this.session.data['currency']);
 				}
 				let special = false;
 				if (result['special']) {
-					special = this.currency.format(this.tax.calculate(result['special'], result['tax_class_id'], Number(Number(this.config.get('config_tax')))), this.session.data['currency']);
+					special = this.currency.format(this.tax.calculate(result['special'], result['tax_class_id'], Number(this.config.get('config_tax'))), this.session.data['currency']);
 				}
 				let tax = false;
-				if (Number(Number(this.config.get('config_tax')))) {
+				if (Number(this.config.get('config_tax'))) {
 					tax = this.currency.format(result['special'] ? result['special'] : result['price'], this.session.data['currency']);
 				}
 

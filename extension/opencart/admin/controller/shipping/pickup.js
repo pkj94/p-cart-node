@@ -32,7 +32,7 @@ global['\Opencart\Admin\Controller\Extension\Opencart\Shipping\Pickup'] = class 
 		data['save'] = await this.url.link('extension/opencart/shipping/pickup.save', 'user_token=' + this.session.data['user_token']);
 		data['back'] = await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=shipping');
 
-		data['shipping_pickup_geo_zone_id'] = this.config.get('shipping_pickup_geo_zone_id');
+		data['shipping_pickup_geo_zone_id'] = Number(this.config.get('shipping_pickup_geo_zone_id'));
 
 		this.load.model('localisation/geo_zone',this);
 

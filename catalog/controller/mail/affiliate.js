@@ -59,7 +59,7 @@ module.exports = class Affiliate extends global['\Opencart\System\Engine\Control
 			mail.setSender(store_name);
 			mail.setSubject(subject);
 			mail.setHtml(await this.load.view('mail/affiliate', data));
-			mail.send();
+			await mail.send();
 		}
 	}
 
@@ -128,7 +128,7 @@ module.exports = class Affiliate extends global['\Opencart\System\Engine\Control
 				mail.setSender(store_name);
 				mail.setSubject(subject);
 				mail.setHtml(await this.load.view('mail/affiliate_alert', data));
-				mail.send();
+				await mail.send();
 
 				// Send to additional alert emails if new affiliate email is enabled
 				emails = this.config.get('config_mail_alert_email').split(',');
@@ -136,7 +136,7 @@ module.exports = class Affiliate extends global['\Opencart\System\Engine\Control
 				for (let email of emails) {
 					if (oc_strlen(email) > 0 && isEmailValid(email)) {
 						mail.setTo(trim(email));
-						mail.send();
+						await mail.send();
 					}
 				}
 			}

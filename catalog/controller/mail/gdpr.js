@@ -71,7 +71,7 @@ module.exports = class Gdpr extends global['\Opencart\System\Engine\Controller']
 			mail.setSender(store_name);
 			mail.setSubject(sprintf(this.language.get('text_subject'), store_name));
 			mail.setHtml(await this.load.view('mail/gdpr', data));
-			mail.send();
+			await mail.send();
 		}
 	}
 
@@ -181,7 +181,7 @@ module.exports = class Gdpr extends global['\Opencart\System\Engine\Controller']
 				mail.setSender(store_name);
 				mail.setSubject(subject);
 				mail.setHtml(await this.load.view('mail/gdpr_delete', data));
-				mail.send();
+				await mail.send();
 			}
 		}
 	}

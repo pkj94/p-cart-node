@@ -240,9 +240,9 @@ module.exports = class SettingController extends global['\Opencart\System\Engine
 
 		data['config_cart_weight'] = Number(this.config.get('config_cart_weight'));
 		data['config_checkout_guest'] = this.config.get('config_checkout_guest');
-		data['config_checkout_payment_address'] = this.config.get('config_checkout_payment_address');
+		data['config_checkout_payment_address'] = Number(this.config.get('config_checkout_payment_address'));
 		data['config_checkout_shipping_address'] = this.config.get('config_checkout_shipping_address');
-		data['config_checkout_id'] = this.config.get('config_checkout_id');
+		data['config_checkout_id'] = Number(this.config.get('config_checkout_id'));
 
 		if (this.config.get('config_invoice_prefix')) {
 			data['config_invoice_prefix'] = this.config.get('config_invoice_prefix');
@@ -308,7 +308,7 @@ module.exports = class SettingController extends global['\Opencart\System\Engine
 		}
 
 		if (this.config.has('config_affiliate_auto')) {
-			data['config_affiliate_auto'] = this.config.get('config_affiliate_auto');
+			data['config_affiliate_auto'] = Number(this.config.get('config_affiliate_auto'));
 		} else {
 			data['config_affiliate_auto'] = '';
 		}

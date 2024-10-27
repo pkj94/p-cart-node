@@ -19,7 +19,7 @@ global['\Opencart\Catalog\Model\Extension\Opencart\Total\Reward'] = class Reward
 
 				let points_total = 0;
 
-				for (let [cart_id,product] of Object.entries(await this.cart.getProducts())) {
+				for (let [cart_id, product] of Object.entries(await this.cart.getProducts())) {
 					if (product['points']) {
 						points_total += product['points'];
 					}
@@ -27,7 +27,7 @@ global['\Opencart\Catalog\Model\Extension\Opencart\Total\Reward'] = class Reward
 
 				points = Math.min(points, points_total);
 
-				for (let [cart_id,product] of Object.entries(await this.cart.getProducts())) {
+				for (let [cart_id, product] of Object.entries(await this.cart.getProducts())) {
 					let discount = 0;
 
 					if (product['points']) {
@@ -55,7 +55,7 @@ global['\Opencart\Catalog\Model\Extension\Opencart\Total\Reward'] = class Reward
 					'sort_order': this.config.get('total_reward_sort_order')
 				});
 
-				total -= discount_total;
+				total = total - discount_total;
 			}
 		}
 		return { totals, taxes, total }

@@ -313,7 +313,7 @@ module.exports = class Activity extends global['\Opencart\System\Engine\Controll
 	async addHistory(route, args) {
 		if (Number(this.config.get('config_customer_activity'))) {
 			// If the last order status id returns 0, and the new order status is not, then we record it as new order
-			this.load.model('checkout/order');
+			this.load.model('checkout/order',this);
 
 			const order_info = await this.model_checkout_order.getOrder(args[0]);
 

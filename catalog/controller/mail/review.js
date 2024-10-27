@@ -45,7 +45,7 @@ module.exports = class Review extends global['\Opencart\System\Engine\Controller
 					mail.setSender(store_name);
 					mail.setSubject(subject);
 					mail.setHtml(await this.load.view('mail/review', data));
-					mail.send();
+					await mail.send();
 
 					// Send to additional alert emails
 					emails = this.config.get('config_mail_alert_email').split(',');
@@ -53,7 +53,7 @@ module.exports = class Review extends global['\Opencart\System\Engine\Controller
 					for (let email of emails) {
 						if (email && isEmailValid(email)) {
 							mail.setTo(trim(email));
-							mail.send();
+							await mail.send();
 						}
 					}
 				}

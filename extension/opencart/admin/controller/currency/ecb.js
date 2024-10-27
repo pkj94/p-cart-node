@@ -56,7 +56,6 @@ global['\Opencart\Admin\Controller\Extension\Opencart\Currency\Ecb'] = class ECB
   }
 
   async currencyConvert(default_ = '') {
-    console.log('test ecb',this.config.get('currency_ecb_status'))
     if (this.config.get('currency_ecb_status')) {
       try {
         const response = await require('axios').get('https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml', {

@@ -1,9 +1,12 @@
+const bin2hex = require("locutus/php/strings/bin2hex");
+const sprintf = require("locutus/php/strings/sprintf");
+
 module.exports = class Voucher extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */
 	async index() {
-const data ={};
+		const data = {};
 		await this.load.language('checkout/voucher');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -15,18 +18,18 @@ const data ={};
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/home', 'language=' + this.config.get('config_language'))
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/home', 'language=' + this.config.get('config_language'))
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_account'),
-			'href' : await this.url.link('account/account', 'language=' + this.config.get('config_language'))
+			'text': this.language.get('text_account'),
+			'href': await this.url.link('account/account', 'language=' + this.config.get('config_language'))
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_voucher'),
-			'href' : await this.url.link('checkout/voucher', 'language=' + this.config.get('config_language'))
+			'text': this.language.get('text_voucher'),
+			'href': await this.url.link('checkout/voucher', 'language=' + this.config.get('config_language'))
 		});
 
 		data['help_amount'] = sprintf(this.language.get('help_amount'), this.currency.format(this.config.get('config_voucher_min'), this.session.data['currency']), this.currency.format(this.config.get('config_voucher_max'), this.session.data['currency']));
@@ -36,7 +39,7 @@ const data ={};
 		data['save'] = await this.url.link('checkout/voucher+add', 'language=' + this.config.get('config_language') + '&voucher_token=' + this.session.data['voucher_token']);
 
 		if (await this.customer.isLogged()) {
-			data['from_name'] = await this.customer.getFirstName() + ' '  + await this.customer.getLastName();
+			data['from_name'] = await this.customer.getFirstName() + ' ' + await this.customer.getLastName();
 		} else {
 			data['from_name'] = '';
 		}
@@ -59,7 +62,7 @@ const data ={};
 		data['content_bottom'] = await this.load.controller('common/content_bottom');
 		data['footer'] = await this.load.controller('common/footer');
 		data['header'] = await this.load.controller('common/header');
-
+		await this.session.save(this.session.data);
 		this.response.setOutput(await this.load.view('checkout/voucher', data));
 	}
 
@@ -69,9 +72,9 @@ const data ={};
 	async add() {
 		await this.load.language('checkout/voucher');
 
-		const json = {};
+		const json = { error: {} };
 
-		keys = [
+		let keys = [
 			'to_name',
 			'to_email',
 			'from_name',
@@ -103,7 +106,7 @@ const data ={};
 			json['error']['from_name'] = this.language.get('error_from_name');
 		}
 
-		if ((oc_strlen(this.request.post['from_email']) > 96) || !filter_var(this.request.post['from_email'], FILTER_VALIDATE_EMAIL)) {
+		if ((oc_strlen(this.request.post['from_email']) > 96) || !isEmailValid(this.request.post['from_email'])) {
 			json['error']['from_email'] = this.language.get('error_email');
 		}
 
@@ -119,30 +122,30 @@ const data ={};
 			json['error']['warning'] = this.language.get('error_agree');
 		}
 
-		if (!Object.keys(json).length) {
-			code = oc_token(10);
-
+		if (!Object.keys(json.error).length) {
+			let code = oc_token(10);
+			this.session.data['vouchers'] = this.session.data['vouchers'] || [];
 			this.session.data['vouchers'].push({
-				'code'             : code,
-				'description'      : sprintf(this.language.get('text_for'), this.currency.format(this.request.post['amount'], this.session.data['currency'], 1+0), this.request.post['to_name']),
-				'to_name'          : this.request.post['to_name'],
-				'to_email'         : this.request.post['to_email'],
-				'from_name'        : this.request.post['from_name'],
-				'from_email'       : this.request.post['from_email'],
-				'voucher_theme_id' : this.request.post['voucher_theme_id'],
-				'message'          : this.request.post['message'],
-				'amount'           : this.currency.convert(this.request.post['amount'], this.session.data['currency'], this.config.get('config_currency'))
+				'code': code,
+				'description': sprintf(this.language.get('text_for'), this.currency.format(this.request.post['amount'], this.session.data['currency'], 1 + 0), this.request.post['to_name']),
+				'to_name': this.request.post['to_name'],
+				'to_email': this.request.post['to_email'],
+				'from_name': this.request.post['from_name'],
+				'from_email': this.request.post['from_email'],
+				'voucher_theme_id': this.request.post['voucher_theme_id'],
+				'message': this.request.post['message'],
+				'amount': this.currency.convert(this.request.post['amount'], this.session.data['currency'], this.config.get('config_currency'))
 			});
 
-			delete (this.session.data['shipping_method']);
-			delete (this.session.data['shipping_methods']);
-			delete (this.session.data['payment_method']);
-			delete (this.session.data['payment_methods']);
-			delete (this.session.data['reward']);
+			delete this.session.data['shipping_method'];
+			delete this.session.data['shipping_methods'];
+			delete this.session.data['payment_method'];
+			delete this.session.data['payment_methods'];
+			delete this.session.data['reward'];
 
 			json['redirect'] = await this.url.link('checkout/voucher+success', 'language=' + this.config.get('config_language'), true);
 		}
-
+		await this.session.save(this.session.data);
 		this.response.addHeader('Content-Type: application/json');
 		this.response.setOutput(json);
 	}
@@ -154,32 +157,30 @@ const data ={};
 		await this.load.language('checkout/voucher');
 
 		const json = {};
-
+		let key = '';
 		if ((this.request.get['key'])) {
 			key = this.request.get['key'];
-		} else {
-			key = '';
 		}
 
-		if (!(this.session.data['vouchers'][key])) {
+		if (!(this.session.data['vouchers'] && this.session.data['vouchers'] && this.session.data['vouchers'][key])) {
 			json['error'] = this.language.get('error_voucher');
 		}
 
 		if (!Object.keys(json).length) {
-			if (await this.cart.hasProducts() (this.session.data['vouchers'] && this.session.data['vouchers'].length)) {
+			if (await this.cart.hasProducts()(this.session.data['vouchers'] && this.session.data['vouchers'].length)) {
 				json['success'] = this.language.get('text_remove');
 			} else {
 				json['redirect'] = await this.url.link('checkout/cart', 'language=' + this.config.get('config_language'), true);
 			}
 
-			delete (this.session.data['vouchers'][key]);
-			delete (this.session.data['shipping_method']);
-			delete (this.session.data['shipping_methods']);
-			delete (this.session.data['payment_method']);
-			delete (this.session.data['payment_methods']);
-			delete (this.session.data['reward']);
+			delete this.session.data['vouchers'][key];
+			delete this.session.data['shipping_method'];
+			delete this.session.data['shipping_methods'];
+			delete this.session.data['payment_method'];
+			delete this.session.data['payment_methods'];
+			delete this.session.data['reward'];
 		}
-
+		await this.session.save(this.session.data);
 		this.response.addHeader('Content-Type: application/json');
 		this.response.setOutput(json);
 	}
@@ -188,6 +189,7 @@ const data ={};
 	 * @return void
 	 */
 	async success() {
+		const data = {};
 		await this.load.language('checkout/voucher');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -195,13 +197,13 @@ const data ={};
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/home', 'language=' + this.config.get('config_language'))
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/home', 'language=' + this.config.get('config_language'))
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('checkout/voucher', 'language=' + this.config.get('config_language'))
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('checkout/voucher', 'language=' + this.config.get('config_language'))
 		});
 
 		data['continue'] = await this.url.link('checkout/cart', 'language=' + this.config.get('config_language'));

@@ -1,3 +1,5 @@
+const sprintf = require("locutus/php/strings/sprintf");
+
 module.exports = class PaymentAddress extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return string
@@ -15,7 +17,7 @@ module.exports = class PaymentAddress extends global['\Opencart\System\Engine\Co
 
 		data['addresses'] = await this.model_account_address.getAddresses(await this.customer.getId());
 
-		if ((this.session.data['payment_address']['address_id'])) {
+		if ((this.session.data['payment_address'] && this.session.data['payment_address']['address_id'])) {
 			data['address_id'] = this.session.data['payment_address']['address_id'];
 		} else {
 			data['address_id'] = 0;
@@ -49,17 +51,17 @@ module.exports = class PaymentAddress extends global['\Opencart\System\Engine\Co
 	async save() {
 		await this.load.language('checkout/payment_address');
 
-		const json = {};
+		const json = { error: {} };
 
-		// Validate cart has products and has stock+
-		if ((!await this.cart.hasProducts() && empty(this.session.data['vouchers'])) || (!await this.cart.hasStock() && !Number(this.config.get('config_stock_checkout')))) {
+		// Validate cart has products and has stock.
+		if ((!await this.cart.hasProducts() && !this.session.data['vouchers']) || (!await this.cart.hasStock() && !Number(this.config.get('config_stock_checkout')))) {
 			json['redirect'] = await this.url.link('checkout/cart', 'language=' + this.config.get('config_language'), true);
 		}
 
 		// Validate minimum quantity requirements+
 		let products = await this.cart.getProducts();
 
-		for (let product of products) {
+		for (let [cart_id, product] of Object.entries(products)) {
 			if (!product['minimum']) {
 				json['redirect'] = await this.url.link('checkout/cart', 'language=' + this.config.get('config_language'), true);
 
@@ -73,12 +75,12 @@ module.exports = class PaymentAddress extends global['\Opencart\System\Engine\Co
 		}
 
 		// Validate if payment address is set if required in settings
-		if (!this.config.get('config_checkout_payment_address')) {
+		if (!Number(this.config.get('config_checkout_payment_address'))) {
 			json['redirect'] = await this.url.link('checkout/cart', 'language=' + this.config.get('config_language'), true);
 		}
 
-		if (!Object.keys(json).length) {
-			keys = [
+		if (!json.redirect) {
+			let keys = [
 				'firstname',
 				'lastname',
 				'company',
@@ -117,7 +119,7 @@ module.exports = class PaymentAddress extends global['\Opencart\System\Engine\Co
 
 			const country_info = await this.model_localisation_country.getCountry(this.request.post['country_id']);
 
-			if (country_info && country_info['postcode_required'] && (oc_strlen(this.request.post['postcode']) < 2 || oc_strlen(this.request.post['postcode']) > 10)) {
+			if (country_info.country_id && country_info['postcode_required'] && (oc_strlen(this.request.post['postcode']) < 2 || oc_strlen(this.request.post['postcode']) > 10)) {
 				json['error']['postcode'] = this.language.get('error_postcode');
 			}
 
@@ -136,18 +138,18 @@ module.exports = class PaymentAddress extends global['\Opencart\System\Engine\Co
 
 			for (let custom_field of custom_fields) {
 				if (custom_field['location'] == 'address') {
-					if (custom_field['required'] && empty(this.request.post['custom_field'][custom_field['custom_field_id']])) {
+					if (custom_field['required'] && !this.request.post['custom_field'][custom_field['custom_field_id']]) {
 						json['error']['custom_field_' + custom_field['custom_field_id']] = sprintf(this.language.get('error_custom_field'), custom_field['name']);
-					} else if ((custom_field['type'] == 'text') && (custom_field['validation']) && !preg_match(html_entity_decode(custom_field['validation']), this.request.post['custom_field'][custom_field['custom_field_id']])) {
+					} else if ((custom_field['type'] == 'text') && (custom_field['validation']) && !new RegExp(html_entity_decode(custom_field['validation'])).test(this.request.post['custom_field'][custom_field['custom_field_id']])) {
 						json['error']['custom_field_' + custom_field['custom_field_id']] = sprintf(this.language.get('error_regex'), custom_field['name']);
 					}
 				}
 			}
 		}
 
-		if (!Object.keys(json).length) {
+		if (!Object.keys(json.error).length) {
 			// If no default address add it
-			address_id = await this.customer.getAddressId();
+			const address_id = await this.customer.getAddressId();
 
 			if (!address_id) {
 				this.request.post['default'] = 1;
@@ -164,12 +166,12 @@ module.exports = class PaymentAddress extends global['\Opencart\System\Engine\Co
 			json['success'] = this.language.get('text_success');
 
 			// Clear payment and shipping methods
-			delete (this.session.data['shipping_method']);
-			delete (this.session.data['shipping_methods']);
-			delete (this.session.data['payment_method']);
-			delete (this.session.data['payment_methods']);
+			delete this.session.data['shipping_method'];
+			delete this.session.data['shipping_methods'];
+			delete this.session.data['payment_method'];
+			delete this.session.data['payment_methods'];
 		}
-
+		await this.session.save(this.session.data);
 		this.response.addHeader('Content-Type: application/json');
 		this.response.setOutput(json);
 	}
@@ -181,7 +183,7 @@ module.exports = class PaymentAddress extends global['\Opencart\System\Engine\Co
 		await this.load.language('checkout/payment_address');
 
 		const json = {};
-
+		let address_id = 0;
 		if ((this.request.get['address_id'])) {
 			address_id = this.request.get['address_id'];
 		} else {
@@ -192,15 +194,15 @@ module.exports = class PaymentAddress extends global['\Opencart\System\Engine\Co
 			json['redirect'] = await this.url.link('checkout/cart', 'language=' + this.config.get('config_language'), true);
 		}
 
-		// Validate cart has products and has stock+
-		if ((!await this.cart.hasProducts() && empty(this.session.data['vouchers'])) || (!await this.cart.hasStock() && !Number(this.config.get('config_stock_checkout')))) {
+		// Validate cart has products and has stock.
+		if ((!await this.cart.hasProducts() && !this.session.data['vouchers']) || (!await this.cart.hasStock() && !Number(this.config.get('config_stock_checkout')))) {
 			json['redirect'] = await this.url.link('checkout/cart', 'language=' + this.config.get('config_language'), true);
 		}
 
 		// Validate minimum quantity requirements+
 		let products = await this.cart.getProducts();
 
-		for (let product of products) {
+		for (let [cart_id, product] of Object.entries(products)) {
 			if (!product['minimum']) {
 				json['redirect'] = await this.url.link('checkout/cart', 'language=' + this.config.get('config_language'), true);
 
@@ -214,10 +216,10 @@ module.exports = class PaymentAddress extends global['\Opencart\System\Engine\Co
 		}
 
 		// Validate if payment address is set if required in settings
-		if (!this.config.get('config_checkout_payment_address')) {
+		if (!Number(this.config.get('config_checkout_payment_address'))) {
 			json['redirect'] = await this.url.link('checkout/cart', 'language=' + this.config.get('config_language'), true);
 		}
-
+		let address_info;
 		if (!Object.keys(json).length) {
 			this.load.model('account/address', this);
 
@@ -240,12 +242,12 @@ module.exports = class PaymentAddress extends global['\Opencart\System\Engine\Co
 			json['success'] = this.language.get('text_success');
 
 			// Clear payment and shipping methods
-			delete (this.session.data['shipping_method']);
-			delete (this.session.data['shipping_methods']);
-			delete (this.session.data['payment_method']);
-			delete (this.session.data['payment_methods']);
+			delete this.session.data['shipping_method'];
+			delete this.session.data['shipping_methods'];
+			delete this.session.data['payment_method'];
+			delete this.session.data['payment_methods'];
 		}
-
+		await this.session.save(this.session.data);
 		this.response.addHeader('Content-Type: application/json');
 		this.response.setOutput(json);
 	}

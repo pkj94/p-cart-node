@@ -48,7 +48,7 @@ global['\Opencart\Admin\Controller\Extension\Opencart\Module\Featured'] = class 
 		data.products = [];
 		const products = module_info && module_info.product ? module_info.product : [];
 		this.load.model('catalog/product', this);
-		console.log(products);
+
 		for (const product_id of products) {
 			const product_info = await this.model_catalog_product.getProduct(product_id);
 			if (product_info) {

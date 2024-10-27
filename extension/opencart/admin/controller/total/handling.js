@@ -36,7 +36,7 @@ global['\Opencart\Admin\Controller\Extension\Opencart\Total\Handling'] = class H
 		data['total_handling_fee'] = this.config.get('total_handling_fee');
 		data['total_handling_tax_class_id'] = this.config.get('total_handling_tax_class_id');
 
-		this.load.model('localisation/tax_class');
+		this.load.model('localisation/tax_class',this);
 
 		data['tax_classes'] = await this.model_localisation_tax_class.getTaxClasses();
 

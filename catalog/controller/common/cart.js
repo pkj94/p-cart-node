@@ -46,7 +46,7 @@ module.exports = class CartCommon extends global['\Opencart\System\Engine\Contro
 
 			let description = '';
 
-			if (product['subscription']) {
+			if (product['subscription'].subscription_plan_id) {
 				if (product['subscription']['trial_status']) {
 					let trial_price = this.currency.format(this.tax.calculate(product['subscription']['trial_price'], product['tax_class_id'], Number(this.config.get('config_tax'))), this.session.data['currency']);
 					let trial_cycle = product['subscription']['trial_cycle'];

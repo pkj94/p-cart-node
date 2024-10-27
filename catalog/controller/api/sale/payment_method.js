@@ -12,7 +12,7 @@ module.exports = class PaymentMethod extends global['\Opencart\System\Engine\Con
 			json['error'] = this.language.get('error_product');
 		}
 
-		if (this.config.get('config_checkout_payment_address') && !(this.session.data['payment_address'])) {
+		if (Number(this.config.get('config_checkout_payment_address')) && !(this.session.data['payment_address'])) {
 			json['error'] = this.language.get('error_payment_address');
 		}
 
@@ -25,7 +25,7 @@ module.exports = class PaymentMethod extends global['\Opencart\System\Engine\Con
 				payment_address = this.session.data['shipping_address'];
 			}
 
-			this.load.model('checkout/payment_method');
+			this.load.model('checkout/payment_method',this);
 
 			payment_methods = await this.model_checkout_payment_method.getMethods(payment_address);
 
@@ -49,7 +49,7 @@ module.exports = class PaymentMethod extends global['\Opencart\System\Engine\Con
 		const json = {};
 
 		// Payment Address
-		if (this.config.get('config_checkout_payment_address') && !(this.session.data['payment_address'])) {
+		if (Number(this.config.get('config_checkout_payment_address')) && !(this.session.data['payment_address'])) {
 			json['error'] = this.language.get('error_payment_address');
 		}
 

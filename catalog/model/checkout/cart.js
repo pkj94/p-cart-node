@@ -104,15 +104,19 @@ module.exports = class Cart extends global['\Opencart\System\Engine\Model'] {
 
 	async getTotals(totals, taxes, total) {
 		this.load.model('setting/extension', this);
-		let results = await this.registry.get('model_setting_extension').getExtensionsByType('total');
+		let results = await this.model_setting_extension.getExtensionsByType('total');
+		results = results.map(a=>{
+			a['total_' + a['code'] + '_sort_order'] = this.config.get('total_' + a['code'] + '_sort_order')
+			return a;
+		});
 		results = results.sort((a, b) => a['total_' + a['code'] + '_sort_order'] - b['total_' + b['code'] + '_sort_order']);
 		for (let result of results) {
 			if (this.config.get('total_' + result['code'] + '_status')) {
 				this.load.model('extension/' + result['extension'] + '/total/' + result['code'], this);
 
 				// __call magic method cannot pass-by-reference so we get PHP to call it as an anonymous function.
-				let data = await this.registry.get('model_extension_' + result['extension'] + '_total_' + result['code']).getTotal(totals, taxes, total);
-				// console.log('data---', data)
+				let data = await this['model_extension_' + result['extension'] + '_total_' + result['code']].getTotal(totals, taxes, total);
+				// console.log('data---',total, data)
 
 				total = data.total;
 				totals = data.totals;
@@ -121,6 +125,6 @@ module.exports = class Cart extends global['\Opencart\System\Engine\Model'] {
 		}
 
 		totals.sort((a, b) => a.sort_order - b.sort_order);
-		return { totals, taxes, total }
+		return { totals, taxes, total };
 	}
 }

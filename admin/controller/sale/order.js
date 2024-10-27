@@ -1577,7 +1577,11 @@ module.exports = class OrderController extends global['\Opencart\System\Engine\C
 					'country': order_info['shipping_country']
 				};
 
-				let shipping_address = str_replace(["\r\n", "\r", "\n"], '<br/>', preg_replace(["/\s\s+/", "/\r\r+/", "/\n\n+/"], '<br/>', trim(str_replace(find, replace, format))));
+				let shipping_address = format
+  .replace(/\r\n|\r|\n/g, '<br/>')
+  .replace(/\s\s+|\r\r+|\n\n+/g, '<br/>')
+  .trim()
+  .replace(find, replace);
 
 				let product_data = [];
 

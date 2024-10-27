@@ -34,14 +34,14 @@ global['\Opencart\Admin\Controller\Extension\Opencart\Shipping\Flat'] = class Fl
 		data['save'] = await this.url.link('extension/opencart/shipping/flat.save', 'user_token=' + this.session.data['user_token']);
 		data['back'] = await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=shipping');
 
-		data['shipping_flat_cost'] = this.config.get('shipping_flat_co])st');
+		data['shipping_flat_cost'] = this.config.get('shipping_flat_cost');
 		data['shipping_flat_tax_class_id'] = this.config.get('shipping_flat_tax_class_id');
 
 		this.load.model('localisation/tax_class',this);
 
 		data['tax_classes'] = await this.model_localisation_tax_class.getTaxClasses();
 
-		data['shipping_flat_geo_zone_id'] = this.config.get('shipping_flat_geo_zone_id');
+		data['shipping_flat_geo_zone_id'] = Number(this.config.get('shipping_flat_geo_zone_id'));
 
 		this.load.model('localisation/geo_zone',this);
 

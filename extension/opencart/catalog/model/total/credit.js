@@ -25,7 +25,7 @@ global['\Opencart\Catalog\Model\Extension\Opencart\Total\Credit'] = class Credit
 					'sort_order': this.config.get('total_credit_sort_order')
 				});
 
-				total -= credit;
+				total = total - credit;
 			}
 		}
 		return { totals, taxes, total }

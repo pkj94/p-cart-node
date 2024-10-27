@@ -65,7 +65,6 @@ module.exports = class Upload extends global['\Opencart\System\Engine\Controller
 
 				json['success'] = this.language.get('text_upload');
 			} catch (e) {
-				console.log('----', e)
 				json['error'] = this.language.get('error_upload_' + this.request.files['file']['error']);
 			}
 		}

@@ -42,7 +42,7 @@ module.exports = class AuthorizeCommontController extends global['\Opencart\Syst
 					this.request.server.connection ? (this.request.server.connection.remoteAddress ||
 						this.request.server.socket.remoteAddress ||
 						this.request.server.connection.socket.remoteAddress) : ''),
-				'user_agent': require("useragent").parse(req.headers['user-agent'], this.request.server.query.jsuseragent).source
+				'user_agent': useragent.parse(this.request.server.headers['user-agent'], this.request.server.query.jsuseragent).source
 			};
 
 			this.load.model('user/user', this);

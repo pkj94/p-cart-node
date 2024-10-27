@@ -25,7 +25,7 @@ global['\Opencart\Catalog\Model\Extension\Opencart\Total\Coupon'] = class Coupon
 				} else {
 					sub_total = 0;
 
-					for (let [cart_id,product] of Object.entries(products)) {
+					for (let [cart_id, product] of Object.entries(products)) {
 						if (coupon_info['product'].includes(product['product_id'])) {
 							sub_total += product['total'];
 						}
@@ -36,7 +36,7 @@ global['\Opencart\Catalog\Model\Extension\Opencart\Total\Coupon'] = class Coupon
 					coupon_info['discount'] = Math.min(coupon_info.discount, sub_total);
 				}
 
-				for (let [cart_id,product] of Object.entries(products)) {
+				for (let [cart_id, product] of Object.entries(products)) {
 					let discount = 0;
 					let status = false;
 					if (!coupon_info['product'].length) {
@@ -94,7 +94,7 @@ global['\Opencart\Catalog\Model\Extension\Opencart\Total\Coupon'] = class Coupon
 						'sort_order': this.config.get('total_coupon_sort_order')
 					});
 
-					total -= discount_total;
+					total = total - discount_total;
 				}
 			}
 		}

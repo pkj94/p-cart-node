@@ -377,7 +377,7 @@ module.exports = class InformationController extends global['\Opencart\System\En
 				json['error'] = this.language.get('error_account');
 			}
 
-			if (this.config.get('config_checkout_id') == information_id) {
+			if (Number(this.config.get('config_checkout_id')) == information_id) {
 				json['error'] = this.language.get('error_checkout');
 			}
 

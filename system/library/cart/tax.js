@@ -94,14 +94,15 @@ module.exports = class TaxLibrary {
     }
 
     calculate(value, tax_class_id, calculate = true) {
+        value = Number(value);
         if (tax_class_id && calculate) {
             let amount = 0;
             const tax_rates = this.getRates(value, tax_class_id);
             for (const tax_rate of tax_rates) {
                 if (calculate !== 'P' && calculate !== 'F') {
-                    amount += tax_rate.amount;
+                    amount = amount + tax_rate.amount;
                 } else if (tax_rate.type === calculate) {
-                    amount += tax_rate.amount;
+                    amount = amount + tax_rate.amount;
                 }
             }
             return value + amount;
@@ -114,7 +115,7 @@ module.exports = class TaxLibrary {
         let amount = 0;
         const tax_rates = this.getRates(value, tax_class_id);
         for (const tax_rate of tax_rates) {
-            amount += tax_rate.amount;
+            amount = amount + tax_rate.amount;
         }
         return amount;
     }
@@ -136,9 +137,9 @@ module.exports = class TaxLibrary {
                 let amount = tax_rate_data[tax_rate.tax_rate_id] ? tax_rate_data[tax_rate.tax_rate_id].amount : 0;
 
                 if (tax_rate.type === 'F') {
-                    amount += tax_rate.rate;
+                    amount = amount + tax_rate.rate;
                 } else if (tax_rate.type === 'P') {
-                    amount += (value / 100 * tax_rate.rate);
+                    amount = amount + (value / 100 * tax_rate.rate);
                 }
 
                 tax_rate_data[tax_rate.tax_rate_id] = {

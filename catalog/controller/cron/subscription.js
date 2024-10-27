@@ -22,8 +22,8 @@ module.exports = class Subscription extends global['\Opencart\System\Engine\Cont
 		};
 
 		// Get all
-		this.load.model('checkout/subscription');
-		this.load.model('checkout/order');
+		this.load.model('checkout/subscription',this);
+		this.load.model('checkout/order',this);
 
 		results = await this.model_checkout_subscription.getSubscriptions(filter_data);
 
@@ -123,7 +123,7 @@ module.exports = class Subscription extends global['\Opencart\System\Engine\Cont
 
 					// 5+ Shipping Methods
 					if (!error) {
-						this.load.model('checkout/shipping_method');
+						this.load.model('checkout/shipping_method',this);
 
 						shipping_methods = await this.model_checkout_shipping_method.getMethods(shipping_address_info);
 
@@ -145,7 +145,7 @@ module.exports = class Subscription extends global['\Opencart\System\Engine\Cont
 				// 6+ Payment Address
 				payment_address = [];
 
-				if (!error && this.config.get('config_checkout_payment_address')) {
+				if (!error && Number(this.config.get('config_checkout_payment_address'))) {
 					this.load.model('account/address', this);
 
 					payment_address_info = await this.model_account_address.getAddress(order_info['customer_id'], result['payment_address_id']);
@@ -159,7 +159,7 @@ module.exports = class Subscription extends global['\Opencart\System\Engine\Cont
 
 				// 7+ Payment Methods
 				if (!error) {
-					this.load.model('checkout/payment_method');
+					this.load.model('checkout/payment_method',this);
 
 					payment_methods = await this.model_checkout_payment_method.getMethods(payment_address);
 

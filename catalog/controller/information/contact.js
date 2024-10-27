@@ -154,7 +154,7 @@ module.exports = class Contact extends global['\Opencart\System\Engine\Controlle
 				mail.setSender(html_entity_decode(this.request.post['name']));
 				mail.setSubject(html_entity_decode(sprintf(this.language.get('email_subject'), this.request.post['name'])));
 				mail.setText(this.request.post['enquiry']);
-				mail.send();
+				await mail.send();
 			}
 
 			json['redirect'] = await this.url.link('information/contact+success', 'language=' + this.config.get('config_language'), true);

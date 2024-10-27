@@ -162,18 +162,18 @@ module.exports = class Manufacturer extends global['\Opencart\System\Engine\Cont
 				}
 
 				if (await this.customer.isLogged() || !Number(this.config.get('config_customer_price'))) {
-					price = this.currency.format(this.tax.calculate(result['price'], result['tax_class_id'], Number(Number(this.config.get('config_tax')))), this.session.data['currency']);
+					price = this.currency.format(this.tax.calculate(result['price'], result['tax_class_id'], Number(this.config.get('config_tax'))), this.session.data['currency']);
 				} else {
 					price = false;
 				}
 
 				if (result['special']) {
-					special = this.currency.format(this.tax.calculate(result['special'], result['tax_class_id'], Number(Number(this.config.get('config_tax')))), this.session.data['currency']);
+					special = this.currency.format(this.tax.calculate(result['special'], result['tax_class_id'], Number(this.config.get('config_tax'))), this.session.data['currency']);
 				} else {
 					special = false;
 				}
 
-				if (Number(Number(this.config.get('config_tax')))) {
+				if (Number(this.config.get('config_tax'))) {
 					tax = this.currency.format(result['special'] ? result['special'] : result['price'], this.session.data['currency']);
 				} else {
 					tax = false;

@@ -7,9 +7,9 @@ global['\Opencart\Catalog\Model\Extension\Opencart\Shipping\Item'] = class Item 
 	async getQuote(address) {
 		await this.load.language('extension/opencart/shipping/item');
 
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "zone_to_geo_zone` WHERE `geo_zone_id` = '" + this.config.get('shipping_item_geo_zone_id') + "' AND `country_id` = '" + address['country_id'] + "' AND (`zone_id` = '" + address['zone_id'] + "' OR `zone_id` = '0')");
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "zone_to_geo_zone` WHERE `geo_zone_id` = '" + Number(this.config.get('shipping_item_geo_zone_id')) + "' AND `country_id` = '" + address['country_id'] + "' AND (`zone_id` = '" + address['zone_id'] + "' OR `zone_id` = '0')");
 		let status = false;
-		if (!this.config.get('shipping_item_geo_zone_id')) {
+		if (!Number(this.config.get('shipping_item_geo_zone_id'))) {
 			status = true;
 		} else if (query.num_rows) {
 			status = true;

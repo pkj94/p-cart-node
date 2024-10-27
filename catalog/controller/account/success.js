@@ -5,7 +5,6 @@ module.exports = class Success extends global['\Opencart\System\Engine\Controlle
 	 * @return void
 	 */
 	async index() {
-		console.log(this.session.data)
 		const data = {};
 		await this.load.language('account/success');
 

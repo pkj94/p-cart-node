@@ -38,7 +38,7 @@ global['\Opencart\Admin\Controller\Extension\Opencart\Shipping\Item'] = class It
 		this.load.model('localisation/tax_class',this);
 
 		data['tax_classes'] = await this.model_localisation_tax_class.getTaxClasses();
-		data['shipping_item_geo_zone_id'] = this.config.get('shipping_item_geo_zone_id');
+		data['shipping_item_geo_zone_id'] = Number(this.config.get('shipping_item_geo_zone_id'));
 
 		this.load.model('localisation/geo_zone',this);
 

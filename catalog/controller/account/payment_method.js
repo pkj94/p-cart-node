@@ -83,8 +83,8 @@ module.exports = class PaymentMethod extends global['\Opencart\System\Engine\Con
 		const results = await this.model_setting_extension.getExtensionsByType('payment');
 
 		for (let result of results) {
-			if (this.config.get('payment_' + result['code'] + '_status')) {
-				this.load.model('extension/' + result['extension'] + '/payment/' + result['code']);
+			if (Number(this.config.get('payment_' + result['code'] + '_status'))) {
+				this.load.model('extension/' + result['extension'] + '/payment/' + result['code'], this);
 
 				//payment_method = this.{'model_extension_' + result['extension'] + '_payment_' + result['code']}.getMethods(payment_address);
 

@@ -220,16 +220,16 @@ module.exports = class Category extends global['\Opencart\System\Engine\Controll
 				}
 				let price = false;
 				if (await this.customer.isLogged() || !Number(this.config.get('config_customer_price'))) {
-					price = this.currency.format(this.tax.calculate(result['price'], result['tax_class_id'], Number(Number(this.config.get('config_tax')))), this.session.data['currency']);
+					price = this.currency.format(this.tax.calculate(result['price'], result['tax_class_id'], Number(this.config.get('config_tax'))), this.session.data['currency']);
 				} else {
 					price = false;
 				}
 				let special = false;
 				if (result['special']) {
-					special = this.currency.format(this.tax.calculate(result['special'], result['tax_class_id'], Number(Number(this.config.get('config_tax')))), this.session.data['currency']);
+					special = this.currency.format(this.tax.calculate(result['special'], result['tax_class_id'], Number(this.config.get('config_tax'))), this.session.data['currency']);
 				}
 				let tax = false;
-				if (Number(Number(this.config.get('config_tax')))) {
+				if (Number(this.config.get('config_tax'))) {
 					tax = this.currency.format(result['special'] ? result['special'] : result['price'], this.session.data['currency']);
 				}
 

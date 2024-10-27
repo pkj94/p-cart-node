@@ -142,7 +142,7 @@ module.exports = class Cart extends global['\Opencart\System\Engine\Controller']
 			let description = '';
 			if (product['subscription'].subscription_plan_id) {
 				if (product['subscription']['trial_status']) {
-					let trial_price = this.currency.format(this.tax.calculate(product['subscription']['trial_price'], product['tax_class_id'], Number(Number(this.config.get('config_tax')))), this.session.data['currency']);
+					let trial_price = this.currency.format(this.tax.calculate(product['subscription']['trial_price'], product['tax_class_id'], Number(this.config.get('config_tax'))), this.session.data['currency']);
 					let trial_cycle = product['subscription']['trial_cycle'];
 					let trial_frequency = this.language.get('text_' + product['subscription']['trial_frequency']);
 					let trial_duration = product['subscription']['trial_duration'];
@@ -150,7 +150,7 @@ module.exports = class Cart extends global['\Opencart\System\Engine\Controller']
 					description += sprintf(this.language.get('text_subscription_trial'), price_status ? trial_price : '', trial_cycle, trial_frequency, trial_duration);
 				}
 
-				let price = this.currency.format(this.tax.calculate(product['subscription']['price'], product['tax_class_id'], Number(Number(this.config.get('config_tax')))), this.session.data['currency']);
+				let price = this.currency.format(this.tax.calculate(product['subscription']['price'], product['tax_class_id'], Number(this.config.get('config_tax'))), this.session.data['currency']);
 
 				let cycle = product['subscription']['cycle'];
 				let frequency = this.language.get('text_' + product['subscription']['frequency']);
@@ -174,8 +174,8 @@ module.exports = class Cart extends global['\Opencart\System\Engine\Controller']
 				'stock': product['stock'] ? true : !(!Number(this.config.get('config_stock_checkout')) || Number(this.config.get('config_stock_warning'))),
 				'minimum': product['minimum'],
 				'reward': product['reward'],
-				'price': price_status ? this.currency.format(this.tax.calculate(product['price'], product['tax_class_id'], Number(Number(this.config.get('config_tax')))), this.session.data['currency']) : '',
-				'total': price_status ? this.currency.format(this.tax.calculate(product['total'], product['tax_class_id'], Number(Number(this.config.get('config_tax')))), this.session.data['currency']) : '',
+				'price': price_status ? this.currency.format(this.tax.calculate(product['price'], product['tax_class_id'], Number(this.config.get('config_tax'))), this.session.data['currency']) : '',
+				'total': price_status ? this.currency.format(this.tax.calculate(product['total'], product['tax_class_id'], Number(this.config.get('config_tax'))), this.session.data['currency']) : '',
 				'href': await this.url.link('product/product', 'language=' + this.config.get('config_language') + '&product_id=' + product['product_id'])
 			});
 		}
@@ -204,6 +204,7 @@ module.exports = class Cart extends global['\Opencart\System\Engine\Controller']
 			total = totalData.total;
 			taxes = totalData.taxes;
 			totals = totalData.totals;
+			// console.log('totalData-',totalData)
 			for (let result of totals) {
 				data['totals'].push({
 					'title': result['title'],

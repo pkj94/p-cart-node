@@ -87,11 +87,11 @@ module.exports = class Subscription extends global['\Opencart\System\Engine\Cont
 
 					if (payment_method) {
 						// Subscription
-						this.load.model('checkout/subscription');
+						this.load.model('checkout/subscription',this);
 
 						subscription_order_product = await this.model_checkout_subscription.getSubscriptionByOrderProductId(value['order_product_id']);
 
-						if (subscription_order_product) {
+						if (subscription_order_product.subscription_plan_id) {
 							// Orders
 							this.load.model('account/order',this);
 
@@ -108,7 +108,7 @@ module.exports = class Subscription extends global['\Opencart\System\Engine\Cont
 
 
 										if (product['subscription']['trial_status']) {
-											trial_price = this.currency.format(this.tax.calculate(value['trial_price'], product['tax_class_id'], Number(Number(this.config.get('config_tax')))), this.config.get('config_currency'));
+											trial_price = this.currency.format(this.tax.calculate(value['trial_price'], product['tax_class_id'], Number(this.config.get('config_tax'))), this.config.get('config_currency'));
 											trial_cycle = value['trial_cycle'];
 											trial_frequency = this.language.get('text_' + value['trial_frequency']);
 											trial_duration = value['trial_duration'];
@@ -116,7 +116,7 @@ module.exports = class Subscription extends global['\Opencart\System\Engine\Cont
 											description += sprintf(this.language.get('text_subscription_trial'), trial_price, trial_cycle, trial_frequency, trial_duration);
 										}
 
-										price = this.currency.format(this.tax.calculate(value['price'], product['tax_class_id'], Number(Number(this.config.get('config_tax')))), this.config.get('config_currency'));
+										price = this.currency.format(this.tax.calculate(value['price'], product['tax_class_id'], Number(this.config.get('config_tax'))), this.config.get('config_currency'));
 										cycle = value['cycle'];
 										frequency = this.language.get('text_' + value['frequency']);
 										duration = value['duration'];
@@ -131,7 +131,7 @@ module.exports = class Subscription extends global['\Opencart\System\Engine\Cont
 
 
 								// Orders
-								this.load.model('checkout/order');
+								this.load.model('checkout/order',this);
 
 								const order_info = await this.model_checkout_order.getOrder(value['order_id']);
 
@@ -355,7 +355,7 @@ module.exports = class Subscription extends global['\Opencart\System\Engine\Cont
 										mail.setSender(store_name);
 										mail.setSubject(subject);
 										mail.setHtml(await this.load.view('mail/subscription', data));
-										mail.send();
+										await mail.send();
 									}
 								}
 							}

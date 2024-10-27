@@ -70,7 +70,7 @@ module.exports = class Subscription extends global['\Opencart\System\Engine\Cont
 				description = '';
 
 				if (result['trial_status']) {
-					trial_price = this.currency.format(this.tax.calculate(result['trial_price'], product_info['tax_class_id'], Number(Number(this.config.get('config_tax')))), currency);
+					trial_price = this.currency.format(this.tax.calculate(result['trial_price'], product_info['tax_class_id'], Number(this.config.get('config_tax'))), currency);
 					trial_cycle = result['trial_cycle'];
 					trial_frequency = this.language.get('text_' + result['trial_frequency']);
 					trial_duration = result['trial_duration'];
@@ -78,7 +78,7 @@ module.exports = class Subscription extends global['\Opencart\System\Engine\Cont
 					description += sprintf(this.language.get('text_subscription_trial'), trial_price, trial_cycle, trial_frequency, trial_duration);
 				}
 
-				price = this.currency.format(this.tax.calculate(result['price'], product_info['tax_class_id'], Number(Number(this.config.get('config_tax')))), currency);
+				price = this.currency.format(this.tax.calculate(result['price'], product_info['tax_class_id'], Number(this.config.get('config_tax'))), currency);
 				cycle = result['cycle'];
 				frequency = this.language.get('text_' + result['frequency']);
 				duration = result['duration'];
@@ -247,7 +247,11 @@ module.exports = class Subscription extends global['\Opencart\System\Engine\Cont
 					'country': address_info['country']
 				};
 
-				data['payment_address'] = str_replace(["\r\n", "\r", "\n"], '<br/>', preg_replace(["/\s\s+/", "/\r\r+/", "/\n\n+/"], '<br/>', trim(str_replace(find, replace, format))));
+				data['payment_address'] = format
+  .replace(/\r\n|\r|\n/g, '<br/>')
+  .replace(/\s\s+|\r\r+|\n\n+/g, '<br/>')
+  .trim()
+  .replace(find, replace);
 			} else {
 				data['payment_address'] = '';
 			}
@@ -296,7 +300,11 @@ module.exports = class Subscription extends global['\Opencart\System\Engine\Cont
 					'country': address_info['country']
 				};
 
-				data['shipping_address'] = str_replace(["\r\n", "\r", "\n"], '<br/>', preg_replace(["/\s\s+/", "/\r\r+/", "/\n\n+/"], '<br/>', trim(str_replace(find, replace, format))));
+				data['shipping_address'] = format
+  .replace(/\r\n|\r|\n/g, '<br/>')
+  .replace(/\s\s+|\r\r+|\n\n+/g, '<br/>')
+  .trim()
+  .replace(find, replace);
 			} else {
 				data['shipping_address'] = '';
 			}
@@ -346,7 +354,7 @@ module.exports = class Subscription extends global['\Opencart\System\Engine\Cont
 			data['description'] = '';
 
 			if (subscription_info['trial_status']) {
-				trial_price = this.currency.format(this.tax.calculate(subscription_info['trial_price'], product_info['tax_class_id'], Number(Number(this.config.get('config_tax')))), currency);
+				trial_price = this.currency.format(this.tax.calculate(subscription_info['trial_price'], product_info['tax_class_id'], Number(this.config.get('config_tax'))), currency);
 				trial_cycle = subscription_info['trial_cycle'];
 				trial_frequency = this.language.get('text_' + subscription_info['trial_frequency']);
 				trial_duration = subscription_info['trial_duration'];
@@ -354,7 +362,7 @@ module.exports = class Subscription extends global['\Opencart\System\Engine\Cont
 				data['description'] += sprintf(this.language.get('text_subscription_trial'), trial_price, trial_cycle, trial_frequency, trial_duration);
 			}
 
-			price = this.currency.format(this.tax.calculate(subscription_info['price'], product_info['tax_class_id'], Number(Number(this.config.get('config_tax')))), currency);
+			price = this.currency.format(this.tax.calculate(subscription_info['price'], product_info['tax_class_id'], Number(this.config.get('config_tax'))), currency);
 			cycle = subscription_info['cycle'];
 			frequency = this.language.get('text_' + subscription_info['frequency']);
 			duration = subscription_info['duration'];

@@ -209,7 +209,11 @@ module.exports = class Order extends global['\Opencart\System\Engine\Controller'
 				'country': order_info['payment_country']
 			};
 
-			data['payment_address'] = str_replace(["\r\n", "\r", "\n"], '<br/>', preg_replace(["/\s\s+/", "/\r\r+/", "/\n\n+/"], '<br/>', trim(str_replace(find, replace, format))));
+			data['payment_address'] = format
+  .replace(/\r\n|\r|\n/g, '<br/>')
+  .replace(/\s\s+|\r\r+|\n\n+/g, '<br/>')
+  .trim()
+  .replace(find, replace);
 
 			data['payment_method'] = order_info['payment_method']['name'];
 
@@ -247,7 +251,11 @@ module.exports = class Order extends global['\Opencart\System\Engine\Controller'
 					'country': order_info['shipping_country']
 				};
 
-				data['shipping_address'] = str_replace(["\r\n", "\r", "\n"], '<br/>', preg_replace(["/\s\s+/", "/\r\r+/", "/\n\n+/"], '<br/>', trim(str_replace(find, replace, format))));
+				data['shipping_address'] = format
+  .replace(/\r\n|\r|\n/g, '<br/>')
+  .replace(/\s\s+|\r\r+|\n\n+/g, '<br/>')
+  .trim()
+  .replace(find, replace);
 
 				data['shipping_method'] = order_info['shipping_method']['name'];
 			} else {
@@ -293,9 +301,9 @@ module.exports = class Order extends global['\Opencart\System\Engine\Controller'
 
 				let subscription_info = await this.model_account_order.getSubscription(order_id, product['order_product_id']);
 
-				if (subscription_info.subscription_id) {
+				if (subscription_info.subscription_plan_id) {
 					if (subscription_info['trial_status']) {
-						let trial_price = this.currency.format(subscription_info['trial_price'] + (Number(Number(this.config.get('config_tax'))) ? subscription_info['trial_tax'] : 0), order_info['currency_code'], order_info['currency_value']);
+						let trial_price = this.currency.format(subscription_info['trial_price'] + (Number(this.config.get('config_tax')) ? subscription_info['trial_tax'] : 0), order_info['currency_code'], order_info['currency_value']);
 						let trial_cycle = subscription_info['trial_cycle'];
 						let trial_frequency = this.language.get('text_' + subscription_info['trial_frequency']);
 						let trial_duration = subscription_info['trial_duration'];
@@ -303,7 +311,7 @@ module.exports = class Order extends global['\Opencart\System\Engine\Controller'
 						description += sprintf(this.language.get('text_subscription_trial'), trial_price, trial_cycle, trial_frequency, trial_duration);
 					}
 
-					let price = this.currency.format(subscription_info['price'] + (Number(Number(this.config.get('config_tax'))) ? subscription_info['tax'] : 0), order_info['currency_code'], order_info['currency_value']);
+					let price = this.currency.format(subscription_info['price'] + (Number(this.config.get('config_tax')) ? subscription_info['tax'] : 0), order_info['currency_code'], order_info['currency_value']);
 					let cycle = subscription_info['cycle'];
 					let frequency = this.language.get('text_' + subscription_info['frequency']);
 					let duration = subscription_info['duration'];
@@ -334,8 +342,8 @@ module.exports = class Order extends global['\Opencart\System\Engine\Controller'
 					'subscription': subscription,
 					'subscription_description': description,
 					'quantity': product['quantity'],
-					'price': this.currency.format(product['price'] + (Number(Number(this.config.get('config_tax'))) ? product['tax'] : 0), order_info['currency_code'], order_info['currency_value']),
-					'total': this.currency.format(product['total'] + (Number(Number(this.config.get('config_tax'))) ? (product['tax'] * product['quantity']) : 0), order_info['currency_code'], order_info['currency_value']),
+					'price': this.currency.format(product['price'] + (Number(this.config.get('config_tax')) ? product['tax'] : 0), order_info['currency_code'], order_info['currency_value']),
+					'total': this.currency.format(product['total'] + (Number(this.config.get('config_tax')) ? (product['tax'] * product['quantity']) : 0), order_info['currency_code'], order_info['currency_value']),
 					'href': await this.url.link('product/product', 'language=' + this.config.get('config_language') + '&product_id=' + product['product_id']),
 					'reorder': reorder,
 					'return': await this.url.link('account/returns.add', 'language=' + this.config.get('config_language') + '&order_id=' + order_info['order_id'] + '&product_id=' + product['product_id'])

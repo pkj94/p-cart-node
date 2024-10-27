@@ -4,7 +4,7 @@ process.on('uncaughtException', (err) => {
 });
 
 // Check PHP version equivalent in Node.js (we'll just note the version)
-console.log(`Node.js version: ${process.version}`);
+// console.log(`Node.js version: ${process.version}`);
 if (parseInt(process.version.slice(1).split('.')[0]) < 14) {
     console.error('Node.js 14+ Required');
     process.exit(1);

@@ -9,20 +9,18 @@ global['\Opencart\Catalog\Model\Extension\Opencart\Payment\FreeCheckout'] = clas
 
 		let total = await this.cart.getTotal();
 		let amounts = []
-		if (this.session.data['vouchers'].length) {
+		if (this.session.data['vouchers'] && this.session.data['vouchers'].length) {
 			amounts = this.session.data.vouchers.map(voucher => voucher.amount);
 		}
-
 		total = total + amounts.reduce((a, b) => a + b, 0);
 		let status = false;
-		if (total <= 0.00) {
+		if (total <= 0) {
 			status = true;
 		} else if (await this.cart.hasSubscription()) {
 			status = false;
 		} else {
 			status = false;
 		}
-
 		let method_data = {};
 
 		if (status) {

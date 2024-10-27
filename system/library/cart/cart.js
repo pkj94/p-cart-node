@@ -343,7 +343,7 @@ module.exports = class CartLibrary {
         const productData = [];
         const products = await this.getProducts();
         for (const [cart_id, product] of Object.entries(products)) {
-            if (product.subscription) {
+            if (product.subscription.subscription_plan_id) {
                 productData.push(product);
             }
         }
@@ -365,7 +365,7 @@ module.exports = class CartLibrary {
         let total = 0;
         const products = await this.getProducts();
         for (const [cart_id, product] of Object.entries(products)) {
-            total += product.total;
+            total = total + product.total;
         }
         return total;
     }
@@ -388,7 +388,7 @@ module.exports = class CartLibrary {
         let total = 0;
         const products = await this.getProducts();
         for (const [cart_id, product] of Object.entries(products)) {
-            total += this.tax.calculate(product.price, product.tax_class_id, Number(this.config.get('config_tax'))) * product.quantity;
+            total = total + (this.tax.calculate(product.price, product.tax_class_id, Number(this.config.get('config_tax'))) * product.quantity);
         }
         return total;
     }

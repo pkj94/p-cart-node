@@ -4,15 +4,15 @@ module.exports = class Checkout extends global['\Opencart\System\Engine\Controll
 	 */
 	async index() {
 		const data = {};
-		// Validate cart has products and has stock+
-		if ((!await this.cart.hasProducts() && empty(this.session.data['vouchers'])) || (!await this.cart.hasStock() && !Number(this.config.get('config_stock_checkout')))) {
+		// Validate cart has products and has stock.
+		if ((!await this.cart.hasProducts() && !this.session.data['vouchers']) || (!await this.cart.hasStock() && !Number(this.config.get('config_stock_checkout')))) {
 			this.response.setRedirect(await this.url.link('checkout/cart', 'language=' + this.config.get('config_language')));
 		}
 
 		// Validate minimum quantity requirements+
 		let products = await this.cart.getProducts();
 
-		for (let product of products) {
+		for (let [cart_id, product] of Object.entries(products)) {
 			if (!product['minimum']) {
 				this.response.setRedirect(await this.url.link('checkout/cart', 'language=' + this.config.get('config_language'), true));
 
@@ -47,7 +47,7 @@ module.exports = class Checkout extends global['\Opencart\System\Engine\Controll
 			data['register'] = '';
 		}
 
-		if (await this.customer.isLogged() && this.config.get('config_checkout_payment_address')) {
+		if (await this.customer.isLogged() && Number(this.config.get('config_checkout_payment_address'))) {
 			data['payment_address'] = await this.load.controller('checkout/payment_address');
 		} else {
 			data['payment_address'] = '';

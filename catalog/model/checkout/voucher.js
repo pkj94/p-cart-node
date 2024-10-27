@@ -26,10 +26,10 @@ module.exports = class Voucher extends global['\Opencart\System\Engine\Model'] {
 	 * @return array
 	 */
 	async getVoucher(code) {
-		status = true;
+		let status = true;
 
-		voucher_query = await this.db.query("SELECT *, vtd.`name` AS theme FROM `" + DB_PREFIX + "voucher` v LEFT JOIN `" + DB_PREFIX + "voucher_theme` vt ON (v.`voucher_theme_id` = vt.`voucher_theme_id`) LEFT JOIN `" + DB_PREFIX + "voucher_theme_description` vtd ON (vt.`voucher_theme_id` = vtd.`voucher_theme_id`) WHERE v.`code` = " + this.db.escape(code) + " AND vtd.`language_id` = '" + this.config.get('config_language_id') + "' AND v.`status` = '1'");
-
+		const voucher_query = await this.db.query("SELECT *, vtd.`name` AS theme FROM `" + DB_PREFIX + "voucher` v LEFT JOIN `" + DB_PREFIX + "voucher_theme` vt ON (v.`voucher_theme_id` = vt.`voucher_theme_id`) LEFT JOIN `" + DB_PREFIX + "voucher_theme_description` vtd ON (vt.`voucher_theme_id` = vtd.`voucher_theme_id`) WHERE v.`code` = " + this.db.escape(code) + " AND vtd.`language_id` = '" + this.config.get('config_language_id') + "' AND v.`status` = '1'");
+		let amount = 0;
 		if (voucher_query.num_rows) {
 			if (voucher_query.row['order_id']) {
 				let implode = [];
@@ -44,14 +44,14 @@ module.exports = class Voucher extends global['\Opencart\System\Engine\Model'] {
 					status = false;
 				}
 
-				order_voucher_query = await this.db.query("SELECT `order_voucher_id` FROM `" + DB_PREFIX + "order_voucher` WHERE `order_id` = '" + voucher_query.row['order_id'] + "' AND `voucher_id` = '" + voucher_query.row['voucher_id'] + "'");
+				const order_voucher_query = await this.db.query("SELECT `order_voucher_id` FROM `" + DB_PREFIX + "order_voucher` WHERE `order_id` = '" + voucher_query.row['order_id'] + "' AND `voucher_id` = '" + voucher_query.row['voucher_id'] + "'");
 
 				if (!order_voucher_query.num_rows) {
 					status = false;
 				}
 			}
 
-			voucher_history_query = await this.db.query("SELECT SUM(`amount`) AS `total` FROM `" + DB_PREFIX + "voucher_history` vh WHERE vh.`voucher_id` = '" + voucher_query.row['voucher_id'] + "' GROUP BY vh.`voucher_id`");
+			const voucher_history_query = await this.db.query("SELECT SUM(`amount`) AS `total` FROM `" + DB_PREFIX + "voucher_history` vh WHERE vh.`voucher_id` = '" + voucher_query.row['voucher_id'] + "' GROUP BY vh.`voucher_id`");
 
 			if (voucher_history_query.num_rows) {
 				amount = voucher_query.row['amount'] + voucher_history_query.row['total'];

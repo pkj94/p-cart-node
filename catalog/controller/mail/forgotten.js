@@ -48,7 +48,7 @@ module.exports = class Forgotten extends global['\Opencart\System\Engine\Control
 					mail.setSender(store_name);
 					mail.setSubject(subject);
 					mail.setHtml(await this.load.view('mail/forgotten', data));
-					mail.send();
+					await mail.send();
 				}
 			}
 		}

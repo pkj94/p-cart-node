@@ -84,7 +84,7 @@ module.exports = class Address extends global['\Opencart\System\Engine\Controlle
 		this.load.model('account/address', this);
 
 		const results = await this.model_account_address.getAddresses(await this.customer.getId());
-		console.log(results);
+		
 		for (let [address_id, result] of Object.entries(results)) {
 			let find = [
 				'{firstname}',

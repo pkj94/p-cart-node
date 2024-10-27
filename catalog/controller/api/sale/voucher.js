@@ -16,7 +16,7 @@ module.exports = class Voucher extends global['\Opencart\System\Engine\Controlle
 		}
 
 		if (voucher) {
-			this.load.model('checkout/voucher');
+			this.load.model('checkout/voucher',this);
 
 			voucher_info = await this.model_checkout_voucher.getVoucher(voucher);
 

@@ -136,7 +136,6 @@ module.exports = class MarketplaceMarketplaceController extends global['\Opencar
 		if ((this.request.get['page'])) {
 			url += '&page=' + this.request.get['page'];
 		}
-		console.log('test----')
 		let curl = await require("axios").get(OPENCART_SERVER + 'index.php?route=api/marketplace' + url);
 
 		let response = curl.data;

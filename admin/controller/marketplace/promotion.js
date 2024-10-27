@@ -26,7 +26,6 @@ module.exports = class PromotionController extends global['\Opencart\System\Engi
 
 		if (!promotion) {
 			try {
-				console.log('test----')
 				const curl = await require("axios").get(OPENCART_SERVER + 'index.php?route=api/recommended&type=' + type + '&version=' + VERSION);
 
 				let response = curl.data;

@@ -16,7 +16,7 @@ module.exports = class Order extends global['\Opencart\System\Engine\Controller'
 			order_id = 0;
 		}
 
-		this.load.model('checkout/order');
+		this.load.model('checkout/order',this);
 
 		const order_info = await this.model_checkout_order.getOrder(order_id);
 
@@ -39,7 +39,7 @@ module.exports = class Order extends global['\Opencart\System\Engine\Controller'
 			};
 
 			// Payment Details
-			if (this.config.get('config_checkout_payment_address')) {
+			if (Number(this.config.get('config_checkout_payment_address'))) {
 				this.session.data['payment_address'] = {
 					'address_id': order_info['payment_address_id'],
 					'firstname': order_info['payment_firstname'],
@@ -127,7 +127,7 @@ module.exports = class Order extends global['\Opencart\System\Engine\Controller'
 
 			this.session.data['vouchers'] = [];
 
-			this.load.model('checkout/voucher');
+			this.load.model('checkout/voucher',this);
 
 			const vouchers = await this.model_checkout_order.getVouchers(order_id);
 
@@ -199,7 +199,7 @@ module.exports = class Order extends global['\Opencart\System\Engine\Controller'
 
 		const json = {};
 
-		// Validate cart has products and has stock+
+		// Validate cart has products and has stock.
 		if ((await this.cart.hasProducts()(this.session.data['vouchers'] && this.session.data['vouchers'].length))) {
 			if (!await this.cart.hasStock() && !Number(this.config.get('config_stock_checkout'))) {
 				json['error']['stock'] = this.language.get('error_stock');
@@ -225,7 +225,7 @@ module.exports = class Order extends global['\Opencart\System\Engine\Controller'
 		}
 
 		// Payment Address
-		if (this.config.get('config_checkout_payment_address') && !(this.session.data['payment_address'])) {
+		if (Number(this.config.get('config_checkout_payment_address')) && !(this.session.data['payment_address'])) {
 			json['error']['payment_address'] = this.language.get('error_payment_address');
 		}
 
@@ -271,7 +271,7 @@ module.exports = class Order extends global['\Opencart\System\Engine\Controller'
 			order_data['custom_field'] = this.session.data['customer']['custom_field'];
 
 			// Payment Details
-			if (this.config.get('config_checkout_payment_address')) {
+			if (Number(this.config.get('config_checkout_payment_address'))) {
 				order_data['payment_address_id'] = this.session.data['payment_address']['address_id'];
 				order_data['payment_lastname'] = this.session.data['payment_address']['lastname'];
 				order_data['payment_company'] = this.session.data['payment_address']['company'];
@@ -492,7 +492,7 @@ module.exports = class Order extends global['\Opencart\System\Engine\Controller'
 				order_data['accept_language'] = '';
 			}
 
-			this.load.model('checkout/order');
+			this.load.model('checkout/order',this);
 
 			if (!(this.session.data['order_id'])) {
 				this.session.data['order_id'] = await this.model_checkout_order.addOrder(order_data);
@@ -547,7 +547,7 @@ module.exports = class Order extends global['\Opencart\System\Engine\Controller'
 		}
 
 		for (let order_id of selected) {
-			this.load.model('checkout/order');
+			this.load.model('checkout/order',this);
 
 			const order_info = await this.model_checkout_order.getOrder(order_id);
 
@@ -585,7 +585,7 @@ module.exports = class Order extends global['\Opencart\System\Engine\Controller'
 			}
 		}
 
-		this.load.model('checkout/order');
+		this.load.model('checkout/order',this);
 
 		const order_info = await this.model_checkout_order.getOrder(this.request.post['order_id']);
 

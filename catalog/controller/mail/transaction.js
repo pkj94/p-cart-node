@@ -75,7 +75,7 @@ module.exports = class Transaction extends global['\Opencart\System\Engine\Contr
 				mail.setSender(store_name);
 				mail.setSubject(subject);
 				mail.setHtml(await this.load.view('mail/transaction', data));
-				mail.send();
+				await mail.send();
 			}
 		}
 	}

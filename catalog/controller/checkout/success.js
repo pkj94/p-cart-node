@@ -1,3 +1,5 @@
+const sprintf = require("locutus/php/strings/sprintf");
+
 module.exports = class Success extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
@@ -9,17 +11,17 @@ module.exports = class Success extends global['\Opencart\System\Engine\Controlle
 		if ((this.session.data['order_id'])) {
 			await this.cart.clear();
 
-			delete (this.session.data['order_id']);
-			delete (this.session.data['payment_method']);
-			delete (this.session.data['payment_methods']);
-			delete (this.session.data['shipping_method']);
-			delete (this.session.data['shipping_methods']);
-			delete (this.session.data['comment']);
-			delete (this.session.data['agree']);
-			delete (this.session.data['coupon']);
-			delete (this.session.data['reward']);
-			delete (this.session.data['voucher']);
-			delete (this.session.data['vouchers']);
+			delete this.session.data['order_id'];
+			delete this.session.data['payment_method'];
+			delete this.session.data['payment_methods'];
+			delete this.session.data['shipping_method'];
+			delete this.session.data['shipping_methods'];
+			delete this.session.data['comment'];
+			delete this.session.data['agree'];
+			delete this.session.data['coupon'];
+			delete this.session.data['reward'];
+			delete this.session.data['voucher'];
+			delete this.session.data['vouchers'];
 		}
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -60,7 +62,7 @@ module.exports = class Success extends global['\Opencart\System\Engine\Controlle
 		data['content_bottom'] = await this.load.controller('common/content_bottom');
 		data['footer'] = await this.load.controller('common/footer');
 		data['header'] = await this.load.controller('common/header');
-
+		await this.session.save(this.session.data);
 		this.response.setOutput(await this.load.view('common/success', data));
 	}
 }

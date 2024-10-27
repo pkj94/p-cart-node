@@ -16,7 +16,7 @@ global['\Opencart\Catalog\Model\Extension\Opencart\Total\Shipping'] = class Ship
 				'sort_order': this.config.get('total_shipping_sort_order')
 			});
 
-			if ((this.session.data['shipping_method']['tax_class_id'])) {
+			if ((this.session.data['shipping_method'] && this.session.data['shipping_method']['tax_class_id'])) {
 				const tax_rates = await this.tax.getRates(this.session.data['shipping_method']['cost'], this.session.data['shipping_method']['tax_class_id']);
 
 				for (let tax_rate of tax_rates) {
@@ -28,7 +28,7 @@ global['\Opencart\Catalog\Model\Extension\Opencart\Total\Shipping'] = class Ship
 				}
 			}
 
-			total += this.session.data['shipping_method']['cost'];
+			total = total + Number(this.session.data['shipping_method']['cost']);
 		}
 		return { totals, taxes, total }
 	}

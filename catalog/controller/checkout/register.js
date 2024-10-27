@@ -1,3 +1,5 @@
+const sprintf = require("locutus/php/strings/sprintf");
+
 module.exports = class Register extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return string
@@ -12,8 +14,8 @@ module.exports = class Register extends global['\Opencart\System\Engine\Controll
 
 		data['error_upload_size'] = sprintf(this.language.get('error_upload_size'), Number(this.config.get('config_file_max_size')));
 
-		data['config_checkout_payment_address'] = this.config.get('config_checkout_payment_address');
-		data['config_checkout_guest'] = (this.config.get('config_checkout_guest') && !Number(this.config.get('config_customer_price')) && !this.cart.hasDownload() && !this.cart.hasSubscription());
+		data['config_checkout_payment_address'] = Number(this.config.get('config_checkout_payment_address'));
+		data['config_checkout_guest'] = (this.config.get('config_checkout_guest') && !Number(this.config.get('config_customer_price')) && !await this.cart.hasDownload() && !await this.cart.hasSubscription());
 		data['config_file_max_size'] = (Number(this.config.get('config_file_max_size')) * 1024 * 1024);
 		data['config_telephone_display'] = Number(this.config.get('config_telephone_display'));
 		data['config_telephone_required'] = Number(this.config.get('config_telephone_required'));
@@ -36,7 +38,7 @@ module.exports = class Register extends global['\Opencart\System\Engine\Controll
 			}
 		}
 
-		if ((this.session.data['customer']['customer_id'])) {
+		if ((this.session.data['customer'] && this.session.data['customer']['customer_id'])) {
 			data['account'] = this.session.data['customer']['customer_id'];
 		} else {
 			data['account'] = 1;
@@ -82,7 +84,7 @@ module.exports = class Register extends global['\Opencart\System\Engine\Controll
 			data['payment_custom_field'] = [];
 		}
 
-		if ((this.session.data['shipping_address']['address_id'])) {
+		if ((this.session.data['shipping_address'] && this.session.data['shipping_address']['address_id'])) {
 			data['shipping_firstname'] = this.session.data['shipping_address']['firstname'];
 			data['shipping_lastname'] = this.session.data['shipping_address']['lastname'];
 			data['shipping_company'] = this.session.data['shipping_address']['company'];
@@ -100,7 +102,7 @@ module.exports = class Register extends global['\Opencart\System\Engine\Controll
 			data['shipping_address_1'] = '';
 			data['shipping_address_2'] = '';
 
-			if ((this.session.data['shipping_address']['postcode'])) {
+			if ((this.session.data['shipping_address'] && this.session.data['shipping_address']['postcode'])) {
 				data['shipping_postcode'] = this.session.data['shipping_address']['postcode'];
 			} else {
 				data['shipping_postcode'] = '';
@@ -108,13 +110,13 @@ module.exports = class Register extends global['\Opencart\System\Engine\Controll
 
 			data['shipping_city'] = '';
 
-			if ((this.session.data['shipping_address']['country_id'])) {
+			if ((this.session.data['shipping_address'] && this.session.data['shipping_address']['country_id'])) {
 				data['shipping_country_id'] = this.session.data['shipping_address']['country_id'];
 			} else {
 				data['shipping_country_id'] = this.config.get('config_country_id');
 			}
 
-			if ((this.session.data['shipping_address']['zone_id'])) {
+			if ((this.session.data['shipping_address'] && this.session.data['shipping_address']['zone_id'])) {
 				data['shipping_zone_id'] = this.session.data['shipping_address']['zone_id'];
 			} else {
 				data['shipping_zone_id'] = '';
@@ -137,7 +139,7 @@ module.exports = class Register extends global['\Opencart\System\Engine\Controll
 
 		const extension_info = await this.model_setting_extension.getExtensionByCode('captcha', this.config.get('config_captcha'));
 
-		if (extension_info && Number(this.config.get('captcha_' + this.config.get('config_captcha') + '_status')) && in_array('register', this.config.get('config_captcha_page'))) {
+		if (extension_info.extension_id && Number(this.config.get('captcha_' + this.config.get('config_captcha') + '_status')) && this.config.get('config_captcha_page').includes('register')) {
 			data['captcha'] = await this.load.controller('extension/' + extension_info['extension'] + '/captcha/' + extension_info['code']);
 		} else {
 			data['captcha'] = '';
@@ -147,7 +149,7 @@ module.exports = class Register extends global['\Opencart\System\Engine\Controll
 
 		const information_info = await this.model_catalog_information.getInformation(this.config.get('config_account_id'));
 
-		if (information_info) {
+		if (information_info.information_id) {
 			data['text_agree'] = sprintf(this.language.get('text_agree'), await this.url.link('information/information.info', 'language=' + this.config.get('config_language') + '&information_id=' + this.config.get('config_account_id')), information_info['title']);
 		} else {
 			data['text_agree'] = '';
@@ -207,7 +209,7 @@ module.exports = class Register extends global['\Opencart\System\Engine\Controll
 			this.request.post['account'] = 1;
 		}
 
-		// Validate cart has products and has stock+
+		// Validate cart has products and has stock.
 		if ((!await this.cart.hasProducts() && empty(this.session.data['vouchers'])) || (!await this.cart.hasStock() && !Number(this.config.get('config_stock_checkout')))) {
 			json['redirect'] = await this.url.link('checkout/cart', 'language=' + this.config.get('config_language'), true);
 		}
@@ -290,7 +292,7 @@ module.exports = class Register extends global['\Opencart\System\Engine\Controll
 				}
 			}
 
-			if (this.config.get('config_checkout_payment_address')) {
+			if (Number(this.config.get('config_checkout_payment_address'))) {
 				if ((oc_strlen(this.request.post['payment_address_1']) < 3) || (oc_strlen(this.request.post['payment_address_1']) > 128)) {
 					json['error']['payment_address_1'] = this.language.get('error_address_1');
 				}
@@ -329,7 +331,7 @@ module.exports = class Register extends global['\Opencart\System\Engine\Controll
 
 			if (await this.cart.hasShipping() && !this.request.post['address_match']) {
 				// If payment address not required we need to use the firstname and lastname from the account+
-				if (this.config.get('config_checkout_payment_address')) {
+				if (Number(this.config.get('config_checkout_payment_address'))) {
 					if ((oc_strlen(this.request.post['shipping_firstname']) < 1) || (oc_strlen(this.request.post['shipping_firstname']) > 32)) {
 						json['error']['shipping_firstname'] = this.language.get('error_firstname');
 					}
@@ -409,13 +411,13 @@ module.exports = class Register extends global['\Opencart\System\Engine\Controll
 		if (!Object.keys(json).length) {
 			// Add customer details into session
 			customer_data = {
-				'customer_id'       : 0,
-				'customer_group_id' : customer_group_id,
-				'firstname'         : this.request.post['firstname'],
-				'lastname'          : this.request.post['lastname'],
-				'email'             : this.request.post['email'],
-				'telephone'         : this.request.post['telephone'],
-				'custom_field'      : (this.request.post['custom_field']) ? this.request.post['custom_field'] : []
+				'customer_id': 0,
+				'customer_group_id': customer_group_id,
+				'firstname': this.request.post['firstname'],
+				'lastname': this.request.post['lastname'],
+				'email': this.request.post['email'],
+				'telephone': this.request.post['telephone'],
+				'custom_field': (this.request.post['custom_field']) ? this.request.post['custom_field'] : []
 			};
 
 			// Register
@@ -436,7 +438,7 @@ module.exports = class Register extends global['\Opencart\System\Engine\Controll
 			this.load.model('account/address', this);
 
 			// Payment Address
-			if (this.config.get('config_checkout_payment_address')) {
+			if (Number(this.config.get('config_checkout_payment_address'))) {
 				if ((this.session.data['payment_address']['address_id'])) {
 					address_id = this.session.data['payment_address']['address_id'];
 				} else {
@@ -468,23 +470,23 @@ module.exports = class Register extends global['\Opencart\System\Engine\Controll
 				}
 
 				payment_address_data = {
-					'address_id'     : address_id,
-					'firstname'      : this.request.post['firstname'],
-					'lastname'       : this.request.post['lastname'],
-					'company'        : this.request.post['payment_company'],
-					'address_1'      : this.request.post['payment_address_1'],
-					'address_2'      : this.request.post['payment_address_2'],
-					'city'           : this.request.post['payment_city'],
-					'postcode'       : this.request.post['payment_postcode'],
-					'zone_id'        : this.request.post['payment_zone_id'],
-					'zone'           : zone,
-					'zone_code'      : zone_code,
-					'country_id'     : this.request.post['payment_country_id'],
-					'country'        : country,
-					'iso_code_2'     : iso_code_2,
-					'iso_code_3'     : iso_code_3,
-					'address_format' : address_format,
-					'custom_field'   : (this.request.post['payment_custom_field']) ? this.request.post['payment_custom_field'] : []
+					'address_id': address_id,
+					'firstname': this.request.post['firstname'],
+					'lastname': this.request.post['lastname'],
+					'company': this.request.post['payment_company'],
+					'address_1': this.request.post['payment_address_1'],
+					'address_2': this.request.post['payment_address_2'],
+					'city': this.request.post['payment_city'],
+					'postcode': this.request.post['payment_postcode'],
+					'zone_id': this.request.post['payment_zone_id'],
+					'zone': zone,
+					'zone_code': zone_code,
+					'country_id': this.request.post['payment_country_id'],
+					'country': country,
+					'iso_code_2': iso_code_2,
+					'iso_code_3': iso_code_3,
+					'address_format': address_format,
+					'custom_field': (this.request.post['payment_custom_field']) ? this.request.post['payment_custom_field'] : []
 				};
 
 				// Add
@@ -514,7 +516,7 @@ module.exports = class Register extends global['\Opencart\System\Engine\Controll
 						address_id = 0;
 					}
 
-					if (!this.config.get('config_checkout_payment_address')) {
+					if (!Number(this.config.get('config_checkout_payment_address'))) {
 						firstname = this.request.post['firstname'];
 						lastname = this.request.post['lastname'];
 					} else {
@@ -547,28 +549,28 @@ module.exports = class Register extends global['\Opencart\System\Engine\Controll
 					}
 
 					shipping_address_data = {
-						'address_id'     : address_id,
-						'firstname'      : firstname,
-						'lastname'       : lastname,
-						'company'        : this.request.post['shipping_company'],
-						'address_1'      : this.request.post['shipping_address_1'],
-						'address_2'      : this.request.post['shipping_address_2'],
-						'city'           : this.request.post['shipping_city'],
-						'postcode'       : this.request.post['shipping_postcode'],
-						'zone_id'        : this.request.post['shipping_zone_id'],
-						'zone'           : zone,
-						'zone_code'      : zone_code,
-						'country_id'     : this.request.post['shipping_country_id'],
-						'country'        : country,
-						'iso_code_2'     : iso_code_2,
-						'iso_code_3'     : iso_code_3,
-						'address_format' : address_format,
-						'custom_field'   : (this.request.post['shipping_custom_field']) ? this.request.post['shipping_custom_field'] : []
+						'address_id': address_id,
+						'firstname': firstname,
+						'lastname': lastname,
+						'company': this.request.post['shipping_company'],
+						'address_1': this.request.post['shipping_address_1'],
+						'address_2': this.request.post['shipping_address_2'],
+						'city': this.request.post['shipping_city'],
+						'postcode': this.request.post['shipping_postcode'],
+						'zone_id': this.request.post['shipping_zone_id'],
+						'zone': zone,
+						'zone_code': zone_code,
+						'country_id': this.request.post['shipping_country_id'],
+						'country': country,
+						'iso_code_2': iso_code_2,
+						'iso_code_3': iso_code_3,
+						'address_format': address_format,
+						'custom_field': (this.request.post['shipping_custom_field']) ? this.request.post['shipping_custom_field'] : []
 					};
 
 					// Add
 					if (this.request.post['account']) {
-						if (!this.config.get('config_checkout_payment_address')) {
+						if (!Number(this.config.get('config_checkout_payment_address'))) {
 							shipping_address_data['default'] = 1;
 						}
 
@@ -584,7 +586,7 @@ module.exports = class Register extends global['\Opencart\System\Engine\Controll
 					if (!customer_group_info['approval']) {
 						this.session.data['shipping_address'] = shipping_address_data;
 					}
-				} else if (!customer_group_info['approval'] && this.config.get('config_checkout_payment_address')) {
+				} else if (!customer_group_info['approval'] && Number(this.config.get('config_checkout_payment_address'))) {
 					this.session.data['shipping_address'] = this.session.data['payment_address'];
 
 					// Remove the address id so if the customer changes their mind and requires changing a different shipping address it will create a new address+

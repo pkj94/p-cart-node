@@ -64,7 +64,6 @@ global['\Opencart\Install\Controller\Install\Step2'] = class Step2 extends globa
             data['version'] = true;
         }
         // Check if config files exist and are writable
-        console.log(fs.accessSync(data.catalog_config, fs.constants.R_OK), data.catalog_config)
         if (!fs.existsSync(data.catalog_config)) {
             data.error_catalog_config = this.language.get('text_missing');
         } else if (!fs.existsSync(data.catalog_config)) {

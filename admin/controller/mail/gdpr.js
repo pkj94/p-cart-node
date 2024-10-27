@@ -209,7 +209,7 @@ module.exports = class GdprController extends global['\Opencart\System\Engine\Co
 			mail.setSender(store_name);
 			mail.setSubject(subject);
 			mail.setHtml(await this.load.view('mail/gdpr_export', data));
-			mail.send();
+			await mail.send();
 		}
 	}
 
@@ -300,7 +300,7 @@ module.exports = class GdprController extends global['\Opencart\System\Engine\Co
 			mail.setSender(store_name);
 			mail.setSubject(subject);
 			mail.setHtml(await this.load.view('mail/gdpr_approve', data));
-			mail.send();
+			await mail.send();
 		}
 	}
 
@@ -391,7 +391,7 @@ module.exports = class GdprController extends global['\Opencart\System\Engine\Co
 			mail.setSender(store_name);
 			mail.setSubject(subject);
 			mail.setHtml(await this.load.view('mail/gdpr_deny', data));
-			mail.send();
+			await mail.send();
 		}
 	}
 
@@ -480,7 +480,7 @@ module.exports = class GdprController extends global['\Opencart\System\Engine\Co
 			mail.setSender(store_name);
 			mail.setSubject(subject);
 			mail.setHtml(await this.load.view('mail/gdpr_delete', data));
-			mail.send();
+			await mail.send();
 		}
 	}
 }

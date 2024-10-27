@@ -28,7 +28,7 @@ global['\Opencart\Catalog\Model\Extension\Opencart\Total\Voucher'] = class Vouch
 						'sort_order': this.config.get('total_voucher_sort_order')
 					});
 
-					total -= amount;
+					total = total - amount;
 				} else {
 					delete this.session.data['voucher'];
 				}

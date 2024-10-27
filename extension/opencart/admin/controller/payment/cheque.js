@@ -35,7 +35,7 @@ global['\Opencart\Admin\Controller\Extension\Opencart\Payment\Cheque'] = class C
 
 		data.order_statuses = await this.model_localisation_order_status.getOrderStatuses();
 
-		data.payment_cheque_geo_zone_id = this.config.get('payment_cheque_geo_zone_id');
+		data.payment_cheque_geo_zone_id = Number(this.config.get('payment_cheque_geo_zone_id'));
 
 		this.load.model('localisation/geo_zone', this);
 

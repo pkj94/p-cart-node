@@ -127,7 +127,7 @@ global['\Opencart\Catalog\Controller\Extension\Opencart\Total\Shipping'] = class
 
 			const shipping_methods = await this.model_checkout_shipping_method.getMethods(this.session.data['shipping_address']);
 
-			if (shipping_methods.length) {
+			if (Object.keys(shipping_methods).length) {
 				json['shipping_methods'] = this.session.data['shipping_methods'] = shipping_methods;
 			} else {
 				json['error']['warning'] = sprintf(this.language.get('error_no_shipping'), await this.url.link('information/contact', 'language=' + this.config.get('config_language')));

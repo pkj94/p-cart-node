@@ -1,3 +1,5 @@
+const sprintf = require("locutus/php/strings/sprintf");
+
 module.exports = class Confirm extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return string
@@ -7,26 +9,29 @@ module.exports = class Confirm extends global['\Opencart\System\Engine\Controlle
 		await this.load.language('checkout/confirm');
 
 		// Order Totals
-		totals = [];
-		taxes = await this.cart.getTaxes();
-		total = 0;
+		let totals = [];
+		let taxes = await this.cart.getTaxes();
+		let total = 0;
 
 		this.load.model('checkout/cart', this);
 
-		(await this.model_checkout_cart.getTotals)(totals, taxes, total);
-
-		status = (await this.customer.isLogged() || !Number(this.config.get('config_customer_price')));
-
+		let totalData = await this.model_checkout_cart.getTotals(totals, taxes, total);
+		total = totalData.total;
+		taxes = totalData.taxes;
+		totals = totalData.totals;
+	
+		let status = (await this.customer.isLogged() || !Number(this.config.get('config_customer_price')));
+		
 		// Validate customer data is set
-		if (!(this.session.data['customer'])) {
+		if (!this.session.data['customer']) {
 			status = false;
 		}
-
-		// Validate cart has products and has stock+
-		if ((!await this.cart.hasProducts() && empty(this.session.data['vouchers'])) || (!await this.cart.hasStock() && !Number(this.config.get('config_stock_checkout')))) {
+		
+		// Validate cart has products and has stock.
+		if ((!await this.cart.hasProducts() && !this.session.data['vouchers']) || (!await this.cart.hasStock() && !Number(this.config.get('config_stock_checkout')))) {
 			status = false;
 		}
-
+		
 		// Validate minimum quantity requirements+
 		let products = await this.model_checkout_cart.getProducts();
 
@@ -37,42 +42,42 @@ module.exports = class Confirm extends global['\Opencart\System\Engine\Controlle
 				break;
 			}
 		}
-
+		
 		// Shipping
 		if (await this.cart.hasShipping()) {
 			// Validate shipping address
-			if (!(this.session.data['shipping_address']['address_id'])) {
+			if (!(this.session.data['shipping_address'] && this.session.data['shipping_address']['address_id'])) {
 				status = false;
 			}
-
+			
 			// Validate shipping method
 			if (!(this.session.data['shipping_method'])) {
 				status = false;
 			}
 		} else {
-			delete (this.session.data['shipping_address']);
-			delete (this.session.data['shipping_method']);
-			delete (this.session.data['shipping_methods']);
+			delete this.session.data['shipping_address'];
+			delete this.session.data['shipping_method'];
+			delete this.session.data['shipping_methods'];
 		}
-
+		
 		// Validate has payment address if required
-		if (this.config.get('config_checkout_payment_address') && !(this.session.data['payment_address'])) {
+		if (Number(this.config.get('config_checkout_payment_address')) && !(this.session.data['payment_address'])) {
 			status = false;
 		}
-
+		
 		// Validate payment methods
 		if (!(this.session.data['payment_method'])) {
 			status = false;
 		}
-
+		
 		// Validate checkout terms
-		if (this.config.get('config_checkout_id') && empty(this.session.data['agree'])) {
+		if (Number(this.config.get('config_checkout_id')) && !this.session.data['agree']) {
 			status = false;
 		}
-
+		
 		// Generate order if payment method is set
 		if (status) {
-			order_data = [];
+			let order_data = {};
 
 			order_data['invoice_prefix'] = this.config.get('config_invoice_prefix');
 
@@ -91,7 +96,7 @@ module.exports = class Confirm extends global['\Opencart\System\Engine\Controlle
 			order_data['custom_field'] = this.session.data['customer']['custom_field'];
 
 			// Payment Details
-			if (this.config.get('config_checkout_payment_address')) {
+			if (Number(this.config.get('config_checkout_payment_address'))) {
 				order_data['payment_address_id'] = this.session.data['payment_address']['address_id'];
 				order_data['payment_firstname'] = this.session.data['payment_address']['firstname'];
 				order_data['payment_lastname'] = this.session.data['payment_address']['lastname'];
@@ -168,13 +173,13 @@ module.exports = class Confirm extends global['\Opencart\System\Engine\Controlle
 				order_data['comment'] = '';
 			}
 
-			total_data = {
+			let total_data = {
 				'totals': totals,
 				'taxes': taxes,
 				'total': total
 			};
 
-			order_data = array_merge(order_data, total_data);
+			order_data = { ...order_data, ...total_data };
 
 			order_data['affiliate_id'] = 0;
 			order_data['commission'] = 0;
@@ -182,15 +187,15 @@ module.exports = class Confirm extends global['\Opencart\System\Engine\Controlle
 			order_data['tracking'] = '';
 
 			if ((this.session.data['tracking'])) {
-				subtotal = await this.cart.getSubTotal();
+				const subtotal = await this.cart.getSubTotal();
 
 				// Affiliate
 				if (this.config.get('config_affiliate_status')) {
 					this.load.model('account/affiliate', this);
 
-					affiliate_info = await this.model_account_affiliate.getAffiliateByTracking(this.session.data['tracking']);
+					const affiliate_info = await this.model_account_affiliate.getAffiliateByTracking(this.session.data['tracking']);
 
-					if (affiliate_info) {
+					if (affiliate_info.affiliate_id) {
 						order_data['affiliate_id'] = affiliate_info['customer_id'];
 						order_data['commission'] = (subtotal / 100) * affiliate_info['commission'];
 						order_data['tracking'] = this.session.data['tracking'];
@@ -199,9 +204,9 @@ module.exports = class Confirm extends global['\Opencart\System\Engine\Controlle
 
 				this.load.model('marketing/marketing', this);
 
-				marketing_info = await this.model_marketing_marketing.getMarketingByCode(this.session.data['tracking']);
+				const marketing_info = await this.model_marketing_marketing.getMarketingByCode(this.session.data['tracking']);
 
-				if (marketing_info) {
+				if (marketing_info.marketing_id) {
 					order_data['marketing_id'] = marketing_info['marketing_id'];
 					order_data['tracking'] = this.session.data['tracking'];
 				}
@@ -219,22 +224,22 @@ module.exports = class Confirm extends global['\Opencart\System\Engine\Controlle
 				this.request.server.socket.remoteAddress ||
 				this.request.server.connection.socket.remoteAddress);
 
-			if ((this.request.server['HTTP_X_FORWARDED_FOR'])) {
-				order_data['forwarded_ip'] = this.request.server['HTTP_X_FORWARDED_FOR'];
-			} else if ((this.request.server['HTTP_CLIENT_IP'])) {
-				order_data['forwarded_ip'] = this.request.server['HTTP_CLIENT_IP'];
+			if ((this.request.server.headers['x-forwarded-for'])) {
+				order_data['forwarded_ip'] = this.request.server.headers['x-forwarded-for'].split(',')[0];
+			} else if ((this.request.server.connection.remoteAddress)) {
+				order_data['forwarded_ip'] = this.request.server.connection.remoteAddress;
 			} else {
 				order_data['forwarded_ip'] = '';
 			}
 
-			if ((this.request.server['HTTP_USER_AGENT'])) {
-				order_data['user_agent'] = this.request.server['HTTP_USER_AGENT'];
+			if (useragent.parse(this.request.server.headers['user-agent'], this.request.server.query.jsuseragent).source) {
+				order_data['user_agent'] = useragent.parse(this.request.server.headers['user-agent'], this.request.server.query.jsuseragent).source;
 			} else {
 				order_data['user_agent'] = '';
 			}
 
-			if ((this.request.server['HTTP_ACCEPT_LANGUAGE'])) {
-				order_data['accept_language'] = this.request.server['HTTP_ACCEPT_LANGUAGE'];
+			if ((this.request.server.headers['accept-language'])) {
+				order_data['accept_language'] = this.request.server.headers['accept-language'];
 			} else {
 				order_data['accept_language'] = '';
 			}
@@ -257,7 +262,7 @@ module.exports = class Confirm extends global['\Opencart\System\Engine\Controlle
 					});
 				}
 
-				subscription_data = [];
+				let subscription_data = {};
 
 				if (product['subscription']) {
 					subscription_data = {
@@ -302,24 +307,23 @@ module.exports = class Confirm extends global['\Opencart\System\Engine\Controlle
 				order_data['vouchers'] = this.session.data['vouchers'];
 			}
 
-			this.load.model('checkout/order');
+			this.load.model('checkout/order', this);
 
 			if (!(this.session.data['order_id'])) {
 				this.session.data['order_id'] = await this.model_checkout_order.addOrder(order_data);
 			} else {
 				const order_info = await this.model_checkout_order.getOrder(this.session.data['order_id']);
 
-				if (order_info && !order_info['order_status_id']) {
+				if (order_info.order_id && !order_info['order_status_id']) {
 					await this.model_checkout_order.editOrder(this.session.data['order_id'], order_data);
 				}
 			}
 		}
 
 		// Display prices
+		let price_status = false;
 		if (await this.customer.isLogged() || !Number(this.config.get('config_customer_price'))) {
 			price_status = true;
-		} else {
-			price_status = false;
 		}
 
 		this.load.model('tool/upload', this);
@@ -333,22 +337,21 @@ module.exports = class Confirm extends global['\Opencart\System\Engine\Controlle
 				}
 			}
 
-			description = '';
-
-			if (product['subscription']) {
+			let description = '';
+			if (product['subscription'].subscription_plan_id) {
 				if (product['subscription']['trial_status']) {
-					trial_price = this.currency.format(this.tax.calculate(product['subscription']['trial_price'], product['tax_class_id'], Number(Number(this.config.get('config_tax')))), this.session.data['currency']);
-					trial_cycle = product['subscription']['trial_cycle'];
-					trial_frequency = this.language.get('text_' + product['subscription']['trial_frequency']);
-					trial_duration = product['subscription']['trial_duration'];
+					let trial_price = this.currency.format(this.tax.calculate(product['subscription']['trial_price'], product['tax_class_id'], Number(this.config.get('config_tax'))), this.session.data['currency']);
+					let trial_cycle = product['subscription']['trial_cycle'];
+					let trial_frequency = this.language.get('text_' + product['subscription']['trial_frequency']);
+					let trial_duration = product['subscription']['trial_duration'];
 
 					description += sprintf(this.language.get('text_subscription_trial'), trial_price, trial_cycle, trial_frequency, trial_duration);
 				}
 
-				price = this.currency.format(this.tax.calculate(product['subscription']['price'], product['tax_class_id'], Number(Number(this.config.get('config_tax')))), this.session.data['currency']);
-				cycle = product['subscription']['cycle'];
-				frequency = this.language.get('text_' + product['subscription']['frequency']);
-				duration = product['subscription']['duration'];
+				let price = this.currency.format(this.tax.calculate(product['subscription']['price'], product['tax_class_id'], Number(this.config.get('config_tax'))), this.session.data['currency']);
+				let cycle = product['subscription']['cycle'];
+				let frequency = this.language.get('text_' + product['subscription']['frequency']);
+				let duration = product['subscription']['duration'];
 
 				if (duration) {
 					description += sprintf(this.language.get('text_subscription_duration'), price_status ? price : '', cycle, frequency, duration);
@@ -365,8 +368,8 @@ module.exports = class Confirm extends global['\Opencart\System\Engine\Controlle
 				'option': product['option'],
 				'subscription': description,
 				'quantity': product['quantity'],
-				'price': price_status ? this.currency.format(this.tax.calculate(product['price'], product['tax_class_id'], Number(Number(this.config.get('config_tax')))), this.session.data['currency']) : '',
-				'total': price_status ? this.currency.format(this.tax.calculate(product['total'], product['tax_class_id'], Number(Number(this.config.get('config_tax')))), this.session.data['currency']) : '',
+				'price': price_status ? this.currency.format(this.tax.calculate(product['price'], product['tax_class_id'], Number(this.config.get('config_tax'))), this.session.data['currency']) : '',
+				'total': price_status ? this.currency.format(this.tax.calculate(product['total'], product['tax_class_id'], Number(this.config.get('config_tax'))), this.session.data['currency']) : '',
 				'reward': product['reward'],
 				'href': await this.url.link('product/product', 'language=' + this.config.get('config_language') + '&product_id=' + product['product_id'])
 			});
@@ -375,7 +378,7 @@ module.exports = class Confirm extends global['\Opencart\System\Engine\Controlle
 		// Gift Voucher
 		data['vouchers'] = [];
 
-		vouchers = await this.model_checkout_cart.getVouchers();
+		const vouchers = await this.model_checkout_cart.getVouchers();
 
 		for (let voucher of vouchers) {
 			data['vouchers'].push({
@@ -394,15 +397,15 @@ module.exports = class Confirm extends global['\Opencart\System\Engine\Controlle
 		}
 
 		// Validate if payment method has been set+
+		let code = '';
 		if ((this.session.data['payment_method'])) {
-			code = oc_substr(this.session.data['payment_method']['code'], 0, strpos(this.session.data['payment_method']['code'], '+'));
+			code = oc_substr(this.session.data['payment_method']['code'], 0, this.session.data['payment_method']['code'].indexOf('.'));
 		} else {
 			code = '';
 		}
 
 		const extension_info = await this.model_setting_extension.getExtensionByCode('payment', code);
-
-		if (status && extension_info) {
+		if (status && extension_info.extension_id) {
 			data['payment'] = await this.load.controller('extension/' + extension_info['extension'] + '/payment/' + extension_info['code']);
 		} else {
 			data['payment'] = '';
@@ -416,6 +419,6 @@ module.exports = class Confirm extends global['\Opencart\System\Engine\Controlle
 	 * @return void
 	 */
 	async confirm() {
-		this.response.setOutput(this.index());
+		this.response.setOutput(await this.index());
 	}
 }

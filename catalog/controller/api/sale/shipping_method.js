@@ -17,7 +17,7 @@ module.exports = class ShippingMethod extends global['\Opencart\System\Engine\Co
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('checkout/shipping_method');
+			this.load.model('checkout/shipping_method',this);
 
 			shipping_methods = await this.model_checkout_shipping_method.getMethods(this.session.data['shipping_address']);
 

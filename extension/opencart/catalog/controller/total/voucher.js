@@ -32,7 +32,7 @@ global['\Opencart\Catalog\Controller\Extension\Opencart\Total\Voucher'] = class 
 		await this.load.language('extension/opencart/total/voucher');
 
 		const json = {};
-		const voucher = '';
+		let voucher = '';
 		if ((this.request.post['voucher'])) {
 			voucher = this.request.post['voucher'];
 		}

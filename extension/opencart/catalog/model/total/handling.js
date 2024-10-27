@@ -30,7 +30,7 @@ global['\Opencart\Catalog\Model\Extension\Opencart\Total\Handling'] = class Hand
 				}
 			}
 
-			total += this.config.get('total_handling_fee');
+			total += Number(this.config.get('total_handling_fee'));
 		}
 		return { totals, taxes, total }
 	}

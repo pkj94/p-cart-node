@@ -3,11 +3,11 @@ module.exports = class CustomField extends global['\Opencart\System\Engine\Contr
 	 * @return void
 	 */
 	async index() {
-		const data = {};
 		const json = {};
 
 		// Customer Group
-		if ((this.request.get['customer_group_id']) && in_array(this.request.get['customer_group_id'], this.config.get('config_customer_group_display'))) {
+		let customer_group_id = this.config.get('config_customer_group_id');
+		if ((this.request.get['customer_group_id']) && this.config.get('config_customer_group_display').includes(this.request.get['customer_group_id'])) {
 			customer_group_id = this.request.get['customer_group_id'];
 		} else {
 			customer_group_id = this.config.get('config_customer_group_id');
