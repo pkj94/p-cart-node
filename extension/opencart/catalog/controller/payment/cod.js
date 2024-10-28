@@ -30,7 +30,7 @@ global['\Opencart\Catalog\Controller\Extension\Opencart\Payment\Cod'] = class Co
 			json['error'] = this.language.get('error_payment_method');
 		}
 
-		if (!json.error) {
+		if (!Object.keys(json).length) {
 			this.load.model('checkout/order', this);
 
 			await this.model_checkout_order.addHistory(this.session.data['order_id'], this.config.get('payment_cod_order_status_id'));

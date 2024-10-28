@@ -9,7 +9,7 @@ module.exports = class Gdpr extends global['\Opencart\System\Engine\Controller']
 	 * @return void
 	 */
 	async index(cron_id, code, cycle, date_added, date_modified) {
-		this.load.model('account/gdpr');
+		this.load.model('account/gdpr',this);
 		this.load.model('account/customer',this);
 
 		const results = await this.model_account_gdpr.getExpires();

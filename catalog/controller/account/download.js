@@ -1,3 +1,5 @@
+const sprintf = require("locutus/php/strings/sprintf");
+
 module.exports = class Download extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
@@ -31,7 +33,7 @@ module.exports = class Download extends global['\Opencart\System\Engine\Controll
 			'href': await this.url.link('account/download', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'])
 		});
 
-		this.load.model('account/download');
+		this.load.model('account/download', this);
 
 		let page = 1;
 		if ((this.request.get['page'])) {
@@ -42,17 +44,17 @@ module.exports = class Download extends global['\Opencart\System\Engine\Controll
 
 		data['downloads'] = [];
 
-		download_total = await this.model_account_download.getTotalDownloads();
+		const download_total = await this.model_account_download.getTotalDownloads();
 
 		const results = await this.model_account_download.getDownloads((page - 1) * limit, limit);
 
 		for (let result of results) {
-			if (is_file(DIR_DOWNLOAD + result['filename'])) {
-				size = filesize(DIR_DOWNLOAD + result['filename']);
+			if (result['filename'] && is_file(DIR_DOWNLOAD + result['filename'])) {
+				let size = fs.lstatSync(DIR_DOWNLOAD + result['filename']).size();
 
-				i = 0;
+				let i = 0;
 
-				suffix = [
+				let suffix = [
 					'B',
 					'KB',
 					'MB',
@@ -73,7 +75,7 @@ module.exports = class Download extends global['\Opencart\System\Engine\Controll
 					'order_id': result['order_id'],
 					'date_added': date(this.language.get('date_format_short'), new Date(result['date_added'])),
 					'name': result['name'],
-					'size': round(substr(size, 0, strpos(size, '+') + 4), 2) + suffix[i],
+					'size': Math.round(substr(size, 0, size.indexOf('.') + 4), 2) + suffix[i],
 					'href': await this.url.link('account/download+download', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'] + '&download_id=' + result['download_id'])
 				});
 			}
@@ -110,47 +112,36 @@ module.exports = class Download extends global['\Opencart\System\Engine\Controll
 			this.response.setRedirect(await this.url.link('account/login', 'language=' + this.config.get('config_language')));
 		}
 
-		this.load.model('account/download');
-
+		this.load.model('account/download', this);
+		let download_id = 0;
 		if ((this.request.get['download_id'])) {
 			download_id = this.request.get['download_id'];
 		} else {
 			download_id = 0;
 		}
 
-		download_info = await this.model_account_download.getDownload(download_id);
+		const download_info = await this.model_account_download.getDownload(download_id);
 
-		if (download_info) {
-			file = DIR_DOWNLOAD + download_info['filename'];
-			mask = basename(download_info['mask']);
+		if (download_info.download_id) {
+			let file = DIR_DOWNLOAD + download_info['filename'];
+			let mask = expressPath.basename(download_info['mask']);
 
-			if (!headers_sent()) {
-				if (is_file(file)) {
-					header('Content-Type: application/octet-stream');
-					header('Content-Disposition: attachment; filename="' + (mask ? mask : basename(file)) + '"');
-					header('Expires: 0');
-					header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-					header('Pragma: public');
-					header('Content-Length: ' + filesize(file));
+			if (is_file(file)) {
+				this.response.headers = [];
+				this.response.addHeader('Content-Disposition: attachment; filename=' + (mask ? mask : expressPath.basename(file)));
+				this.response.addHeader('Content-Transfer-Encoding :binary');
+				this.response.addHeader('Content-Type :application/octet-stream');
+				this.response.setFile(file)
 
-					if (ob_get_level()) {
-						ob_end_clean();
-					}
+				await this.model_account_download.addReport(download_id, (this.request.server.headers['x-forwarded-for'] ||
+					this.request.server.connection.remoteAddress ||
+					this.request.server.socket.remoteAddress ||
+					this.request.server.connection.socket.remoteAddress));
 
-					readfile(file, 'rb');
-
-					await this.model_account_download.addReport(download_id, (this.request.server.headers['x-forwarded-for'] ||
-						this.request.server.connection.remoteAddress ||
-						this.request.server.socket.remoteAddress ||
-						this.request.server.connection.socket.remoteAddress));
-
-					exit();
-				} else {
-					exit(sprintf(this.language.get('error_not_found'), basename(file)));
-				}
 			} else {
-				exit(this.language.get('error_headers_sent'));
+				this.response.setOutput(sprintf(this.language.get('error_not_found'), expressPath.basename(file)));
 			}
+
 		} else {
 			this.response.setRedirect(await this.url.link('account/download', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token']));
 		}

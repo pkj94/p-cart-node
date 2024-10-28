@@ -24,17 +24,17 @@ module.exports = class Sitemap extends global['\Opencart\System\Engine\Controlle
 
 		data['categories'] = [];
 
-		categories_1 = await this.model_catalog_category.getCategories(0);
+		const categories_1 = await this.model_catalog_category.getCategories(0);
 
 		for (let category_1 of categories_1) {
-			level_2_data = [];
+			let level_2_data = [];
 
-			categories_2 = await this.model_catalog_category.getCategories(category_1['category_id']);
+			const categories_2 = await this.model_catalog_category.getCategories(category_1['category_id']);
 
 			for (let category_2 of categories_2) {
-				level_3_data = [];
+				let level_3_data = [];
 
-				categories_3 = await this.model_catalog_category.getCategories(category_2['category_id']);
+				const categories_3 = await this.model_catalog_category.getCategories(category_2['category_id']);
 
 				for (let category_3 of categories_3) {
 					level_3_data.push({

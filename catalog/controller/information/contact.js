@@ -1,3 +1,5 @@
+const nl2br = require("locutus/php/strings/nl2br");
+
 module.exports = class Contact extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
@@ -40,30 +42,29 @@ module.exports = class Contact extends global['\Opencart\System\Engine\Controlle
 
 		data['locations'] = [];
 
-		this.load.model('localisation/location');
+		this.load.model('localisation/location', this);
+		if (this.config.get('config_location'))
+			for (let location_id of this.config.get('config_location')) {
+				const location_info = await this.model_localisation_location.getLocation(location_id);
 
-		for (let location_id of this.config.get('config_location')) {
-			location_info = await this.model_localisation_location.getLocation(location_id);
+				if (location_info.location_id) {
+					let image = '';
+					if (location_info['image'] && is_file(DIR_IMAGE + html_entity_decode(location_info['image']))) {
+						image = await this.model_tool_image.resize(html_entity_decode(location_info['image']), this.config.get('config_image_location_width'), this.config.get('config_image_location_height'));
+					}
 
-			if (location_info) {
-				if (is_file(DIR_IMAGE + html_entity_decode(location_info['image']))) {
-					image = await this.model_tool_image.resize(html_entity_decode(location_info['image']), this.config.get('config_image_location_width'), this.config.get('config_image_location_height'));
-				} else {
-					image = '';
+					data['locations'].push({
+						'location_id': location_info['location_id'],
+						'name': location_info['name'],
+						'address': nl2br(location_info['address']),
+						'geocode': location_info['geocode'],
+						'telephone': location_info['telephone'],
+						'image': image,
+						'open': nl2br(location_info['open']),
+						'comment': location_info['comment']
+					});
 				}
-
-				data['locations'].push({
-					'location_id': location_info['location_id'],
-					'name': location_info['name'],
-					'address': nl2br(location_info['address']),
-					'geocode': location_info['geocode'],
-					'telephone': location_info['telephone'],
-					'image': image,
-					'open': nl2br(location_info['open']),
-					'comment': location_info['comment']
-				});
 			}
-		}
 
 		data['name'] = await this.customer.getFirstName();
 		data['email'] = await this.customer.getEmail();
@@ -73,7 +74,7 @@ module.exports = class Contact extends global['\Opencart\System\Engine\Controlle
 
 		const extension_info = await this.model_setting_extension.getExtensionByCode('captcha', this.config.get('config_captcha'));
 
-		if (extension_info && Number(this.config.get('captcha_' + this.config.get('config_captcha') + '_status')) && in_array('contact', this.config.get('config_captcha_page'))) {
+		if (extension_info.extension_id && Number(this.config.get('captcha_' + this.config.get('config_captcha') + '_status')) && this.config.get('config_captcha_page').includes('contact')) {
 			data['captcha'] = await this.load.controller('extension/' + extension_info['extension'] + '/captcha/' + extension_info['code']);
 		} else {
 			data['captcha'] = '';
@@ -96,9 +97,9 @@ module.exports = class Contact extends global['\Opencart\System\Engine\Controlle
 	async send() {
 		await this.load.language('information/contact');
 
-		const json = {};
+		const json = { error: {} };
 
-		keys = [
+		let keys = [
 			'name',
 			'email',
 			'enquiry'
@@ -127,7 +128,7 @@ module.exports = class Contact extends global['\Opencart\System\Engine\Controlle
 
 		const extension_info = await this.model_setting_extension.getExtensionByCode('captcha', this.config.get('config_captcha'));
 
-		if (extension_info && Number(this.config.get('captcha_' + this.config.get('config_captcha') + '_status')) && in_array('contact', this.config.get('config_captcha_page'))) {
+		if (extension_info.extension_id && Number(this.config.get('captcha_' + this.config.get('config_captcha') + '_status')) && this.config.get('config_captcha_page').includes('contact')) {
 			const captcha = await this.load.controller('extension/' + extension_info['extension'] + '/captcha/' + extension_info['code'] + '.validate');
 
 			if (captcha) {
@@ -137,7 +138,7 @@ module.exports = class Contact extends global['\Opencart\System\Engine\Controlle
 
 		if (!Object.keys(json).length) {
 			if (this.config.get('config_mail_engine')) {
-				mail_option = {
+				let mail_option = {
 					'parameter': this.config.get('config_mail_parameter'),
 					'smtp_hostname': this.config.get('config_mail_smtp_hostname'),
 					'smtp_username': this.config.get('config_mail_smtp_username'),

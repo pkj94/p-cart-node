@@ -31,7 +31,7 @@ module.exports = class Marketing extends global['\Opencart\System\Engine\Control
 
 				const affiliate_info = await this.model_account_affiliate.getAffiliateByTracking(tracking);
 
-				if (affiliate_info.affiliate_id && affiliate_info['status']) {
+				if (affiliate_info.customer_id && affiliate_info['status']) {
 					await this.model_account_affiliate.addReport(affiliate_info['customer_id'], (this.request.server.headers['x-forwarded-for'] ||
 					this.request.server.connection.remoteAddress ||
 					this.request.server.socket.remoteAddress ||

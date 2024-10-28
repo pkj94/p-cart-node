@@ -33,9 +33,9 @@ autoloader.register(`OpencartInstall`, getConfig('DIR_OPENCART') + '/install/');
 autoloader.register('OpencartExtension', getConfig('DIR_EXTENSION'));
 autoloader.register('OpencartSystem', getConfig('DIR_SYSTEM'));
 // Registry
-const registry = new (global['\Opencart\System\Engine\Registry'])();
+const registry = new global['\Opencart\System\Engine\Registry']();
 registry.set('autoloader', autoloader);
-const config = new (global['\Opencart\System\Engine\Config'])();
+const config = new global['\Opencart\System\Engine\Config']();
 registry.set('config', config);
 // End Optimize
 app.use(cookieParser());

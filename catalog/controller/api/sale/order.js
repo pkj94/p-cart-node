@@ -9,14 +9,14 @@ module.exports = class Order extends global['\Opencart\System\Engine\Controller'
 		await this.load.language('api/sale/order');
 
 		const json = {};
-
+		let order_id = 0;
 		if ((this.request.get['order_id'])) {
 			order_id = this.request.get['order_id'];
 		} else {
 			order_id = 0;
 		}
 
-		this.load.model('checkout/order',this);
+		this.load.model('checkout/order', this);
 
 		const order_info = await this.model_checkout_order.getOrder(order_id);
 
@@ -115,8 +115,8 @@ module.exports = class Order extends global['\Opencart\System\Engine\Controller'
 				}
 
 				const subscription_info = await this.model_checkout_order.getSubscription(order_id, product['order_product_id']);
-
-				if (subscription_info.subscription_id) {
+				let subscription_plan_id = 0;
+				if (subscription_info.subscription_plan_id) {
 					subscription_plan_id = subscription_info['subscription_plan_id'];
 				} else {
 					subscription_plan_id = 0;
@@ -127,7 +127,7 @@ module.exports = class Order extends global['\Opencart\System\Engine\Controller'
 
 			this.session.data['vouchers'] = [];
 
-			this.load.model('checkout/voucher',this);
+			this.load.model('checkout/voucher', this);
 
 			const vouchers = await this.model_checkout_order.getVouchers(order_id);
 
@@ -150,21 +150,21 @@ module.exports = class Order extends global['\Opencart\System\Engine\Controller'
 			}
 
 			// Coupon, Voucher, Reward
-			order_totals = await this.model_checkout_order.getTotals(order_id);
+			const order_totals = await this.model_checkout_order.getTotals(order_id);
 
 			for (let order_total of order_totals) {
 				// If coupon, voucher or reward points
-				start = strpos(order_total['title'], '(') + 1;
-				end = strrpos(order_total['title'], ')');
+				let start = order_total['title'].indexOf('(') + 1;
+				let end = order_total['title'].indexOf(')');
 
 				if (start && end) {
-					this.session.data[order_total['code']] = substr(order_total['title'], start, end - start);
+					this.session.data[order_total['code']] = order_total['title'].substring(start, end - start);
 				}
 			}
 
 			json['success'] = this.language.get('text_success');
 		}
-
+		await this.session.save(this.session.data);
 		this.response.addHeader('Content-Type: application/json');
 		this.response.setOutput(json);
 	}
@@ -186,7 +186,7 @@ module.exports = class Order extends global['\Opencart\System\Engine\Controller'
 
 			json['success'] = this.language.get('text_success');
 		}
-
+		await this.session.save(this.session.data);
 		this.response.addHeader('Content-Type: application/json');
 		this.response.setOutput(json);
 	}
@@ -197,7 +197,7 @@ module.exports = class Order extends global['\Opencart\System\Engine\Controller'
 	async confirm() {
 		await this.load.language('api/sale/order');
 
-		const json = {};
+		const json = { error: {} };
 
 		// Validate cart has products and has stock.
 		if ((await this.cart.hasProducts()(this.session.data['vouchers'] && this.session.data['vouchers'].length))) {
@@ -241,18 +241,18 @@ module.exports = class Order extends global['\Opencart\System\Engine\Controller'
 				json['error']['shipping_method'] = this.language.get('error_shipping_method');
 			}
 		} else {
-			delete (this.session.data['shipping_address']);
-			delete (this.session.data['shipping_method']);
-			delete (this.session.data['shipping_methods']);
+			delete this.session.data['shipping_address'];
+			delete this.session.data['shipping_method'];
+			delete this.session.data['shipping_methods'];
 		}
 
 		// Payment Method
-		if (empty(this.session.data['payment_method'])) {
+		if (!this.session.data['payment_method']) {
 			json['error']['payment_method'] = this.language.get('error_payment_method');
 		}
 
-		if (!Object.keys(json).length) {
-			order_data = [];
+		if (!Object.keys(json.error).length) {
+			let order_data = {};
 
 			// Store Details
 			order_data['invoice_prefix'] = this.config.get('config_invoice_prefix');
@@ -341,7 +341,7 @@ module.exports = class Order extends global['\Opencart\System\Engine\Controller'
 				order_data['shipping_method'] = [];
 			}
 
-			points = 0;
+			let points = 0;
 
 			// Products
 			order_data['products'] = [];
@@ -361,7 +361,7 @@ module.exports = class Order extends global['\Opencart\System\Engine\Controller'
 					});
 				}
 
-				subscription_data = [];
+				let subscription_data = {};
 
 				if (product['subscription']) {
 					subscription_data = {
@@ -423,21 +423,23 @@ module.exports = class Order extends global['\Opencart\System\Engine\Controller'
 			}
 
 			// Order Totals
-			const totals = [];
-			taxes = await this.cart.getTaxes();
-			total = 0;
+			let totals = [];
+			let taxes = await this.cart.getTaxes();
+			let total = 0;
 
 			this.load.model('checkout/cart', this);
 
-			(await this.model_checkout_cart.getTotals)(totals, taxes, total);
-
-			total_data = {
+			let totalsData = await this.model_checkout_cart.getTotals(totals, taxes, total);
+			totals = totalsData.totals;
+			taxes = totalsData.taxes;
+			total = totalsData.total;
+			let total_data = {
 				'totals': totals,
 				'taxes': taxes,
 				'total': total
 			};
 
-			order_data = array_merge(order_data, total_data);
+			order_data = { ...order_data, ...total_data };
 
 			order_data['affiliate_id'] = 0;
 			order_data['commission'] = 0;
@@ -445,14 +447,14 @@ module.exports = class Order extends global['\Opencart\System\Engine\Controller'
 			order_data['tracking'] = '';
 
 			if ((this.session.data['affiliate_id'])) {
-				subtotal = await this.cart.getSubTotal();
+				let subtotal = await this.cart.getSubTotal();
 
 				// Affiliate
 				this.load.model('account/affiliate', this);
 
-				affiliate_info = await this.model_account_affiliate.getAffiliate(this.session.data['affiliate_id']);
+				const affiliate_info = await this.model_account_affiliate.getAffiliate(this.session.data['affiliate_id']);
 
-				if (affiliate_info) {
+				if (affiliate_info.customer_id) {
 					order_data['affiliate_id'] = affiliate_info['customer_id'];
 					order_data['commission'] = (subtotal / 100) * affiliate_info['commission'];
 					order_data['tracking'] = affiliate_info['tracking'];
@@ -473,26 +475,26 @@ module.exports = class Order extends global['\Opencart\System\Engine\Controller'
 				this.request.server.connection.socket.remoteAddress);
 
 			if ((this.request.server['HTTP_X_FORWARDED_FOR'])) {
-				order_data['forwarded_ip'] = this.request.server['HTTP_X_FORWARDED_FOR'];
+				order_data['forwarded_ip'] = this.request.server.headers['x-forwarded-for'].split(',')[0];
 			} else if ((this.request.server['HTTP_CLIENT_IP'])) {
-				order_data['forwarded_ip'] = this.request.server['HTTP_CLIENT_IP'];
+				order_data['forwarded_ip'] = this.request.server.connection.remoteAddress;
 			} else {
 				order_data['forwarded_ip'] = '';
 			}
 
-			if ((this.request.server['HTTP_USER_AGENT'])) {
-				order_data['user_agent'] = this.request.server['HTTP_USER_AGENT'];
+			if (useragent.parse(this.request.server.headers['user-agent'], this.request.server.query.jsuseragent).source) {
+				order_data['user_agent'] = useragent.parse(this.request.server.headers['user-agent'], this.request.server.query.jsuseragent).source;
 			} else {
 				order_data['user_agent'] = '';
 			}
 
-			if ((this.request.server['HTTP_ACCEPT_LANGUAGE'])) {
-				order_data['accept_language'] = this.request.server['HTTP_ACCEPT_LANGUAGE'];
+			if (this.request.server.headers['accept-language']) {
+				order_data['accept_language'] = this.request.server.headers['accept-language'];
 			} else {
 				order_data['accept_language'] = '';
 			}
 
-			this.load.model('checkout/order',this);
+			this.load.model('checkout/order', this);
 
 			if (!(this.session.data['order_id'])) {
 				this.session.data['order_id'] = await this.model_checkout_order.addOrder(order_data);
@@ -507,6 +509,7 @@ module.exports = class Order extends global['\Opencart\System\Engine\Controller'
 			json['order_id'] = this.session.data['order_id'];
 
 			// Set the order history
+			let order_status_id = this.config.get('config_order_status_id');
 			if ((this.request.post['order_status_id'])) {
 				order_status_id = this.request.post['order_status_id'];
 			} else {
@@ -523,7 +526,7 @@ module.exports = class Order extends global['\Opencart\System\Engine\Controller'
 				json['commission'] = this.currency.format(order_data['commission'], this.config.get('config_currency'));
 			}
 		}
-
+		await this.session.save(this.session.data);
 		this.response.addHeader('Content-Type: application/json');
 		this.response.setOutput(json);
 	}
@@ -532,11 +535,13 @@ module.exports = class Order extends global['\Opencart\System\Engine\Controller'
 	 * @return void
 	 */
 	async delete() {
+		if (typeof this.load.language == 'undefined')
+			this.load = this.registry.get('load');
 		await this.load.language('api/sale/order');
 
 		const json = {};
 
-		selected = [];
+		let selected = [];
 
 		if ((this.request.post['selected'])) {
 			selected = this.request.post['selected'];
@@ -547,7 +552,7 @@ module.exports = class Order extends global['\Opencart\System\Engine\Controller'
 		}
 
 		for (let order_id of selected) {
-			this.load.model('checkout/order',this);
+			this.load.model('checkout/order', this);
 
 			const order_info = await this.model_checkout_order.getOrder(order_id);
 
@@ -571,7 +576,7 @@ module.exports = class Order extends global['\Opencart\System\Engine\Controller'
 		const json = {};
 
 		// Add keys for missing post vars
-		keys = [
+		let keys = [
 			'order_id',
 			'order_status_id',
 			'comment',
@@ -585,7 +590,7 @@ module.exports = class Order extends global['\Opencart\System\Engine\Controller'
 			}
 		}
 
-		this.load.model('checkout/order',this);
+		this.load.model('checkout/order', this);
 
 		const order_info = await this.model_checkout_order.getOrder(this.request.post['order_id']);
 

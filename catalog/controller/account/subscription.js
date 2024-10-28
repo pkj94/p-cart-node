@@ -246,12 +246,10 @@ module.exports = class Subscription extends global['\Opencart\System\Engine\Cont
 					'zone_code': address_info['zone_code'],
 					'country': address_info['country']
 				};
-
-				data['payment_address'] = format
-  .replace(/\r\n|\r|\n/g, '<br/>')
-  .replace(/\s\s+|\r\r+|\n\n+/g, '<br/>')
-  .trim()
-  .replace(find, replace);
+				find.forEach((item, index) => {
+					format = format.replace(new RegExp(item, 'g'), replace[Object.keys(replace)[index]]);
+				});
+				data['payment_address'] = format;
 			} else {
 				data['payment_address'] = '';
 			}
@@ -299,12 +297,10 @@ module.exports = class Subscription extends global['\Opencart\System\Engine\Cont
 					'zone_code': address_info['zone_code'],
 					'country': address_info['country']
 				};
-
-				data['shipping_address'] = format
-  .replace(/\r\n|\r|\n/g, '<br/>')
-  .replace(/\s\s+|\r\r+|\n\n+/g, '<br/>')
-  .trim()
-  .replace(find, replace);
+				find.forEach((item, index) => {
+					format = format.replace(new RegExp(item, 'g'), replace[Object.keys(replace)[index]]);
+				});
+				data['shipping_address'] = format;
 			} else {
 				data['shipping_address'] = '';
 			}

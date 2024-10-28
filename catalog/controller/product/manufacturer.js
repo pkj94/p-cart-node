@@ -1,3 +1,5 @@
+const is_numeric = require("locutus/php/var/is_numeric");
+
 module.exports = class Manufacturer extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
@@ -27,6 +29,7 @@ module.exports = class Manufacturer extends global['\Opencart\System\Engine\Cont
 		const results = await this.model_catalog_manufacturer.getManufacturers();
 
 		for (let result of results) {
+			let key = oc_substr(oc_strtoupper(result['name']), 0, 1);
 			if (is_numeric(oc_substr(result['name'], 0, 1))) {
 				key = '0 - 9';
 			} else {
@@ -34,10 +37,11 @@ module.exports = class Manufacturer extends global['\Opencart\System\Engine\Cont
 			}
 
 			if (!(data['categories'][key])) {
+				data['categories'][key] = data['categories'][key] || {manufacturer: []};
 				data['categories'][key]['name'] = key;
 				data['categories'][key]['href'] = await this.url.link('product/manufacturer', 'language=' + this.config.get('config_language'));
 			}
-
+			data['categories'][key] = data['categories'][key] || { manufacturer: [] };
 			data['categories'][key]['manufacturer'].push({
 				'name': result['name'],
 				'href': await this.url.link('product/manufacturer.info', 'language=' + this.config.get('config_language') + '&manufacturer_id=' + result['manufacturer_id'])

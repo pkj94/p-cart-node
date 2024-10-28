@@ -8,7 +8,7 @@ module.exports = class Compare extends global['\Opencart\System\Engine\Controlle
 
 		this.load.model('catalog/product', this);
 		this.load.model('catalog/manufacturer', this);
-		this.load.model('localisation/stock_status');
+		this.load.model('localisation/stock_status',this);
 		this.load.model('tool/image', this);
 
 		if (!(this.session.data['compare'])) {
@@ -85,16 +85,16 @@ module.exports = class Compare extends global['\Opencart\System\Engine\Controlle
 				} else {
 					manufacturer = '';
 				}
-
+				let availability = '';
 				if (product_info['quantity'] <= 0) {
-					stock_status_info = await this.model_localisation_stock_status.getStockStatus(product_info['stock_status_id']);
+					const stock_status_info = await this.model_localisation_stock_status.getStockStatus(product_info['stock_status_id']);
 
-					if (stock_status_info) {
+					if (stock_status_info.stock_status_id) {
 						availability = stock_status_info['name'];
 					} else {
 						availability = '';
 					}
-				} else if (this.config.get('config_stock_display')) {
+				} else if (Number(this.config.get('config_stock_display'))) {
 					availability = product_info['quantity'];
 				} else {
 					availability = this.language.get('text_instock');

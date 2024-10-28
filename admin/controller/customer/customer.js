@@ -827,9 +827,9 @@ module.exports = class CustomerController extends global['\Opencart\System\Engin
 			const store_info = await this.model_setting_store.getStore(store_id);
 
 			if (store_info && store_info.store_id) {
-				this.response.setRedirect(store_info['url'] + 'account/login.token&email=' + encodeURIComponent(customer_info['email']) + '&login_token=' + token);
+				this.response.setRedirect(store_info['url'] + '?route=account/login.token&email=' + encodeURIComponent(customer_info['email']) + '&login_token=' + token);
 			} else {
-				this.response.setRedirect(HTTP_CATALOG + 'account/login.token&email=' + encodeURIComponent(customer_info['email']) + '&login_token=' + token);
+				this.response.setRedirect(HTTP_CATALOG + '?route=account/login.token&email=' + encodeURIComponent(customer_info['email']) + '&login_token=' + token);
 			}
 
 			return null;

@@ -515,97 +515,97 @@ module.exports = class AffiliateController extends global['\Opencart\System\Engi
 			data['customer_id'] = 0;
 		}
 
-		if ((affiliate_info)) {
+		if (affiliate_info.customer_id) {
 			data['customer'] = affiliate_info['customer'];
 		} else {
 			data['customer'] = '';
 		}
 
-		if ((affiliate_info)) {
+		if (affiliate_info.customer_id) {
 			data['customer_group_id'] = affiliate_info['customer_group_id'];
 		} else {
 			data['customer_group_id'] = '';
 		}
 
-		if ((affiliate_info)) {
+		if (affiliate_info.customer_id) {
 			data['company'] = affiliate_info['company'];
 		} else {
 			data['company'] = '';
 		}
 
-		if ((affiliate_info)) {
+		if (affiliate_info.customer_id) {
 			data['website'] = affiliate_info['website'];
 		} else {
 			data['website'] = '';
 		}
 
-		if ((affiliate_info)) {
+		if (affiliate_info.customer_id) {
 			data['tracking'] = affiliate_info['tracking'];
 		} else {
 			data['tracking'] = oc_token(10);
 		}
 
-		if ((affiliate_info)) {
+		if (affiliate_info.customer_id) {
 			data['commission'] = affiliate_info['commission'];
 		} else {
 			data['commission'] = this.config.get('config_affiliate_commission');
 		}
 
-		if ((affiliate_info)) {
+		if (affiliate_info.customer_id) {
 			data['status'] = affiliate_info['status'];
 		} else {
 			data['status'] = '';
 		}
 
-		if ((affiliate_info)) {
+		if (affiliate_info.customer_id) {
 			data['tax'] = affiliate_info['tax'];
 		} else {
 			data['tax'] = '';
 		}
 
-		if ((affiliate_info)) {
+		if (affiliate_info.customer_id) {
 			data['payment_method'] = affiliate_info['payment_method'];
 		} else {
 			data['payment_method'] = 'cheque';
 		}
 
-		if ((affiliate_info)) {
+		if (affiliate_info.customer_id) {
 			data['cheque'] = affiliate_info['cheque'];
 		} else {
 			data['cheque'] = '';
 		}
 
-		if ((affiliate_info)) {
+		if (affiliate_info.customer_id) {
 			data['paypal'] = affiliate_info['paypal'];
 		} else {
 			data['paypal'] = '';
 		}
 
-		if ((affiliate_info)) {
+		if (affiliate_info.customer_id) {
 			data['bank_name'] = affiliate_info['bank_name'];
 		} else {
 			data['bank_name'] = '';
 		}
 
-		if ((affiliate_info)) {
+		if (affiliate_info.customer_id) {
 			data['bank_branch_number'] = affiliate_info['bank_branch_number'];
 		} else {
 			data['bank_branch_number'] = '';
 		}
 
-		if ((affiliate_info)) {
+		if (affiliate_info.customer_id) {
 			data['bank_swift_code'] = affiliate_info['bank_swift_code'];
 		} else {
 			data['bank_swift_code'] = '';
 		}
 
-		if ((affiliate_info)) {
+		if (affiliate_info.customer_id) {
 			data['bank_account_name'] = affiliate_info['bank_account_name'];
 		} else {
 			data['bank_account_name'] = '';
 		}
 
-		if ((affiliate_info)) {
+		if (affiliate_info.customer_id) {
 			data['bank_account_number'] = affiliate_info['bank_account_number'];
 		} else {
 			data['bank_account_number'] = '';
@@ -637,7 +637,7 @@ module.exports = class AffiliateController extends global['\Opencart\System\Engi
 			}
 		}
 
-		if ((affiliate_info)) {
+		if (affiliate_info.customer_id) {
 			data['affiliate_custom_field'] = JSON.parse(affiliate_info['custom_field']);
 		} else {
 			data['affiliate_custom_field'] = [];

@@ -26,7 +26,7 @@ global['\Opencart\System\Engine\Loader'] = class Loader {
 
             // Execute action
             result = await action.execute(this.registry, args);
-            // if (route.indexOf('Module/Banner') != -1)
+            // if (route.indexOf('Api/Sale') != -1)
             //     console.log('---',args,action, result)
 
             // Reset action to prevent infinite loop

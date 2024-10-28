@@ -1,3 +1,5 @@
+const sprintf = require("locutus/php/strings/sprintf");
+
 module.exports = class Affiliate extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @param string route
@@ -8,25 +10,24 @@ module.exports = class Affiliate extends global['\Opencart\System\Engine\Control
 	 * @throws \Exception
 	 */
 	async index(route, args, output) {
+		const data = {};
 		await this.load.language('mail/affiliate');
 
-		store_name = html_entity_decode(this.config.get('config_name'));
+		let store_name = html_entity_decode(this.config.get('config_name'));
 
-		subject = sprintf(this.language.get('text_subject'), store_name);
+		let subject = sprintf(this.language.get('text_subject'), store_name);
 
 		data['text_welcome'] = sprintf(this.language.get('text_welcome'), store_name);
 
 		this.load.model('account/customer_group', this);
-
+		let customer_group_id = args[1]['customer_group_id'];
 		if (await this.customer.isLogged()) {
 			customer_group_id = await this.customer.getGroupId();
-		} else {
-			customer_group_id = args[1]['customer_group_id'];
 		}
 
-		customer_group_info = await this.model_account_customer_group.getCustomerGroup(customer_group_id);
+		const customer_group_info = await this.model_account_customer_group.getCustomerGroup(customer_group_id);
 
-		if (customer_group_info) {
+		if (customer_group_info.customer_group_id) {
 			data['approval'] = (this.config.get('config_affiliate_approval') || customer_group_info['approval']);
 		} else {
 			data['approval'] = '';
@@ -38,7 +39,7 @@ module.exports = class Affiliate extends global['\Opencart\System\Engine\Control
 		data['store_url'] = this.config.get('config_url');
 
 		if (this.config.get('config_mail_engine')) {
-			mail_option = {
+			let mail_option = {
 				'parameter': this.config.get('config_mail_parameter'),
 				'smtp_hostname': this.config.get('config_mail_smtp_hostname'),
 				'smtp_username': this.config.get('config_mail_smtp_username'),
@@ -72,14 +73,15 @@ module.exports = class Affiliate extends global['\Opencart\System\Engine\Control
 	 * @throws \Exception
 	 */
 	async alert(route, args, output) {
+		const data = {};
 		// Send to main admin email if new affiliate email is enabled
 		if (this.config.get('config_mail_alert').includes('affiliate')) {
 			await this.load.language('mail/affiliate');
 
-			store_name = html_entity_decode(this.config.get('config_name'));
+			let store_name = html_entity_decode(this.config.get('config_name'));
 
-			subject = this.language.get('text_new_affiliate');
-
+			let subject = this.language.get('text_new_affiliate');
+			let customer_group_id = '';
 			if (await this.customer.isLogged()) {
 				customer_group_id = await this.customer.getGroupId();
 
@@ -103,7 +105,7 @@ module.exports = class Affiliate extends global['\Opencart\System\Engine\Control
 
 			const customer_group_info = await this.model_account_customer_group.getCustomerGroup(customer_group_id);
 
-			if (customer_group_info) {
+			if (customer_group_info.customer_group_id) {
 				data['customer_group'] = customer_group_info['name'];
 			} else {
 				data['customer_group'] = '';
@@ -113,7 +115,7 @@ module.exports = class Affiliate extends global['\Opencart\System\Engine\Control
 			data['store_url'] = this.config.get('config_url');
 
 			if (this.config.get('config_mail_engine')) {
-				mail_option = {
+				let mail_option = {
 					'parameter': this.config.get('config_mail_parameter'),
 					'smtp_hostname': this.config.get('config_mail_smtp_hostname'),
 					'smtp_username': this.config.get('config_mail_smtp_username'),
@@ -131,7 +133,7 @@ module.exports = class Affiliate extends global['\Opencart\System\Engine\Control
 				await mail.send();
 
 				// Send to additional alert emails if new affiliate email is enabled
-				emails = this.config.get('config_mail_alert_email').split(',');
+				let emails = this.config.get('config_mail_alert_email').split(',');
 
 				for (let email of emails) {
 					if (oc_strlen(email) > 0 && isEmailValid(email)) {

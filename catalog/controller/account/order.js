@@ -208,12 +208,10 @@ module.exports = class Order extends global['\Opencart\System\Engine\Controller'
 				'zone_code': order_info['payment_zone_code'],
 				'country': order_info['payment_country']
 			};
-
-			data['payment_address'] = format
-  .replace(/\r\n|\r|\n/g, '<br/>')
-  .replace(/\s\s+|\r\r+|\n\n+/g, '<br/>')
-  .trim()
-  .replace(find, replace);
+			find.forEach((item, index) => {
+				format = format.replace(new RegExp(item, 'g'), replace[Object.keys(replace)[index]]);
+			});
+			data['payment_address'] = format;
 
 			data['payment_method'] = order_info['payment_method']['name'];
 
@@ -250,12 +248,10 @@ module.exports = class Order extends global['\Opencart\System\Engine\Controller'
 					'zone_code': order_info['shipping_zone_code'],
 					'country': order_info['shipping_country']
 				};
-
-				data['shipping_address'] = format
-  .replace(/\r\n|\r|\n/g, '<br/>')
-  .replace(/\s\s+|\r\r+|\n\n+/g, '<br/>')
-  .trim()
-  .replace(find, replace);
+				find.forEach((item, index) => {
+					format = format.replace(new RegExp(item, 'g'), replace[Object.keys(replace)[index]]);
+				});
+				data['shipping_address'] = format;
 
 				data['shipping_method'] = order_info['shipping_method']['name'];
 			} else {

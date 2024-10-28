@@ -1,8 +1,12 @@
-module.exports=class WishList extends global['\Opencart\System\Engine\Controller'] {
+const array_unique = require("locutus/php/array/array_unique");
+const sprintf = require("locutus/php/strings/sprintf");
+
+module.exports = class WishList extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */
 	async index() {
+		const data = {};
 		await this.load.language('account/wishlist');
 
 		if (!await this.customer.isLogged() || (!(this.request.get['customer_token']) || !(this.session.data['customer_token']) || (this.request.get['customer_token'] != this.session.data['customer_token']))) {
@@ -16,18 +20,18 @@ module.exports=class WishList extends global['\Opencart\System\Engine\Controller
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/home', 'language=' + this.config.get('config_language'))
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/home', 'language=' + this.config.get('config_language'))
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_account'),
-			'href' : await this.url.link('account/account', 'language=' + this.config.get('config_language') + ((this.session.data['customer_token']) ? '&customer_token=' + this.session.data['customer_token'] : ''))
+			'text': this.language.get('text_account'),
+			'href': await this.url.link('account/account', 'language=' + this.config.get('config_language') + ((this.session.data['customer_token']) ? '&customer_token=' + this.session.data['customer_token'] : ''))
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('account/wishlist', 'language=' + this.config.get('config_language') + ((this.session.data['customer_token']) ? '&customer_token=' + this.session.data['customer_token'] : ''))
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('account/wishlist', 'language=' + this.config.get('config_language') + ((this.session.data['customer_token']) ? '&customer_token=' + this.session.data['customer_token'] : ''))
 		});
 
 		if ((this.session.data['success'])) {
@@ -65,15 +69,16 @@ module.exports=class WishList extends global['\Opencart\System\Engine\Controller
 	 * @return string
 	 */
 	async getList() {
+		const data = {};
 		data['wishlist'] = await this.url.link('account/wishlist.list', 'language=' + this.config.get('config_language') + ((this.session.data['customer_token']) ? '&customer_token=' + this.session.data['customer_token'] : ''));
 		data['add_to_cart'] = await this.url.link('checkout/cart.add', 'language=' + this.config.get('config_language'));
 		data['remove'] = await this.url.link('account/wishlist.remove', 'language=' + this.config.get('config_language') + ((this.session.data['customer_token']) ? '&customer_token=' + this.session.data['customer_token'] : ''));
 
 		data['products'] = [];
 
-		this.load.model('account/wishlist',this);
-		this.load.model('catalog/product',this);
-		this.load.model('tool/image',this);
+		this.load.model('account/wishlist', this);
+		this.load.model('catalog/product', this);
+		this.load.model('tool/image', this);
 
 		const results = await this.model_account_wishlist.getWishlist();
 
@@ -81,42 +86,35 @@ module.exports=class WishList extends global['\Opencart\System\Engine\Controller
 			const product_info = await this.model_catalog_product.getProduct(result['product_id']);
 
 			if (product_info.product_id) {
+				let image = false;
 				if (product_info['image']) {
 					image = await this.model_tool_image.resize(html_entity_decode(product_info['image']), this.config.get('config_image_wishlist_width'), this.config.get('config_image_wishlist_height'));
-				} else {
-					image = false;
 				}
-
+				let stock = this.language.get('text_instock');
 				if (product_info['quantity'] <= 0) {
 					stock = product_info['stock_status'];
-				} else if (this.config.get('config_stock_display')) {
+				} else if (Number(this.config.get('config_stock_display'))) {
 					stock = product_info['quantity'];
-				} else {
-					stock = this.language.get('text_instock');
 				}
-
+				let price = false;
 				if (await this.customer.isLogged() || !Number(this.config.get('config_customer_price'))) {
 					price = this.currency.format(this.tax.calculate(product_info['price'], product_info['tax_class_id'], Number(this.config.get('config_tax'))), this.session.data['currency']);
-				} else {
-					price = false;
 				}
-
+				let special = false;
 				if (product_info['special']) {
 					special = this.currency.format(this.tax.calculate(product_info['special'], product_info['tax_class_id'], Number(this.config.get('config_tax'))), this.session.data['currency']);
-				} else {
-					special = false;
 				}
 
 				data['products'].push({
-					'product_id' : product_info['product_id'],
-					'thumb'      : image,
-					'name'       : product_info['name'],
-					'model'      : product_info['model'],
-					'stock'      : stock,
-					'price'      : price,
-					'special'    : special,
-					'minimum'    : product_info['minimum'] > 0 ? product_info['minimum'] : 1,
-					'href'       : await this.url.link('product/product', 'language=' + this.config.get('config_language') + '&product_id=' + product_info['product_id'])
+					'product_id': product_info['product_id'],
+					'thumb': image,
+					'name': product_info['name'],
+					'model': product_info['model'],
+					'stock': stock,
+					'price': price,
+					'special': special,
+					'minimum': product_info['minimum'] > 0 ? product_info['minimum'] : 1,
+					'href': await this.url.link('product/product', 'language=' + this.config.get('config_language') + '&product_id=' + product_info['product_id'])
 				});
 			} else {
 				await this.model_account_wishlist.deleteWishlist(result['product_id']);
@@ -133,18 +131,16 @@ module.exports=class WishList extends global['\Opencart\System\Engine\Controller
 		await this.load.language('account/wishlist');
 
 		const json = {};
-
+		let product_id = 0;
 		if ((this.request.post['product_id'])) {
 			product_id = this.request.post['product_id'];
-		} else {
-			product_id = 0;
 		}
 
-		this.load.model('catalog/product',this);
+		this.load.model('catalog/product', this);
 
 		const product_info = await this.model_catalog_product.getProduct(product_id);
 
-		if (!product_info) {
+		if (!product_info.product_id) {
 			json['error'] = this.language.get('error_product');
 		}
 
@@ -152,15 +148,12 @@ module.exports=class WishList extends global['\Opencart\System\Engine\Controller
 			if (!(this.session.data['wishlist'])) {
 				this.session.data['wishlist'] = [];
 			}
-
 			this.session.data['wishlist'].push(product_id);
-
-			this.session.data['wishlist'] = array_unique(this.session.data['wishlist']);
-
+			this.session.data['wishlist'] = Object.values(array_unique(this.session.data['wishlist']));
 			// Store the
 			if (await this.customer.isLogged()) {
 				// Edit customers cart
-				this.load.model('account/wishlist',this);
+				this.load.model('account/wishlist', this);
 
 				await this.model_account_wishlist.addWishlist(product_id);
 
@@ -170,10 +163,10 @@ module.exports=class WishList extends global['\Opencart\System\Engine\Controller
 			} else {
 				json['success'] = sprintf(this.language.get('text_login'), await this.url.link('account/login', 'language=' + this.config.get('config_language')), await this.url.link('account/register', 'language=' + this.config.get('config_language')), await this.url.link('product/product', 'language=' + this.config.get('config_language') + '&product_id=' + product_id), product_info['name'], await this.url.link('account/wishlist', 'language=' + this.config.get('config_language') + ((this.session.data['customer_token']) ? '&customer_token=' + this.session.data['customer_token'] : '')));
 
-				json['total'] = sprintf(this.language.get('text_wishlist'), ((this.session.data['wishlist']) ? count(this.session.data['wishlist']) : 0));
+				json['total'] = sprintf(this.language.get('text_wishlist'), ((this.session.data['wishlist']) ? this.session.data['wishlist'].length : 0));
 			}
 		}
-
+		await this.session.save(this.session.data);
 		this.response.addHeader('Content-Type: application/json');
 		this.response.setOutput(json);
 	}
@@ -185,16 +178,14 @@ module.exports=class WishList extends global['\Opencart\System\Engine\Controller
 		await this.load.language('account/wishlist');
 
 		const json = {};
-
+		let product_id = 0;
 		if ((this.request.post['product_id'])) {
 			product_id = this.request.post['product_id'];
-		} else {
-			product_id = 0;
 		}
 
 		if (!Object.keys(json).length) {
 			if (await this.customer.isLogged()) {
-				this.load.model('account/wishlist',this);
+				this.load.model('account/wishlist', this);
 
 				await this.model_account_wishlist.deleteWishlist(product_id);
 

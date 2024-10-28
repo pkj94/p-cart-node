@@ -5,9 +5,9 @@ module.exports = class Download extends global['\Opencart\System\Engine\Model'] 
 	 * @return array
 	 */
 	async getDownload(download_id) {
-		implode = [];
+		let implode = [];
 
-		order_statuses = this.config.get('config_complete_status');
+		const order_statuses = this.config.get('config_complete_status');
 
 		for (let order_status_id of order_statuses) {
 			implode.push("o.`order_status_id` = '" + order_status_id + "'");
@@ -37,9 +37,9 @@ module.exports = class Download extends global['\Opencart\System\Engine\Model'] 
 			limit = 20;
 		}
 
-		implode = [];
+		let implode = [];
 
-		order_statuses = this.config.get('config_complete_status');
+		const order_statuses = this.config.get('config_complete_status');
 
 		for (let order_status_id of order_statuses) {
 			implode.push("o.`order_status_id` = '" + order_status_id + "'");
@@ -58,9 +58,9 @@ module.exports = class Download extends global['\Opencart\System\Engine\Model'] 
 	 * @return int
 	 */
 	async getTotalDownloads() {
-		implode = [];
+		let implode = [];
 
-		order_statuses = this.config.get('config_complete_status');
+		const order_statuses = this.config.get('config_complete_status');
 
 		for (let order_status_id of order_statuses) {
 			implode.push("o.`order_status_id` = '" + order_status_id + "'");

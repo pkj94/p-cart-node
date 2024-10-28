@@ -5,18 +5,15 @@ module.exports = class Information extends global['\Opencart\System\Engine\Contr
 	async index() {
 		const data = {};
 		await this.load.language('information/information');
-
+		let information_id = 0;
 		if ((this.request.get['information_id'])) {
 			information_id = this.request.get['information_id'];
-		} else {
-			information_id = 0;
 		}
-
 		this.load.model('catalog/information', this);
 
 		const information_info = await this.model_catalog_information.getInformation(information_id);
 
-		if (information_info) {
+		if (information_info.information_id) {
 			this.document.setTitle(information_info['meta_title']);
 			this.document.setDescription(information_info['meta_description']);
 			this.document.setKeywords(information_info['meta_keyword']);
@@ -58,17 +55,16 @@ module.exports = class Information extends global['\Opencart\System\Engine\Contr
 	 * @return void
 	 */
 	async info() {
+		const data = {};
+		let information_id = 0;
 		if ((this.request.get['information_id'])) {
 			information_id = this.request.get['information_id'];
-		} else {
-			information_id = 0;
 		}
-
 		this.load.model('catalog/information', this);
 
 		const information_info = await this.model_catalog_information.getInformation(information_id);
 
-		if (information_info) {
+		if (information_info.information_id) {
 			data['title'] = information_info['title'];
 			data['description'] = html_entity_decode(information_info['description']);
 

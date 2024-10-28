@@ -3,8 +3,8 @@ module.exports = class Gdpr extends global['\Opencart\System\Engine\Controller']
 	 * @return object|Action|null
 	 */
 	async index() {
-const data ={};
-		this.load.model('catalog/information',this);
+		const data = {};
+		this.load.model('catalog/information', this);
 
 		const information_info = await this.model_catalog_information.getInformation(this.config.get('config_gdpr_id'));
 
@@ -16,16 +16,16 @@ const data ={};
 			data['breadcrumbs'] = [];
 
 			data['breadcrumbs'].push({
-				'text' : this.language.get('text_home'),
-				'href' : await this.url.link('common/home', 'language=' + this.config.get('config_language'))
+				'text': this.language.get('text_home'),
+				'href': await this.url.link('common/home', 'language=' + this.config.get('config_language'))
 			});
 
 			data['breadcrumbs'].push({
-				'text' : this.language.get('heading_title'),
-				'href' : await this.url.link('information/gdpr', 'language=' + this.config.get('config_language'))
+				'text': this.language.get('heading_title'),
+				'href': await this.url.link('information/gdpr', 'language=' + this.config.get('config_language'))
 			});
 
-			data['action'] = await this.url.link('information/gdpr+action', 'language=' + this.config.get('config_language'));
+			data['action'] = await this.url.link('information/gdpr.action', 'language=' + this.config.get('config_language'));
 
 			data['title'] = information_info['title'];
 
@@ -82,13 +82,13 @@ const data ={};
 		await this.load.language('information/gdpr');
 
 		const json = {};
-
+		let email = '';
 		if ((this.request.post['email'])) {
 			email = this.request.post['email'];
 		} else {
 			email = '';
 		}
-
+		let action = '';
 		if ((this.request.post['action'])) {
 			action = this.request.post['action'];
 		} else {
@@ -101,20 +101,20 @@ const data ={};
 		}
 
 		// Validate Action
-		allowed = [
+		let allowed = [
 			'export',
 			'remove'
 		];
 
-		if (!in_array(action, allowed)) {
+		if (!allowed.includes(action)) {
 			json['error']['action'] = this.language.get('error_action');
 		}
 
 		if (!Object.keys(json).length) {
 			// Added additional check so people are not spamming requests
-			status = true;
+			let status = true;
 
-			this.load.model('account/gdpr');
+			this.load.model('account/gdpr', this);
 
 			const results = await this.model_account_gdpr.getGdprsByEmail(email);
 
@@ -141,17 +141,19 @@ const data ={};
 	 * @return object|Action|null
 	 */
 	async success() {
+		const data = {};
+		let code = '';
 		if ((this.request.get['code'])) {
 			code = this.request.get['code'];
 		} else {
 			code = '';
 		}
 
-		this.load.model('account/gdpr');
+		this.load.model('account/gdpr', this);
 
-		gdpr_info = await this.model_account_gdpr.getGdprByCode(code);
+		const gdpr_info = await this.model_account_gdpr.getGdprByCode(code);
 
-		if (gdpr_info) {
+		if (gdpr_info.gdpr_id) {
 			await this.load.language('information/gdpr_success');
 
 			this.document.setTitle(this.language.get('heading_title'));
@@ -159,18 +161,18 @@ const data ={};
 			data['breadcrumbs'] = [];
 
 			data['breadcrumbs'].push({
-				'text' : this.language.get('text_home'),
-				'href' : await this.url.link('common/home', 'language=' + this.config.get('config_language'))
+				'text': this.language.get('text_home'),
+				'href': await this.url.link('common/home', 'language=' + this.config.get('config_language'))
 			});
 
 			data['breadcrumbs'].push({
-				'text' : this.language.get('text_account'),
-				'href' : await this.url.link('information/gdpr', 'language=' + this.config.get('config_language'))
+				'text': this.language.get('text_account'),
+				'href': await this.url.link('information/gdpr', 'language=' + this.config.get('config_language'))
 			});
 
 			data['breadcrumbs'].push({
-				'text' : this.language.get('heading_title'),
-				'href' : await this.url.link('information/gdpr+success', 'language=' + this.config.get('config_language'))
+				'text': this.language.get('heading_title'),
+				'href': await this.url.link('information/gdpr.success', 'language=' + this.config.get('config_language'))
 			});
 
 			if (gdpr_info['status'] == 0) {

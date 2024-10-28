@@ -1222,7 +1222,6 @@ module.exports = class OrderController extends global['\Opencart\System\Engine\C
 			this.load.model('setting/store', this);
 
 			const store = await this.model_setting_store.createStoreInstance(store_id, language, session_id);
-
 			// 2. Add the request vars and remove the unneeded ones
 			store.request.get = this.request.get;
 			store.request.post = this.request.post;
@@ -1331,8 +1330,10 @@ module.exports = class OrderController extends global['\Opencart\System\Engine\C
 					'zone_code': order_info['payment_zone_code'],
 					'country': order_info['payment_country']
 				};
-
-				let payment_address = str_replace(["\r\n", "\r", "\n"], '<br/>', preg_replace(["/\s\s+/", "/\r\r+/", "/\n\n+/"], '<br/>', trim(format.replaceAll(find, replace))));
+				find.forEach((item, index) => {
+					format = format.replace(new RegExp(item, 'g'), replace[Object.keys(replace)[index]]);
+				});
+				let payment_address = format;
 
 				// Shipping Address
 				if (order_info['shipping_address_format']) {
@@ -1366,8 +1367,10 @@ module.exports = class OrderController extends global['\Opencart\System\Engine\C
 					'zone_code': order_info['shipping_zone_code'],
 					'country': order_info['shipping_country']
 				};
-
-				shipping_address = str_replace(["\r\n", "\r", "\n"], '<br/>', preg_replace(["/\s\s+/", "/\r\r+/", "/\n\n+/"], '<br/>', trim(format.replaceAll(find, replace))));
+				find.forEach((item, index) => {
+					format = format.replace(new RegExp(item, 'g'), replace[Object.keys(replace)[index]]);
+				});
+				shipping_address = format;
 
 				let product_data = [];
 
@@ -1576,12 +1579,10 @@ module.exports = class OrderController extends global['\Opencart\System\Engine\C
 					'zone_code': order_info['shipping_zone_code'],
 					'country': order_info['shipping_country']
 				};
-
-				let shipping_address = format
-  .replace(/\r\n|\r|\n/g, '<br/>')
-  .replace(/\s\s+|\r\r+|\n\n+/g, '<br/>')
-  .trim()
-  .replace(find, replace);
+				find.forEach((item, index) => {
+					format = format.replace(new RegExp(item, 'g'), replace[Object.keys(replace)[index]]);
+				});
+				let shipping_address = format;
 
 				let product_data = [];
 
@@ -1900,7 +1901,7 @@ module.exports = class OrderController extends global['\Opencart\System\Engine\C
 		let order_id = 0;
 		if ((this.request.get['order_id'])) {
 			order_id = this.request.get['order_id'];
-		} 
+		}
 
 		if (!await this.user.hasPermission('modify', 'sale/order')) {
 			json['error'] = this.language.get('error_permission');

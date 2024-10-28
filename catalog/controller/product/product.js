@@ -259,16 +259,16 @@ module.exports = class Product extends global['\Opencart\System\Engine\Controlle
 			data['description'] = html_entity_decode(product_info['description']);
 
 			if (product_info['quantity'] <= 0) {
-				this.load.model('localisation/stock_status');
+				this.load.model('localisation/stock_status', this);
 
-				stock_status_info = await this.model_localisation_stock_status.getStockStatus(product_info['stock_status_id']);
+				const stock_status_info = await this.model_localisation_stock_status.getStockStatus(product_info['stock_status_id']);
 
-				if (stock_status_info) {
+				if (stock_status_info.stock_status_id) {
 					data['stock'] = stock_status_info['name'];
 				} else {
 					data['stock'] = '';
 				}
-			} else if (this.config.get('config_stock_display')) {
+			} else if (Number(this.config.get('config_stock_display'))) {
 				data['stock'] = product_info['quantity'];
 			} else {
 				data['stock'] = this.language.get('text_instock');

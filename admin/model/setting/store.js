@@ -1,9 +1,9 @@
 module.exports = class StoreSettingModel extends global['\Opencart\System\Engine\Model'] {
-    constructor(registry) {
-        super(registry)
-    }
-    async addStore(data){
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "store` SET `name` = " + this.db.escape(data['config_name']) + ", `url` = " + this.db.escape(data['config_url']) );
+	constructor(registry) {
+		super(registry)
+	}
+	async addStore(data) {
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "store` SET `name` = " + this.db.escape(data['config_name']) + ", `url` = " + this.db.escape(data['config_url']));
 
 		const store_id = this.db.getLastId();
 
@@ -26,7 +26,7 @@ module.exports = class StoreSettingModel extends global['\Opencart\System\Engine
 	 * @return void
 	 */
 	async editStore(store_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "store` SET `name` = " + this.db.escape(data['config_name']) + ", `url` = " + this.db.escape(data['config_url']) + "' WHERE `store_id` = '" + store_id );
+		await this.db.query("UPDATE `" + DB_PREFIX + "store` SET `name` = " + this.db.escape(data['config_name']) + ", `url` = " + this.db.escape(data['config_url']) + "' WHERE `store_id` = '" + store_id);
 
 		await this.cache.delete('store');
 	}
@@ -110,11 +110,11 @@ module.exports = class StoreSettingModel extends global['\Opencart\System\Engine
 		// this.autoloader.register('Opencart\Catalog', DIR_CATALOG);
 
 		// Registry
-		let registry = new Registry();
+		const registry = new global['\Opencart\System\Engine\Registry']();
 		registry.set('autoloader', this.autoloader);
 
 		// Config
-		let config = new Config();
+		const config = new global['\Opencart\System\Engine\Config']();
 		registry.set('config', config);
 
 		// Load the default config
@@ -130,34 +130,33 @@ module.exports = class StoreSettingModel extends global['\Opencart\System\Engine
 		registry.set('log', this.log);
 
 		// Event
-		let event = new Event(registry);
+		const event = new global['\Opencart\System\Engine\Event'](registry);
 		registry.set('event', event);
 
 		// Event Register
 		if (config.has('action_event')) {
 			for (let [key, value] of Object.entries(config.get('action_event'))) {
-                for (let [priority, action] of Object.entries(value)) {
+				for (let [priority, action] of Object.entries(value)) {
 					event.register(key, new global['\Opencart\System\Engine\Action'](action), priority);
 				}
 			}
 		}
 
 		// Loader
-		let loader = new Loader(registry);
+		const loader = new global['\Opencart\System\Engine\Loader'](registry);
 		registry.set('load', loader);
 
 		// Create a dummy request class, so we can feed the data to the order editor
-		let request = this.request;
+		const request = new global['\Opencart\System\Library\Request'](this.request.server);
 		request.get = [];
 		request.post = [];
-		request.server = this.request.server;
 		request.cookie = [];
 
 		// Request
 		registry.set('request', request);
 
 		// Response
-		let response = new ResponseLibrary(this.response.response, this.request.server);
+		const response = new global['\Opencart\System\Library\Response'](this.response.response, this.request.server);
 		registry.set('response', response);
 
 		// Database
@@ -168,23 +167,23 @@ module.exports = class StoreSettingModel extends global['\Opencart\System\Engine
 
 		// Session
 		// let session = new global['\Opencart\System\Library\Session'](config.get('session_engine'), registry);
-		let session = new global['\Opencart\System\Library\Session'](this.request.server.session);
-		session.start(this.request.server.sessionID)
+		const session = new global['\Opencart\System\Library\Session'](request.server.session);
+		session.start(request.server.sessionID)
 		registry.set('session', session);
 
 		// Start session
 		// session.start(session_id);
 
 		// Template
-		let template = new TemplateLibrary(config.get('template_engine'));
+		const template = new global['\Opencart\System\Library\Template'](config.get('template_engine'));
 		template.addPath(DIR_CATALOG + 'view/template/');
 		registry.set('template', template);
 
 		// Adding language var to the GET variable so there is a default language
-		registry.get('request').get['language'] = language;
+		request.get['language'] = language;
 
 		// Language
-		let languageLib = new LanguageLibrary(config.get('language_code'));
+		const languageLib = new global['\Opencart\System\Library\Language'](config.get('language_code'));
 		languageLib.addPath(DIR_CATALOG + 'language/');
 		languageLib.load('default');
 		registry.set('language', languageLib);
@@ -193,7 +192,7 @@ module.exports = class StoreSettingModel extends global['\Opencart\System\Engine
 		registry.set('url', new global['\Opencart\System\Library\Url'](config.get('site_url')));
 
 		// Document
-		registry.set('document', new DocumentLibrary(registry));
+		registry.set('document', new global['\Opencart\System\Library\Document'](registry));
 
 		// Run pre actions to load key settings and classes+
 		let pre_actions = [
@@ -219,7 +218,7 @@ module.exports = class StoreSettingModel extends global['\Opencart\System\Engine
 	/**
 	 * @return int
 	 */
-	async getTotalStores(){
+	async getTotalStores() {
 		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "store`");
 
 		return query.row['total'];
@@ -230,7 +229,7 @@ module.exports = class StoreSettingModel extends global['\Opencart\System\Engine
 	 *
 	 * @return int
 	 */
-	async getTotalStoresByLayoutId(layout_id){
+	async getTotalStoresByLayoutId(layout_id) {
 		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "setting` WHERE `key` = 'config_layout_id' AND `value` = '" + layout_id + "' AND `store_id` != '0'");
 
 		return query.row['total'];
@@ -241,7 +240,7 @@ module.exports = class StoreSettingModel extends global['\Opencart\System\Engine
 	 *
 	 * @return int
 	 */
-	async getTotalStoresByLanguage(language){
+	async getTotalStoresByLanguage(language) {
 		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "setting` WHERE `key` = 'config_language' AND `value` = " + this.db.escape(language) + " AND `store_id` != '0'");
 
 		return query.row['total'];
@@ -252,7 +251,7 @@ module.exports = class StoreSettingModel extends global['\Opencart\System\Engine
 	 *
 	 * @return int
 	 */
-	async getTotalStoresByCurrency(currency){
+	async getTotalStoresByCurrency(currency) {
 		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "setting` WHERE `key` = 'config_currency' AND `value` = " + this.db.escape(currency) + " AND `store_id` != '0'");
 
 		return query.row['total'];
@@ -263,7 +262,7 @@ module.exports = class StoreSettingModel extends global['\Opencart\System\Engine
 	 *
 	 * @return int
 	 */
-	async getTotalStoresByCountryId(country_id){
+	async getTotalStoresByCountryId(country_id) {
 		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "setting` WHERE `key` = 'config_country_id' AND `value` = '" + country_id + "' AND `store_id` != '0'");
 
 		return query.row['total'];
@@ -274,7 +273,7 @@ module.exports = class StoreSettingModel extends global['\Opencart\System\Engine
 	 *
 	 * @return int
 	 */
-	async getTotalStoresByZoneId(zone_id){
+	async getTotalStoresByZoneId(zone_id) {
 		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "setting` WHERE `key` = 'config_zone_id' AND `value` = '" + zone_id + "' AND `store_id` != '0'");
 
 		return query.row['total'];
@@ -285,7 +284,7 @@ module.exports = class StoreSettingModel extends global['\Opencart\System\Engine
 	 *
 	 * @return int
 	 */
-	async getTotalStoresByCustomerGroupId(customer_group_id){
+	async getTotalStoresByCustomerGroupId(customer_group_id) {
 		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "setting` WHERE `key` = 'config_customer_group_id' AND `value` = '" + customer_group_id + "' AND `store_id` != '0'");
 
 		return query.row['total'];
@@ -296,7 +295,7 @@ module.exports = class StoreSettingModel extends global['\Opencart\System\Engine
 	 *
 	 * @return int
 	 */
-	async getTotalStoresByInformationId(information_id){
+	async getTotalStoresByInformationId(information_id) {
 		const account_query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "setting` WHERE `key` = 'config_account_id' AND `value` = '" + information_id + "' AND `store_id` != '0'");
 
 		const checkout_query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "setting` WHERE `key` = 'config_checkout_id' AND `value` = '" + information_id + "' AND `store_id` != '0'");
@@ -309,7 +308,7 @@ module.exports = class StoreSettingModel extends global['\Opencart\System\Engine
 	 *
 	 * @return int
 	 */
-	async getTotalStoresByOrderStatusId(order_status_id){
+	async getTotalStoresByOrderStatusId(order_status_id) {
 		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "setting` WHERE `key` = 'config_order_status_id' AND `value` = '" + order_status_id + "' AND `store_id` != '0'");
 
 		return query.row['total'];

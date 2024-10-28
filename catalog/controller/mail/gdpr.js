@@ -9,22 +9,23 @@ module.exports = class Gdpr extends global['\Opencart\System\Engine\Controller']
 	 * @throws \Exception
 	 */
 	async index(route, args, output) {
+		const data = {};
 		// args[0] code
 		// args[1] email
 		// args[2] action
-
+		let code = '';
 		if ((args[0])) {
 			code = args[0];
 		} else {
 			code = '';
 		}
-
+		let email = '';
 		if ((args[1])) {
 			email = args[1];
 		} else {
 			email = '';
 		}
-
+		let action = '';
 		if ((args[2])) {
 			action = args[2];
 		} else {
@@ -33,7 +34,7 @@ module.exports = class Gdpr extends global['\Opencart\System\Engine\Controller']
 
 		await this.load.language('mail/gdpr');
 
-		store_name = html_entity_decode(this.config.get('config_name'));
+		let store_name = html_entity_decode(this.config.get('config_name'));
 
 		if (this.config.get('config_logo')) {
 			data['logo'] = this.config.get('config_url') + 'image/' + html_entity_decode(this.config.get('config_logo'));
@@ -45,7 +46,7 @@ module.exports = class Gdpr extends global['\Opencart\System\Engine\Controller']
 
 		data['button_confirm'] = this.language.get('button_' + action);
 
-		data['confirm'] = await this.url.link('information/gdpr+success', 'language=' + this.config.get('config_language') + '&code=' + code, true);
+		data['confirm'] = await this.url.link('information/gdpr.success', 'language=' + this.config.get('config_language') + '&code=' + code, true);
 
 		data['ip'] = (this.request.server.headers['x-forwarded-for'] ||
 			this.request.server.connection.remoteAddress ||
@@ -86,48 +87,48 @@ module.exports = class Gdpr extends global['\Opencart\System\Engine\Controller']
 	 * @throws \Exception
 	 */
 	async remove(route, args, output) {
+		const data = {};
+		let gdpr_id = 0;
 		if ((args[0])) {
 			gdpr_id = args[0];
 		} else {
 			gdpr_id = 0;
 		}
-
+		let status = 0;
 		if ((args[1])) {
 			status = args[1];
 		} else {
 			status = 0;
 		}
 
-		this.load.model('account/gdpr');
+		this.load.model('account/gdpr', this);
 
-		gdpr_info = await this.model_account_gdpr.getGdpr(gdpr_id);
+		const gdpr_info = await this.model_account_gdpr.getGdpr(gdpr_id);
 
-		if (gdpr_info && gdpr_info['action'] == 'remove' && status == 3) {
+		if (gdpr_info.gdpr_id && gdpr_info['action'] == 'remove' && status == 3) {
 			this.load.model('setting/store', this);
 
 			const store_info = await this.model_setting_store.getStore(gdpr_info['store_id']);
-
-			if (store_info) {
+			let store_logo = html_entity_decode(this.config.get('config_logo'));
+			let store_name = html_entity_decode(this.config.get('config_name'));
+			let store_url = HTTP_SERVER;
+			if (store_info.store_id) {
 				this.load.model('setting/setting', this);
 
 				store_logo = html_entity_decode(await this.model_setting_setting.getValue('config_logo', store_info['store_id']));
 				store_name = html_entity_decode(store_info['name']);
 				store_url = store_info['url'];
 			} else {
-				store_logo = html_entity_decode(this.config.get('config_logo'));
-				store_name = html_entity_decode(this.config.get('config_name'));
-				store_url = HTTP_SERVER;
+
 			}
 
 			// Send the email in the correct language
 			this.load.model('localisation/language', this);
 
 			const language_info = await this.model_localisation_language.getLanguage(gdpr_info['language_id']);
-
-			if (language_info) {
+			let language_code = this.config.get('config_language');
+			if (language_info.language_id) {
 				language_code = language_info['code'];
-			} else {
-				language_code = this.config.get('config_language');
 			}
 
 			// Load the language for any mails using a different country code and prefixing it so that it does not pollute the main data pool+
@@ -141,11 +142,11 @@ module.exports = class Gdpr extends global['\Opencart\System\Engine\Controller']
 				data[key] = value;
 			}
 
-			subject = sprintf(this.language.get('mail_text_subject'), store_name);
+			let subject = sprintf(this.language.get('mail_text_subject'), store_name);
 
 			this.load.model('tool/image', this);
 
-			if (is_file(DIR_IMAGE + store_logo)) {
+			if (store_logo && is_file(DIR_IMAGE + store_logo)) {
 				data['logo'] = store_url + 'image/' + store_logo;
 			} else {
 				data['logo'] = '';
@@ -153,7 +154,7 @@ module.exports = class Gdpr extends global['\Opencart\System\Engine\Controller']
 
 			this.load.model('account/customer', this);
 
-			customer_info = await this.model_account_customer.getCustomerByEmail(gdpr_info['email']);
+			const customer_info = await this.model_account_customer.getCustomerByEmail(gdpr_info['email']);
 
 			if (customer_info.customer_id) {
 				data['text_hello'] = sprintf(this.language.get('mail_text_hello'), html_entity_decode(customer_info['firstname']));

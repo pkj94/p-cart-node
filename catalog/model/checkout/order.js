@@ -358,7 +358,7 @@ module.exports = class Order extends global['\Opencart\System\Engine\Model'] {
 	 * @return void
 	 */
 	async addHistory(order_id, order_status_id, comment = '', notify = false, override = false) {
-		const order_info = this.getOrder(order_id);
+		const order_info = await this.getOrder(order_id);
 
 		if (order_info.order_id) {
 			// Load subscription model
@@ -367,10 +367,9 @@ module.exports = class Order extends global['\Opencart\System\Engine\Model'] {
 			const customer_info = await this.model_account_customer.getCustomer(order_info['customer_id']);
 
 			// Fraud Detection Enable / Disable
+			let safe = false;
 			if (customer_info.customer_id && customer_info['safe']) {
 				safe = true;
-			} else {
-				safe = false;
 			}
 
 			// Only do the fraud check if the customer is not on the safe list and the order status is changing into the complete or process order status

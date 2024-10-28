@@ -195,7 +195,7 @@ module.exports = class Confirm extends global['\Opencart\System\Engine\Controlle
 
 					const affiliate_info = await this.model_account_affiliate.getAffiliateByTracking(this.session.data['tracking']);
 
-					if (affiliate_info.affiliate_id) {
+					if (affiliate_info.customer_id) {
 						order_data['affiliate_id'] = affiliate_info['customer_id'];
 						order_data['commission'] = (subtotal / 100) * affiliate_info['commission'];
 						order_data['tracking'] = this.session.data['tracking'];

@@ -1215,7 +1215,7 @@ module.exports = class ProductController extends global['\Opencart\System\Engine
 
 		for (let result of results) {
 			const store_info = await this.model_setting_store.getStore(result['store_id']);
-
+			let store = '';
 			if (store_info && store_info.store_id) {
 				store = store_info['name'];
 			} else if (!result['store_id']) {

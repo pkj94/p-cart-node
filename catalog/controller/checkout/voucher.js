@@ -36,7 +36,7 @@ module.exports = class Voucher extends global['\Opencart\System\Engine\Controlle
 
 		this.session.data['voucher_token'] = bin2hex(26);
 
-		data['save'] = await this.url.link('checkout/voucher+add', 'language=' + this.config.get('config_language') + '&voucher_token=' + this.session.data['voucher_token']);
+		data['save'] = await this.url.link('checkout/voucher.add', 'language=' + this.config.get('config_language') + '&voucher_token=' + this.session.data['voucher_token']);
 
 		if (await this.customer.isLogged()) {
 			data['from_name'] = await this.customer.getFirstName() + ' ' + await this.customer.getLastName();
@@ -52,7 +52,7 @@ module.exports = class Voucher extends global['\Opencart\System\Engine\Controlle
 
 		data['amount'] = this.currency.format(this.config.get('config_voucher_min'), this.config.get('config_currency'), false, false);
 
-		this.load.model('checkout/voucher_theme');
+		this.load.model('checkout/voucher_theme', this);
 
 		data['voucher_themes'] = await this.model_checkout_voucher_theme.getVoucherThemes();
 
@@ -98,7 +98,7 @@ module.exports = class Voucher extends global['\Opencart\System\Engine\Controlle
 			json['error']['to_name'] = this.language.get('error_to_name');
 		}
 
-		if ((oc_strlen(this.request.post['to_email']) > 96) || !filter_var(this.request.post['to_email'], FILTER_VALIDATE_EMAIL)) {
+		if ((oc_strlen(this.request.post['to_email']) > 96) || !isEmailValid(this.request.post['to_email'])) {
 			json['error']['to_email'] = this.language.get('error_email');
 		}
 
@@ -143,7 +143,7 @@ module.exports = class Voucher extends global['\Opencart\System\Engine\Controlle
 			delete this.session.data['payment_methods'];
 			delete this.session.data['reward'];
 
-			json['redirect'] = await this.url.link('checkout/voucher+success', 'language=' + this.config.get('config_language'), true);
+			json['redirect'] = await this.url.link('checkout/voucher.success', 'language=' + this.config.get('config_language'), true);
 		}
 		await this.session.save(this.session.data);
 		this.response.addHeader('Content-Type: application/json');

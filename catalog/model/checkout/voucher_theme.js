@@ -16,7 +16,7 @@ module.exports = class VoucherTheme extends global['\Opencart\System\Engine\Mode
 	 * @return array
 	 */
 	async getVoucherThemes(data = {}) {
-		const sql = "SELECT * FROM `" + DB_PREFIX + "voucher_theme` vt LEFT JOIN `" + DB_PREFIX + "voucher_theme_description` vtd ON (vt.`voucher_theme_id` = vtd.`voucher_theme_id`) WHERE vtd.`language_id` = '" + this.config.get('config_language_id') + "' ORDER BY vtd.`name`";
+		let sql = "SELECT * FROM `" + DB_PREFIX + "voucher_theme` vt LEFT JOIN `" + DB_PREFIX + "voucher_theme_description` vtd ON (vt.`voucher_theme_id` = vtd.`voucher_theme_id`) WHERE vtd.`language_id` = '" + this.config.get('config_language_id') + "' ORDER BY vtd.`name`";
 
 		if ((data['order']) && (data['order'] == 'DESC')) {
 			sql += " DESC";
@@ -36,7 +36,7 @@ module.exports = class VoucherTheme extends global['\Opencart\System\Engine\Mode
 			sql += " LIMIT " + data['start'] + "," + data['limit'];
 		}
 
-		voucher_theme_data = await this.cache.get('voucher_theme.' + md5(sql));
+		let voucher_theme_data = await this.cache.get('voucher_theme.' + md5(sql));
 
 		if (!voucher_theme_data) {
 			const query = await this.db.query(sql);

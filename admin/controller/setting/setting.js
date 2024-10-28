@@ -289,7 +289,7 @@ module.exports = class SettingController extends global['\Opencart\System\Engine
 
 		data['config_api_id'] = this.config.get('config_api_id');
 
-		data['config_stock_display'] = this.config.get('config_stock_display');
+		data['config_stock_display'] = Number(this.config.get('config_stock_display'));
 		data['config_stock_warning'] = Number(this.config.get('config_stock_warning'));
 		data['config_stock_checkout'] = Number(this.config.get('config_stock_checkout'));
 
