@@ -1,8 +1,11 @@
+const sprintf = require("locutus/php/strings/sprintf");
+
 module.exports = class Transaction extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */
 	async index() {
+		const data = {};
 		await this.load.language('account/transaction');
 
 		if (!await this.customer.isLogged() || (!(this.request.get['customer_token']) || !(this.session.data['customer_token']) || (this.request.get['customer_token'] != this.session.data['customer_token']))) {
@@ -30,7 +33,7 @@ module.exports = class Transaction extends global['\Opencart\System\Engine\Contr
 			'href': await this.url.link('account/transaction', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'])
 		});
 
-		this.load.model('account/transaction');
+		this.load.model('account/transaction',this);
 
 		data['column_amount'] = sprintf(this.language.get('column_amount'), this.config.get('config_currency'));
 
@@ -43,14 +46,14 @@ module.exports = class Transaction extends global['\Opencart\System\Engine\Contr
 
 		data['transactions'] = [];
 
-		filter_data = {
+		let filter_data = {
 			'sort': 'date_added',
 			'order': 'DESC',
 			'start': (page - 1) * limit,
 			'limit': limit
 		};
 
-		transaction_total = await this.model_account_transaction.getTotalTransactions();
+		const transaction_total = await this.model_account_transaction.getTotalTransactions();
 
 		const results = await this.model_account_transaction.getTransactions(filter_data);
 

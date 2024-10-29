@@ -1,8 +1,11 @@
+const sprintf = require("locutus/php/strings/sprintf");
+
 module.exports = class Subscription extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */
 	async index() {
+		const data = {};
 		await this.load.language('account/subscription');
 
 		if (!await this.customer.isLogged() || (!(this.request.get['customer_token']) || !(this.session.data['customer_token']) || (this.request.get['customer_token'] != this.session.data['customer_token']))) {
@@ -49,9 +52,9 @@ module.exports = class Subscription extends global['\Opencart\System\Engine\Cont
 		this.load.model('account/order', this);
 		this.load.model('catalog/product', this);
 		this.load.model('localisation/currency', this);
-		this.load.model('localisation/subscription_status');
+		this.load.model('localisation/subscription_status', this);
 
-		subscription_total = await this.model_account_subscription.getTotalSubscriptions();
+		const subscription_total = await this.model_account_subscription.getTotalSubscriptions();
 
 		const results = await this.model_account_subscription.getSubscriptions((page - 1) * limit, limit);
 
@@ -59,28 +62,26 @@ module.exports = class Subscription extends global['\Opencart\System\Engine\Cont
 			const product_info = await this.model_catalog_product.getProduct(result['product_id']);
 
 			if (product_info.product_id) {
-				currency_info = await this.model_localisation_currency.getCurrency(result['currency_id']);
-
-				if (currency_info) {
+				const currency_info = await this.model_localisation_currency.getCurrency(result['currency_id']);
+				let currency = this.config.get('config_currency');
+				if (currency_info.currency_id) {
 					currency = currency_info['code'];
-				} else {
-					currency = this.config.get('config_currency');
 				}
 
-				description = '';
+				let description = '';
 
 				if (result['trial_status']) {
-					trial_price = this.currency.format(this.tax.calculate(result['trial_price'], product_info['tax_class_id'], Number(this.config.get('config_tax'))), currency);
-					trial_cycle = result['trial_cycle'];
-					trial_frequency = this.language.get('text_' + result['trial_frequency']);
-					trial_duration = result['trial_duration'];
+					let trial_price = this.currency.format(this.tax.calculate(result['trial_price'], product_info['tax_class_id'], Number(this.config.get('config_tax'))), currency);
+					let trial_cycle = result['trial_cycle'];
+					let trial_frequency = this.language.get('text_' + result['trial_frequency']);
+					let trial_duration = result['trial_duration'];
 
 					description += sprintf(this.language.get('text_subscription_trial'), trial_price, trial_cycle, trial_frequency, trial_duration);
 				}
 
-				price = this.currency.format(this.tax.calculate(result['price'], product_info['tax_class_id'], Number(this.config.get('config_tax'))), currency);
-				cycle = result['cycle'];
-				frequency = this.language.get('text_' + result['frequency']);
+				let price = this.currency.format(this.tax.calculate(result['price'], product_info['tax_class_id'], Number(this.config.get('config_tax'))), currency);
+				let cycle = result['cycle'];
+				let frequency = this.language.get('text_' + result['frequency']);
 				duration = result['duration'];
 
 				if (duration) {
@@ -89,12 +90,10 @@ module.exports = class Subscription extends global['\Opencart\System\Engine\Cont
 					description += sprintf(this.language.get('text_subscription_cancel'), price, cycle, frequency);
 				}
 
-				subscription_status_info = await this.model_localisation_subscription_status.getSubscriptionStatus(result['subscription_status_id']);
-
-				if (subscription_status_info) {
+				const subscription_status_info = await this.model_localisation_subscription_status.getSubscriptionStatus(result['subscription_status_id']);
+				let subscription_status = '';
+				if (subscription_status_info.subscription_status_id) {
 					subscription_status = subscription_status_info['name'];
-				} else {
-					subscription_status = '';
 				}
 
 				data['subscriptions'].push({
@@ -135,6 +134,7 @@ module.exports = class Subscription extends global['\Opencart\System\Engine\Cont
 	 * @return void
 	 */
 	async info() {
+		const data = {};
 		await this.load.language('account/subscription');
 
 		if (!await this.customer.isLogged() || (!(this.request.get['customer_token']) || !(this.session.data['customer_token']) || (this.request.get['customer_token'] != this.session.data['customer_token']))) {
@@ -143,17 +143,15 @@ module.exports = class Subscription extends global['\Opencart\System\Engine\Cont
 			this.response.setRedirect(await this.url.link('account/login', 'language=' + this.config.get('config_language')));
 		}
 
+		let subscription_id = 0;
 		if ((this.request.get['subscription_id'])) {
 			subscription_id = this.request.get['subscription_id'];
-		} else {
-			subscription_id = 0;
 		}
-
 		this.load.model('account/subscription', this);
 
-		subscription_info = await this.model_account_subscription.getSubscription(subscription_id);
+		const subscription_info = await this.model_account_subscription.getSubscription(subscription_id);
 
-		if (subscription_info.subscription_id) {
+		if (subscription_info.subscription_plan_id) {
 			const heading_title = sprintf(this.language.get('text_subscription'), subscription_info['subscription_id']);
 
 			this.document.setTitle(heading_title);
@@ -191,11 +189,11 @@ module.exports = class Subscription extends global['\Opencart\System\Engine\Cont
 			data['subscription_id'] = subscription_info['subscription_id'];
 			data['order_id'] = subscription_info['order_id'];
 
-			this.load.model('localisation/subscription_status');
+			this.load.model('localisation/subscription_status', this);
 
-			subscription_status_info = await this.model_localisation_subscription_status.getSubscriptionStatus(subscription_info['subscription_status_id']);
+			const subscription_status_info = await this.model_localisation_subscription_status.getSubscriptionStatus(subscription_info['subscription_status_id']);
 
-			if (subscription_status_info) {
+			if (subscription_status_info.subscription_status_id) {
 				data['subscription_status'] = subscription_status_info['name'];
 			} else {
 				data['subscription_status'] = '';
@@ -204,24 +202,22 @@ module.exports = class Subscription extends global['\Opencart\System\Engine\Cont
 			data['date_added'] = date(this.language.get('date_format_short'), new Date(subscription_info['date_added']));
 
 			// Payment Address
+			let payment_address_id = 0;
 			if (subscription_info['payment_address_id']) {
 				payment_address_id = subscription_info['payment_address_id'];
-			} else {
-				payment_address_id = 0;
 			}
 
 			this.load.model('account/address', this);
 
-			address_info = await this.model_account_address.getAddress(await this.customer.getId(), payment_address_id);
+			let address_info = await this.model_account_address.getAddress(await this.customer.getId(), payment_address_id);
 
-			if (address_info) {
+			if (address_info.address_id) {
+				let format = '{firstname} {lastname}' + "\n" + '{company}' + "\n" + '{address_1}' + "\n" + '{address_2}' + "\n" + '{city} {postcode}' + "\n" + '{zone}' + "\n" + '{country}';
 				if (address_info['address_format']) {
 					format = address_info['address_format'];
-				} else {
-					format = '{firstname} {lastname}' + "\n" + '{company}' + "\n" + '{address_1}' + "\n" + '{address_2}' + "\n" + '{city} {postcode}' + "\n" + '{zone}' + "\n" + '{country}';
 				}
 
-				find = [
+				let find = [
 					'{firstname}',
 					'{lastname}',
 					'{company}',
@@ -234,7 +230,7 @@ module.exports = class Subscription extends global['\Opencart\System\Engine\Cont
 					'{country}'
 				];
 
-				replace = {
+				let replace = {
 					'firstname': address_info['firstname'],
 					'lastname': address_info['lastname'],
 					'company': address_info['company'],
@@ -255,24 +251,22 @@ module.exports = class Subscription extends global['\Opencart\System\Engine\Cont
 			}
 
 			// Shipping Address
+			let shipping_address_id = 0;
 			if (subscription_info['shipping_address_id']) {
 				shipping_address_id = subscription_info['shipping_address_id'];
-			} else {
-				shipping_address_id = 0;
 			}
 
 			this.load.model('account/address', this);
 
 			address_info = await this.model_account_address.getAddress(await this.customer.getId(), shipping_address_id);
 
-			if (address_info) {
+			if (address_info.address_id) {
+				let format = '{firstname} {lastname}' + "\n" + '{company}' + "\n" + '{address_1}' + "\n" + '{address_2}' + "\n" + '{city} {postcode}' + "\n" + '{zone}' + "\n" + '{country}';
 				if (address_info['address_format']) {
 					format = address_info['address_format'];
-				} else {
-					format = '{firstname} {lastname}' + "\n" + '{company}' + "\n" + '{address_1}' + "\n" + '{address_2}' + "\n" + '{city} {postcode}' + "\n" + '{zone}' + "\n" + '{country}';
 				}
 
-				find = [
+				let find = [
 					'{firstname}',
 					'{lastname}',
 					'{company}',
@@ -285,7 +279,7 @@ module.exports = class Subscription extends global['\Opencart\System\Engine\Cont
 					'{country}'
 				];
 
-				replace = {
+				let replace = {
 					'firstname': address_info['firstname'],
 					'lastname': address_info['lastname'],
 					'company': address_info['company'],
@@ -329,19 +323,17 @@ module.exports = class Subscription extends global['\Opencart\System\Engine\Cont
 
 			data['quantity'] = subscription_info['quantity'];
 
-			currency_info = await this.model_localisation_currency.getCurrency(subscription_info['currency_id']);
-
-			if (currency_info) {
+			const currency_info = await this.model_localisation_currency.getCurrency(subscription_info['currency_id']);
+			let currency = this.config.get('config_currency');
+			if (currency_info.currency_id) {
 				currency = currency_info['code'];
-			} else {
-				currency = this.config.get('config_currency');
 			}
 
-			this.load.model('localisation/subscription_status');
+			this.load.model('localisation/subscription_status', this);
 
 			subscription_status_info = await this.model_localisation_subscription_status.getSubscriptionStatus(subscription_info['subscription_status_id']);
 
-			if (subscription_status_info) {
+			if (subscription_status_info.subscription_status_id) {
 				data['subscription_status'] = subscription_status_info['name'];
 			} else {
 				data['subscription_status'] = '';
@@ -350,18 +342,18 @@ module.exports = class Subscription extends global['\Opencart\System\Engine\Cont
 			data['description'] = '';
 
 			if (subscription_info['trial_status']) {
-				trial_price = this.currency.format(this.tax.calculate(subscription_info['trial_price'], product_info['tax_class_id'], Number(this.config.get('config_tax'))), currency);
-				trial_cycle = subscription_info['trial_cycle'];
+				let trial_price = this.currency.format(this.tax.calculate(subscription_info['trial_price'], product_info['tax_class_id'], Number(this.config.get('config_tax'))), currency);
+				let trial_cycle = subscription_info['trial_cycle'];
 				trial_frequency = this.language.get('text_' + subscription_info['trial_frequency']);
-				trial_duration = subscription_info['trial_duration'];
+				let trial_duration = subscription_info['trial_duration'];
 
 				data['description'] += sprintf(this.language.get('text_subscription_trial'), trial_price, trial_cycle, trial_frequency, trial_duration);
 			}
 
-			price = this.currency.format(this.tax.calculate(subscription_info['price'], product_info['tax_class_id'], Number(this.config.get('config_tax'))), currency);
-			cycle = subscription_info['cycle'];
-			frequency = this.language.get('text_' + subscription_info['frequency']);
-			duration = subscription_info['duration'];
+			let price = this.currency.format(this.tax.calculate(subscription_info['price'], product_info['tax_class_id'], Number(this.config.get('config_tax'))), currency);
+			let cycle = subscription_info['cycle'];
+			let frequency = this.language.get('text_' + subscription_info['frequency']);
+			let duration = subscription_info['duration'];
 
 			if (duration) {
 				data['description'] += sprintf(this.language.get('text_subscription_duration'), price, cycle, frequency, duration);
@@ -370,8 +362,8 @@ module.exports = class Subscription extends global['\Opencart\System\Engine\Cont
 			}
 
 			// Orders
-			data['history'] = this.getHistory();
-			data['order'] = this.getOrder();
+			data['history'] = await this.getHistory();
+			data['order'] = await this.getOrder();
 
 			//data['order'] = await this.url.link('account/order.info', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'] + '&order_id=' + subscription_info['order_id']);
 			data['product'] = await this.url.link('product/product', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'] + '&product_id=' + subscription_info['product_id']);
@@ -397,23 +389,21 @@ module.exports = class Subscription extends global['\Opencart\System\Engine\Cont
 	async history() {
 		await this.load.language('account/subscription');
 
-		this.response.setOutput(this.getHistory());
+		this.response.setOutput(await this.getHistory());
 	}
 
 	/**
 	 * @return string
 	 */
 	async getHistory() {
+		const data = {};
+		let subscription_id = 0;
 		if ((this.request.get['subscription_id'])) {
 			subscription_id = this.request.get['subscription_id'];
-		} else {
-			subscription_id = 0;
 		}
-
+		let page = 1;
 		if ((this.request.get['page']) && this.request.get['route'] == 'account/subscription.history') {
 			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
 		}
 
 		let limit = 10;
@@ -432,7 +422,7 @@ module.exports = class Subscription extends global['\Opencart\System\Engine\Cont
 			});
 		}
 
-		subscription_total = await this.model_account_subscription.getTotalHistories(subscription_id);
+		const subscription_total = await this.model_account_subscription.getTotalHistories(subscription_id);
 
 		data['pagination'] = await this.load.controller('common/pagination', {
 			'total': subscription_total,
@@ -452,25 +442,22 @@ module.exports = class Subscription extends global['\Opencart\System\Engine\Cont
 	async order() {
 		await this.load.language('account/subscription');
 
-		this.response.setOutput(this.getOrder());
+		this.response.setOutput(await this.getOrder());
 	}
 
 	/**
 	 * @return string
 	 */
 	async getOrder() {
+		const data = {};
+		let subscription_id = 0;
 		if ((this.request.get['subscription_id'])) {
 			subscription_id = this.request.get['subscription_id'];
-		} else {
-			subscription_id = 0;
 		}
-
+		let page = 1;
 		if ((this.request.get['page']) && this.request.get['route'] == 'account/subscription+order') {
 			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
 		}
-
 		let limit = 10;
 
 		data['orders'] = [];

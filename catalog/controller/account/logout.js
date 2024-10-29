@@ -7,20 +7,20 @@ module.exports = class Logout extends global['\Opencart\System\Engine\Controller
 		if (await this.customer.isLogged()) {
 			await this.customer.logout();
 
-			delete (this.session.data['customer']);
-			delete (this.session.data['shipping_address']);
-			delete (this.session.data['shipping_method']);
-			delete (this.session.data['shipping_methods']);
-			delete (this.session.data['payment_address']);
-			delete (this.session.data['payment_method']);
-			delete (this.session.data['payment_methods']);
-			delete (this.session.data['comment']);
-			delete (this.session.data['order_id']);
-			delete (this.session.data['coupon']);
-			delete (this.session.data['reward']);
-			delete (this.session.data['voucher']);
-			delete (this.session.data['vouchers']);
-			delete (this.session.data['customer_token']);
+			delete this.session.data['customer'];
+			delete this.session.data['shipping_address'];
+			delete this.session.data['shipping_method'];
+			delete this.session.data['shipping_methods'];
+			delete this.session.data['payment_address'];
+			delete this.session.data['payment_method'];
+			delete this.session.data['payment_methods'];
+			delete this.session.data['comment'];
+			delete this.session.data['order_id'];
+			delete this.session.data['coupon'];
+			delete this.session.data['reward'];
+			delete this.session.data['voucher'];
+			delete this.session.data['vouchers'];
+			delete this.session.data['customer_token'];
 
 			this.response.setRedirect(await this.url.link('account/logout', 'language=' + this.config.get('config_language')));
 		}

@@ -1,3 +1,5 @@
+const sprintf = require("locutus/php/strings/sprintf");
+
 module.exports = class Returns extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
@@ -46,9 +48,9 @@ module.exports = class Returns extends global['\Opencart\System\Engine\Controlle
 
 		data['returns'] = [];
 
-		this.load.model('account/returns');
+		this.load.model('account/returns', this);
 
-		return_total = await this.model_account_returns.getTotalReturns();
+		const return_total = await this.model_account_returns.getTotalReturns();
 
 		const results = await this.model_account_returns.getReturns((page - 1) * limit, limit);
 
@@ -88,6 +90,7 @@ module.exports = class Returns extends global['\Opencart\System\Engine\Controlle
 	 * @return void
 	 */
 	async info() {
+		const data = {};
 		await this.load.language('account/returns');
 
 		if (!await this.customer.isLogged() || (!(this.request.get['customer_token']) || !(this.session.data['customer_token']) || (this.request.get['customer_token'] != this.session.data['customer_token']))) {
@@ -95,18 +98,15 @@ module.exports = class Returns extends global['\Opencart\System\Engine\Controlle
 
 			this.response.setRedirect(await this.url.link('account/login', 'language=' + this.config.get('config_language')));
 		}
-
+		let return_id = 0;
 		if ((this.request.get['return_id'])) {
 			return_id = this.request.get['return_id'];
-		} else {
-			return_id = 0;
 		}
+		this.load.model('account/returns', this);
 
-		this.load.model('account/returns');
+		const return_info = await this.model_account_returns.getReturn(return_id);
 
-		return_info = await this.model_account_returns.getReturn(return_id);
-
-		if (return_info) {
+		if (return_info.return_id) {
 			this.document.setTitle(this.language.get('text_return'));
 
 			data['breadcrumbs'] = [];
@@ -186,6 +186,7 @@ module.exports = class Returns extends global['\Opencart\System\Engine\Controlle
 	 * @return void
 	 */
 	async add() {
+		const data = {};
 		await this.load.language('account/returns');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -223,61 +224,61 @@ module.exports = class Returns extends global['\Opencart\System\Engine\Controlle
 			const product_info = await this.model_catalog_product.getProduct(this.request.get['product_id']);
 		}
 
-		if ((order_info)) {
+		if ((order_info.order_id)) {
 			data['order_id'] = order_info['order_id'];
 		} else {
 			data['order_id'] = '';
 		}
 
-		if ((product_info)) {
+		if ((product_info.product_id)) {
 			data['product_id'] = product_info['product_id'];
 		} else {
 			data['product_id'] = '';
 		}
 
-		if ((order_info)) {
+		if ((order_info.order_id)) {
 			data['date_ordered'] = date('Y-m-d', new Date(order_info['date_added']));
 		} else {
 			data['date_ordered'] = '';
 		}
 
-		if ((order_info)) {
+		if ((order_info.order_id)) {
 			data['firstname'] = order_info['firstname'];
 		} else {
 			data['firstname'] = await this.customer.getFirstName();
 		}
 
-		if ((order_info)) {
+		if ((order_info.order_id)) {
 			data['lastname'] = order_info['lastname'];
 		} else {
 			data['lastname'] = await this.customer.getLastName();
 		}
 
-		if ((order_info)) {
+		if ((order_info.order_id)) {
 			data['email'] = order_info['email'];
 		} else {
 			data['email'] = await this.customer.getEmail();
 		}
 
-		if ((order_info)) {
+		if ((order_info.order_id)) {
 			data['telephone'] = order_info['telephone'];
 		} else {
 			data['telephone'] = await this.customer.getTelephone();
 		}
 
-		if ((product_info)) {
+		if ((product_info.order_id)) {
 			data['product'] = product_info['name'];
 		} else {
 			data['product'] = '';
 		}
 
-		if ((product_info)) {
+		if ((product_info.order_id)) {
 			data['model'] = product_info['model'];
 		} else {
 			data['model'] = '';
 		}
 
-		this.load.model('localisation/return_reason');
+		this.load.model('localisation/return_reason', this);
 
 		data['return_reasons'] = await this.model_localisation_return_reason.getReturnReasons();
 
@@ -286,7 +287,7 @@ module.exports = class Returns extends global['\Opencart\System\Engine\Controlle
 
 		const extension_info = await this.model_setting_extension.getExtensionByCode('captcha', this.config.get('config_captcha'));
 
-		if (extension_info && Number(this.config.get('captcha_' + this.config.get('config_captcha') + '_status')) && in_array('returns', this.config.get('config_captcha_page'))) {
+		if (extension_info.extension_id && Number(this.config.get('captcha_' + this.config.get('config_captcha') + '_status')) && in_array('returns', this.config.get('config_captcha_page'))) {
 			data['captcha'] = await this.load.controller('extension/' + extension_info['extension'] + '/captcha/' + extension_info['code']);
 		} else {
 			data['captcha'] = '';
@@ -296,10 +297,10 @@ module.exports = class Returns extends global['\Opencart\System\Engine\Controlle
 
 		const information_info = await this.model_catalog_information.getInformation(this.config.get('config_return_id'));
 
-		if (information_info) {
-			data['text_agree'] = sprintf(this.language.get('text_agree'), await this.url.link('information/information.info', 'language=' + this.config.get('config_language') + '&information_id=' + this.config.get('config_return_id')), information_info['title']);
+		if (information_info.information_id) {
+			data['agree_text'] = sprintf(this.language.get('text_agree'), await this.url.link('information/information.info', 'language=' + this.config.get('config_language') + '&information_id=' + this.config.get('config_return_id')), information_info['title']);
 		} else {
-			data['text_agree'] = '';
+			data['agree_text'] = '';
 		}
 
 		data['back'] = await this.url.link('account/account', 'language=' + this.config.get('config_language'));
@@ -320,14 +321,14 @@ module.exports = class Returns extends global['\Opencart\System\Engine\Controlle
 	async save() {
 		await this.load.language('account/returns');
 
-		const json = {};
+		const json = { error: {} };
 
 		if (!(this.request.get['return_token']) || !(this.session.data['return_token']) || (this.request.get['return_token'] != this.session.data['return_token'])) {
 			json['redirect'] = await this.url.link('account/returns.add', 'language=' + this.config.get('config_language'), true);
 		}
 
-		if (!Object.keys(json).length) {
-			keys = [
+		if (!json.redirect) {
+			let keys = [
 				'order_id',
 				'firstname',
 				'lastname',
@@ -357,7 +358,7 @@ module.exports = class Returns extends global['\Opencart\System\Engine\Controlle
 				json['error']['lastname'] = this.language.get('error_lastname');
 			}
 
-			if ((oc_strlen(this.request.post['email']) > 96) || !filter_var(this.request.post['email'], FILTER_VALIDATE_EMAIL)) {
+			if ((oc_strlen(this.request.post['email']) > 96) || !isEmailValid(this.request.post['email'])) {
 				json['error']['email'] = this.language.get('error_email');
 			}
 
@@ -382,7 +383,7 @@ module.exports = class Returns extends global['\Opencart\System\Engine\Controlle
 
 			const extension_info = await this.model_setting_extension.getExtensionByCode('captcha', this.config.get('config_captcha'));
 
-			if (extension_info && Number(this.config.get('captcha_' + this.config.get('config_captcha') + '_status')) && in_array('return', this.config.get('config_captcha_page'))) {
+			if (extension_info.extension_id && Number(this.config.get('captcha_' + this.config.get('config_captcha') + '_status')) && this.config.get('config_captcha_page').includes('return')) {
 				const captcha = await this.load.controller('extension/' + extension_info['extension'] + '/captcha/' + extension_info['code'] + '.validate');
 
 				if (captcha) {
@@ -395,14 +396,14 @@ module.exports = class Returns extends global['\Opencart\System\Engine\Controlle
 
 				const information_info = await this.model_catalog_information.getInformation(this.config.get('config_return_id'));
 
-				if (information_info && !(this.request.post['agree'])) {
+				if (information_info.information_id && !(this.request.post['agree'])) {
 					json['error']['warning'] = sprintf(this.language.get('error_agree'), information_info['title']);
 				}
 			}
 		}
 
-		if (!Object.keys(json).length) {
-			this.load.model('account/returns');
+		if (!Object.keys(json.error).length) {
+			this.load.model('account/returns', this);
 
 			await this.model_account_returns.addReturn(this.request.post);
 
@@ -417,6 +418,7 @@ module.exports = class Returns extends global['\Opencart\System\Engine\Controlle
 	 * @return void
 	 */
 	async success() {
+		const data = {};
 		await this.load.language('account/returns');
 
 		this.document.setTitle(this.language.get('heading_title'));

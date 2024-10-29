@@ -40,9 +40,8 @@ module.exports = class Currency extends global['\Opencart\System\Engine\Model'] 
 		const sql = "SELECT * FROM `" + DB_PREFIX + "currency` WHERE `status` = '1' ORDER BY `title` ASC";
 
 		let currency_data = await this.cache.get('currency.' + md5(sql));
-
-		if (!currency_data) {
-			currency_data = [];
+		if (!currency_data || (currency_data && !Object.keys(currency_data).length)) {
+			currency_data = {};
 
 			const query = await this.db.query(sql);
 
@@ -59,7 +58,6 @@ module.exports = class Currency extends global['\Opencart\System\Engine\Model'] 
 					'date_modified': result['date_modified']
 				};
 			}
-
 			await this.cache.set('currency.' + md5(sql), currency_data);
 		}
 

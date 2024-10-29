@@ -5,7 +5,7 @@ module.exports =class Subscription extends global['\Opencart\System\Engine\Model
 	 * @return array
 	 */
 	async getSubscription(subscription_id) {
-		subscription_data = [];
+		let subscription_data = {};
 
 		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "subscription` `s` WHERE `subscription_id` = '" + subscription_id + "' AND `customer_id` = '" + await this.customer.getId() + "'");
 
@@ -26,7 +26,7 @@ module.exports =class Subscription extends global['\Opencart\System\Engine\Model
 	 * @return array
 	 */
 	async getSubscriptionByOrderProductId(order_id, order_product_id) {
-		subscription_data = [];
+		let subscription_data = {};
 
 		const query = await this.db.query("SELECT * FROM  `" + DB_PREFIX + "subscription` WHERE `order_id` = '" + order_id + "' AND `order_product_id` = '" + order_product_id + "' AND `customer_id` = '" + await this.customer.getId() + "'");
 

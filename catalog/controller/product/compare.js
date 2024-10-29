@@ -1,3 +1,5 @@
+const sprintf = require("locutus/php/strings/sprintf");
+
 module.exports = class Compare extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
@@ -8,7 +10,7 @@ module.exports = class Compare extends global['\Opencart\System\Engine\Controlle
 
 		this.load.model('catalog/product', this);
 		this.load.model('catalog/manufacturer', this);
-		this.load.model('localisation/stock_status',this);
+		this.load.model('localisation/stock_status', this);
 		this.load.model('tool/image', this);
 
 		if (!(this.session.data['compare'])) {
@@ -16,14 +18,14 @@ module.exports = class Compare extends global['\Opencart\System\Engine\Controlle
 		}
 
 		if ((this.request.get['remove'])) {
-			key = array_search(this.request.get['remove'], this.session.data['compare']);
+			let key = this.session.data['compare'].indexOf(this.request.get['remove'],);
 
 			if (key !== false) {
-				delete (this.session.data['compare'][key]);
+				delete this.session.data['compare'][key];
 
 				this.session.data['success'] = this.language.get('text_remove');
 			}
-
+			await this.session.save(this.session.data);
 			this.response.setRedirect(await this.url.link('product/compare', 'language=' + this.config.get('config_language')));
 		}
 
@@ -47,43 +49,36 @@ module.exports = class Compare extends global['\Opencart\System\Engine\Controlle
 		if ((this.session.data['success'])) {
 			data['success'] = this.session.data['success'];
 
-			delete (this.session.data['success']);
+			delete this.session.data['success'];
 		} else {
 			data['success'] = '';
 		}
 
-		data['products'] = [];
+		data['products'] = {};
 
-		data['attribute_groups'] = [];
+		data['attribute_groups'] = {};
 
 		for (let [key, product_id] of Object.entries(this.session.data['compare'])) {
 			const product_info = await this.model_catalog_product.getProduct(product_id);
 
 			if (product_info.product_id) {
-				if (is_file(DIR_IMAGE + html_entity_decode(product_info['image']))) {
+				let image = false;
+				if (product_info['image'] && is_file(DIR_IMAGE + html_entity_decode(product_info['image']))) {
 					image = await this.model_tool_image.resize(html_entity_decode(product_info['image']), this.config.get('config_image_compare_width'), this.config.get('config_image_compare_height'));
-				} else {
-					image = false;
 				}
-
+				let price = false;
 				if (await this.customer.isLogged() || !Number(this.config.get('config_customer_price'))) {
 					price = this.currency.format(this.tax.calculate(product_info['price'], product_info['tax_class_id'], Number(this.config.get('config_tax'))), this.session.data['currency']);
-				} else {
-					price = false;
 				}
-
+				let special = false;
 				if (product_info['special']) {
 					special = this.currency.format(this.tax.calculate(product_info['special'], product_info['tax_class_id'], Number(this.config.get('config_tax'))), this.session.data['currency']);
-				} else {
-					special = false;
 				}
 
 				const manufacturer_info = await this.model_catalog_manufacturer.getManufacturer(product_info['manufacturer_id']);
-
+				let manufacturer = '';
 				if (manufacturer_info.manufacturer_id) {
 					manufacturer = manufacturer_info['name'];
-				} else {
-					manufacturer = '';
 				}
 				let availability = '';
 				if (product_info['quantity'] <= 0) {
@@ -100,9 +95,9 @@ module.exports = class Compare extends global['\Opencart\System\Engine\Controlle
 					availability = this.language.get('text_instock');
 				}
 
-				attribute_data = [];
+				let attribute_data = {};
 
-				attribute_groups = await this.model_catalog_product.getAttributes(product_id);
+				const attribute_groups = await this.model_catalog_product.getAttributes(product_id);
 
 				for (let attribute_group of attribute_groups) {
 					for (let attribute of attribute_group['attribute']) {
@@ -133,14 +128,20 @@ module.exports = class Compare extends global['\Opencart\System\Engine\Controlle
 				};
 
 				for (let attribute_group of attribute_groups) {
+					data['attribute_groups'][attribute_group['attribute_group_id']] = data['attribute_groups'][attribute_group['attribute_group_id']] || {};
+
 					data['attribute_groups'][attribute_group['attribute_group_id']]['name'] = attribute_group['name'];
 
 					for (let attribute of attribute_group['attribute']) {
+						data['attribute_groups'][attribute_group['attribute_group_id']]['attribute'] = data['attribute_groups'][attribute_group['attribute_group_id']]['attribute'] || {};
+
+						data['attribute_groups'][attribute_group['attribute_group_id']]['attribute'][attribute['attribute_id']] = data['attribute_groups'][attribute_group['attribute_group_id']]['attribute'][attribute['attribute_id']] || {};
+
 						data['attribute_groups'][attribute_group['attribute_group_id']]['attribute'][attribute['attribute_id']]['name'] = attribute['name'];
 					}
 				}
 			} else {
-				delete (this.session.data['compare'][key]);
+				delete this.session.data['compare'][key];
 			}
 		}
 
@@ -152,7 +153,7 @@ module.exports = class Compare extends global['\Opencart\System\Engine\Controlle
 		data['content_bottom'] = await this.load.controller('common/content_bottom');
 		data['footer'] = await this.load.controller('common/footer');
 		data['header'] = await this.load.controller('common/header');
-
+		await this.session.save(this.session.data);
 		this.response.setOutput(await this.load.view('product/compare', data));
 	}
 
@@ -167,41 +168,39 @@ module.exports = class Compare extends global['\Opencart\System\Engine\Controlle
 		if (!(this.session.data['compare'])) {
 			this.session.data['compare'] = [];
 		}
-
+		let product_id = 0;
 		if ((this.request.post['product_id'])) {
 			product_id = this.request.post['product_id'];
-		} else {
-			product_id = 0;
 		}
 
 		this.load.model('catalog/product', this);
 
 		const product_info = await this.model_catalog_product.getProduct(product_id);
 
-		if (!product_info) {
+		if (!product_info.product_id) {
 			json['error'] = this.language.get('error_product');
 		}
 
 		if (!Object.keys(json).length) {
 			// If already in remove the product_id so it will be added to the back of the array
-			key = array_search(this.request.post['product_id'], this.session.data['compare']);
+			let key = this.session.data['compare'].indexOf(this.request.post['product_id']);
 
 			if (key !== false) {
-				delete (this.session.data['compare'][key]);
+				delete this.session.data['compare'][key];
 			}
 
 			// If we count a numeric value that is greater than 4 products, we remove the first one
-			if (count(this.session.data['compare']) >= 4) {
-				array_shift(this.session.data['compare']);
+			if (this.session.data['compare'] && this.session.data['compare'].length >= 4) {
+				this.session.data['compare'].shift();
 			}
 
 			this.session.data['compare'].push(this.request.post['product_id']);
 
 			json['success'] = sprintf(this.language.get('text_success'), await this.url.link('product/product', 'language=' + this.config.get('config_language') + '&product_id=' + this.request.post['product_id']), product_info['name'], await this.url.link('product/compare', 'language=' + this.config.get('config_language')));
 
-			json['total'] = sprintf(this.language.get('text_compare'), ((this.session.data['compare']) ? count(this.session.data['compare']) : 0));
+			json['total'] = sprintf(this.language.get('text_compare'), ((this.session.data['compare']) ? this.session.data['compare'].length : 0));
 		}
-
+		await this.session.save(this.session.data)
 		this.response.addHeader('Content-Type: application/json');
 		this.response.setOutput(json);
 	}

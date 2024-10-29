@@ -16,7 +16,7 @@ module.exports = class File {
     set(key, value, expire = 0) {
         this.delete(key);
         expire = expire || this.expire;
-        const filePath = expressPath.join(DIR_CACHE, `cache.${this.sanitizeKey(key)}.${Date.now() + expire}`);
+        const filePath = DIR_CACHE + `cache.${this.sanitizeKey(key)}.${Date.now() + expire}`;
         fs.writeFileSync(filePath, JSON.stringify(value), 'utf-8');
     }
 

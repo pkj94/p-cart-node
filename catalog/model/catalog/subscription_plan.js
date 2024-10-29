@@ -16,13 +16,13 @@ module.exports=class SubscriptionPlan extends global['\Opencart\System\Engine\Mo
 	 * @return array
 	 */
 	async getSubscriptionPlans(data = {}) {
-		const sql = "SELECT * FROM `" + DB_PREFIX + "subscription_plan` `sp` LEFT JOIN `" + DB_PREFIX + "subscription_plan_description` `spd` ON (`sp`.`subscription_plan_id` = `spd`.`subscription_plan_id`) WHERE `spd`.`language_id` = '" + this.config.get('config_language_id') + "'";
+		let sql = "SELECT * FROM `" + DB_PREFIX + "subscription_plan` `sp` LEFT JOIN `" + DB_PREFIX + "subscription_plan_description` `spd` ON (`sp`.`subscription_plan_id` = `spd`.`subscription_plan_id`) WHERE `spd`.`language_id` = '" + this.config.get('config_language_id') + "'";
 
 		if ((data['filter_name'])) {
 			sql += " AND spd.`name` LIKE " + this.db.escape(data['filter_name'] + '%') ;
 		}
 
-		sort_data = [
+		let sort_data = [
 			'spd+name',
 			'sp.sort_order'
 		];

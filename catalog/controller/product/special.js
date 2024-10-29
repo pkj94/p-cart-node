@@ -1,3 +1,6 @@
+const sprintf = require("locutus/php/strings/sprintf");
+const strip_tags = require("locutus/php/strings/strip_tags");
+
 module.exports = class Special extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
@@ -9,11 +12,9 @@ module.exports = class Special extends global['\Opencart\System\Engine\Controlle
 		this.load.model('catalog/product', this);
 
 		this.load.model('tool/image', this);
-
+		let sort = 'p.sort_order';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
-		} else {
-			sort = 'p.sort_order';
 		}
 
 		let order = 'ASC';
@@ -63,48 +64,40 @@ module.exports = class Special extends global['\Opencart\System\Engine\Controlle
 			'href': await this.url.link('product/special', 'language=' + this.config.get('config_language') + url)
 		});
 
-		data['text_compare'] = sprintf(this.language.get('text_compare'), ((this.session.data['compare']) ? count(this.session.data['compare']) : 0));
+		data['text_compare'] = sprintf(this.language.get('text_compare'), ((this.session.data['compare']) ? this.session.data['compare'].length : 0));
 
 		data['compare'] = await this.url.link('product/compare', 'language=' + this.config.get('config_language'));
 
 		data['products'] = [];
 
-		filter_data = {
+		let filter_data = {
 			'sort': sort,
 			'order': order,
 			'start': (page - 1) * limit,
 			'limit': limit
 		};
 
-		product_total = await this.model_catalog_product.getTotalSpecials();
+		const product_total = await this.model_catalog_product.getTotalSpecials();
 
 		const results = await this.model_catalog_product.getSpecials(filter_data);
 
 		for (let result of results) {
-			if (is_file(DIR_IMAGE + html_entity_decode(result['image']))) {
+			let image = await this.model_tool_image.resize('placeholder.png', this.config.get('config_image_product_width'), this.config.get('config_image_product_height'));
+			if (result['image'] && is_file(DIR_IMAGE + html_entity_decode(result['image']))) {
 				image = await this.model_tool_image.resize(html_entity_decode(result['image']), this.config.get('config_image_product_width'), this.config.get('config_image_product_height'));
-			} else {
-				image = await this.model_tool_image.resize('placeholder.png', this.config.get('config_image_product_width'), this.config.get('config_image_product_height'));
 			}
-
+			let price = false;
 			if (await this.customer.isLogged() || !Number(this.config.get('config_customer_price'))) {
 				price = this.currency.format(this.tax.calculate(result['price'], result['tax_class_id'], Number(this.config.get('config_tax'))), this.session.data['currency']);
-			} else {
-				price = false;
 			}
-
+			let special = false;
 			if (result['special']) {
 				special = this.currency.format(this.tax.calculate(result['special'], result['tax_class_id'], Number(this.config.get('config_tax'))), this.session.data['currency']);
-			} else {
-				special = false;
 			}
-
+			let tax = false;
 			if (Number(this.config.get('config_tax'))) {
 				tax = this.currency.format(result['special'] ? result['special'] : result['price'], this.session.data['currency']);
-			} else {
-				tax = false;
 			}
-
 			let product_data = {
 				'product_id': result['product_id'],
 				'thumb': image,
@@ -197,9 +190,9 @@ module.exports = class Special extends global['\Opencart\System\Engine\Controlle
 
 		data['limits'] = [];
 
-		limits = array_unique([this.config.get('config_pagination'), 25, 50, 75, 100]);
+		const limits = [...new Set([this.config.get('config_pagination'), 25, 50, 75, 100])];
 
-		sort(limits);
+		limits.sort();
 
 		for (let value of limits) {
 			data['limits'].push({

@@ -1,9 +1,9 @@
-module.exports=class Newsletter extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class Newsletter extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */
 	async index() {
-const data ={};
+		const data = {};
 		await this.load.language('account/newsletter');
 
 		if (!await this.customer.isLogged() || (!(this.request.get['customer_token']) || !(this.session.data['customer_token']) || (this.request.get['customer_token'] != this.session.data['customer_token']))) {
@@ -17,21 +17,21 @@ const data ={};
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/home', 'language=' + this.config.get('config_language'))
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/home', 'language=' + this.config.get('config_language'))
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_account'),
-			'href' : await this.url.link('account/account', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'])
+			'text': this.language.get('text_account'),
+			'href': await this.url.link('account/account', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'])
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_newsletter'),
-			'href' : await this.url.link('account/newsletter', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'])
+			'text': this.language.get('text_newsletter'),
+			'href': await this.url.link('account/newsletter', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'])
 		});
 
-		data['save'] = await this.url.link('account/newsletter+save', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token']);
+		data['save'] = await this.url.link('account/newsletter.save', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token']);
 
 		data['newsletter'] = await this.customer.getNewsletter();
 
@@ -62,7 +62,7 @@ const data ={};
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('account/customer',this);
+			this.load.model('account/customer', this);
 
 			await this.model_account_customer.editNewsletter(this.request.post['newsletter']);
 

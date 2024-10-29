@@ -127,7 +127,7 @@ module.exports = class Search extends global['\Opencart\System\Engine\Controller
 			data['heading_title'] = this.language.get('heading_title');
 		}
 
-		data['text_compare'] = sprintf(this.language.get('text_compare'), ((this.session.data['compare']) ? count(this.session.data['compare']) : 0));
+		data['text_compare'] = sprintf(this.language.get('text_compare'), ((this.session.data['compare']) ? this.session.data['compare'].length : 0));
 
 		data['compare'] = await this.url.link('product/compare', 'language=' + this.config.get('config_language'));
 

@@ -1,8 +1,12 @@
+const sprintf = require("locutus/php/strings/sprintf");
+const strip_tags = require("locutus/php/strings/strip_tags");
+
 module.exports = class Tracking extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */
 	async index() {
+		const data = {};
 		if (!await this.customer.isLogged() || (!(this.request.get['customer_token']) || !(this.session.data['customer_token']) || (this.request.get['customer_token'] != this.session.data['customer_token']))) {
 			this.session.data['redirect'] = await this.url.link('account/tracking', 'language=' + this.config.get('config_language'));
 
@@ -15,7 +19,7 @@ module.exports = class Tracking extends global['\Opencart\System\Engine\Controll
 
 		this.load.model('account/affiliate', this);
 
-		affiliate_info = await this.model_account_affiliate.getAffiliate(await this.customer.getId());
+		const affiliate_info = await this.model_account_affiliate.getAffiliate(await this.customer.getId());
 
 		if (!affiliate_info) {
 			this.response.setRedirect(await this.url.link('account/account', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token']));
@@ -66,18 +70,14 @@ module.exports = class Tracking extends global['\Opencart\System\Engine\Controll
 	 * @return void
 	 */
 	async autocomplete() {
-		const json = {};
-
+		let json = {};
+		let search = '';
 		if ((this.request.get['search'])) {
 			search = this.request.get['search'];
-		} else {
-			search = '';
 		}
-
+		let tracking = '';
 		if ((this.request.get['tracking'])) {
 			tracking = this.request.get['tracking'];
-		} else {
-			tracking = '';
 		}
 
 		if (!await this.customer.isLogged() || (!(this.request.get['customer_token']) || !(this.session.data['customer_token']) || (this.request.get['customer_token'] != this.session.data['customer_token']))) {
@@ -87,7 +87,7 @@ module.exports = class Tracking extends global['\Opencart\System\Engine\Controll
 		}
 
 		if (!Object.keys(json).length) {
-			filter_data = {
+			let filter_data = {
 				'filter_search': search,
 				'start': 0,
 				'limit': 5
@@ -96,7 +96,7 @@ module.exports = class Tracking extends global['\Opencart\System\Engine\Controll
 			this.load.model('catalog/product', this);
 
 			const results = await this.model_catalog_product.getProducts(filter_data);
-
+			json = [];
 			for (let result of results) {
 				json.push({
 					'name': strip_tags(html_entity_decode(result['name'])),

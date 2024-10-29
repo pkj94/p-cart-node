@@ -5,9 +5,9 @@ module.exports =class Transaction extends global['\Opencart\System\Engine\Model'
 	 * @return array
 	 */
 	async getTransactions(data = {}) {
-		const sql = "SELECT * FROM `" + DB_PREFIX + "customer_transaction` WHERE `customer_id` = '" + await this.customer.getId() + "'";
+		let sql = "SELECT * FROM `" + DB_PREFIX + "customer_transaction` WHERE `customer_id` = '" + await this.customer.getId() + "'";
 
-		sort_data = [
+		let sort_data = [
 			'amount',
 			'description',
 			'date_added'

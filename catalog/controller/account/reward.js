@@ -1,8 +1,11 @@
+const sprintf = require("locutus/php/strings/sprintf");
+
 module.exports = class Reward extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */
 	async index() {
+		const data = {};
 		await this.load.language('account/reward');
 
 		if (!await this.customer.isLogged() || (!(this.request.get['customer_token']) || !(this.session.data['customer_token']) || (this.request.get['customer_token'] != this.session.data['customer_token']))) {
@@ -30,7 +33,7 @@ module.exports = class Reward extends global['\Opencart\System\Engine\Controller
 			'href': await this.url.link('account/reward', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'])
 		});
 
-		this.load.model('account/reward');
+		this.load.model('account/reward',this);
 
 		let page = 1;
 		if ((this.request.get['page'])) {
@@ -41,14 +44,14 @@ module.exports = class Reward extends global['\Opencart\System\Engine\Controller
 
 		data['rewards'] = [];
 
-		filter_data = {
+		let filter_data = {
 			'sort': 'date_added',
 			'order': 'DESC',
 			'start': (page - 1) * limit,
 			'limit': limit
 		};
 
-		reward_total = await this.model_account_reward.getTotalRewards();
+		const reward_total = await this.model_account_reward.getTotalRewards();
 
 		const results = await this.model_account_reward.getRewards(filter_data);
 

@@ -5,9 +5,9 @@ module.exports =class Reward extends global['\Opencart\System\Engine\Model'] {
 	 * @return array
 	 */
 	async getRewards(data = {}) {
-		const sql = "SELECT * FROM `" + DB_PREFIX + "customer_reward` WHERE `customer_id` = '" + await this.customer.getId() + "'";
+		let sql = "SELECT * FROM `" + DB_PREFIX + "customer_reward` WHERE `customer_id` = '" + await this.customer.getId() + "'";
 
-		sort_data = [
+		let sort_data = [
 			'points',
 			'description',
 			'date_added'
