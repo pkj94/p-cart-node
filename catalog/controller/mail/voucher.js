@@ -11,6 +11,7 @@ module.exports = class Voucher extends global['\Opencart\System\Engine\Controlle
 	 * @throws \Exception
 	 */
 	async index(route, args, output) {
+		const data = {};
 		this.load.model('checkout/order', this);
 
 		const order_info = await this.model_checkout_order.getOrder(args[0]);

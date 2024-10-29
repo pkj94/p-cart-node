@@ -7,10 +7,9 @@ module.exports = class Subscription extends global['\Opencart\System\Engine\Cont
 	 * @return void
 	 */
 	async index(route, args, output) {
+		let subscription_id = 0;
 		if ((args[0])) {
 			subscription_id = args[0];
-		} else {
-			subscription_id = 0;
 		}
 
 		if ((args[1]['subscription'])) {

@@ -1,3 +1,5 @@
+const sprintf = require("locutus/php/strings/sprintf");
+
 module.exports = class Transaction extends global['\Opencart\System\Engine\Controller'] {
 	// catalog/model/account/customer/addTransaction/after
 	/**
@@ -11,31 +13,28 @@ module.exports = class Transaction extends global['\Opencart\System\Engine\Contr
 	async index(route, args, output) {
 		await this.load.language('mail/transaction');
 
-		this.load.model('account/customer',this);
+		this.load.model('account/customer', this);
 
-		customer_info = await this.model_account_customer.getCustomer(args[0]);
+		const customer_info = await this.model_account_customer.getCustomer(args[0]);
 
 		if (customer_info.customer_id) {
-			this.load.model('setting/store',this);
+			const data = {};
+			this.load.model('setting/store', this);
 
 			const store_info = await this.model_setting_store.getStore(customer_info['store_id']);
-
+			let store_name = html_entity_decode(this.config.get('config_name'));
+			let store_url = this.config.get('config_url');
 			if (store_info) {
 				store_name = html_entity_decode(store_info['name']);
 				store_url = store_info['store_url'];
-			} else {
-				store_name = html_entity_decode(this.config.get('config_name'));
-				store_url = this.config.get('config_url');
-			}
+			} 
 
-			this.load.model('localisation/language',this);
+			this.load.model('localisation/language', this);
 
 			const language_info = await this.model_localisation_language.getLanguage(customer_info['language_id']);
-
+			let language_code = this.config.get('config_language');
 			if (language_info) {
 				language_code = language_info['code'];
-			} else {
-				language_code = this.config.get('config_language');
 			}
 
 			// Load the language for any mails using a different country code and prefixing it so it does not pollute the main data pool+
@@ -45,11 +44,11 @@ module.exports = class Transaction extends global['\Opencart\System\Engine\Contr
 			// Add language vars to the template folder
 			const results = this.language.all('mail');
 
-			for (let [key , value] of Object.entries(results)) {
+			for (let [key, value] of Object.entries(results)) {
 				data[key] = value;
 			}
 
-			subject = sprintf(this.language.get('mail_text_subject'), store_name);
+			let subject = sprintf(this.language.get('mail_text_subject'), store_name);
 
 			data['text_received'] = sprintf(this.language.get('mail_text_received'), store_name);
 
@@ -60,14 +59,14 @@ module.exports = class Transaction extends global['\Opencart\System\Engine\Contr
 			data['store_url'] = store_url;
 
 			if (this.config.get('config_mail_engine')) {
-					let mail_option = {
-					'parameter'     : this.config.get('config_mail_parameter'),
-					'smtp_hostname' : this.config.get('config_mail_smtp_hostname'),
-					'smtp_username' : this.config.get('config_mail_smtp_username'),
-					'smtp_password' : html_entity_decode(this.config.get('config_mail_smtp_password')),
-					'smtp_port'     : this.config.get('config_mail_smtp_port'),
-					'smtp_timeout'  : this.config.get('config_mail_smtp_timeout')
-					};
+				let mail_option = {
+					'parameter': this.config.get('config_mail_parameter'),
+					'smtp_hostname': this.config.get('config_mail_smtp_hostname'),
+					'smtp_username': this.config.get('config_mail_smtp_username'),
+					'smtp_password': html_entity_decode(this.config.get('config_mail_smtp_password')),
+					'smtp_port': this.config.get('config_mail_smtp_port'),
+					'smtp_timeout': this.config.get('config_mail_smtp_timeout')
+				};
 
 				const mail = new global['\Opencart\System\Library\Mail'](this.config.get('config_mail_engine'), mail_option);
 				mail.setTo(customer_info['email']);

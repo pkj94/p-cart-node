@@ -1,3 +1,5 @@
+const sprintf = require("locutus/php/strings/sprintf");
+
 module.exports = class Forgotten extends global['\Opencart\System\Engine\Controller'] {
 	// catalog/model/account/customer/editCode/after
 	/**
@@ -10,20 +12,21 @@ module.exports = class Forgotten extends global['\Opencart\System\Engine\Control
 	 */
 	async index(route, args, output) {
 		if (args[0] && args[1]) {
+			const data = {};
 			this.load.model('account/customer', this);
 
-			customer_info = await this.model_account_customer.getCustomerByEmail(args[0]);
+			const customer_info = await this.model_account_customer.getCustomerByEmail(args[0]);
 
 			if (customer_info.customer_id) {
 				await this.load.language('mail/forgotten');
 
-				store_name = html_entity_decode(this.config.get('config_name'));
+				let store_name = html_entity_decode(this.config.get('config_name'));
 
-				subject = sprintf(this.language.get('text_subject'), store_name);
+				let subject = sprintf(this.language.get('text_subject'), store_name);
 
 				data['text_greeting'] = sprintf(this.language.get('text_greeting'), store_name);
 
-				data['reset'] = await this.url.link('account/forgotten+reset', 'language=' + this.config.get('config_language') + '&email=' + encodeURIComponent(args[0]) + '&code=' + args[1], true);
+				data['reset'] = await this.url.link('account/forgotten.reset', 'language=' + this.config.get('config_language') + '&email=' + encodeURIComponent(args[0]) + '&code=' + args[1], true);
 				data['ip'] = (this.request.server.headers['x-forwarded-for'] ||
 					this.request.server.connection.remoteAddress ||
 					this.request.server.socket.remoteAddress ||

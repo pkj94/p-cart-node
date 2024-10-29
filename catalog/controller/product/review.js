@@ -58,7 +58,7 @@ module.exports = class Review extends global['\Opencart\System\Engine\Controller
 	async write() {
 		await this.load.language('product/review');
 
-		const json = {};
+		const json = {error:{}};
 
 		let product_id = 0;
 		if ((this.request.get['product_id'])) {
@@ -81,9 +81,9 @@ module.exports = class Review extends global['\Opencart\System\Engine\Controller
 			}
 		}
 
-		this.load.model('product/product', this);
+		this.load.model('catalog/product', this);
 
-		const product_info = await this.model_product_product.getProduct(product_id);
+		const product_info = await this.model_catalog_product.getProduct(product_id);
 
 		if (!product_info.product_id) {
 			json['error']['warning'] = this.language.get('error_product');
@@ -126,7 +126,7 @@ module.exports = class Review extends global['\Opencart\System\Engine\Controller
 			}
 		}
 
-		if (!Object.keys(json).length) {
+		if (!Object.keys(json.error).length) {
 			this.load.model('catalog/review', this);
 
 			await this.model_catalog_review.addReview(product_id, this.request.post);

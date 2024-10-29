@@ -45,14 +45,14 @@ $('#input-generator').autocomplete({
                 response($.map(json, function(item) {
                     return {
                         label: item['name'],
-                        value: item['link']
+                        value: btoa(item['link'])
                     }
                 }));
             }
         });
     },
     'select': function(item) {
-        $('#input-link').val(item['value']);
+        $('#input-link').val(atob(item['value']));
     }
 });
 //--></script>

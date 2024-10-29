@@ -1,3 +1,5 @@
+const sprintf = require("locutus/php/strings/sprintf");
+const strip_tags = require("locutus/php/strings/strip_tags");
 const is_numeric = require("locutus/php/var/is_numeric");
 
 module.exports = class Manufacturer extends global['\Opencart\System\Engine\Controller'] {
@@ -37,7 +39,7 @@ module.exports = class Manufacturer extends global['\Opencart\System\Engine\Cont
 			}
 
 			if (!(data['categories'][key])) {
-				data['categories'][key] = data['categories'][key] || {manufacturer: []};
+				data['categories'][key] = data['categories'][key] || { manufacturer: [] };
 				data['categories'][key]['name'] = key;
 				data['categories'][key]['href'] = await this.url.link('product/manufacturer', 'language=' + this.config.get('config_language'));
 			}
@@ -64,18 +66,15 @@ module.exports = class Manufacturer extends global['\Opencart\System\Engine\Cont
 	 * @return void
 	 */
 	async info() {
+		const data = {};
 		await this.load.language('product/manufacturer');
-
+		let manufacturer_id = 0;
 		if ((this.request.get['manufacturer_id'])) {
 			manufacturer_id = this.request.get['manufacturer_id'];
-		} else {
-			manufacturer_id = 0;
 		}
-
+		let sort = 'p.sort_order';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
-		} else {
-			sort = 'p.sort_order';
 		}
 
 		let order = 'ASC';
@@ -112,7 +111,7 @@ module.exports = class Manufacturer extends global['\Opencart\System\Engine\Cont
 				'href': await this.url.link('product/manufacturer', 'language=' + this.config.get('config_language'))
 			});
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -143,7 +142,7 @@ module.exports = class Manufacturer extends global['\Opencart\System\Engine\Cont
 
 			data['products'] = [];
 
-			filter_data = {
+			let filter_data = {
 				'filter_manufacturer_id': manufacturer_id,
 				'sort': sort,
 				'order': order,
@@ -159,28 +158,21 @@ module.exports = class Manufacturer extends global['\Opencart\System\Engine\Cont
 			const results = await this.model_catalog_product.getProducts(filter_data);
 
 			for (let result of results) {
-				if (is_file(DIR_IMAGE + html_entity_decode(result['image']))) {
+				let image = await this.model_tool_image.resize('placeholder.png', this.config.get('config_image_product_width'), this.config.get('config_image_product_height'));
+				if (result['image'] && is_file(DIR_IMAGE + html_entity_decode(result['image']))) {
 					image = await this.model_tool_image.resize(html_entity_decode(result['image']), this.config.get('config_image_product_width'), this.config.get('config_image_product_height'));
-				} else {
-					image = await this.model_tool_image.resize('placeholder.png', this.config.get('config_image_product_width'), this.config.get('config_image_product_height'));
 				}
-
+				let price = false;
 				if (await this.customer.isLogged() || !Number(this.config.get('config_customer_price'))) {
 					price = this.currency.format(this.tax.calculate(result['price'], result['tax_class_id'], Number(this.config.get('config_tax'))), this.session.data['currency']);
-				} else {
-					price = false;
 				}
-
+				let special = false;
 				if (result['special']) {
 					special = this.currency.format(this.tax.calculate(result['special'], result['tax_class_id'], Number(this.config.get('config_tax'))), this.session.data['currency']);
-				} else {
-					special = false;
 				}
-
+				let tax = false;
 				if (Number(this.config.get('config_tax'))) {
 					tax = this.currency.format(result['special'] ? result['special'] : result['price'], this.session.data['currency']);
-				} else {
-					tax = false;
 				}
 
 				let product_data = {
@@ -275,9 +267,9 @@ module.exports = class Manufacturer extends global['\Opencart\System\Engine\Cont
 
 			data['limits'] = [];
 
-			limits = array_unique([this.config.get('config_pagination'), 25, 50, 75, 100]);
+			const limits = [...new Set([this.config.get('config_pagination'), 25, 50, 75, 100])];
 
-			sort(limits);
+			limits.sort();
 
 			for (let value of limits) {
 				data['limits'].push({
@@ -287,7 +279,7 @@ module.exports = class Manufacturer extends global['\Opencart\System\Engine\Cont
 				});
 			}
 
-			let url = '';
+			url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];

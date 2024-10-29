@@ -56,7 +56,7 @@ module.exports = class Forgotten extends global['\Opencart\System\Engine\Control
 		}
 
 		if (!Object.keys(json).length) {
-			keys = ['email'];
+			let keys = ['email'];
 
 			for (let key of keys) {
 				if (!(this.request.post[key])) {
@@ -66,9 +66,9 @@ module.exports = class Forgotten extends global['\Opencart\System\Engine\Control
 
 			this.load.model('account/customer', this);
 
-			customer_info = await this.model_account_customer.getCustomerByEmail(this.request.post['email']);
+			const customer_info = await this.model_account_customer.getCustomerByEmail(this.request.post['email']);
 
-			if (!customer_info) {
+			if (!customer_info.customer_id) {
 				json['error'] = this.language.get('error_not_found');
 			}
 		}
@@ -80,7 +80,7 @@ module.exports = class Forgotten extends global['\Opencart\System\Engine\Control
 
 			json['redirect'] = await this.url.link('account/login', 'language=' + this.config.get('config_language'), true);
 		}
-
+		await this.session.save(this.session.data);
 		this.response.addHeader('Content-Type: application/json');
 		this.response.setOutput(json);
 	}
@@ -90,17 +90,13 @@ module.exports = class Forgotten extends global['\Opencart\System\Engine\Control
 	 */
 	async reset() {
 		await this.load.language('account/forgotten');
-
+		let email = '';
 		if ((this.request.get['email'])) {
 			email = this.request.get['email'];
-		} else {
-			email = '';
 		}
-
+		let code = '';
 		if ((this.request.get['code'])) {
 			code = this.request.get['code'];
-		} else {
-			code = '';
 		}
 
 		if (await this.customer.isLogged()) {
@@ -109,13 +105,13 @@ module.exports = class Forgotten extends global['\Opencart\System\Engine\Control
 
 		this.load.model('account/customer', this);
 
-		customer_info = await this.model_account_customer.getCustomerByEmail(email);
+		const customer_info = await this.model_account_customer.getCustomerByEmail(email);
 
-		if (!customer_info || !customer_info['code'] || customer_info['code'] !== code) {
+		if (!customer_info.customer_id || !customer_info['code'] || customer_info['code'] !== code) {
 			await this.model_account_customer.editCode(email, '');
 
 			this.session.data['error'] = this.language.get('error_code');
-
+			await this.session.save(this.session.data);
 			this.response.setRedirect(await this.url.link('account/login', 'language=' + this.config.get('config_language')));
 		}
 
@@ -149,7 +145,7 @@ module.exports = class Forgotten extends global['\Opencart\System\Engine\Control
 		data['content_bottom'] = await this.load.controller('common/content_bottom');
 		data['footer'] = await this.load.controller('common/footer');
 		data['header'] = await this.load.controller('common/header');
-
+		await this.session.save(this.session.data);
 		this.response.setOutput(await this.load.view('account/forgotten_reset', data));
 	}
 
@@ -159,18 +155,14 @@ module.exports = class Forgotten extends global['\Opencart\System\Engine\Control
 	async password() {
 		await this.load.language('account/forgotten');
 
-		const json = {};
-
+		const json = { error: {} };
+		let email = '';
 		if ((this.request.get['email'])) {
 			email = this.request.get['email'];
-		} else {
-			email = '';
 		}
-
+		let code = '';
 		if ((this.request.get['code'])) {
 			code = this.request.get['code'];
-		} else {
-			code = '';
 		}
 
 		if (await this.customer.isLogged()) {
@@ -179,25 +171,25 @@ module.exports = class Forgotten extends global['\Opencart\System\Engine\Control
 
 		if (!(this.request.get['reset_token']) || !(this.session.data['reset_token']) || (this.request.get['reset_token'] != this.session.data['reset_token'])) {
 			this.session.data['error'] = this.language.get('error_session');
-
+			await this.session.save(this.session.data);
 			json['redirect'] = await this.url.link('account/forgotten', 'language=' + this.config.get('config_language'), true);
 		}
 
 		this.load.model('account/customer', this);
 
-		customer_info = await this.model_account_customer.getCustomerByEmail(email);
+		const customer_info = await this.model_account_customer.getCustomerByEmail(email);
 
-		if (!customer_info || !customer_info['code'] || customer_info['code'] !== code) {
+		if (!customer_info.customer_id || !customer_info['code'] || customer_info['code'] !== code) {
 			// Reset token
 			await this.model_account_customer.editCode(email, '');
 
 			this.session.data['error'] = this.language.get('error_code');
-
+			await this.session.save(this.session.data);
 			json['redirect'] = await this.url.link('account/forgotten', 'language=' + this.config.get('config_language'), true);
 		}
 
-		if (!Object.keys(json).length) {
-			keys = [
+		if (!json.redirect) {
+			let keys = [
 				'password',
 				'confirm'
 			];
@@ -217,13 +209,13 @@ module.exports = class Forgotten extends global['\Opencart\System\Engine\Control
 			}
 		}
 
-		if (!Object.keys(json).length) {
+		if (!Object.keys(json.error).length) {
 			await this.model_account_customer.editPassword(customer_info['email'], this.request.post['password']);
 
 			this.session.data['success'] = this.language.get('text_success');
 
-			delete (this.session.data['reset_token']);
-
+			delete this.session.data['reset_token'];
+			await this.session.save(this.session.data);
 			json['redirect'] = await this.url.link('account/login', 'language=' + this.config.get('config_language'), true);
 		}
 

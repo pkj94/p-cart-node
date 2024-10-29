@@ -1,3 +1,7 @@
+const sprintf = require("locutus/php/strings/sprintf");
+const strip_tags = require("locutus/php/strings/strip_tags");
+const trim = require("locutus/php/strings/trim");
+
 module.exports = class Search extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
@@ -9,45 +13,32 @@ module.exports = class Search extends global['\Opencart\System\Engine\Controller
 		this.load.model('catalog/category', this);
 		this.load.model('catalog/product', this);
 		this.load.model('tool/image', this);
-
+		let search = '';
 		if ((this.request.get['search'])) {
 			search = this.request.get['search'];
-		} else {
-			search = '';
 		}
-
+		let tag = '';
 		if ((this.request.get['tag'])) {
 			tag = this.request.get['tag'];
 		} else if ((this.request.get['search'])) {
 			tag = this.request.get['search'];
-		} else {
-			tag = '';
 		}
-
+		let description = '';
 		if ((this.request.get['description'])) {
 			description = this.request.get['description'];
-		} else {
-			description = '';
 		}
-
+		let category_id = 0;
 		if ((this.request.get['category_id'])) {
 			category_id = this.request.get['category_id'];
-		} else {
-			category_id = 0;
 		}
-
+		let sub_category = 0;
 		if ((this.request.get['sub_category'])) {
 			sub_category = this.request.get['sub_category'];
-		} else {
-			sub_category = 0;
 		}
-
+		let sort = 'p.sort_order';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
-		} else {
-			sort = 'p.sort_order';
 		}
-
 		let order = 'ASC';
 		if ((this.request.get['order'])) {
 			order = this.request.get['order'];
@@ -136,17 +127,17 @@ module.exports = class Search extends global['\Opencart\System\Engine\Controller
 		// 3 Level Category Search
 		data['categories'] = [];
 
-		categories_1 = await this.model_catalog_category.getCategories(0);
+		const categories_1 = await this.model_catalog_category.getCategories(0);
 
 		for (let category_1 of categories_1) {
-			level_2_data = [];
+			let level_2_data = [];
 
-			categories_2 = await this.model_catalog_category.getCategories(category_1['category_id']);
+			const categories_2 = await this.model_catalog_category.getCategories(category_1['category_id']);
 
 			for (let category_2 of categories_2) {
-				level_3_data = [];
+				let level_3_data = [];
 
-				categories_3 = await this.model_catalog_category.getCategories(category_2['category_id']);
+				const categories_3 = await this.model_catalog_category.getCategories(category_2['category_id']);
 
 				for (let category_3 of categories_3) {
 					level_3_data.push({
@@ -172,7 +163,7 @@ module.exports = class Search extends global['\Opencart\System\Engine\Controller
 		data['products'] = [];
 
 		if (search || tag) {
-			filter_data = {
+			let filter_data = {
 				'filter_search': search,
 				'filter_tag': tag,
 				'filter_description': description,
@@ -189,28 +180,21 @@ module.exports = class Search extends global['\Opencart\System\Engine\Controller
 			const results = await this.model_catalog_product.getProducts(filter_data);
 
 			for (let result of results) {
-				if (is_file(DIR_IMAGE + html_entity_decode(result['image']))) {
+				let image = await this.model_tool_image.resize('placeholder.png', this.config.get('config_image_product_width'), this.config.get('config_image_product_height'));
+				if (result['image'] && is_file(DIR_IMAGE + html_entity_decode(result['image']))) {
 					image = await this.model_tool_image.resize(html_entity_decode(result['image']), this.config.get('config_image_product_width'), this.config.get('config_image_product_height'));
-				} else {
-					image = await this.model_tool_image.resize('placeholder.png', this.config.get('config_image_product_width'), this.config.get('config_image_product_height'));
 				}
-
+				let price = false;
 				if (await this.customer.isLogged() || !Number(this.config.get('config_customer_price'))) {
 					price = this.currency.format(this.tax.calculate(result['price'], result['tax_class_id'], Number(this.config.get('config_tax'))), this.session.data['currency']);
-				} else {
-					price = false;
 				}
-
+				let special = false;
 				if (result['special']) {
 					special = this.currency.format(this.tax.calculate(result['special'], result['tax_class_id'], Number(this.config.get('config_tax'))), this.session.data['currency']);
-				} else {
-					special = false;
 				}
-
+				let tax = false;
 				if (Number(this.config.get('config_tax'))) {
 					tax = this.currency.format(result['special'] ? result['special'] : result['price'], this.session.data['currency']);
-				} else {
-					tax = false;
 				}
 
 				let product_data = {
@@ -345,9 +329,9 @@ module.exports = class Search extends global['\Opencart\System\Engine\Controller
 
 			data['limits'] = [];
 
-			limits = array_unique([this.config.get('config_pagination'), 25, 50, 75, 100]);
+			const limits = [...new Set([this.config.get('config_pagination'), 25, 50, 75, 100])];
 
-			sort(limits);
+			limits.sort();
 
 			for (let value of limits) {
 				data['limits'].push({
@@ -357,7 +341,7 @@ module.exports = class Search extends global['\Opencart\System\Engine\Controller
 				});
 			}
 
-			let url = '';
+			url = '';
 
 			if ((this.request.get['search'])) {
 				url += '&search=' + encodeURIComponent(html_entity_decode(this.request.get['search']));
@@ -401,14 +385,12 @@ module.exports = class Search extends global['\Opencart\System\Engine\Controller
 			data['results'] = sprintf(this.language.get('text_pagination'), (product_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (product_total - limit)) ? product_total : (((page - 1) * limit) + limit), product_total, Math.ceil(product_total / limit));
 
 			if ((this.request.get['search']) && this.config.get('config_customer_search')) {
-				this.load.model('account/search');
-
+				this.load.model('account/search', this);
+				let customer_id = 0;
 				if (await this.customer.isLogged()) {
-					const customer_id = await this.customer.getId();
-				} else {
-					const customer_id = 0;
-				}
-
+					customer_id = await this.customer.getId();
+				} 
+				let ip = '';
 				if (((this.request.server.headers['x-forwarded-for'] ||
 					this.request.server.connection.remoteAddress ||
 					this.request.server.socket.remoteAddress ||
@@ -417,11 +399,9 @@ module.exports = class Search extends global['\Opencart\System\Engine\Controller
 						this.request.server.connection.remoteAddress ||
 						this.request.server.socket.remoteAddress ||
 						this.request.server.connection.socket.remoteAddress);
-				} else {
-					ip = '';
-				}
+				} 
 
-				search_data = {
+				let search_data = {
 					'keyword': search,
 					'category_id': category_id,
 					'sub_category': sub_category,

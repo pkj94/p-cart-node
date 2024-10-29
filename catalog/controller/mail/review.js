@@ -1,3 +1,5 @@
+const nl2br = require("locutus/php/strings/nl2br");
+
 module.exports = class Review extends global['\Opencart\System\Engine\Controller'] {
 	// catalog/model/catalog/review/addReview/after
 	/**
@@ -9,17 +11,18 @@ module.exports = class Review extends global['\Opencart\System\Engine\Controller
 	 * @throws \Exception
 	 */
 	async index(route, args, output) {
-		if (in_array('review', this.config.get('config_mail_alert'))) {
+		if (this.config.get('config_mail_alert').includes('review')) {
+			const data = {};
 			await this.load.language('mail/review');
 
-			this.load.model('catalog/product',this);
+			this.load.model('catalog/product', this);
 
 			const product_info = await this.model_catalog_product.getProduct(args[0]);
 
 			if (product_info.product_id) {
-				store_name = html_entity_decode(this.config.get('config_name'));
+				let store_name = html_entity_decode(this.config.get('config_name'));
 
-				subject = sprintf(this.language.get('text_subject'), store_name);
+				let subject = sprintf(this.language.get('text_subject'), store_name);
 
 				data['product'] = html_entity_decode(product_info['name']);
 				data['reviewer'] = html_entity_decode(args[1]['name']);
@@ -31,12 +34,12 @@ module.exports = class Review extends global['\Opencart\System\Engine\Controller
 
 				if (this.config.get('config_mail_engine')) {
 					let mail_option = {
-						'parameter'     : this.config.get('config_mail_parameter'),
-						'smtp_hostname' : this.config.get('config_mail_smtp_hostname'),
-						'smtp_username' : this.config.get('config_mail_smtp_username'),
-						'smtp_password' : html_entity_decode(this.config.get('config_mail_smtp_password')),
-						'smtp_port'     : this.config.get('config_mail_smtp_port'),
-						'smtp_timeout'  : this.config.get('config_mail_smtp_timeout')
+						'parameter': this.config.get('config_mail_parameter'),
+						'smtp_hostname': this.config.get('config_mail_smtp_hostname'),
+						'smtp_username': this.config.get('config_mail_smtp_username'),
+						'smtp_password': html_entity_decode(this.config.get('config_mail_smtp_password')),
+						'smtp_port': this.config.get('config_mail_smtp_port'),
+						'smtp_timeout': this.config.get('config_mail_smtp_timeout')
 					};
 
 					const mail = new global['\Opencart\System\Library\Mail'](this.config.get('config_mail_engine'), mail_option);
@@ -48,7 +51,7 @@ module.exports = class Review extends global['\Opencart\System\Engine\Controller
 					await mail.send();
 
 					// Send to additional alert emails
-					emails = this.config.get('config_mail_alert_email').split(',');
+					let emails = this.config.get('config_mail_alert_email').split(',');
 
 					for (let email of emails) {
 						if (email && isEmailValid(email)) {
