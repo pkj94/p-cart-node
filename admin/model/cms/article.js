@@ -115,14 +115,14 @@ module.exports = class ArticleModel extends global['\Opencart\System\Engine\Mode
 	async getArticle(article_id) {
 		let sql = "SELECT DISTINCT * FROM `" + DB_PREFIX + "article` `a` LEFT JOIN `" + DB_PREFIX + "article_description` `ad` ON (`a`.`article_id` = `ad`.`article_id`) WHERE `a`.`article_id` = '" + article_id + "' AND `ad`.`language_id` = '" + this.config.get('config_language_id') + "'";
 
-		let article_data = await this.cache.get('article.'.md5(sql));
+		let article_data = await this.cache.get('article.'+md5(sql));
 
 		if (!article_data) {
 			let query = await this.db.query(sql);
 
 			article_data = query.row;
 
-			await this.cache.set('article.'.md5(sql), article_data);
+			await this.cache.set('article.'+md5(sql), article_data);
 		}
 
 		return article_data;
@@ -171,14 +171,14 @@ module.exports = class ArticleModel extends global['\Opencart\System\Engine\Mode
 			sql += " LIMIT " + data['start'] + "," + data['limit'];
 		}
 
-		let article_data = await this.cache.get('article.'.md5(sql));
+		let article_data = await this.cache.get('article.'+md5(sql));
 
 		if (!article_data) {
 			let query = await this.db.query(sql);
 
 			article_data = query.rows;
 
-			await this.cache.set('article.'.md5(sql), article_data);
+			await this.cache.set('article.'+md5(sql), article_data);
 		}
 
 		return article_data;

@@ -8,6 +8,7 @@ module.exports = class Exception extends global['\Opencart\System\Engine\Control
 	 * @return void
 	 */
 	async index(message, code, file, line) {
+		const data = {};
 		await this.load.language('error/exception');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -15,13 +16,13 @@ module.exports = class Exception extends global['\Opencart\System\Engine\Control
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('error/exception', 'user_token=' + this.session.data['user_token'])
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('error/exception', 'user_token=' + this.session.data['user_token'])
 		});
 
 		data['header'] = await this.load.controller('common/header');

@@ -368,7 +368,7 @@ module.exports = class ArticleController extends global['\Opencart\System\Engine
 					}
 
 					let seo_url_info = await this.model_design_seo_url.getSeoUrlByKeyword(keyword, store_id);
-
+					console.log(seo_url_info);
 					if (seo_url_info.key && (!(this.request.post['article_id']) || seo_url_info['key'] != 'article_id' || seo_url_info['value'] != this.request.post['article_id'])) {
 						json['error']['keyword_' + store_id + '_' + language_id] = this.language.get('error_keyword_exists');
 					}
@@ -382,7 +382,7 @@ module.exports = class ArticleController extends global['\Opencart\System\Engine
 
 		if (!Object.keys(json.error).length) {
 			this.load.model('cms/article', this);
-
+			this.request.post['article_id'] = Number(this.request.post['article_id']);
 			if (!this.request.post['article_id']) {
 				json['article_id'] = await this.model_cms_article.addArticle(this.request.post);
 			} else {

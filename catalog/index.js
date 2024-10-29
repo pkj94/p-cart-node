@@ -60,5 +60,5 @@ module.exports = function (registry) {
         });
     };
     // loadControllers();
-    app.all('/', loadControllers);
+    app.all('/*', loadControllers);
 }

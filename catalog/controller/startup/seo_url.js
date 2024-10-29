@@ -1,3 +1,5 @@
+const str_replace = require("locutus/php/strings/str_replace");
+
 module.exports = class SeoUrl extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
@@ -8,7 +10,6 @@ module.exports = class SeoUrl extends global['\Opencart\System\Engine\Controller
 			this.url.addRewrite(this);
 
 			this.load.model('design/seo_url', this);
-
 			// Decode URL
 			if ((this.request.get['_route_'])) {
 				let parts = this.request.get['_route_'].split('/');
@@ -40,22 +41,22 @@ module.exports = class SeoUrl extends global['\Opencart\System\Engine\Controller
 		// Build the url
 		let url = '';
 
-		if (url_info['scheme']) {
-			url += url_info['scheme'];
+		if (url_info['protocol']) {
+			url += url_info['protocol'];
 		}
 
-		url += '://';
+		url += '//';
 
 		if (url_info['host']) {
 			url += url_info['host'];
 		}
 
-		if ((url_info['port'])) {
-			url += ':' + url_info['port'];
-		}
+		// if ((url_info['port'])) {
+		// 	url += ':' + url_info['port'];
+		// }
 
-		const query = {};
-		new URLSearchParams(url_info.query).forEach((value, key) => {
+		let query = {};
+		new URLSearchParams(url_info.search).forEach((value, key) => {
 			query[key] = value;
 		});
 
@@ -63,8 +64,7 @@ module.exports = class SeoUrl extends global['\Opencart\System\Engine\Controller
 		let paths = [];
 
 		// Parse the query into its separate parts
-		let parts = url_info['search'].split('&');
-
+		let parts = url_info['search'].replace('?route', 'route').split('&');
 		for (let part of parts) {
 			const [key, value] = part.split('=');
 
@@ -76,7 +76,7 @@ module.exports = class SeoUrl extends global['\Opencart\System\Engine\Controller
 				delete query[key];
 			}
 		}
-
+		
 		let sort_order = {};
 
 		for (let [key, value] of Object.entries(paths)) {
@@ -86,17 +86,14 @@ module.exports = class SeoUrl extends global['\Opencart\System\Engine\Controller
 		// paths = multiSort(paths, sort_order, 'ASC');
 		paths = paths.sort((a, b) => a.sort_order - b.sort_order);
 		// Build the path
-		url += str_replace('/', '', url_info['path']);
-
+		url += str_replace('/', '', url_info['pathname']);
 		for (let result of paths) {
 			url += '/' + result['keyword'];
 		}
-
 		// Rebuild the URL query
-		if (query) {
+		if (Object.keys(query).length) {
 			url += '?' + str_replace(['%2F'], ['/'], http_build_query(query));
 		}
-
 		return url;
 	}
 }

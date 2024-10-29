@@ -276,7 +276,7 @@ module.exports = class UserPermissionController extends global['\Opencart\System
 		for (let file of files) {
 			let controller = file.substring((DIR_APPLICATION + 'controller/').length);
 
-			let permission = controller.substring(0, controller.indexOf('.'));
+			let permission = controller.substring(0, controller.indexOf('.')).replaceAll('\\','/');
 
 			if (!ignore.includes(permission)) {
 				data['permissions'].push(permission);
@@ -307,7 +307,7 @@ module.exports = class UserPermissionController extends global['\Opencart\System
 		}
 
 		data['user_token'] = this.session.data['user_token'];
-
+		
 		data['header'] = await this.load.controller('common/header');
 		data['column_left'] = await this.load.controller('common/column_left');
 		data['footer'] = await this.load.controller('common/footer');
@@ -320,7 +320,6 @@ module.exports = class UserPermissionController extends global['\Opencart\System
 	 */
 	async save() {
 		await this.load.language('user/user_group');
-
 		const json = { error: {} };
 
 		if (!await this.user.hasPermission('modify', 'user/user_permission')) {
@@ -334,6 +333,7 @@ module.exports = class UserPermissionController extends global['\Opencart\System
 		if (!Object.keys(json.error).length) {
 			this.load.model('user/user_group', this);
 			this.request.post['user_group_id'] = Number(this.request.post['user_group_id']);
+			
 			if (!this.request.post['user_group_id']) {
 				json['user_group_id'] = await this.model_user_user_group.addUserGroup(this.request.post);
 			} else {

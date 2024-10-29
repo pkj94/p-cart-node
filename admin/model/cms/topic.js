@@ -95,14 +95,14 @@ module.exports = class TopicModel extends global['\Opencart\System\Engine\Model'
 	async getTopic(topic_id) {
 		let sql = "SELECT DISTINCT * FROM `" + DB_PREFIX + "topic` `t` LEFT JOIN `" + DB_PREFIX + "topic_description` `td` ON (`t`.`topic_id` = `td`.`topic_id`) WHERE `t`.`topic_id` = '" + topic_id + "' AND `td`.`language_id` = '" + this.config.get('config_language_id') + "'";
 
-		let topic_data = await this.cache.get('topic.'.md5(sql));
+		let topic_data = await this.cache.get('topic.' + md5(sql));
 
 		if (!topic_data) {
 			let query = await this.db.query(sql);
 
 			topic_data = query.row;
 
-			await this.cache.set('topic.'.md5(sql), topic_data);
+			await this.cache.set('topic.' + md5(sql), topic_data);
 		}
 
 		return topic_data;
@@ -147,14 +147,14 @@ module.exports = class TopicModel extends global['\Opencart\System\Engine\Model'
 			sql += " LIMIT " + data['start'] + "," + data['limit'];
 		}
 
-		let topic_data = await this.cache.get('topic.'.md5(sql));
+		let topic_data = await this.cache.get('topic.' + md5(sql));
 
 		if (!topic_data) {
 			let query = await this.db.query(sql);
 
 			topic_data = query.rows;
 
-			await this.cache.set('topic.'.md5(sql), topic_data);
+			await this.cache.set('topic.' + md5(sql), topic_data);
 		}
 
 		return topic_data;

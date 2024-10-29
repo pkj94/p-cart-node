@@ -70,6 +70,7 @@ module.exports = class AntispamController extends global['\Opencart\System\Engin
 	 * @return string
 	 */
 	async getList() {
+		const data = {};
 		let filter_keyword = '';
 		if ((this.request.get['filter_keyword'])) {
 			filter_keyword = this.request.get['filter_keyword'];
@@ -264,7 +265,7 @@ module.exports = class AntispamController extends global['\Opencart\System\Engin
 
 		if (!Object.keys(json.error).length) {
 			this.load.model('cms/antispam', this);
-
+			this.request.post['antispam_id'] = Number(this.request.post['antispam_id']);
 			if (!this.request.post['antispam_id']) {
 				json['antispam_id'] = await this.model_cms_antispam.addAntispam(this.request.post);
 			} else {

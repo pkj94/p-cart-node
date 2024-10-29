@@ -79,7 +79,7 @@ module.exports = class Header extends global['\Opencart\System\Engine\Controller
 		data['checkout'] = await this.url.link('checkout/checkout', 'language=' + this.config.get('config_language'));
 		data['contact'] = await this.url.link('information/contact', 'language=' + this.config.get('config_language'));
 		data['telephone'] = this.config.get('config_telephone');
-
+		
 		data['language'] = await this.load.controller('common/language');
 		data['currency'] = await this.load.controller('common/currency');
 		data['search'] = await this.load.controller('common/search');

@@ -1,3 +1,5 @@
+const strtotime = require("locutus/php/datetime/strtotime");
+
 module.exports = class Subscription extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * Index
@@ -14,7 +16,7 @@ module.exports = class Subscription extends global['\Opencart\System\Engine\Cont
 		this.load.language('cron/subscription');
 
 		// Check the there is an order and the order status is complete and subscription status is active
-		filter_data = {
+		let filter_data = {
 			'filter_date_next': date('Y-m-d H:i:s'),
 			'filter_subscription_status_id': this.config.get('config_subscription_active_status_id'),
 			'start': 0,
@@ -22,39 +24,39 @@ module.exports = class Subscription extends global['\Opencart\System\Engine\Cont
 		};
 
 		// Get all
-		this.load.model('checkout/subscription',this);
-		this.load.model('checkout/order',this);
+		this.load.model('checkout/subscription', this);
+		this.load.model('checkout/order', this);
 
-		results = await this.model_checkout_subscription.getSubscriptions(filter_data);
+		const results = await this.model_checkout_subscription.getSubscriptions(filter_data);
 
 		for (let result of results) {
 			const order_info = await this.model_checkout_order.getOrder(result['order_id']);
 
 			// Check the there is an order and the order status is complete and subscription status is active
-			if (order_info && in_array(order_info['order_status_id'], this.config.get('config_complete_status'))) {
+			if (order_info.order_id && this.config.get('config_complete_status').includes(order_info['order_status_id'])) {
 				this.load.model('setting/store', this);
 
-				error = '';
+				let error = '';
 
-				// 1+ Language
+				// 1. Language
 				this.load.model('localisation/language', this);
 
 				const language_info = await this.model_localisation_language.getLanguage(result['language_id']);
 
-				if (!language_info) {
+				if (!language_info.language_id) {
 					error = this.language.get('error_language');
 				}
 
-				// 2+ Currency
+				// 2. Currency
 				this.load.model('localisation/currency', this);
 
-				currency_info = await this.model_localisation_currency.getCurrency(result['currency_id']);
+				const currency_info = await this.model_localisation_currency.getCurrency(result['currency_id']);
 
-				if (!currency_info) {
+				if (!currency_info.currency_id) {
 					error = this.language.get('error_currency');
 				}
-
-				// 3+ Create new instance of a store
+				let store;
+				// 3. Create new instance of a store
 				if (!error) {
 					store = await this.model_setting_store.createStoreInstance(result['store_id'], language_info['code']);
 
@@ -63,7 +65,7 @@ module.exports = class Subscription extends global['\Opencart\System\Engine\Cont
 
 					const customer_info = await this.model_account_customer.getCustomer(result['customer_id']);
 
-					if (customer_info && await this.customer.login(customer_info['email'], '', true)) {
+					if (customer_info.customer_id && await this.customer.login(customer_info['email'], '', true)) {
 						// Add customer details into session
 						store.session.data['customer'] = {
 							'customer_id': customer_info['customer_id'],
@@ -79,17 +81,16 @@ module.exports = class Subscription extends global['\Opencart\System\Engine\Cont
 					}
 				}
 
-				// 4+ Add product
+				// 4. Add product
 				if (!error) {
 					this.load.model('catalog/product', this);
 
 					const product_info = await this.model_checkout_order.getProduct(result['product_id']);
 
 					if (product_info.product_id) {
-						let option_data = [];
+						let option_data = {};
 
-						const
-							order_options = await this.model_account_order.getOptions(result['order_id'], result['order_product_id']);
+						const order_options = await this.model_account_order.getOptions(result['order_id'], result['order_product_id']);
 
 						for (let order_option of order_options) {
 							if (order_option['type'] == 'select' || order_option['type'] == 'radio' || order_option['type'] == 'image') {
@@ -109,27 +110,29 @@ module.exports = class Subscription extends global['\Opencart\System\Engine\Cont
 					}
 				}
 
-				// 5+ Add Shipping Address
-				if (!error && store.cart.hasShipping()) {
+				// 5. Add Shipping Address
+				let shipping_address_info;
+				if (!error && await store.cart.hasShipping()) {
 					this.load.model('account/address', this);
 
 					shipping_address_info = await this.model_account_address.getAddress(result['customer_id'], result['shipping_address_id']);
 
-					if (shipping_address_info) {
+					if (shipping_address_info.address_id) {
 						store.session.data['shipping_address'] = shipping_address_info;
 					} else {
 						error = this.language.get('error_shipping_address');
 					}
 
-					// 5+ Shipping Methods
+					// 5. Shipping Methods
+					let shipping_methods;
 					if (!error) {
-						this.load.model('checkout/shipping_method',this);
+						this.load.model('checkout/shipping_method', this);
 
 						shipping_methods = await this.model_checkout_shipping_method.getMethods(shipping_address_info);
 
 						// Validate shipping method
 						if ((order_info['shipping_method']['code']) && shipping_methods) {
-							shipping = explode('+', order_info['shipping_method']['code']);
+							let shipping = order_info['shipping_method']['code'].split('.');
 
 							if ((shipping[0]) && (shipping[1]) && (shipping_methods[shipping[0]]['quote'][shipping[1]])) {
 								store.session.data['shipping_method'] = shipping_methods[shipping[0]]['quote'][shipping[1]];
@@ -142,30 +145,32 @@ module.exports = class Subscription extends global['\Opencart\System\Engine\Cont
 					}
 				}
 
-				// 6+ Payment Address
-				payment_address = [];
-
+				// 6. Payment Address
+				let payment_address = [];
+				let payment_address_info;
 				if (!error && Number(this.config.get('config_checkout_payment_address'))) {
 					this.load.model('account/address', this);
 
 					payment_address_info = await this.model_account_address.getAddress(order_info['customer_id'], result['payment_address_id']);
 
-					if (payment_address_info) {
+					if (payment_address_info.address_id) {
 						store.session.data['payment_address'] = payment_address_info;
 					} else {
 						error = this.language.get('error_payment_address');
 					}
 				}
 
-				// 7+ Payment Methods
+				// 7. Payment Methods
+				let payment;
+				let payment_methods;
 				if (!error) {
-					this.load.model('checkout/payment_method',this);
+					this.load.model('checkout/payment_method', this);
 
 					payment_methods = await this.model_checkout_payment_method.getMethods(payment_address);
 
 					// Validate payment methods
 					if ((order_info['payment_method']['code']) && payment_methods) {
-						payment = explode('+', order_info['payment_method']['code']);
+						payment = order_info['payment_method']['code'].split('.');
 
 						if ((payment[0]) && (payment[1]) && (payment_methods[payment[0]]['option'][payment[1]])) {
 							store.session.data['payment_method'] = payment_methods[payment[0]]['option'][payment[1]];
@@ -176,11 +181,11 @@ module.exports = class Subscription extends global['\Opencart\System\Engine\Cont
 						error = this.language.get('error_payment_method');
 					}
 				}
-
+				const order_data = {}
 				if (!error) {
 					this.load.model('marketing/marketing', this);
 
-					marketing_info = await this.model_marketing_marketing.getMarketingByCode(this.session.data['tracking']);
+					const marketing_info = await this.model_marketing_marketing.getMarketingByCode(this.session.data['tracking']);
 					order_data['language_id'] = this.config.get('config_language_id');
 				}
 
@@ -204,7 +209,7 @@ module.exports = class Subscription extends global['\Opencart\System\Engine\Cont
 					order_data['custom_field'] = customer_info['custom_field'];
 
 					// Payment Details
-					if (payment_address_info) {
+					if (payment_address_info.address_id) {
 						order_data['payment_address_id'] = payment_address_info['address_id'];
 						order_data['payment_firstname'] = payment_address_info['firstname'];
 						order_data['payment_lastname'] = payment_address_info['lastname'];
@@ -239,7 +244,7 @@ module.exports = class Subscription extends global['\Opencart\System\Engine\Cont
 					order_data['payment_method'] = this.session.data['payment_method'];
 
 					// Shipping Details
-					if (store.cart.hasShipping()) {
+					if (await store.cart.hasShipping()) {
 						order_data['shipping_address_id'] = shipping_address_info['address_id'];
 						order_data['shipping_firstname'] = shipping_address_info['firstname'];
 						order_data['shipping_lastname'] = shipping_address_info['lastname'];
@@ -302,21 +307,23 @@ module.exports = class Subscription extends global['\Opencart\System\Engine\Cont
 					order_data['vouchers'] = [];
 
 					// Order Totals
-					const totals = [];
-					taxes = store.cart.getTaxes();
-					total = 0;
+					let totals = [];
+					let taxes = await store.cart.getTaxes();
+					let total = 0;
 
-					store.load.model('checkout/cart');
+					store.load.model('checkout/cart', this);
 
-					(store.model_checkout_cart.getTotals)(totals, taxes, total);
-
-					total_data = {
+					const totalData = await store.model_checkout_cart.getTotals(totals, taxes, total);
+					totals = totalData.totals;
+					taxes = totalData.taxes;
+					total = totalData.total;
+					let total_data = {
 						'totals': totals,
 						'taxes': taxes,
 						'total': total
 					};
 
-					order_data = array_merge(order_data, total_data);
+					order_data = { ...order_data, ...total_data };
 
 					order_data['affiliate_id'] = 0;
 					order_data['commission'] = 0;
@@ -324,15 +331,15 @@ module.exports = class Subscription extends global['\Opencart\System\Engine\Cont
 					order_data['tracking'] = '';
 
 					if ((this.session.data['tracking'])) {
-						subtotal = await this.cart.getSubTotal();
+						let subtotal = await this.cart.getSubTotal();
 
 						// Affiliate
 						if (this.config.get('config_affiliate_status')) {
 							this.load.model('account/affiliate', this);
 
-							affiliate_info = await this.model_account_affiliate.getAffiliateByTracking(this.session.data['tracking']);
+							const affiliate_info = await this.model_account_affiliate.getAffiliateByTracking(this.session.data['tracking']);
 
-							if (affiliate_info) {
+							if (affiliate_info.customer_id) {
 								order_data['affiliate_id'] = affiliate_info['customer_id'];
 								order_data['commission'] = (subtotal / 100) * affiliate_info['commission'];
 								order_data['tracking'] = this.session.data['tracking'];
@@ -341,9 +348,9 @@ module.exports = class Subscription extends global['\Opencart\System\Engine\Cont
 
 						this.load.model('marketing/marketing', this);
 
-						marketing_info = await this.model_marketing_marketing.getMarketingByCode(this.session.data['tracking']);
+						const marketing_info = await this.model_marketing_marketing.getMarketingByCode(this.session.data['tracking']);
 
-						if (marketing_info) {
+						if (marketing_info.marketing_id) {
 							order_data['marketing_id'] = marketing_info['marketing_id'];
 						}
 					}
@@ -363,14 +370,14 @@ module.exports = class Subscription extends global['\Opencart\System\Engine\Cont
 					order_data['user_agent'] = result['user_agent'];
 					order_data['accept_language'] = result['accept_language'];
 				}
-
+				let amount = result['price'];
 				if (result['trial_status'] && (!result['trial_duration'] || result['trial_remaining'])) {
 					amount = result['trial_price'];
 				} else if (!result['duration'] || result['remaining']) {
 					amount = result['price'];
 				}
 
-				subscription_status_id = this.config.get('config_subscription_status_id');
+				let subscription_status_id = this.config.get('config_subscription_status_id');
 
 				// Get the payment method used by the subscription
 				// Check payment status
@@ -404,22 +411,23 @@ module.exports = class Subscription extends global['\Opencart\System\Engine\Cont
 				*/
 				// Transaction
 				if (this.config.get('config_subscription_active_status_id') == subscription_status_id) {
+					let date_next = date('Y-m-d', strtotime('+' + result['cycle'] + ' ' + result['frequency']));
 					if (result['trial_duration'] && result['trial_remaining']) {
 						date_next = date('Y-m-d', strtotime('+' + result['trial_cycle'] + ' ' + result['trial_frequency']));
 					} else if (result['duration'] && result['remaining']) {
 						date_next = date('Y-m-d', strtotime('+' + result['cycle'] + ' ' + result['frequency']));
 					}
 
-					filter_data = {
-						'filter_date_next' : date_next,
-						'filter_subscription_status_id' : subscription_status_id,
-						'start' : 0,
-						'limit' : 1
+					let filter_data = {
+						'filter_date_next': date_next,
+						'filter_subscription_status_id': subscription_status_id,
+						'start': 0,
+						'limit': 1
 					};
 
-					subscriptions = await this.model_account_subscription.getSubscriptions(filter_data);
+					const subscriptions = await this.model_account_subscription.getSubscriptions(filter_data);
 
-					if (subscriptions) {
+					if (subscriptions.length) {
 						// Only match the latest order ID of the same customer ID
 						// since new subscriptions cannot be re-added with the same
 						// order ID; only as a new order ID added by an extension
@@ -427,7 +435,7 @@ module.exports = class Subscription extends global['\Opencart\System\Engine\Cont
 							if (subscription['customer_id'] == result['customer_id'] && (subscription['subscription_id'] != result['subscription_id']) && (subscription['order_id'] != result['order_id']) && (subscription['order_product_id'] != result['order_product_id'])) {
 								const subscription_info = await this.model_account_subscription.getSubscription(subscription['subscription_id']);
 
-								if (subscription_info.subscription_id) {
+								if (subscription_info.subscription_plan_id) {
 									// this.model_account_subscription.addTransaction(subscription['subscription_id'], subscription['order_id'], this.language.get('text_success'), amount, subscription_info['type'], subscription_info['payment_method'], subscription_info['payment_code']);
 								}
 							}

@@ -7,7 +7,7 @@ module.exports = class UserGroupUserModel extends global['\Opencart\System\Engin
 	 * @return int
 	 */
 	async addUserGroup(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "user_group` SET `name` = " + this.db.escape(data['name']) + ", `permission` = " + this.db.escape(JSON.stringify(data['permission'] || {})));
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "user_group` SET `name` = " + this.db.escape(data['name']) + ", `permission` = '" + JSON.stringify(data['permission'] || {}) + "'");
 
 		return this.db.getLastId();
 	}
@@ -19,7 +19,7 @@ module.exports = class UserGroupUserModel extends global['\Opencart\System\Engin
 	 * @return void
 	 */
 	async editUserGroup(user_group_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "user_group` SET `name` = " + this.db.escape(data['name']) + ", `permission` = " + this.db.escape(JSON.stringify(data['permission'] || {})) + " WHERE `user_group_id` = '" + user_group_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "user_group` SET `name` = " + this.db.escape(data['name']) + ", `permission` = '" + JSON.stringify(data['permission'] || {}) + "' WHERE `user_group_id` = '" + user_group_id + "'");
 	}
 
 	/**

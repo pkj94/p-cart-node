@@ -226,7 +226,7 @@ module.exports = class TopicController extends global['\Opencart\System\Engine\C
 			for (let [key, result] of Object.entries(results)) {
 				data['topic_description'][key] = result;
 
-				if (result['image'] && findSeries.existSync(DIR_IMAGE + html_entity_decode(result['image']))) {
+				if (result['image'] && fs.existsSync(DIR_IMAGE + html_entity_decode(result['image']))) {
 					data['topic_description'][key]['thumb'] = await this.model_tool_image.resize(html_entity_decode(result['image']), 100, 100);
 				} else {
 					data['topic_description'][key]['thumb'] = data['placeholder'];
@@ -291,7 +291,7 @@ module.exports = class TopicController extends global['\Opencart\System\Engine\C
 	async save() {
 		await this.load.language('cms/topic');
 
-		const json = {};
+		const json = { error: {} };
 
 		if (!await this.user.hasPermission('modify', 'cms/topic')) {
 			json['error']['warning'] = this.language.get('error_permission');
@@ -337,9 +337,9 @@ module.exports = class TopicController extends global['\Opencart\System\Engine\C
 			json['error']['warning'] = this.language.get('error_warning');
 		}
 
-		if (!Object.keys(json).length) {
+		if (!Object.keys(json.error).length) {
 			this.load.model('cms/topic', this);
-
+			this.request.post['topic_id'] = Number(this.request.post['topic_id']);
 			if (!this.request.post['topic_id']) {
 				json['topic_id'] = await this.model_cms_topic.addTopic(this.request.post);
 			} else {

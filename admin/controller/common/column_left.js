@@ -7,7 +7,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
             menus: []
         };
         if ((this.request.get['user_token']) && (this.session.data['user_token']) && (this.request.get['user_token'] == this.session.data['user_token'])) {
-            await  this.load.language('common/column_left');
+            await this.load.language('common/column_left');
 
             // Create a 3 level menu array
             // Level 2 cannot have children
@@ -24,7 +24,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
             // Catalog
             let catalog = [];
 
-            if (await  this.user.hasPermission('access', 'catalog/category')) {
+            if (await this.user.hasPermission('access', 'catalog/category')) {
                 catalog.push({
                     'name': this.language.get('text_category'),
                     'href': await this.url.link('catalog/category', 'user_token=' + this.session.data['user_token']),
@@ -32,7 +32,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
                 });
             }
 
-            if (await  this.user.hasPermission('access', 'catalog/product')) {
+            if (await this.user.hasPermission('access', 'catalog/product')) {
                 catalog.push({
                     'name': this.language.get('text_product'),
                     'href': await this.url.link('catalog/product', 'user_token=' + this.session.data['user_token']),
@@ -40,7 +40,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
                 });
             }
 
-            if (await  this.user.hasPermission('access', 'catalog/subscription_plan')) {
+            if (await this.user.hasPermission('access', 'catalog/subscription_plan')) {
                 catalog.push({
                     'name': this.language.get('text_subscription_plan'),
                     'href': await this.url.link('catalog/subscription_plan', 'user_token=' + this.session.data['user_token']),
@@ -48,7 +48,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
                 });
             }
 
-            if (await  this.user.hasPermission('access', 'catalog/filter')) {
+            if (await this.user.hasPermission('access', 'catalog/filter')) {
                 catalog.push({
                     'name': this.language.get('text_filter'),
                     'href': await this.url.link('catalog/filter', 'user_token=' + this.session.data['user_token']),
@@ -59,7 +59,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
             // Attributes
             let attribute = [];
 
-            if (await  this.user.hasPermission('access', 'catalog/attribute')) {
+            if (await this.user.hasPermission('access', 'catalog/attribute')) {
                 attribute.push({
                     'name': this.language.get('text_attribute'),
                     'href': await this.url.link('catalog/attribute', 'user_token=' + this.session.data['user_token']),
@@ -67,7 +67,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
                 });
             }
 
-            if (await  this.user.hasPermission('access', 'catalog/attribute_group')) {
+            if (await this.user.hasPermission('access', 'catalog/attribute_group')) {
                 attribute.push({
                     'name': this.language.get('text_attribute_group'),
                     'href': await this.url.link('catalog/attribute_group', 'user_token=' + this.session.data['user_token']),
@@ -83,7 +83,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
                 });
             }
 
-            if (await  this.user.hasPermission('access', 'catalog/option')) {
+            if (await this.user.hasPermission('access', 'catalog/option')) {
                 catalog.push({
                     'name': this.language.get('text_option'),
                     'href': await this.url.link('catalog/option', 'user_token=' + this.session.data['user_token']),
@@ -91,7 +91,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
                 });
             }
 
-            if (await  this.user.hasPermission('access', 'catalog/manufacturer')) {
+            if (await this.user.hasPermission('access', 'catalog/manufacturer')) {
                 catalog.push({
                     'name': this.language.get('text_manufacturer'),
                     'href': await this.url.link('catalog/manufacturer', 'user_token=' + this.session.data['user_token']),
@@ -99,7 +99,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
                 });
             }
 
-            if (await  this.user.hasPermission('access', 'catalog/download')) {
+            if (await this.user.hasPermission('access', 'catalog/download')) {
                 catalog.push({
                     'name': this.language.get('text_download'),
                     'href': await this.url.link('catalog/download', 'user_token=' + this.session.data['user_token']),
@@ -107,7 +107,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
                 });
             }
 
-            if (await  this.user.hasPermission('access', 'catalog/review')) {
+            if (await this.user.hasPermission('access', 'catalog/review')) {
                 catalog.push({
                     'name': this.language.get('text_review'),
                     'href': await this.url.link('catalog/review', 'user_token=' + this.session.data['user_token']),
@@ -115,7 +115,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
                 });
             }
 
-            if (await  this.user.hasPermission('access', 'catalog/information')) {
+            if (await this.user.hasPermission('access', 'catalog/information')) {
                 catalog.push({
                     'name': this.language.get('text_information'),
                     'href': await this.url.link('catalog/information', 'user_token=' + this.session.data['user_token']),
@@ -135,7 +135,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
 
             let cms = [];
 
-            if (await  this.user.hasPermission('access', 'cms/topic')) {
+            if (await this.user.hasPermission('access', 'cms/topic')) {
                 cms.push({
                     'name': this.language.get('text_topic'),
                     'href': await this.url.link('cms/topic', 'user_token=' + this.session.data['user_token']),
@@ -143,7 +143,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
                 });
             }
 
-            if (await  this.user.hasPermission('access', 'cms/article')) {
+            if (await this.user.hasPermission('access', 'cms/article')) {
                 cms.push({
                     'name': this.language.get('text_article'),
                     'href': await this.url.link('cms/article', 'user_token=' + this.session.data['user_token']),
@@ -151,7 +151,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
                 });
             }
 
-            if (await  this.user.hasPermission('access', 'cms/comment')) {
+            if (await this.user.hasPermission('access', 'cms/comment')) {
                 cms.push({
                     'name': this.language.get('text_comment'),
                     'href': await this.url.link('cms/comment', 'user_token=' + this.session.data['user_token']),
@@ -159,7 +159,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
                 });
             }
 
-            if (await  this.user.hasPermission('access', 'cms/antispam')) {
+            if (await this.user.hasPermission('access', 'cms/antispam')) {
                 cms.push({
                     'name': this.language.get('text_antispam'),
                     'href': await this.url.link('cms/antispam', 'user_token=' + this.session.data['user_token']),
@@ -167,20 +167,20 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
                 });
             }
             // Still in development
-            //if (cms) {
-            //	data['menus'].push({
-            //		'id'       : 'menu-cms',
-            //		'icon'	   : 'fa-regular fa-newspaper',
-            //		'name'	   : this.language.get('text_cms'),
-            //		'href'     : '',
-            //		'children' : cms
-            //	];
-            //}
+            if (cms) {
+                data['menus'].push({
+                    'id': 'menu-cms',
+                    'icon': 'fa-regular fa-newspaper',
+                    'name': this.language.get('text_cms'),
+                    'href': '',
+                    'children': cms
+                });
+            }
 
             // Extension
             let marketplace = [];
 
-            if (await  this.user.hasPermission('access', 'marketplace/marketplace')) {
+            if (await this.user.hasPermission('access', 'marketplace/marketplace')) {
                 marketplace.push({
                     'name': this.language.get('text_marketplace'),
                     'href': await this.url.link('marketplace/marketplace', 'user_token=' + this.session.data['user_token']),
@@ -188,7 +188,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
                 });
             }
 
-            if (await  this.user.hasPermission('access', 'marketplace/installer')) {
+            if (await this.user.hasPermission('access', 'marketplace/installer')) {
                 marketplace.push({
                     'name': this.language.get('text_installer'),
                     'href': await this.url.link('marketplace/installer', 'user_token=' + this.session.data['user_token']),
@@ -196,7 +196,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
                 });
             }
 
-            if (await  this.user.hasPermission('access', 'marketplace/extension')) {
+            if (await this.user.hasPermission('access', 'marketplace/extension')) {
                 marketplace.push({
                     'name': this.language.get('text_extension'),
                     'href': await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token']),
@@ -204,7 +204,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
                 });
             }
 
-            if (await  this.user.hasPermission('access', 'marketplace/startup')) {
+            if (await this.user.hasPermission('access', 'marketplace/startup')) {
                 marketplace.push({
                     'name': this.language.get('text_startup'),
                     'href': await this.url.link('marketplace/startup', 'user_token=' + this.session.data['user_token']),
@@ -212,7 +212,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
                 });
             }
 
-            if (await  this.user.hasPermission('access', 'marketplace/event')) {
+            if (await this.user.hasPermission('access', 'marketplace/event')) {
                 marketplace.push({
                     'name': this.language.get('text_event'),
                     'href': await this.url.link('marketplace/event', 'user_token=' + this.session.data['user_token']),
@@ -220,7 +220,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
                 });
             }
 
-            if (await  this.user.hasPermission('access', 'marketplace/cron')) {
+            if (await this.user.hasPermission('access', 'marketplace/cron')) {
                 marketplace.push({
                     'name': this.language.get('text_cron'),
                     'href': await this.url.link('marketplace/cron', 'user_token=' + this.session.data['user_token']),
@@ -241,7 +241,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
             // Design
             let design = [];
 
-            if (await  this.user.hasPermission('access', 'design/layout')) {
+            if (await this.user.hasPermission('access', 'design/layout')) {
                 design.push({
                     'name': this.language.get('text_layout'),
                     'href': await this.url.link('design/layout', 'user_token=' + this.session.data['user_token']),
@@ -249,7 +249,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
                 });
             }
 
-            if (await  this.user.hasPermission('access', 'design/theme')) {
+            if (await this.user.hasPermission('access', 'design/theme')) {
                 design.push({
                     'name': this.language.get('text_theme'),
                     'href': await this.url.link('design/theme', 'user_token=' + this.session.data['user_token']),
@@ -257,7 +257,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
                 });
             }
 
-            if (await  this.user.hasPermission('access', 'design/translation')) {
+            if (await this.user.hasPermission('access', 'design/translation')) {
                 design.push({
                     'name': this.language.get('text_language_editor'),
                     'href': await this.url.link('design/translation', 'user_token=' + this.session.data['user_token']),
@@ -265,7 +265,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
                 });
             }
 
-            if (await  this.user.hasPermission('access', 'design/banner')) {
+            if (await this.user.hasPermission('access', 'design/banner')) {
                 design.push({
                     'name': this.language.get('text_banner'),
                     'href': await this.url.link('design/banner', 'user_token=' + this.session.data['user_token']),
@@ -275,7 +275,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
 
             let seo = [];
 
-            if (await  this.user.hasPermission('access', 'design/seo_url')) {
+            if (await this.user.hasPermission('access', 'design/seo_url')) {
                 design.push({
                     'name': this.language.get('text_seo_url'),
                     'href': await this.url.link('design/seo_url', 'user_token=' + this.session.data['user_token']),
@@ -296,7 +296,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
             // Sales
             let sale = [];
 
-            if (await  this.user.hasPermission('access', 'sale/order')) {
+            if (await this.user.hasPermission('access', 'sale/order')) {
                 sale.push({
                     'name': this.language.get('text_order'),
                     'href': await this.url.link('sale/order', 'user_token=' + this.session.data['user_token']),
@@ -304,7 +304,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
                 });
             }
 
-            if (await  this.user.hasPermission('access', 'sale/subscription')) {
+            if (await this.user.hasPermission('access', 'sale/subscription')) {
                 sale.push({
                     'name': this.language.get('text_subscription'),
                     'href': await this.url.link('sale/subscription', 'user_token=' + this.session.data['user_token']),
@@ -312,7 +312,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
                 });
             }
 
-            if (await  this.user.hasPermission('access', 'sale/returns')) {
+            if (await this.user.hasPermission('access', 'sale/returns')) {
                 sale.push({
                     'name': this.language.get('text_return'),
                     'href': await this.url.link('sale/returns', 'user_token=' + this.session.data['user_token']),
@@ -323,7 +323,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
             // Voucher
             let voucher = [];
 
-            if (await  this.user.hasPermission('access', 'sale/voucher')) {
+            if (await this.user.hasPermission('access', 'sale/voucher')) {
                 voucher.push({
                     'name': this.language.get('text_voucher'),
                     'href': await this.url.link('sale/voucher', 'user_token=' + this.session.data['user_token']),
@@ -331,7 +331,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
                 });
             }
 
-            if (await  this.user.hasPermission('access', 'sale/voucher_theme')) {
+            if (await this.user.hasPermission('access', 'sale/voucher_theme')) {
                 voucher.push({
                     'name': this.language.get('text_voucher_theme'),
                     'href': await this.url.link('sale/voucher_theme', 'user_token=' + this.session.data['user_token']),
@@ -360,7 +360,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
             // Customer
             let customer = [];
 
-            if (await  this.user.hasPermission('access', 'customer/customer')) {
+            if (await this.user.hasPermission('access', 'customer/customer')) {
                 customer.push({
                     'name': this.language.get('text_customer'),
                     'href': await this.url.link('customer/customer', 'user_token=' + this.session.data['user_token']),
@@ -368,7 +368,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
                 });
             }
 
-            if (await  this.user.hasPermission('access', 'customer/customer_group')) {
+            if (await this.user.hasPermission('access', 'customer/customer_group')) {
                 customer.push({
                     'name': this.language.get('text_customer_group'),
                     'href': await this.url.link('customer/customer_group', 'user_token=' + this.session.data['user_token']),
@@ -376,7 +376,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
                 });
             }
 
-            if (await  this.user.hasPermission('access', 'customer/customer_approval')) {
+            if (await this.user.hasPermission('access', 'customer/customer_approval')) {
                 customer.push({
                     'name': this.language.get('text_customer_approval'),
                     'href': await this.url.link('customer/customer_approval', 'user_token=' + this.session.data['user_token']),
@@ -384,7 +384,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
                 });
             }
 
-            if (await  this.user.hasPermission('access', 'customer/gdpr')) {
+            if (await this.user.hasPermission('access', 'customer/gdpr')) {
                 customer.push({
                     'name': this.language.get('text_gdpr'),
                     'href': await this.url.link('customer/gdpr', 'user_token=' + this.session.data['user_token']),
@@ -392,7 +392,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
                 });
             }
 
-            if (await  this.user.hasPermission('access', 'customer/custom_field')) {
+            if (await this.user.hasPermission('access', 'customer/custom_field')) {
                 customer.push({
                     'name': this.language.get('text_custom_field'),
                     'href': await this.url.link('customer/custom_field', 'user_token=' + this.session.data['user_token']),
@@ -413,7 +413,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
             // Marketing
             let marketing = [];
 
-            if (await  this.user.hasPermission('access', 'marketing/affiliate')) {
+            if (await this.user.hasPermission('access', 'marketing/affiliate')) {
                 marketing.push({
                     'name': this.language.get('text_affiliate'),
                     'href': await this.url.link('marketing/affiliate', 'user_token=' + this.session.data['user_token']),
@@ -421,7 +421,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
                 });
             }
 
-            if (await  this.user.hasPermission('access', 'marketing/marketing')) {
+            if (await this.user.hasPermission('access', 'marketing/marketing')) {
                 marketing.push({
                     'name': this.language.get('text_marketing'),
                     'href': await this.url.link('marketing/marketing', 'user_token=' + this.session.data['user_token']),
@@ -429,7 +429,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
                 });
             }
 
-            if (await  this.user.hasPermission('access', 'marketing/coupon')) {
+            if (await this.user.hasPermission('access', 'marketing/coupon')) {
                 marketing.push({
                     'name': this.language.get('text_coupon'),
                     'href': await this.url.link('marketing/coupon', 'user_token=' + this.session.data['user_token']),
@@ -437,7 +437,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
                 });
             }
 
-            if (await  this.user.hasPermission('access', 'marketing/contact')) {
+            if (await this.user.hasPermission('access', 'marketing/contact')) {
                 marketing.push({
                     'name': this.language.get('text_contact'),
                     'href': await this.url.link('marketing/contact', 'user_token=' + this.session.data['user_token']),
@@ -458,7 +458,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
             // System
             let system = [];
 
-            if (await  this.user.hasPermission('access', 'setting/setting')) {
+            if (await this.user.hasPermission('access', 'setting/setting')) {
                 system.push({
                     'name': this.language.get('text_setting'),
                     'href': await this.url.link('setting/store', 'user_token=' + this.session.data['user_token']),
@@ -469,7 +469,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
             // Users
             let user = [];
 
-            if (await  this.user.hasPermission('access', 'user/user')) {
+            if (await this.user.hasPermission('access', 'user/user')) {
                 user.push({
                     'name': this.language.get('text_users'),
                     'href': await this.url.link('user/user', 'user_token=' + this.session.data['user_token']),
@@ -477,7 +477,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
                 });
             }
 
-            if (await  this.user.hasPermission('access', 'user/user_permission')) {
+            if (await this.user.hasPermission('access', 'user/user_permission')) {
                 user.push({
                     'name': this.language.get('text_user_group'),
                     'href': await this.url.link('user/user_permission', 'user_token=' + this.session.data['user_token']),
@@ -485,7 +485,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
                 });
             }
 
-            if (await  this.user.hasPermission('access', 'user/api')) {
+            if (await this.user.hasPermission('access', 'user/api')) {
                 user.push({
                     'name': this.language.get('text_api'),
                     'href': await this.url.link('user/api', 'user_token=' + this.session.data['user_token']),
@@ -504,7 +504,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
             // Localisation
             let localisation = [];
 
-            if (await  this.user.hasPermission('access', 'localisation/location')) {
+            if (await this.user.hasPermission('access', 'localisation/location')) {
                 localisation.push({
                     'name': this.language.get('text_location'),
                     'href': await this.url.link('localisation/location', 'user_token=' + this.session.data['user_token']),
@@ -512,7 +512,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
                 });
             }
 
-            if (await  this.user.hasPermission('access', 'localisation/language')) {
+            if (await this.user.hasPermission('access', 'localisation/language')) {
                 localisation.push({
                     'name': this.language.get('text_language'),
                     'href': await this.url.link('localisation/language', 'user_token=' + this.session.data['user_token']),
@@ -520,7 +520,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
                 });
             }
 
-            if (await  this.user.hasPermission('access', 'localisation/currency')) {
+            if (await this.user.hasPermission('access', 'localisation/currency')) {
                 localisation.push({
                     'name': this.language.get('text_currency'),
                     'href': await this.url.link('localisation/currency', 'user_token=' + this.session.data['user_token']),
@@ -528,7 +528,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
                 });
             }
 
-            if (await  this.user.hasPermission('access', 'localisation/stock_status')) {
+            if (await this.user.hasPermission('access', 'localisation/stock_status')) {
                 localisation.push({
                     'name': this.language.get('text_stock_status'),
                     'href': await this.url.link('localisation/stock_status', 'user_token=' + this.session.data['user_token']),
@@ -536,7 +536,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
                 });
             }
 
-            if (await  this.user.hasPermission('access', 'localisation/order_status')) {
+            if (await this.user.hasPermission('access', 'localisation/order_status')) {
                 localisation.push({
                     'name': this.language.get('text_order_status'),
                     'href': await this.url.link('localisation/order_status', 'user_token=' + this.session.data['user_token']),
@@ -544,7 +544,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
                 });
             }
 
-            if (await  this.user.hasPermission('access', 'localisation/subscription_status')) {
+            if (await this.user.hasPermission('access', 'localisation/subscription_status')) {
                 localisation.push({
                     'name': this.language.get('text_subscription_status'),
                     'href': await this.url.link('localisation/subscription_status', 'user_token=' + this.session.data['user_token']),
@@ -555,7 +555,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
             // Returns
             let returns = [];
 
-            if (await  this.user.hasPermission('access', 'localisation/return_status')) {
+            if (await this.user.hasPermission('access', 'localisation/return_status')) {
                 returns.push({
                     'name': this.language.get('text_return_status'),
                     'href': await this.url.link('localisation/return_status', 'user_token=' + this.session.data['user_token']),
@@ -563,7 +563,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
                 });
             }
 
-            if (await  this.user.hasPermission('access', 'localisation/return_action')) {
+            if (await this.user.hasPermission('access', 'localisation/return_action')) {
                 returns.push({
                     'name': this.language.get('text_return_action'),
                     'href': await this.url.link('localisation/return_action', 'user_token=' + this.session.data['user_token']),
@@ -571,7 +571,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
                 });
             }
 
-            if (await  this.user.hasPermission('access', 'localisation/return_reason')) {
+            if (await this.user.hasPermission('access', 'localisation/return_reason')) {
                 returns.push({
                     'name': this.language.get('text_return_reason'),
                     'href': await this.url.link('localisation/return_reason', 'user_token=' + this.session.data['user_token']),
@@ -587,7 +587,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
                 });
             }
 
-            if (await  this.user.hasPermission('access', 'localisation/country')) {
+            if (await this.user.hasPermission('access', 'localisation/country')) {
                 localisation.push({
                     'name': this.language.get('text_country'),
                     'href': await this.url.link('localisation/country', 'user_token=' + this.session.data['user_token']),
@@ -595,7 +595,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
                 });
             }
 
-            if (await  this.user.hasPermission('access', 'localisation/zone')) {
+            if (await this.user.hasPermission('access', 'localisation/zone')) {
                 localisation.push({
                     'name': this.language.get('text_zone'),
                     'href': await this.url.link('localisation/zone', 'user_token=' + this.session.data['user_token']),
@@ -603,7 +603,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
                 });
             }
 
-            if (await  this.user.hasPermission('access', 'localisation/geo_zone')) {
+            if (await this.user.hasPermission('access', 'localisation/geo_zone')) {
                 localisation.push({
                     'name': this.language.get('text_geo_zone'),
                     'href': await this.url.link('localisation/geo_zone', 'user_token=' + this.session.data['user_token']),
@@ -614,7 +614,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
             // Tax
             let tax = [];
 
-            if (await  this.user.hasPermission('access', 'localisation/tax_class')) {
+            if (await this.user.hasPermission('access', 'localisation/tax_class')) {
                 tax.push({
                     'name': this.language.get('text_tax_class'),
                     'href': await this.url.link('localisation/tax_class', 'user_token=' + this.session.data['user_token']),
@@ -622,7 +622,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
                 });
             }
 
-            if (await  this.user.hasPermission('access', 'localisation/tax_rate')) {
+            if (await this.user.hasPermission('access', 'localisation/tax_rate')) {
                 tax.push({
                     'name': this.language.get('text_tax_rate'),
                     'href': await this.url.link('localisation/tax_rate', 'user_token=' + this.session.data['user_token']),
@@ -638,7 +638,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
                 });
             }
 
-            if (await  this.user.hasPermission('access', 'localisation/length_class')) {
+            if (await this.user.hasPermission('access', 'localisation/length_class')) {
                 localisation.push({
                     'name': this.language.get('text_length_class'),
                     'href': await this.url.link('localisation/length_class', 'user_token=' + this.session.data['user_token']),
@@ -646,7 +646,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
                 });
             }
 
-            if (await  this.user.hasPermission('access', 'localisation/weight_class')) {
+            if (await this.user.hasPermission('access', 'localisation/weight_class')) {
                 localisation.push({
                     'name': this.language.get('text_weight_class'),
                     'href': await this.url.link('localisation/weight_class', 'user_token=' + this.session.data['user_token']),
@@ -654,7 +654,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
                 });
             }
 
-            if (await  this.user.hasPermission('access', 'localisation/address_format')) {
+            if (await this.user.hasPermission('access', 'localisation/address_format')) {
                 localisation.push({
                     'name': this.language.get('text_address_format'),
                     'href': await this.url.link('localisation/address_format', 'user_token=' + this.session.data['user_token']),
@@ -673,7 +673,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
             // Tools
             let maintenance = [];
 
-            if (await  this.user.hasPermission('access', 'tool/upgrade')) {
+            if (await this.user.hasPermission('access', 'tool/upgrade')) {
                 maintenance.push({
                     'name': this.language.get('text_upgrade'),
                     'href': await this.url.link('tool/upgrade', 'user_token=' + this.session.data['user_token']),
@@ -681,7 +681,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
                 });
             }
 
-            if (await  this.user.hasPermission('access', 'tool/backup')) {
+            if (await this.user.hasPermission('access', 'tool/backup')) {
                 maintenance.push({
                     'name': this.language.get('text_backup'),
                     'href': await this.url.link('tool/backup', 'user_token=' + this.session.data['user_token']),
@@ -689,7 +689,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
                 });
             }
 
-            if (await  this.user.hasPermission('access', 'tool/upload')) {
+            if (await this.user.hasPermission('access', 'tool/upload')) {
                 maintenance.push({
                     'name': this.language.get('text_upload'),
                     'href': await this.url.link('tool/upload', 'user_token=' + this.session.data['user_token']),
@@ -697,7 +697,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
                 });
             }
 
-            if (await  this.user.hasPermission('access', 'tool/log')) {
+            if (await this.user.hasPermission('access', 'tool/log')) {
                 maintenance.push({
                     'name': this.language.get('text_log'),
                     'href': await this.url.link('tool/log', 'user_token=' + this.session.data['user_token']),
@@ -725,7 +725,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
 
             let report = [];
 
-            if (await  this.user.hasPermission('access', 'report/report')) {
+            if (await this.user.hasPermission('access', 'report/report')) {
                 report.push({
                     'name': this.language.get('text_reports'),
                     'href': await this.url.link('report/report', 'user_token=' + this.session.data['user_token']),
@@ -733,7 +733,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
                 });
             }
 
-            if (await  this.user.hasPermission('access', 'report/online')) {
+            if (await this.user.hasPermission('access', 'report/online')) {
                 report.push({
                     'name': this.language.get('text_online'),
                     'href': await this.url.link('report/online', 'user_token=' + this.session.data['user_token']),
@@ -741,7 +741,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
                 });
             }
 
-            if (await  this.user.hasPermission('access', 'report/statistics')) {
+            if (await this.user.hasPermission('access', 'report/statistics')) {
                 report.push({
                     'name': this.language.get('text_statistics'),
                     'href': await this.url.link('report/statistics', 'user_token=' + this.session.data['user_token']),
@@ -760,7 +760,7 @@ module.exports = class ColumnLeftCommonController extends global['\Opencart\Syst
             }
 
             // Stats
-            if (await  this.user.hasPermission('access', 'report/statistics')) {
+            if (await this.user.hasPermission('access', 'report/statistics')) {
                 this.load.model('sale/order', this);
 
                 let order_total = await this.model_sale_order.getTotalOrders();

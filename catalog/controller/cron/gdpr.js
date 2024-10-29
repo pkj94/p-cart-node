@@ -17,7 +17,7 @@ module.exports = class Gdpr extends global['\Opencart\System\Engine\Controller']
 		for (let result of results) {
 			await this.model_account_gdpr.editStatus(result['gdpr_id'], 3);
 
-			customer_info = await this.model_account_customer.getCustomerByEmail(result['email']);
+			const customer_info = await this.model_account_customer.getCustomerByEmail(result['email']);
 
 			if (customer_info.customer_id) {
 				await this.model_account_customer.deleteCustomer(customer_info['customer_id']);

@@ -19,10 +19,10 @@ module.exports = class UrlLibrary {
                 url += `&${args.trim('&')}`;
             }
         }
+        
         for (const rewrite of this.rewrite) {
             url = await rewrite.rewrite(url);
         }
-
         return js ? url : url.replace(/&/g, '&amp;');
     }
 }

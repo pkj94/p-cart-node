@@ -44,6 +44,8 @@ module.exports = class Framework {
         if (request.get['route']) {
             request.get['route'] = request.get['route'].replace('|', '.');
             request.get['route'] = request.get['route'].replace('%7C', '|');
+        } else if (req.params[0]) {
+            request.get['_route_'] = req.params[0];
         }
         // Response
         const response = new global['\Opencart\System\Library\Response'](res, req);

@@ -2263,6 +2263,7 @@ INSERT INTO `oc_seo_url` (`store_id`, `language_id`, `key`, `value`, `keyword`, 
 (0, 1, 'route', 'information/information', 'information', -1),
 (0, 1, 'route', 'product/product', 'product', -1),
 (0, 1, 'route', 'product/category', 'catalog', -1),
+(0, 1, 'route', 'common/home', '', -1),
 (0, 1, 'route', 'product/manufacturer', 'brands', -1);
 
 -----------------------------------------------------------
