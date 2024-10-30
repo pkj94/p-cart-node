@@ -204,5 +204,8 @@ global.bin2hex = (length = 26) => {
     return crypto.randomBytes(26).toString('hex').substring(0, length);
 }
 global.is_file = (file) => {
-    return fs.existsSync(file)
+    return fs.statSync(file).isFile()
+}
+global.is_dir = (file) => {
+    return fs.statSync(file).isDirectory()
 }

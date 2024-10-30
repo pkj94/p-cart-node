@@ -15,7 +15,7 @@ let adminRoutes = require('./admin');
 let catalogRoutes = require('./catalog');
 let installRoutes = require('./install');
 // boostrap all models
-
+process.setMaxListeners(100)
 var compression = require('compression')
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
@@ -69,6 +69,12 @@ app.use(bodyParser.json({ limit: '50mb' }));
 
 app.use(compression());
 app.use('/image', express.static('image'));
+// admin
+app.use('/admin/view/stylesheet', express.static(getConfig('DIR_APPLICATION', 'admin') + 'view/stylesheet'));
+app.use('/admin/view/javascript', express.static(getConfig('DIR_APPLICATION', 'admin') + 'view/javascript'));
+app.use('/admin/view/image', express.static(getConfig('DIR_APPLICATION', 'admin') + 'view/image'));
+app.use('/admin/language', express.static(getConfig('DIR_APPLICATION', 'admin') + '/language'));
+
 app.use('/catalog/view/stylesheet', express.static('catalog/view/stylesheet'));
 app.use('/catalog/view/javascript', express.static('catalog/view/javascript'));
 app.use('/catalog/view/image', express.static('catalog/view/image'));
@@ -115,6 +121,7 @@ app.use((req, res, next) => {
         next();
     }
 });
+
 adminRoutes(registry);
 installRoutes(registry);
 catalogRoutes(registry);

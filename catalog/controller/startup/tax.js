@@ -4,7 +4,8 @@ module.exports = class Tax extends global['\Opencart\System\Engine\Controller'] 
 	 */
 	async index() {
 		this.registry.set('tax', new (require(DIR_SYSTEM + 'library/cart/tax'))(this.registry));
-
+		// console.log('config_country_id',this.config.get('config_country_id'))
+		// console.log('config_zone_id',this.config.get('config_zone_id'))
 		if ((this.session.data['shipping_address'])) {
 			this.registry.get('tax').setShippingAddress(this.session.data['shipping_address']['country_id'], this.session.data['shipping_address']['zone_id']);
 		} else if (this.config.get('config_tax_default') == 'shipping') {

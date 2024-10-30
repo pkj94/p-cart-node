@@ -16,7 +16,12 @@ module.exports = class Language extends global['\Opencart\System\Engine\Controll
 	}
 
 	after(route, args, output) {
-		const data = JSON.parse(this.language.get('backup'));
+		let data = {};
+		try {
+			data = this.language.get('backup') ? JSON.parse(this.language.get('backup')) : {};
+		} catch (e) {
+			data = {};
+		}
 		if (typeof data == 'object') {
 			this.language.clear();
 			for (const [key, value] of Object.entries(data)) {

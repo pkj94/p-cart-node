@@ -45,20 +45,27 @@ module.exports = class TemplateTwigLibrary {
             // };
             // const twig = new Environment(loader, config);
             try {
-                twigNode.renderFile(file, {
-                    ...data, allowAsync: true, settings: {
-                        'twig options': {
-                            allowAsync: true, // Allow asynchronous compiling
-                            strict_variables: false
+                if (code) {
+                    let template = twigNode.twig({ data: code }).render(data);
+                    // console.log('=======================', template)
+                    resolve(template);
+                } else
+                    twigNode.renderFile(file, {
+                        ...data, allowAsync: true, settings: {
+                            'twig options': {
+                                allowAsync: true, // Allow asynchronous compiling
+                                strict_variables: false
+                            }
                         }
-                    }
-                }, (err, template) => {
-                    if (err) {
-                        throw new Error(`Error: Could not load template ${filename}!`);
-                    } else
-                        resolve(template)
-                });
+                    }, (err, template) => {
+                        if (err) {
+                            console.log(file, err)
+                            throw new Error(`Error: Could not load template ${filename}!`);
+                        } else
+                            resolve(template)
+                    });
             } catch (e) {
+                console.log(e)
                 throw new Error(`Error: Could not load template ${filename}!`);
             }
         })

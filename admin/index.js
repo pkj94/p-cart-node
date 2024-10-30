@@ -11,10 +11,7 @@ module.exports = function (registry) {
         if (typeof DIR_APPLICATION == 'undefined')
             return res.redirect('/install');
         // console.log(typeof DIR_APPLICATION == 'undefined')
-        app.use('/admin/view/stylesheet', express.static(DIR_APPLICATION + 'view/stylesheet'));
-        app.use('/admin/view/javascript', express.static(DIR_APPLICATION + 'view/javascript'));
-        app.use('/admin/view/image', express.static(DIR_APPLICATION + 'view/image'));
-        app.use('/admin/language', express.static(DIR_APPLICATION + '/language'));
+       
 
         new Framework(registry).init(req, res, next).then(output => {
             if (registry.get('response').end) {

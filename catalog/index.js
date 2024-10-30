@@ -2,6 +2,7 @@ const Framework = require("../system/framework");
 
 module.exports = function (registry) {
     const loadControllers = async (req, res, next) => {
+        // console.log(req.params)
         if (fs.readFileSync(APPROOT + '/config.json').toString())
             for (let [key, value] of Object.entries(require('../config.json'))) {
                 global[key] = value;

@@ -6488,7 +6488,7 @@
       doc.extend = false;
       if (copyHistory) {
         doc.history.undoDepth = this.history.undoDepth;
-        doc.setHistory(await this.getHistory());
+        doc.setHistory(this.getHistory());
       }
       return doc
     },

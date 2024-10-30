@@ -12,11 +12,11 @@ global['\Opencart\System\Engine\Event'] = class Event {
     async trigger(event, args = []) {
         for (const { trigger, action } of this.data) {
             const pattern = new RegExp(`^${trigger.replace(/\*/g, '.*').replace(/\?/g, '.')}$`);
-            // if (event.indexOf('view/common/header/before') >= 0)
-            //     console.log('1---', event, pattern.test(event), '^' + trigger.replace(/\*/g, '.*').replace(/\?/g, '.'))
+            if (event.indexOf('view/common/header/before') >= 0)
+                console.log('1---', event, trigger, pattern, pattern.test(event), action)
 
             if (pattern.test(event)) {
-                const result = await action.execute(this.registry, args);
+                const result = await action.execute(this.registry, args);           
                 if (result && result !== null && !(result instanceof Error)) {
                     return result;
                 }

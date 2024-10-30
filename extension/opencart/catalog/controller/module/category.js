@@ -10,9 +10,8 @@ global['\Opencart\Catalog\Controller\Extension\Opencart\Module\Category'] = clas
 		await this.load.language('extension/opencart/module/category');
 		let parts = [];
 		if ((this.request.get['path'])) {
-			parts = this.request.get['path'].split('_');
+			parts = (this.request.get['path']||'').split('_');
 		}
-
 		if ((parts[0])) {
 			data['category_id'] = parts[0];
 		} else {
@@ -65,7 +64,6 @@ global['\Opencart\Catalog\Controller\Extension\Opencart\Module\Category'] = clas
 				'href': await this.url.link('product/category', 'language=' + this.config.get('config_language') + '&path=' + category['category_id'])
 			});
 		}
-
 		return await this.load.view('extension/opencart/module/category', data);
 	}
 }

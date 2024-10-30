@@ -11,7 +11,7 @@ module.exports = class TemplateLibrary {
     addPath(namespace, directory = '') {
         this.adaptor.addPath(namespace, directory);
     }
-    render(filename, data = {}, code = '') {
-        return this.adaptor.render(filename, data, code);
+    async render(filename, data = {}, code = '') {
+        return await this.adaptor.render(filename, data, code);
     }
 }

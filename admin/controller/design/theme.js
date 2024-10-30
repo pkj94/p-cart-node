@@ -1,7 +1,8 @@
+const rtrim = require("locutus/php/strings/rtrim");
 const sprintf = require("locutus/php/strings/sprintf");
+const trim = require("locutus/php/strings/trim");
 
-const expressPath = require('path');
-module.exports = class ThemeController extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class Theme extends global['\Opencart\System\Engine\Controller'] {
 	/**
 	 * @return void
 	 */
@@ -49,15 +50,13 @@ module.exports = class ThemeController extends global['\Opencart\System\Engine\C
 	 * @return void
 	 */
 	async history() {
-		const data = {};
+		const data = {}
 		await this.load.language('design/theme');
-
 		let page = 1;
 		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
+			page = this.request.get['page'];
 		}
-
-		let limit = 10;
+		limit = 10;
 
 		data['histories'] = [];
 
@@ -70,20 +69,18 @@ module.exports = class ThemeController extends global['\Opencart\System\Engine\C
 
 		for (let result of results) {
 			const store_info = await this.model_setting_store.getStore(result['store_id']);
-
-			if (store_info && store_info.store_id) {
+			let store = '';
+			if (store_info.store_id) {
 				store = store_info['name'];
-			} else {
-				store = '';
 			}
 
 			data['histories'].push({
 				'store_id': result['store_id'],
 				'store': (result['store_id'] ? store : this.language.get('text_default')),
 				'route': result['route'],
-				'date_added': date(this.language.get('date_format_short'), new Date(result['date_added'])),
-				'edit': await this.url.link('design/theme.template', 'user_token=' + this.session.data['user_token']),
-				'delete': await this.url.link('design/theme.delete', 'user_token=' + this.session.data['user_token'] + '&theme_id=' + result['theme_id'])
+				'date_added': date(this.language.get('date_format_short'), strtotime(result['date_added'])),
+				'edit': await this.url.link('design/theme+template', 'user_token=' + this.session.data['user_token']),
+				'delete': await this.url.link('design/theme+delete', 'user_token=' + this.session.data['user_token'] + '&theme_id=' + result['theme_id'])
 			});
 		}
 
@@ -91,10 +88,10 @@ module.exports = class ThemeController extends global['\Opencart\System\Engine\C
 			'total': history_total,
 			'page': page,
 			'limit': limit,
-			'url': await this.url.link('design/theme.history', 'user_token=' + this.session.data['user_token'] + '&page={page}')
+			'url': await this.url.link('design/theme+history', 'user_token=' + this.session.data['user_token'] + '&page={page}')
 		});
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (history_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (history_total - limit)) ? history_total : (((page - 1) * limit) + limit), history_total, Math.ceil(history_total / limit));
+		data['results'] = sprintf(this.language.get('text_pagination'), (history_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (history_total - limit)) ? history_total : (((page - 1) * limit) + limit), history_total, ceil(history_total / limit));
 
 		this.response.setOutput(await this.load.view('design/theme_history', data));
 	}
@@ -123,20 +120,20 @@ module.exports = class ThemeController extends global['\Opencart\System\Engine\C
 
 		if (fs.realpathSync(directory + '/' + path).replaceAll('\\', '/').substring(0, directory.length) == directory) {
 			// We grab the files from the default template directory
-			let files = fs.readdirSync(rtrim(DIR_CATALOG + 'view/template/' + path, '/') + '/');
-
+			let files = require('glob').sync(rtrim(DIR_CATALOG + 'view/template/' + path, '/') + '/*');
+			files = files.sort();
 			for (let file of files) {
-				if (fs.existsSync(file) && fs.lstatSync(file).isDirectory()) {
+				if (is_dir(file)) {
 					json['directory'].push({
 						'name': expressPath.basename(file),
-						'path': trim(path + '/' + basename(file), '/')
+						'path': trim(path + '/' + expressPath.basename(file), '/')
 					});
 				}
 
-				if (fs.existsSync(file) && fs.lstatSync(file).isFile()) {
+				if (is_file(file)) {
 					json['file'].push({
 						'name': expressPath.basename(file),
-						'path': trim(path + '/' + basename(file), '/')
+						'path': trim(path + '/' + expressPath.basename(file), '/')
 					});
 				}
 			}
@@ -154,12 +151,12 @@ module.exports = class ThemeController extends global['\Opencart\System\Engine\C
 
 		// List all the extensions
 		if (path == 'extension') {
-			let directories = fs.readdirSync(DIR_EXTENSION);
-
-			for (directories of directory) {
+			let directories = require('glob').sync(DIR_EXTENSION + '*', { nodir: '/' });
+			directories = directories.sort();
+			for (let directory of directories) {
 				json['extension']['directory'].push({
 					'name': expressPath.basename(directory),
-					'path': 'extension/' + basename(directory)
+					'path': 'extension/' + expressPath.basename(directory)
 				});
 			}
 		}
@@ -192,23 +189,22 @@ module.exports = class ThemeController extends global['\Opencart\System\Engine\C
 			}
 
 			if (safe) {
-				let files = fs.readdirSync(rtrim(DIR_EXTENSION + extension + '/catalog/view/template/' + route, '/') + '/');
+				let files = require('glob').sync(rtrim(DIR_EXTENSION + extension + '/catalog/view/template/' + route, '/') + '/*');
 
-				// sort(files);
 				files = files.sort();
 
 				for (let file of files) {
-					if (fs.lstatSync(file).isDirectory()) {
+					if (is_dir(file)) {
 						json['extension']['directory'].push({
 							'name': expressPath.basename(file),
-							'path': path + '/' + basename(file)
+							'path': path + '/' + expressPath.basename(file)
 						});
 					}
 
-					if (fs.lstatSync(file).isFile()) {
+					if (is_file(file)) {
 						json['extension']['file'].push({
 							'name': expressPath.basename(file),
-							'path': path + '/' + basename(file)
+							'path': path + '/' + expressPath.basename(file)
 						});
 					}
 				}
@@ -231,7 +227,6 @@ module.exports = class ThemeController extends global['\Opencart\System\Engine\C
 	 */
 	async template() {
 		await this.load.language('design/theme');
-
 		const json = {};
 		let store_id = 0;
 		if ((this.request.get['store_id'])) {
@@ -244,8 +239,7 @@ module.exports = class ThemeController extends global['\Opencart\System\Engine\C
 
 		// Default template load
 		let directory = DIR_CATALOG + 'view/template';
-
-		if (fs.lstatSync(directory + '/' + path).isFile() && (fs.realpathSync(directory + '/' + path).replaceAll('\\', '/').substring(0, directory.length) == directory)) {
+		if (is_file(directory + '/' + path) && (fs.realpathSync(directory + '/' + path).replaceAll('\\', '/').substring(0, directory.length) == directory)) {
 			json['code'] = fs.readFileSync(DIR_CATALOG + 'view/template/' + path).toString();
 		}
 
@@ -271,8 +265,7 @@ module.exports = class ThemeController extends global['\Opencart\System\Engine\C
 			if (fs.realpathSync(directory + '/' + route).replaceAll('\\', '/').substring(0, directory.length) != directory) {
 				safe = false;
 			}
-
-			if (safe && fs.lstatSync(directory + '/' + route).isFile()) {
+			if (safe && is_file(directory + '/' + route)) {
 				json['code'] = fs.readFileSync(directory + '/' + route).toString();
 			}
 		}
@@ -282,7 +275,7 @@ module.exports = class ThemeController extends global['\Opencart\System\Engine\C
 
 		const theme_info = await this.model_design_theme.getTheme(store_id, path);
 
-		if (theme_info) {
+		if (theme_info.theme_id) {
 			json['code'] = html_entity_decode(theme_info['code']);
 		}
 
@@ -305,7 +298,6 @@ module.exports = class ThemeController extends global['\Opencart\System\Engine\C
 		if ((this.request.get['path'])) {
 			path = this.request.get['path'];
 		}
-
 		// Check user has permission
 		if (!await this.user.hasPermission('modify', 'design/theme')) {
 			json['error'] = this.language.get('error_permission');
@@ -320,7 +312,7 @@ module.exports = class ThemeController extends global['\Opencart\System\Engine\C
 
 			let pos = path.indexOf('.');
 
-			await this.model_design_theme.editTheme(store_id, (pos !== false) ? substr(path, 0, pos) : path, this.request.post['code']);
+			await this.model_design_theme.editTheme(store_id, (pos !== false) ? path.substring(0, pos) : path, this.request.post['code']);
 
 			json['success'] = this.language.get('text_success');
 		}
@@ -345,20 +337,20 @@ module.exports = class ThemeController extends global['\Opencart\System\Engine\C
 
 		let directory = DIR_CATALOG + 'view/template';
 
-		if (fs.lstatSync(directory + '/' + path).isFile() && (fs.realpathSync(directory + '/' + path).replaceAll('\\', '/').substring(0, directory.length) == directory)) {
+		if (is_file(directory + '/' + path) && (fs.realpathSync(directory + '/' + path).replaceAll('\\', '/').substring(0, directory.length) == directory)) {
 			json['code'] = fs.readFileSync(DIR_CATALOG + 'view/template/' + path).toString();
 		}
 
 		// Extension template load
 		if (path.substring(0, 10) == 'extension/') {
-			let part = path.split('/');
+			let part = explode('/', path);
 
 			let extension = part[1];
 
 			delete part[0];
 			delete part[1];
 
-			let route = part.join('/');
+			let route = part.split('/');
 
 			let safe = true;
 
@@ -372,7 +364,7 @@ module.exports = class ThemeController extends global['\Opencart\System\Engine\C
 				safe = false;
 			}
 
-			if (safe && fs.lstatSync(directory + '/' + route).isFile()) {
+			if (safe && is_file(directory + '/' + route)) {
 				json['code'] = fs.readFileSync(directory + '/' + route).toString();
 			}
 		}

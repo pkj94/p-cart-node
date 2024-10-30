@@ -109,8 +109,8 @@ global['\Opencart\System\Engine\Loader'] = class Loader {
             route = route.replace(/[^a-zA-Z0-9_\/]/g, '');
             let output = '';
             let result = await this.registry.get('event').trigger(`view/${route}/before`, [route, data, code]);
-            // if (route.indexOf('header'))
-            //     console.log('event header---', result);
+            if (route.indexOf('common/header') != -1)
+                console.log('event header---',route, result?true:false);
             if (result) {
                 output = result;
             }
