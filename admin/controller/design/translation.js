@@ -1,4 +1,6 @@
 const sprintf = require("locutus/php/strings/sprintf");
+const strlen = require("locutus/php/strings/strlen");
+const substr = require("locutus/php/strings/substr");
 
 const expressPath = require('path');
 module.exports = class TranslationController extends global['\Opencart\System\Engine\Controller'] {
@@ -331,7 +333,7 @@ module.exports = class TranslationController extends global['\Opencart\System\En
 	async path() {
 		await this.load.language('design/translation');
 
-		const json = [];
+		let json = [];
 		let language_id = 0;
 		if ((this.request.get['language_id'])) {
 			language_id = this.request.get['language_id'];
@@ -340,28 +342,25 @@ module.exports = class TranslationController extends global['\Opencart\System\En
 		this.load.model('localisation/language', this);
 
 		const language_info = await this.model_localisation_language.getLanguage(language_id);
-
 		if ((language_info.language_id)) {
-			let path = fs.readdirSync(DIR_CATALOG + 'language/' + language_info['code'] + '/');
+			let path = require('glob').sync(DIR_CATALOG + 'language/' + language_info['code'] + '/*');
 
 			while (path.length != 0) {
-				let next = path.shift();
-
-				for (let file of fs.readdirSync(next + '/')) {
+				let next = path[0];
+				path.shift();
+				for (let file of require('glob').sync(next + '/*')) {
 					if (fs.lstatSync(file).isDirectory()) {
-						path.push(next + '/' + file);
+						path.push(next + '/' + expressPath.basename(file));
 					}
-
-					if (file.substring(-3) == '.js') {
-						json.push(file.substring((DIR_CATALOG + 'language/' + language_info['code'] + '/').length).substring(0, -4));
+					if (substr(next + '/' + expressPath.basename(file), -3) == '.js') {
+						json.push(substr(substr(next + '/' + expressPath.basename(file), strlen(DIR_CATALOG + 'language/' + language_info['code'] + '/')), 0, -3));
 					}
 				}
 			}
-
 			path = require('glob').sync(DIR_EXTENSION + '*/catalog/language/' + language_info['code'] + '/*');
 
 			while (path.length != 0) {
-				next = path.shift();
+				let next = path.shift();
 
 				for (let file of require('glob').sync(next + '/*')) {
 					if (fs.lstatSync(file).isDirectory()) {
@@ -382,7 +381,7 @@ module.exports = class TranslationController extends global['\Opencart\System\En
 				}
 			}
 		}
-
+		json = json.sort();
 		this.response.addHeader('Content-Type: application/json');
 		this.response.setOutput(json);
 	}
@@ -393,7 +392,7 @@ module.exports = class TranslationController extends global['\Opencart\System\En
 	async translation() {
 		await this.load.language('design/translation');
 
-		const json = {};
+		let json = [];
 		let store_id = 0;
 		if ((this.request.get['store_id'])) {
 			store_id = this.request.get['store_id'];

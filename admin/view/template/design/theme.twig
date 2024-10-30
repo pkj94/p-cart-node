@@ -95,9 +95,9 @@ $(document).ready(function(){
             }
         });
     });
-    setTimeout(()=>{
+    //setTimeout(()=>{
         $('#input-store').trigger('change');
-    },300);
+    //},300);
 
     $('#path').on('click', 'a.directory', function (e) {
         e.preventDefault();
@@ -228,7 +228,7 @@ $(document).ready(function(){
         }
     });
 
-    $('#code .nav-tabs').on('click', 'i.fas.fa-minus-circle', function (e) {
+    $('#code .nav-tabs').on('click', 'i.fa-solid.fa-minus-circle', function (e) {
         e.preventDefault();
 
         // 1. Remove tab functionality
@@ -297,7 +297,7 @@ $(document).ready(function(){
             var element = this;
 
             $.ajax({
-                url: '?route=design/theme.reset&user_token={{ user_token }}&store_id=' + $('.tab-content .active #input-store').val() + '&path=' + $('.tab-content .active input[name=\'path\']').val(),
+                url: '?route=design/theme.reset&user_token={{ user_token }}&store_id=' + $('.tab-content .active input[name=\'store_id\']').val() + '&path=' + $('.tab-content .active input[name=\'path\']').val(),
                 dataType: 'json',
                 beforeSend: function () {
                     $(element).button('loading');
@@ -333,9 +333,9 @@ $(document).ready(function(){
 
         $('#history').load(this.href);
     });
-    //setTimeout(()=>{
-      //  $('#history').load('?route=design/theme.history&user_token={{ user_token }}');
-    //},500);
+    setTimeout(()=>{
+        $('#history').load('?route=design/theme.history&user_token={{ user_token }}');
+    },500);
     $('#history').on('click', '.btn-primary', function (e) {
         e.preventDefault();
 

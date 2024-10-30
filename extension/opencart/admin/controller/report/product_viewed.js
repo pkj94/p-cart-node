@@ -140,7 +140,7 @@ global['\Opencart\Admin\Controller\Extension\Opencart\Report\ProductViewed'] = c
 			if (product_info) {
 				let percent = 0;
 				if (result['viewed']) {
-					percent = round((result['viewed'] / total) * 100, 2);
+					percent = Math.round((result['viewed'] / total) * 100, 2);
 				}
 
 				data['products'].push({
@@ -155,7 +155,7 @@ global['\Opencart\Admin\Controller\Extension\Opencart\Report\ProductViewed'] = c
 		let url = '';
 
 		if ((this.request.get['page'])) {
-			url += '&page='.this.request.get['page'];
+			url += '&page=' + this.request.get['page'];
 		}
 
 		data['pagination'] = await this.load.controller('common/pagination', {

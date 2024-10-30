@@ -56,7 +56,7 @@ module.exports = class Theme extends global['\Opencart\System\Engine\Controller'
 		if ((this.request.get['page'])) {
 			page = this.request.get['page'];
 		}
-		limit = 10;
+		let limit = 10;
 
 		data['histories'] = [];
 
@@ -78,7 +78,7 @@ module.exports = class Theme extends global['\Opencart\System\Engine\Controller'
 				'store_id': result['store_id'],
 				'store': (result['store_id'] ? store : this.language.get('text_default')),
 				'route': result['route'],
-				'date_added': date(this.language.get('date_format_short'), strtotime(result['date_added'])),
+				'date_added': date(this.language.get('date_format_short'), new Date(result['date_added'])),
 				'edit': await this.url.link('design/theme+template', 'user_token=' + this.session.data['user_token']),
 				'delete': await this.url.link('design/theme+delete', 'user_token=' + this.session.data['user_token'] + '&theme_id=' + result['theme_id'])
 			});
@@ -91,7 +91,7 @@ module.exports = class Theme extends global['\Opencart\System\Engine\Controller'
 			'url': await this.url.link('design/theme+history', 'user_token=' + this.session.data['user_token'] + '&page={page}')
 		});
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (history_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (history_total - limit)) ? history_total : (((page - 1) * limit) + limit), history_total, ceil(history_total / limit));
+		data['results'] = sprintf(this.language.get('text_pagination'), (history_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (history_total - limit)) ? history_total : (((page - 1) * limit) + limit), history_total, Math.ceil(history_total / limit));
 
 		this.response.setOutput(await this.load.view('design/theme_history', data));
 	}
@@ -273,8 +273,8 @@ module.exports = class Theme extends global['\Opencart\System\Engine\Controller'
 		// Custom template load
 		this.load.model('design/theme', this);
 
-		const theme_info = await this.model_design_theme.getTheme(store_id, path);
-
+		const theme_info = await this.model_design_theme.getTheme(store_id, path.split(".").shift());
+		// console.log('=====',theme_info,path)
 		if (theme_info.theme_id) {
 			json['code'] = html_entity_decode(theme_info['code']);
 		}

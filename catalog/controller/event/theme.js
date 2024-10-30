@@ -14,7 +14,8 @@ module.exports = class Theme extends global['\Opencart\System\Engine\Controller'
 
 		const theme_info = await this.model_design_theme.getTheme(route, this.config.get('config_theme'));
 		if (theme_info.theme_id) {
-			code = html_entity_decode(theme_info['code']);
+			 code.value = html_entity_decode(theme_info['code']);
 		}
+
 	}
 }

@@ -104,18 +104,18 @@ global['\Opencart\System\Engine\Loader'] = class Loader {
         // }
     }
 
-    view(route, data = {}, code = '') {
+    view(route, data = {}, code = {}) {
         return new Promise(async (resolve, reject) => {
             route = route.replace(/[^a-zA-Z0-9_\/]/g, '');
             let output = '';
             let result = await this.registry.get('event').trigger(`view/${route}/before`, [route, data, code]);
-            if (route.indexOf('common/header') != -1)
-                console.log('event header---',route, result?true:false);
+            // if (route.indexOf('common/header') != -1)
+            //     console.log('event header---', route, result, code);
             if (result) {
                 output = result;
             }
             if (!output) {
-                output = await this.registry.get('template').render(route, data, code);
+                output = await this.registry.get('template').render(route, data, code.value);
             }
 
             result = await this.registry.get('event').trigger(`view/${route}/after`, [route, data, output]);
