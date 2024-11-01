@@ -268,10 +268,10 @@ module.exports = class Security extends global['\Opencart\System\Engine\Controll
         }
 
         const json = {};
-
+        let base_old = DIR_OPENCART + 'admin/';
+        let base_new = DIR_OPENCART + name + '/';
         if (await this.user.hasPermission('modify', 'common/security')) {
-            let base_old = DIR_OPENCART + 'admin/';
-            let base_new = DIR_OPENCART + name + '/';
+
 
             if (!is_dir(base_old)) {
                 json['error'] = this.language.get('error_admin');
@@ -301,7 +301,7 @@ module.exports = class Security extends global['\Opencart\System\Engine\Controll
 
             // While the path array is still populated keep looping through
             while (directory.length != 0) {
-                next = directory.shift();
+                let next = directory.shift();
 
                 for (let file of require('glob').sync(rtrim(next, '/') + '/{*,.[!.]*,..?*}')) {
                     // If directory add to path array
@@ -347,8 +347,8 @@ module.exports = class Security extends global['\Opencart\System\Engine\Controll
 
 
                 let output = require(file);
-                output.HTTP_SERVER = HTTP_SERVER.substring(0, HTTP_SERVER.indexOf('/admin/')) + '/' + name + '/';
-                output.DIR_APPLICATION = DIR_OPENCART + name + '/';
+                output.HTTP_SERVER = global.HTTP_SERVER = HTTP_SERVER.substring(0, HTTP_SERVER.indexOf('/admin/')) + '/' + name + '/';
+                output.DIR_APPLICATION = global.DIR_APPLICATION = DIR_OPENCART + name + '/';
 
                 fs.writeFileSync(file, JSON.stringify(output, null, "\t"));
 
