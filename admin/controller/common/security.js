@@ -1,18 +1,17 @@
+const html_entity_decode = require("locutus/php/strings/html_entity_decode");
+const rtrim = require("locutus/php/strings/rtrim");
+const trim = require("locutus/php/strings/trim");
 
-const pathExpress = require('path');
-module.exports = class SecurityController extends global['\Opencart\System\Engine\Controller'] {
-    constructor(registry) {
-        super(registry);
-    }
+module.exports = class Security extends global['\Opencart\System\Engine\Controller'] {
     /**
      * @return string
      */
     async index() {
-        const data = {};
+        const data = [];
         await this.load.language('common/security');
 
         // Check install directory exists
-        if (fs.existsSync(DIR_OPENCART + 'install/')) {
+        if (is_dir(DIR_OPENCART + 'install/')) {
             data['install'] = DIR_OPENCART + 'install/';
         } else {
             data['install'] = '';
@@ -23,13 +22,14 @@ module.exports = class SecurityController extends global['\Opencart\System\Engin
             // Check install directory exists
             data['storage'] = DIR_STORAGE;
 
-            data['document_root'] = fs.realpathSync(this.request.server['DOCUMENT_ROOT'] + '/../').replaceAll('\\', '/') + '/';
+            data['document_root'] = fs.realpathSync(APPROOT + '/../').replaceAll('\\', '/') + '/';
 
             let path = '';
 
             data['paths'] = [];
 
-            let parts = data['document_root'].replace(new RegExp('/' + "*"), '').split('/');
+            let parts = rtrim(data['document_root'], '/').split('/');
+
             for (let part of parts) {
                 path += part + '/';
 
@@ -66,7 +66,7 @@ module.exports = class SecurityController extends global['\Opencart\System\Engin
         const json = {};
 
         if (await this.user.hasPermission('modify', 'common/security')) {
-            if (!fs.existsSync(DIR_OPENCART + 'install/')) {
+            if (!is_dir(DIR_OPENCART + 'install/')) {
                 json['error'] = this.language.get('error_install');
             }
         } else {
@@ -85,30 +85,32 @@ module.exports = class SecurityController extends global['\Opencart\System\Engin
             while (directory.length != 0) {
                 let next = directory.shift();
 
-                if (fs.existsSync(next)) {
-                    for (let file of fs.readdirSync(next.replace(new RegExp('/' + "*"), ''))) {
+                if (is_dir(next)) {
+                    // console.log('next', next, is_dir(next))
+                    for (let file of require('glob').sync(rtrim(next, '/') + '/{*,.[!.]*,..?*}')) {
+                        // console.log(fs.realpathSync(file), is_dir(file))
                         // If directory add to path array
-                        if (fs.lstatSync(next + file).isDirectory()) {
-                            directory.push(next + file);
+                        if (is_dir(file)) {
+                            directory.push(fs.realpathSync(file));
                         }
 
                         // Add the file to the files to be deleted array
-                        files.push(file);
+                        files.push(fs.realpathSync(file));
                     }
                 }
             }
 
-            files = files.reverse(files);
-
+            files = files.reverse();
+            console.log(files, directory)
             for (let file of files) {
-                if (fs.lstatSync(file).isFile()) {
-                    fs.unlinkSyncSync(file);
-                } else if (fs.lstatSync(file).isFile()) {
-                    fs.rmdirSyncSync(file);
+                if (is_file(file)) {
+                    fs.unlinkSync(file);
+                } else if (is_dir(file)) {
+                    fs.rmdirSync(file);
                 }
             }
 
-            fs.rmdirSyncSync(path);
+            fs.rmdirSync(path);
 
             json['success'] = this.language.get('text_install_success');
         }
@@ -124,37 +126,34 @@ module.exports = class SecurityController extends global['\Opencart\System\Engin
         await this.load.language('common/security');
         let page = 1;
         if ((this.request.get['page'])) {
-            page = Number(this.request.get['page']);
+            page = this.request.get['page'];
         }
         let name = '';
         if ((this.request.get['name'])) {
-            name = pathExpress.basename(this.request.get['name'].trim()).replace(new RegExp('[^a-zA-z0-9_]'), '');
+            name = expressPath.basename(html_entity_decode(trim(this.request.get['name']))).replace(/[^a-zA-Z0-9_]/g, '');
         }
         let path = '';
         if ((this.request.get['path'])) {
-            path = this.request.get['path'].replace(new RegExp('[^a-zA-z0-9_]'), '');
+            path = html_entity_decode(trim(this.request.get['path'])).replace(/[^a-zA-Z0-9_:\//]/g, '');
         }
 
         const json = {};
-
+        let base_old = DIR_STORAGE;
+        let base_new = path + name + '/';
         if (await this.user.hasPermission('modify', 'common/security')) {
-            let base_old = DIR_STORAGE;
-            let base_new = path + name + '/';
 
-            if (!fs.existsSync(base_old)) {
+            if (!is_dir(base_old)) {
                 json['error'] = this.language.get('error_storage');
             }
+            let root = expressPath.resolve(APPROOT, '..').replace(/\\/g, '/');
 
-            let root = fs.realpathSync(this.request.server['DOCUMENT_ROOT'] + '/../').replaceAll('\\', '/');
-
-            if ((base_new.substring(0, strlen(root)) != root) || (root == base_new)) {
-                json['error'] = this.language.get('error_storage');
+            if ((base_new.substring(0, root.length) !== root) || (root === base_new)) {
+                json.error = this.language.get('error_storage');
             }
 
-            if (fs.existsSync(base_new) && page < 2) {
+            if (is_dir(base_new) && page < 2) {
                 json['error'] = this.language.get('error_storage_exists');
             }
-
             if (!fs.existsSync(DIR_OPENCART + 'config.json') || !fs.existsSync(DIR_APPLICATION + 'config.json')) {
                 json['error'] = this.language.get('error_writable');
             }
@@ -162,7 +161,7 @@ module.exports = class SecurityController extends global['\Opencart\System\Engin
             json['error'] = this.language.get('error_permission');
         }
 
-        if (!json.error) {
+        if (!Object.keys(json).length) {
             let files = [];
 
             // Make path into an array
@@ -172,9 +171,9 @@ module.exports = class SecurityController extends global['\Opencart\System\Engin
             while (directory.length != 0) {
                 let next = directory.shift();
 
-                for (let file of fs.readdirSync(next.replace(new RegExp('/' + "*"), ''))) {
+                for (let file of require('glob').sync(rtrim(next, '/') + '/{*,.[!.]*,..?*}')) {
                     // If directory add to path array
-                    if (fs.lstatSync(file).isFile()) {
+                    if (is_dir(file)) {
                         directory.push(file);
                     }
 
@@ -184,7 +183,7 @@ module.exports = class SecurityController extends global['\Opencart\System\Engin
             }
 
             // Create the new storage folder
-            if (!fs.existsSync(base_new)) {
+            if (!is_dir(base_new)) {
                 fs.mkdirSync(base_new);
             }
 
@@ -198,34 +197,34 @@ module.exports = class SecurityController extends global['\Opencart\System\Engin
             for (let i = start; i < end; i++) {
                 let destination = files[i].substring(base_old.length);
 
-                if (fs.existsSync(base_old + destination) && !fs.existsSync(base_new + destination)) {
+                if (is_dir(base_old + destination) && !is_dir(base_new + destination)) {
                     fs.mkdirSync(base_new + destination);
                 }
 
-                if (fs.lstatSync(base_old + destination).isFile() && !fs.lstatSync(base_new + destination).isFile()) {
+                if (is_file(base_old + destination) && !is_file(base_new + destination)) {
                     fs.copyFileSync(base_old + destination, base_new + destination);
                 }
             }
 
             if (end < total) {
-                json['next'] = await this.url.link('common/security+storage', '&user_token=' + this.session.data['user_token'] + '&name=' + name + '&path=' + path + '&page=' + (page + 1), true);
+                json['next'] = await this.url.link('common/security.storage', '&user_token=' + this.session.data['user_token'] + '&name=' + name + '&path=' + path + '&page=' + (page + 1), true);
             } else {
-                // Start deleting old storage location files+
+                // Start deleting old storage location files.
                 files = files.reverse();
 
                 for (let file of files) {
                     // If file just delete
-                    if (fs.lstatSync(file).isFile()) {
-                        fs.unlinkSyncSync(file);
+                    if (is_file(file)) {
+                        fs.unlinkSync(file);
                     }
 
                     // If directory use the remove directory function
-                    if (fs.lstatSync(file).isFile()) {
-                        fs.rmdirSyncSync(file);
+                    if (is_dir(file)) {
+                        fs.rmdirSync(file);
                     }
                 }
 
-                fs.rmdirSyncSync(base_old);
+                fs.rmdirSync(base_old);
 
                 // Modify the config files
                 files = [
@@ -234,13 +233,15 @@ module.exports = class SecurityController extends global['\Opencart\System\Engin
                 ];
 
                 for (let file of files) {
+
                     let output = require(file);
-                    let find = '';
-                    for (let [key, value] of output) {
-                        if (key == 'DIR_STORAGE')
-                            find = value;
-                        output[k] = value.replace(find, base_new);
-                    }
+                    output.DIR_STORAGE = base_new;
+                    output.DIR_CACHE = base_new + 'cache/';
+                    output.DIR_DOWNLOAD = base_new + 'download/';
+                    output.DIR_LOGS = base_new + 'logs/';
+                    output.DIR_SESSION = base_new + 'session/';
+                    output.DIR_UPLOAD = base_new + 'upload/';
+
                     fs.writeFileSync(file, JSON.stringify(output, null, "\t"));
                 }
 
@@ -259,11 +260,11 @@ module.exports = class SecurityController extends global['\Opencart\System\Engin
         await this.load.language('common/security');
         let page = 1;
         if ((this.request.get['page'])) {
-            page = Number(this.request.get['page']);
+            page = this.request.get['page'];
         }
         let name = 'admin';
         if ((this.request.get['name'])) {
-            name = pathExpress.basename(this.request.get['name'].trim()).replace(new RegExp('[^a-zA-z0-9]'), '');
+            name = expressPath.basename(html_entity_decode(trim(this.request.get['name']))).replace(/[^a-zA-Z0-9_]/g, '');
         }
 
         const json = {};
@@ -272,11 +273,11 @@ module.exports = class SecurityController extends global['\Opencart\System\Engin
             let base_old = DIR_OPENCART + 'admin/';
             let base_new = DIR_OPENCART + name + '/';
 
-            if (!fs.existsSync(base_old)) {
+            if (!is_dir(base_old)) {
                 json['error'] = this.language.get('error_admin');
             }
 
-            if (fs.existsSync(base_new) && page < 2) {
+            if (is_dir(base_new) && page < 2) {
                 json['error'] = this.language.get('error_admin_exists');
             }
 
@@ -291,8 +292,8 @@ module.exports = class SecurityController extends global['\Opencart\System\Engin
             json['error'] = this.language.get('error_permission');
         }
 
-        if (!json.error) {
-            // 1+  // 1+ We need to copy the files, of rename cannot be used on any directory, the executing script is running under
+        if (!Object.keys(json).length) {
+            // 1.  // 1. We need to copy the files, as rename cannot be used on any directory, the executing script is running under
             let files = [];
 
             // Make path into an array
@@ -300,11 +301,11 @@ module.exports = class SecurityController extends global['\Opencart\System\Engin
 
             // While the path array is still populated keep looping through
             while (directory.length != 0) {
-                let next = directory.shift();
+                next = directory.shift();
 
-                for (let file of fs.readdirSync(next.replace(new RegExp('/' + "*"), ''))) {
+                for (let file of require('glob').sync(rtrim(next, '/') + '/{*,.[!.]*,..?*}')) {
                     // If directory add to path array
-                    if (fs.lstatSync(file).isFile()) {
+                    if (is_dir(file)) {
                         directory.push(file);
                     }
 
@@ -313,27 +314,27 @@ module.exports = class SecurityController extends global['\Opencart\System\Engin
                 }
             }
 
-            // 2+ Create the new admin folder name
-            if (!fs.existsSync(base_new)) {
+            // 2. Create the new admin folder name
+            if (!is_dir(base_new)) {
                 fs.mkdirSync(base_new);
             }
 
-            // 3+ split the file copies into chunks+
+            // 3. split the file copies into chunks+
             let total = files.length;
             let limit = 200;
 
             let start = (page - 1) * limit;
             let end = start > (total - limit) ? total : (start + limit);
 
-            // 4+ Copy the files across
+            // 4. Copy the files across
             for (let file of files.slice(start, end)) {
                 let destination = file.substring(base_old.length);
 
-                if (fs.existsSync(base_old + destination) && !fs.existsSync(base_new + destination)) {
+                if (is_dir(base_old + destination) && !is_dir(base_new + destination)) {
                     fs.mkdirSync(base_new + destination);
                 }
 
-                if (fs.lstatSync(base_old + destination).isFile() && !fs.lstatSync(base_new + destination).isFile()) {
+                if (is_file(base_old + destination) && !is_file(base_new + destination)) {
                     fs.copyFileSync(base_old + destination, base_new + destination);
                 }
             }
@@ -343,13 +344,16 @@ module.exports = class SecurityController extends global['\Opencart\System\Engin
             } else {
                 // Update the old config files
                 let file = base_new + 'config.json';
+
+
                 let output = require(file);
-                output.HTTP_SERVER = output.HTTP_SERVER.replace('admin', name)
-                output.DIR_OPENCART = output.DIR_OPENCART + name + '/'
+                output.HTTP_SERVER = HTTP_SERVER.substring(0, HTTP_SERVER.indexOf('/admin/')) + '/' + name + '/';
+                output.DIR_APPLICATION = DIR_OPENCART + name + '/';
+
                 fs.writeFileSync(file, JSON.stringify(output, null, "\t"));
 
-                // 6+ redirect to the new admin
-                json['redirect'] = (HTTP_SERVER.substring(0, -6) + name + '?route=common/login').replace('&amp;', '&');
+                // 6. redirect to the new admin
+                json['redirect'] = HTTP_SERVER.substring(0, -6) + name + '/?route=common/login'.replaceAll('&amp;', '&');
             }
         }
 
@@ -364,8 +368,8 @@ module.exports = class SecurityController extends global['\Opencart\System\Engin
         // Remove old admin if exists
         let path = DIR_OPENCART + 'admin/';
 
-        if (fs.existsSync(path) && DIR_APPLICATION != path) {
-            // 1+ We need to copy the files, of rename cannot be used on any directory, the executing script is running under
+        if (is_dir(path) && DIR_APPLICATION != path) {
+            // 1. We need to copy the files, as rename cannot be used on any directory, the executing script is running under
             let files = [];
 
             // Make path into an array
@@ -373,11 +377,11 @@ module.exports = class SecurityController extends global['\Opencart\System\Engin
 
             // While the path array is still populated keep looping through
             while (directory.length != 0) {
-                let next = directory.shift();
+                next = directory.shift();
 
-                for (let file of fs.readdirSync(next.replace(new RegExp('/' + "*"), ''))) {
+                for (let file of require('glob')(rtrim(next, '/') + '/{*,.[!.]*,..?*}')) {
                     // If directory add to path array
-                    if (fs.existsSync(file)) {
+                    if (is_dir(file)) {
                         directory.push(file);
                     }
 
@@ -386,19 +390,19 @@ module.exports = class SecurityController extends global['\Opencart\System\Engin
                 }
             }
 
-            // 4+ reverse file order
-            files = files.reverse()
+            // 4. reverse file order
+            files = files.reverse();
 
             // 5+ Delete the old admin directory
             for (let file of files) {
                 // If file just delete
-                if (fs.lstatSync(file).isFile()) {
-                    fs.unlinkSyncSync(file);
+                if (is_file(file)) {
+                    fs.unlinkSync(file);
                 }
 
                 // If directory use the remove directory function
-                if (fs.lstatSync(file).isFile()) {
-                    fs.rmdirSyncSync(file);
+                if (is_dir(file)) {
+                    fs.rmdirSync(file);
                 }
             }
 

@@ -13,7 +13,9 @@ const getConfig = (key, from = '') => {
 
 let adminRoutes = require('./admin');
 let catalogRoutes = require('./catalog');
-let installRoutes = require('./install');
+let installRoutes;
+if (fs.existsSync('./install'))
+    installRoutes = require('./install');
 // boostrap all models
 process.setMaxListeners(100)
 var compression = require('compression')
@@ -29,7 +31,8 @@ const cookieParser = require("cookie-parser");
 const autoloader = new OpencartSystemEngineAutoloader();
 autoloader.register(`Opencart${getConfig('APPLICATION', 'admin')}`, getConfig('DIR_APPLICATION', 'admin'));
 autoloader.register(`Opencart${getConfig('APPLICATION')}`, getConfig('DIR_APPLICATION'));
-autoloader.register(`OpencartInstall`, getConfig('DIR_OPENCART') + '/install/');
+if (installRoutes)
+    autoloader.register(`OpencartInstall`, getConfig('DIR_OPENCART') + '/install/');
 autoloader.register('OpencartExtension', getConfig('DIR_EXTENSION'));
 autoloader.register('OpencartSystem', getConfig('DIR_SYSTEM'));
 // Registry
@@ -124,7 +127,8 @@ app.use((req, res, next) => {
 });
 
 adminRoutes(registry);
-installRoutes(registry);
+if (installRoutes)
+    installRoutes(registry);
 app.use('/error.html', express.static('./error.html'));
 catalogRoutes(registry);
 
