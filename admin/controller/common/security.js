@@ -9,7 +9,7 @@ module.exports = class SecurityController extends global['\Opencart\System\Engin
      */
     async index() {
         const data = {};
-        await  this.load.language('common/security');
+        await this.load.language('common/security');
 
         // Check install directory exists
         if (fs.existsSync(DIR_OPENCART + 'install/')) {
@@ -61,11 +61,11 @@ module.exports = class SecurityController extends global['\Opencart\System\Engin
      * @return void
      */
     async install() {
-        await  this.load.language('common/security');
+        await this.load.language('common/security');
 
         const json = {};
 
-        if (await  this.user.hasPermission('modify', 'common/security')) {
+        if (await this.user.hasPermission('modify', 'common/security')) {
             if (!fs.existsSync(DIR_OPENCART + 'install/')) {
                 json['error'] = this.language.get('error_install');
             }
@@ -76,10 +76,10 @@ module.exports = class SecurityController extends global['\Opencart\System\Engin
         if (!Object.keys(json).length) {
             let files = [];
 
-            path = DIR_OPENCART + 'install/';
+            let path = DIR_OPENCART + 'install/';
 
             // Make path into an array
-            directory = [path];
+            let directory = [path];
 
             // While the path array is still populated keep looping through
             while (directory.length != 0) {
@@ -102,13 +102,13 @@ module.exports = class SecurityController extends global['\Opencart\System\Engin
 
             for (let file of files) {
                 if (fs.lstatSync(file).isFile()) {
-                    fs.fs.unlinkSyncSync(file);
+                    fs.unlinkSyncSync(file);
                 } else if (fs.lstatSync(file).isFile()) {
-                    fs.fs.rmdirSyncSync(file);
+                    fs.rmdirSyncSync(file);
                 }
             }
 
-            fs.fs.rmdirSyncSync(path);
+            fs.rmdirSyncSync(path);
 
             json['success'] = this.language.get('text_install_success');
         }
@@ -121,7 +121,7 @@ module.exports = class SecurityController extends global['\Opencart\System\Engin
      * @return void
      */
     async storage() {
-        await  this.load.language('common/security');
+        await this.load.language('common/security');
         let page = 1;
         if ((this.request.get['page'])) {
             page = Number(this.request.get['page']);
@@ -137,7 +137,7 @@ module.exports = class SecurityController extends global['\Opencart\System\Engin
 
         const json = {};
 
-        if (await  this.user.hasPermission('modify', 'common/security')) {
+        if (await this.user.hasPermission('modify', 'common/security')) {
             let base_old = DIR_STORAGE;
             let base_new = path + name + '/';
 
@@ -145,7 +145,7 @@ module.exports = class SecurityController extends global['\Opencart\System\Engin
                 json['error'] = this.language.get('error_storage');
             }
 
-            root = fs.realpathSync(this.request.server['DOCUMENT_ROOT'] + '/../').replaceAll('\\', '/');
+            let root = fs.realpathSync(this.request.server['DOCUMENT_ROOT'] + '/../').replaceAll('\\', '/');
 
             if ((base_new.substring(0, strlen(root)) != root) || (root == base_new)) {
                 json['error'] = this.language.get('error_storage');
@@ -216,16 +216,16 @@ module.exports = class SecurityController extends global['\Opencart\System\Engin
                 for (let file of files) {
                     // If file just delete
                     if (fs.lstatSync(file).isFile()) {
-                        fs.fs.unlinkSyncSync(file);
+                        fs.unlinkSyncSync(file);
                     }
 
                     // If directory use the remove directory function
                     if (fs.lstatSync(file).isFile()) {
-                        fs.fs.rmdirSyncSync(file);
+                        fs.rmdirSyncSync(file);
                     }
                 }
 
-                fs.fs.rmdirSyncSync(base_old);
+                fs.rmdirSyncSync(base_old);
 
                 // Modify the config files
                 files = [
@@ -256,7 +256,7 @@ module.exports = class SecurityController extends global['\Opencart\System\Engin
      * @return void
      */
     async admin() {
-        await  this.load.language('common/security');
+        await this.load.language('common/security');
         let page = 1;
         if ((this.request.get['page'])) {
             page = Number(this.request.get['page']);
@@ -268,7 +268,7 @@ module.exports = class SecurityController extends global['\Opencart\System\Engin
 
         const json = {};
 
-        if (await  this.user.hasPermission('modify', 'common/security')) {
+        if (await this.user.hasPermission('modify', 'common/security')) {
             let base_old = DIR_OPENCART + 'admin/';
             let base_new = DIR_OPENCART + name + '/';
 
@@ -393,12 +393,12 @@ module.exports = class SecurityController extends global['\Opencart\System\Engin
             for (let file of files) {
                 // If file just delete
                 if (fs.lstatSync(file).isFile()) {
-                    fs.fs.unlinkSyncSync(file);
+                    fs.unlinkSyncSync(file);
                 }
 
                 // If directory use the remove directory function
                 if (fs.lstatSync(file).isFile()) {
-                    fs.fs.rmdirSyncSync(file);
+                    fs.rmdirSyncSync(file);
                 }
             }
 
