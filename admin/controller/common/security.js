@@ -235,12 +235,12 @@ module.exports = class Security extends global['\Opencart\System\Engine\Controll
                 for (let file of files) {
 
                     let output = require(file);
-                    output.DIR_STORAGE = base_new;
-                    output.DIR_CACHE = base_new + 'cache/';
-                    output.DIR_DOWNLOAD = base_new + 'download/';
-                    output.DIR_LOGS = base_new + 'logs/';
-                    output.DIR_SESSION = base_new + 'session/';
-                    output.DIR_UPLOAD = base_new + 'upload/';
+                    output.DIR_STORAGE = global.DIR_STORAGE = base_new;
+                    output.DIR_CACHE = global.DIR_CACHE = base_new + 'cache/';
+                    output.DIR_DOWNLOAD = global.DIR_DOWNLOAD = base_new + 'download/';
+                    output.DIR_LOGS = global.DIR_LOGS = base_new + 'logs/';
+                    output.DIR_SESSION = global.DIR_SESSION = base_new + 'session/';
+                    output.DIR_UPLOAD = global.DIR_UPLOAD = base_new + 'upload/';
 
                     fs.writeFileSync(file, JSON.stringify(output, null, "\t"));
                 }
