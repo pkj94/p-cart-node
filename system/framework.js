@@ -15,30 +15,30 @@ module.exports = class Framework {
         // Set the default application
         config.set('application', APPLICATION);
         // Set the default time zone
-        let dateTimezone = config.get('date_timezone');
+        const dateTimezone = config.get('date_timezone');
         Intl.DateTimeFormat().resolvedOptions().timeZone = dateTimezone;
         // Logging
         const log = new global['\Opencart\System\Library\Log'](config.get('error_filename'));
         this.registry.set('log', log);
         // Event
-        let event = new global['\Opencart\System\Engine\Event'](this.registry);
+        const event = new global['\Opencart\System\Engine\Event'](this.registry);
         this.registry.set('event', event);
         // Event Register
         if (config.has('action_event')) {
-            let actionEvents = config.get('action_event');
+            const actionEvents = config.get('action_event');
             for (let key in actionEvents) {
-                let value = actionEvents[key];
+                const value = actionEvents[key];
                 for (let priority in value) {
-                    let action = value[priority];
+                    const action = value[priority];
                     await event.register(key, new global['\Opencart\System\Engine\Action'](action), priority);
                 }
             }
         }
         // Loader
-        let loader = new global['\Opencart\System\Engine\Loader'](this.registry);
+        const loader = new global['\Opencart\System\Engine\Loader'](this.registry);
         this.registry.set('load', loader);
         // Request
-        let request = new global['\Opencart\System\Library\Request'](req);
+        const request = new global['\Opencart\System\Library\Request'](req);
         this.registry.set('request', request);
         // Compatibility
         if (request.get['route']) {
@@ -77,15 +77,15 @@ module.exports = class Framework {
 
         }
         // Cache
-        let cache = new global['\Opencart\System\Library\Cache'](config.get('cache_engine'), config.get('cache_expire'));
+        const cache = new global['\Opencart\System\Library\Cache'](config.get('cache_engine'), config.get('cache_expire'));
         this.registry.set('cache', cache);
         // Template
-        let template = new global['\Opencart\System\Library\Template'](config.get('template_engine'));
+        const template = new global['\Opencart\System\Library\Template'](config.get('template_engine'));
         this.registry.set('template', template);
         // console.log('config template', config.get('template_engine'))
         template.addPath(DIR_TEMPLATE);
         // Language
-        let language = new global['\Opencart\System\Library\Language'](config.get('language_code'));
+        const language = new global['\Opencart\System\Library\Language'](config.get('language_code'));
         language.addPath(DIR_LANGUAGE);
         await language.load('default');
         this.registry.set('language', language);

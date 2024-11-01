@@ -80,6 +80,7 @@ app.use('/catalog/view/javascript', express.static('catalog/view/javascript'));
 app.use('/catalog/view/image', express.static('catalog/view/image'));
 app.use('/catalog/language', express.static('catalog/language'));
 app.use('/extension', express.static('extension'));
+app.use('/favicon.ico', express.static('./favicon.ico'));
 app.use(morgan('dev'));
 const decodeObject = (obj) => {
     for (let [key, value] of Object.entries(obj)) {
@@ -124,9 +125,10 @@ app.use((req, res, next) => {
 
 adminRoutes(registry);
 installRoutes(registry);
+app.use('/error.html', express.static('./error.html'));
 catalogRoutes(registry);
 
-app.use('/error.html', express.static('./error.html'));
+
 
 let port = typeof SERVER_PORT == 'undefined' ? 8080 : SERVER_PORT;
 app.listen(port, () => {

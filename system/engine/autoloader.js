@@ -7,9 +7,9 @@ module.exports = class Autoloader {
         this.register('Opencart\System\Engine', __dirname.replace(/\\/g, '/'));
     }
 
-    register(namespace, directory, psr4 = false) {
+    async register(namespace, directory, psr4 = false) {
         this.paths[namespace] = { directory, psr4 };
-        this.load(directory);
+        await this.load(directory);
     }
 
     load(directory1) {

@@ -1,5 +1,4 @@
 
-const path = require('path');
 const sass = require('sass');
 
 module.exports = class SassController extends global['\Opencart\System\Engine\Controller'] {
@@ -7,14 +6,14 @@ module.exports = class SassController extends global['\Opencart\System\Engine\Co
 		super(registry)
 	}
 	async index() {
-		const files = fs.readdirSync(path.join(DIR_APPLICATION, 'view/stylesheet')).filter(file => file.endsWith('.scss'));
+		const files = fs.readdirSync(expressPath.join(DIR_APPLICATION, 'view/stylesheet')).filter(file => file.endsWith('.scss'));
 
 		for (const file of files) {
-			const filename = path.basename(file, '.scss');
-			const stylesheet = path.join(DIR_APPLICATION, 'view/stylesheet', `${filename}.css`);
+			const filename = expressPath.basename(file, '.scss');
+			const stylesheet = expressPath.join(DIR_APPLICATION, 'view/stylesheet', `${filename}.css`);
 
 			if (!fs.existsSync(stylesheet) || !this.config.get('developer_sass')) {
-				const result = sass.compile(path.join(DIR_APPLICATION, 'view/stylesheet', `${filename}.scss`));
+				const result = sass.compile(expressPath.join(DIR_APPLICATION, 'view/stylesheet', `${filename}.scss`));
 
 				fs.writeFileSync(stylesheet, result.css);
 			}

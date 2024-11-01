@@ -6,11 +6,9 @@ module.exports = class PermissionController extends global['\Opencart\System\Eng
 		if (this.request.get.route) {
 			const pos = this.request.get.route.lastIndexOf('.');
 
-			let route;
+			let route = this.request.get.route.substring(0, pos);
 			if (pos === -1) {
 				route = this.request.get.route;
-			} else {
-				route = this.request.get.route.substring(0, pos);
 			}
 
 			// We want to ignore some pages from having their permissions checked.
@@ -25,7 +23,7 @@ module.exports = class PermissionController extends global['\Opencart\System\Eng
 				'error/permission'
 			];
 			if (!ignore.includes(route) && !await this.user.hasPermission('access', route)) {
-				return await new global['\Opencart\System\Engine\Action']('error/permission');
+				return new global['\Opencart\System\Engine\Action']('error/permission');
 			}
 		}
 

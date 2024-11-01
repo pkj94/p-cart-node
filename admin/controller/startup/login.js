@@ -19,7 +19,8 @@ module.exports = class LoginController extends global['\Opencart\System\Engine\C
 		];
 
 		// User
-		this.user = new (require(DIR_SYSTEM + 'library/cart/user'))(this.registry)
+		this.user = new global['\Opencart\System\Library\Cart\User'](this.registry);
+
 		this.registry.set('user', this.user);
 		// console.log('statup/login',  this.request.get.user_token, this.session.data.user_token, this.session.data,this.request.get)
 

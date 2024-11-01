@@ -1,4 +1,4 @@
-module.exports = class CartLibrary {
+module.exports = class Cart {
     constructor(registry) {
         this.db = registry.get('db');
         this.config = registry.get('config');

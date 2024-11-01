@@ -5,35 +5,42 @@ module.exports = class ApplicationController extends global['\Opencart\System\En
 
 	async index() {
 		// Url
-		this.registry.set('url', new global['\Opencart\System\Library\Url'](this.config.get('site_url')));
+		const url = new global['\Opencart\System\Library\Url'](this.config.get('site_url'));
+		this.registry.set('url', url);
 
 		// Customer
-		this.registry.set('customer', new (require(DIR_SYSTEM + 'library/cart/customer'))(this.registry));
+		const customer = new global['\Opencart\System\Library\Cart\Customer'](this.registry);
+		this.registry.set('customer', customer);
 
 		// Currency
-		this.registry.set('currency', new (require(DIR_SYSTEM + 'library/cart/currency'))(this.registry));
+		const currency = new global['\Opencart\System\Library\Cart\Currency'](this.registry);
+		this.registry.set('currency', currency);
 
 		// Tax
-		this.registry.set('tax', new (require(DIR_SYSTEM + 'library/cart/tax'))(this.registry));
+		const tax = new global['\Opencart\System\Library\Cart\Tax'](this.registry);
+		this.registry.set('tax', tax);
 
 		if (this.config.get('config_tax_default') === 'shipping') {
-			this.registry.get('tax').setShippingAddress(this.config.get('config_country_id'), this.config.get('config_zone_id'));
+			tax.setShippingAddress(this.config.get('config_country_id'), this.config.get('config_zone_id'));
 		}
 
 		if (this.config.get('config_tax_default') === 'payment') {
-			this.registry.get('tax').setPaymentAddress(this.config.get('config_country_id'), this.config.get('config_zone_id'));
+			tax.setPaymentAddress(this.config.get('config_country_id'), this.config.get('config_zone_id'));
 		}
 
-		this.registry.get('tax').setStoreAddress(this.config.get('config_country_id'), this.config.get('config_zone_id'));
+		tax.setStoreAddress(this.config.get('config_country_id'), this.config.get('config_zone_id'));
 
 		// Weight
-		this.registry.set('weight', new (require(DIR_SYSTEM + 'library/cart/weight'))(this.registry));
+		const weight = new global['\Opencart\System\Library\Cart\Weight'](this.registry);
+		this.registry.set('weight', weight);
 
 		// Length
-		this.registry.set('length', new (require(DIR_SYSTEM + 'library/cart/length'))(this.registry));
+		const length = new global['\Opencart\System\Library\Cart\Length'](this.registry);
+		this.registry.set('length', length);
 
 		// Cart
-		this.registry.set('cart', new (require(DIR_SYSTEM + 'library/cart/cart'))(this.registry));
+		const cart = new global['\Opencart\System\Library\Cart\Cart'](this.registry);
+		this.registry.set('cart', cart);
 	}
 }
 

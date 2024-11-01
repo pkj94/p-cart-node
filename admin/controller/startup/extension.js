@@ -9,16 +9,16 @@ module.exports = class ExtensionController extends global['\Opencart\System\Engi
 		this.load.model('setting/extension', this);
 		const results = await this.model_setting_extension.getInstalls();
 
-		results.forEach(result => {
+		results.forEach(async result => {
 			const extension = result.code.replace(/[_/]/g, '').replace(/(?:^|\s)\S/g, a => a.toUpperCase());
 
 			// Register controllers, models and system extension folders
 			if (fs.existsSync(`${DIR_EXTENSION}${result.code}/admin/controller/`))
-				this.autoloader.register(`Opencart\Admin\Controller\Extension${extension}`, `${DIR_EXTENSION}${result.code}/admin/controller/`);
+				await this.autoloader.register(`Opencart\Admin\Controller\Extension${extension}`, `${DIR_EXTENSION}${result.code}/admin/controller/`);
 			if (fs.existsSync(`${DIR_EXTENSION}${result.code}/admin/model/`))
-				this.autoloader.register(`Opencart\Admin\Model\Extension${extension}`, `${DIR_EXTENSION}${result.code}/admin/model/`);
+				await this.autoloader.register(`Opencart\Admin\Model\Extension${extension}`, `${DIR_EXTENSION}${result.code}/admin/model/`);
 			if (fs.existsSync(`${DIR_EXTENSION}${result.code}/system/library/`))
-				this.autoloader.register(`Opencart\System\Library\Extension${extension}`, `${DIR_EXTENSION}${result.code}/system/library/`);
+				await this.autoloader.register(`Opencart\System\Library\Extension${extension}`, `${DIR_EXTENSION}${result.code}/system/library/`);
 
 			// Template directory
 			if (fs.existsSync(`${DIR_EXTENSION}${result.code}/admin/view/template/`))
