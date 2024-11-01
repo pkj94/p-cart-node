@@ -18,7 +18,7 @@ global.APP = () => {
         installRoutes = require('./install');
     // boostrap all models
     // Start Optimize
-    console.log('installRoutes---', installRoutes)
+    console.log('installRoutes---')
     const autoloader = new OpencartSystemEngineAutoloader();
     autoloader.register(`Opencart${getConfig('APPLICATION', 'admin')}`, getConfig('DIR_APPLICATION', 'admin'));
     autoloader.register(`Opencart${getConfig('APPLICATION')}`, getConfig('DIR_APPLICATION'));
