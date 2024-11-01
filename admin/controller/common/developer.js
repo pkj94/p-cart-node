@@ -110,9 +110,7 @@ module.exports = class DeveloperCommonController extends global['\Opencart\Syste
 			files = require('glob').sync(DIR_CATALOG + 'view/theme/*/stylesheet/stylesheet.scss');
 
 			for (let file of files) {
-				console.log(file)
 				file = file.substring(0, -16) + '/stylesheet.css';
-				console.log(file)
 
 				if (fs.lstatSync(file).isFile()) {
 					fs.unlinkSync(file);
