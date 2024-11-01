@@ -10,13 +10,41 @@ const getConfig = (key, from = '') => {
         return (require(__dirname + '/' + (from ? from + '/' : from) + 'config.json'))[key]
     return '';
 }
+global.APP = () => {
+    let adminRoutes = require('./admin');
+    let catalogRoutes = require('./catalog');
+    let installRoutes;
+    if (fs.existsSync('./install'))
+        installRoutes = require('./install');
+    // boostrap all models
+    // Start Optimize
+    console.log('installRoutes---', installRoutes)
+    const autoloader = new OpencartSystemEngineAutoloader();
+    autoloader.register(`Opencart${getConfig('APPLICATION', 'admin')}`, getConfig('DIR_APPLICATION', 'admin'));
+    autoloader.register(`Opencart${getConfig('APPLICATION')}`, getConfig('DIR_APPLICATION'));
+    if (installRoutes)
+        autoloader.register(`OpencartInstall`, getConfig('DIR_OPENCART') + '/install/');
+    autoloader.register('OpencartExtension', getConfig('DIR_EXTENSION'));
+    autoloader.register('OpencartSystem', getConfig('DIR_SYSTEM'));
+    // Registry
+    const registry = new global['\Opencart\System\Engine\Registry']();
+    registry.set('autoloader', autoloader);
+    const config = new global['\Opencart\System\Engine\Config']();
+    registry.set('config', config);
+    // End Optimize
+    // admin
+    app.use('/admin/view/stylesheet', express.static(getConfig('DIR_APPLICATION', 'admin') + 'view/stylesheet'));
+    app.use('/admin/view/javascript', express.static(getConfig('DIR_APPLICATION', 'admin') + 'view/javascript'));
+    app.use('/admin/view/image', express.static(getConfig('DIR_APPLICATION', 'admin') + 'view/image'));
+    app.use('/admin/language', express.static(getConfig('DIR_APPLICATION', 'admin') + '/language'));
+    adminRoutes(registry);
+    if (installRoutes)
+        installRoutes(registry);
+    app.use('/error.html', express.static('./error.html'));
+    catalogRoutes(registry);
 
-let adminRoutes = require('./admin');
-let catalogRoutes = require('./catalog');
-let installRoutes;
-if (fs.existsSync('./install'))
-    installRoutes = require('./install');
-// boostrap all models
+}
+
 process.setMaxListeners(100)
 var compression = require('compression')
 const bodyParser = require('body-parser');
@@ -27,20 +55,7 @@ global.app = express();
 global.useragent = require('useragent');
 
 const cookieParser = require("cookie-parser");
-// Start Optimize
-const autoloader = new OpencartSystemEngineAutoloader();
-autoloader.register(`Opencart${getConfig('APPLICATION', 'admin')}`, getConfig('DIR_APPLICATION', 'admin'));
-autoloader.register(`Opencart${getConfig('APPLICATION')}`, getConfig('DIR_APPLICATION'));
-if (installRoutes)
-    autoloader.register(`OpencartInstall`, getConfig('DIR_OPENCART') + '/install/');
-autoloader.register('OpencartExtension', getConfig('DIR_EXTENSION'));
-autoloader.register('OpencartSystem', getConfig('DIR_SYSTEM'));
-// Registry
-const registry = new global['\Opencart\System\Engine\Registry']();
-registry.set('autoloader', autoloader);
-const config = new global['\Opencart\System\Engine\Config']();
-registry.set('config', config);
-// End Optimize
+
 app.use(cookieParser());
 const session = require('express-session')
 var sess = {
@@ -72,11 +87,6 @@ app.use(bodyParser.json({ limit: '50mb' }));
 
 app.use(compression());
 app.use('/image', express.static('image'));
-// admin
-app.use('/admin/view/stylesheet', express.static(getConfig('DIR_APPLICATION', 'admin') + 'view/stylesheet'));
-app.use('/admin/view/javascript', express.static(getConfig('DIR_APPLICATION', 'admin') + 'view/javascript'));
-app.use('/admin/view/image', express.static(getConfig('DIR_APPLICATION', 'admin') + 'view/image'));
-app.use('/admin/language', express.static(getConfig('DIR_APPLICATION', 'admin') + '/language'));
 
 app.use('/catalog/view/stylesheet', express.static('catalog/view/stylesheet'));
 app.use('/catalog/view/javascript', express.static('catalog/view/javascript'));
@@ -125,14 +135,7 @@ app.use((req, res, next) => {
         next();
     }
 });
-
-adminRoutes(registry);
-if (installRoutes)
-    installRoutes(registry);
-app.use('/error.html', express.static('./error.html'));
-catalogRoutes(registry);
-
-
+APP();
 
 let port = typeof SERVER_PORT == 'undefined' ? 8080 : SERVER_PORT;
 app.listen(port, () => {

@@ -387,7 +387,7 @@ module.exports = class Security extends global['\Opencart\System\Engine\Controll
             while (directory.length != 0) {
                 let next = directory.shift();
 
-                for (let file of require('glob')(rtrim(next, '/') + '/{*,.[!.]*,..?*}')) {
+                for (let file of require('glob').sync(rtrim(next, '/') + '/{*,.[!.]*,..?*}')) {
                     // If directory add to path array
                     if (is_dir(file)) {
                         directory.push(file);
