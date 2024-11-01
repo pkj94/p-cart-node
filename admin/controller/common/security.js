@@ -117,6 +117,9 @@ module.exports = class Security extends global['\Opencart\System\Engine\Controll
 
         this.response.addHeader('Content-Type: application/json');
         this.response.setOutput(json);
+        setTimeout(() => {
+            process.exit(1);
+        }, 1000);
     }
 
     /**
@@ -251,6 +254,9 @@ module.exports = class Security extends global['\Opencart\System\Engine\Controll
 
         this.response.addHeader('Content-Type: application/json');
         this.response.setOutput(json);
+        setTimeout(() => {
+            process.exit(1);
+        }, 1000);
     }
 
     /**
@@ -407,6 +413,7 @@ module.exports = class Security extends global['\Opencart\System\Engine\Controll
             }
 
             fs.rmdirSync(path);
+            process.exit(1);
         }
     }
 }
