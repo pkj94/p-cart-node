@@ -68,7 +68,7 @@ module.exports = class AuthorizeCommontController extends global['\Opencart\Syst
 			let url = '';
 
 			if (args) {
-				url+= args;
+				url += args;
 			}
 
 			data['redirect'] = await this.url.link(route, url);
@@ -108,7 +108,7 @@ module.exports = class AuthorizeCommontController extends global['\Opencart\Syst
 		let token = '';
 		if ((this.request.cookie['authorize'])) {
 			token = this.request.cookie['authorize'];
-		} 
+		}
 
 		this.load.model('user/user', this);
 
@@ -152,7 +152,7 @@ module.exports = class AuthorizeCommontController extends global['\Opencart\Syst
 		let token = '';
 		if ((this.request.cookie['authorize'])) {
 			token = this.request.cookie['authorize'];
-		} 
+		}
 		this.load.model('user/user', this);
 
 		const authorize_info = await this.model_user_user.getAuthorizeByToken(await this.user.getId(), token);
