@@ -356,7 +356,7 @@ module.exports = class Security extends global['\Opencart\System\Engine\Controll
                 json['redirect'] = HTTP_SERVER.substring(0, -6) + name + '/?route=common/login'.replaceAll('&amp;', '&');
             }
         }
-
+        await this.__destruct();
         this.response.addHeader('Content-Type: application/json');
         this.response.setOutput(json);
     }
@@ -377,7 +377,7 @@ module.exports = class Security extends global['\Opencart\System\Engine\Controll
 
             // While the path array is still populated keep looping through
             while (directory.length != 0) {
-                next = directory.shift();
+                let next = directory.shift();
 
                 for (let file of require('glob')(rtrim(next, '/') + '/{*,.[!.]*,..?*}')) {
                     // If directory add to path array
