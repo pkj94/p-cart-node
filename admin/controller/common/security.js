@@ -101,7 +101,6 @@ module.exports = class Security extends global['\Opencart\System\Engine\Controll
             }
 
             files = files.reverse();
-            console.log(files, directory)
             for (let file of files) {
                 if (is_file(file)) {
                     fs.unlinkSync(file);
@@ -118,7 +117,7 @@ module.exports = class Security extends global['\Opencart\System\Engine\Controll
         this.response.addHeader('Content-Type: application/json');
         this.response.setOutput(json);
         setTimeout(() => {
-            process.exit(1);
+            APP();
         }, 1000);
     }
 
@@ -255,7 +254,7 @@ module.exports = class Security extends global['\Opencart\System\Engine\Controll
         this.response.addHeader('Content-Type: application/json');
         this.response.setOutput(json);
         setTimeout(() => {
-            process.exit(1);
+            APP();
         }, 1000);
     }
 
@@ -365,6 +364,9 @@ module.exports = class Security extends global['\Opencart\System\Engine\Controll
         await this.__destruct();
         this.response.addHeader('Content-Type: application/json');
         this.response.setOutput(json);
+        setTimeout(() => {
+            APP();
+        }, 1000);
     }
 
     /**
@@ -413,7 +415,6 @@ module.exports = class Security extends global['\Opencart\System\Engine\Controll
             }
 
             fs.rmdirSync(path);
-            process.exit(1);
         }
     }
 }
