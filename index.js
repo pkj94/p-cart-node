@@ -10,7 +10,7 @@ const getConfig = (key, from = '') => {
         return (require(__dirname + '/' + (from ? from + '/' : from) + 'config.json'))[key]
     return '';
 }
-globalAgent.APP = () => {
+global.APP = () => {
     let adminRoutes = require('./admin');
     let catalogRoutes = require('./catalog');
     let installRoutes;
