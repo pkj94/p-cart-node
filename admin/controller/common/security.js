@@ -51,7 +51,7 @@ module.exports = class Security extends global['\Opencart\System\Engine\Controll
         data['user_token'] = this.session.data['user_token'];
 
         if (data['install'] || data['storage'] || data['admin']) {
-            return await this.load.view('common/security', data);
+            return '';//await this.load.view('common/security', data);
         } else {
             return '';
         }
