@@ -517,7 +517,7 @@ module.exports = class MarketplaceMarketplaceController extends global['\Opencar
 		string += extension_id + "\n";
 		string += time + "\n";
 
-		let signature = base64_encode(hash_hmac('sha1', string, this.config.get('opencart_secret'), 1));
+		let signature = atob(hash_hmac('sha1', string, this.config.get('opencart_secret'), 1));
 
 		let url = '&username=' + encodeURIComponent(this.config.get('opencart_username') || '');
 		url += '&domain=' + this.request.server.headers.host;
@@ -620,7 +620,7 @@ module.exports = class MarketplaceMarketplaceController extends global['\Opencar
 
 			data['images'] = [];
 
-			for (response_info['images'] of result) {
+			for (let result of response_info['images']) {
 				data['images'].push({
 					'thumb': result['thumb'],
 					'popup': result['popup']
@@ -632,6 +632,7 @@ module.exports = class MarketplaceMarketplaceController extends global['\Opencar
 			data['downloads'] = [];
 
 			if (response_info['downloads']) {
+				this.session.data['extension_download'] = this.session.data['extension_download'] || {};
 				this.session.data['extension_download'][extension_id] = response_info['downloads'];
 			} else {
 				this.session.data['extension_download'][extension_id] = {};
@@ -646,7 +647,7 @@ module.exports = class MarketplaceMarketplaceController extends global['\Opencar
 			data['header'] = await this.load.controller('common/header');
 			data['column_left'] = await this.load.controller('common/column_left');
 			data['footer'] = await this.load.controller('common/footer');
-
+			await this.session.save(this.session.data);
 			this.response.setOutput(await this.load.view('marketplace/marketplace_info', data));
 
 			return null;
@@ -905,7 +906,7 @@ module.exports = class MarketplaceMarketplaceController extends global['\Opencar
 			string += encodeURIComponent(VERSION) + "\n";
 			string += extension_id + "\n";
 			string += parent_id + "\n";
-			string += encodeURIComponent(base64_encode(this.request.post['comment'])) + "\n";
+			string += encodeURIComponent(atob(this.request.post['comment'])) + "\n";
 			string += time + "\n";
 
 			let signature = hash_hmac('sha1', string, this.config.get('opencart_secret')).toString('base64');
