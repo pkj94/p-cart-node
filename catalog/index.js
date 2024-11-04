@@ -1,5 +1,3 @@
-const Framework = require("../system/framework");
-
 module.exports = function (registry) {
     const loadControllers = async (req, res, next) => {
         // console.log(req.params)
@@ -12,7 +10,8 @@ module.exports = function (registry) {
         if (typeof DIR_APPLICATION == 'undefined')
             return res.redirect('/install');
         // console.log(typeof DIR_APPLICATION == 'undefined')
-        new Framework(registry).init(req, res, next).then(output => {
+        require('./system/startup');
+        start(req, res, next).then(output => {
             if (registry.get('response').redirect) {
                 res.redirect(registry.get('response').redirect);
             } else {

@@ -18,13 +18,13 @@ if (!process.env.TZ) {
 // Windows IIS Compatibility equivalent
 if (!process.env.DOCUMENT_ROOT) {
     if (process.env.SCRIPT_FILENAME) {
-        process.env.DOCUMENT_ROOT = path.dirname(process.env.SCRIPT_FILENAME);
+        process.env.DOCUMENT_ROOT = expressPath.dirname(process.env.SCRIPT_FILENAME);
     }
 }
 
 if (!process.env.DOCUMENT_ROOT) {
     if (process.env.PATH_TRANSLATED) {
-        process.env.DOCUMENT_ROOT = path.dirname(process.env.PATH_TRANSLATED);
+        process.env.DOCUMENT_ROOT = expressPath.dirname(process.env.PATH_TRANSLATED);
     }
 }
 
@@ -56,13 +56,46 @@ if (process.env.HTTP_X_FORWARDED_FOR) {
 } else if (process.env.HTTP_CLIENT_IP) {
     process.env.REMOTE_ADDR = process.env.HTTP_CLIENT_IP;
 }
-
+global.modification = (filename) => {
+    let file;
+    if (typeof DIR_CATALOG !== 'undefined') {
+        file = expressPath.join(DIR_MODIFICATION, 'admin', filename.substring(DIR_APPLICATION.length));
+    } else if (typeof DIR_OPENCART !== 'undefined') {
+        file = expressPath.join(DIR_MODIFICATION, 'install', filename.substring(DIR_APPLICATION.length));
+    } else {
+        file = expressPath.join(DIR_MODIFICATION, 'catalog', filename.substring(DIR_APPLICATION.length));
+    } if (filename.startsWith(DIR_SYSTEM)) {
+        file = expressPath.join(DIR_MODIFICATION, 'system', filename.substring(DIR_SYSTEM.length));
+    } if (fs.existsSync(file)) {
+        return file;
+    }
+    return filename;
+}
+global.library = (className) => {
+    const file = expressPath.join(DIR_SYSTEM, 'library', className.replace(/\\/g, '/').toLowerCase() + '.js');
+    if (fs.existsSync(file)) {
+        require(modification(file));
+        return true;
+    } else {
+        return false;
+    }
+}
 // Load environment variables
-// dotenv.config({ path: path.join(__dirname, 'config.env') });
+// dotenv.config({ path: expressPath.join(__dirname, 'config.env') });
 
 // Autoloader equivalent in Node.js
-require('./helper/general');
-module.exports = {
-    '\Opencart\System\Engine\Autoloader': require('./engine/autoloader'),
-    '\Opencart\System\Engine\Config': require('./engine/config')
-};
+global.Action = require(modification(DIR_SYSTEM + 'engine/action.js'));
+global.Controller = require(modification(DIR_SYSTEM + 'engine/controller.js'));
+global.Event = require(modification(DIR_SYSTEM + 'engine/event.js'));
+global.Router = require(modification(DIR_SYSTEM + 'engine/router.js'));
+global.Loader = require(modification(DIR_SYSTEM + 'engine/loader.js'));
+global.Model = require(modification(DIR_SYSTEM + 'engine/model.js'));
+global.Registry = require(modification(DIR_SYSTEM + 'engine/registry.js'));
+global.Proxy = require(modification(DIR_SYSTEM + 'engine/proxy.js'));
+require(DIR_SYSTEM + 'helper/general.js');
+require(DIR_SYSTEM + 'helper/utf8.js');
+
+global.start = (application_config, req, res, next) => {
+    const framework = require(DIR_SYSTEM + 'framework.js');
+    new framework().init(application_config);
+}

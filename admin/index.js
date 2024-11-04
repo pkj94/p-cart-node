@@ -1,8 +1,6 @@
-const Framework = require('../system/framework');
 
 module.exports = function (registry) {
     const loadAdminControllers = async (req, res, next) => {
-        const config = registry.get('config');
         if (fs.readFileSync('./config.json').toString())
             for (let [key, value] of Object.entries(require('./config.json'))) {
                 global[key] = value;
@@ -11,9 +9,9 @@ module.exports = function (registry) {
         if (typeof DIR_APPLICATION == 'undefined')
             return res.redirect('/install');
         // console.log(typeof DIR_APPLICATION == 'undefined')
-       
+        require(DIR_SYSTEM + 'startup.js')
 
-        new Framework(registry).init(req, res, next).then(output => {
+        start('admin', req, res, next).then(output => {
             if (registry.get('response').end) {
                 registry.get('response').headers.forEach(header => {
                     res.header((header.split(':')[0] || '').trim(), (header.split(':')[1] || '').trim());
@@ -70,5 +68,10 @@ module.exports = function (registry) {
         });
     };
     // loadAdminControllers();
+    app.use('/admin/view/stylesheet', express.static('D:/Development/NODE/p-cart-node/admin/' + 'view/stylesheet'));
+    app.use('/admin/view/javascript', express.static('D:/Development/NODE/p-cart-node/admin/' + 'view/javascript'));
+    app.use('/admin/view/image', express.static('D:/Development/NODE/p-cart-node/admin/' + 'view/image'));
+    app.use('/admin/language', express.static('D:/Development/NODE/p-cart-node/admin/' + '/language'));
+
     app.all('/admin', loadAdminControllers);
 }

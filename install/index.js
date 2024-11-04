@@ -13,25 +13,28 @@ module.exports = function (registry) {
         global.DIR_OPENCART = path.join(__dirname, '..', '/').replace(/\\/g, '/');
         global.DIR_APPLICATION = DIR_OPENCART + 'install/';
         global.DIR_SYSTEM = DIR_OPENCART + 'system/';
-        global.DIR_EXTENSION = DIR_OPENCART + 'extension/';
-        global.DIR_IMAGE = DIR_OPENCART + 'image/';
         global.DIR_STORAGE = DIR_SYSTEM + 'storage/';
+        global.DIR_IMAGE = DIR_OPENCART + 'image/';
         global.DIR_LANGUAGE = DIR_APPLICATION + 'language/';
         global.DIR_TEMPLATE = DIR_APPLICATION + 'view/template/';
+        global.DIR_DATABASE = DIR_SYSTEM + 'database/';
         global.DIR_CONFIG = DIR_SYSTEM + 'config/';
         global.DIR_CACHE = DIR_SYSTEM + 'storage/cache/';
         global.DIR_DOWNLOAD = DIR_SYSTEM + 'storage/download/';
         global.DIR_LOGS = DIR_SYSTEM + 'storage/logs/';
+        global.DIR_MODIFICATION = DIR_SYSTEM + 'storage/modification/';
         global.DIR_SESSION = DIR_SYSTEM + 'storage/session/';
         global.DIR_UPLOAD = DIR_SYSTEM + 'storage/upload/';
+        global.DIR_DOWNLOAD = DIR_SYSTEM + 'storage/download/';
         // console.log("=================", HTTP_SERVER, HTTP_OPENCART);
         app.use('/install/view/stylesheet', express.static(DIR_APPLICATION + 'view/stylesheet'));
         app.use('/install/view/javascript', express.static(DIR_APPLICATION + 'view/javascript'));
         app.use('/install/view/image', express.static(DIR_APPLICATION + 'view/image'));
         app.use('/install/language', express.static(DIR_APPLICATION + '/language'));
+        require(DIR_SYSTEM + 'startup.js');
 
 
-        new Framework(registry).init(req, res, next).then(output => {
+        start('install', req, res, next).then(output => {
             if (registry.get('response').redirect) {
                 res.redirect(registry.get('response').redirect);
             } else {

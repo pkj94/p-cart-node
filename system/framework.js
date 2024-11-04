@@ -1,19 +1,19 @@
 
 // Helper
 module.exports = class Framework {
-    constructor(registry) {
-        this.registry = registry;
-    }
-    async init(req, res, next) {
-        const config = this.registry.get('config');
+    async init(application_config, req, res, next) {
+        // Registry
+        const registry = new Registry();
+        // Config
+        const config = new Config();
         config.addPath(DIR_CONFIG);
         // Load the default config
         await config.load('default');
-        await config.load(oc_strtolower(APPLICATION));
+        await config.load(application_config);
         // console.log('config--', config)
 
         // Set the default application
-        config.set('application', APPLICATION);
+        registry.set('config', config);
         // Set the default time zone
         const dateTimezone = config.get('date_timezone');
         Intl.DateTimeFormat().resolvedOptions().timeZone = dateTimezone;

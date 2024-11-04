@@ -1,47 +1,22 @@
-const { OpencartSystemEngineAutoloader } = require('./system/startup');
 
 global.VERSION = '4.0.2.3';
 global.APPROOT = __dirname;
 global.date = require('php-date-format');
 global.fs = require('fs');
 global.expressPath = require('path');
-const getConfig = (key, from = '') => {
-    if (fs.readFileSync(__dirname + '/' + (from ? from + '/' : from) + 'config.json').toString())
-        return (require(__dirname + '/' + (from ? from + '/' : from) + 'config.json'))[key]
-    return '';
-}
+
 global.APP = () => {
     let adminRoutes = require('./admin');
     let catalogRoutes = require('./catalog');
     let installRoutes;
     if (fs.existsSync('./install'))
         installRoutes = require('./install');
-    // boostrap all models
-    // Start Optimize
-    console.log('installRoutes---')
-    const autoloader = new OpencartSystemEngineAutoloader();
-    autoloader.register(`Opencart${getConfig('APPLICATION', 'admin')}`, getConfig('DIR_APPLICATION', 'admin'));
-    autoloader.register(`Opencart${getConfig('APPLICATION')}`, getConfig('DIR_APPLICATION'));
-    if (installRoutes)
-        autoloader.register(`OpencartInstall`, getConfig('DIR_OPENCART') + '/install/');
-    autoloader.register('OpencartExtension', getConfig('DIR_EXTENSION'));
-    autoloader.register('OpencartSystem', getConfig('DIR_SYSTEM'));
-    // Registry
-    const registry = new global['\Opencart\System\Engine\Registry']();
-    registry.set('autoloader', autoloader);
-    const config = new global['\Opencart\System\Engine\Config']();
-    registry.set('config', config);
-    // End Optimize
     // admin
-    app.use('/admin/view/stylesheet', express.static(getConfig('DIR_APPLICATION', 'admin') + 'view/stylesheet'));
-    app.use('/admin/view/javascript', express.static(getConfig('DIR_APPLICATION', 'admin') + 'view/javascript'));
-    app.use('/admin/view/image', express.static(getConfig('DIR_APPLICATION', 'admin') + 'view/image'));
-    app.use('/admin/language', express.static(getConfig('DIR_APPLICATION', 'admin') + '/language'));
-    adminRoutes(registry);
+    adminRoutes();
     if (installRoutes)
-        installRoutes(registry);
+        installRoutes();
     app.use('/error.html', express.static('./error.html'));
-    catalogRoutes(registry);
+    catalogRoutes();
 
 }
 

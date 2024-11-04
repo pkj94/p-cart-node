@@ -1,34 +1,33 @@
-global['\Opencart\System\Engine\Proxy'] = class Proxy {
+global['\Opencart\System\Engine\Proxy'] = class ProxyLocal {
     constructor() {
-        this.data = {};
+        return new Proxy(this, {
+            get: (target, key) => {
+                if (key in target) {
+                    return target[key];
+                } else {
+                    throw new Error(`Undefined property: Proxy::${key}`);
+                }
+            },
+            set: (target, key, value) => {
+                target[key] = value;
+                return true;
+            },
+            apply: (target, thisArg, args) => {
+                if (typeof target[key] === 'function') {
+                    return target[key](...args);
+                } else {
+                    throw new Error(`Undefined property: Proxy::${key}`);
+                }
+            }
+        });
     }
 
-    get(key) {
-        if (this.data[key]) {
-            return this.data[key];
+    __call(key, ...args) {
+        if (typeof this[key] === 'function') {
+            return this[key](...args);
         } else {
-            throw new Error(`Error: Could not call proxy key ${key}!`);
-        }
-    }
-
-    set(key, value) {
-        this.data[key] = value;
-    }
-
-    isset(key) {
-        return this.data.hasOwnProperty(key);
-    }
-
-    unset(key) {
-        delete this.data[key];
-    }
-
-    call(method, ...args) {
-        if (typeof this.data[method] === 'function') {
-            return this.data[method](...args);
-        } else {
-            throw new Error(`Notice: Undefined property: Proxy::${method}`);
+            const trace = new Error().stack;
+            console.error(`Notice: Undefined property: Proxy::${key} in ${trace.split('\n')[1].trim()}`);
         }
     }
 }
-
