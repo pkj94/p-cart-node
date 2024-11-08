@@ -2,7 +2,7 @@ const nl2br = require("locutus/php/strings/nl2br");
 const sprintf = require("locutus/php/strings/sprintf");
 const str_replace = require("locutus/php/strings/str_replace");
 
-module.exports = class Order extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class Order extends Controller {
 	/**
 	 * @return void
 	 */

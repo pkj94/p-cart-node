@@ -1,326 +1,129 @@
-module.exports = class UserModel extends global['\Opencart\System\Engine\Model'] {
-    constructor(registry) {
-        super(registry);
-    }
-    /**
-     * @param data
-     *
-     * @return int
-     */
-    async addUser(data) {
-        await this.db.query("INSERT INTO `" + DB_PREFIX + "user` SET `username` = " + this.db.escape(data['username']) + ", `user_group_id` = '" + data['user_group_id'] + "', `password` = " + this.db.escape(await password_hash(html_entity_decode(data['password']))) + ", `firstname` = " + this.db.escape(data['firstname']) + ", `lastname` = " + this.db.escape(data['lastname']) + ", `email` = " + this.db.escape(data['email']) + ", `image` = " + this.db.escape(data['image']) + ", `status` = '" + (data['status'] ? data['status'] : 0) + "', `date_added` = NOW()");
-        return this.db.getLastId();
-    }
+module.exports = class ModelUserUser extends Model {
+	async addUser(data) {
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "user` SET username = '" + this.db.escape(data['username']) + "', user_group_id = '" + data['user_group_id'] + "', salt = '" + this.db.escape(salt = token(9)) + "', password = '" + this.db.escape(sha1(salt + sha1(salt + sha1(data['password'])))) + "', firstname = '" + this.db.escape(data['firstname']) + "', lastname = '" + this.db.escape(data['lastname']) + "', email = '" + this.db.escape(data['email']) + "', image = '" + this.db.escape(data['image']) + "', status = '" + data['status'] + "', date_added = NOW()");
 
-    /**
-     * @param   user_id
-     * @param data
-     *
-     * @return void
-     */
-    async editUser(user_id, data) {
-        await this.db.query("UPDATE `" + DB_PREFIX + "user` SET `username` = " + this.db.escape(data['username']) + ", `user_group_id` = '" + data['user_group_id'] + "', `firstname` = " + this.db.escape(data['firstname']) + ", `lastname` = " + this.db.escape(data['lastname']) + ", `email` = " + this.db.escape(data['email']) + ", `image` = " + this.db.escape(data['image']) + ", `status` = '" + (data['status'] ? data['status'] : 0) + "' WHERE `user_id` = '" + user_id + "'");
+		return this.db.getLastId();
+	}
 
-        if (data['password']) {
-            await this.db.query("UPDATE `" + DB_PREFIX + "user` SET `password` = " + this.db.escape(await password_hash(data['password'])) + " WHERE `user_id` = '" + user_id + "'");
-        }
-    }
+	async editUser(user_id, data) {
+		await this.db.query("UPDATE `" + DB_PREFIX + "user` SET username = '" + this.db.escape(data['username']) + "', user_group_id = '" + data['user_group_id'] + "', firstname = '" + this.db.escape(data['firstname']) + "', lastname = '" + this.db.escape(data['lastname']) + "', email = '" + this.db.escape(data['email']) + "', image = '" + this.db.escape(data['image']) + "', status = '" + data['status'] + "' WHERE user_id = '" + user_id + "'");
 
-    /**
-     * @param user_id
-     * @param     password
-     *
-     * @return void
-     */
-    async editPassword(user_id, password) {
-        await this.db.query("UPDATE `" + DB_PREFIX + "user` SET `password` = " + this.db.escape(await password_hash(password)) + ", `code` = '' WHERE `user_id` = '" + user_id + "'");
-    }
+		if (data['password']) {
+			await this.db.query("UPDATE `" + DB_PREFIX + "user` SET salt = '" + this.db.escape(salt = token(9)) + "', password = '" + this.db.escape(sha1(salt + sha1(salt + sha1(data['password'])))) + "' WHERE user_id = '" + user_id + "'");
+		}
+	}
 
-    /**
-     * @param email
-     * @param code
-     *
-     * @return void
-     */
-    async editCode(email, code) {
-        await this.db.query("UPDATE `" + DB_PREFIX + "user` SET `code` = " + this.db.escape(code) + " WHERE LCASE(`email`) = " + this.db.escape(oc_strtolower(email)) );
-    }
+	async editPassword(user_id, password) {
+		await this.db.query("UPDATE `" + DB_PREFIX + "user` SET salt = '" + this.db.escape(salt = token(9)) + "', password = '" + this.db.escape(sha1(salt + sha1(salt + sha1(password)))) + "', code = '' WHERE user_id = '" + user_id + "'");
+	}
 
-    /**
-     * @param user_id
-     *
-     * @return void
-     */
-    async deleteUser(user_id) {
-        await this.db.query("DELETE FROM `" + DB_PREFIX + "user` WHERE `user_id` = '" + user_id + "'");
-        await this.db.query("DELETE FROM `" + DB_PREFIX + "user_history` WHERE `user_id` = '" + user_id + "'");
-        await this.db.query("DELETE FROM `" + DB_PREFIX + "user_history` WHERE `user_id` = '" + user_id + "'");
-    }
+	async editCode(email, code) {
+		await this.db.query("UPDATE `" + DB_PREFIX + "user` SET code = '" + this.db.escape(code) + "' WHERE LCASE(email) = '" + this.db.escape(oc_strtolower(email)) + "'");
+	}
 
-    /**
-     * @param user_id
-     *
-     * @return array
-     */
-    async getUser(user_id) {
-        let query = await this.db.query("SELECT *, (SELECT ug.`name` FROM `" + DB_PREFIX + "user_group` ug WHERE ug.`user_group_id` = u.`user_group_id`) AS user_group FROM `" + DB_PREFIX + "user` u WHERE u.`user_id` = '" + user_id + "'");
-        return query.row;
-    }
+	async deleteUser(user_id) {
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "user` WHERE user_id = '" + user_id + "'");
+	}
 
-    /**
-     * @param username
-     *
-     * @return array
-     */
-    async getUserByUsername(username) {
-        let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "user` WHERE `username` = " + this.db.escape(username) );
+	async getUser(user_id) {
+		const query = await this.db.query("SELECT *, (SELECT ug.name FROM `" + DB_PREFIX + "user_group` ug WHERE ug.user_group_id = u.user_group_id) AS user_group FROM `" + DB_PREFIX + "user` u WHERE u.user_id = '" + user_id + "'");
 
-        return query.row;
-    }
+		return query.row;
+	}
 
-    /**
-     * @param email
-     *
-     * @return array
-     */
-    async getUserByEmail(email) {
-        const query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "user` WHERE LCASE(`email`) = " + this.db.escape(oc_strtolower(email)) );
+	async getUserByUsername(username) {
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "user` WHERE username = '" + this.db.escape(username) + "'");
 
-        return query.row;
-    }
+		return query.row;
+	}
 
-    /**
-     * @param code
-     *
-     * @return array
-     */
-    async getUserByCode(code) {
-        let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "user` WHERE `code` = " + this.db.escape(code) + " AND `code` != ''");
+	async getUserByEmail(email) {
+		const query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "user` WHERE LCASE(email) = '" + this.db.escape(oc_strtolower(email)) + "'");
 
-        return query.row;
-    }
+		return query.row;
+	}
 
-    /**
-     * @param data
-     *
-     * @return array
-     */
-    async getUsers(data = {}) {
-        let sql = "SELECT * FROM `" + DB_PREFIX + "user`";
+	async getUserByCode(code) {
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "user` WHERE code = '" + this.db.escape(code) + "' AND code != ''");
 
-        let sort_data = [
-            'username',
-            'status',
-            'date_added'
-        ];
+		return query.row;
+	}
 
-        if (data['sort'] && sort_data.includes(data['sort'])) {
-            sql += " ORDER BY " + data['sort'];
-        } else {
-            sql += " ORDER BY `username`";
-        }
+	async getUsers(data = {}) {
+		let sql = "SELECT * FROM `" + DB_PREFIX + "user`";
 
-        if (data['order'] && (data['order'] == 'DESC')) {
-            sql += " DESC";
-        } else {
-            sql += " ASC";
-        }
+		let sort_data = [
+			'username',
+			'status',
+			'date_added'
+		];
 
-        if (data['start'] || data['limit']) {
-            if (data['start'] < 0) {
-                data['start'] = 0;
-            }
+		if ((data['sort']) && sort_data.includes(data['sort'])) {
+			sql += " ORDER BY " + data['sort'];
+		} else {
+			sql += " ORDER BY username";
+		}
 
-            if (data['limit'] < 1) {
-                data['limit'] = 20;
-            }
+		if ((data['order']) && (data['order'] == 'DESC')) {
+			sql += " DESC";
+		} else {
+			sql += " ASC";
+		}
 
-            sql += " LIMIT " + data['start'] + "," + data['limit'];
-        }
+		if ((data['start']) || (data['limit'])) {
+			data['start'] = data['start'] || 0;
+			if (data['start'] < 0) {
+				data['start'] = 0;
+			}
 
-        const query = await this.db.query(sql);
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
+				data['limit'] = 20;
+			}
 
-        return query.rows;
-    }
+			sql += " LIMIT " + data['start'] + "," + data['limit'];
+		}
 
-    /**
-     * @return int
-     */
-    async getTotalUsers() {
-        let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "user`");
+		const query = await this.db.query(sql);
 
-        return query.row['total'];
-    }
+		return query.rows;
+	}
 
-    /**
-     * @param user_group_id
-     *
-     * @return int
-     */
-    async getTotalUsersByGroupId(user_group_id) {
-        let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "user` WHERE `user_group_id` = '" + user_group_id + "'");
+	async getTotalUsers() {
+		const query = await this.db.query("SELECT COUNT(*) AS total FROM `" + DB_PREFIX + "user`");
 
-        return query.row['total'];
-    }
+		return query.row['total'];
+	}
 
-    /**
-     * @param email
-     *
-     * @return int
-     */
-    async getTotalUsersByEmail(email) {
-        let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "user` WHERE LCASE(`email`) = " + this.db.escape(oc_strtolower(email)));
+	async getTotalUsersByGroupId(user_group_id) {
+		const query = await this.db.query("SELECT COUNT(*) AS total FROM `" + DB_PREFIX + "user` WHERE user_group_id = '" + user_group_id + "'");
 
-        return query.row['total'];
-    }
+		return query.row['total'];
+	}
 
-    /**
-     * @param   user_id
-     * @param data
-     *
-     * @return void
-     */
-    async addLogin(user_id, data) {
-        await this.db.query("INSERT INTO `" + DB_PREFIX + "user_login` SET `user_id` = '" + user_id + "', `ip` = " + this.db.escape(data['ip']) + ", `user_agent` = " + this.db.escape(data['user_agent']) + ", `date_added` = NOW()");
-    }
+	async getTotalUsersByEmail(email) {
+		const query = await this.db.query("SELECT COUNT(*) AS total FROM `" + DB_PREFIX + "user` WHERE LCASE(email) = '" + this.db.escape(oc_strtolower(email)) + "'");
 
-    /**
-     * @param user_id
-     * @param start
-     * @param limit
-     *
-     * @return array
-     */
-    async getLogins(user_id, start = 0, limit = 10) {
-        if (start < 0) {
-            start = 0;
-        }
+		return query.row['total'];
+	}
 
-        if (limit < 1) {
-            limit = 10;
-        }
+	async addLoginAttempt(username) {
+		const query = await this.db.query("SELECT * FROM " + DB_PREFIX + "customer_login WHERE email = '" + this.db.escape(oc_strtolower(username)) + "'");
 
-        let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "user_login` WHERE `user_id` = '" + user_id + "' LIMIT " + start + "," + limit);
+		if (!query.num_rows) {
+			await this.db.query("INSERT INTO " + DB_PREFIX + "customer_login SET email = '" + this.db.escape(oc_strtolower(username)) + "', ip = '" + this.db.escape(this.request.server['REMOTE_ADDR']) + "', total = 1, date_added = '" + this.db.escape(date('Y-m-d H:i:s')) + "', date_modified = '" + this.db.escape(date('Y-m-d H:i:s')) + "'");
+		} else {
+			await this.db.query("UPDATE " + DB_PREFIX + "customer_login SET total = (total + 1), date_modified = '" + this.db.escape(date('Y-m-d H:i:s')) + "' WHERE customer_login_id = '" + query.row['customer_login_id'] + "'");
+		}
+	}
 
-        if (query.num_rows) {
-            return query.rows;
-        } else {
-            return [];
-        }
-    }
+	async getLoginAttempts(username) {
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "customer_login` WHERE email = '" + this.db.escape(oc_strtolower(username)) + "'");
 
-    /**
-     * @param user_id
-     *
-     * @return int
-     */
-    async getTotalLogins(user_id) {
-        let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "user_login` WHERE `user_id` = '" + user_id + "'");
+		return query.row;
+	}
 
-        if (query.num_rows) {
-            return query.row['total'];
-        } else {
-            return 0;
-        }
-    }
-
-    /**
-     * @param   user_id
-     * @param data
-     *
-     * @return void
-     */
-    async addAuthorize(user_id, data) {
-        await this.db.query("INSERT INTO `" + DB_PREFIX + "user_authorize` SET `user_id` = '" + user_id + "', `token` = " + this.db.escape(data['token']) + ", `ip` = " + this.db.escape(data['ip']) + ", `user_agent` = " + this.db.escape(data['user_agent']) + ", `date_added` = NOW()");
-    }
-
-    /**
-     * @param  user_authorize_id
-     * @param status
-     *
-     * @return void
-     */
-    async editAuthorizeStatus(user_authorize_id, status) {
-        await this.db.query("UPDATE `" + DB_PREFIX + "user_authorize` SET `status` = '" + status + "' WHERE `user_authorize_id` = '" + user_authorize_id + "'");
-    }
-
-    /**
-     * @param user_authorize_id
-     * @param total
-     *
-     * @return void
-     */
-    async editAuthorizeTotal(user_authorize_id, total) {
-        await this.db.query("UPDATE `" + DB_PREFIX + "user_authorize` SET `total` = '" + total + "' WHERE `user_authorize_id` = '" + user_authorize_id + "'");
-    }
-
-    /**
-     * @param user_authorize_id
-     *
-     * @return void
-     */
-    async deleteAuthorize(user_authorize_id) {
-        await this.db.query("DELETE FROM `" + DB_PREFIX + "user_authorize` WHERE `user_authorize_id` = '" + user_authorize_id + "'");
-    }
-
-    /**
-     * @param    user_id
-     * @param token
-     *
-     * @return array
-     */
-    async getAuthorizeByToken(user_id, token) {
-        let query = await this.db.query("SELECT *, (SELECT SUM(total) FROM `" + DB_PREFIX + "user_authorize` WHERE `user_id` = '" + user_id + "') AS `attempts` FROM `" + DB_PREFIX + "user_authorize` WHERE `user_id` = '" + user_id + "' AND `token` = " + this.db.escape(token));
-
-        return query.row;
-    }
-
-    /**
-     * @param user_id
-     *
-     * @return void
-     */
-    async resetAuthorizes(user_id) {
-        await this.db.query("UPDATE `" + DB_PREFIX + "user_authorize` SET `total` = '0' WHERE `user_id` = '" + user_id + "'");
-    }
-
-    /**
-     * @param user_id
-     * @param start
-     * @param limit
-     *
-     * @return array
-     */
-    async getAuthorizes(user_id, start = 0, limit = 10) {
-        if (start < 0) {
-            start = 0;
-        }
-
-        if (limit < 1) {
-            limit = 10;
-        }
-
-        let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "user_authorize` WHERE `user_id` = '" + user_id + "' LIMIT " + start + "," + limit);
-
-        if (query.num_rows) {
-            return query.rows;
-        } else {
-            return [];
-        }
-    }
-
-    /**
-     * @param user_id
-     *
-     * @return int
-     */
-    async getTotalAuthorizes(user_id) {
-        let query = await this.db.query("SELECT COUNT(*) AS total FROM `" + DB_PREFIX + "user_authorize` WHERE `user_id` = '" + user_id + "'");
-
-        if (query.num_rows) {
-            return query.row['total'];
-        } else {
-            return 0;
-        }
-    }
+	async deleteLoginAttempts(username) {
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_login` WHERE email = '" + this.db.escape(oc_strtolower(username)) + "'");
+	}
 }

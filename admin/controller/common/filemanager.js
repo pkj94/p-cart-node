@@ -1,17 +1,110 @@
-const expressPath = require('path');
-
-const sprintf = require('locutus/php/strings/sprintf');
-module.exports = class FileManagerController extends global['\Opencart\System\Engine\Controller'] {
-	/**
-	 * @return void
-	 */
+module.exports = class ControllerCommonFileManager extends Controller {
 	async index() {
-		const data = {};
 		await this.load.language('common/filemanager');
 
-		data['error_upload_size'] = sprintf(this.language.get('error_upload_size'), this.config.get('config_file_max_size'));
+		// Find which protocol to use to pass the full image link back
+		if (this.request.server['HTTPS']) {
+			server = HTTPS_CATALOG;
+		} else {
+			server = HTTP_CATALOG;
+		}
 
-		data['config_file_max_size'] = (this.config.get('config_file_max_size') * 1024 * 1024);
+		if ((this.request.get['filter_name'])) {
+			filter_name = rtrim(str_replace(array('*', '/', '\\'), '', this.request.get['filter_name']), '/');
+		} else {
+			filter_name = '';
+		}
+
+		// Make sure we have the correct directory
+		if ((this.request.get['directory'])) {
+			directory = rtrim(DIR_IMAGE + 'catalog/' + str_replace('*', '', this.request.get['directory']), '/');
+		} else {
+			directory = DIR_IMAGE + 'catalog';
+		}
+
+		if ((this.request.get['page'])) {
+			page = this.request.get['page'];
+		} else {
+			page = 1;
+		}
+
+		directories = {};
+		files = {};
+
+		data['images'] = {};
+
+		this.load.model('tool/image',this);
+
+		if (substr(str_replace('\\', '/', realpath(directory) + '/' + filter_name), 0, strlen(DIR_IMAGE + 'catalog')) == str_replace('\\', '/', DIR_IMAGE + 'catalog')) {
+			// Get directories
+			directories = glob(directory + '/' + filter_name + '*', GLOB_ONLYDIR);
+
+			if (!directories) {
+				directories = {};
+			}
+
+			// Get files
+			files = glob(directory + '/' + filter_name + '*.{jpg,jpeg,png,gif,webp,JPG,JPEG,PNG,GIF,WEBP}', GLOB_BRACE);
+
+			if (!files) {
+				files = {};
+			}
+		}
+
+		// Merge directories and files
+		images = array_merge(directories, files);
+
+		// Get total number of files and directories
+		image_total = count(images);
+
+		// Split the array based on current page number and max number of items per page of 10
+		images = array_splice(images, (page - 1) * 16, 16);
+
+		for (images of image) {
+			name = str_split(basename(image), 14);
+
+			if (is_dir(image)) {
+				url = '';
+
+				if ((this.request.get['target'])) {
+					url += '&target=' + this.request.get['target'];
+				}
+
+				if ((this.request.get['thumb'])) {
+					url += '&thumb=' + this.request.get['thumb'];
+				}
+
+				data['images'].push({
+					'thumb' : '',
+					'name'  : implode(' ', name),
+					'type'  : 'directory',
+					'path'  : oc_substr(image, oc_strlen(DIR_IMAGE)),
+					'href'  : await this.url.link('common/filemanager', 'user_token=' + this.session.data['user_token'] + '&directory=' + urlencode(oc_substr(image, oc_strlen(DIR_IMAGE + 'catalog/'))) + url, true)
+				);
+			} else if (is_file(image)) {
+				data['images'].push({
+					'thumb' : await this.model_tool_image.resize(oc_substr(image, oc_strlen(DIR_IMAGE)), 100, 100),
+					'name'  : implode(' ', name),
+					'type'  : 'image',
+					'path'  : oc_substr(image, oc_strlen(DIR_IMAGE)),
+					'href'  : server + 'image/' + oc_substr(image, oc_strlen(DIR_IMAGE))
+				);
+			}
+		}
+
+		data['user_token'] = this.session.data['user_token'];
+
+		if ((this.request.get['directory'])) {
+			data['directory'] = urlencode(this.request.get['directory']);
+		} else {
+			data['directory'] = '';
+		}
+
+		if ((this.request.get['filter_name'])) {
+			data['filter_name'] = this.request.get['filter_name'];
+		} else {
+			data['filter_name'] = '';
+		}
 
 		// Return the target ID for the file manager to set the value
 		if ((this.request.get['target'])) {
@@ -27,128 +120,14 @@ module.exports = class FileManagerController extends global['\Opencart\System\En
 			data['thumb'] = '';
 		}
 
-		// if ((this.request.get['ckeditor'])) {
-		// 	data['ckeditor'] = this.request.get['ckeditor'];
-		// } else {
-		// 	data['ckeditor'] = '';
-		// }
-
-		data['user_token'] = this.session.data['user_token'];
-
-		this.response.setOutput(await this.load.view('common/filemanager', data));
-	}
-
-	/**
-	 * @return void
-	 */
-	async list() {
-		const data = {};
-		await this.load.language('common/filemanager');
-
-		let base = DIR_IMAGE + 'catalog/';
-
-		// Make sure we have the correct directory
-		let directory = base;
-		if ((this.request.get['directory'])) {
-			directory = base + html_entity_decode(this.request.get['directory']) + '/';
-		}
-		let filter_name = '';
-		if ((this.request.get['filter_name'])) {
-			filter_name = expressPath.basename(html_entity_decode(this.request.get['filter_name']));
-		}
-		let page = 1;
-		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
-		}
-
-		let allowed = [
-			'.ico',
-			'.jpg',
-			'.jpeg',
-			'.png',
-			'.gif',
-			'.webp',
-			'.JPG',
-			'.JPEG',
-			'.PNG',
-			'.GIF'
-		];
-
-		data['directories'] = [];
-		data['images'] = [];
-
-		this.load.model('tool/image', this);
-
-		// Get directories and files
-		let paths = fs.readdirSync(directory).filter(a => (a.indexOf('.') == -1 || allowed.indexOf('.' + (a.split('.')[a.split('.').length - 1])) != -1) && a.indexOf(filter_name) != -1)
-
-
-		let total = paths.length;
-		let limit = 16;
-		let start = (page - 1) * limit;
-
-		if (paths) {
-			// Split the array based on current page number and max number of items per page of 10
-			for (let path of paths.slice(start, limit)) {
-				path = directory + path
-				path = fs.lstatSync(path).isDirectory() ? fs.realpathSync(path).replaceAll('\\', '/') : path;
-				if (path.substring(0, path.length) == path) {
-					let name = expressPath.basename(path);
-
-					let url = '';
-
-					if ((this.request.get['target'])) {
-						url += '&target=' + this.request.get['target'];
-					}
-
-					if ((this.request.get['thumb'])) {
-						url += '&thumb=' + this.request.get['thumb'];
-					}
-
-					if ((this.request.get['ckeditor'])) {
-						url += '&ckeditor=' + this.request.get['ckeditor'];
-					}
-
-					if (fs.lstatSync(path).isDirectory()) {
-						data['directories'].push({
-							'name': name,
-							'path': oc_substr(path, oc_strlen(base)) + '/',
-							'href': await this.url.link('common/filemanager.list', 'user_token=' + this.session.data['user_token'] + '&directory=' + encodeURIComponent(oc_substr(path, oc_strlen(base))) + url)
-						});
-					}
-
-					if (fs.lstatSync(path).isFile() && allowed.includes(path.substring(path.indexOf('.')))) {
-						data['images'].push({
-							'name': name,
-							'path': oc_substr(path, oc_strlen(base)),
-							'href': HTTP_CATALOG + 'image/catalog/' + oc_substr(path, oc_strlen(base)),
-							'thumb': this.model_tool_image.resize(oc_substr(path, oc_strlen(DIR_IMAGE)), 136, 136)
-						});
-					}
-				}
-			}
-		}
-
-		if ((this.request.get['directory'])) {
-			data['directory'] = decodeURIComponent(this.request.get['directory']);
-		} else {
-			data['directory'] = '';
-		}
-
-		if ((this.request.get['filter_name'])) {
-			data['filter_name'] = this.request.get['filter_name'];
-		} else {
-			data['filter_name'] = '';
-		}
-
 		// Parent
-		let url = '';
+		url = '';
 
 		if ((this.request.get['directory'])) {
-			let pos = this.request.get['directory'].indexOf('/');
+			pos = strrpos(this.request.get['directory'], '/');
 
 			if (pos) {
-				url += '&directory=' + encodeURIComponent(this.request.get['directory'].substring(0, pos));
+				url += '&directory=' + urlencode(substr(this.request.get['directory'], 0, pos));
 			}
 		}
 
@@ -160,21 +139,13 @@ module.exports = class FileManagerController extends global['\Opencart\System\En
 			url += '&thumb=' + this.request.get['thumb'];
 		}
 
-		if ((this.request.get['ckeditor'])) {
-			url += '&ckeditor=' + this.request.get['ckeditor'];
-		}
-
-		data['parent'] = await this.url.link('common/filemanager.list', 'user_token=' + this.session.data['user_token'] + url);
+		data['parent'] = await this.url.link('common/filemanager', 'user_token=' + this.session.data['user_token'] + url, true);
 
 		// Refresh
 		url = '';
 
 		if ((this.request.get['directory'])) {
-			url += '&directory=' + encodeURIComponent(html_entity_decode(this.request.get['directory']));
-		}
-
-		if ((this.request.get['filter_name'])) {
-			url += '&filter_name=' + encodeURIComponent(html_entity_decode(this.request.get['filter_name']));
+			url += '&directory=' + urlencode(this.request.get['directory']);
 		}
 
 		if ((this.request.get['target'])) {
@@ -185,24 +156,16 @@ module.exports = class FileManagerController extends global['\Opencart\System\En
 			url += '&thumb=' + this.request.get['thumb'];
 		}
 
-		// if ((this.request.get['ckeditor'])) {
-		// 	url += '&ckeditor=' + this.request.get['ckeditor'];
-		// }
-
-		if ((this.request.get['page'])) {
-			url += '&page=' + this.request.get['page'];
-		}
-
-		data['refresh'] = await this.url.link('common/filemanager.list', 'user_token=' + this.session.data['user_token'] + url);
+		data['refresh'] = await this.url.link('common/filemanager', 'user_token=' + this.session.data['user_token'] + url, true);
 
 		url = '';
 
 		if ((this.request.get['directory'])) {
-			url += '&directory=' + encodeURIComponent(html_entity_decode(this.request.get['directory']));
+			url += '&directory=' + urlencode(html_entity_decode(this.request.get['directory']));
 		}
 
 		if ((this.request.get['filter_name'])) {
-			url += '&filter_name=' + encodeURIComponent(html_entity_decode(this.request.get['filter_name']));
+			url += '&filter_name=' + urlencode(html_entity_decode(this.request.get['filter_name']));
 		}
 
 		if ((this.request.get['target'])) {
@@ -213,29 +176,21 @@ module.exports = class FileManagerController extends global['\Opencart\System\En
 			url += '&thumb=' + this.request.get['thumb'];
 		}
 
-		// if ((this.request.get['ckeditor'])) {
-		// 	url += '&ckeditor=' + this.request.get['ckeditor'];
-		// }
+		pagination = new Pagination();
+		pagination.total = image_total;
+		pagination.page = page;
+		pagination.limit = 16;
+		pagination.url = await this.url.link('common/filemanager', 'user_token=' + this.session.data['user_token'] + url + '&page={page}', true);
 
-		// Get total number of files and directories
-		data['pagination'] = await this.load.controller('common/pagination', {
-			'total': total,
-			'page': page,
-			'limit': limit,
-			'url': await this.url.link('common/filemanager.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
-		});
+		data['pagination'] = pagination.render();
 
-		this.response.setOutput(await this.load.view('common/filemanager_list', data));
+		this.response.setOutput(await this.load.view('common/filemanager', data));
 	}
 
-	/**
-	 * @return void
-	 */
 	async upload() {
 		await this.load.language('common/filemanager');
-		const json = {};
 
-		let base = DIR_IMAGE + 'catalog/';
+		json = {};
 
 		// Check user has permission
 		if (!await this.user.hasPermission('modify', 'common/filemanager')) {
@@ -243,104 +198,100 @@ module.exports = class FileManagerController extends global['\Opencart\System\En
 		}
 
 		// Make sure we have the correct directory
-		let directory = base;
 		if ((this.request.get['directory'])) {
-			directory = base + html_entity_decode(this.request.get['directory']) + '/';
+			directory = rtrim(DIR_IMAGE + 'catalog/' + this.request.get['directory'], '/');
+		} else {
+			directory = DIR_IMAGE + 'catalog';
 		}
 
-		// Check it's a directory
-		if (!fs.lstatSync(directory).isDirectory() || (fs.realpathSync(directory).replaceAll('\\', '/') + '/').substring(0, base.length) != base) {
+		// Check its a directory
+		if (!is_dir(directory) || substr(str_replace('\\', '/', realpath(directory)), 0, strlen(DIR_IMAGE + 'catalog')) != str_replace('\\', '/', DIR_IMAGE + 'catalog')) {
 			json['error'] = this.language.get('error_directory');
 		}
 
-		if (!json.error) {
+		if (!json) {
 			// Check if multiple files are uploaded or just one
-			let files = [];
-			if (this.request.files.file && !Array.isArray(this.request.files.file)) {
-				files = [this.request.files.file];
-			} else if (this.request.files.file) {
-				files = this.request.files.file;
+			files = {};
+
+			if ((this.request.files['file']['name']) && Array.isArray(this.request.files['file']['name'])) {
+				for (array_keys(this.request.files['file']['name']) of key) {
+					files.push({
+						'name'     : this.request.files['file']['name'][key],
+						'type'     : this.request.files['file']['type'][key],
+						'tmp_name' : this.request.files['file']['tmp_name'][key],
+						'error'    : this.request.files['file']['error'][key],
+						'size'     : this.request.files['file']['size'][key]
+					);
+				}
 			}
-			if (!files.length) {
-				json['error'] = this.language.get('error_upload');
-			}
+
 			for (let file of files) {
-				// Sanitize the filename
-				// console.log('file--', file, file['name'])
-				let filename = file['name'].replace(new RegExp('[/\\?%*:|"<>]'), '');
-				// console.log('filename----', filename)
+				if (is_file(file['tmp_name'])) {
+					// Sanitize the filename
+					filename = basename(html_entity_decode(file['name']));
 
-				// Validate the filename length
-				if ((oc_strlen(filename) < 4) || (oc_strlen(filename) > 255)) {
-					json['error'] = this.language.get('error_filename');
-				}
+					// Validate the filename length
+					if ((oc_strlen(filename) < 3) || (oc_strlen(filename) > 255)) {
+						json['error'] = this.language.get('error_filename');
+					}
 
-				// Allowed file extension types
-				let allowed = [
-					'ico',
-					'jpg',
-					'jpeg',
-					'png',
-					'gif',
-					'webp',
-					'JPG',
-					'JPEG',
-					'PNG',
-					'GIF'
-				];
-				// console.log('filename------', filename, filename.split('.').pop())
-				if (!allowed.includes(filename.split('.').pop())) {
-					json['error'] = this.language.get('error_file_type');
-				}
+					// Allowed file extension types
+					allowed = array(
+						'jpg',
+						'jpeg',
+						'gif',
+						'png',
+						'webp'
+					);
 
-				// Allowed file mime types
-				allowed = [
-					'image/x-icon',
-					'image/jpeg',
-					'image/pjpeg',
-					'image/png',
-					'image/x-png',
-					'image/gif',
-					'image/webp'
-				];
+					if (!in_array(oc_strtolower(oc_substr(strrchr(filename, '.'), 1)), allowed)) {
+						json['error'] = this.language.get('error_filetype');
+					}
 
-				if (!allowed.includes(file['mimetype'])) {
-					json['error'] = this.language.get('error_file_type');
-				}
+					// Allowed file mime types
+					allowed = array(
+						'image/jpeg',
+						'image/pjpeg',
+						'image/png',
+						'image/x-png',
+						'image/gif',
+						'image/webp'
+					);
 
-				// Return any upload error
-				// if (file['error'] != UPLOAD_ERR_OK) {
-				// 	json['error'] = this.language.get('error_upload_' + file['error']);
-				// }
+					if (!in_array(file['type'], allowed)) {
+						json['error'] = this.language.get('error_filetype');
+					}
 
+					if (file['size'] > this.config.get('config_file_max_size')) {
+						json['error'] = this.language.get('error_filesize');
+					}
 
-				if (!json.error) {
-					try {
-						await uploadFile(file, directory + filename)
-					} catch (err) {
+					// Return any upload error
+					if (file['error'] != UPLOAD_ERR_OK) {
 						json['error'] = this.language.get('error_upload_' + file['error']);
 					}
+				} else {
+					json['error'] = this.language.get('error_upload');
+				}
+
+				if (!json) {
+					move_uploaded_file(file['tmp_name'], directory + '/' + filename);
 				}
 			}
 		}
 
-		if (!json.error) {
+		if (!json) {
 			json['success'] = this.language.get('text_uploaded');
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(json);
+		this.response.setOutput(JSON.stringify(json));
 	}
 
-	/**
-	 * @return void
-	 */
 	async folder() {
 		await this.load.language('common/filemanager');
 
-		const json = {};
-
-		let base = DIR_IMAGE + 'catalog/';
+		json = {};
 
 		// Check user has permission
 		if (!await this.user.hasPermission('modify', 'common/filemanager')) {
@@ -348,110 +299,114 @@ module.exports = class FileManagerController extends global['\Opencart\System\En
 		}
 
 		// Make sure we have the correct directory
-		let directory = base;
 		if ((this.request.get['directory'])) {
-			directory = base + html_entity_decode(this.request.get['directory']) + '/';
+			directory = rtrim(DIR_IMAGE + 'catalog/' + this.request.get['directory'], '/');
+		} else {
+			directory = DIR_IMAGE + 'catalog';
 		}
 
 		// Check its a directory
-		if (!fs.lstatSync(directory).isDirectory() || (fs.realpathSync(directory).replaceAll('\\', '/') + '/').substring(0, base.length) != base) {
+		if (!is_dir(directory) || substr(str_replace('\\', '/', realpath(directory)), 0, strlen(DIR_IMAGE + 'catalog')) != str_replace('\\', '/', DIR_IMAGE + 'catalog')) {
 			json['error'] = this.language.get('error_directory');
 		}
-		let folder = '';
+
 		if (this.request.server['method'] == 'POST') {
 			// Sanitize the folder name
-			folder = this.request.post['folder'].replace(new RegExp('[/\\?%*&:|"<>]'), '');
+			folder = basename(html_entity_decode(this.request.post['folder']));
+
 			// Validate the filename length
 			if ((oc_strlen(folder) < 3) || (oc_strlen(folder) > 128)) {
 				json['error'] = this.language.get('error_folder');
 			}
 
 			// Check if directory already exists or not
-			if (fs.existsSync(directory + folder)) {
+			if (is_dir(directory + '/' + folder)) {
 				json['error'] = this.language.get('error_exists');
 			}
 		}
-		if (!json.error) {
-			fs.mkdirSync(directory + '/' + folder);
 
-			fs.writeFileSync(directory + '/' + folder + '/' + 'index.html', '');
+		if (!(json['error'])) {
+			mkdir(directory + '/' + folder, 0777);
+			chmod(directory + '/' + folder, 0777);
+
+			@touch(directory + '/' + folder + '/' + 'index.html');
 
 			json['success'] = this.language.get('text_directory');
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(json);
+		this.response.setOutput(JSON.stringify(json));
 	}
 
-	/**
-	 * @return void
-	 */
 	async delete() {
 		await this.load.language('common/filemanager');
 
-		const json = {};
-
-		let base = DIR_IMAGE + 'catalog/';
+		json = {};
 
 		// Check user has permission
 		if (!await this.user.hasPermission('modify', 'common/filemanager')) {
 			json['error'] = this.language.get('error_permission');
 		}
-		let paths = [];
+
 		if ((this.request.post['path'])) {
 			paths = this.request.post['path'];
+		} else {
+			paths = {};
 		}
-		// Loop through each path to run validations
-		for (let path of paths) {
-			// Convert any html encoded characters.
-			path = html_entity_decode(path);
 
+		// Loop through each path to run validations
+		for (paths of path) {
 			// Check path exists
-			if ((path == base) || ((fs.realpathSync(base + path).replaceAll('\\', '/') + '/').substring(0, base.length) != base)) {
+			if (path == DIR_IMAGE + 'catalog' || substr(str_replace('\\', '/', realpath(DIR_IMAGE + path)), 0, strlen(DIR_IMAGE + 'catalog')) != str_replace('\\', '/', DIR_IMAGE + 'catalog')) {
 				json['error'] = this.language.get('error_delete');
 
 				break;
 			}
 		}
 
-		if (!json.error) {
+		if (!json) {
 			// Loop through each path
-			for (let path of paths) {
-				path = rtrim(base + html_entity_decode(path), '/');
+			for (paths of path) {
+				path = rtrim(DIR_IMAGE + path, '/');
 
-				let files = [];
+				// If path is just a file delete it
+				if (is_file(path)) {
+					unlink(path);
 
-				// Make path into an array
-				let directory = [path];
+				// If path is a directory beging deleting each file and sub folder
+				} else if (is_dir(path)) {
+					files = {};
 
-				// While the path array is still populated keep looping through
-				while (directory.length != 0) {
-					let next = directory.shift('');
+					// Make path into an array
+					path = array(path);
 
-					if (next && fs.lstatSync(next).isDirectory()) {
-						for (let file of fs.readdirSync(next)) {
+					// While the path array is still populated keep looping through
+					while (count(path) != 0) {
+						next = array_shift(path);
+
+						for (glob(next) of file) {
 							// If directory add to path array
-							directory.push(next + '/' + file);
+							if (is_dir(file)) {
+								path[] = file + '/*';
+							}
+
+							// Add the file to the files to be deleted array
+							files[] = file;
 						}
 					}
 
-					// Add the file to the files to be deleted array
-					if (next)
-						files.push(next);
-				}
+					// Reverse sort the file array
+					rsort(files);
 
-				// Reverse sort the file array
-				files = files.reverse();
+					for (let file of files) {
+						// If file just delete
+						if (is_file(file)) {
+							unlink(file);
 
-				for (let file of files) {
-					// If file just delete
-					if (fs.lstatSync(file).isFile()) {
-						fs.unlinkSync(file);
-					}
-
-					// If directory use the remove directory function
-					if (fs.existsSync(file) && fs.lstatSync(file).isDirectory()) {
-						fs.rmdirSync(file);
+						// If directory use the remove directory function
+						} else if (is_dir(file)) {
+							rmdir(file);
+						}
 					}
 				}
 			}
@@ -460,6 +415,6 @@ module.exports = class FileManagerController extends global['\Opencart\System\En
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(json);
+		this.response.setOutput(JSON.stringify(json));
 	}
 }

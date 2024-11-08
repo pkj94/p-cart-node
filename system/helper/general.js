@@ -3,6 +3,7 @@ const htmlEntity = require('html-entities');
 // Import required libraries
 const crypto = require('crypto');
 const md5 = require('locutus/php/strings/md5');
+const sprintf = require('locutus/php/strings/sprintf');
 
 // String
 global.oc_strlen = (string) => {
@@ -209,3 +210,44 @@ global.is_file = (file) => {
 global.is_dir = (file) => {
     return fs.existsSync(file) ? fs.statSync(file).isDirectory() : false;
 }
+global.sha1 = (string) => { return crypto.createHash('sha1').update(string).digest('hex'); }
+global.sprintf = (key, ...args) => {
+    // console.log('args', args)
+    // console.log('key', key)
+    return sprintf(key, args);
+}
+global.strtotime = (relativeDate) => {
+    const now = new Date();
+    const [value, unit] = relativeDate.split(' '); // Split the string into value and unit
+
+    let amount = parseInt(value, 10); // Parse the numeric value
+
+    switch (unit) {
+        case 'day':
+        case 'days':
+            now.setDate(now.getDate() + amount);
+            break;
+        case 'hour':
+        case 'hours':
+            now.setHours(now.getHours() + amount);
+            break;
+        case 'minute':
+        case 'minutes':
+            now.setMinutes(now.getMinutes() + amount);
+            break;
+        case 'second':
+        case 'seconds':
+            now.setSeconds(now.getSeconds() + amount);
+            break;
+        default:
+            break;
+    }
+
+    return Math.floor(now.getTime() / 1000); // Return Unix timestamp
+}
+global.ValidateIPaddress = (ipaddress) => {
+    if (/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(ipaddress)) {
+        return (true)
+    }
+    return (false)
+} 

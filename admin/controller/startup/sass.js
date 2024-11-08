@@ -1,23 +1,32 @@
-
 const sass = require('sass');
 
-module.exports = class SassController extends global['\Opencart\System\Engine\Controller'] {
-	constructor(registry) {
-		super(registry)
+module.exports = class ControllerStartupSass {
+	constructor(config) {
+		this.config = config;
 	}
+
 	async index() {
-		const files = fs.readdirSync(expressPath.join(DIR_APPLICATION, 'view/stylesheet')).filter(file => file.endsWith('.scss'));
+		const DIR_APPLICATION = '/path/to/application'; // Adjust this to your actual path
+		const files = require('glob').sync(`${DIR_APPLICATION}/view/stylesheet/*.scss`);
 
-		for (const file of files) {
-			const filename = expressPath.basename(file, '.scss');
-			const stylesheet = expressPath.join(DIR_APPLICATION, 'view/stylesheet', `${filename}.css`);
+		if (files.length) {
+			for (const file of files) {
+				// Get the filename
+				const filename = expressParh.basename(file, '.scss');
 
-			if (!fs.existsSync(stylesheet) || !this.config.get('developer_sass')) {
-				const result = sass.compile(expressPath.join(DIR_APPLICATION, 'view/stylesheet', `${filename}.scss`));
+				const stylesheet = expressParh.join(DIR_APPLICATION, 'view/stylesheet', `${filename}.css`);
 
-				fs.writeFileSync(stylesheet, result.css);
+				if (!fs.existsSync(stylesheet) || !this.config.get('developer_sass')) {
+					try {
+						const result = sass.compile(file);
+
+						fs.writeFileSync(stylesheet, result.css, { flag: 'w' });
+					} catch (error) {
+						console.error('Error compiling SCSS:', error);
+					}
+				}
 			}
 		}
 	}
-}
 
+}

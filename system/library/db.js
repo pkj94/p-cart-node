@@ -1,6 +1,6 @@
 module.exports = class DBLibrary {
     constructor(adaptor, hostname, username, password, database, port = '', debug = false) {
-        let className = 'Opencart\System\Library\Db' + ucfirst(adaptor);
+        let className = 'Db' + ucfirst(adaptor);
         if (global[className]) {
             this.adaptor = new global[className](hostname, username, password, database, port, debug);
         } else {

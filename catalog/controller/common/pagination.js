@@ -1,6 +1,6 @@
 const str_replace = require("locutus/php/strings/str_replace");
 
-module.exports = class Pagination extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class Pagination extends Controller {
 	/**
 	 * @param setting
 	 *

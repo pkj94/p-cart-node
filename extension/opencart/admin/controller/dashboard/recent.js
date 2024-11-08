@@ -1,6 +1,6 @@
 const strtotime = require("locutus/php/datetime/strtotime");
 
-global['\Opencart\Admin\Controller\Extension\Opencart\Dashboard\Recent'] = class Recent extends global['\Opencart\System\Engine\Controller'] {
+global['\Opencart\Admin\Controller\Extension\Opencart\Dashboard\Recent'] = class Recent extends Controller {
 	constructor(registry){
 		super(registry)
 	}

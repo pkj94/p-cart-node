@@ -1,36 +1,30 @@
 module.exports = {
-      // Heading
-      'heading_title': 'Important Security Notification!',
+    // Heading
+    heading_title: 'Important Security Notification!',
 
-      // Text
-      'text_install': 'Installation directory',
-      'text_install_description': 'Your installation directory needs deleting!',
-      'text_install_success': 'Success: Install directory has been deleted!',
-      'text_storage': 'Storage path',
-      'text_storage_description': 'It is very important that you move the storage directory outside of the web directory (e.g. public_html, www or htdocs).',
-      'text_storage_success': 'Success: Storage directory has been moved!',
-      'text_admin': 'Rename admin directory',
-      'text_admin_description': 'Please type in a new admin directory name in the field below.',
-      'text_admin_success': 'Success: Admin directory has been renamed!',
-      'text_path': 'Path',
+    // Text
+    text_success: 'Success: You have modified the storage folder!',
+    text_admin: 'Edit admin/config.php and change',
+    text_security: 'It is very important that you move the storage directory outside of the web directory (e.g. public_html, www or htdocs).',
+    text_choose: 'Choose how to move the storage directory',
+    text_automatic: 'Automatically Move',
+    text_manual: 'Manually Move',
+    text_move: 'Move',
+    text_to: 'to',
+    text_config: 'Edit config.php change',
+    text_admin: 'Edit admin/config.php and change',
 
-      // Entry
-      'entry_path': 'Path',
-      'entry_path_current': 'Current Path',
-      'entry_path_new': 'New Path',
-      'entry_name': 'Directory Name',
+    // Entry
+    entry_directory: 'Directory',
 
-      // Button
-      'button_move': 'Move',
-      'button_rename': 'Rename',
+    // Button
+    button_move: 'Move',
+    button_manual: 'Manual',
 
-      // Error
-      'error_permission': 'Warning: You do not have permission to modify security!',
-      'error_install': 'Warning: Install directory does not exist!',
-      'error_storage': 'Warning: Storage directory does not exist!',
-      'error_storage_exists': 'Warning: Storage folder name already exists!',
-      'error_admin': 'Warning: Admin directory does not exist!',
-      'error_admin_exists': 'Warning: Admin folder name already exists!',
-      'error_admin_name': 'Warning: Admin name cannot be `admin` as it is available to the public!',
-      'error_writable': 'Warning: config.json and admin/config.json need to be made writable!',
+    // Error
+    error_permission: 'Warning: You do not have permission to modify the storage directory!',
+    error_path: 'Warning: Invalid path!',
+    error_directory: 'Warning: Invalid directory!',
+    error_exists: 'Warning: Directory already exists!',
+    error_writable: 'Warning: config.php and admin/config.php need to be made writable!',
 }

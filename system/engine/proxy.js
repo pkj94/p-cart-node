@@ -1,4 +1,4 @@
-global['\Opencart\System\Engine\Proxy'] = class ProxyLocal {
+module.exports = class ProxyLocal {
     constructor() {
         return new Proxy(this, {
             get: (target, key) => {

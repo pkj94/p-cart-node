@@ -2,7 +2,7 @@ const str_replace = require("locutus/php/strings/str_replace");
 const ucwords = require("locutus/php/strings/ucwords");
 
 
-module.exports = class Extension extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class Extension extends Controller {
 	/**
 	 * @return void
 	 */

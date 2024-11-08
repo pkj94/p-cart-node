@@ -1,6 +1,6 @@
 const nl2br = require("locutus/php/strings/nl2br");
 
-module.exports = class Contact extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class Contact extends Controller {
 	/**
 	 * @return void
 	 */

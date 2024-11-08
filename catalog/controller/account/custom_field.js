@@ -1,4 +1,4 @@
-module.exports = class CustomField extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class CustomField extends Controller {
 	/**
 	 * @return void
 	 */

@@ -1,4 +1,4 @@
-module.exports = class Order extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class Order extends Controller {
 	/*
 	 * Loads order info
 	 */

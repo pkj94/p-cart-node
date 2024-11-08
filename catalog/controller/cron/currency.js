@@ -1,4 +1,4 @@
-module.exports = class Currency extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class Currency extends Controller {
 	/**
 	 * @param    cron_id
 	 * @param string code

@@ -1,4 +1,4 @@
-module.exports = class Blog extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class Blog extends Controller {
 	/**
 	 * @return void
 	 */
@@ -360,7 +360,7 @@ module.exports = class Blog extends global['\Opencart\System\Engine\Controller']
 	async addComment() {
 		await this.load.language('cms/article');
 
-		const json = array();
+		const json = [];
 
 		if ((this.request.get['article_id'])) {
 			article_id = this.request.get['article_id'];

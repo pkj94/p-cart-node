@@ -1,127 +1,77 @@
-module.exports = class ExtensionModel extends global['\Opencart\System\Engine\Model'] {
-    constructor(registry) {
-        super(registry);
-    }
-    async getExtensions() {
-        const query = await this.db.query(`SELECT DISTINCT extension FROM ${DB_PREFIX}extension`);
-        return query.rows;
-    }
-    async getExtensionsByType(type) {
-        const query = await this.db.query(`SELECT * FROM ${DB_PREFIX}extension WHERE type = ${this.db.escape(type)} ORDER BY code ASC`);
-        return query.rows;
-    }
-    async getExtensionByCode(type, code) {
-        const query = await this.db.query(`SELECT * FROM ${DB_PREFIX}extension WHERE type = ${this.db.escape(type)} AND code = ${this.db.escape(code)}`);
-        return query.row;
-    }
-    async getTotalExtensionsByExtension(extension) {
-        const query = await this.db.query(`SELECT COUNT(*) AS total FROM ${DB_PREFIX}extension WHERE extension = ${this.db.escape(extension)}`);
-        return parseInt(query.row.total, 10);
-    }
-    async install(type, extension, code) {
-        const extensions = await this.getExtensionsByType(type);
-        const codes = extensions.map(ext => ext.code);
+module.exports = class ModelSettingExtension extends Model {
+	async getInstalled(type) {
+		let extension_data = [];
 
-        if (!codes.includes(code)) {
-            await this.db.query(`INSERT INTO ${DB_PREFIX}extension SET extension = ${this.db.escape(extension)}, type = ${this.db.escape(type)}, code = ${this.db.escape(code)}`);
-        }
-    }
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "extension` WHERE `type` = '" + this.db.escape(type) + "' ORDER BY `code`");
 
-    async uninstall(type, code) {
-        await this.db.query(`DELETE FROM ${DB_PREFIX}extension WHERE type = ${this.db.escape(type)} AND code = ${this.db.escape(code)}`);
-        await this.db.query(`DELETE FROM ${DB_PREFIX}setting WHERE code = ${this.db.escape(type + '_' + code)}`);
-    }
+		for (let result of query.rows) {
+			extension_data.push(result['code']);
+		}
 
-    async addInstall(data) {
-        await this.db.query(`INSERT INTO ${DB_PREFIX}extension_install SET extension_id = '${parseInt(data.extension_id)}', extension_download_id = '${parseInt(data.extension_download_id)}', name = ${this.db.escape(data.name)}, code = ${this.db.escape(data.code)}, version = ${this.db.escape(data.version)}, author = ${this.db.escape(data.author)}, link = ${this.db.escape(data.link)}, status = '0', date_added = NOW()`);
-        return await this.db.getLastId();
-    }
+		return extension_data;
+	}
 
-    async deleteInstall(extension_install_id) {
-        await this.db.query(`DELETE FROM ${DB_PREFIX}extension_install WHERE extension_install_id = '${parseInt(extension_install_id)}'`);
-    }
+	async install(type, code) {
+		let extensions = await this.getInstalled(type);
 
-    async editStatus(extension_install_id, status) {
-        await this.db.query(`UPDATE ${DB_PREFIX}extension_install SET status = '${status}' WHERE extension_install_id = '${parseInt(extension_install_id)}'`);
-    }
+		if (!extensions.includes(code)) {
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "extension` SET `type` = '" + this.db.escape(type) + "', `code` = '" + this.db.escape(code) + "'");
+		}
+	}
 
-    async getInstall(extension_install_id) {
-        const query = await this.db.query(`SELECT * FROM ${DB_PREFIX}extension_install WHERE extension_install_id = '${parseInt(extension_install_id)}'`);
-        return query.row;
-    }
-    async getInstallByExtensionDownloadId(extension_download_id) {
-        const query = await this.db.query(`SELECT * FROM ${DB_PREFIX}extension_install WHERE extension_download_id = ${parseInt(extension_download_id)}`);
-        return query.row;
-    }
+	async uninstall(type, code) {
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "extension` WHERE `type` = '" + this.db.escape(type) + "' AND `code` = '" + this.db.escape(code) + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "setting` WHERE `code` = '" + this.db.escape(type + '_' + code) + "'");
+	}
 
-    async getInstallByCode(code) {
-        const query = await this.db.query(`SELECT * FROM ${DB_PREFIX}extension_install WHERE code = ${this.db.escape(code)}`);
-        return query.row;
-    }
+	async addExtensionInstall(filename, extension_download_id = 0) {
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "extension_install` SET `filename` = '" + this.db.escape(filename) + "', `extension_download_id` = '" + extension_download_id + "', `date_added` = NOW()");
 
-    async getInstalls(data = {}) {
-        let sql = "SELECT * FROM "+DB_PREFIX+"extension_install";
+		return this.db.getLastId();
+	}
 
-        if (data.filter_extension_download_id) {
-            sql += ` WHERE extension_download_id = ${parseInt(data.filter_extension_download_id)}`;
-        }
+	async deleteExtensionInstall(extension_install_id) {
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "extension_install` WHERE `extension_install_id` = '" + extension_install_id + "'");
+	}
 
-        const sort_data = ['name', 'version', 'date_added'];
+	async getExtensionInstalls(start = 0, limit = 10) {
+		start = start || 0;
+		if (start < 0) {
+			start = 0;
+		}
+		limit = limit || 10;
+		if (limit < 1) {
+			limit = 10;
+		}
 
-        if (data.sort && sort_data.includes(data.sort)) {
-            sql += ` ORDER BY ${data.sort}`;
-        } else {
-            sql += " ORDER BY date_added";
-        }
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "extension_install` ORDER BY date_added ASC LIMIT " + start + "," + limit);
 
-        if (data.order === 'DESC') {
-            sql += " DESC";
-        } else {
-            sql += " ASC";
-        }
+		return query.rows;
+	}
 
-        if (data.start >= 0 || data.limit > 0) {
-            const start = data.start < 0 ? 0 : parseInt(data.start);
-            const limit = data.limit < 1 ? 20 : parseInt(data.limit);
-            sql += ` LIMIT ${start}, ${limit}`;
-        }
+	async getExtensionInstallByExtensionDownloadId(extension_download_id) {
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "extension_install` WHERE `extension_download_id` = '" + extension_download_id + "'");
 
-        const query = await this.db.query(sql);
-        return query.rows;
-    }
+		return query.row;
+	}
 
-    async getTotalInstalls(data = {}) {
-        let sql = "SELECT COUNT(*) AS total FROM "+DB_PREFIX+"extension_install";
+	async getTotalExtensionInstalls() {
+		const query = await this.db.query("SELECT COUNT(*) AS total FROM `" + DB_PREFIX + "extension_install`");
 
-        if (data.filter_extension_download_id) {
-            sql += ` WHERE extension_download_id = ${parseInt(data.filter_extension_download_id)}`;
-        }
+		return query.row['total'];
+	}
 
-        const query = await this.db.query(sql);
-        return parseInt(query.row.total, 10);
-    }
+	async addExtensionPath(extension_install_id, path) {
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "extension_path` SET `extension_install_id` = '" + extension_install_id + "', `path` = '" + this.db.escape(path) + "', `date_added` = NOW()");
+	}
 
-    async addPath(extension_install_id, path) {
-        await this.db.query(`INSERT INTO ${DB_PREFIX}extension_path SET extension_install_id = ${parseInt(extension_install_id)}, path = ${this.db.escape(path)}`);
-    }
+	async deleteExtensionPath(extension_path_id) {
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "extension_path` WHERE `extension_path_id` = '" + extension_path_id + "'");
+	}
 
-    async deletePath(extension_path_id) {
-        await this.db.query(`DELETE FROM ${DB_PREFIX}extension_path WHERE extension_path_id = ${parseInt(extension_path_id)}`);
-    }
+	async getExtensionPathsByExtensionInstallId(extension_install_id) {
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "extension_path` WHERE `extension_install_id` = '" + extension_install_id + "' ORDER BY `date_added` ASC");
 
-    async getPathsByExtensionInstallId(extension_install_id) {
-        const query = await this.db.query(`SELECT * FROM ${DB_PREFIX}extension_path WHERE extension_install_id = ${parseInt(extension_install_id)} ORDER BY extension_path_id ASC`);
-        return query.rows;
-    }
-
-    async getPaths(path) {
-        const query = await this.db.query(`SELECT * FROM ${DB_PREFIX}extension_path WHERE path LIKE ${this.db.escape(path)} ORDER BY path ASC`);
-        return query.rows;
-    }
-
-    async getTotalPaths(path) {
-        const query = await this.db.query(`SELECT COUNT(*) AS total FROM ${DB_PREFIX}extension_path WHERE path LIKE ${this.db.escape(path)}`);
-        return parseInt(query.row.total, 10);
-    }
+		return query.rows;
+	}
 }
-

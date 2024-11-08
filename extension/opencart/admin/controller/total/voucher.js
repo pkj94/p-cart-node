@@ -1,4 +1,4 @@
-global['\Opencart\Admin\Controller\Extension\Opencart\Total\Voucher'] = class Voucher extends global['\Opencart\System\Engine\Controller'] {
+global['\Opencart\Admin\Controller\Extension\Opencart\Total\Voucher'] = class Voucher extends Controller {
 	constructor(registry) {
 		super(registry)
 	}

@@ -1,17 +1,16 @@
-module.exports = function (registry) {
+module.exports = function () {
     const loadControllers = async (req, res, next) => {
         // console.log(req.params)
         if (fs.readFileSync(APPROOT + '/config.json').toString())
             for (let [key, value] of Object.entries(require('../config.json'))) {
                 global[key] = value;
             }
-        const config = registry.get('config');
         // console.log('DIR_APPLICATION', typeof DIR_APPLICATION)
         if (typeof DIR_APPLICATION == 'undefined')
             return res.redirect('/install');
         // console.log(typeof DIR_APPLICATION == 'undefined')
-        require('./system/startup');
-        start(req, res, next).then(output => {
+        require(DIR_SYSTEM + 'startup.js');
+        start('catalog', req, res, next).then(output => {
             if (registry.get('response').redirect) {
                 res.redirect(registry.get('response').redirect);
             } else {
@@ -45,11 +44,11 @@ module.exports = function (registry) {
                     break;
             }
 
-            if (config.get('error_log')) {
+            if (registry.get('config').get('error_log')) {
                 registry.get('log').write('JavaScript ' + errorType + ':  ' + error.toString());
             }
 
-            if (config.get('error_display')) {
+            if (registry.get('config').get('error_display')) {
                 res.status(200).send('<b>' + errorType + '</b>: ' + error.toString());
             } else {
                 registry.get('log')(config.get('error_page'))

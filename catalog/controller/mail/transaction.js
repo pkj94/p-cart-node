@@ -1,6 +1,6 @@
 const sprintf = require("locutus/php/strings/sprintf");
 
-module.exports = class Transaction extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class Transaction extends Controller {
 	// catalog/model/account/customer/addTransaction/after
 	/**
 	 * @param string route

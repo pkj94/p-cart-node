@@ -1,4 +1,4 @@
-global['\Opencart\Install\Controller\Error\NotFound'] = class NotFound extends global['\Opencart\System\Engine\Controller'] {
+global['\Opencart\Install\Controller\Error\NotFound'] = class NotFound extends Controller {
     constructor(registry) {
         super(registry);
     }

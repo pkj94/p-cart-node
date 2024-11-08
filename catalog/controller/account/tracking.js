@@ -2,7 +2,7 @@ const sprintf = require("locutus/php/strings/sprintf");
 const str_replace = require("locutus/php/strings/str_replace");
 const strip_tags = require("locutus/php/strings/strip_tags");
 
-module.exports = class Tracking extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class Tracking extends Controller {
 	/**
 	 * @return void
 	 */

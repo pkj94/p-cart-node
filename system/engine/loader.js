@@ -1,4 +1,4 @@
-global['\Opencart\System\Engine\Event'] = class Loader {
+module.exports = class Loader {
     constructor(registry) {
         this.registry = registry;
     }
@@ -12,17 +12,17 @@ global['\Opencart\System\Engine\Event'] = class Loader {
         const trigger = route;
 
         let output;
-        let result = await this.registry.event.emitAsync(`controller/${trigger}/before`, route, data);
+        let result = await this.registry.get('event').trigger(`controller/${trigger}/before`, [route, data]);
 
         if (result && !(result instanceof Error)) {
             output = result;
         } else {
             const Action = require(expressPath.join(__dirname, 'action')); // Adjust the path as needed
             const action = new Action(route);
-            output = await action.execute(this.registry, data);
+            output = await action.execute(this.registry, [data]);
         }
 
-        result = await this.registry.event.emitAsync(`controller/${trigger}/after`, route, data, output);
+        result = await this.registry.get('event').trigger(`controller/${trigger}/after`, [route, data, output]);
         if (result && !(result instanceof Error)) {
             output = result;
         }
@@ -32,20 +32,26 @@ global['\Opencart\System\Engine\Event'] = class Loader {
         }
     }
 
-    async model(route) {
-        route = this.sanitizeRoute(route);
-
-        if (!this.registry.has(`model_${route.replace('/', '_')}`)) {
-            const file = expressPath.join(__dirname, 'model', `${route}.js`); // Adjust the path as needed
-            const ModelClass = require(file);
-
-            const proxy = new Proxy({}, {
-                get: (target, method) => {
-                    return (...args) => this.callback(route, method).apply(this, args);
-                }
-            });
-
-            this.registry.set(`model_${route.replace('/', '_')}`, proxy);
+    async model(route, $this) {
+        // Sanitize the call 
+        route = route.replace(/[^a-zA-Z0-9_\/]/g, '');
+        if (!this.registry.has(`model_${route.replace(/\//g, '_')}`)) {
+            const file = expressPath.join(DIR_APPLICATION, 'model', `${route}.js`);
+            const className = `Model${route.replace(/[^a-zA-Z0-9]/g, '')}`;
+            if (fs.existsSync(file)) {
+                const ModelClass = require(file);
+                const proxy = new ProxyLocal();
+                // Mimicking the dynamic method assignment
+                Object.getOwnPropertyNames(ModelClass.prototype).forEach(method => {
+                    if (method !== 'constructor') {
+                        proxy[method] = this.callback(route, method);
+                    }
+                });
+                this.registry.set(`model_${route.replace(/\//g, '_')}`, proxy);
+                $this[`model_${route.replace(/\//g, '_')}`] = proxy;
+            } else {
+                throw new Error(`Error: Could not load model ${route}!`);
+            }
         }
     }
 
@@ -56,13 +62,11 @@ global['\Opencart\System\Engine\Event'] = class Loader {
         let output;
         let code = '';
 
-        let result = await this.registry.event.emitAsync(`view/${trigger}/before`, route, data, code);
+        let result = await this.registry.get('event').trigger(`view/${trigger}/before`, [route, data, code]);
         if (result && !(result instanceof Error)) {
             output = result;
         } else {
-            const Template = require(expressPath.join(__dirname, 'template')); // Adjust the path as needed
             const template = new Template(this.registry.get('config').get('template_engine'));
-
             for (const key in data) {
                 template.set(key, data[key]);
             }
@@ -70,7 +74,7 @@ global['\Opencart\System\Engine\Event'] = class Loader {
             output = await template.render(this.registry.get('config').get('template_directory') + route, code);
         }
 
-        result = await this.registry.event.emitAsync(`view/${trigger}/after`, route, data, output);
+        result = await this.registry.get('event').trigger(`view/${trigger}/after`, [route, data, output]);
         if (result && !(result instanceof Error)) {
             output = result;
         }
@@ -98,9 +102,9 @@ global['\Opencart\System\Engine\Event'] = class Loader {
     }
 
     async config(route) {
-        await this.registry.event.emitAsync(`config/${route}/before`, route);
+        await this.registry.get('event').trigger(`config/${route}/before`, route);
         this.registry.get('config').load(route);
-        await this.registry.event.emitAsync(`config/${route}/after`, route);
+        await this.registry.get('event').trigger(`config/${route}/after`, route);
     }
 
     async language(route, key = '') {
@@ -108,14 +112,14 @@ global['\Opencart\System\Engine\Event'] = class Loader {
         const trigger = route;
 
         let output;
-        let result = await this.registry.event.emitAsync(`language/${trigger}/before`, route, key);
+        let result = await this.registry.get('event').trigger(`language/${trigger}/before`, route, key);
         if (result && !(result instanceof Error)) {
             output = result;
         } else {
             output = await this.registry.get('language').load(route, key);
         }
 
-        result = await this.registry.event.emitAsync(`language/${trigger}/after`, route, key, output);
+        result = await this.registry.get('event').trigger(`language/${trigger}/after`, [route, key, output]);
         if (result && !(result instanceof Error)) {
             output = result;
         }
@@ -125,15 +129,17 @@ global['\Opencart\System\Engine\Event'] = class Loader {
 
     callback(route, method) {
         return async (...args) => {
+            // console.log(route)
             route = this.sanitizeRoute(route);
             const trigger = route;
 
             let output;
-            let result = await this.registry.event.emitAsync(`model/${trigger}/before`, route, args);
+            let result = await this.registry.get('event').trigger(`model/${trigger}/before`, [route, args]);
             if (result && !(result instanceof Error)) {
                 output = result;
             } else {
-                const ModelClass = require(expressPath.join(__dirname, 'model', route.split('/')[0])); // Adjust the path as needed
+                // console.log('=====', expressPath.join(DIR_APPLICATION, 'model', route + '.js'))
+                const ModelClass = require(expressPath.join(DIR_APPLICATION, 'model', route + '.js')); // Adjust the path as needed
                 const model = new ModelClass(this.registry);
 
                 if (typeof model[method] === 'function') {
@@ -143,7 +149,7 @@ global['\Opencart\System\Engine\Event'] = class Loader {
                 }
             }
 
-            result = await this.registry.event.emitAsync(`model/${trigger}/after`, route, args, output);
+            result = await this.registry.get('event').trigger(`model/${trigger}/after`, [route, args, output]);
             if (result && !(result instanceof Error)) {
                 output = result;
             }

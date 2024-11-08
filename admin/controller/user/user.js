@@ -1,16 +1,134 @@
-const sprintf = require("locutus/php/strings/sprintf");
+module.exports = class ControllerUserUser extends Controller {
+	error = {};
 
-module.exports = class UserController extends global['\Opencart\System\Engine\Controller'] {
-	/**
-	 * @return void
-	 */
 	async index() {
-		const data = {};
 		await this.load.language('user/user');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		let url = '';
+		this.load.model('user/user',this);
+
+		await this.getList();
+	}
+
+	async add() {
+		await this.load.language('user/user');
+
+		this.document.setTitle(this.language.get('heading_title'));
+
+		this.load.model('user/user',this);
+
+		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+			await this.model_user_user.addUser(this.request.post);
+
+			this.session.data['success'] = this.language.get('text_success');
+
+			url = '';
+
+			if ((this.request.get['sort'])) {
+				url += '&sort=' + this.request.get['sort'];
+			}
+
+			if ((this.request.get['order'])) {
+				url += '&order=' + this.request.get['order'];
+			}
+
+			if ((this.request.get['page'])) {
+				url += '&page=' + this.request.get['page'];
+			}
+
+			this.response.setRedirect(await this.url.link('user/user', 'user_token=' + this.session.data['user_token'] + url, true));
+		}
+
+		await this.getForm();
+	}
+
+	async edit() {
+		await this.load.language('user/user');
+
+		this.document.setTitle(this.language.get('heading_title'));
+
+		this.load.model('user/user',this);
+
+		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+			await this.model_user_user.editUser(this.request.get['user_id'], this.request.post);
+
+			this.session.data['success'] = this.language.get('text_success');
+
+			url = '';
+
+			if ((this.request.get['sort'])) {
+				url += '&sort=' + this.request.get['sort'];
+			}
+
+			if ((this.request.get['order'])) {
+				url += '&order=' + this.request.get['order'];
+			}
+
+			if ((this.request.get['page'])) {
+				url += '&page=' + this.request.get['page'];
+			}
+
+			this.response.setRedirect(await this.url.link('user/user', 'user_token=' + this.session.data['user_token'] + url, true));
+		}
+
+		await this.getForm();
+	}
+
+	async delete() {
+		await this.load.language('user/user');
+
+		this.document.setTitle(this.language.get('heading_title'));
+
+		this.load.model('user/user',this);
+
+		if ((this.request.post['selected']) && this.validateDelete()) {
+			for (this.request.post['selected'] of user_id) {
+				await this.model_user_user.deleteUser(user_id);
+			}
+
+			this.session.data['success'] = this.language.get('text_success');
+
+			url = '';
+
+			if ((this.request.get['sort'])) {
+				url += '&sort=' + this.request.get['sort'];
+			}
+
+			if ((this.request.get['order'])) {
+				url += '&order=' + this.request.get['order'];
+			}
+
+			if ((this.request.get['page'])) {
+				url += '&page=' + this.request.get['page'];
+			}
+
+			this.response.setRedirect(await this.url.link('user/user', 'user_token=' + this.session.data['user_token'] + url, true));
+		}
+
+		await this.getList();
+	}
+
+	async getList() {
+		if ((this.request.get['sort'])) {
+			sort = this.request.get['sort'];
+		} else {
+			sort = 'username';
+		}
+
+		if ((this.request.get['order'])) {
+			order = this.request.get['order'];
+		} else {
+			order = 'ASC';
+		}
+
+		if ((this.request.get['page'])) {
+			page = this.request.get['page'];
+		} else {
+			page = 1;
+		}
+
+		url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -27,97 +145,59 @@ module.exports = class UserController extends global['\Opencart\System\Engine\Co
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text': this.language.get('text_home'),
-			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
-		});
+			'text' : this.language.get('text_home'),
+			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+		);
 
 		data['breadcrumbs'].push({
-			'text': this.language.get('heading_title'),
-			'href': await this.url.link('user/user', 'user_token=' + this.session.data['user_token'] + url)
-		});
+			'text' : this.language.get('heading_title'),
+			'href' : await this.url.link('user/user', 'user_token=' + this.session.data['user_token'] + url, true)
+		);
 
-		data['add'] = await this.url.link('user/user.form', 'user_token=' + this.session.data['user_token'] + url);
-		data['delete'] = await this.url.link('user/user.delete', 'user_token=' + this.session.data['user_token']);
+		data['add'] = await this.url.link('user/user/add', 'user_token=' + this.session.data['user_token'] + url, true);
+		data['delete'] = await this.url.link('user/user/delete', 'user_token=' + this.session.data['user_token'] + url, true);
 
-		data['list'] = await this.getList();
+		data['users'] = {};
 
-		data['user_token'] = this.session.data['user_token'];
+		filter_data = array(
+			'sort'  : sort,
+			'order' : order,
+			'start' : (page - 1) * this.config.get('config_limit_admin'),
+			'limit' : this.config.get('config_limit_admin')
+		);
 
-		data['header'] = await this.load.controller('common/header');
-		data['column_left'] = await this.load.controller('common/column_left');
-		data['footer'] = await this.load.controller('common/footer');
+		user_total = await this.model_user_user.getTotalUsers();
 
-		this.response.setOutput(await this.load.view('user/user', data));
-	}
-
-	/**
-	 * @return void
-	 */
-	async list() {
-		await this.load.language('user/user');
-
-		this.response.setOutput(await this.getList());
-	}
-
-	/**
-	 * @return string
-	 */
-	async getList() {
-		const data = {};
-		let sort = 'username';
-		if ((this.request.get['sort'])) {
-			sort = this.request.get['sort'];
-		}
-
-		let order = 'ASC';
-		if ((this.request.get['order'])) {
-			order = this.request.get['order'];
-		}
-
-		let page = 1;
-		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
-		}
-
-		let url = '';
-
-		if ((this.request.get['sort'])) {
-			url += '&sort=' + this.request.get['sort'];
-		}
-
-		if ((this.request.get['order'])) {
-			url += '&order=' + this.request.get['order'];
-		}
-
-		if ((this.request.get['page'])) {
-			url += '&page=' + this.request.get['page'];
-		}
-
-		data['action'] = await this.url.link('user/user.list', 'user_token=' + this.session.data['user_token'] + url);
-
-		data['users'] = [];
-
-		let filter_data = {
-			'sort': sort,
-			'order': order,
-			'start': (page - 1) * Number(this.config.get('config_pagination_admin')),
-			'limit': this.config.get('config_pagination_admin')
-		};
-
-		this.load.model('user/user', this);
-
-		const user_total = await this.model_user_user.getTotalUsers();
-
-		const results = await this.model_user_user.getUsers(filter_data);
+		results = await this.model_user_user.getUsers(filter_data);
 
 		for (let result of results) {
 			data['users'].push({
-				'user_id': result['user_id'],
-				'username': result['username'],
-				'status': (result['status'] ? this.language.get('text_enabled') : this.language.get('text_disabled')),
-				'date_added': date(this.language.get('date_format_short'), new Date(result['date_added'])),
-				'edit': await this.url.link('user/user.form', 'user_token=' + this.session.data['user_token'] + '&user_id=' + result['user_id'] + url)
-			});
+				'user_id'    : result['user_id'],
+				'username'   : result['username'],
+				'status'     : (result['status'] ? this.language.get('text_enabled') : this.language.get('text_disabled')),
+				'date_added' : date(this.language.get('date_format_short'), strtotime(result['date_added'])),
+				'edit'       : await this.url.link('user/user/edit', 'user_token=' + this.session.data['user_token'] + '&user_id=' + result['user_id'] + url, true)
+			);
+		}
+
+		if ((this.error['warning'])) {
+			data['error_warning'] = this.error['warning'];
+		} else {
+			data['error_warning'] = '';
+		}
+
+		if ((this.session.data['success'])) {
+			data['success'] = this.session.data['success'];
+
+			delete this.session.data['success']);
+		} else {
+			data['success'] = '';
+		}
+
+		if ((this.request.post['selected'])) {
+			data['selected'] = this.request.post['selected'];
+		} else {
+			data['selected'] = {};
 		}
 
 		url = '';
@@ -128,9 +208,13 @@ module.exports = class UserController extends global['\Opencart\System\Engine\Co
 			url += '&order=ASC';
 		}
 
-		data['sort_username'] = await this.url.link('user/user.list', 'user_token=' + this.session.data['user_token'] + '&sort=username' + url);
-		data['sort_status'] = await this.url.link('user/user.list', 'user_token=' + this.session.data['user_token'] + '&sort=status' + url);
-		data['sort_date_added'] = await this.url.link('user/user.list', 'user_token=' + this.session.data['user_token'] + '&sort=date_added' + url);
+		if ((this.request.get['page'])) {
+			url += '&page=' + this.request.get['page'];
+		}
+
+		data['sort_username'] = await this.url.link('user/user', 'user_token=' + this.session.data['user_token'] + '&sort=username' + url, true);
+		data['sort_status'] = await this.url.link('user/user', 'user_token=' + this.session.data['user_token'] + '&sort=status' + url, true);
+		data['sort_date_added'] = await this.url.link('user/user', 'user_token=' + this.session.data['user_token'] + '&sort=date_added' + url, true);
 
 		url = '';
 
@@ -142,33 +226,72 @@ module.exports = class UserController extends global['\Opencart\System\Engine\Co
 			url += '&order=' + this.request.get['order'];
 		}
 
-		data['pagination'] = await this.load.controller('common/pagination', {
-			'total': user_total,
-			'page': page,
-			'limit': this.config.get('config_pagination_admin'),
-			'url': await this.url.link('user/user.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
-		});
+		pagination = new Pagination();
+		pagination.total = user_total;
+		pagination.page = page;
+		pagination.limit = this.config.get('config_limit_admin');
+		pagination.url = await this.url.link('user/user', 'user_token=' + this.session.data['user_token'] + url + '&page={page}', true);
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (user_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (user_total - this.config.get('config_pagination_admin'))) ? user_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), user_total, Math.ceil(user_total / this.config.get('config_pagination_admin')));
+		data['pagination'] = pagination.render();
+
+		data['results'] = sprintf(this.language.get('text_pagination'), (user_total) ? ((page - 1) * this.config.get('config_limit_admin')) + 1 : 0, (((page - 1) * this.config.get('config_limit_admin')) > (user_total - this.config.get('config_limit_admin'))) ? user_total : (((page - 1) * this.config.get('config_limit_admin')) + this.config.get('config_limit_admin')), user_total, ceil(user_total / this.config.get('config_limit_admin')));
 
 		data['sort'] = sort;
 		data['order'] = order;
 
-		return await this.load.view('user/user_list', data);
+		data['header'] = await this.load.controller('common/header');
+		data['column_left'] = await this.load.controller('common/column_left');
+		data['footer'] = await this.load.controller('common/footer');
+
+		this.response.setOutput(await this.load.view('user/user_list', data));
 	}
 
-	/**
-	 * @return void
-	 */
-	async form() {
-		const data = {};
-		await this.load.language('user/user');
-
-		this.document.setTitle(this.language.get('heading_title'));
-
+	async getForm() {
 		data['text_form'] = !(this.request.get['user_id']) ? this.language.get('text_add') : this.language.get('text_edit');
 
-		let url = '';
+		if ((this.error['warning'])) {
+			data['error_warning'] = this.error['warning'];
+		} else {
+			data['error_warning'] = '';
+		}
+
+		if ((this.error['username'])) {
+			data['error_username'] = this.error['username'];
+		} else {
+			data['error_username'] = '';
+		}
+
+		if ((this.error['password'])) {
+			data['error_password'] = this.error['password'];
+		} else {
+			data['error_password'] = '';
+		}
+
+		if ((this.error['confirm'])) {
+			data['error_confirm'] = this.error['confirm'];
+		} else {
+			data['error_confirm'] = '';
+		}
+
+		if ((this.error['firstname'])) {
+			data['error_firstname'] = this.error['firstname'];
+		} else {
+			data['error_firstname'] = '';
+		}
+
+		if ((this.error['lastname'])) {
+			data['error_lastname'] = this.error['lastname'];
+		} else {
+			data['error_lastname'] = '';
+		}
+
+		if ((this.error['email'])) {
+			data['error_email'] = this.error['email'];
+		} else {
+			data['error_email'] = '';
+		}
+
+		url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -182,81 +305,113 @@ module.exports = class UserController extends global['\Opencart\System\Engine\Co
 			url += '&page=' + this.request.get['page'];
 		}
 
-		data['save'] = await this.url.link('user/user.save', 'user_token=' + this.session.data['user_token']);
-		data['back'] = await this.url.link('user/user', 'user_token=' + this.session.data['user_token'] + url);
-		let user_info
-		if ((this.request.get['user_id'])) {
-			this.load.model('user/user', this);
+		data['breadcrumbs'] = [];
 
+		data['breadcrumbs'].push({
+			'text' : this.language.get('text_home'),
+			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+		);
+
+		data['breadcrumbs'].push({
+			'text' : this.language.get('heading_title'),
+			'href' : await this.url.link('user/user', 'user_token=' + this.session.data['user_token'] + url, true)
+		);
+
+		if (!(this.request.get['user_id'])) {
+			data['action'] = await this.url.link('user/user/add', 'user_token=' + this.session.data['user_token'] + url, true);
+		} else {
+			data['action'] = await this.url.link('user/user/edit', 'user_token=' + this.session.data['user_token'] + '&user_id=' + this.request.get['user_id'] + url, true);
+		}
+
+		data['cancel'] = await this.url.link('user/user', 'user_token=' + this.session.data['user_token'] + url, true);
+
+		if ((this.request.get['user_id']) && (this.request.server['method'] != 'POST')) {
 			user_info = await this.model_user_user.getUser(this.request.get['user_id']);
 		}
 
-		if ((this.request.get['user_id'])) {
-			data['user_id'] = this.request.get['user_id'];
-		} else {
-			data['user_id'] = 0;
-		}
-
-		if ((user_info)) {
+		if ((this.request.post['username'])) {
+			data['username'] = this.request.post['username'];
+		} else if ((user_info)) {
 			data['username'] = user_info['username'];
 		} else {
 			data['username'] = '';
 		}
 
-		this.load.model('user/user_group', this);
+		if ((this.request.post['user_group_id'])) {
+			data['user_group_id'] = this.request.post['user_group_id'];
+		} else if ((user_info)) {
+			data['user_group_id'] = user_info['user_group_id'];
+		} else {
+			data['user_group_id'] = '';
+		}
+
+		this.load.model('user/user_group');
 
 		data['user_groups'] = await this.model_user_user_group.getUserGroups();
 
-		if ((user_info)) {
-			data['user_group_id'] = user_info['user_group_id'];
+		if ((this.request.post['password'])) {
+			data['password'] = this.request.post['password'];
 		} else {
-			data['user_group_id'] = 0;
+			data['password'] = '';
 		}
 
-		if ((user_info)) {
+		if ((this.request.post['confirm'])) {
+			data['confirm'] = this.request.post['confirm'];
+		} else {
+			data['confirm'] = '';
+		}
+
+		if ((this.request.post['firstname'])) {
+			data['firstname'] = this.request.post['firstname'];
+		} else if ((user_info)) {
 			data['firstname'] = user_info['firstname'];
 		} else {
 			data['firstname'] = '';
 		}
 
-		if ((user_info)) {
+		if ((this.request.post['lastname'])) {
+			data['lastname'] = this.request.post['lastname'];
+		} else if ((user_info)) {
 			data['lastname'] = user_info['lastname'];
 		} else {
 			data['lastname'] = '';
 		}
 
-		if ((user_info)) {
+		if ((this.request.post['email'])) {
+			data['email'] = this.request.post['email'];
+		} else if ((user_info)) {
 			data['email'] = user_info['email'];
 		} else {
 			data['email'] = '';
 		}
 
-		if ((user_info)) {
+		if ((this.request.post['image'])) {
+			data['image'] = this.request.post['image'];
+		} else if ((user_info)) {
 			data['image'] = user_info['image'];
 		} else {
 			data['image'] = '';
 		}
 
-		this.load.model('tool/image', this);
+		this.load.model('tool/image',this);
 
+		if ((this.request.post['image']) && is_file(DIR_IMAGE + this.request.post['image'])) {
+			data['thumb'] = await this.model_tool_image.resize(this.request.post['image'], 100, 100);
+		} else if ((user_info) && user_info['image'] && is_file(DIR_IMAGE + user_info['image'])) {
+			data['thumb'] = await this.model_tool_image.resize(user_info['image'], 100, 100);
+		} else {
+			data['thumb'] = await this.model_tool_image.resize('no_image.png', 100, 100);
+		}
+		
 		data['placeholder'] = await this.model_tool_image.resize('no_image.png', 100, 100);
 
-		if (data['image'] && fs.existsSync(DIR_IMAGE + html_entity_decode(data['image']))) {
-			data['thumb'] = await this.model_tool_image.resize(html_entity_decode(data['image']), 100, 100);
-		} else {
-			data['thumb'] = data['placeholder'];
-		}
-
-		if ((user_info)) {
+		if ((this.request.post['status'])) {
+			data['status'] = this.request.post['status'];
+		} else if ((user_info)) {
 			data['status'] = user_info['status'];
 		} else {
 			data['status'] = 0;
 		}
-
-		data['authorize'] = await this.getAuthorize();
-		data['login'] = await this.getLogin();
-
-		data['user_token'] = this.session.data['user_token'];
 
 		data['header'] = await this.load.controller('common/header');
 		data['column_left'] = await this.load.controller('common/column_left');
@@ -265,274 +420,81 @@ module.exports = class UserController extends global['\Opencart\System\Engine\Co
 		this.response.setOutput(await this.load.view('user/user_form', data));
 	}
 
-	/**
-	 * @return void
-	 */
-	async save() {
-		await this.load.language('user/user');
-		this.request.post['user_id'] = Number(this.request.post['user_id']);
-		const json = { error: {} };
-
+	async validateForm() {
 		if (!await this.user.hasPermission('modify', 'user/user')) {
-			json['error']['warning'] = this.language.get('error_permission');
+			this.error['warning'] = this.language.get('error_permission');
 		}
 
 		if ((oc_strlen(this.request.post['username']) < 3) || (oc_strlen(this.request.post['username']) > 20)) {
-			json['error']['username'] = this.language.get('error_username');
+			this.error['username'] = this.language.get('error_username');
 		}
 
-		this.load.model('user/user', this);
+		user_info = await this.model_user_user.getUserByUsername(this.request.post['username']);
 
-		let user_info = await this.model_user_user.getUserByUsername(this.request.post['username']);
-
-		if (!this.request.post['user_id']) {
-			if (user_info.user_id) {
-				json['error']['warning'] = this.language.get('error_username_exists');
+		if (!(this.request.get['user_id'])) {
+			if (user_info) {
+				this.error['warning'] = this.language.get('error_exists_username');
 			}
 		} else {
-			if (user_info.user_id && (this.request.post['user_id'] != user_info['user_id'])) {
-				json['error']['warning'] = this.language.get('error_username_exists');
+			if (user_info && (this.request.get['user_id'] != user_info['user_id'])) {
+				this.error['warning'] = this.language.get('error_exists_username');
 			}
 		}
 
-		if ((oc_strlen(this.request.post['firstname']) < 1) || (oc_strlen(this.request.post['firstname']) > 32)) {
-			json['error']['firstname'] = this.language.get('error_firstname');
+		if ((oc_strlen(trim(this.request.post['firstname'])) < 1) || (oc_strlen(trim(this.request.post['firstname'])) > 32)) {
+			this.error['firstname'] = this.language.get('error_firstname');
 		}
 
-		if ((oc_strlen(this.request.post['lastname']) < 1) || (oc_strlen(this.request.post['lastname']) > 32)) {
-			json['error']['lastname'] = this.language.get('error_lastname');
+		if ((oc_strlen(trim(this.request.post['lastname'])) < 1) || (oc_strlen(trim(this.request.post['lastname'])) > 32)) {
+			this.error['lastname'] = this.language.get('error_lastname');
 		}
 
-		if ((oc_strlen(this.request.post['email']) > 96) || !isEmailValid(this.request.post['email'])) {
-			json['error']['email'] = this.language.get('error_email');
+		if ((oc_strlen(this.request.post['email']) > 96) || !filter_var(this.request.post['email'], FILTER_VALIDATE_EMAIL)) {
+			this.error['email'] = this.language.get('error_email');
 		}
 
 		user_info = await this.model_user_user.getUserByEmail(this.request.post['email']);
 
-		if (!this.request.post['user_id']) {
-			if (user_info.user_id) {
-				json['error']['warning'] = this.language.get('error_email_exists');
+		if (!(this.request.get['user_id'])) {
+			if (user_info) {
+				this.error['warning'] = this.language.get('error_exists_email');
 			}
 		} else {
-			if (user_info.user_id && (this.request.post['user_id'] != user_info['user_id'])) {
-				json['error']['warning'] = this.language.get('error_email_exists');
+			if (user_info && (this.request.get['user_id'] != user_info['user_id'])) {
+				this.error['warning'] = this.language.get('error_exists_email');
 			}
 		}
 
-		if (this.request.post['password'] || (!(this.request.post['user_id']))) {
+		if (this.request.post['password'] || (!(this.request.get['user_id']))) {
 			if ((oc_strlen(html_entity_decode(this.request.post['password'])) < 4) || (oc_strlen(html_entity_decode(this.request.post['password'])) > 40)) {
-				json['error']['password'] = this.language.get('error_password');
+				this.error['password'] = this.language.get('error_password');
 			}
 
 			if (this.request.post['password'] != this.request.post['confirm']) {
-				json['error']['confirm'] = this.language.get('error_confirm');
+				this.error['confirm'] = this.language.get('error_confirm');
 			}
 		}
 
-		if (!Object.keys(json.error).length) {
-			if (!this.request.post['user_id']) {
-				json['user_id'] = await this.model_user_user.addUser(this.request.post);
-			} else {
-				await this.model_user_user.editUser(this.request.post['user_id'], this.request.post);
-			}
+		total_users = await this.model_user_user.getTotalUsers();
 
-			json['success'] = this.language.get('text_success');
+		if (total_users <= 1 && (this.request.post['status']) && this.request.post['status'] == 0) {
+			this.error['warning'] = this.language.get('error_single_user');
 		}
 
-		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(json);
+		return Object.keys(this.error).length?false:true
 	}
 
-	/**
-	 * @return void
-	 */
-	async delete() {
-		await this.load.language('user/user');
-
-		const json = {};
-
-		let selected = [];
-		if ((this.request.post['selected'])) {
-			selected = this.request.post['selected'];
-		}
-
+	async validateDelete() {
 		if (!await this.user.hasPermission('modify', 'user/user')) {
-			json['error'] = this.language.get('error_permission');
+			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		for (let user_id of selected) {
+		for (this.request.post['selected'] of user_id) {
 			if (await this.user.getId() == user_id) {
-				json['error'] = json['error'] || {};
-				json['error']['warning'] = this.language.get('error_account');
+				this.error['warning'] = this.language.get('error_account');
 			}
 		}
 
-		if (!Object.keys(json).length) {
-			this.load.model('user/user', this);
-
-			for (let user_id of selected) {
-				await this.model_user_user.deleteUser(user_id);
-			}
-
-			json['success'] = this.language.get('text_success');
-		}
-
-		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(json);
-	}
-
-	/**
-	 * @return void
-	 */
-	async authorize() {
-		await this.load.language('user/user');
-
-		this.response.setOutput(await this.getAuthorize());
-	}
-
-	/**
-	 * @return string
-	 */
-	async getAuthorize() {
-		const data = {};
-		let user_id = 0;
-		if ((this.request.get['user_id'])) {
-			user_id = this.request.get['user_id'];
-		}
-		let page = 1;
-		if ((this.request.get['page']) && this.request.get['route'] == 'user/user.login') {
-			page = Number(this.request.get['page']);
-		}
-
-		let limit = 10;
-
-		data['authorizes'] = [];
-
-		this.load.model('user/user', this);
-
-		const results = await this.model_user_user.getAuthorizes(user_id, (page - 1) * limit, limit);
-
-		for (let result of results) {
-			data['authorizes'].push({
-				'token': result['token'],
-				'ip': result['ip'],
-				'user_agent': result['user_agent'],
-				'status': result['status'] ? this.language.get('text_enabled') : this.language.get('text_disabled'),
-				'total': result['total'],
-				'date_added': date(this.language.get('datetime_format'), new Date(result['date_added'])),
-				'delete': await this.url.link('user/user.deleteAuthorize', 'user_token=' + this.session.data['user_token'] + '&user_authorize_id=' + result['user_authorize_id'])
-			});
-		}
-
-		const authorize_total = await this.model_user_user.getTotalAuthorizes(user_id);
-
-		data['pagination'] = await this.load.controller('common/pagination', {
-			'total': authorize_total,
-			'page': page,
-			'limit': limit,
-			'url': await this.url.link('user/user.authorize', 'user_token=' + this.session.data['user_token'] + '&user_id=' + user_id + '&page={page}')
-		});
-
-		data['results'] = sprintf(this.language.get('text_pagination'), (authorize_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (authorize_total - limit)) ? authorize_total : (((page - 1) * limit) + limit), authorize_total, Math.ceil(authorize_total / limit));
-
-		return await this.load.view('user/user_authorize', data);
-	}
-
-	/**
-	 * @return void
-	 */
-	async deleteAuthorize() {
-		await this.load.language('user/user');
-
-		const json = {};
-		let user_authorize_id = 0;
-		if ((this.request.get['user_authorize_id'])) {
-			user_authorize_id = this.request.get['user_authorize_id'];
-		}
-		let token = '';
-		if ((this.request.cookie['authorize'])) {
-			token = this.request.cookie['authorize'];
-		}
-
-		if (!await this.user.hasPermission('modify', 'user/user')) {
-			json['error'] = this.language.get('error_permission');
-		}
-
-		this.load.model('user/user', this);
-
-		const login_info = await this.model_user_user.getAuthorize(user_authorize_id);
-
-		if (!login_info.login_id) {
-			json['error'] = this.language.get('error_authorize');
-		}
-
-		if (!Object.keys(json).length) {
-			await this.model_user_user.deleteAuthorize(user_authorize_id);
-
-			// If the token is still present, then we enforce the user to log out automatically.
-			if (login_info['token'] == token) {
-				this.session.data['success'] = this.language.get('text_success');
-
-				json['redirect'] = await this.url.link('common/login', '', true);
-			} else {
-				json['success'] = this.language.get('text_success');
-			}
-		}
-
-		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(json);
-	}
-
-	/**
-	 * @return void
-	 */
-	async login() {
-		await this.load.language('user/user');
-
-		this.response.setOutput(await this.getLogin());
-	}
-
-	/**
-	 * @return string
-	 */
-	async getLogin() {
-		const data = {};
-		let user_id = 0;
-		if ((this.request.get['user_id'])) {
-			user_id = this.request.get['user_id'];
-		}
-		let page = 1;
-		if ((this.request.get['page']) && this.request.get['route'] == 'user/user.login') {
-			page = Number(this.request.get['page']);
-		}
-
-		let limit = 10;
-
-		data['logins'] = [];
-
-		this.load.model('user/user', this);
-
-		const results = await this.model_user_user.getLogins(user_id, (page - 1) * limit, limit);
-
-		for (let result of results) {
-			data['logins'].push({
-				'ip': result['ip'],
-				'user_agent': result['user_agent'],
-				'date_added': date(this.language.get('datetime_format'), new Date(result['date_added']))
-			});
-		}
-
-		const login_total = await this.model_user_user.getTotalLogins(user_id);
-
-		data['pagination'] = await this.load.controller('common/pagination', {
-			'total': login_total,
-			'page': page,
-			'limit': limit,
-			'url': await this.url.link('user/user.login', 'user_token=' + this.session.data['user_token'] + '&user_id=' + user_id + '&page={page}')
-		});
-
-		data['results'] = sprintf(this.language.get('text_pagination'), (login_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (login_total - limit)) ? login_total : (((page - 1) * limit) + limit), login_total, Math.ceil(login_total / limit));
-
-		return await this.load.view('user/user_login', data);
+		return Object.keys(this.error).length?false:true
 	}
 }

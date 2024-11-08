@@ -1,4 +1,4 @@
-module.exports = class Error extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class Error extends Controller {
 	constructor(registry) {
 		super(registry)
 	}

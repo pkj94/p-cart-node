@@ -1,97 +1,91 @@
+module.exports = class ControllerCommonHeader extends Controller {
+	async index() {
+		const data = {};
+		data['title'] = this.document.getTitle();
 
-module.exports = class HeaderController extends global['\Opencart\System\Engine\Controller'] {
-    constructor(registry) {
-        super(registry)
-    }
+		if (this.request.server['HTTPS']) {
+			data['base'] = HTTPS_SERVER;
+		} else {
+			data['base'] = HTTP_SERVER;
+		}
+		let server = HTTP_CATALOG;
+		if (this.request.server['HTTPS']) {
+			server = HTTPS_CATALOG;
+		} else {
+			server = HTTP_CATALOG;
+		}
 
-    async index() {
-        const data = {
-            lang: this.language.get('code'),
-            direction: this.language.get('direction'),
-            title: this.document.getTitle(),
-            base: HTTP_SERVER,
-            description: this.document.getDescription(),
-            keywords: this.document.getKeywords(),
-            bootstrap: 'view/stylesheet/bootstrap.css',
-            icons: 'view/stylesheet/fonts/fontawesome/css/all.min.css',
-            stylesheet: 'view/stylesheet/stylesheet.css',
-            jquery: 'view/javascript/jquery/jquery-3.7.1.min.js',
-            links: this.document.getLinks(),
-            styles: this.document.getStyles(),
-            scripts: this.document.getScripts()
-        };
+		if (is_file(DIR_IMAGE + this.config.get('config_icon'))) {
+			this.document.addLink(server + 'image/' + this.config.get('config_icon'), 'icon');
+		}
 
-        await this.language.load('common/header');
+		data['description'] = this.document.getDescription();
+		data['keywords'] = this.document.getKeywords();
+		data['links'] = this.document.getLinks();
+		data['styles'] = this.document.getStyles();
+		data['scripts'] = this.document.getScripts();
+		data['lang'] = this.language.get('code');
+		data['direction'] = this.language.get('direction');
 
-        if (!this.request.get.user_token || !this.session.data.user_token || this.request.get.user_token !== this.session.data.user_token) {
-            data.logged = false;
-            data.home = await this.url.link('common/login');
-        } else {
-            data.logged = true;
-            data.home = await this.url.link('common/dashboard', { user_token: this.session.data.user_token });
+		await this.load.language('common/header');
 
-            data.language = await this.load.controller('common/language');
+		data['text_logged'] = sprintf(this.language.get('text_logged'), await this.user.getUserName());
 
-            // Notifications
-            const filter_data = {
-                start: 0,
-                limit: 5
-            };
+		if (!(this.request.get['user_token']) || !(this.session.data['user_token']) || (this.request.get['user_token'] != this.session.data['user_token'])) {
+			data['logged'] = '';
 
-            data.notifications = [];
-            this.load.model('tool/notification', this);
+			data['home'] = await this.url.link('common/login', '', true);
+		} else {
+			data['logged'] = true;
 
-            let results = await this.model_tool_notification.getNotifications(filter_data);
+			data['home'] = await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true);
+			data['logout'] = await this.url.link('common/logout', 'user_token=' + this.session.data['user_token'], true);
+			data['profile'] = await this.url.link('common/profile', 'user_token=' + this.session.data['user_token'], true);
 
-            for (const result of results) {
-                data.notifications.push({
-                    title: result.title,
-                    href: await this.url.link('tool/notification.info', { user_token: this.session.data.user_token, notification_id: result.notification_id })
-                });
-            }
+			this.load.model('user/user', this);
 
-            data.notification_all = await this.url.link('tool/notification', { user_token: this.session.data.user_token });
-            data.notification_total = await this.model_tool_notification.getTotalNotifications({ filter_status: 0 });
+			this.load.model('tool/image', this);
 
-            data.profile = await this.url.link('user/profile', { user_token: this.session.data.user_token });
+			const user_info = await this.model_user_user.getUser(await this.user.getId());
 
-            this.load.model('tool/image', this);
-            data.image = await this.model_tool_image.resize('profile.png', 45, 45);
-            this.load.model('user/user', this);
-            const user_info = await this.model_user_user.getUser(await this.user.getId());
+			if (user_info.user_id) {
+				data['firstname'] = user_info['firstname'];
+				data['lastname'] = user_info['lastname'];
+				data['username'] = user_info['username'];
+				data['user_group'] = user_info['user_group'];
 
-            if (user_info) {
-                data.firstname = user_info.firstname;
-                data.lastname = user_info.lastname;
-                data.username = user_info.username;
-                data.user_group = user_info.user_group;
+				if (is_file(DIR_IMAGE + user_info['image'])) {
+					data['image'] = await this.model_tool_image.resize(user_info['image'], 45, 45);
+				} else {
+					data['image'] = await this.model_tool_image.resize('profile.png', 45, 45);
+				}
+			} else {
+				data['firstname'] = '';
+				data['lastname'] = '';
+				data['user_group'] = '';
+				data['image'] = '';
+			}
 
-                if (user_info.image && fs.existsSync(DIR_IMAGE + user_info.image)) {
-                    data.image = await this.model_tool_image.resize(user_info.image, 45, 45);
-                }
-            } else {
-                data.firstname = '';
-                data.lastname = '';
-                data.user_group = '';
-            }
+			// Online Stores
+			data['stores'] = [];
 
-            data.stores = [{
-                name: this.config.get('config_name'),
-                href: HTTP_CATALOG
-            }];
+			data['stores'].push({
+				'name': this.config.get('config_name'),
+				'href': HTTP_CATALOG
+			});
 
-            this.load.model('setting/store', this);
-            const storeResults = await this.model_setting_store.getStores();
-            for (const result of storeResults) {
-                data.stores.push({
-                    name: result.name,
-                    href: result.url
-                });
-            }
+			this.load.model('setting/store', this);
 
-            data.logout = await this.url.link('common/logout', { user_token: this.session.data.user_token });
-        }
-        return await this.load.view('common/header', data);
-    }
+			const results = await this.model_setting_store.getStores();
+
+			for (let result of results) {
+				data['stores'].push({
+					'name': result['name'],
+					'href': result['url']
+				});
+			}
+		}
+
+		return await this.load.view('common/header', data);
+	}
 }
-

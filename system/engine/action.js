@@ -1,4 +1,4 @@
-global['\Opencart\System\Engine\Action'] = class Action {
+module.exports = class Action {
     constructor(route) {
         this.id = route;
         this.method = 'index';
@@ -8,7 +8,7 @@ global['\Opencart\System\Engine\Action'] = class Action {
         // Break apart the route
         while (parts.length) {
             const file = expressPath.join(DIR_APPLICATION, 'controller', parts.join('/') + '.js');
-
+            // console.log('file---',file,fs.existsSync(file))
             if (fs.existsSync(file)) {
                 this.route = parts.join('/');
                 break;
@@ -29,14 +29,15 @@ global['\Opencart\System\Engine\Action'] = class Action {
         }
 
         const file = expressPath.join(DIR_APPLICATION, 'controller', `${this.route}.js`);
+        // console.log('====', file, this)
         const className = `Controller${this.route.replace(/[^a-zA-Z0-9]/g, '')}`;
 
         // Initialize the class
         if (fs.existsSync(file)) {
-            const ControllerClass = require(file);
-            const controller = new ControllerClass(registry);
+            // console.log('file----', file, this)
+            const controller = new (require(file))(registry);
 
-            if (typeof controller[this.method] === 'function' && controller[this.method].length <= args.length) {
+            if (typeof controller[this.method] === 'function') {
                 return controller[this.method](...args);
             } else {
                 throw new Error(`Error: Could not call ${this.route}/${this.method}!`);

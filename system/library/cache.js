@@ -1,6 +1,6 @@
 module.exports = class Cache {
     constructor(adaptor, expire = 3600) {
-        let className = 'Opencart\System\Library\Cache' + ucfirst(adaptor);
+        let className = 'Cache' + ucfirst(adaptor);
         if (global[className]) {
             this.adaptor = new global[className](expire * 1000);
         } else {

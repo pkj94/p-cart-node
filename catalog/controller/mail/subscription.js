@@ -1,4 +1,4 @@
-module.exports = class Subscription extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class Subscription extends Controller {
 	/**
 	 * @param string route
 	 * @param  args

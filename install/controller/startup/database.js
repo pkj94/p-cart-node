@@ -1,5 +1,5 @@
 
-global['\Opencart\Install\Controller\Startup\Database'] = class Database extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class Database extends Controller {
     async index() {
         if (fs.existsSync(DIR_OPENCART + 'config.json') && fs.statSync(DIR_OPENCART + 'config.json').size > 0) {
             const lines = require(DIR_OPENCART + 'config.json');
@@ -9,7 +9,7 @@ global['\Opencart\Install\Controller\Startup\Database'] = class Database extends
                 }
             }
             const port = DB_PORT || 3306;
-            let db = new global['\Opencart\System\Library\Db'](
+            let db = new global.Db(
                 DB_DRIVER,
                 DB_HOSTNAME,
                 DB_USERNAME,

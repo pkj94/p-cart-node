@@ -1,36 +1,25 @@
-module.exports = class LanguageController extends global['\Opencart\System\Engine\Controller'] {
-    index(route, args) {
-        const allLanguages = this.language.all();
-        for (const [key, value] of Object.entries(allLanguages)) {
-            if (!args[key]) {
-                args[key] = value;
-            }
-        }
-    }
+module.exports = class ControllerEventLanguage extends Controller {
+	async index(route, args, template_code = '') {
+		for (let [key, value] of Object.entries(this.language.all())) {
+			if (!(args[key])) {
+				args[key] = value;
+			}
+		}
+	}
 
-    async before(route, args) {
-        if (this.language) {
-            const data = this.language.all();
+	// 1. Before controller load store all current loaded language data
+	async before(route, output) {
+		this.language.set('backup', this.language.all());
+	}
 
-            if (data) {
-                this.language.set('backup', JSON.stringify(data));
-            }
-        }
-    }
+	// 2. After contoller load restore old language data
+	async after(route, args, output) {
+		let data = this.language.get('backup');
 
-    after(route, args, output) {
-        let data = {};
-        try {
-            data = this.language.get('backup') ? JSON.parse(this.language.get('backup')) : {};
-        } catch (e) {
-            data = {};
-        }
-        if (typeof data == 'object') {
-            this.language.clear();
-            for (const [key, value] of Object.entries(data)) {
-                this.language.set(key, value);
-            }
-        }
-    }
+		if (typeof data == 'object') {
+			for (let [key, value] of Object.entries(data)) {
+				this.language.set(key, value);
+			}
+		}
+	}
 }
-

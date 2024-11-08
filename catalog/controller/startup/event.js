@@ -1,4 +1,4 @@
-module.exports = class Event extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class Event extends Controller {
 	/**
 	 * @return void
 	 */

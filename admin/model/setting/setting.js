@@ -1,50 +1,53 @@
-module.exports = class SettingModel extends global['\Opencart\System\Engine\Model'] {
-    constructor(registry) {
-        super(registry);
-    }
+module.exports = class ModelSettingSetting extends Model {
+	async getSetting(code, store_id = 0) {
+		setting_data = {};
 
-    async getSettings(store_id = 0) {
-        const query = await this.db.query(`SELECT * FROM ${DB_PREFIX}setting WHERE store_id = ${store_id} OR store_id = 0 ORDER BY store_id ASC`);
-        return query.rows;
-    }
+		const query = await this.db.query("SELECT * FROM " + DB_PREFIX + "setting WHERE store_id = '" + store_id + "' AND `code` = '" + this.db.escape(code) + "'");
 
-    async getSetting(code, store_id = 0) {
-        const setting_data = [];
-        const query = await this.db.query(`SELECT * FROM ${DB_PREFIX}setting WHERE store_id = ${store_id} AND code = ${this.db.escape(code)}`);
+		for (let result of query.rows ) {
+			if (!result['serialized']) {
+				setting_data[result['key']] = result['value'];
+			} else {
+				setting_data[result['key']] = JSON.parse(result['value'], true);
+			}
+		}
 
-        query.rows.forEach(result => {
-            setting_data[result.key] = result.serialized ? JSON.parse(result.value) : result.value;
-        });
+		return setting_data;
+	}
 
-        return setting_data;
-    }
+	async editSetting(code, data, store_id = 0) {
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "setting` WHERE store_id = '" + store_id + "' AND `code` = '" + this.db.escape(code) + "'");
 
-    async editSetting(code, data, store_id = 0) {
-        await this.db.query(`DELETE FROM ${DB_PREFIX}setting WHERE store_id = ${store_id} AND code = ${this.db.escape(code)}`);
+		for (data of key : value) {
+			if (substr(key, 0, strlen(code)) == code) {
+				if (!Array.isArray(value)) {
+					await this.db.query("INSERT INTO " + DB_PREFIX + "setting SET store_id = '" + store_id + "', `code` = '" + this.db.escape(code) + "', `key` = '" + this.db.escape(key) + "', `value` = '" + this.db.escape(value) + "'");
+				} else {
+					await this.db.query("INSERT INTO " + DB_PREFIX + "setting SET store_id = '" + store_id + "', `code` = '" + this.db.escape(code) + "', `key` = '" + this.db.escape(key) + "', `value` = '" + this.db.escape(JSON.stringify(value, true)) + "', serialized = '1'");
+				}
+			}
+		}
+	}
 
-        for (const key in data) {
-            const value = data[key];
-            if (key.startsWith(code)) {
-                const serialized = Array.isArray(value) ? 1 : 0;
-                const valueToStore = serialized ? JSON.stringify(value) : value;
-                await this.db.query('INSERT INTO ' + DB_PREFIX + 'setting SET store_id = ' + store_id + ', code = ' + this.db.escape(code) + ', `key` = ' + this.db.escape(key) + ', value = ' + this.db.escape(valueToStore) + ', serialized = ' + serialized);
-            }
-        }
-    }
+	async deleteSetting(code, store_id = 0) {
+		await this.db.query("DELETE FROM " + DB_PREFIX + "setting WHERE store_id = '" + store_id + "' AND `code` = '" + this.db.escape(code) + "'");
+	}
+	
+	async getSettingValue(key, store_id = 0) {
+		const query = await this.db.query("SELECT value FROM " + DB_PREFIX + "setting WHERE store_id = '" + store_id + "' AND `key` = '" + this.db.escape(key) + "'");
 
-    async deleteSetting(code, store_id = 0) {
-        await this.db.query(`DELETE FROM ${DB_PREFIX}setting WHERE store_id = ${store_id} AND code = ${this.db.escape(code)}`);
-    }
-
-    async getValue(key, store_id = 0) {
-        const query = await this.db.query('SELECT value FROM ' + DB_PREFIX + 'setting WHERE store_id = ' + store_id + ' AND `key` = ' + this.db.escape(key));
-        return query.rows.length ? query.rows[0].value : '';
-    }
-
-    async editValue(code, key, value, store_id = 0) {
-        const serialized = Array.isArray(value) ? 1 : 0;
-        const valueToStore = serialized ? JSON.stringify(value) : value;
-        await this.db.query('UPDATE ' + DB_PREFIX + 'setting SET value = ' + this.db.escape(valueToStore) + ', serialized = ' + serialized + ' WHERE code = ' + this.db.escape(code) + ' AND `key` = ' + this.db.escape(key) + ' AND store_id = ' + store_id);
-    }
+		if (query.num_rows) {
+			return query.row['value'];
+		} else {
+			return null;	
+		}
+	}
+	
+	async editSettingValue(code = '', key = '', value = '', store_id = 0) {
+		if (!Array.isArray(value)) {
+			await this.db.query("UPDATE " + DB_PREFIX + "setting SET `value` = '" + this.db.escape(value) + "', serialized = '0'  WHERE `code` = '" + this.db.escape(code) + "' AND `key` = '" + this.db.escape(key) + "' AND store_id = '" + store_id + "'");
+		} else {
+			await this.db.query("UPDATE " + DB_PREFIX + "setting SET `value` = '" + this.db.escape(JSON.stringify(value)) + "', serialized = '1' WHERE `code` = '" + this.db.escape(code) + "' AND `key` = '" + this.db.escape(key) + "' AND store_id = '" + store_id + "'");
+		}
+	}
 }
-

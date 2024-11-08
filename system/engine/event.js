@@ -1,4 +1,4 @@
-global['\Opencart\System\Engine\Event'] = class Event {
+module.exports = class Event {
     constructor(registry) {
         this.registry = registry;
         this.data = [];

@@ -1,17 +1,33 @@
-module.exports = class TemplateLibrary {
+module.exports = class Template {
+    adaptor;
     constructor(adaptor) {
-        let className = 'Opencart\System\Library\Template' + ucfirst(adaptor);
-
+        let className = 'Template' + ucfirst(adaptor);
         if (global[className]) {
-            this.adaptor = new global[className]();
+            this.adaptor = new (global[className])();
         } else {
-            throw new Error(`Error: Could not load template adaptor ${adaptor}!`);
+            throw new Error('Error: Could not load template adaptor ' + adaptor + '!');
         }
     }
-    addPath(namespace, directory = '') {
-        this.adaptor.addPath(namespace, directory);
+
+    /**
+     * 
+     *
+     * @param	string	key
+     * @param	mixed	value
+      */
+    set(key, value) {
+        this.adaptor.set(key, value);
     }
-    async render(filename, data = {}, code = '') {
-        return await this.adaptor.render(filename, data, code);
+
+    /**
+     * 
+     *
+     * @param	string	template
+     * @param	bool	cache
+     *
+     * @return	string
+      */
+    async render(template, cache = false) {
+        return await this.adaptor.render(template, cache);
     }
 }

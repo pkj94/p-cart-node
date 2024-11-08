@@ -1,6 +1,6 @@
 const nl2br = require("locutus/php/strings/nl2br");
 
-module.exports = class Review extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class Review extends Controller {
 	// catalog/model/catalog/review/addReview/after
 	/**
 	 * @param string route

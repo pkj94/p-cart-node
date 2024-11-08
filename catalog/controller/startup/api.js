@@ -1,4 +1,4 @@
-module.exports = class Api extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class Api extends Controller {
 	constructor(registry) {
 		super(registry);
 	}

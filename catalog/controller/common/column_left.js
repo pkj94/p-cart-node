@@ -1,4 +1,4 @@
-module.exports = class ColumnLeft extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class ColumnLeft extends Controller {
 	/**
 	 * @return string
 	 */

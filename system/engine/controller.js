@@ -1,4 +1,4 @@
-global['\Opencart\System\Engine\Controller'] = class Controller {
+module.exports = class Controller {
     constructor(registry) {
         this.registry = registry;
 

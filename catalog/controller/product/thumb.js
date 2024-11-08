@@ -1,4 +1,4 @@
-module.exports = class Thumb extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class Thumb extends Controller {
 	/**
 	 * @param data
 	 *

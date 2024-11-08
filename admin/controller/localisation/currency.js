@@ -1,86 +1,164 @@
-const sprintf = require("locutus/php/strings/sprintf");
+module.exports = class ControllerLocalisationCurrency extends Controller {
+	error = {};
 
-module.exports = class CurrencyController extends global['\Opencart\System\Engine\Controller'] {
-	/**
-	 * @return void
-	 */
 	async index() {
-		const data = {};
 		await this.load.language('localisation/currency');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		let url = '';
+		this.load.model('localisation/currency',this);
 
-		if ((this.request.get['sort'])) {
-			url += '&sort=' + this.request.get['sort'];
-		}
-
-		if ((this.request.get['order'])) {
-			url += '&order=' + this.request.get['order'];
-		}
-
-		if ((this.request.get['page'])) {
-			url += '&page=' + this.request.get['page'];
-		}
-
-		data['breadcrumbs'] = [];
-
-		data['breadcrumbs'].push({
-			'text': this.language.get('text_home'),
-			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
-		});
-
-		data['breadcrumbs'].push({
-			'text': this.language.get('heading_title'),
-			'href': await this.url.link('localisation/currency', 'user_token=' + this.session.data['user_token'] + url)
-		});
-
-		data['refresh'] = await this.url.link('localisation/currency.refresh', 'user_token=' + this.session.data['user_token'] + url);
-		data['add'] = await this.url.link('localisation/currency.form', 'user_token=' + this.session.data['user_token'] + url);
-		data['delete'] = await this.url.link('localisation/currency.delete', 'user_token=' + this.session.data['user_token']);
-
-		data['list'] = await this.getList();
-
-		data['user_token'] = this.session.data['user_token'];
-
-		data['header'] = await this.load.controller('common/header');
-		data['column_left'] = await this.load.controller('common/column_left');
-		data['footer'] = await this.load.controller('common/footer');
-
-		this.response.setOutput(await this.load.view('localisation/currency', data));
+		await this.getList();
 	}
 
-	/**
-	 * @return void
-	 */
-	async list() {
+	async add() {
 		await this.load.language('localisation/currency');
 
-		this.response.setOutput(await this.getList());
+		this.document.setTitle(this.language.get('heading_title'));
+
+		this.load.model('localisation/currency',this);
+
+		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+			await this.model_localisation_currency.addCurrency(this.request.post);
+
+			this.session.data['success'] = this.language.get('text_success');
+
+			url = '';
+
+			if ((this.request.get['sort'])) {
+				url += '&sort=' + this.request.get['sort'];
+			}
+
+			if ((this.request.get['order'])) {
+				url += '&order=' + this.request.get['order'];
+			}
+
+			if ((this.request.get['page'])) {
+				url += '&page=' + this.request.get['page'];
+			}
+
+			this.response.setRedirect(await this.url.link('localisation/currency', 'user_token=' + this.session.data['user_token'] + url, true));
+		}
+
+		await this.getForm();
 	}
 
-	/**
-	 * @return string
-	 */
+	async edit() {
+		await this.load.language('localisation/currency');
+
+		this.document.setTitle(this.language.get('heading_title'));
+
+		this.load.model('localisation/currency',this);
+
+		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+			await this.model_localisation_currency.editCurrency(this.request.get['currency_id'], this.request.post);
+
+			this.session.data['success'] = this.language.get('text_success');
+
+			url = '';
+
+			if ((this.request.get['sort'])) {
+				url += '&sort=' + this.request.get['sort'];
+			}
+
+			if ((this.request.get['order'])) {
+				url += '&order=' + this.request.get['order'];
+			}
+
+			if ((this.request.get['page'])) {
+				url += '&page=' + this.request.get['page'];
+			}
+
+			this.response.setRedirect(await this.url.link('localisation/currency', 'user_token=' + this.session.data['user_token'] + url, true));
+		}
+
+		await this.getForm();
+	}
+
+	async delete() {
+		await this.load.language('localisation/currency');
+
+		this.document.setTitle(this.language.get('heading_title'));
+
+		this.load.model('localisation/currency',this);
+
+		if ((this.request.post['selected']) && this.validateDelete()) {
+			for (this.request.post['selected'] of currency_id) {
+				await this.model_localisation_currency.deleteCurrency(currency_id);
+			}
+
+			this.session.data['success'] = this.language.get('text_success');
+
+			url = '';
+
+			if ((this.request.get['sort'])) {
+				url += '&sort=' + this.request.get['sort'];
+			}
+
+			if ((this.request.get['order'])) {
+				url += '&order=' + this.request.get['order'];
+			}
+
+			if ((this.request.get['page'])) {
+				url += '&page=' + this.request.get['page'];
+			}
+
+			this.response.setRedirect(await this.url.link('localisation/currency', 'user_token=' + this.session.data['user_token'] + url, true));
+		}
+
+		await this.getList();
+	}
+
+	async refresh() {
+		await this.load.language('localisation/currency');
+
+		this.document.setTitle(this.language.get('heading_title'));
+
+		this.load.model('localisation/currency',this);
+
+		if (this.validateRefresh()) {
+			await this.model_localisation_currency.refresh();
+
+			this.session.data['success'] = this.language.get('text_success');
+
+			url = '';
+
+			if ((this.request.get['sort'])) {
+				url += '&sort=' + this.request.get['sort'];
+			}
+
+			if ((this.request.get['order'])) {
+				url += '&order=' + this.request.get['order'];
+			}
+
+			if ((this.request.get['page'])) {
+				url += '&page=' + this.request.get['page'];
+			}
+		}
+
+		await this.getList();
+	}
+
 	async getList() {
-		const data = {};
-		let sort = 'title';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
+		} else {
+			sort = 'title';
 		}
 
-		let order = 'ASC';
 		if ((this.request.get['order'])) {
 			order = this.request.get['order'];
+		} else {
+			order = 'ASC';
 		}
 
-		let page = 1;
 		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
+			page = this.request.get['page'];
+		} else {
+			page = 1;
 		}
 
-		let url = '';
+		url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -97,42 +175,63 @@ module.exports = class CurrencyController extends global['\Opencart\System\Engin
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text': this.language.get('text_home'),
-			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
-		});
+			'text' : this.language.get('text_home'),
+			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+		);
 
 		data['breadcrumbs'].push({
-			'text': this.language.get('heading_title'),
-			'href': await this.url.link('localisation/currency', 'user_token=' + this.session.data['user_token'] + url)
-		});
+			'text' : this.language.get('heading_title'),
+			'href' : await this.url.link('localisation/currency', 'user_token=' + this.session.data['user_token'] + url, true)
+		);
 
-		data['action'] = await this.url.link('localisation/currency.list', 'user_token=' + this.session.data['user_token'] + url);
+		data['add'] = await this.url.link('localisation/currency/add', 'user_token=' + this.session.data['user_token'] + url, true);
+		data['delete'] = await this.url.link('localisation/currency/delete', 'user_token=' + this.session.data['user_token'] + url, true);
+		data['refresh'] = await this.url.link('localisation/currency/refresh', 'user_token=' + this.session.data['user_token'] + url, true);
 
-		data['currencies'] = [];
+		data['currencies'] = {};
 
-		let filter_data = {
-			'sort': sort,
-			'order': order,
-			'start': (page - 1) * Number(this.config.get('config_pagination_admin')),
-			'limit': this.config.get('config_pagination_admin')
-		};
+		filter_data = array(
+			'sort'  : sort,
+			'order' : order,
+			'start' : (page - 1) * this.config.get('config_limit_admin'),
+			'limit' : this.config.get('config_limit_admin')
+		);
 
-		this.load.model('localisation/currency', this);
+		currency_total = await this.model_localisation_currency.getTotalCurrencies();
 
-		const currency_total = await this.model_localisation_currency.getTotalCurrencies();
+		results = await this.model_localisation_currency.getCurrencies(filter_data);
 
-		const results = await this.model_localisation_currency.getCurrencies(filter_data);
-
-		for (let [code, result] of Object.entries(results)) {
+		for (let result of results) {
 			data['currencies'].push({
-				'currency_id': result['currency_id'],
-				'title': result['title'] + ((result['code'] == this.config.get('config_currency')) ? this.language.get('text_default') : ''),
-				'code': result['code'],
-				'value': result['value'],
-				'status': result['status'],
-				'date_modified': date(this.language.get('date_format_short'), new Date(result['date_modified'])),
-				'edit': await this.url.link('localisation/currency.form', 'user_token=' + this.session.data['user_token'] + '&currency_id=' + result['currency_id'] + url)
-			});
+				'currency_id'   : result['currency_id'],
+				'title'         : result['title'] + ((result['code'] == this.config.get('config_currency')) ? this.language.get('text_default') : null),
+				'code'          : result['code'],
+				'value'         : result['value'],
+				'date_modified' : date(this.language.get('date_format_short'), strtotime(result['date_modified'])),
+				'edit'          : await this.url.link('localisation/currency/edit', 'user_token=' + this.session.data['user_token'] + '&currency_id=' + result['currency_id'] + url, true)
+			);
+		}
+
+		if ((this.error['warning'])) {
+			data['error_warning'] = this.error['warning'];
+		} else if ((this.error['currency_engine'])) {
+			data['error_warning'] = this.error['currency_engine'];
+		} else {
+			data['error_warning'] = '';
+		}
+
+		if ((this.session.data['success'])) {
+			data['success'] = this.session.data['success'];
+
+			delete this.session.data['success']);
+		} else {
+			data['success'] = '';
+		}
+
+		if ((this.request.post['selected'])) {
+			data['selected'] = this.request.post['selected'];
+		} else {
+			data['selected'] = {};
 		}
 
 		url = '';
@@ -143,11 +242,14 @@ module.exports = class CurrencyController extends global['\Opencart\System\Engin
 			url += '&order=ASC';
 		}
 
-		data['sort_title'] = await this.url.link('localisation/currency.list', 'user_token=' + this.session.data['user_token'] + '&sort=title' + url);
-		data['sort_code'] = await this.url.link('localisation/currency.list', 'user_token=' + this.session.data['user_token'] + '&sort=code' + url);
-		data['sort_value'] = await this.url.link('localisation/currency.list', 'user_token=' + this.session.data['user_token'] + '&sort=value' + url);
-		data['sort_status'] = await this.url.link('localisation/currency.list', 'user_token=' + this.session.data['user_token'] + '&sort=status' + url);
-		data['sort_date_modified'] = await this.url.link('localisation/currency.list', 'user_token=' + this.session.data['user_token'] + '&sort=date_modified' + url);
+		if ((this.request.get['page'])) {
+			url += '&page=' + this.request.get['page'];
+		}
+
+		data['sort_title'] = await this.url.link('localisation/currency', 'user_token=' + this.session.data['user_token'] + '&sort=title' + url, true);
+		data['sort_code'] = await this.url.link('localisation/currency', 'user_token=' + this.session.data['user_token'] + '&sort=code' + url, true);
+		data['sort_value'] = await this.url.link('localisation/currency', 'user_token=' + this.session.data['user_token'] + '&sort=value' + url, true);
+		data['sort_date_modified'] = await this.url.link('localisation/currency', 'user_token=' + this.session.data['user_token'] + '&sort=date_modified' + url, true);
 
 		url = '';
 
@@ -159,33 +261,48 @@ module.exports = class CurrencyController extends global['\Opencart\System\Engin
 			url += '&order=' + this.request.get['order'];
 		}
 
-		data['pagination'] = await this.load.controller('common/pagination', {
-			'total': currency_total,
-			'page': page,
-			'limit': this.config.get('config_pagination_admin'),
-			'url': await this.url.link('localisation/currency.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
-		});
+		pagination = new Pagination();
+		pagination.total = currency_total;
+		pagination.page = page;
+		pagination.limit = this.config.get('config_limit_admin');
+		pagination.url = await this.url.link('localisation/currency', 'user_token=' + this.session.data['user_token'] + url + '&page={page}', true);
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (currency_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (currency_total - this.config.get('config_pagination_admin'))) ? currency_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), currency_total, Math.ceil(currency_total / this.config.get('config_pagination_admin')));
+		data['pagination'] = pagination.render();
+
+		data['results'] = sprintf(this.language.get('text_pagination'), (currency_total) ? ((page - 1) * this.config.get('config_limit_admin')) + 1 : 0, (((page - 1) * this.config.get('config_limit_admin')) > (currency_total - this.config.get('config_limit_admin'))) ? currency_total : (((page - 1) * this.config.get('config_limit_admin')) + this.config.get('config_limit_admin')), currency_total, ceil(currency_total / this.config.get('config_limit_admin')));
 
 		data['sort'] = sort;
 		data['order'] = order;
 
-		return await this.load.view('localisation/currency_list', data);
+		data['header'] = await this.load.controller('common/header');
+		data['column_left'] = await this.load.controller('common/column_left');
+		data['footer'] = await this.load.controller('common/footer');
+
+		this.response.setOutput(await this.load.view('localisation/currency_list', data));
 	}
 
-	/**
-	 * @return void
-	 */
-	async form() {
-		const data = {};
-		await this.load.language('localisation/currency');
-
-		this.document.setTitle(this.language.get('heading_title'));
-
+	async getForm() {
 		data['text_form'] = !(this.request.get['currency_id']) ? this.language.get('text_add') : this.language.get('text_edit');
 
-		let url = '';
+		if ((this.error['warning'])) {
+			data['error_warning'] = this.error['warning'];
+		} else {
+			data['error_warning'] = '';
+		}
+
+		if ((this.error['title'])) {
+			data['error_title'] = this.error['title'];
+		} else {
+			data['error_title'] = '';
+		}
+
+		if ((this.error['code'])) {
+			data['error_code'] = this.error['code'];
+		} else {
+			data['error_code'] = '';
+		}
+
+		url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -202,73 +319,82 @@ module.exports = class CurrencyController extends global['\Opencart\System\Engin
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text': this.language.get('text_home'),
-			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
-		});
+			'text' : this.language.get('text_home'),
+			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+		);
 
 		data['breadcrumbs'].push({
-			'text': this.language.get('heading_title'),
-			'href': await this.url.link('localisation/currency', 'user_token=' + this.session.data['user_token'] + url)
-		});
+			'text' : this.language.get('heading_title'),
+			'href' : await this.url.link('localisation/currency', 'user_token=' + this.session.data['user_token'] + url, true)
+		);
 
-		data['save'] = await this.url.link('localisation/currency.save', 'user_token=' + this.session.data['user_token']);
-		data['back'] = await this.url.link('localisation/currency', 'user_token=' + this.session.data['user_token'] + url);
-		let currency_info;
-		if ((this.request.get['currency_id'])) {
-			this.load.model('localisation/currency', this);
+		if (!(this.request.get['currency_id'])) {
+			data['action'] = await this.url.link('localisation/currency/add', 'user_token=' + this.session.data['user_token'] + url, true);
+		} else {
+			data['action'] = await this.url.link('localisation/currency/edit', 'user_token=' + this.session.data['user_token'] + '&currency_id=' + this.request.get['currency_id'] + url, true);
+		}
 
+		data['cancel'] = await this.url.link('localisation/currency', 'user_token=' + this.session.data['user_token'] + url, true);
+
+		if ((this.request.get['currency_id']) && (this.request.server['method'] != 'POST')) {
 			currency_info = await this.model_localisation_currency.getCurrency(this.request.get['currency_id']);
 		}
 
-		if ((this.request.get['currency_id'])) {
-			data['currency_id'] = this.request.get['currency_id'];
-		} else {
-			data['currency_id'] = 0;
-		}
-
-		if ((currency_info)) {
+		if ((this.request.post['title'])) {
+			data['title'] = this.request.post['title'];
+		} else if ((currency_info)) {
 			data['title'] = currency_info['title'];
 		} else {
 			data['title'] = '';
 		}
 
-		if ((currency_info)) {
+		if ((this.request.post['code'])) {
+			data['code'] = this.request.post['code'];
+		} else if ((currency_info)) {
 			data['code'] = currency_info['code'];
 		} else {
 			data['code'] = '';
 		}
 
-		if ((currency_info)) {
+		if ((this.request.post['symbol_left'])) {
+			data['symbol_left'] = this.request.post['symbol_left'];
+		} else if ((currency_info)) {
 			data['symbol_left'] = currency_info['symbol_left'];
 		} else {
 			data['symbol_left'] = '';
 		}
 
-		if ((currency_info)) {
+		if ((this.request.post['symbol_right'])) {
+			data['symbol_right'] = this.request.post['symbol_right'];
+		} else if ((currency_info)) {
 			data['symbol_right'] = currency_info['symbol_right'];
 		} else {
 			data['symbol_right'] = '';
 		}
 
-		if ((currency_info)) {
+		if ((this.request.post['decimal_place'])) {
+			data['decimal_place'] = this.request.post['decimal_place'];
+		} else if ((currency_info)) {
 			data['decimal_place'] = currency_info['decimal_place'];
 		} else {
 			data['decimal_place'] = '';
 		}
 
-		if ((currency_info)) {
+		if ((this.request.post['value'])) {
+			data['value'] = this.request.post['value'];
+		} else if ((currency_info)) {
 			data['value'] = currency_info['value'];
 		} else {
 			data['value'] = '';
 		}
 
-		if ((currency_info)) {
+		if ((this.request.post['status'])) {
+			data['status'] = this.request.post['status'];
+		} else if ((currency_info)) {
 			data['status'] = currency_info['status'];
 		} else {
 			data['status'] = '';
 		}
-
-		data['user_token'] = this.session.data['user_token'];
 
 		data['header'] = await this.load.controller('common/header');
 		data['column_left'] = await this.load.controller('common/column_left');
@@ -277,126 +403,68 @@ module.exports = class CurrencyController extends global['\Opencart\System\Engin
 		this.response.setOutput(await this.load.view('localisation/currency_form', data));
 	}
 
-	/**
-	 * @return void
-	 */
-	async save() {
-		await this.load.language('localisation/currency');
-
-		const json = { error: {} };
-
+	async validateForm() {
 		if (!await this.user.hasPermission('modify', 'localisation/currency')) {
-			json['error']['warning'] = this.language.get('error_permission');
+			this.error['warning'] = this.language.get('error_permission');
 		}
 
 		if ((oc_strlen(this.request.post['title']) < 3) || (oc_strlen(this.request.post['title']) > 32)) {
-			json['error']['title'] = this.language.get('error_title');
+			this.error['title'] = this.language.get('error_title');
 		}
 
 		if (oc_strlen(this.request.post['code']) != 3) {
-			json['error']['code'] = this.language.get('error_code');
+			this.error['code'] = this.language.get('error_code');
 		}
 
-		if (!Object.keys(json.error).length) {
-			this.load.model('localisation/currency', this);
-			this.request.post['currency_id'] = Number(this.request.post['currency_id']);
-			if (!this.request.post['currency_id']) {
-				json['currency_id'] = await this.model_localisation_currency.addCurrency(this.request.post);
-			} else {
-				await this.model_localisation_currency.editCurrency(this.request.post['currency_id'], this.request.post);
-			}
-
-			json['success'] = this.language.get('text_success');
-		}
-
-		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(json);
+		return Object.keys(this.error).length?false:true
 	}
 
-	/**
-	 * @return void
-	 */
-	async refresh() {
-		await this.load.language('localisation/currency');
-
-		const json = {};
-
+	async validateDelete() {
 		if (!await this.user.hasPermission('modify', 'localisation/currency')) {
-			json['error'] = this.language.get('error_permission');
+			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		this.load.model('setting/extension', this);
+		this.load.model('setting/store',this);
+		this.load.model('sale/order',this);
 
-		const extension_info = await this.model_setting_extension.getExtensionByCode('currency', this.config.get('config_currency_engine'));
+		for (this.request.post['selected'] of currency_id) {
+			currency_info = await this.model_localisation_currency.getCurrency(currency_id);
 
-		if (!extension_info.extension_id) {
-			json['error'] = this.language.get('error_extension');
-		}
-
-		if (!Object.keys(json).length) {
-			// console.log('extension/' + extension_info['extension'] + '/currency/' + extension_info['code'] + '.currencyConvert', this.config.get('config_currency'))
-
-			await this.load.controller('extension/' + extension_info['extension'] + '/currency/' + extension_info['code'] + '.currencyConvert', this.config.get('config_currency'));
-
-			json['success'] = this.language.get('text_success');
-		}
-
-		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(json);
-	}
-
-	/**
-	 * @return void
-	 */
-	async delete() {
-		await this.load.language('localisation/currency');
-
-		const json = {};
-
-		let selected = [];
-		if ((this.request.post['selected'])) {
-			selected = this.request.post['selected'];
-		}
-
-		if (!await this.user.hasPermission('modify', 'localisation/currency')) {
-			json['error'] = this.language.get('error_permission');
-		}
-
-		this.load.model('localisation/currency', this);
-		this.load.model('setting/store', this);
-		this.load.model('sale/order', this);
-
-		for (let currency_id of selected) {
-			const currency_info = await this.model_localisation_currency.getCurrency(currency_id);
-
-			if (currency_info.currency_id) {
+			if (currency_info) {
 				if (this.config.get('config_currency') == currency_info['code']) {
-					json['error'] = this.language.get('error_default');
+					this.error['warning'] = this.language.get('error_default');
 				}
 
-				const store_total = await this.model_setting_store.getTotalStoresByCurrency(currency_info['code']);
+				store_total = await this.model_setting_store.getTotalStoresByCurrency(currency_info['code']);
 
 				if (store_total) {
-					json['error'] = sprintf(this.language.get('error_store'), store_total);
+					this.error['warning'] = sprintf(this.language.get('error_store'), store_total);
 				}
 			}
 
-			const order_total = await this.model_sale_order.getTotalOrdersByCurrencyId(currency_id);
+			order_total = await this.model_sale_order.getTotalOrdersByCurrencyId(currency_id);
 
 			if (order_total) {
-				json['error'] = sprintf(this.language.get('error_order'), order_total);
+				this.error['warning'] = sprintf(this.language.get('error_order'), order_total);
 			}
 		}
 
-		if (!Object.keys(json).length) {
-			for (let currency_id of selected) {
-				await this.model_localisation_currency.deleteCurrency(currency_id);
-			}
+		return Object.keys(this.error).length?false:true
+	}
 
-			json['success'] = this.language.get('text_success');
+	async validateRefresh() {
+		if (!await this.user.hasPermission('modify', 'localisation/currency')) {
+			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(json);
+		config_currency_engine = this.config.get('config_currency_engine');
+
+		if (!config_currency_engine) {
+			this.error['currency_engine'] = this.language.get('error_currency_engine');
+		} else if (!this.config.get('currency_'.config_currency_engine.'_status')) {
+			this.error['currency_engine'] = this.language.get('error_currency_engine');
+		}
+
+		return Object.keys(this.error).length?false:true
 	}
 }

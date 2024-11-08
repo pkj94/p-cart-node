@@ -1,124 +1,62 @@
 const bcrypt = require('bcrypt');
-
-global['\Opencart\Install\Model\Install\Install'] = class Install extends global['\Opencart\System\Engine\Model'] {
-    constructor(regisstry) {
-        super(regisstry);
-        this.db = null;
+module.exports = class ModelInstallInstall {
+    constructor(registry) {
+        this.registry = registry;
     }
 
-    database(data) {
-        return new Promise(async (resolve, reject) => {
-            try {
-                this.db = new global['\Opencart\System\Library\Db'](
-                    data.db_driver,
-                    decodeHTMLEntities(data.db_hostname),
-                    decodeHTMLEntities(data.db_username),
-                    decodeHTMLEntities(data.db_password),
-                    decodeHTMLEntities(data.db_database),
-                    data.db_port,
-                    false
-                );
-                await this.db.connect();
+    async database(data) {
+        const db = new global.Db(data['db_driver'], data.db_hostname, data.db_username, data.db_password, data.db_database, data.db_port, data.debug
+        );
 
-                // Structure
-                const tables = oc_db_schema();
-                // Clear old DB
-                for (const table of tables) {
-                    await this.db.query(`DROP TABLE IF EXISTS \`${data.db_prefix}${table.name}\``);
-                }
+        const file = expressPath.join(DIR_APPLICATION, 'opencart.sql');
 
-                // Create tables
-                for (const table of tables) {
-                    let sql = `CREATE TABLE \`${data.db_prefix}${table.name}\` (\n`;
+        if (!fs.existsSync(file)) {
+            console.error(`Could not load sql file: ${file}`);
+            process.exit(1);
+        }
 
-                    for (const field of table.field) {
-                        sql += `  \`${field.name}\` ${field.type}${field.not_null ? ' NOT NULL' : ''}${field.default !== undefined ? ` DEFAULT ${this.db.escape(field.default)}` : ''}${field.auto_increment ? ' AUTO_INCREMENT' : ''},\n`;
-                    }
+        const lines = fs.readFileSync(file, 'utf8').toString().split('\n');
+        if (lines.length) {
+            let sql = '';
+            for (let line of lines) {
+                // console.log("============line---", line, sql, (line && !line.startsWith('--') && !line.startsWith('#')));
 
-                    if (table.primary) {
-                        const primaryData = table.primary.map(primary => `\`${primary}\``);
-                        sql += `  PRIMARY KEY (${primaryData.join(',')}),\n`;
-                    }
+                if (line && !line.startsWith('--') && !line.startsWith('#')) {
+                    sql = sql + line;
+                    // console.log("===========sql1---", sql)
+                    if (line.trim().endsWith(';')) {
+                        sql = sql.replace(/DROP TABLE IF EXISTS `oc_/g, `DROP TABLE IF EXISTS \`${data.db_prefix}`);
+                        sql = sql.replace(/CREATE TABLE `oc_/g, `CREATE TABLE \`${data.db_prefix}`);
+                        sql = sql.replace(/INSERT INTO `oc_/g, `INSERT INTO \`${data.db_prefix}`);
+                        // console.log("=========sql---", sql)
+                        await db.query(sql.replace(/\r/g, ''));
+                        sql = '';
 
-                    if (table.index) {
-                        for (const index of table.index) {
-                            const indexData = index.key.map(key => `\`${key}\``);
-                            sql += `  KEY \`${index.name}\` (${indexData.join(',')}),\n`;
-                        }
-                    }
-
-                    sql = sql.slice(0, -2) + '\n';
-                    sql += `) ENGINE=${table.engine} CHARSET=${table.charset} ROW_FORMAT=DYNAMIC COLLATE=${table.collate};\n`;
-                    // console.log('sql--------', sql);
-                    try {
-                        await this.db.query(sql);
-                    } catch (err) {
-                        console.log('create table error ===---===', err)
-                        reject(err.message)
                     }
                 }
-
-                // Data
-                
-                const lines = fs.readFileSync(DIR_APPLICATION + 'opencart.sql', 'utf8').toString().split('\n');
-                let sql = '';
-                let start = false;
-
-                for (let line of lines) {
-                    try {
-                        if (line.startsWith('INSERT INTO ')) {
-                            sql = '';
-                            start = true;
-                        }
-
-                        if (start) {
-                            sql += line;
-                        }
-                        if (line.trim().endsWith(');')) {
-                            await this.db.query(sql.replace(/INSERT INTO `oc_/g, `INSERT INTO \`${data.db_prefix}`));
-                            start = false;
-                        }
-                    } catch (e) {
-                        console.log(e)
-                    }
-                }
-
-                await this.db.query("SET CHARACTER SET utf8mb4");
-                await this.db.query("SET @@session.sql_mode = ''");
-
-                await this.db.query(`DELETE FROM \`${data.db_prefix}user\` WHERE \`user_id\` = '1'`);
-                await this.db.query(`INSERT INTO \`${data.db_prefix}user\` SET \`user_id\` = '1', \`user_group_id\` = '1', \`username\` = ${this.db.escape(data.username)}, \`password\` = ${this.db.escape(await bcrypt.hash(decodeHTMLEntities(data.password), 10))}, \`firstname\` = 'John', \`lastname\` = 'Doe', \`email\` = ${this.db.escape(data.email)}, \`status\` = '1', \`date_added\` = NOW()`);
-
-                await this.db.query(`UPDATE \`${data.db_prefix}setting\` SET \`code\` = 'config', \`key\` = 'config_email', \`value\` = ${this.db.escape(data.email)} WHERE \`key\` = 'config_email'`);
-
-                await this.db.query(`DELETE FROM \`${data.db_prefix}setting\` WHERE \`key\` = 'config_encryption'`);
-                await this.db.query(`INSERT INTO \`${data.db_prefix}setting\` SET \`code\` = 'config', \`key\` = 'config_encryption', \`value\` = ${this.db.escape(oc_token(512))}`);
-
-                await this.db.query(`INSERT INTO \`${data.db_prefix}api\` SET \`username\` = 'Default', \`key\` = ${this.db.escape(oc_token(256))}, \`status\` = '1', \`date_added\` = NOW(), \`date_modified\` = NOW()`);
-
-                const apiId = await this.db.getLastId();
-
-                await this.db.query(`DELETE FROM \`${data.db_prefix}setting\` WHERE \`key\` = 'config_api_id'`);
-                await this.db.query(`INSERT INTO \`${data.db_prefix}setting\` SET \`code\` = 'config', \`key\` = 'config_api_id', \`value\` = '${apiId}'`);
-
-                // set the current years prefix
-                await this.db.query(`UPDATE \`${data.db_prefix}setting\` SET \`value\` = 'INV-${new Date().getFullYear()}-00' WHERE \`key\` = 'config_invoice_prefix'`);
-                resolve(true)
-            } catch (e) {
-                console.log('err==================', e)
-                reject(e)
             }
-        });
+
+            await db.query("SET CHARACTER SET utf8");
+
+            await db.query(`DELETE FROM \`${data.db_prefix}user\` WHERE user_id = '1'`);
+            const salt = oc_token(9);
+            await db.query(`INSERT INTO \`${data.db_prefix}user\` SET user_id = '1', user_group_id = '1', username = '${data.username}', salt = '${salt}', password = '${sha1(salt + sha1(salt + sha1(data.password)))}', firstname = 'John', lastname = 'Doe', email = '${data.email}', status = '1', date_added = NOW()`);
+
+            await db.query(`DELETE FROM \`${data.db_prefix}setting\` WHERE \`key\` = 'config_email'`);
+            await db.query(`INSERT INTO \`${data.db_prefix}setting\` SET \`code\` = 'config', \`key\` = 'config_email', value = '${data.email}'`);
+
+            await db.query(`DELETE FROM \`${data.db_prefix}setting\` WHERE \`key\` = 'config_encryption'`);
+            await db.query(`INSERT INTO \`${data.db_prefix}setting\` SET \`code\` = 'config', \`key\` = 'config_encryption', value = '${oc_token(1024)}'`);
+
+            await db.query(`UPDATE \`${data.db_prefix}product\` SET \`viewed\` = '0'`);
+
+            let api_id = await db.query(`INSERT INTO \`${data.db_prefix}api\` SET username = 'Default', \`key\` = '${oc_token(256)}', status = 1, date_added = NOW(), date_modified = NOW()`);
+            
+
+            await db.query(`DELETE FROM \`${data.db_prefix}setting\` WHERE \`key\` = 'config_api_id'`);
+            await db.query(`INSERT INTO \`${data.db_prefix}setting\` SET \`code\` = 'config', \`key\` = 'config_api_id', value = ${api_id}`);
+
+            await db.query(`UPDATE \`${data.db_prefix}setting\` SET \`value\` = 'INV-${new Date().getFullYear()}-00' WHERE \`key\` = 'config_invoice_prefix'`);
+        }
     }
 }
-function decodeHTMLEntities(text) {
-    const entities = {
-        '&amp;': '&',
-        '&lt;': '<',
-        '&gt;': '>',
-        '&quot;': '"',
-        '&#39;': "'"
-    };
-    return text.replace(/&amp;|&lt;|&gt;|&quot;|&#39;/g, match => entities[match]);
-}
-

@@ -1,7 +1,7 @@
 const nl2br = require("locutus/php/strings/nl2br");
 const sprintf = require("locutus/php/strings/sprintf");
 
-module.exports = class Voucher extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class Voucher extends Controller {
 	/**
 	 * @param string route
 	 * @param  args

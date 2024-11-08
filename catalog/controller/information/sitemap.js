@@ -1,4 +1,4 @@
-module.exports = class Sitemap extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class Sitemap extends Controller {
 	/**
 	 * @return void
 	 */

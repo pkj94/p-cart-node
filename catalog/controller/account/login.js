@@ -1,6 +1,6 @@
 const str_replace = require("locutus/php/strings/str_replace");
 
-module.exports = class Login extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class Login extends Controller {
 	/**
 	 * @return void
 	 */

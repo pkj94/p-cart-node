@@ -2,7 +2,7 @@ const sprintf = require("locutus/php/strings/sprintf");
 const strip_tags = require("locutus/php/strings/strip_tags");
 const trim = require("locutus/php/strings/trim");
 
-module.exports = class Search extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class Search extends Controller {
 	/**
 	 * @return void
 	 */

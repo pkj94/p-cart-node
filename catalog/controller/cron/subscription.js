@@ -1,6 +1,6 @@
 const strtotime = require("locutus/php/datetime/strtotime");
 
-module.exports = class Subscription extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class Subscription extends Controller {
 	/**
 	 * Index
 	 *

@@ -1,4 +1,4 @@
-module.exports = class NotFound extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class NotFound extends Controller {
 	/**
 	 * @return void
 	 */

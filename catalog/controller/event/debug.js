@@ -1,4 +1,4 @@
-module.exports = class Debug extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class Debug extends Controller {
 	/**
 	 * @param string route
 	 * @param  args

@@ -1,56 +1,53 @@
+module.exports = class ControllerToolLog extends Controller {
+	error = {};
 
-const sprintf = require('locutus/php/strings/sprintf');
-const expressPath = require('path');
-module.exports = class LogController extends global['\Opencart\System\Engine\Controller'] {
-	/**
-	 * @return void
-	 */
-	async index() {
-		const data = {};
+	async index() {		
 		await this.load.language('tool/log');
-
+		
 		this.document.setTitle(this.language.get('heading_title'));
-
-		data['breadcrumbs'] = [];
-
-		data['breadcrumbs'].push({
-			'text': this.language.get('text_home'),
-			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
-		});
-
-		data['breadcrumbs'].push({
-			'text': this.language.get('heading_title'),
-			'href': await this.url.link('tool/log', 'user_token=' + this.session.data['user_token'])
-		});
 
 		if ((this.session.data['error'])) {
 			data['error_warning'] = this.session.data['error'];
 
-			delete (this.session.data['error']);
+			delete this.session.data['error']);
+		} else if ((this.error['warning'])) {
+			data['error_warning'] = this.error['warning'];
 		} else {
 			data['error_warning'] = '';
 		}
 
-		let file = DIR_LOGS + this.config.get('config_error_filename');
+		if ((this.session.data['success'])) {
+			data['success'] = this.session.data['success'];
 
-		if (!fs.lstatSync(file).isFile()) {
-			fs.appendFileSync(file, '');
+			delete this.session.data['success']);
+		} else {
+			data['success'] = '';
 		}
 
+		data['breadcrumbs'] = [];
 
-		data['logs'] = [];
+		data['breadcrumbs'].push({
+			'text' : this.language.get('text_home'),
+			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+		);
 
-		let files = require('glob').sync(DIR_LOGS + '*.log');
+		data['breadcrumbs'].push({
+			'text' : this.language.get('heading_title'),
+			'href' : await this.url.link('tool/log', 'user_token=' + this.session.data['user_token'], true)
+		);
 
-		for (let file of files) {
-			let error = '';
+		data['download'] = await this.url.link('tool/log/download', 'user_token=' + this.session.data['user_token'], true);
+		data['clear'] = await this.url.link('tool/log/clear', 'user_token=' + this.session.data['user_token'], true);
 
-			let filename = expressPath.basename(file);
+		data['log'] = '';
 
-			let size = fs.lstatSync(file).size;
+		file = DIR_LOGS + this.config.get('config_error_filename');
 
-			if (size >= 3145728) {
-				let suffix = [
+		if (file_exists(file)) {
+			size = filesize(file);
+
+			if (size >= 5242880) {
+				suffix = array(
 					'B',
 					'KB',
 					'MB',
@@ -60,7 +57,7 @@ module.exports = class LogController extends global['\Opencart\System\Engine\Con
 					'EB',
 					'ZB',
 					'YB'
-				];
+				);
 
 				i = 0;
 
@@ -68,21 +65,12 @@ module.exports = class LogController extends global['\Opencart\System\Engine\Con
 					size = size / 1024;
 					i++;
 				}
-				const roundedSize = Math.round(parseFloat(size.toString().substring(0, size.toString().indexOf('.') + 4)) * 100);
-				error = sprintf(this.language.get('error_size'), filename, roundedSize.toString() + suffix[i]);
-			}
-			const handle = fs.openSync(file, 'r+');
-			data['logs'].push({
-				'name': filename,
-				'output': fs.readFileSync(handle, { encoding: 'utf8', length: 3145728 }),
-				'download': await this.url.link('tool/log.download', 'user_token=' + this.session.data['user_token'] + '&filename=' + filename),
-				'clear': await this.url.link('tool/log.clear', 'user_token=' + this.session.data['user_token'] + '&filename=' + filename),
-				'error': error
-			});
-			fs.closeSync(handle);
-		}
 
-		data['user_token'] = this.session.data['user_token'];
+				data['error_warning'] = sprintf(this.language.get('error_warning'), basename(file), round(substr(size, 0, strpos(size, '.') + 4), 2) + suffix[i]);
+			} else {
+				data['log'] = htmlspecialchars(file_get_contents(file), ENT_COMPAT, 'UTF-8');
+			}
+		}
 
 		data['header'] = await this.load.controller('common/header');
 		data['column_left'] = await this.load.controller('common/column_left');
@@ -91,71 +79,42 @@ module.exports = class LogController extends global['\Opencart\System\Engine\Con
 		this.response.setOutput(await this.load.view('tool/log', data));
 	}
 
-	/**
-	 * @return void
-	 */
 	async download() {
 		await this.load.language('tool/log');
-		let filename = '';
-		if ((this.request.get['filename'])) {
-			filename = expressPath.basename(this.request.get['filename']);
-		}
 
-		let file = DIR_LOGS + filename;
+		file = DIR_LOGS + this.config.get('config_error_filename');
 
-		if (!fs.lstatSync(file).isFile()) {
-			this.session.data['error'] = sprintf(this.language.get('error_file'), filename);
+		if (file_exists(file) && filesize(file) > 0) {
+			this.response.addheader('Pragma: public');
+			this.response.addheader('Expires: 0');
+			this.response.addheader('Content-Description: File Transfer');
+			this.response.addheader('Content-Type: application/octet-stream');
+			this.response.addheader('Content-Disposition: attachment; filename="' + this.config.get('config_name') + '_' + date('Y-m-d_H-i-s', time()) + '_error.log"');
+			this.response.addheader('Content-Transfer-Encoding: binary');
+
+			this.response.setOutput(file_get_contents(file, FILE_USE_INCLUDE_PATH, null));
+		} else {
+			this.session.data['error'] = sprintf(this.language.get('error_warning'), basename(file), '0B');
 
 			this.response.setRedirect(await this.url.link('tool/log', 'user_token=' + this.session.data['user_token'], true));
 		}
-
-		if (!fs.lstatSync(file).size) {
-			this.session.data['error'] = sprintf(this.language.get('error_!'), filename);
-
-			this.response.setRedirect(await this.url.link('tool/log', 'user_token=' + this.session.data['user_token'], true));
-		}
-		this.response.headers = [];
-		this.response.addHeader('Pragma: public');
-		this.response.addHeader('Expires: 0');
-		this.response.addHeader('Content-Description: File Transfer');
-		this.response.addHeader('Content-Type: application/octet-stream');
-		this.response.addHeader('Content-Disposition: attachment; filename="' + this.config.get('config_name') + '_' + date('Y-m-d_H-i-s', time()) + '_error.log"');
-		this.response.addHeader('Content-Transfer-Encoding: binary');
-
-		this.response.setFile(file);
 	}
-
-	/**
-	 * @return void
-	 */
+	
 	async clear() {
 		await this.load.language('tool/log');
-		let filename = '';
-		if ((this.request.get['filename'])) {
-			filename = this.request.get['filename'];
-		}
-
-		const json = {};
 
 		if (!await this.user.hasPermission('modify', 'tool/log')) {
-			json['error'] = this.language.get('error_permission');
+			this.session.data['error'] = this.language.get('error_permission');
+		} else {
+			file = DIR_LOGS + this.config.get('config_error_filename');
+
+			handle = fopen(file, 'w+');
+
+			fclose(handle);
+
+			this.session.data['success'] = this.language.get('text_success');
 		}
 
-		let file = DIR_LOGS + filename;
-
-		if (!fs.lstatSync(file).isFile()) {
-			json['error'] = sprintf(this.language.get('error_file'), filename);
-		}
-
-		if (!Object.keys(json).length) {
-			let handle = fs.openSync(file, 'w+');
-
-			fs.closeSync(handle);
-
-			json['success'] = this.language.get('text_success');
-		}
-
-		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(json);
+		this.response.setRedirect(await this.url.link('tool/log', 'user_token=' + this.session.data['user_token'], true));
 	}
 }

@@ -1,26 +1,15 @@
-module.exports = class StatisticsController extends global['\Opencart\System\Engine\Controller'] {
-    constructor(registry) {
-        super(registry)
-    }
+module.exports = class ControllerEventStatistics extends Controller {
+	// model/catalog/review/removeReview/after
+	async removeReview(&route, &args, &output) {
+		this.load.model('setting/statistics');
 
-    async addReview(route, args, output) {
-        this.load.model('report/statistics', this);
-        await this.model_report_statistics.addValue('review', 1);
-    }
+		await this.model_report_statistics.addValue('review', 1);
+	}
 
-    async deleteReview(route, args, output) {
-        this.load.model('report/statistics', this);
-        await this.model_report_statistics.removeValue('review', 1);
-    }
+	// model/sale/return/removeReturn/after
+	async removeReturn(&route, &args, &output) {
+		this.load.model('setting/statistics');
 
-    async addReturn(route, args, output) {
-        this.load.model('report/statistics', this);
-        await this.model_report_statistics.addValue('returns', 1);
-    }
-
-    async deleteReturn(route, args, output) {
-        this.load.model('report/statistics', this);
-        await this.model_report_statistics.removeValue('returns', 1);
-    }
+		await this.model_report_statistics.addValue('return', 1);
+	}
 }
-

@@ -1,11 +1,7 @@
+module.exports = class ControllerMarketplaceExtension extends Controller {
+	error = {};
 
-const expressPath = require('path');
-module.exports = class ExtensionController extends global['\Opencart\System\Engine\Controller'] {
-	/**
-	 * @return void
-	 */
 	async index() {
-		const data = {};
 		await this.load.language('marketplace/extension');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -13,54 +9,57 @@ module.exports = class ExtensionController extends global['\Opencart\System\Engi
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text': this.language.get('text_home'),
-			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
-		});
+			'text' : this.language.get('text_home'),
+			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+		);
 
 		data['breadcrumbs'].push({
-			'text': this.language.get('heading_title'),
-			'href': await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'])
-		});
+			'text' : this.language.get('heading_title'),
+			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'], true)
+		);
+
+		data['user_token'] = this.session.data['user_token'];
 
 		if ((this.request.get['type'])) {
 			data['type'] = this.request.get['type'];
 		} else {
 			data['type'] = '';
 		}
+		
+		data['categories'] = {};
+		
+		files = glob(DIR_APPLICATION + 'controller/extension/extension/*.php', GLOB_BRACE);
+		
+		for (let file of files) {
+			extension = basename(file, '.php');
 
-		data['categories'] = [];
+			if (extension=='promotion') {
+				continue;
+			}
 
-		this.load.model('setting/extension', this);
-
-		let files = require('glob').sync(DIR_APPLICATION + 'controller/extension/*.js');
-		for (let file of files.reverse()) {
-			let extension = expressPath.basename(file,'.js');
-			await this.load.language('extension/' + extension, extension);
-
-			if (await this.user.hasPermission('access', 'extension/' + extension)) {
-				let extensions = await this.model_setting_extension.getPaths('%/admin/controller/' + extension + '/%.js');
+			// Compatibility code for old extension folders
+			await this.load.language('extension/extension/' + extension, 'extension');
+		
+			if (await this.user.hasPermission('access', 'extension/extension/' + extension)) {
+				files = glob(DIR_APPLICATION + 'controller/extension/' + extension + '/*.php', GLOB_BRACE);
+		
 				data['categories'].push({
-					'code': extension,
-					'text': this.language.get(extension + '_heading_title') + ' (' + extensions.length + ')',
-					'href': await this.url.link('extension/' + extension, 'user_token=' + this.session.data['user_token'])
-				});
+					'code' : extension,
+					'text' : this.language.get('extension').get('heading_title') + ' (' + count(files) .')',
+					'href' : await this.url.link('extension/extension/' + extension, 'user_token=' + this.session.data['user_token'], true)
+				);
 			}
 		}
-
-		if ((this.request.get['type'])) {
-			data['extension'] = await this.load.controller('extension/' + expressPath.basename(this.request.get['type']) + '.getList');
-		} else if (data['categories']) {
-			data['extension'] = await this.load.controller('extension/' + data['categories'][0]['code'] + '.getList');
-		} else {
-			data['extension'] = '';
-		}
-
-		data['user_token'] = this.session.data['user_token'];
 
 		data['header'] = await this.load.controller('common/header');
 		data['column_left'] = await this.load.controller('common/column_left');
 		data['footer'] = await this.load.controller('common/footer');
 
 		this.response.setOutput(await this.load.view('marketplace/extension', data));
+	}
+
+	async refreshMenu() {
+		output = await this.load.controller('common/column_left');
+		this.response.setOutput(output);
 	}
 }

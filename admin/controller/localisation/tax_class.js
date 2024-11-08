@@ -1,16 +1,134 @@
-const sprintf = require("locutus/php/strings/sprintf");
+module.exports = class ControllerLocalisationTaxClass extends Controller {
+	error = {};
 
-module.exports = class TaxController extends global['\Opencart\System\Engine\Controller'] {
-	/**
-	 * @return void
-	 */
 	async index() {
-		const data = {};
 		await this.load.language('localisation/tax_class');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		let url = '';
+		this.load.model('localisation/tax_class');
+
+		await this.getList();
+	}
+
+	async add() {
+		await this.load.language('localisation/tax_class');
+
+		this.document.setTitle(this.language.get('heading_title'));
+
+		this.load.model('localisation/tax_class');
+
+		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+			await this.model_localisation_tax_class.addTaxClass(this.request.post);
+
+			this.session.data['success'] = this.language.get('text_success');
+
+			url = '';
+
+			if ((this.request.get['sort'])) {
+				url += '&sort=' + this.request.get['sort'];
+			}
+
+			if ((this.request.get['order'])) {
+				url += '&order=' + this.request.get['order'];
+			}
+
+			if ((this.request.get['page'])) {
+				url += '&page=' + this.request.get['page'];
+			}
+
+			this.response.setRedirect(await this.url.link('localisation/tax_class', 'user_token=' + this.session.data['user_token'] + url, true));
+		}
+
+		await this.getForm();
+	}
+
+	async edit() {
+		await this.load.language('localisation/tax_class');
+
+		this.document.setTitle(this.language.get('heading_title'));
+
+		this.load.model('localisation/tax_class');
+
+		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+			await this.model_localisation_tax_class.editTaxClass(this.request.get['tax_class_id'], this.request.post);
+
+			this.session.data['success'] = this.language.get('text_success');
+
+			url = '';
+
+			if ((this.request.get['sort'])) {
+				url += '&sort=' + this.request.get['sort'];
+			}
+
+			if ((this.request.get['order'])) {
+				url += '&order=' + this.request.get['order'];
+			}
+
+			if ((this.request.get['page'])) {
+				url += '&page=' + this.request.get['page'];
+			}
+
+			this.response.setRedirect(await this.url.link('localisation/tax_class', 'user_token=' + this.session.data['user_token'] + url, true));
+		}
+
+		await this.getForm();
+	}
+
+	async delete() {
+		await this.load.language('localisation/tax_class');
+
+		this.document.setTitle(this.language.get('heading_title'));
+
+		this.load.model('localisation/tax_class');
+
+		if ((this.request.post['selected']) && this.validateDelete()) {
+			for (this.request.post['selected'] of tax_class_id) {
+				await this.model_localisation_tax_class.deleteTaxClass(tax_class_id);
+			}
+
+			this.session.data['success'] = this.language.get('text_success');
+
+			url = '';
+
+			if ((this.request.get['sort'])) {
+				url += '&sort=' + this.request.get['sort'];
+			}
+
+			if ((this.request.get['order'])) {
+				url += '&order=' + this.request.get['order'];
+			}
+
+			if ((this.request.get['page'])) {
+				url += '&page=' + this.request.get['page'];
+			}
+
+			this.response.setRedirect(await this.url.link('localisation/tax_class', 'user_token=' + this.session.data['user_token'] + url, true));
+		}
+
+		await this.getList();
+	}
+
+	async getList() {
+		if ((this.request.get['sort'])) {
+			sort = this.request.get['sort'];
+		} else {
+			sort = 'title';
+		}
+
+		if ((this.request.get['order'])) {
+			order = this.request.get['order'];
+		} else {
+			order = 'ASC';
+		}
+
+		if ((this.request.get['page'])) {
+			page = this.request.get['page'];
+		} else {
+			page = 1;
+		}
+
+		url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -27,95 +145,57 @@ module.exports = class TaxController extends global['\Opencart\System\Engine\Con
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text': this.language.get('text_home'),
-			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
-		});
+			'text' : this.language.get('text_home'),
+			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+		);
 
 		data['breadcrumbs'].push({
-			'text': this.language.get('heading_title'),
-			'href': await this.url.link('localisation/tax_class', 'user_token=' + this.session.data['user_token'] + url)
-		});
+			'text' : this.language.get('heading_title'),
+			'href' : await this.url.link('localisation/tax_class', 'user_token=' + this.session.data['user_token'] + url, true)
+		);
 
-		data['add'] = await this.url.link('localisation/tax_class.form', 'user_token=' + this.session.data['user_token'] + url);
-		data['delete'] = await this.url.link('localisation/tax_class.delete', 'user_token=' + this.session.data['user_token']);
+		data['add'] = await this.url.link('localisation/tax_class/add', 'user_token=' + this.session.data['user_token'] + url, true);
+		data['delete'] = await this.url.link('localisation/tax_class/delete', 'user_token=' + this.session.data['user_token'] + url, true);
 
-		data['list'] = await this.getList();
+		data['tax_classes'] = {};
 
-		data['user_token'] = this.session.data['user_token'];
+		filter_data = array(
+			'sort'  : sort,
+			'order' : order,
+			'start' : (page - 1) * this.config.get('config_limit_admin'),
+			'limit' : this.config.get('config_limit_admin')
+		);
 
-		data['header'] = await this.load.controller('common/header');
-		data['column_left'] = await this.load.controller('common/column_left');
-		data['footer'] = await this.load.controller('common/footer');
+		tax_class_total = await this.model_localisation_tax_class.getTotalTaxClasses();
 
-		this.response.setOutput(await this.load.view('localisation/tax_class', data));
-	}
-
-	/**
-	 * @return void
-	 */
-	async list() {
-		await this.load.language('localisation/tax_class');
-
-		this.response.setOutput(await this.getList());
-	}
-
-	/**
-	 * @return string
-	 */
-	async getList() {
-		const data = {};
-		let sort = 'title';
-		if ((this.request.get['sort'])) {
-			sort = this.request.get['sort'];
-		}
-
-		let order = 'ASC';
-		if ((this.request.get['order'])) {
-			order = this.request.get['order'];
-		}
-
-		let page = 1;
-		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
-		}
-
-		let url = '';
-
-		if ((this.request.get['sort'])) {
-			url += '&sort=' + this.request.get['sort'];
-		}
-
-		if ((this.request.get['order'])) {
-			url += '&order=' + this.request.get['order'];
-		}
-
-		if ((this.request.get['page'])) {
-			url += '&page=' + this.request.get['page'];
-		}
-
-		data['action'] = await this.url.link('localisation/tax_class.list', 'user_token=' + this.session.data['user_token'] + url);
-
-		data['tax_classes'] = [];
-
-		let filter_data = {
-			'sort': sort,
-			'order': order,
-			'start': (page - 1) * Number(this.config.get('config_pagination_admin')),
-			'limit': this.config.get('config_pagination_admin')
-		};
-
-		this.load.model('localisation/tax_class', this);
-
-		const tax_class_total = await this.model_localisation_tax_class.getTotalTaxClasses();
-
-		const results = await this.model_localisation_tax_class.getTaxClasses(filter_data);
+		results = await this.model_localisation_tax_class.getTaxClasses(filter_data);
 
 		for (let result of results) {
 			data['tax_classes'].push({
-				'tax_class_id': result['tax_class_id'],
-				'title': result['title'],
-				'edit': await this.url.link('localisation/tax_class.form', 'user_token=' + this.session.data['user_token'] + '&tax_class_id=' + result['tax_class_id'] + url)
-			});
+				'tax_class_id' : result['tax_class_id'],
+				'title'        : result['title'],
+				'edit'         : await this.url.link('localisation/tax_class/edit', 'user_token=' + this.session.data['user_token'] + '&tax_class_id=' + result['tax_class_id'] + url, true)
+			);
+		}
+
+		if ((this.error['warning'])) {
+			data['error_warning'] = this.error['warning'];
+		} else {
+			data['error_warning'] = '';
+		}
+
+		if ((this.session.data['success'])) {
+			data['success'] = this.session.data['success'];
+
+			delete this.session.data['success']);
+		} else {
+			data['success'] = '';
+		}
+
+		if ((this.request.post['selected'])) {
+			data['selected'] = this.request.post['selected'];
+		} else {
+			data['selected'] = {};
 		}
 
 		url = '';
@@ -126,7 +206,11 @@ module.exports = class TaxController extends global['\Opencart\System\Engine\Con
 			url += '&order=ASC';
 		}
 
-		data['sort_title'] = await this.url.link('localisation/tax_class.list', 'user_token=' + this.session.data['user_token'] + '&sort=title' + url);
+		if ((this.request.get['page'])) {
+			url += '&page=' + this.request.get['page'];
+		}
+
+		data['sort_title'] = await this.url.link('localisation/tax_class', 'user_token=' + this.session.data['user_token'] + '&sort=title' + url, true);
 
 		url = '';
 
@@ -138,33 +222,48 @@ module.exports = class TaxController extends global['\Opencart\System\Engine\Con
 			url += '&order=' + this.request.get['order'];
 		}
 
-		data['pagination'] = await this.load.controller('common/pagination', {
-			'total': tax_class_total,
-			'page': page,
-			'limit': this.config.get('config_pagination_admin'),
-			'url': await this.url.link('localisation/tax_class.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
-		});
+		pagination = new Pagination();
+		pagination.total = tax_class_total;
+		pagination.page = page;
+		pagination.limit = this.config.get('config_limit_admin');
+		pagination.url = await this.url.link('localisation/tax_class', 'user_token=' + this.session.data['user_token'] + url + '&page={page}', true);
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (tax_class_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (tax_class_total - this.config.get('config_pagination_admin'))) ? tax_class_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), tax_class_total, Math.ceil(tax_class_total / this.config.get('config_pagination_admin')));
+		data['pagination'] = pagination.render();
+
+		data['results'] = sprintf(this.language.get('text_pagination'), (tax_class_total) ? ((page - 1) * this.config.get('config_limit_admin')) + 1 : 0, (((page - 1) * this.config.get('config_limit_admin')) > (tax_class_total - this.config.get('config_limit_admin'))) ? tax_class_total : (((page - 1) * this.config.get('config_limit_admin')) + this.config.get('config_limit_admin')), tax_class_total, ceil(tax_class_total / this.config.get('config_limit_admin')));
 
 		data['sort'] = sort;
 		data['order'] = order;
 
-		return await this.load.view('localisation/tax_class_list', data);
+		data['header'] = await this.load.controller('common/header');
+		data['column_left'] = await this.load.controller('common/column_left');
+		data['footer'] = await this.load.controller('common/footer');
+
+		this.response.setOutput(await this.load.view('localisation/tax_class_list', data));
 	}
 
-	/**
-	 * @return void
-	 */
-	async form() {
-		const data = {};
-		await this.load.language('localisation/tax_class');
-
-		this.document.setTitle(this.language.get('heading_title'));
-
+	async getForm() {
 		data['text_form'] = !(this.request.get['tax_class_id']) ? this.language.get('text_add') : this.language.get('text_edit');
 
-		let url = '';
+		if ((this.error['warning'])) {
+			data['error_warning'] = this.error['warning'];
+		} else {
+			data['error_warning'] = '';
+		}
+
+		if ((this.error['title'])) {
+			data['error_title'] = this.error['title'];
+		} else {
+			data['error_title'] = '';
+		}
+
+		if ((this.error['description'])) {
+			data['error_description'] = this.error['description'];
+		} else {
+			data['error_description'] = '';
+		}
+
+		url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -181,50 +280,53 @@ module.exports = class TaxController extends global['\Opencart\System\Engine\Con
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text': this.language.get('text_home'),
-			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
-		});
+			'text' : this.language.get('text_home'),
+			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+		);
 
 		data['breadcrumbs'].push({
-			'text': this.language.get('heading_title'),
-			'href': await this.url.link('localisation/tax_class', 'user_token=' + this.session.data['user_token'] + url)
-		});
+			'text' : this.language.get('heading_title'),
+			'href' : await this.url.link('localisation/tax_class', 'user_token=' + this.session.data['user_token'] + url, true)
+		);
 
-		data['save'] = await this.url.link('localisation/tax_class.save', 'user_token=' + this.session.data['user_token']);
-		data['back'] = await this.url.link('localisation/tax_class', 'user_token=' + this.session.data['user_token'] + url);
-		let tax_class_info;
-		if ((this.request.get['tax_class_id'])) {
-			this.load.model('localisation/tax_class', this);
+		if (!(this.request.get['tax_class_id'])) {
+			data['action'] = await this.url.link('localisation/tax_class/add', 'user_token=' + this.session.data['user_token'] + url, true);
+		} else {
+			data['action'] = await this.url.link('localisation/tax_class/edit', 'user_token=' + this.session.data['user_token'] + '&tax_class_id=' + this.request.get['tax_class_id'] + url, true);
+		}
 
+		data['cancel'] = await this.url.link('localisation/tax_class', 'user_token=' + this.session.data['user_token'] + url, true);
+
+		if ((this.request.get['tax_class_id']) && (this.request.server['method'] != 'POST')) {
 			tax_class_info = await this.model_localisation_tax_class.getTaxClass(this.request.get['tax_class_id']);
 		}
 
-		if ((this.request.get['tax_class_id'])) {
-			data['tax_class_id'] = this.request.get['tax_class_id'];
-		} else {
-			data['tax_class_id'] = 0;
-		}
-
-		if ((tax_class_info)) {
+		if ((this.request.post['title'])) {
+			data['title'] = this.request.post['title'];
+		} else if ((tax_class_info)) {
 			data['title'] = tax_class_info['title'];
 		} else {
 			data['title'] = '';
 		}
 
-		if ((tax_class_info)) {
+		if ((this.request.post['description'])) {
+			data['description'] = this.request.post['description'];
+		} else if ((tax_class_info)) {
 			data['description'] = tax_class_info['description'];
 		} else {
 			data['description'] = '';
 		}
 
-		this.load.model('localisation/tax_rate', this);
+		this.load.model('localisation/tax_rate');
 
 		data['tax_rates'] = await this.model_localisation_tax_rate.getTaxRates();
 
-		if ((this.request.get['tax_class_id'])) {
+		if ((this.request.post['tax_rule'])) {
+			data['tax_rules'] = this.request.post['tax_rule'];
+		} else if ((this.request.get['tax_class_id'])) {
 			data['tax_rules'] = await this.model_localisation_tax_class.getTaxRules(this.request.get['tax_class_id']);
 		} else {
-			data['tax_rules'] = [];
+			data['tax_rules'] = {};
 		}
 
 		data['header'] = await this.load.controller('common/header');
@@ -234,80 +336,37 @@ module.exports = class TaxController extends global['\Opencart\System\Engine\Con
 		this.response.setOutput(await this.load.view('localisation/tax_class_form', data));
 	}
 
-	/**
-	 * @return void
-	 */
-	async save() {
-		await this.load.language('localisation/tax_class');
-
-		const json = { error: {} };
-
+	async validateForm() {
 		if (!await this.user.hasPermission('modify', 'localisation/tax_class')) {
-			json['error']['warning'] = this.language.get('error_permission');
+			this.error['warning'] = this.language.get('error_permission');
 		}
 
 		if ((oc_strlen(this.request.post['title']) < 3) || (oc_strlen(this.request.post['title']) > 32)) {
-			json['error']['title'] = this.language.get('error_title');
+			this.error['title'] = this.language.get('error_title');
 		}
 
 		if ((oc_strlen(this.request.post['description']) < 3) || (oc_strlen(this.request.post['description']) > 255)) {
-			json['error']['description'] = this.language.get('error_description');
+			this.error['description'] = this.language.get('error_description');
 		}
 
-		if (!Object.keys(json.error).length) {
-			this.load.model('localisation/tax_class', this);
-			this.request.post['tax_class_id'] = Number(this.request.post['tax_class_id']);
-			if (!this.request.post['tax_class_id']) {
-				json['tax_class_id'] = await this.model_localisation_tax_class.addTaxClass(this.request.post);
-			} else {
-				await this.model_localisation_tax_class.editTaxClass(this.request.post['tax_class_id'], this.request.post);
-			}
-
-			json['success'] = this.language.get('text_success');
-		}
-
-		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(json);
+		return Object.keys(this.error).length?false:true
 	}
 
-	/**
-	 * @return void
-	 */
-	async delete() {
-		await this.load.language('localisation/tax_class');
-
-		const json = {};
-
-		let selected = [];
-		if ((this.request.post['selected'])) {
-			selected = this.request.post['selected'];
-		}
-
+	async validateDelete() {
 		if (!await this.user.hasPermission('modify', 'localisation/tax_class')) {
-			json['error'] = this.language.get('error_permission');
+			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		this.load.model('catalog/product', this);
+		this.load.model('catalog/product');
 
-		for (let tax_class_id of selected) {
-			const product_total = await this.model_catalog_product.getTotalProductsByTaxClassId(tax_class_id);
+		for (this.request.post['selected'] of tax_class_id) {
+			product_total = await this.model_catalog_product.getTotalProductsByTaxClassId(tax_class_id);
 
 			if (product_total) {
-				json['error'] = sprintf(this.language.get('error_product'), product_total);
+				this.error['warning'] = sprintf(this.language.get('error_product'), product_total);
 			}
 		}
 
-		if (!Object.keys(json).length) {
-			this.load.model('localisation/tax_class', this);
-
-			for (let tax_class_id of selected) {
-				await this.model_localisation_tax_class.deleteTaxClass(tax_class_id);
-			}
-
-			json['success'] = this.language.get('text_success');
-		}
-
-		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(json);
+		return Object.keys(this.error).length?false:true
 	}
 }

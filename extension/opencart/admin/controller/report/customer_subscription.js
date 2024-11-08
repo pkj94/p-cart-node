@@ -1,6 +1,6 @@
 const sprintf = require("locutus/php/strings/sprintf");
 
-global['\Opencart\Admin\Controller\Extension\Opencart\Report\CustomerSubscription'] = class CustomerSubscription extends global['\Opencart\System\Engine\Controller'] {
+global['\Opencart\Admin\Controller\Extension\Opencart\Report\CustomerSubscription'] = class CustomerSubscription extends Controller {
 	constructor(registry) {
 		super(registry)
 	}

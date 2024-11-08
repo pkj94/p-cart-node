@@ -143,7 +143,7 @@ module.exports = class Store extends global['\Opencart\System\Engine\Model'] {
 		registry.set('language', languageLib);
 
 		// Url
-		registry.set('url', new global['\Opencart\System\Library\Url'](config.get('site_url')));
+		registry.set('url', new Url(config.get('site_url')));
 
 		// Document
 		registry.set('document', new DocumentLibrary());

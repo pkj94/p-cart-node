@@ -1,4 +1,4 @@
-global['\Opencart\Install\Controller\Upgrade\Upgrade8'] = class Upgrade8 extends global['\Opencart\System\Engine\Controller'] {
+global['\Opencart\Install\Controller\Upgrade\Upgrade8'] = class Upgrade8 extends Controller {
 	/**
 	 * @return void
 	 */

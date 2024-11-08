@@ -1,4 +1,4 @@
-module.exports = class Exception extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class Exception extends Controller {
 	/**
 	 * @param string message
 	 * @param string code

@@ -1,4 +1,4 @@
-module.exports = class Gdpr extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class Gdpr extends Controller {
 	// catalog/model/account/gdpr/addGdpr
 	/**
 	 * @param string route

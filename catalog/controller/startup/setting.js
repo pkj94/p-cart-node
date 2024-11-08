@@ -1,4 +1,4 @@
-module.exports = class Setting extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class Setting extends Controller {
 	constructor(registry) {
 		super(registry);
 	}
@@ -41,7 +41,7 @@ module.exports = class Setting extends global['\Opencart\System\Engine\Controlle
 		}
 
 		// Url
-		this.registry.set('url', new global['\Opencart\System\Library\Url'](this.config.get('config_url')));
+		this.registry.set('url', new Url(this.config.get('config_url')));
 
 		// Set time zone
 		if (this.config.get('config_timezone')) {

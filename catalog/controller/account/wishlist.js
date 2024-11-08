@@ -1,7 +1,7 @@
 const array_unique = require("locutus/php/array/array_unique");
 const sprintf = require("locutus/php/strings/sprintf");
 
-module.exports = class WishList extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class WishList extends Controller {
 	/**
 	 * @return void
 	 */

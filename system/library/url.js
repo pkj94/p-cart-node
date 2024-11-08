@@ -1,28 +1,29 @@
-module.exports = class UrlLibrary {
-    constructor(url) {
+module.exports = class Url {
+    constructor(url, ssl = '') {
         this.url = url;
+        this.ssl = ssl;
         this.rewrite = [];
     }
+
     addRewrite(rewrite) {
         this.rewrite.push(rewrite);
     }
-    async link(route, args = '', js = false) {
-        let url = `${this.url.substring(0, this.url.length - 1)}/?route=${route}`;
+
+    async link(route, args = '', secure = false) {
+        let url = this.ssl && secure ? `${this.ssl}?route=${route}` : `${this.url}?route=${route}`;
 
         if (args) {
-            if (typeof args == 'object') {
-                Object.keys(args).map(key => {
-                    url += `&${key}=${args[key]}`;
-                    return key;
-                })
+            if (typeof args === 'object') {
+                url += '&' + new URLSearchParams(args).toString().replace(/&/g, '&amp;');
             } else {
-                url += `&${args.trim('&')}`;
+                url += `&${args.trim().replace(/^&/, '').replace(/&/g, '&amp;')}`;
             }
         }
-        
-        for (const rewrite of this.rewrite) {
+
+        this.rewrite.forEach(async rewrite => {
             url = await rewrite.rewrite(url);
-        }
-        return js ? url : url.replace(/&/g, '&amp;');
+        });
+
+        return url;
     }
-}
+}  

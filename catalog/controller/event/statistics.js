@@ -1,4 +1,4 @@
-module.exports=class Statistics extends global['\Opencart\System\Engine\Controller'] {
+module.exports=class Statistics extends Controller {
 	// catalog/model/catalog/review/addReview/after
 	/**
 	 * @param string route

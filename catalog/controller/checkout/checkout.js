@@ -1,4 +1,4 @@
-module.exports = class Checkout extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class Checkout extends Controller {
 	/**
 	 * @return void
 	 */

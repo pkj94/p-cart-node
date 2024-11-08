@@ -5,6 +5,7 @@ function getURLVar(key) {
     
     if (query[1]) {
         var part = query[1].split('&');
+
         for (i = 0; i < part.length; i++) {
             var data = part[i].split('=');
             
@@ -20,6 +21,7 @@ function getURLVar(key) {
         }
     }
 } 
+
 $(document).ready(function() {
 	route = getURLVar('route');
 	
@@ -34,32 +36,6 @@ $(document).ready(function() {
 			url += '/' + part[1];
 		}		
 		
-		$('#menu a[href*=\'?route=' + url + '\']').parents('li[id]').addClass('active');
+		$('#menu a[href*=\'index.php?route=' + url + '\']').parents('li[id]').addClass('active');
 	}	
 });
-// Chain ajax calls.
-class Chain {
-	constructor() {
-		this.start = false;
-		this.data = [];
-	}
-	attach(call) {
-		this.data.push(call);
-		if (!this.start) {
-			this.execute();
-		}
-	}
-	execute() {
-		if (this.data.length) {
-			this.start = true;
-			var call = this.data.shift();
-			var jqxhr = call();
-			jqxhr.done(function() {
-				chain.execute();
-			});
-		} else {
-			this.start = false;
-		}
-	}
-}
-var chain = new Chain();

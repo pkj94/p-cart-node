@@ -1,52 +1,203 @@
-const strtotime = require("locutus/php/datetime/strtotime");
-const uniqid = require("locutus/php/misc/uniqid");
-const sprintf = require("locutus/php/strings/sprintf");
+module.exports = class ControllerMarketingMarketing extends Controller {
+	error = {};
 
-module.exports = class MarketingController extends global['\Opencart\System\Engine\Controller'] {
-	/**
-	 * @return void
-	 */
 	async index() {
-		const data = {};
 		await this.load.language('marketing/marketing');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		let filter_name = '';
+		this.load.model('marketing/marketing');
+
+		await this.getList();
+	}
+
+	async add() {
+		await this.load.language('marketing/marketing');
+
+		this.document.setTitle(this.language.get('heading_title'));
+
+		this.load.model('marketing/marketing');
+
+		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+			await this.model_marketing_marketing.addMarketing(this.request.post);
+
+			this.session.data['success'] = this.language.get('text_success');
+
+			url = '';
+
+			if ((this.request.get['filter_name'])) {
+				url += '&filter_name=' + urlencode(html_entity_decode(this.request.get['filter_name']));
+			}
+
+			if ((this.request.get['filter_code'])) {
+				url += '&filter_code=' + this.request.get['filter_code'];
+			}
+
+			if ((this.request.get['filter_date_added'])) {
+				url += '&filter_date_added=' + this.request.get['filter_date_added'];
+			}
+
+			if ((this.request.get['sort'])) {
+				url += '&sort=' + this.request.get['sort'];
+			}
+
+			if ((this.request.get['order'])) {
+				url += '&order=' + this.request.get['order'];
+			}
+
+			if ((this.request.get['page'])) {
+				url += '&page=' + this.request.get['page'];
+			}
+
+			this.response.setRedirect(await this.url.link('marketing/marketing', 'user_token=' + this.session.data['user_token'] + url, true));
+		}
+
+		await this.getForm();
+	}
+
+	async edit() {
+		await this.load.language('marketing/marketing');
+
+		this.document.setTitle(this.language.get('heading_title'));
+
+		this.load.model('marketing/marketing');
+
+		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+			await this.model_marketing_marketing.editMarketing(this.request.get['marketing_id'], this.request.post);
+
+			this.session.data['success'] = this.language.get('text_success');
+
+			url = '';
+
+			if ((this.request.get['filter_name'])) {
+				url += '&filter_name=' + urlencode(html_entity_decode(this.request.get['filter_name']));
+			}
+
+			if ((this.request.get['filter_code'])) {
+				url += '&filter_code=' + this.request.get['filter_code'];
+			}
+
+			if ((this.request.get['filter_date_added'])) {
+				url += '&filter_date_added=' + this.request.get['filter_date_added'];
+			}
+
+			if ((this.request.get['sort'])) {
+				url += '&sort=' + this.request.get['sort'];
+			}
+
+			if ((this.request.get['order'])) {
+				url += '&order=' + this.request.get['order'];
+			}
+
+			if ((this.request.get['page'])) {
+				url += '&page=' + this.request.get['page'];
+			}
+
+			this.response.setRedirect(await this.url.link('marketing/marketing', 'user_token=' + this.session.data['user_token'] + url, true));
+		}
+
+		await this.getForm();
+	}
+
+	async delete() {
+		await this.load.language('marketing/marketing');
+
+		this.document.setTitle(this.language.get('heading_title'));
+
+		this.load.model('marketing/marketing');
+
+		if ((this.request.post['selected']) && this.validateDelete()) {
+			for (this.request.post['selected'] of marketing_id) {
+				await this.model_marketing_marketing.deleteMarketing(marketing_id);
+			}
+
+			this.session.data['success'] = this.language.get('text_success');
+
+			url = '';
+
+			if ((this.request.get['filter_name'])) {
+				url += '&filter_name=' + urlencode(html_entity_decode(this.request.get['filter_name']));
+			}
+
+			if ((this.request.get['filter_code'])) {
+				url += '&filter_code=' + this.request.get['filter_code'];
+			}
+
+			if ((this.request.get['filter_date_added'])) {
+				url += '&filter_date_added=' + this.request.get['filter_date_added'];
+			}
+
+			if ((this.request.get['sort'])) {
+				url += '&sort=' + this.request.get['sort'];
+			}
+
+			if ((this.request.get['order'])) {
+				url += '&order=' + this.request.get['order'];
+			}
+
+			if ((this.request.get['page'])) {
+				url += '&page=' + this.request.get['page'];
+			}
+
+			this.response.setRedirect(await this.url.link('marketing/marketing', 'user_token=' + this.session.data['user_token'] + url, true));
+		}
+
+		await this.getList();
+	}
+
+	async getList() {
 		if ((this.request.get['filter_name'])) {
 			filter_name = this.request.get['filter_name'];
+		} else {
+			filter_name = '';
 		}
-		let filter_code = '';
+
 		if ((this.request.get['filter_code'])) {
 			filter_code = this.request.get['filter_code'];
+		} else {
+			filter_code = '';
 		}
 
-		let filter_date_from = '';
-		if ((this.request.get['filter_date_from'])) {
-			filter_date_from = this.request.get['filter_date_from'];
+		if ((this.request.get['filter_date_added'])) {
+			filter_date_added = this.request.get['filter_date_added'];
+		} else {
+			filter_date_added = '';
 		}
 
-		let filter_date_to = '';
-		if ((this.request.get['filter_date_to'])) {
-			filter_date_to = this.request.get['filter_date_to'];
+		if ((this.request.get['sort'])) {
+			sort = this.request.get['sort'];
+		} else {
+			sort = 'm.name';
 		}
 
-		let url = '';
+		if ((this.request.get['order'])) {
+			order = this.request.get['order'];
+		} else {
+			order = 'ASC';
+		}
+
+		if ((this.request.get['page'])) {
+			page = this.request.get['page'];
+		} else {
+			page = 1;
+		}
+
+		url = '';
 
 		if ((this.request.get['filter_name'])) {
-			url += '&filter_name=' + encodeURIComponent(html_entity_decode(this.request.get['filter_name']));
+			url += '&filter_name=' + urlencode(html_entity_decode(this.request.get['filter_name']));
 		}
 
 		if ((this.request.get['filter_code'])) {
 			url += '&filter_code=' + this.request.get['filter_code'];
 		}
 
-		if ((this.request.get['filter_date_from'])) {
-			url += '&filter_date_from=' + this.request.get['filter_date_from'];
+		if ((this.request.get['filter_date_added'])) {
+			url += '&filter_date_added=' + this.request.get['filter_date_added'];
 		}
 
-		if ((this.request.get['filter_date_to'])) {
-			url += '&filter_date_to=' + this.request.get['filter_date_to'];
+		if ((this.request.get['sort'])) {
+			url += '&sort=' + this.request.get['sort'];
 		}
 
 		if ((this.request.get['sort'])) {
@@ -64,159 +215,80 @@ module.exports = class MarketingController extends global['\Opencart\System\Engi
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text': this.language.get('text_home'),
-			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
-		});
+			'text' : this.language.get('text_home'),
+			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+		);
 
 		data['breadcrumbs'].push({
-			'text': this.language.get('heading_title'),
-			'href': await this.url.link('marketing/marketing', 'user_token=' + this.session.data['user_token'] + url)
-		});
+			'text' : this.language.get('heading_title'),
+			'href' : await this.url.link('marketing/marketing', 'user_token=' + this.session.data['user_token'] + url, true)
+		);
 
-		data['add'] = await this.url.link('marketing/marketing.form', 'user_token=' + this.session.data['user_token'] + url);
-		data['delete'] = await this.url.link('marketing/marketing.delete', 'user_token=' + this.session.data['user_token']);
+		data['add'] = await this.url.link('marketing/marketing/add', 'user_token=' + this.session.data['user_token'] + url, true);
+		data['delete'] = await this.url.link('marketing/marketing/delete', 'user_token=' + this.session.data['user_token'] + url, true);
 
-		data['list'] = await this.getList();
+		data['marketings'] = {};
 
-		data['filter_name'] = filter_name;
-		data['filter_code'] = filter_code;
-		data['filter_date_from'] = filter_date_from;
-		data['filter_date_to'] = filter_date_to;
+		filter_data = array(
+			'filter_name'       : filter_name,
+			'filter_code'       : filter_code,
+			'filter_date_added' : filter_date_added,
+			'sort'              : sort,
+			'order'             : order,
+			'start'             : (page - 1) * this.config.get('config_limit_admin'),
+			'limit'             : this.config.get('config_limit_admin')
+		);
 
-		data['user_token'] = this.session.data['user_token'];
+		marketing_total = await this.model_marketing_marketing.getTotalMarketings(filter_data);
 
-		data['header'] = await this.load.controller('common/header');
-		data['column_left'] = await this.load.controller('common/column_left');
-		data['footer'] = await this.load.controller('common/footer');
-
-		this.response.setOutput(await this.load.view('marketing/marketing', data));
-	}
-
-	/**
-	 * @return void
-	 */
-	async list() {
-		await this.load.language('marketing/marketing');
-
-		this.response.setOutput(await this.getList());
-	}
-
-	/**
-	 * @return string
-	 */
-	async getList() {
-		const data = {};
-		let filter_name = '';
-		if ((this.request.get['filter_name'])) {
-			filter_name = this.request.get['filter_name'];
-		}
-		let filter_code = '';
-		if ((this.request.get['filter_code'])) {
-			filter_code = this.request.get['filter_code'];
-		}
-
-		let filter_date_from = '';
-		if ((this.request.get['filter_date_from'])) {
-			filter_date_from = this.request.get['filter_date_from'];
-		}
-
-		let filter_date_to = '';
-		if ((this.request.get['filter_date_to'])) {
-			filter_date_to = this.request.get['filter_date_to'];
-		}
-		let sort = 'm.name';
-		if ((this.request.get['sort'])) {
-			sort = this.request.get['sort'];
-		}
-		let order = 'ASC';
-		if ((this.request.get['order'])) {
-			order = this.request.get['order'];
-		}
-
-		let page = 1;
-		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
-		}
-
-		let url = '';
-
-		if ((this.request.get['filter_name'])) {
-			url += '&filter_name=' + encodeURIComponent(html_entity_decode(this.request.get['filter_name']));
-		}
-
-		if ((this.request.get['filter_code'])) {
-			url += '&filter_code=' + this.request.get['filter_code'];
-		}
-
-		if ((this.request.get['filter_date_from'])) {
-			url += '&filter_date_from=' + this.request.get['filter_date_from'];
-		}
-
-		if ((this.request.get['filter_date_to'])) {
-			url += '&filter_date_to=' + this.request.get['filter_date_to'];
-		}
-
-		if ((this.request.get['sort'])) {
-			url += '&sort=' + this.request.get['sort'];
-		}
-
-		if ((this.request.get['order'])) {
-			url += '&order=' + this.request.get['order'];
-		}
-
-		if ((this.request.get['page'])) {
-			url += '&page=' + this.request.get['page'];
-		}
-
-		data['action'] = await this.url.link('marketing/marketing.list', 'user_token=' + this.session.data['user_token'] + url);
-
-		data['marketings'] = [];
-
-		let filter_data = {
-			'filter_name': filter_name,
-			'filter_code': filter_code,
-			'filter_date_from': filter_date_from,
-			'filter_date_to': filter_date_to,
-			'sort': sort,
-			'order': order,
-			'start': (page - 1) * Number(this.config.get('config_pagination_admin')),
-			'limit': this.config.get('config_pagination_admin')
-		};
-
-		this.load.model('marketing/marketing', this);
-
-		const marketing_total = await this.model_marketing_marketing.getTotalMarketings(filter_data);
-
-		const results = await this.model_marketing_marketing.getMarketings(filter_data);
+		results = await this.model_marketing_marketing.getMarketings(filter_data);
 
 		for (let result of results) {
 			data['marketings'].push({
-				'marketing_id': result['marketing_id'],
-				'name': result['name'],
-				'code': result['code'],
-				'clicks': result['clicks'],
-				'orders': result['orders'],
-				'date_added': date(this.language.get('date_format_short'), new Date(result['date_added'])),
-				'edit': await this.url.link('marketing/marketing.form', 'user_token=' + this.session.data['user_token'] + '&marketing_id=' + result['marketing_id'] + url)
-			});
+				'marketing_id' : result['marketing_id'],
+				'name'         : result['name'],
+				'code'         : result['code'],
+				'clicks'       : result['clicks'],
+				'orders'       : result['orders'],
+				'date_added'   : date(this.language.get('date_format_short'), strtotime(result['date_added'])),
+				'edit'         : await this.url.link('marketing/marketing/edit', 'user_token=' + this.session.data['user_token'] + '&marketing_id=' + result['marketing_id'] + url, true)
+			);
+		}
+
+		data['user_token'] = this.session.data['user_token'];
+
+		if ((this.error['warning'])) {
+			data['error_warning'] = this.error['warning'];
+		} else {
+			data['error_warning'] = '';
+		}
+
+		if ((this.session.data['success'])) {
+			data['success'] = this.session.data['success'];
+
+			delete this.session.data['success']);
+		} else {
+			data['success'] = '';
+		}
+
+		if ((this.request.post['selected'])) {
+			data['selected'] = this.request.post['selected'];
+		} else {
+			data['selected'] = {};
 		}
 
 		url = '';
 
 		if ((this.request.get['filter_name'])) {
-			url += '&filter_name=' + encodeURIComponent(html_entity_decode(this.request.get['filter_name']));
+			url += '&filter_name=' + urlencode(html_entity_decode(this.request.get['filter_name']));
 		}
 
 		if ((this.request.get['filter_code'])) {
 			url += '&filter_code=' + this.request.get['filter_code'];
 		}
 
-		if ((this.request.get['filter_date_from'])) {
-			url += '&filter_date_from=' + this.request.get['filter_date_from'];
-		}
-
-		if ((this.request.get['filter_date_to'])) {
-			url += '&filter_date_to=' + this.request.get['filter_date_to'];
+		if ((this.request.get['filter_date_added'])) {
+			url += '&filter_date_added=' + this.request.get['filter_date_added'];
 		}
 
 		if (order == 'ASC') {
@@ -225,26 +297,26 @@ module.exports = class MarketingController extends global['\Opencart\System\Engi
 			url += '&order=ASC';
 		}
 
-		data['sort_name'] = await this.url.link('marketing/marketing.list', 'user_token=' + this.session.data['user_token'] + '&sort=m.name' + url);
-		data['sort_code'] = await this.url.link('marketing/marketing.list', 'user_token=' + this.session.data['user_token'] + '&sort=m.code' + url);
-		data['sort_date_added'] = await this.url.link('marketing/marketing.list', 'user_token=' + this.session.data['user_token'] + '&sort=m.date_added' + url);
+		if ((this.request.get['page'])) {
+			url += '&page=' + this.request.get['page'];
+		}
+
+		data['sort_name'] = await this.url.link('marketing/marketing', 'user_token=' + this.session.data['user_token'] + '&sort=m.name' + url, true);
+		data['sort_code'] = await this.url.link('marketing/marketing', 'user_token=' + this.session.data['user_token'] + '&sort=m.code' + url, true);
+		data['sort_date_added'] = await this.url.link('marketing/marketing', 'user_token=' + this.session.data['user_token'] + '&sort=m.date_added' + url, true);
 
 		url = '';
 
 		if ((this.request.get['filter_name'])) {
-			url += '&filter_name=' + encodeURIComponent(html_entity_decode(this.request.get['filter_name']));
+			url += '&filter_name=' + urlencode(html_entity_decode(this.request.get['filter_name']));
 		}
 
 		if ((this.request.get['filter_code'])) {
 			url += '&filter_code=' + this.request.get['filter_code'];
 		}
 
-		if ((this.request.get['filter_date_from'])) {
-			url += '&filter_date_from=' + this.request.get['filter_date_from'];
-		}
-
-		if ((this.request.get['filter_date_to'])) {
-			url += '&filter_date_to=' + this.request.get['filter_date_to'];
+		if ((this.request.get['filter_date_added'])) {
+			url += '&filter_date_added=' + this.request.get['filter_date_added'];
 		}
 
 		if ((this.request.get['sort'])) {
@@ -255,48 +327,63 @@ module.exports = class MarketingController extends global['\Opencart\System\Engi
 			url += '&order=' + this.request.get['order'];
 		}
 
-		data['pagination'] = await this.load.controller('common/pagination', {
-			'total': marketing_total,
-			'page': page,
-			'limit': this.config.get('config_pagination_admin'),
-			'url': await this.url.link('marketing/marketing.list', 'user_token=' + this.session.data['user_token'] + url + '&page={page}')
-		});
+		pagination = new Pagination();
+		pagination.total = marketing_total;
+		pagination.page = page;
+		pagination.limit = this.config.get('config_limit_admin');
+		pagination.url = await this.url.link('marketing/marketing', 'user_token=' + this.session.data['user_token'] + url + '&page={page}', true);
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (marketing_total) ? ((page - 1) * Number(this.config.get('config_pagination_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_pagination_admin'))) > (marketing_total - this.config.get('config_pagination_admin'))) ? marketing_total : (((page - 1) * Number(this.config.get('config_pagination_admin'))) + this.config.get('config_pagination_admin')), marketing_total, Math.ceil(marketing_total / this.config.get('config_pagination_admin')));
+		data['pagination'] = pagination.render();
+
+		data['results'] = sprintf(this.language.get('text_pagination'), (marketing_total) ? ((page - 1) * this.config.get('config_limit_admin')) + 1 : 0, (((page - 1) * this.config.get('config_limit_admin')) > (marketing_total - this.config.get('config_limit_admin'))) ? marketing_total : (((page - 1) * this.config.get('config_limit_admin')) + this.config.get('config_limit_admin')), marketing_total, ceil(marketing_total / this.config.get('config_limit_admin')));
+
+		data['filter_name'] = filter_name;
+		data['filter_code'] = filter_code;
+		data['filter_date_added'] = filter_date_added;
 
 		data['sort'] = sort;
 		data['order'] = order;
 
-		return await this.load.view('marketing/marketing_list', data);
+		data['header'] = await this.load.controller('common/header');
+		data['column_left'] = await this.load.controller('common/column_left');
+		data['footer'] = await this.load.controller('common/footer');
+
+		this.response.setOutput(await this.load.view('marketing/marketing_list', data));
 	}
 
-	/**
-	 * @return void
-	 */
-	async form() {
-		const data = {};
-		await this.load.language('marketing/marketing');
-
-		this.document.setTitle(this.language.get('heading_title'));
-
+	async getForm() {
 		data['text_form'] = !(this.request.get['marketing_id']) ? this.language.get('text_add') : this.language.get('text_edit');
 
-		let url = '';
+		if ((this.error['warning'])) {
+			data['error_warning'] = this.error['warning'];
+		} else {
+			data['error_warning'] = '';
+		}
+
+		if ((this.error['name'])) {
+			data['error_name'] = this.error['name'];
+		} else {
+			data['error_name'] = '';
+		}
+
+		if ((this.error['code'])) {
+			data['error_code'] = this.error['code'];
+		} else {
+			data['error_code'] = '';
+		}
+
+		url = '';
 
 		if ((this.request.get['filter_name'])) {
-			url += '&filter_name=' + encodeURIComponent(html_entity_decode(this.request.get['filter_name']));
+			url += '&filter_name=' + urlencode(html_entity_decode(this.request.get['filter_name']));
 		}
 
 		if ((this.request.get['filter_code'])) {
 			url += '&filter_code=' + this.request.get['filter_code'];
 		}
 
-		if ((this.request.get['filter_date_from'])) {
-			url += '&filter_date_from=' + this.request.get['filter_date_from'];
-		}
-
-		if ((this.request.get['filter_date_to'])) {
-			url += '&filter_date_to=' + this.request.get['filter_date_to'];
+		if ((this.request.get['filter_date_added'])) {
+			url += '&filter_date_added=' + this.request.get['filter_date_added'];
 		}
 
 		if ((this.request.get['sort'])) {
@@ -314,53 +401,54 @@ module.exports = class MarketingController extends global['\Opencart\System\Engi
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text': this.language.get('text_home'),
-			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'])
-		});
+			'text' : this.language.get('text_home'),
+			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+		);
 
 		data['breadcrumbs'].push({
-			'text': this.language.get('heading_title'),
-			'href': await this.url.link('marketing/marketing', 'user_token=' + this.session.data['user_token'] + url)
-		});
+			'text' : this.language.get('heading_title'),
+			'href' : await this.url.link('marketing/marketing', 'user_token=' + this.session.data['user_token'] + url, true)
+		);
 
-		data['save'] = await this.url.link('marketing/marketing.save', 'user_token=' + this.session.data['user_token']);
-		data['back'] = await this.url.link('marketing/marketing', 'user_token=' + this.session.data['user_token'] + url);
-		let marketing_info;
-		if ((this.request.get['marketing_id'])) {
-			this.load.model('marketing/marketing', this);
+		if (!(this.request.get['marketing_id'])) {
+			data['action'] = await this.url.link('marketing/marketing/add', 'user_token=' + this.session.data['user_token'] + url, true);
+		} else {
+			data['action'] = await this.url.link('marketing/marketing/edit', 'user_token=' + this.session.data['user_token'] + '&marketing_id=' + this.request.get['marketing_id'] + url, true);
+		}
 
+		data['cancel'] = await this.url.link('marketing/marketing', 'user_token=' + this.session.data['user_token'] + url, true);
+
+		if ((this.request.get['marketing_id']) && (this.request.server['method'] != 'POST')) {
 			marketing_info = await this.model_marketing_marketing.getMarketing(this.request.get['marketing_id']);
 		}
 
-		if ((this.request.get['marketing_id'])) {
-			data['marketing_id'] = this.request.get['marketing_id'];
-		} else {
-			data['marketing_id'] = 0;
-		}
+		data['user_token'] = this.session.data['user_token'];
 
 		data['store'] = HTTP_CATALOG;
 
-		if ((marketing_info)) {
+		if ((this.request.post['name'])) {
+			data['name'] = this.request.post['name'];
+		} else if ((marketing_info)) {
 			data['name'] = marketing_info['name'];
 		} else {
 			data['name'] = '';
 		}
 
-		if ((marketing_info)) {
+		if ((this.request.post['description'])) {
+			data['description'] = this.request.post['description'];
+		} else if ((marketing_info)) {
 			data['description'] = marketing_info['description'];
 		} else {
 			data['description'] = '';
 		}
 
-		if ((marketing_info)) {
+		if ((this.request.post['code'])) {
+			data['code'] = this.request.post['code'];
+		} else if ((marketing_info)) {
 			data['code'] = marketing_info['code'];
 		} else {
 			data['code'] = uniqid();
 		}
-
-		data['report'] = await this.getReport();
-
-		data['user_token'] = this.session.data['user_token'];
 
 		data['header'] = await this.load.controller('common/header');
 		data['column_left'] = await this.load.controller('common/column_left');
@@ -369,143 +457,39 @@ module.exports = class MarketingController extends global['\Opencart\System\Engi
 		this.response.setOutput(await this.load.view('marketing/marketing_form', data));
 	}
 
-	/**
-	 * @return void
-	 */
-	async save() {
-		await this.load.language('marketing/marketing');
-
-		const json = { error: {} };
-
+	async validateForm() {
 		if (!await this.user.hasPermission('modify', 'marketing/marketing')) {
-			json['error']['warning'] = this.language.get('error_permission');
+			this.error['warning'] = this.language.get('error_permission');
 		}
 
 		if ((oc_strlen(this.request.post['name']) < 1) || (oc_strlen(this.request.post['name']) > 32)) {
-			json['error']['name'] = this.language.get('error_name');
+			this.error['name'] = this.language.get('error_name');
 		}
 
 		if (!this.request.post['code']) {
-			json['error']['code'] = this.language.get('error_code');
+			this.error['code'] = this.language.get('error_code');
 		}
 
-		this.load.model('marketing/marketing', this);
+		marketing_info = await this.model_marketing_marketing.getMarketingByCode(this.request.post['code']);
 
-		const marketing_info = await this.model_marketing_marketing.getMarketingByCode(this.request.post['code']);
-
-		if (marketing_info.marketing_id && (!(this.request.post['marketing_id']) || (this.request.post['marketing_id'] != marketing_info['marketing_id']))) {
-			json['error']['code'] = this.language.get('error_exists');
-		}
-
-		if (!Object.keys(json.error).length) {
-			this.request.post['marketing_id'] = Number(this.request.post['marketing_id']);
-			if (!this.request.post['marketing_id']) {
-				json['marketing_id'] = await this.model_marketing_marketing.addMarketing(this.request.post);
-			} else {
-				await this.model_marketing_marketing.editMarketing(this.request.post['marketing_id'], this.request.post);
+		if (!(this.request.get['marketing_id'])) {
+			if (marketing_info) {
+				this.error['code'] = this.language.get('error_exists');
 			}
-
-			json['success'] = this.language.get('text_success');
+		} else {
+			if (marketing_info && (this.request.get['marketing_id'] != marketing_info['marketing_id'])) {
+				this.error['code'] = this.language.get('error_exists');
+			}
 		}
 
-		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(json);
+		return Object.keys(this.error).length?false:true
 	}
 
-	/**
-	 * @return void
-	 */
-	async delete() {
-		await this.load.language('marketing/marketing');
-
-		const json = {};
-
-		let selected = [];
-		if ((this.request.post['selected'])) {
-			selected = this.request.post['selected'];
-		}
-
+	async validateDelete() {
 		if (!await this.user.hasPermission('modify', 'marketing/marketing')) {
-			json['error'] = this.language.get('error_permission');
+			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		if (!Object.keys(json).length) {
-			this.load.model('marketing/marketing', this);
-
-			for (let marketing_id of selected) {
-				await this.model_marketing_marketing.deleteMarketing(marketing_id);
-			}
-
-			json['success'] = this.language.get('text_success');
-		}
-
-		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(json);
-	}
-
-	/**
-	 * @return void
-	 */
-	async report() {
-		await this.load.language('marketing/marketing');
-
-		this.response.setOutput(await this.getReport());
-	}
-
-	/**
-	 * @return string
-	 */
-	async getReport() {
-		const data = {};
-		let marketing_id = 0;
-		if ((this.request.get['marketing_id'])) {
-			marketing_id = this.request.get['marketing_id'];
-		}
-		let page = 1;
-		if ((this.request.get['page']) && this.request.get['route'] == 'marketing/marketing.report') {
-			page = Number(this.request.get['page']);
-		}
-
-		let limit = 10;
-
-		data['reports'] = [];
-
-		this.load.model('marketing/marketing', this);
-		this.load.model('customer/customer', this);
-		this.load.model('setting/store', this);
-
-		const results = await this.model_marketing_marketing.getReports(marketing_id, (page - 1) * limit, limit);
-
-		for (let result of results) {
-			const store_info = await this.model_setting_store.getStore(result['store_id']);
-			let store = '';
-			if (store_info && store_info.store_id) {
-				store = store_info['name'];
-			} else if (!result['store_id']) {
-				store = this.config.get('config_name');
-			}
-
-			data['reports'].push({
-				'ip': result['ip'],
-				'account': this.model_customer_customer.getTotalCustomersByIp(result['ip']),
-				'store': store,
-				'country': result['country'],
-				'date_added': date(this.language.get('datetime_format'), new Date(result['date_added'])),
-				'filter_ip': await this.url.link('customer/customer', 'user_token=' + this.session.data['user_token'] + '&filter_ip=' + result['ip'])
-			});
-		}
-
-		const report_total = await this.model_marketing_marketing.getTotalReports(marketing_id);
-
-		data['pagination'] = await this.load.controller('common/pagination', {
-			'total': report_total,
-			'page': page,
-			'limit': limit,
-			'url': await this.url.link('marketing/marketing.report', 'user_token=' + this.session.data['user_token'] + '&marketing_id=' + marketing_id + '&page={page}')
-		});
-
-		data['results'] = sprintf(this.language.get('text_pagination'), (report_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (report_total - limit)) ? report_total : (((page - 1) * limit) + limit), report_total, Math.ceil(report_total / limit));
-
-		return await this.load.view('marketing/marketing_report', data);
+		return Object.keys(this.error).length?false:true
 	}
 }

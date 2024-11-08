@@ -1,19 +1,4 @@
-
-const sharp = require('sharp');
-const ico = require("sharp-ico");
-const expressPath = require('path');
-module.exports = class ImageToolModel extends global['\Opencart\System\Engine\Model'] {
-	constructor(registry) {
-		super(registry)
-	}
-	/**
-	 * @param filename
-	 * @param    width
-	 * @param    height
-	 *
-	 * @return string
-	 * @throws \Exception
-	 */
+module.exports = class ModelToolImage extends Model {
 	async resize(filename, width_new, height_new) {
 		if (!fs.existsSync(DIR_IMAGE + filename) || fs.realpathSync(DIR_IMAGE + filename).substring(0, DIR_IMAGE.length).replaceAll('\\', '/') != DIR_IMAGE) {
 			return '';

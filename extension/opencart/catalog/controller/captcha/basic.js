@@ -1,5 +1,5 @@
 const { createCanvas } = require('canvas');
-global['\Opencart\Catalog\Controller\Extension\Opencart\Captcha\Basic'] = class Basic extends global['\Opencart\System\Engine\Controller'] {
+global['\Opencart\Catalog\Controller\Extension\Opencart\Captcha\Basic'] = class Basic extends Controller {
 	constructor(registry) {
 		super(registry)
 	}

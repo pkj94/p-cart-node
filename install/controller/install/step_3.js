@@ -1,6 +1,6 @@
 
 const html_entity_decode = require('locutus/php/strings/html_entity_decode');
-global['\Opencart\Install\Controller\Install\Step3'] = class Step3 extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class Step3 extends Controller {
     constructor(registry) {
         super(registry);
         this.error = {};
@@ -18,20 +18,20 @@ global['\Opencart\Install\Controller\Install\Step3'] = class Step3 extends globa
                 // Catalog config.json
                 let output = {};
 
-                output.APPLICATION = 'Catalog';
                 output.HTTP_SERVER = HTTP_OPENCART;
+                output.HTTPS_SERVER = HTTP_OPENCART;
                 output.DIR_OPENCART = DIR_OPENCART;
                 output.DIR_APPLICATION = DIR_OPENCART + 'catalog/';
-                output.DIR_EXTENSION = DIR_OPENCART + 'extension/';
                 output.DIR_IMAGE = DIR_OPENCART + 'image/';
                 output.DIR_SYSTEM = DIR_OPENCART + 'system/';
                 output.DIR_STORAGE = output.DIR_SYSTEM + 'storage/';
                 output.DIR_LANGUAGE = output.DIR_APPLICATION + 'language/';
-                output.DIR_TEMPLATE = output.DIR_APPLICATION + 'view/template/';
+                output.DIR_TEMPLATE = output.DIR_APPLICATION + 'view/theme/';
                 output.DIR_CONFIG = output.DIR_SYSTEM + 'config/';
                 output.DIR_CACHE = output.DIR_STORAGE + 'cache/';
                 output.DIR_DOWNLOAD = output.DIR_STORAGE + 'download/';
                 output.DIR_LOGS = output.DIR_STORAGE + 'logs/';
+                output.DIR_MODIFICATION = output.DIR_STORAGE + 'modification/';
                 output.DIR_SESSION = output.DIR_STORAGE + 'session/';
                 output.DIR_UPLOAD = output.DIR_STORAGE + 'upload/';
                 output.DB_DRIVER = this.addslashes(this.request.post['db_driver']);
@@ -41,7 +41,7 @@ global['\Opencart\Install\Controller\Install\Step3'] = class Step3 extends globa
                 output.DB_DATABASE = this.addslashes(this.request.post['db_database']);
                 output.DB_PORT = this.request.post['db_port'];
                 output.DB_PREFIX = this.addslashes(this.request.post['db_prefix']);
-                output.DB_DEBUG = true;
+                output.DB_DEBUG = false;
                 output.SERVER_PORT = this.request.post['port'] || 8080;
 
 
@@ -49,12 +49,12 @@ global['\Opencart\Install\Controller\Install\Step3'] = class Step3 extends globa
 
                 // Admin config.json
                 output = {};
-                output.APPLICATION = 'Admin';
                 output.HTTP_SERVER = HTTP_OPENCART + 'admin/';
+                output.HTTPS_SERVER = HTTP_OPENCART + 'admin/';
                 output.HTTP_CATALOG = HTTP_OPENCART;
+                output.HTTPS_CATALOG = HTTP_OPENCART;
                 output.DIR_OPENCART = DIR_OPENCART;
                 output.DIR_APPLICATION = DIR_OPENCART + 'admin/';
-                output.DIR_EXTENSION = DIR_OPENCART + 'extension/';
                 output.DIR_IMAGE = DIR_OPENCART + 'image/';
                 output.DIR_SYSTEM = DIR_OPENCART + 'system/';
                 output.DIR_CATALOG = DIR_OPENCART + 'catalog/';
@@ -65,6 +65,7 @@ global['\Opencart\Install\Controller\Install\Step3'] = class Step3 extends globa
                 output.DIR_CACHE = output.DIR_STORAGE + 'cache/';
                 output.DIR_DOWNLOAD = output.DIR_STORAGE + 'download/';
                 output.DIR_LOGS = output.DIR_STORAGE + 'logs/';
+                output.DIR_MODIFICATION = output.DIR_STORAGE + 'modification/';
                 output.DIR_SESSION = output.DIR_STORAGE + 'session/';
                 output.DIR_UPLOAD = output.DIR_STORAGE + 'upload/';
                 output.DB_DRIVER = this.addslashes(this.request.post['db_driver']);
@@ -74,13 +75,13 @@ global['\Opencart\Install\Controller\Install\Step3'] = class Step3 extends globa
                 output.DB_DATABASE = this.addslashes(this.request.post['db_database']);
                 output.DB_PORT = this.request.post['db_port'];
                 output.DB_PREFIX = this.addslashes(this.request.post['db_prefix']);
-                output.DB_DEBUG = true;
+                output.DB_DEBUG = false;
                 output.SERVER_PORT = this.request.post['port'] || 8080;
                 output.OPENCART_SERVER = 'https://www.opencart.com/';
 
                 fs.writeFileSync(DIR_OPENCART + 'admin/config.json', JSON.stringify(output, null, "\t"));
 
-                this.response.setRedirect(await this.url.link('install/step_4', 'language=' + this.config.get('language_code')));
+                this.response.setRedirect(await this.url.link('install/step_4'));
             } catch (e) {
                 console.log(e);
                 this.error['warning'] = e.message;
@@ -98,9 +99,7 @@ global['\Opencart\Install\Controller\Install\Step3'] = class Step3 extends globa
         data['text_mysqli'] = this.language.get('text_mysqli');
         data['text_mpdo'] = this.language.get('text_mpdo');
         data['text_pgsql'] = this.language.get('text_pgsql');
-        data['text_help'] = this.language.get('text_help');
-        data['text_cpanel'] = this.language.get('text_cpanel');
-        data['text_plesk'] = this.language.get('text_plesk');
+
 
         data['entry_db_driver'] = this.language.get('entry_db_driver');
         data['entry_db_hostname'] = this.language.get('entry_db_hostname');
@@ -127,9 +126,13 @@ global['\Opencart\Install\Controller\Install\Step3'] = class Step3 extends globa
         data['error_password'] = this.error['password'] || '';
         data['error_email'] = this.error['email'] || '';
 
-        data['action'] = await this.url.link('install/step_3', 'language=' + this.config.get('language_code'));
+        data['action'] = await this.url.link('install/step_3');
 
-        const db_drivers = ['mysqli', 'mongodb'];
+        const db_drivers = [
+            'mysqli',
+            'pdo',
+            'pgsql'
+        ];
         data['drivers'] = [];
 
         db_drivers.forEach(db_driver => {
@@ -152,11 +155,11 @@ global['\Opencart\Install\Controller\Install\Step3'] = class Step3 extends globa
         data['password'] = this.request.post['password'] || '';
         data['email'] = this.request.post['email'] || '';
 
-        data['back'] = await this.url.link('install/step_2', 'language=' + this.config.get('language_code'));
+        data['back'] = await this.url.link('install/step_2');
 
         data['footer'] = this.load.controller('common/footer');
         data['header'] = this.load.controller('common/header');
-        data['language'] = this.load.controller('common/language');
+        data['column_left'] = this.load.controller('common/column_left');
 
         this.response.setOutput(this.load.view('install/step_3', data));
     }
@@ -182,13 +185,17 @@ global['\Opencart\Install\Controller\Install\Step3'] = class Step3 extends globa
             this.error['db_prefix'] = this.language.get('error_db_prefix');
         }
 
-        const db_drivers = ['mysqli', 'mongodb'];
+        const db_drivers = [
+            'mysqli',
+            'pdo',
+            'pgsql'
+        ];
 
         if (!db_drivers.includes(this.request.post['db_driver'])) {
             this.error['db_driver'] = this.language.get('error_db_driver');
         } else {
             try {
-                const db = await new global['\Opencart\System\Library\Db'](this.request.post['db_driver'], this.html_entity_decode(this.request.post['db_hostname']), this.html_entity_decode(this.request.post['db_username']), this.html_entity_decode(this.request.post['db_password']), this.html_entity_decode(this.request.post['db_database']), this.request.post['db_port']).connect();
+                const db = await new global.Db(this.request.post['db_driver'], this.html_entity_decode(this.request.post['db_hostname']), this.html_entity_decode(this.request.post['db_username']), this.html_entity_decode(this.request.post['db_password']), this.html_entity_decode(this.request.post['db_database']), this.request.post['db_port']).connect();
             } catch (e) {
                 console.log('e----------', e)
                 this.error['warning'] = e.message;

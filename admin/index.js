@@ -1,5 +1,5 @@
 
-module.exports = function (registry) {
+module.exports = function () {
     const loadAdminControllers = async (req, res, next) => {
         if (fs.readFileSync('./config.json').toString())
             for (let [key, value] of Object.entries(require('./config.json'))) {
@@ -53,15 +53,15 @@ module.exports = function (registry) {
                     break;
             }
 
-            if (config.get('error_log')) {
+            if (registry.get('config').get('error_log')) {
                 registry.get('log').write('JavaScript ' + errorType + ':  ' + error.toString());
             }
 
-            if (config.get('error_display')) {
+            if (registry.get('config').get('error_display')) {
                 res.status(200).send('<b>' + errorType + '</b>: ' + error.toString());
             } else {
-                console.log(config.get('error_page'))
-                res.redirect(config.get('error_page'));
+                console.log(registry.get('config').get('error_page'))
+                res.redirect(registry.get('config').get('error_page'));
             }
 
             return res.status(200).send(registry.get('response').outputData);

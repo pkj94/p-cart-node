@@ -3,7 +3,7 @@
  *
  * @package Opencart\Admin\Controller\Extension\Opencart\Module
  */
-global['\Opencart\Admin\Controller\Extension\Opencart\Module\Banner'] = class Banner extends global['\Opencart\System\Engine\Controller'] {
+global['\Opencart\Admin\Controller\Extension\Opencart\Module\Banner'] = class Banner extends Controller {
 	/**
 	 * @return void
 	 */

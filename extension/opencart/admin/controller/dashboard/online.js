@@ -3,7 +3,7 @@
  *
  * @package Opencart\Admin\Controller\Extension\Opencart\Dashboard
  */
-global['\Opencart\Admin\Controller\Extension\Opencart\Dashboard\Online'] = class Online extends global['\Opencart\System\Engine\Controller'] {
+global['\Opencart\Admin\Controller\Extension\Opencart\Dashboard\Online'] = class Online extends Controller {
 	constructor(registry) {
 		super(registry)
 	}

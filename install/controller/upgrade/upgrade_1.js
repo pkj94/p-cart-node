@@ -1,5 +1,5 @@
 
-global['\Opencart\Install\Controller\Upgrade\Upgrade1'] = class Upgrade1 extends global['\Opencart\System\Engine\Controller'] {
+global['\Opencart\Install\Controller\Upgrade\Upgrade1'] = class Upgrade1 extends Controller {
 	constructor(registry) {
 		super(registry);
 	}

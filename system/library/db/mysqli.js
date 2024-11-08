@@ -61,7 +61,7 @@ module.exports = class MySQLiDBLibrary {
     }
 
     escape(value) {
-        return this.connection.escape(value);
+        return value;
     }
 
     countAffected() {

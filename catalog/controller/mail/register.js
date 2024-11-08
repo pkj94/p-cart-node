@@ -1,7 +1,7 @@
 const sprintf = require("locutus/php/strings/sprintf");
 const trim = require("locutus/php/strings/trim");
 
-module.exports = class Register extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class Register extends Controller {
 	// catalog/model/account/customer/addCustomer/after
 	/**
 	 * @param string route

@@ -80,10 +80,21 @@ global.library = (className) => {
         return false;
     }
 }
-// Load environment variables
-// dotenv.config({ path: expressPath.join(__dirname, 'config.env') });
-
-// Autoloader equivalent in Node.js
+require(DIR_SYSTEM + 'helper/general.js');
+require(DIR_SYSTEM + 'helper/utf8.js');
+fs.readdirSync(DIR_SYSTEM + 'library').map(a => {
+    if (is_file(DIR_SYSTEM + 'library/' + a)) {
+        global[ucfirst(a.replace('.js', ''))] = require(DIR_SYSTEM + 'library/' + a);
+    } else {
+        fs.readdirSync(DIR_SYSTEM + 'library/' + a).map(aa => {
+            if (is_file(DIR_SYSTEM + 'library/' + a + '/' + aa)) {
+                global[ucfirst(a.replace('.js', '')) + ucfirst(aa.replace('.js', ''))] = require(DIR_SYSTEM + 'library/' + a + '/' + aa);
+            }
+        });
+    }
+    return a;
+})
+// Engine
 global.Action = require(modification(DIR_SYSTEM + 'engine/action.js'));
 global.Controller = require(modification(DIR_SYSTEM + 'engine/controller.js'));
 global.Event = require(modification(DIR_SYSTEM + 'engine/event.js'));
@@ -91,11 +102,13 @@ global.Router = require(modification(DIR_SYSTEM + 'engine/router.js'));
 global.Loader = require(modification(DIR_SYSTEM + 'engine/loader.js'));
 global.Model = require(modification(DIR_SYSTEM + 'engine/model.js'));
 global.Registry = require(modification(DIR_SYSTEM + 'engine/registry.js'));
-global.Proxy = require(modification(DIR_SYSTEM + 'engine/proxy.js'));
-require(DIR_SYSTEM + 'helper/general.js');
-require(DIR_SYSTEM + 'helper/utf8.js');
+global.ProxyLocal = require(modification(DIR_SYSTEM + 'engine/proxy.js'));
+// Helper
+
+
 
 global.start = (application_config, req, res, next) => {
-    const framework = require(DIR_SYSTEM + 'framework.js');
-    new framework().init(application_config);
+    console.log(application_config,req.url)
+    const framework = require(DIR_SYSTEM + 'framework');
+    return new framework().init(application_config, req, res, next);
 }

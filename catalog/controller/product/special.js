@@ -1,7 +1,7 @@
 const sprintf = require("locutus/php/strings/sprintf");
 const strip_tags = require("locutus/php/strings/strip_tags");
 
-module.exports = class Special extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class Special extends Controller {
 	/**
 	 * @return void
 	 */

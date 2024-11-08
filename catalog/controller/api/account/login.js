@@ -1,4 +1,4 @@
-module.exports = class Login extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class Login extends Controller {
 	/*
 	 * Opencart\Catalog\Controller\Api\Account\Login+Index
 	 *

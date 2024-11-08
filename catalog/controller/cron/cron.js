@@ -1,6 +1,6 @@
 const strtotime = require("locutus/php/datetime/strtotime");
 
-module.exports = class Cron extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class Cron extends Controller {
 	/**
 	 * @return void
 	 */

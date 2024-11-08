@@ -1,6 +1,4 @@
-const path = require('path');
-const Framework = require('../system/framework');
-module.exports = function (registry) {
+module.exports = function () {
     const loadInstall = async (req, res, next) => {
         let protocol = req.protocol + '://';
         // APPLICATION
@@ -10,7 +8,7 @@ module.exports = function (registry) {
         global.HTTP_OPENCART = `${protocol}${req.get('host') + req.route.path.replace(/\/+$/, '').replace(/install\/?$/, '')}`;
         // console.log('HTTP_OPENCART', HTTP_OPENCART)
         // DIR
-        global.DIR_OPENCART = path.join(__dirname, '..', '/').replace(/\\/g, '/');
+        global.DIR_OPENCART = expressPath.join(__dirname, '..', '/').replace(/\\/g, '/');
         global.DIR_APPLICATION = DIR_OPENCART + 'install/';
         global.DIR_SYSTEM = DIR_OPENCART + 'system/';
         global.DIR_STORAGE = DIR_SYSTEM + 'storage/';
@@ -35,10 +33,10 @@ module.exports = function (registry) {
 
 
         start('install', req, res, next).then(output => {
-            if (registry.get('response').redirect) {
+            if (global.registry.get('response').redirect) {
                 res.redirect(registry.get('response').redirect);
             } else {
-                registry.get('response').headers.forEach(header => {
+                global.registry.get('response').headers.forEach(header => {
                     res.header(header.split(':')[0].trim(), header.split(':')[1].trim());
                 });
                 res.status(200).send(output);

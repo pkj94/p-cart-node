@@ -1,4 +1,4 @@
-global['\Opencart\System\Engine\Router'] = class Router {
+module.exports = class Router {
     constructor(registry) {
         this.registry = registry;
         this.preActions = [];
@@ -14,13 +14,13 @@ global['\Opencart\System\Engine\Router'] = class Router {
 
         for (let preAction of this.preActions) {
             const result = await this.execute(preAction);
-            if (result instanceof global['\Opencart\System\Engine\Action']) {
+            if (result instanceof Action) {
                 action = result;
                 break;
             }
         }
 
-        while (action instanceof global['\Opencart\System\Engine\Action']) {
+        while (action instanceof Action) {
             action = await this.execute(action);
         }
     }
@@ -28,7 +28,7 @@ global['\Opencart\System\Engine\Router'] = class Router {
     async execute(action) {
         const result = await action.execute(this.registry);
 
-        if (result instanceof global['\Opencart\System\Engine\Action']) {
+        if (result instanceof Action) {
             return result;
         }
 

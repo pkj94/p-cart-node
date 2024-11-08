@@ -1,4 +1,4 @@
-global['\Opencart\Install\Controller\Install\Promotion'] = class Promotion extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class ControllerInstallPromotion extends Controller {
     constructor(registry) {
         super(registry);
     }

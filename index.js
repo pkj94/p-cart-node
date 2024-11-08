@@ -19,7 +19,6 @@ global.APP = () => {
     catalogRoutes();
 
 }
-
 process.setMaxListeners(100)
 var compression = require('compression')
 const bodyParser = require('body-parser');
@@ -62,6 +61,11 @@ app.use(bodyParser.json({ limit: '50mb' }));
 
 app.use(compression());
 app.use('/image', express.static('image'));
+
+app.use('/install/view/stylesheet', express.static('install/view/stylesheet'));
+app.use('/install/view/javascript', express.static('install/view/javascript'));
+app.use('/install/view/image', express.static('install/view/image'));
+app.use('/install/language', express.static('install/language'));
 
 app.use('/catalog/view/stylesheet', express.static('catalog/view/stylesheet'));
 app.use('/catalog/view/javascript', express.static('catalog/view/javascript'));

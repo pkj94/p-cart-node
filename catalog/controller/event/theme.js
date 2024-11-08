@@ -1,6 +1,6 @@
 const html_entity_decode = require("locutus/php/strings/html_entity_decode");
 
-module.exports = class Theme extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class Theme extends Controller {
 	/**
 	 * @param string route
 	 * @param  args
