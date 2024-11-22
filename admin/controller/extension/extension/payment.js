@@ -106,7 +106,7 @@ module.exports = class ControllerExtensionExtensionPayment extends Controller {
 					'uninstall'  : await this.url.link('extension/extension/payment/uninstall', 'user_token=' + this.session.data['user_token'] + '&extension=' + extension, true),
 					'installed'  : in_array(extension, extensions),
 					'edit'       : await this.url.link('extension/payment/' + extension, 'user_token=' + this.session.data['user_token'], true)
-				);
+				});
 			}
 		}
 

@@ -46,7 +46,7 @@ module.exports = class ModelDesignBanner extends Model {
 		let sort_data = [
 			'name',
 			'status'
-		);
+		});
 
 		if ((data['sort']) && sort_data.includes(data['sort'])) {
 			sql += " ORDER BY " + data['sort'];
@@ -90,7 +90,7 @@ if (data['limit'] < 1) {
 				'link'       : banner_image['link'],
 				'image'      : banner_image['image'],
 				'sort_order' : banner_image['sort_order']
-			);
+			});
 		}
 
 		return banner_image_data;

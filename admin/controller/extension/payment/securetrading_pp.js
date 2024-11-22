@@ -198,17 +198,17 @@ module.exports = class ControllerExtensionPaymentSecureTradingPp extends Control
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_extension'),
 			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('extension/payment/securetrading_pp', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['geo_zones'] = await this.model_localisation_geo_zone.getGeoZones();
 		data['order_statuses'] = await this.model_localisation_order_status.getOrderStatuses();
@@ -223,14 +223,14 @@ module.exports = class ControllerExtensionPaymentSecureTradingPp extends Control
 			'MASTERCARDDEBIT' : 'MasterCard Debit',
 			'MAESTRO' : 'Maestro',
 			'PAYPAL' : 'PayPal',
-		);
+		});
 
 		data['settlement_statuses'] = array(
 			'0' : this.language.get('text_pending_settlement'),
 			'1' : this.language.get('text_pending_settlement_manually_overriden'),
 			'2' : this.language.get('text_pending_suspended'),
 			'100' : this.language.get('text_pending_settled'),
-		);
+		});
 
 		data['action'] = await this.url.link('extension/payment/securetrading_pp', 'user_token=' + this.session.data['user_token'], true);
 
@@ -308,7 +308,7 @@ module.exports = class ControllerExtensionPaymentSecureTradingPp extends Control
 						'order_status_id' : this.config.get('payment_securetrading_pp_authorisation_reversed_order_status_id'),
 						'notify' : false,
 						'comment' : '',
-					);
+					});
 
 					this.load.model('sale/order',this);
 
@@ -327,7 +327,7 @@ module.exports = class ControllerExtensionPaymentSecureTradingPp extends Control
 			json['msg'] = 'Missing data';
 		}
 
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 
 	async release() {
@@ -390,7 +390,7 @@ module.exports = class ControllerExtensionPaymentSecureTradingPp extends Control
 			json['msg'] = this.language.get('error_data_missing');
 		}
 
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 
 	async rebate() {
@@ -461,7 +461,7 @@ module.exports = class ControllerExtensionPaymentSecureTradingPp extends Control
 			json['msg'] = 'Missing data';
 		}
 
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 
 	async validate() {

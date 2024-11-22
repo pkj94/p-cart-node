@@ -6,7 +6,7 @@ module.exports = class ControllerCatalogManufacturer extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('catalog/manufacturer');
+		this.load.model('catalog/manufacturer',this);
 
 		await this.getList();
 	}
@@ -16,9 +16,9 @@ module.exports = class ControllerCatalogManufacturer extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('catalog/manufacturer');
+		this.load.model('catalog/manufacturer',this);
 
-		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_catalog_manufacturer.addManufacturer(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
@@ -48,9 +48,9 @@ module.exports = class ControllerCatalogManufacturer extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('catalog/manufacturer');
+		this.load.model('catalog/manufacturer',this);
 
-		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_catalog_manufacturer.editManufacturer(this.request.get['manufacturer_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
@@ -80,10 +80,11 @@ module.exports = class ControllerCatalogManufacturer extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('catalog/manufacturer');
+		this.load.model('catalog/manufacturer',this);
 
-		if ((this.request.post['selected']) && this.validateDelete()) {
-			for (this.request.post['selected'] of manufacturer_id) {
+		if ((this.request.post['selected']) && await this.validateDelete()) {
+this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
+			for (let manufacturer_id of this.request.post['selected']) {
 				await this.model_catalog_manufacturer.deleteManufacturer(manufacturer_id);
 			}
 
@@ -147,12 +148,12 @@ module.exports = class ControllerCatalogManufacturer extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('catalog/manufacturer', 'user_token=' + this.session.data['user_token'] + url, true)
-		);
+		});
 
 		data['add'] = await this.url.link('catalog/manufacturer/add', 'user_token=' + this.session.data['user_token'] + url, true);
 		data['delete'] = await this.url.link('catalog/manufacturer/delete', 'user_token=' + this.session.data['user_token'] + url, true);
@@ -162,9 +163,9 @@ module.exports = class ControllerCatalogManufacturer extends Controller {
 		filter_data = array(
 			'sort'  : sort,
 			'order' : order,
-			'start' : (page - 1) * this.config.get('config_limit_admin'),
-			'limit' : this.config.get('config_limit_admin')
-		);
+			'start' : (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit' : Number(this.config.get('config_limit_admin'))
+		});
 
 		manufacturer_total = await this.model_catalog_manufacturer.getTotalManufacturers();
 
@@ -176,7 +177,7 @@ module.exports = class ControllerCatalogManufacturer extends Controller {
 				'name'            : result['name'],
 				'sort_order'      : result['sort_order'],
 				'edit'            : await this.url.link('catalog/manufacturer/edit', 'user_token=' + this.session.data['user_token'] + '&manufacturer_id=' + result['manufacturer_id'] + url, true)
-			);
+			});
 		}
 
 		if ((this.error['warning'])) {
@@ -227,12 +228,12 @@ module.exports = class ControllerCatalogManufacturer extends Controller {
 		pagination = new Pagination();
 		pagination.total = manufacturer_total;
 		pagination.page = page;
-		pagination.limit = this.config.get('config_limit_admin');
+		pagination.limit = Number(this.config.get('config_limit_admin'));
 		pagination.url = await this.url.link('catalog/manufacturer', 'user_token=' + this.session.data['user_token'] + url + '&page={page}', true);
 
 		data['pagination'] = pagination.render();
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (manufacturer_total) ? ((page - 1) * this.config.get('config_limit_admin')) + 1 : 0, (((page - 1) * this.config.get('config_limit_admin')) > (manufacturer_total - this.config.get('config_limit_admin'))) ? manufacturer_total : (((page - 1) * this.config.get('config_limit_admin')) + this.config.get('config_limit_admin')), manufacturer_total, ceil(manufacturer_total / this.config.get('config_limit_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (manufacturer_total) ? ((page - 1) * Number(this.config.get('config_limit_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_limit_admin'))) > (manufacturer_total - Number(this.config.get('config_limit_admin')))) ? manufacturer_total : (((page - 1) * Number(this.config.get('config_limit_admin'))) + Number(this.config.get('config_limit_admin'))), manufacturer_total, Math.ceil(manufacturer_total / Number(this.config.get('config_limit_admin'))));
 
 		data['sort'] = sort;
 		data['order'] = order;
@@ -284,12 +285,12 @@ module.exports = class ControllerCatalogManufacturer extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('catalog/manufacturer', 'user_token=' + this.session.data['user_token'] + url, true)
-		);
+		});
 
 		if (!(this.request.get['manufacturer_id'])) {
 			data['action'] = await this.url.link('catalog/manufacturer/add', 'user_token=' + this.session.data['user_token'] + url, true);
@@ -320,15 +321,15 @@ module.exports = class ControllerCatalogManufacturer extends Controller {
 		data['stores'].push({
 			'store_id' : 0,
 			'name'     : this.language.get('text_default')
-		);
+		});
 
 		stores = await this.model_setting_store.getStores();
 
-		for (stores of store) {
+		for (let store of stores) {
 			data['stores'].push({
 				'store_id' : store['store_id'],
 				'name'     : store['name']
-			);
+			});
 		}
 
 		if ((this.request.post['manufacturer_store'])) {
@@ -396,10 +397,10 @@ module.exports = class ControllerCatalogManufacturer extends Controller {
 		}
 
 		if (this.request.post['manufacturer_seo_url']) {
-			this.load.model('design/seo_url');
+			this.load.model('design/seo_url',this);
 			
-			for (this.request.post['manufacturer_seo_url'] of store_id : language) {
-				for (language of language_id : keyword) {
+			for (let [store_id , language] of Object.entries(this.request.post['manufacturer_seo_url'])) {
+				for (let [language_id , keyword] of Object.entries(language)) {
 					if ((keyword)) {
 						if (count(array_keys(language, keyword)) > 1) {
 							this.error['keyword'][store_id][language_id] = this.language.get('error_unique');
@@ -425,9 +426,9 @@ module.exports = class ControllerCatalogManufacturer extends Controller {
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		this.load.model('catalog/product');
+		this.load.model('catalog/product',this);
 
-		for (this.request.post['selected'] of manufacturer_id) {
+		for (let manufacturer_id of this.request.post['selected']) {
 			product_total = await this.model_catalog_product.getTotalProductsByManufacturerId(manufacturer_id);
 
 			if (product_total) {
@@ -442,13 +443,13 @@ module.exports = class ControllerCatalogManufacturer extends Controller {
 		json = {};
 
 		if ((this.request.get['filter_name'])) {
-			this.load.model('catalog/manufacturer');
+			this.load.model('catalog/manufacturer',this);
 
 			filter_data = array(
 				'filter_name' : this.request.get['filter_name'],
 				'start'       : 0,
 				'limit'       : 5
-			);
+			});
 
 			results = await this.model_catalog_manufacturer.getManufacturers(filter_data);
 
@@ -456,7 +457,7 @@ module.exports = class ControllerCatalogManufacturer extends Controller {
 				json.push({
 					'manufacturer_id' : result['manufacturer_id'],
 					'name'            : strip_tags(html_entity_decode(result['name']))
-				);
+				});
 			}
 		}
 
@@ -469,6 +470,6 @@ module.exports = class ControllerCatalogManufacturer extends Controller {
 		array_multisort(sort_order, SORT_ASC, json);
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 }

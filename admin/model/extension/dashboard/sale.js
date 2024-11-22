@@ -35,7 +35,7 @@ module.exports = class ModelExtensionDashboardSale extends Model {
 			};
 		}
 
-		const query = await this.db.query("SELECT COUNT(*) AS total, HOUR(date_added) AS hour FROM `" + DB_PREFIX + "order` WHERE order_status_id IN(" + implode(",", implode) + ") AND DATE(date_added) = DATE(NOW()) GROUP BY HOUR(date_added) ORDER BY date_added ASC");
+		const query = await this.db.query("SELECT COUNT(*) AS total, HOUR(date_added) AS hour FROM `" + DB_PREFIX + "order` WHERE order_status_id IN(" + implode.join(",") + ") AND DATE(date_added) = DATE(NOW()) GROUP BY HOUR(date_added) ORDER BY date_added ASC");
 
 		for (let result of query.rows) {
 			order_data[result['hour']] = {
@@ -67,7 +67,7 @@ module.exports = class ModelExtensionDashboardSale extends Model {
 			};
 		}
 
-		const query = await this.db.query("SELECT COUNT(*) AS total, date_added FROM `" + DB_PREFIX + "order` WHERE order_status_id IN(" + implode(",", implode) + ") AND DATE(date_added) >= DATE('" + this.db.escape(date('Y-m-d', date_start)) + "') GROUP BY DAYNAME(date_added)");
+		const query = await this.db.query("SELECT COUNT(*) AS total, date_added FROM `" + DB_PREFIX + "order` WHERE order_status_id IN(" + implode.join(",") + ") AND DATE(date_added) >= DATE('" + this.db.escape(date('Y-m-d', date_start)) + "') GROUP BY DAYNAME(date_added)");
 
 		for (let result of query.rows) {
 			order_data[date('w', strtotime(result['date_added']))] = {
@@ -97,7 +97,7 @@ module.exports = class ModelExtensionDashboardSale extends Model {
 			};
 		}
 
-		const query = await this.db.query("SELECT COUNT(*) AS total, date_added FROM `" + DB_PREFIX + "order` WHERE order_status_id IN(" + implode(",", implode) + ") AND DATE(date_added) >= DATE('" + this.db.escape(date('Y') + '-' + date('m') + '-1') + "') GROUP BY DATE(date_added)");
+		const query = await this.db.query("SELECT COUNT(*) AS total, date_added FROM `" + DB_PREFIX + "order` WHERE order_status_id IN(" + implode.join(",") + ") AND DATE(date_added) >= DATE('" + this.db.escape(date('Y') + '-' + date('m') + '-1') + "') GROUP BY DATE(date_added)");
 
 		for (let result of query.rows) {
 			order_data[date('j', strtotime(result['date_added']))] = {
@@ -125,7 +125,7 @@ module.exports = class ModelExtensionDashboardSale extends Model {
 			};
 		}
 
-		const query = await this.db.query("SELECT COUNT(*) AS total, date_added FROM `" + DB_PREFIX + "order` WHERE order_status_id IN(" + implode(",", implode) + ") AND YEAR(date_added) = YEAR(NOW()) GROUP BY MONTH(date_added)");
+		const query = await this.db.query("SELECT COUNT(*) AS total, date_added FROM `" + DB_PREFIX + "order` WHERE order_status_id IN(" + implode.join(",") + ") AND YEAR(date_added) = YEAR(NOW()) GROUP BY MONTH(date_added)");
 
 		for (let result of query.rows) {
 			order_data[date('n', strtotime(result['date_added']))] = {

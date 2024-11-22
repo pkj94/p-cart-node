@@ -27,17 +27,17 @@ module.exports = class ControllerExtensionReportSaleCoupon extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_extension'),
 			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=report', true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('extension/report/sale_coupon', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['action'] = await this.url.link('extension/report/sale_coupon', 'user_token=' + this.session.data['user_token'], true);
 
@@ -98,9 +98,9 @@ module.exports = class ControllerExtensionReportSaleCoupon extends Controller {
 		filter_data = array(
 			'filter_date_start'	: filter_date_start,
 			'filter_date_end'	: filter_date_end,
-			'start'             : (page - 1) * this.config.get('config_limit_admin'),
-			'limit'             : this.config.get('config_limit_admin')
-		);
+			'start'             : (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit'             : Number(this.config.get('config_limit_admin'))
+		});
 
 		coupon_total = await this.model_extension_report_coupon.getTotalCoupons(filter_data);
 
@@ -113,7 +113,7 @@ module.exports = class ControllerExtensionReportSaleCoupon extends Controller {
 				'orders' : result['orders'],
 				'total'  : this.currency.format(result['total'], this.config.get('config_currency')),
 				'edit'   : await this.url.link('marketing/coupon/edit', 'user_token=' + this.session.data['user_token'] + '&coupon_id=' + result['coupon_id'], true)
-			);
+			});
 		}
 
 		data['user_token'] = this.session.data['user_token'];
@@ -131,12 +131,12 @@ module.exports = class ControllerExtensionReportSaleCoupon extends Controller {
 		pagination = new Pagination();
 		pagination.total = coupon_total;
 		pagination.page = page;
-		pagination.limit = this.config.get('config_limit_admin');
+		pagination.limit = Number(this.config.get('config_limit_admin'));
 		pagination.url = await this.url.link('report/report', 'user_token=' + this.session.data['user_token'] + '&code=sale_coupon' + url + '&page={page}', true);
 
 		data['pagination'] = pagination.render();
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (coupon_total) ? ((page - 1) * this.config.get('config_limit_admin')) + 1 : 0, (((page - 1) * this.config.get('config_limit_admin')) > (coupon_total - this.config.get('config_limit_admin'))) ? coupon_total : (((page - 1) * this.config.get('config_limit_admin')) + this.config.get('config_limit_admin')), coupon_total, ceil(coupon_total / this.config.get('config_limit_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (coupon_total) ? ((page - 1) * Number(this.config.get('config_limit_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_limit_admin'))) > (coupon_total - Number(this.config.get('config_limit_admin')))) ? coupon_total : (((page - 1) * Number(this.config.get('config_limit_admin'))) + Number(this.config.get('config_limit_admin'))), coupon_total, Math.ceil(coupon_total / Number(this.config.get('config_limit_admin'))));
 
 		data['filter_date_start'] = filter_date_start;
 		data['filter_date_end'] = filter_date_end;

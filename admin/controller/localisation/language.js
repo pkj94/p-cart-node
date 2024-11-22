@@ -18,7 +18,7 @@ module.exports = class ControllerLocalisationLanguage extends Controller {
 
 		this.load.model('localisation/language',this);
 
-		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_localisation_language.addLanguage(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
@@ -50,7 +50,7 @@ module.exports = class ControllerLocalisationLanguage extends Controller {
 
 		this.load.model('localisation/language',this);
 
-		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_localisation_language.editLanguage(this.request.get['language_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
@@ -82,7 +82,8 @@ module.exports = class ControllerLocalisationLanguage extends Controller {
 
 		this.load.model('localisation/language',this);
 
-		if ((this.request.post['selected']) && this.validateDelete()) {
+		if ((this.request.post['selected']) && await this.validateDelete()) {
+this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
 			for (this.request.post['selected'] of language_id) {
 				await this.model_localisation_language.deleteLanguage(language_id);
 			}
@@ -147,12 +148,12 @@ module.exports = class ControllerLocalisationLanguage extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('localisation/language', 'user_token=' + this.session.data['user_token'] + url, true)
-		);
+		});
 
 		data['add'] = await this.url.link('localisation/language/add', 'user_token=' + this.session.data['user_token'] + url, true);
 		data['delete'] = await this.url.link('localisation/language/delete', 'user_token=' + this.session.data['user_token'] + url, true);
@@ -162,9 +163,9 @@ module.exports = class ControllerLocalisationLanguage extends Controller {
 		filter_data = array(
 			'sort'  : sort,
 			'order' : order,
-			'start' : (page - 1) * this.config.get('config_limit_admin'),
-			'limit' : this.config.get('config_limit_admin')
-		);
+			'start' : (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit' : Number(this.config.get('config_limit_admin'))
+		});
 
 		language_total = await this.model_localisation_language.getTotalLanguages();
 
@@ -177,7 +178,7 @@ module.exports = class ControllerLocalisationLanguage extends Controller {
 				'code'        : result['code'],
 				'sort_order'  : result['sort_order'],
 				'edit'        : await this.url.link('localisation/language/edit', 'user_token=' + this.session.data['user_token'] + '&language_id=' + result['language_id'] + url, true)
-			);
+			});
 		}
 
 		if ((this.error['warning'])) {
@@ -229,12 +230,12 @@ module.exports = class ControllerLocalisationLanguage extends Controller {
 		pagination = new Pagination();
 		pagination.total = language_total;
 		pagination.page = page;
-		pagination.limit = this.config.get('config_limit_admin');
+		pagination.limit = Number(this.config.get('config_limit_admin'));
 		pagination.url = await this.url.link('localisation/language', 'user_token=' + this.session.data['user_token'] + url + '&page={page}', true);
 
 		data['pagination'] = pagination.render();
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (language_total) ? ((page - 1) * this.config.get('config_limit_admin')) + 1 : 0, (((page - 1) * this.config.get('config_limit_admin')) > (language_total - this.config.get('config_limit_admin'))) ? language_total : (((page - 1) * this.config.get('config_limit_admin')) + this.config.get('config_limit_admin')), language_total, ceil(language_total / this.config.get('config_limit_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (language_total) ? ((page - 1) * Number(this.config.get('config_limit_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_limit_admin'))) > (language_total - Number(this.config.get('config_limit_admin')))) ? language_total : (((page - 1) * Number(this.config.get('config_limit_admin'))) + Number(this.config.get('config_limit_admin'))), language_total, Math.ceil(language_total / Number(this.config.get('config_limit_admin'))));
 
 		data['sort'] = sort;
 		data['order'] = order;
@@ -292,12 +293,12 @@ module.exports = class ControllerLocalisationLanguage extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('localisation/language', 'user_token=' + this.session.data['user_token'] + url, true)
-		);
+		});
 
 		if (!(this.request.get['language_id'])) {
 			data['action'] = await this.url.link('localisation/language/add', 'user_token=' + this.session.data['user_token'] + url, true);
@@ -332,7 +333,7 @@ module.exports = class ControllerLocalisationLanguage extends Controller {
 		folders = glob(DIR_LANGUAGE + '*', GLOB_ONLYDIR);
 
 		for (folders of folder) {
-			data['languages'][] = basename(folder);
+			data['languages'].push(basename(folder);
 		}
 
 		if ((this.request.post['locale'])) {

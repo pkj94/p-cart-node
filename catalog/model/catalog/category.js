@@ -1,4 +1,4 @@
-module.exports = class Category extends global['\Opencart\System\Engine\Model'] {
+module.exports = class Category extends Model {
 	/**
 	 * @param category_id
 	 *

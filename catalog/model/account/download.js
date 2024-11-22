@@ -1,4 +1,4 @@
-module.exports = class Download extends global['\Opencart\System\Engine\Model'] {
+module.exports = class Download extends Model {
 	/**
 	 * @param download_id
 	 *

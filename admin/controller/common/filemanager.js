@@ -79,8 +79,8 @@ module.exports = class ControllerCommonFileManager extends Controller {
 					'name'  : implode(' ', name),
 					'type'  : 'directory',
 					'path'  : oc_substr(image, oc_strlen(DIR_IMAGE)),
-					'href'  : await this.url.link('common/filemanager', 'user_token=' + this.session.data['user_token'] + '&directory=' + urlencode(oc_substr(image, oc_strlen(DIR_IMAGE + 'catalog/'))) + url, true)
-				);
+					'href'  : await this.url.link('common/filemanager', 'user_token=' + this.session.data['user_token'] + '&directory=' + encodeURIComponent(oc_substr(image, oc_strlen(DIR_IMAGE + 'catalog/'))) + url, true)
+				});
 			} else if (is_file(image)) {
 				data['images'].push({
 					'thumb' : await this.model_tool_image.resize(oc_substr(image, oc_strlen(DIR_IMAGE)), 100, 100),
@@ -88,14 +88,14 @@ module.exports = class ControllerCommonFileManager extends Controller {
 					'type'  : 'image',
 					'path'  : oc_substr(image, oc_strlen(DIR_IMAGE)),
 					'href'  : server + 'image/' + oc_substr(image, oc_strlen(DIR_IMAGE))
-				);
+				});
 			}
 		}
 
 		data['user_token'] = this.session.data['user_token'];
 
 		if ((this.request.get['directory'])) {
-			data['directory'] = urlencode(this.request.get['directory']);
+			data['directory'] = encodeURIComponent(this.request.get['directory']);
 		} else {
 			data['directory'] = '';
 		}
@@ -127,7 +127,7 @@ module.exports = class ControllerCommonFileManager extends Controller {
 			pos = strrpos(this.request.get['directory'], '/');
 
 			if (pos) {
-				url += '&directory=' + urlencode(substr(this.request.get['directory'], 0, pos));
+				url += '&directory=' + encodeURIComponent(substr(this.request.get['directory'], 0, pos));
 			}
 		}
 
@@ -145,7 +145,7 @@ module.exports = class ControllerCommonFileManager extends Controller {
 		url = '';
 
 		if ((this.request.get['directory'])) {
-			url += '&directory=' + urlencode(this.request.get['directory']);
+			url += '&directory=' + encodeURIComponent(this.request.get['directory']);
 		}
 
 		if ((this.request.get['target'])) {
@@ -161,11 +161,11 @@ module.exports = class ControllerCommonFileManager extends Controller {
 		url = '';
 
 		if ((this.request.get['directory'])) {
-			url += '&directory=' + urlencode(html_entity_decode(this.request.get['directory']));
+			url += '&directory=' + encodeURIComponent(html_entity_decode(this.request.get['directory']));
 		}
 
 		if ((this.request.get['filter_name'])) {
-			url += '&filter_name=' + urlencode(html_entity_decode(this.request.get['filter_name']));
+			url += '&filter_name=' + encodeURIComponent(html_entity_decode(this.request.get['filter_name']));
 		}
 
 		if ((this.request.get['target'])) {
@@ -221,7 +221,7 @@ module.exports = class ControllerCommonFileManager extends Controller {
 						'tmp_name' : this.request.files['file']['tmp_name'][key],
 						'error'    : this.request.files['file']['error'][key],
 						'size'     : this.request.files['file']['size'][key]
-					);
+					});
 				}
 			}
 
@@ -242,7 +242,7 @@ module.exports = class ControllerCommonFileManager extends Controller {
 						'gif',
 						'png',
 						'webp'
-					);
+					});
 
 					if (!in_array(oc_strtolower(oc_substr(strrchr(filename, '.'), 1)), allowed)) {
 						json['error'] = this.language.get('error_filetype');
@@ -256,7 +256,7 @@ module.exports = class ControllerCommonFileManager extends Controller {
 						'image/x-png',
 						'image/gif',
 						'image/webp'
-					);
+					});
 
 					if (!in_array(file['type'], allowed)) {
 						json['error'] = this.language.get('error_filetype');
@@ -285,7 +285,7 @@ module.exports = class ControllerCommonFileManager extends Controller {
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 
 	async folder() {
@@ -335,7 +335,7 @@ module.exports = class ControllerCommonFileManager extends Controller {
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 
 	async delete() {
@@ -387,11 +387,11 @@ module.exports = class ControllerCommonFileManager extends Controller {
 						for (glob(next) of file) {
 							// If directory add to path array
 							if (is_dir(file)) {
-								path[] = file + '/*';
+								path.push(file + '/*';
 							}
 
 							// Add the file to the files to be deleted array
-							files[] = file;
+							files.push(file;
 						}
 					}
 
@@ -415,6 +415,6 @@ module.exports = class ControllerCommonFileManager extends Controller {
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 }

@@ -12,7 +12,7 @@ module.exports = class ModelLocalisationGeoZone extends Model {
 			}
 		}
 
-		this.cache.delete('geo_zone');
+		await this.cache.delete('geo_zone');
 		
 		return geo_zone_id;
 	}
@@ -30,14 +30,14 @@ module.exports = class ModelLocalisationGeoZone extends Model {
 			}
 		}
 
-		this.cache.delete('geo_zone');
+		await this.cache.delete('geo_zone');
 	}
 
 	async deleteGeoZone(geo_zone_id) {
 		await this.db.query("DELETE FROM " + DB_PREFIX + "geo_zone WHERE geo_zone_id = '" + geo_zone_id + "'");
 		await this.db.query("DELETE FROM " + DB_PREFIX + "zone_to_geo_zone WHERE geo_zone_id = '" + geo_zone_id + "'");
 
-		this.cache.delete('geo_zone');
+		await this.cache.delete('geo_zone');
 	}
 
 	async getGeoZone(geo_zone_id) {
@@ -53,7 +53,7 @@ module.exports = class ModelLocalisationGeoZone extends Model {
 			let sort_data = [
 				'name',
 				'description'
-			);
+			});
 
 			if ((data['sort']) && sort_data.includes(data['sort'])) {
 				sql += " ORDER BY " + data['sort'];
@@ -85,14 +85,14 @@ if (data['limit'] < 1) {
 
 			return query.rows;
 		} else {
-			geo_zone_data = this.cache.get('geo_zone');
+			geo_zone_data = await this.cache.get('geo_zone');
 
 			if (!geo_zone_data) {
 				const query = await this.db.query("SELECT * FROM " + DB_PREFIX + "geo_zone ORDER BY name ASC");
 
 				geo_zone_data = query.rows;
 
-				this.cache.set('geo_zone', geo_zone_data);
+				await this.cache.set('geo_zone', geo_zone_data);
 			}
 
 			return geo_zone_data;

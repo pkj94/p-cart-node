@@ -1,3 +1,5 @@
+const mktime = require("locutus/php/datetime/mktime");
+
 module.exports = class ControllerExtensionDashboardChart extends Controller {
 	error = {};
 
@@ -52,7 +54,7 @@ module.exports = class ControllerExtensionDashboardChart extends Controller {
 
 		data['columns'] = [];
 
-		for (i = 3; i <= 12; i++) {
+		for (let i = 3; i <= 12; i++) {
 			data['columns'].push(i);
 		}
 
@@ -113,7 +115,8 @@ module.exports = class ControllerExtensionDashboardChart extends Controller {
 		} else {
 			range = 'day';
 		}
-		let result = {};
+		let results = {};
+		console.log('--------range========',range)
 		switch (range) {
 			default:
 			case 'day':
@@ -129,7 +132,7 @@ module.exports = class ControllerExtensionDashboardChart extends Controller {
 					json['customer']['data'].push([key, value['total']]);
 				}
 
-				for (i = 0; i < 24; i++) {
+				for (let i = 0; i < 24; i++) {
 					json['xaxis'].push([i, i]);
 				}
 				break;
@@ -148,7 +151,7 @@ module.exports = class ControllerExtensionDashboardChart extends Controller {
 
 				let date_start = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate() - new Date().getDay()).getTime();
 
-				for (i = 0; i < 7; i++) {
+				for (let i = 0; i < 7; i++) {
 					const date = new Date(dateStart);
 					date.setDate(dateStart.getDate() + i);
 
@@ -168,10 +171,10 @@ module.exports = class ControllerExtensionDashboardChart extends Controller {
 					json['customer']['data'].push([key, value['total']]);
 				}
 
-				for (i = 1; i <= date('t'); i++) {
-					date = date('Y') + '-' + date('m') + '-' + i;
+				for (let i = 1; i <= date('t'); i++) {
+					let date1 = date('Y') + '-' + date('m') + '-' + i;
 
-					json['xaxis'].push([date('j', strtotime(date)), date('d', strtotime(date))]);
+					json['xaxis'].push([date('j', new Date(date1)), date('d', new Date(date1))]);
 				}
 				break;
 			case 'year':
@@ -187,13 +190,13 @@ module.exports = class ControllerExtensionDashboardChart extends Controller {
 					json['customer']['data'].push([key, value['total']]);
 				}
 
-				for (i = 1; i <= 12; i++) {
+				for (let i = 1; i <= 12; i++) {
 					json['xaxis'].push([i, date('M', mktime(0, 0, 0, i))]);
 				}
 				break;
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 }

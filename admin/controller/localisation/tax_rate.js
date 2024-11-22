@@ -18,7 +18,7 @@ module.exports = class ControllerLocalisationTaxRate extends Controller {
 
 		this.load.model('localisation/tax_rate');
 
-		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_localisation_tax_rate.addTaxRate(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
@@ -50,7 +50,7 @@ module.exports = class ControllerLocalisationTaxRate extends Controller {
 
 		this.load.model('localisation/tax_rate');
 
-		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_localisation_tax_rate.editTaxRate(this.request.get['tax_rate_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
@@ -82,7 +82,8 @@ module.exports = class ControllerLocalisationTaxRate extends Controller {
 
 		this.load.model('localisation/tax_rate');
 
-		if ((this.request.post['selected']) && this.validateDelete()) {
+		if ((this.request.post['selected']) && await this.validateDelete()) {
+this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
 			for (this.request.post['selected'] of tax_rate_id) {
 				await this.model_localisation_tax_rate.deleteTaxRate(tax_rate_id);
 			}
@@ -147,12 +148,12 @@ module.exports = class ControllerLocalisationTaxRate extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('localisation/tax_rate', 'user_token=' + this.session.data['user_token'] + url, true)
-		);
+		});
 
 		data['add'] = await this.url.link('localisation/tax_rate/add', 'user_token=' + this.session.data['user_token'] + url, true);
 		data['delete'] = await this.url.link('localisation/tax_rate/delete', 'user_token=' + this.session.data['user_token'] + url, true);
@@ -162,9 +163,9 @@ module.exports = class ControllerLocalisationTaxRate extends Controller {
 		filter_data = array(
 			'sort'  : sort,
 			'order' : order,
-			'start' : (page - 1) * this.config.get('config_limit_admin'),
-			'limit' : this.config.get('config_limit_admin')
-		);
+			'start' : (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit' : Number(this.config.get('config_limit_admin'))
+		});
 
 		tax_rate_total = await this.model_localisation_tax_rate.getTotalTaxRates();
 
@@ -180,7 +181,7 @@ module.exports = class ControllerLocalisationTaxRate extends Controller {
 				'date_added'    : date(this.language.get('date_format_short'), strtotime(result['date_added'])),
 				'date_modified' : date(this.language.get('date_format_short'), strtotime(result['date_modified'])),
 				'edit'          : await this.url.link('localisation/tax_rate/edit', 'user_token=' + this.session.data['user_token'] + '&tax_rate_id=' + result['tax_rate_id'] + url, true)
-			);
+			});
 		}
 
 		if ((this.error['warning'])) {
@@ -235,12 +236,12 @@ module.exports = class ControllerLocalisationTaxRate extends Controller {
 		pagination = new Pagination();
 		pagination.total = tax_rate_total;
 		pagination.page = page;
-		pagination.limit = this.config.get('config_limit_admin');
+		pagination.limit = Number(this.config.get('config_limit_admin'));
 		pagination.url = await this.url.link('localisation/tax_rate', 'user_token=' + this.session.data['user_token'] + url + '&page={page}', true);
 
 		data['pagination'] = pagination.render();
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (tax_rate_total) ? ((page - 1) * this.config.get('config_limit_admin')) + 1 : 0, (((page - 1) * this.config.get('config_limit_admin')) > (tax_rate_total - this.config.get('config_limit_admin'))) ? tax_rate_total : (((page - 1) * this.config.get('config_limit_admin')) + this.config.get('config_limit_admin')), tax_rate_total, ceil(tax_rate_total / this.config.get('config_limit_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (tax_rate_total) ? ((page - 1) * Number(this.config.get('config_limit_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_limit_admin'))) > (tax_rate_total - Number(this.config.get('config_limit_admin')))) ? tax_rate_total : (((page - 1) * Number(this.config.get('config_limit_admin'))) + Number(this.config.get('config_limit_admin'))), tax_rate_total, Math.ceil(tax_rate_total / Number(this.config.get('config_limit_admin'))));
 
 		data['sort'] = sort;
 		data['order'] = order;
@@ -292,12 +293,12 @@ module.exports = class ControllerLocalisationTaxRate extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('localisation/tax_rate', 'user_token=' + this.session.data['user_token'] + url, true)
-		);
+		});
 
 		if (!(this.request.get['tax_rate_id'])) {
 			data['action'] = await this.url.link('localisation/tax_rate/add', 'user_token=' + this.session.data['user_token'] + url, true);
@@ -343,7 +344,7 @@ module.exports = class ControllerLocalisationTaxRate extends Controller {
 			data['tax_rate_customer_group'] = array(this.config.get('config_customer_group_id'));
 		}
 
-		this.load.model('customer/customer_group');
+		this.load.model('customer/customer_group',this);
 
 		data['customer_groups'] = await this.model_customer_customer_group.getCustomerGroups();
 
@@ -387,7 +388,7 @@ module.exports = class ControllerLocalisationTaxRate extends Controller {
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		this.load.model('localisation/tax_class');
+		this.load.model('localisation/tax_class',this);
 
 		for (this.request.post['selected'] of tax_rate_id) {
 			tax_rule_total = await this.model_localisation_tax_class.getTotalTaxRulesByTaxRateId(tax_rate_id);

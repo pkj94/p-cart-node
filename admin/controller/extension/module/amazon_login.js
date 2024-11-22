@@ -7,7 +7,7 @@ module.exports = class ControllerExtensionModuleAmazonLogin extends Controller {
 		await this.load.language('extension/module/amazon_login');
 
 		this.load.model('setting/setting',this);
-		this.load.model('design/layout');
+		this.load.model('design/layout',this);
 
 		this.document.setTitle(this.language.get('heading_title'));
 
@@ -36,17 +36,17 @@ module.exports = class ControllerExtensionModuleAmazonLogin extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_extension'),
 			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=module', true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('extension/module/amazon_login', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['action'] = await this.url.link('extension/module/amazon_login', 'user_token=' + this.session.data['user_token'], true);
 

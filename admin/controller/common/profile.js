@@ -8,7 +8,7 @@ module.exports = class ControllerCommonProfile extends Controller {
 
 		this.load.model('user/user');
 
-		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			user_data = array_merge(this.request.post, array(
 				'user_group_id' : await this.user.getGroupId(),
 				'status'        : 1,
@@ -76,12 +76,12 @@ module.exports = class ControllerCommonProfile extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('common/profile', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['action'] = await this.url.link('common/profile', 'user_token=' + this.session.data['user_token'], true);
 

@@ -18,7 +18,7 @@ module.exports = class ControllerSaleReturn extends Controller {
 
 		this.load.model('sale/return');
 
-		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_sale_return.addReturn(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
@@ -34,15 +34,15 @@ module.exports = class ControllerSaleReturn extends Controller {
 			}
 
 			if ((this.request.get['filter_customer'])) {
-				url += '&filter_customer=' + urlencode(html_entity_decode(this.request.get['filter_customer']));
+				url += '&filter_customer=' + encodeURIComponent(html_entity_decode(this.request.get['filter_customer']));
 			}
 
 			if ((this.request.get['filter_product'])) {
-				url += '&filter_product=' + urlencode(html_entity_decode(this.request.get['filter_product']));
+				url += '&filter_product=' + encodeURIComponent(html_entity_decode(this.request.get['filter_product']));
 			}
 
 			if ((this.request.get['filter_model'])) {
-				url += '&filter_model=' + urlencode(html_entity_decode(this.request.get['filter_model']));
+				url += '&filter_model=' + encodeURIComponent(html_entity_decode(this.request.get['filter_model']));
 			}
 
 			if ((this.request.get['filter_return_status_id'])) {
@@ -82,7 +82,7 @@ module.exports = class ControllerSaleReturn extends Controller {
 
 		this.load.model('sale/return');
 
-		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_sale_return.editReturn(this.request.get['return_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
@@ -98,15 +98,15 @@ module.exports = class ControllerSaleReturn extends Controller {
 			}
 
 			if ((this.request.get['filter_customer'])) {
-				url += '&filter_customer=' + urlencode(html_entity_decode(this.request.get['filter_customer']));
+				url += '&filter_customer=' + encodeURIComponent(html_entity_decode(this.request.get['filter_customer']));
 			}
 
 			if ((this.request.get['filter_product'])) {
-				url += '&filter_product=' + urlencode(html_entity_decode(this.request.get['filter_product']));
+				url += '&filter_product=' + encodeURIComponent(html_entity_decode(this.request.get['filter_product']));
 			}
 
 			if ((this.request.get['filter_model'])) {
-				url += '&filter_model=' + urlencode(html_entity_decode(this.request.get['filter_model']));
+				url += '&filter_model=' + encodeURIComponent(html_entity_decode(this.request.get['filter_model']));
 			}
 
 			if ((this.request.get['filter_return_status_id'])) {
@@ -146,7 +146,8 @@ module.exports = class ControllerSaleReturn extends Controller {
 
 		this.load.model('sale/return');
 
-		if ((this.request.post['selected']) && this.validateDelete()) {
+		if ((this.request.post['selected']) && await this.validateDelete()) {
+this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
 			for (this.request.post['selected'] of return_id) {
 				await this.model_sale_return.deleteReturn(return_id);
 			}
@@ -164,15 +165,15 @@ module.exports = class ControllerSaleReturn extends Controller {
 			}
 
 			if ((this.request.get['filter_customer'])) {
-				url += '&filter_customer=' + urlencode(html_entity_decode(this.request.get['filter_customer']));
+				url += '&filter_customer=' + encodeURIComponent(html_entity_decode(this.request.get['filter_customer']));
 			}
 
 			if ((this.request.get['filter_product'])) {
-				url += '&filter_product=' + urlencode(html_entity_decode(this.request.get['filter_product']));
+				url += '&filter_product=' + encodeURIComponent(html_entity_decode(this.request.get['filter_product']));
 			}
 
 			if ((this.request.get['filter_model'])) {
-				url += '&filter_model=' + urlencode(html_entity_decode(this.request.get['filter_model']));
+				url += '&filter_model=' + encodeURIComponent(html_entity_decode(this.request.get['filter_model']));
 			}
 
 			if ((this.request.get['filter_return_status_id'])) {
@@ -283,15 +284,15 @@ module.exports = class ControllerSaleReturn extends Controller {
 		}
 
 		if ((this.request.get['filter_customer'])) {
-			url += '&filter_customer=' + urlencode(html_entity_decode(this.request.get['filter_customer']));
+			url += '&filter_customer=' + encodeURIComponent(html_entity_decode(this.request.get['filter_customer']));
 		}
 
 		if ((this.request.get['filter_product'])) {
-			url += '&filter_product=' + urlencode(html_entity_decode(this.request.get['filter_product']));
+			url += '&filter_product=' + encodeURIComponent(html_entity_decode(this.request.get['filter_product']));
 		}
 
 		if ((this.request.get['filter_model'])) {
-			url += '&filter_model=' + urlencode(html_entity_decode(this.request.get['filter_model']));
+			url += '&filter_model=' + encodeURIComponent(html_entity_decode(this.request.get['filter_model']));
 		}
 
 		if ((this.request.get['filter_return_status_id'])) {
@@ -323,12 +324,12 @@ module.exports = class ControllerSaleReturn extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('sale/return', 'user_token=' + this.session.data['user_token'] + url, true)
-		);
+		});
 
 		data['add'] = await this.url.link('sale/return/add', 'user_token=' + this.session.data['user_token'] + url, true);
 		data['delete'] = await this.url.link('sale/return/delete', 'user_token=' + this.session.data['user_token'] + url, true);
@@ -346,9 +347,9 @@ module.exports = class ControllerSaleReturn extends Controller {
 			'filter_date_modified'    : filter_date_modified,
 			'sort'                    : sort,
 			'order'                   : order,
-			'start'                   : (page - 1) * this.config.get('config_limit_admin'),
-			'limit'                   : this.config.get('config_limit_admin')
-		);
+			'start'                   : (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit'                   : Number(this.config.get('config_limit_admin'))
+		});
 
 		return_total = await this.model_sale_return.getTotalReturns(filter_data);
 
@@ -365,7 +366,7 @@ module.exports = class ControllerSaleReturn extends Controller {
 				'date_added'    : date(this.language.get('date_format_short'), strtotime(result['date_added'])),
 				'date_modified' : date(this.language.get('date_format_short'), strtotime(result['date_modified'])),
 				'edit'          : await this.url.link('sale/return/edit', 'user_token=' + this.session.data['user_token'] + '&return_id=' + result['return_id'] + url, true)
-			);
+			});
 		}
 
 		data['user_token'] = this.session.data['user_token'];
@@ -405,15 +406,15 @@ module.exports = class ControllerSaleReturn extends Controller {
 		}
 
 		if ((this.request.get['filter_customer'])) {
-			url += '&filter_customer=' + urlencode(html_entity_decode(this.request.get['filter_customer']));
+			url += '&filter_customer=' + encodeURIComponent(html_entity_decode(this.request.get['filter_customer']));
 		}
 
 		if ((this.request.get['filter_product'])) {
-			url += '&filter_product=' + urlencode(html_entity_decode(this.request.get['filter_product']));
+			url += '&filter_product=' + encodeURIComponent(html_entity_decode(this.request.get['filter_product']));
 		}
 
 		if ((this.request.get['filter_model'])) {
-			url += '&filter_model=' + urlencode(html_entity_decode(this.request.get['filter_model']));
+			url += '&filter_model=' + encodeURIComponent(html_entity_decode(this.request.get['filter_model']));
 		}
 
 		if ((this.request.get['filter_return_status_id'])) {
@@ -458,15 +459,15 @@ module.exports = class ControllerSaleReturn extends Controller {
 		}
 
 		if ((this.request.get['filter_customer'])) {
-			url += '&filter_customer=' + urlencode(html_entity_decode(this.request.get['filter_customer']));
+			url += '&filter_customer=' + encodeURIComponent(html_entity_decode(this.request.get['filter_customer']));
 		}
 
 		if ((this.request.get['filter_product'])) {
-			url += '&filter_product=' + urlencode(html_entity_decode(this.request.get['filter_product']));
+			url += '&filter_product=' + encodeURIComponent(html_entity_decode(this.request.get['filter_product']));
 		}
 
 		if ((this.request.get['filter_model'])) {
-			url += '&filter_model=' + urlencode(html_entity_decode(this.request.get['filter_model']));
+			url += '&filter_model=' + encodeURIComponent(html_entity_decode(this.request.get['filter_model']));
 		}
 
 		if ((this.request.get['filter_return_status_id'])) {
@@ -492,12 +493,12 @@ module.exports = class ControllerSaleReturn extends Controller {
 		pagination = new Pagination();
 		pagination.total = return_total;
 		pagination.page = page;
-		pagination.limit = this.config.get('config_limit_admin');
+		pagination.limit = Number(this.config.get('config_limit_admin'));
 		pagination.url = await this.url.link('sale/return', 'user_token=' + this.session.data['user_token'] + url + '&page={page}', true);
 
 		data['pagination'] = pagination.render();
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (return_total) ? ((page - 1) * this.config.get('config_limit_admin')) + 1 : 0, (((page - 1) * this.config.get('config_limit_admin')) > (return_total - this.config.get('config_limit_admin'))) ? return_total : (((page - 1) * this.config.get('config_limit_admin')) + this.config.get('config_limit_admin')), return_total, ceil(return_total / this.config.get('config_limit_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (return_total) ? ((page - 1) * Number(this.config.get('config_limit_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_limit_admin'))) > (return_total - Number(this.config.get('config_limit_admin')))) ? return_total : (((page - 1) * Number(this.config.get('config_limit_admin'))) + Number(this.config.get('config_limit_admin'))), return_total, Math.ceil(return_total / Number(this.config.get('config_limit_admin'))));
 
 		data['filter_return_id'] = filter_return_id;
 		data['filter_order_id'] = filter_order_id;
@@ -592,15 +593,15 @@ module.exports = class ControllerSaleReturn extends Controller {
 		}
 
 		if ((this.request.get['filter_customer'])) {
-			url += '&filter_customer=' + urlencode(html_entity_decode(this.request.get['filter_customer']));
+			url += '&filter_customer=' + encodeURIComponent(html_entity_decode(this.request.get['filter_customer']));
 		}
 
 		if ((this.request.get['filter_product'])) {
-			url += '&filter_product=' + urlencode(html_entity_decode(this.request.get['filter_product']));
+			url += '&filter_product=' + encodeURIComponent(html_entity_decode(this.request.get['filter_product']));
 		}
 
 		if ((this.request.get['filter_model'])) {
-			url += '&filter_model=' + urlencode(html_entity_decode(this.request.get['filter_model']));
+			url += '&filter_model=' + encodeURIComponent(html_entity_decode(this.request.get['filter_model']));
 		}
 
 		if ((this.request.get['filter_return_status_id'])) {
@@ -632,12 +633,12 @@ module.exports = class ControllerSaleReturn extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('sale/return', 'user_token=' + this.session.data['user_token'] + url, true)
-		);
+		});
 
 		if (!(this.request.get['return_id'])) {
 			data['action'] = await this.url.link('sale/return/add', 'user_token=' + this.session.data['user_token'] + url, true);
@@ -843,7 +844,7 @@ module.exports = class ControllerSaleReturn extends Controller {
 			this.error['reason'] = this.language.get('error_reason');
 		}
 
-		if (this.error && !(this.error['warning'])) {
+		if (Object.keys(this.error).length && !(this.error['warning'])) {
 			this.error['warning'] = this.language.get('error_warning');
 		}
 
@@ -879,7 +880,7 @@ module.exports = class ControllerSaleReturn extends Controller {
 				'status'     : result['status'],
 				'comment'    : nl2br(result['comment']),
 				'date_added' : date(this.language.get('date_format_short'), strtotime(result['date_added']))
-			);
+			});
 		}
 
 		history_total = await this.model_sale_return.getTotalReturnHistories(this.request.get['return_id']);
@@ -892,7 +893,7 @@ module.exports = class ControllerSaleReturn extends Controller {
 
 		data['pagination'] = pagination.render();
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (history_total) ? ((page - 1) * 10) + 1 : 0, (((page - 1) * 10) > (history_total - 10)) ? history_total : (((page - 1) * 10) + 10), history_total, ceil(history_total / 10));
+		data['results'] = sprintf(this.language.get('text_pagination'), (history_total) ? ((page - 1) * 10) + 1 : 0, (((page - 1) * 10) > (history_total - 10)) ? history_total : (((page - 1) * 10) + 10), history_total, Math.ceil(history_total / 10));
 
 		this.response.setOutput(await this.load.view('sale/return_history', data));
 	}
@@ -913,6 +914,6 @@ module.exports = class ControllerSaleReturn extends Controller {
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}	
 }

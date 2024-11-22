@@ -366,7 +366,7 @@
   <script type="text/javascript"><!--
   $(document).delegate('#button-invoice', 'click', function() {
 	  $.ajax({
-		  url: 'index.php?route=sale/order/createinvoiceno&user_token={{ user_token }}&order_id={{ order_id }}',
+		  url: '?route=sale/order/createinvoiceno&user_token={{ user_token }}&order_id={{ order_id }}',
 		  dataType: 'json',
 		  beforeSend: function() {
 			  $('#button-invoice').button('loading');
@@ -395,7 +395,7 @@
 
   $(document).delegate('#button-reward-add', 'click', function() {
 	  $.ajax({
-		  url: 'index.php?route=sale/order/addreward&user_token={{ user_token }}&order_id={{ order_id }}',
+		  url: '?route=sale/order/addreward&user_token={{ user_token }}&order_id={{ order_id }}',
 		  type: 'post',
 		  dataType: 'json',
 		  beforeSend: function() {
@@ -425,7 +425,7 @@
 
   $(document).delegate('#button-reward-remove', 'click', function() {
 	  $.ajax({
-		  url: 'index.php?route=sale/order/removereward&user_token={{ user_token }}&order_id={{ order_id }}',
+		  url: '?route=sale/order/removereward&user_token={{ user_token }}&order_id={{ order_id }}',
 		  type: 'post',
 		  dataType: 'json',
 		  beforeSend: function() {
@@ -455,7 +455,7 @@
 
   $(document).delegate('#button-commission-add', 'click', function() {
 	  $.ajax({
-		  url: 'index.php?route=sale/order/addcommission&user_token={{ user_token }}&order_id={{ order_id }}',
+		  url: '?route=sale/order/addcommission&user_token={{ user_token }}&order_id={{ order_id }}',
 		  type: 'post',
 		  dataType: 'json',
 		  beforeSend: function() {
@@ -485,7 +485,7 @@
 
   $(document).delegate('#button-commission-remove', 'click', function() {
 	  $.ajax({
-		  url: 'index.php?route=sale/order/removecommission&user_token={{ user_token }}&order_id={{ order_id }}',
+		  url: '?route=sale/order/removecommission&user_token={{ user_token }}&order_id={{ order_id }}',
 		  type: 'post',
 		  dataType: 'json',
 		  beforeSend: function() {
@@ -516,7 +516,7 @@
   var api_token = '';
 
   $.ajax({
-	  url: '{{ catalog }}index.php?route=api/login',
+	  url: '{{ catalog }}?route=api/login',
 	  type: 'post',
 	  dataType: 'json',
 	  data: 'key={{ api_key }}',
@@ -546,11 +546,11 @@
 	  $('#history').load(this.href);
   });
 
-  $('#history').load('index.php?route=sale/order/history&user_token={{ user_token }}&order_id={{ order_id }}');
+  $('#history').load('?route=sale/order/history&user_token={{ user_token }}&order_id={{ order_id }}');
 
   $('#button-history').on('click', function() {
 	  $.ajax({
-		  url: '{{ catalog }}index.php?route=api/order/history&api_token={{ api_token }}&store_id={{ store_id }}&order_id={{ order_id }}',
+		  url: '{{ catalog }}?route=api/order/history&api_token={{ api_token }}&store_id={{ store_id }}&order_id={{ order_id }}',
 		  type: 'post',
 		  dataType: 'json',
 		  data: 'order_status_id=' + encodeURIComponent($('select[name=\'order_status_id\']').val()) + '&notify=' + ($('input[name=\'notify\']').prop('checked') ? 1 : 0) + '&override=' + ($('input[name=\'override\']').prop('checked') ? 1 : 0) + '&append=' + ($('input[name=\'append\']').prop('checked') ? 1 : 0) + '&comment=' + encodeURIComponent($('textarea[name=\'comment\']').val()),
@@ -568,7 +568,7 @@
 			  }
 
 			  if (json['success']) {
-				  $('#history').load('index.php?route=sale/order/history&user_token={{ user_token }}&order_id={{ order_id }}');
+				  $('#history').load('?route=sale/order/history&user_token={{ user_token }}&order_id={{ order_id }}');
 
 				  $('#history').before('<div class="alert alert-success alert-dismissible"><i class="fa fa-check-circle"></i> ' + json['success'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
 

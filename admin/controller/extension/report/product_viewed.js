@@ -27,17 +27,17 @@ module.exports = class ControllerExtensionReportProductViewed extends Controller
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_extension'),
 			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=report', true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('extension/report/product_viewed', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['action'] = await this.url.link('extension/report/product_viewed', 'user_token=' + this.session.data['user_token'], true);
 
@@ -84,9 +84,9 @@ module.exports = class ControllerExtensionReportProductViewed extends Controller
 		this.load.model('extension/report/product');
 
 		filter_data = array(
-			'start' : (page - 1) * this.config.get('config_limit_admin'),
-			'limit' : this.config.get('config_limit_admin')
-		);
+			'start' : (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit' : Number(this.config.get('config_limit_admin'))
+		});
 
 		data['products'] = {};
 
@@ -108,7 +108,7 @@ module.exports = class ControllerExtensionReportProductViewed extends Controller
 				'model'   : result['model'],
 				'viewed'  : result['viewed'],
 				'percent' : percent + '%'
-			);
+			});
 		}
 		
 		data['user_token'] = this.session.data['user_token'];
@@ -122,12 +122,12 @@ module.exports = class ControllerExtensionReportProductViewed extends Controller
 		pagination = new Pagination();
 		pagination.total = product_total;
 		pagination.page = page;
-		pagination.limit = this.config.get('config_limit_admin');
+		pagination.limit = Number(this.config.get('config_limit_admin'));
 		pagination.url = await this.url.link('report/report', 'user_token=' + this.session.data['user_token'] + '&code=product_viewed&page={page}', true);
 
 		data['pagination'] = pagination.render();
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (product_total) ? ((page - 1) * this.config.get('config_limit_admin')) + 1 : 0, (((page - 1) * this.config.get('config_limit_admin')) > (product_total - this.config.get('config_limit_admin'))) ? product_total : (((page - 1) * this.config.get('config_limit_admin')) + this.config.get('config_limit_admin')), product_total, ceil(product_total / this.config.get('config_limit_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (product_total) ? ((page - 1) * Number(this.config.get('config_limit_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_limit_admin'))) > (product_total - Number(this.config.get('config_limit_admin')))) ? product_total : (((page - 1) * Number(this.config.get('config_limit_admin'))) + Number(this.config.get('config_limit_admin'))), product_total, Math.ceil(product_total / Number(this.config.get('config_limit_admin'))));
 		
 		return await this.load.view('extension/report/product_viewed_info', data);
 	}

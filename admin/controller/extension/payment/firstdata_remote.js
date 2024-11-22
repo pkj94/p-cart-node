@@ -77,17 +77,17 @@ module.exports = class ControllerExtensionPaymentFirstdataRemote extends Control
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_extension'),
 			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('extension/payment/firstdata_remote', 'user_token=' + this.session.data['user_token'] + '&type=payment', true)
-		);
+		});
 
 		data['action'] = await this.url.link('extension/payment/firstdata_remote', 'user_token=' + this.session.data['user_token'], true);
 		
@@ -225,27 +225,27 @@ module.exports = class ControllerExtensionPaymentFirstdataRemote extends Control
 		data['cards'].push({
 			'text'  : this.language.get('text_mastercard'),
 			'value' : 'mastercard'
-		);
+		});
 
 		data['cards'].push({
 			'text'  : this.language.get('text_visa'),
 			'value' : 'visa'
-		);
+		});
 
 		data['cards'].push({
 			'text'  : this.language.get('text_diners'),
 			'value' : 'diners'
-		);
+		});
 
 		data['cards'].push({
 			'text'  : this.language.get('text_amex'),
 			'value' : 'amex'
-		);
+		});
 
 		data['cards'].push({
 			'text'  : this.language.get('text_maestro'),
 			'value' : 'maestro'
-		);
+		});
 
 		if ((this.request.post['firstdata_remote_cards_accepted'])) {
 			data['firstdata_remote_cards_accepted'] = this.request.post['firstdata_remote_cards_accepted'];
@@ -350,7 +350,7 @@ module.exports = class ControllerExtensionPaymentFirstdataRemote extends Control
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 
 	async capture() {
@@ -391,7 +391,7 @@ module.exports = class ControllerExtensionPaymentFirstdataRemote extends Control
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 
 	async refund() {
@@ -440,7 +440,7 @@ module.exports = class ControllerExtensionPaymentFirstdataRemote extends Control
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 
 	async validate() {

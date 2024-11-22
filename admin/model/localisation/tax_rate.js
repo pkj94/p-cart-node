@@ -46,7 +46,7 @@ module.exports = class ModelLocalisationTaxRate extends Model {
 			'gz.name',
 			'tr.date_added',
 			'tr.date_modified'
-		);
+		});
 
 		if ((data['sort']) && sort_data.includes(data['sort'])) {
 			sql += " ORDER BY " + data['sort'];
@@ -85,7 +85,7 @@ if (data['limit'] < 1) {
 		const query = await this.db.query("SELECT * FROM " + DB_PREFIX + "tax_rate_to_customer_group WHERE tax_rate_id = '" + tax_rate_id + "'");
 
 		for (let result of query.rows ) {
-			tax_customer_group_data[] = result['customer_group_id'];
+			tax_customer_group_data.push(result['customer_group_id'];
 		}
 
 		return tax_customer_group_data;

@@ -4,7 +4,7 @@ module.exports = class ModelCatalogReview extends Model {
 
 		review_id = this.db.getLastId();
 
-		this.cache.delete('product');
+		await this.cache.delete('product');
 
 		return review_id;
 	}
@@ -12,13 +12,13 @@ module.exports = class ModelCatalogReview extends Model {
 	async editReview(review_id, data) {
 		await this.db.query("UPDATE " + DB_PREFIX + "review SET author = '" + this.db.escape(data['author']) + "', product_id = '" + data['product_id'] + "', text = '" + this.db.escape(strip_tags(data['text'])) + "', rating = '" + data['rating'] + "', status = '" + data['status'] + "', date_added = '" + this.db.escape(data['date_added']) + "', date_modified = NOW() WHERE review_id = '" + review_id + "'");
 
-		this.cache.delete('product');
+		await this.cache.delete('product');
 	}
 
 	async deleteReview(review_id) {
 		await this.db.query("DELETE FROM " + DB_PREFIX + "review WHERE review_id = '" + review_id + "'");
 
-		this.cache.delete('product');
+		await this.cache.delete('product');
 	}
 
 	async getReview(review_id) {
@@ -52,7 +52,7 @@ module.exports = class ModelCatalogReview extends Model {
 			'r.rating',
 			'r.status',
 			'r.date_added'
-		);
+		});
 
 		if ((data['sort']) && sort_data.includes(data['sort'])) {
 			sql += " ORDER BY " + data['sort'];

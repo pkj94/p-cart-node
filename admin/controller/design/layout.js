@@ -6,7 +6,7 @@ module.exports = class ControllerDesignLayout extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('design/layout');
+		this.load.model('design/layout',this);
 
 		await this.getList();
 	}
@@ -16,9 +16,9 @@ module.exports = class ControllerDesignLayout extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('design/layout');
+		this.load.model('design/layout',this);
 
-		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_design_layout.addLayout(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
@@ -48,9 +48,9 @@ module.exports = class ControllerDesignLayout extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('design/layout');
+		this.load.model('design/layout',this);
 
-		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_design_layout.editLayout(this.request.get['layout_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
@@ -80,9 +80,10 @@ module.exports = class ControllerDesignLayout extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('design/layout');
+		this.load.model('design/layout',this);
 
-		if ((this.request.post['selected']) && this.validateDelete()) {
+		if ((this.request.post['selected']) && await this.validateDelete()) {
+this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
 			for (this.request.post['selected'] of layout_id) {
 				await this.model_design_layout.deleteLayout(layout_id);
 			}
@@ -147,12 +148,12 @@ module.exports = class ControllerDesignLayout extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('design/layout', 'user_token=' + this.session.data['user_token'] + url, true)
-		);
+		});
 
 		data['add'] = await this.url.link('design/layout/add', 'user_token=' + this.session.data['user_token'] + url, true);
 		data['delete'] = await this.url.link('design/layout/delete', 'user_token=' + this.session.data['user_token'] + url, true);
@@ -162,9 +163,9 @@ module.exports = class ControllerDesignLayout extends Controller {
 		filter_data = array(
 			'sort'  : sort,
 			'order' : order,
-			'start' : (page - 1) * this.config.get('config_limit_admin'),
-			'limit' : this.config.get('config_limit_admin')
-		);
+			'start' : (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit' : Number(this.config.get('config_limit_admin'))
+		});
 
 		layout_total = await this.model_design_layout.getTotalLayouts();
 
@@ -175,7 +176,7 @@ module.exports = class ControllerDesignLayout extends Controller {
 				'layout_id' : result['layout_id'],
 				'name'      : result['name'],
 				'edit'      : await this.url.link('design/layout/edit', 'user_token=' + this.session.data['user_token'] + '&layout_id=' + result['layout_id'] + url, true)
-			);
+			});
 		}
 
 		if ((this.error['warning'])) {
@@ -225,12 +226,12 @@ module.exports = class ControllerDesignLayout extends Controller {
 		pagination = new Pagination();
 		pagination.total = layout_total;
 		pagination.page = page;
-		pagination.limit = this.config.get('config_limit_admin');
+		pagination.limit = Number(this.config.get('config_limit_admin'));
 		pagination.url = await this.url.link('design/layout', 'user_token=' + this.session.data['user_token'] + url + '&page={page}', true);
 
 		data['pagination'] = pagination.render();
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (layout_total) ? ((page - 1) * this.config.get('config_limit_admin')) + 1 : 0, (((page - 1) * this.config.get('config_limit_admin')) > (layout_total - this.config.get('config_limit_admin'))) ? layout_total : (((page - 1) * this.config.get('config_limit_admin')) + this.config.get('config_limit_admin')), layout_total, ceil(layout_total / this.config.get('config_limit_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (layout_total) ? ((page - 1) * Number(this.config.get('config_limit_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_limit_admin'))) > (layout_total - Number(this.config.get('config_limit_admin')))) ? layout_total : (((page - 1) * Number(this.config.get('config_limit_admin'))) + Number(this.config.get('config_limit_admin'))), layout_total, Math.ceil(layout_total / Number(this.config.get('config_limit_admin'))));
 
 		data['sort'] = sort;
 		data['order'] = order;
@@ -276,12 +277,12 @@ module.exports = class ControllerDesignLayout extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('design/layout', 'user_token=' + this.session.data['user_token'] + url, true)
-		);
+		});
 
 		if (!(this.request.get['layout_id'])) {
 			data['action'] = await this.url.link('design/layout/add', 'user_token=' + this.session.data['user_token'] + url, true);
@@ -338,7 +339,7 @@ module.exports = class ControllerDesignLayout extends Controller {
 				module_data.push({
 					'name' : strip_tags(module['name']),
 					'code' : code + '.' +  module['module_id']
-				);
+				});
 			}
 
 			if (this.config.has('module_' + code + '_status') || module_data) {
@@ -346,7 +347,7 @@ module.exports = class ControllerDesignLayout extends Controller {
 					'name'   : strip_tags(this.language.get('extension').get('heading_title')),
 					'code'   : code,
 					'module' : module_data
-				);
+				});
 			}
 		}
 
@@ -371,7 +372,7 @@ module.exports = class ControllerDesignLayout extends Controller {
 					'edit'       : await this.url.link('extension/module/' + part[0], 'user_token=' + this.session.data['user_token'], true),
 					'position'   : layout_module['position'],
 					'sort_order' : layout_module['sort_order']
-				);
+				});
 			} else {
 				module_info = await this.model_setting_module.getModule(part[1]);
 
@@ -381,7 +382,7 @@ module.exports = class ControllerDesignLayout extends Controller {
 						'edit'       : await this.url.link('extension/module/' + part[0], 'user_token=' + this.session.data['user_token'] + '&module_id=' + part[1], true),
 						'position'   : layout_module['position'],
 						'sort_order' : layout_module['sort_order']
-					);
+					});
 				}
 			}
 		}
@@ -411,8 +412,8 @@ module.exports = class ControllerDesignLayout extends Controller {
 		}
 
 		this.load.model('setting/store',this);
-		this.load.model('catalog/product');
-		this.load.model('catalog/category');
+		this.load.model('catalog/product',this);
+		this.load.model('catalog/category',this);
 		this.load.model('catalog/information');
 
 		for (this.request.post['selected'] of layout_id) {

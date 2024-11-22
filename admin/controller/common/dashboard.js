@@ -42,8 +42,8 @@ module.exports = class ControllerCommonDashboard extends Controller {
 				if (output) {
 					dashboards.push({
 						'code': code,
-						'width': this.config.get('dashboard_' + code + '_width'),
-						'sort_order': this.config.get('dashboard_' + code + '_sort_order'),
+						'width': Number(this.config.get('dashboard_' + code + '_width')),
+						'sort_order': Number(this.config.get('dashboard_' + code + '_sort_order')),
 						'output': output
 					});
 				}

@@ -135,17 +135,17 @@ module.exports = class ControllerSettingSetting extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_stores'),
 			'href' : await this.url.link('setting/store', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('setting/setting', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		if ((this.session.data['success'])) {
 			data['success'] = this.session.data['success'];
@@ -203,7 +203,7 @@ module.exports = class ControllerSettingSetting extends Controller {
 			data['themes'].push({
 				'text'  : this.language.get('extension').get('heading_title'),
 				'value' : code
-			);
+			});
 		}
 			
 		if ((this.request.post['config_layout_id'])) {
@@ -212,7 +212,7 @@ module.exports = class ControllerSettingSetting extends Controller {
 			data['config_layout_id'] = this.config.get('config_layout_id');
 		}
 
-		this.load.model('design/layout');
+		this.load.model('design/layout',this);
 
 		data['layouts'] = await this.model_design_layout.getLayouts();
 
@@ -336,7 +336,7 @@ module.exports = class ControllerSettingSetting extends Controller {
 			data['timezones'].push({
 				'text'  : timezone + hour,
 				'value' : timezone
-			);
+			});
 		}
 
 		date_default_timezone_set(this.config.get('config_timezone'));
@@ -389,7 +389,7 @@ module.exports = class ControllerSettingSetting extends Controller {
 				data['currency_engines'].push({
 					'text'  : this.language.get('currency_engine').get('heading_title'),
 					'value' : extension_code
-				);
+				});
 			}
 		}
 
@@ -399,7 +399,7 @@ module.exports = class ControllerSettingSetting extends Controller {
 			data['config_length_class_id'] = this.config.get('config_length_class_id');
 		}
 
-		this.load.model('localisation/length_class');
+		this.load.model('localisation/length_class',this);
 
 		data['length_classes'] = await this.model_localisation_length_class.getLengthClasses();
 
@@ -409,14 +409,14 @@ module.exports = class ControllerSettingSetting extends Controller {
 			data['config_weight_class_id'] = this.config.get('config_weight_class_id');
 		}
 
-		this.load.model('localisation/weight_class');
+		this.load.model('localisation/weight_class',this);
 
 		data['weight_classes'] = await this.model_localisation_weight_class.getWeightClasses();
 
 		if ((this.request.post['config_limit_admin'])) {
 			data['config_limit_admin'] = this.request.post['config_limit_admin'];
 		} else {
-			data['config_limit_admin'] = this.config.get('config_limit_admin');
+			data['config_limit_admin'] = Number(this.config.get('config_limit_admin'));
 		}
 
 		if ((this.request.post['config_product_count'])) {
@@ -491,7 +491,7 @@ module.exports = class ControllerSettingSetting extends Controller {
 			data['config_customer_group_id'] = this.config.get('config_customer_group_id');
 		}
 
-		this.load.model('customer/customer_group');
+		this.load.model('customer/customer_group',this);
 
 		data['customer_groups'] = await this.model_customer_customer_group.getCustomerGroups();
 
@@ -685,7 +685,7 @@ module.exports = class ControllerSettingSetting extends Controller {
 				data['captchas'].push({
 					'text'  : this.language.get('extension').get('heading_title'),
 					'value' : code
-				);
+				});
 			}
 		}		
 
@@ -702,27 +702,27 @@ module.exports = class ControllerSettingSetting extends Controller {
 		data['captcha_pages'].push({
 			'text'  : this.language.get('text_register'),
 			'value' : 'register'
-		);
+		});
 		
 		data['captcha_pages'].push({
 			'text'  : this.language.get('text_guest'),
 			'value' : 'guest'
-		);
+		});
 		
 		data['captcha_pages'].push({
 			'text'  : this.language.get('text_review'),
 			'value' : 'review'
-		);
+		});
 
 		data['captcha_pages'].push({
 			'text'  : this.language.get('text_return'),
 			'value' : 'return'
-		);
+		});
 
 		data['captcha_pages'].push({
 			'text'  : this.language.get('text_contact'),
 			'value' : 'contact'
-		);
+		});
 
 		if ((this.request.post['config_logo'])) {
 			data['config_logo'] = this.request.post['config_logo'];
@@ -811,22 +811,22 @@ module.exports = class ControllerSettingSetting extends Controller {
 		data['mail_alerts'].push({
 			'text'  : this.language.get('text_mail_account'),
 			'value' : 'account'
-		);
+		});
 
 		data['mail_alerts'].push({
 			'text'  : this.language.get('text_mail_affiliate'),
 			'value' : 'affiliate'
-		);
+		});
 
 		data['mail_alerts'].push({
 			'text'  : this.language.get('text_mail_order'),
 			'value' : 'order'
-		);
+		});
 
 		data['mail_alerts'].push({
 			'text'  : this.language.get('text_mail_review'),
 			'value' : 'review'
-		);
+		});
 
 		if ((this.request.post['config_mail_alert_email'])) {
 			data['config_mail_alert_email'] = this.request.post['config_mail_alert_email'];
@@ -996,7 +996,7 @@ module.exports = class ControllerSettingSetting extends Controller {
 			this.error['encryption'] = this.language.get('error_encryption');
 		}
 
-		if (this.error && !(this.error['warning'])) {
+		if (Object.keys(this.error).length && !(this.error['warning'])) {
 			this.error['warning'] = this.language.get('error_warning');
 		}
 

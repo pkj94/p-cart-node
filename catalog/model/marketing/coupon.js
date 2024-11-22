@@ -1,4 +1,4 @@
-module.exports = class Coupon extends global['\Opencart\System\Engine\Model'] {
+module.exports = class Coupon extends Model {
 	/**
 	 * @param string code
 	 *

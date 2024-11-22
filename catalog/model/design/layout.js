@@ -1,4 +1,4 @@
-module.exports =class Layout extends global['\Opencart\System\Engine\Model'] {
+module.exports =class Layout extends Model {
 	/**
 	 * @param string route
 	 *

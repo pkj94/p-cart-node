@@ -99,17 +99,17 @@ module.exports = class ControllerExtensionThemeDefault extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_extension'),
 			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=theme', true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('extension/theme/default', 'user_token=' + this.session.data['user_token'] + '&store_id=' + this.request.get['store_id'], true)
-		);
+		});
 
 		data['action'] = await this.url.link('extension/theme/default', 'user_token=' + this.session.data['user_token'] + '&store_id=' + this.request.get['store_id'], true);
 
@@ -132,7 +132,7 @@ module.exports = class ControllerExtensionThemeDefault extends Controller {
 		directories = glob(DIR_CATALOG + 'view/theme/*', GLOB_ONLYDIR);
 
 		for (directories of directory) {
-			data['directories'][] = basename(directory);
+			data['directories'].push(basename(directory);
 		}
 
 		if ((this.request.post['theme_default_product_limit'])) {

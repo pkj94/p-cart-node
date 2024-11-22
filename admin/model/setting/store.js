@@ -11,7 +11,7 @@ module.exports = class ModelSettingStore extends Model {
 			await this.db.query("INSERT INTO " + DB_PREFIX + "layout_route SET layout_id = '" + layout_route['layout_id'] + "', route = '" + this.db.escape(layout_route['route']) + "', store_id = '" + store_id + "'");
 		}
 
-		this.cache.delete('store');
+		await this.cache.delete('store');
 
 		return store_id;
 	}
@@ -19,14 +19,14 @@ module.exports = class ModelSettingStore extends Model {
 	async editStore(store_id, data) {
 		await this.db.query("UPDATE " + DB_PREFIX + "store SET name = '" + this.db.escape(data['config_name']) + "', `url` = '" + this.db.escape(data['config_url']) + "', `ssl` = '" + this.db.escape(data['config_ssl']) + "' WHERE store_id = '" + store_id + "'");
 
-		this.cache.delete('store');
+		await this.cache.delete('store');
 	}
 
 	async deleteStore(store_id) {
 		await this.db.query("DELETE FROM " + DB_PREFIX + "store WHERE store_id = '" + store_id + "'");
 		await this.db.query("DELETE FROM " + DB_PREFIX + "layout_route WHERE store_id = '" + store_id + "'");
 
-		this.cache.delete('store');
+		await this.cache.delete('store');
 	}
 
 	async getStore(store_id) {

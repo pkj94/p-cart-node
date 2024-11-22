@@ -9,7 +9,7 @@
 $(document).ready(function() {
     var addOrderHistory = function(success_callback) {
         $.ajax({
-            url: '{{ catalog }}index.php?route=api/order/history&api_token={{ api_token }}&order_id={{ order_id }}',
+            url: '{{ catalog }}?route=api/order/history&api_token={{ api_token }}&order_id={{ order_id }}',
             type: 'post',
             dataType: 'json',
             data: 'order_status_id={{ order_status_id }}&notify={{ notify }}&override=0&append=0&comment=' + encodeURIComponent("{{ comment }}"),

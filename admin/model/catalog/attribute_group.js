@@ -2,9 +2,9 @@ module.exports = class ModelCatalogAttributeGroup extends Model {
 	async addAttributeGroup(data) {
 		await this.db.query("INSERT INTO " + DB_PREFIX + "attribute_group SET sort_order = '" + data['sort_order'] + "'");
 
-		attribute_group_id = this.db.getLastId();
+		const attribute_group_id = this.db.getLastId();
 
-		for (data['attribute_group_description'] of language_id : value) {
+		for (let [language_id, value] of Object.entries(data['attribute_group_description'])) {
 			await this.db.query("INSERT INTO " + DB_PREFIX + "attribute_group_description SET attribute_group_id = '" + attribute_group_id + "', language_id = '" + language_id + "', name = '" + this.db.escape(value['name']) + "'");
 		}
 
@@ -16,7 +16,7 @@ module.exports = class ModelCatalogAttributeGroup extends Model {
 
 		await this.db.query("DELETE FROM " + DB_PREFIX + "attribute_group_description WHERE attribute_group_id = '" + attribute_group_id + "'");
 
-		for (data['attribute_group_description'] of language_id : value) {
+		for (let [language_id, value] of Object.entries(data['attribute_group_description'])) {
 			await this.db.query("INSERT INTO " + DB_PREFIX + "attribute_group_description SET attribute_group_id = '" + attribute_group_id + "', language_id = '" + language_id + "', name = '" + this.db.escape(value['name']) + "'");
 		}
 	}
@@ -38,7 +38,7 @@ module.exports = class ModelCatalogAttributeGroup extends Model {
 		let sort_data = [
 			'agd.name',
 			'ag.sort_order'
-		);
+		];
 
 		if ((data['sort']) && sort_data.includes(data['sort'])) {
 			sql += " ORDER BY " + data['sort'];
@@ -53,13 +53,13 @@ module.exports = class ModelCatalogAttributeGroup extends Model {
 		}
 
 		if ((data['start']) || (data['limit'])) {
-			data['start'] = data['start']||0;
-if (data['start'] < 0) {
+			data['start'] = data['start'] || 0;
+			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
@@ -72,12 +72,12 @@ if (data['limit'] < 1) {
 	}
 
 	async getAttributeGroupDescriptions(attribute_group_id) {
-		attribute_group_data = {};
+		let attribute_group_data = {};
 
 		const query = await this.db.query("SELECT * FROM " + DB_PREFIX + "attribute_group_description WHERE attribute_group_id = '" + attribute_group_id + "'");
 
-		for (let result of query.rows ) {
-			attribute_group_data[result['language_id']] = array('name' : result['name']);
+		for (let result of query.rows) {
+			attribute_group_data[result['language_id']] = { 'name': result['name'] };
 		}
 
 		return attribute_group_data;

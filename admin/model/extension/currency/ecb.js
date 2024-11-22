@@ -2,7 +2,7 @@ module.exports = class ModelExtensionCurrencyEcb extends Model {
 
 	async editValueByCode(code, value) {
 		await this.db.query("UPDATE `" + DB_PREFIX + "currency` SET `value` = '" + value + "', `date_modified` = NOW() WHERE `code` = '" + this.db.escape(code) + "'");
-		this.cache.delete('currency');
+		await this.cache.delete('currency');
 	}
 
 	async refresh() {

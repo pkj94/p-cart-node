@@ -1,4 +1,4 @@
-module.exports =class Reward extends global['\Opencart\System\Engine\Model'] {
+module.exports =class Reward extends Model {
 	/**
 	 * @param data
 	 *

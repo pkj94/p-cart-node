@@ -1,4 +1,4 @@
-module.exports =class Extension extends global['\Opencart\System\Engine\Model'] {
+module.exports =class Extension extends Model {
 	/**
 	 * @return array
 	 */

@@ -1,4 +1,4 @@
-module.exports = class Startup extends global['\Opencart\System\Engine\Model'] {
+module.exports = class Startup extends Model {
 	/**
 	 * @return mixed
 	 */

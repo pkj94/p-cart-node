@@ -7,7 +7,7 @@ module.exports = class ModelToolBackup extends Model {
 		for (let result of query.rows ) {
 			table = reset(result);
 			if (table && oc_substr(table, 0, strlen(DB_PREFIX)) == DB_PREFIX) {
-				table_data[] = table;
+				table_data.push(table;
 			}
 		}
 

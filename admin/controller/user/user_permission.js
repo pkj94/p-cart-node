@@ -18,7 +18,7 @@ module.exports = class ControllerUserUserPermission extends Controller {
 
 		this.load.model('user/user_group');
 
-		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_user_user_group.addUserGroup(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
@@ -50,7 +50,7 @@ module.exports = class ControllerUserUserPermission extends Controller {
 
 		this.load.model('user/user_group');
 
-		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_user_user_group.editUserGroup(this.request.get['user_group_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
@@ -82,7 +82,8 @@ module.exports = class ControllerUserUserPermission extends Controller {
 
 		this.load.model('user/user_group');
 
-		if ((this.request.post['selected']) && this.validateDelete()) {
+		if ((this.request.post['selected']) && await this.validateDelete()) {
+this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
 			for (this.request.post['selected'] of user_group_id) {
 				await this.model_user_user_group.deleteUserGroup(user_group_id);
 			}
@@ -147,12 +148,12 @@ module.exports = class ControllerUserUserPermission extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('user/user_permission', 'user_token=' + this.session.data['user_token'] + url, true)
-		);
+		});
 
 		data['add'] = await this.url.link('user/user_permission/add', 'user_token=' + this.session.data['user_token'] + url, true);
 		data['delete'] = await this.url.link('user/user_permission/delete', 'user_token=' + this.session.data['user_token'] + url, true);
@@ -162,9 +163,9 @@ module.exports = class ControllerUserUserPermission extends Controller {
 		filter_data = array(
 			'sort'  : sort,
 			'order' : order,
-			'start' : (page - 1) * this.config.get('config_limit_admin'),
-			'limit' : this.config.get('config_limit_admin')
-		);
+			'start' : (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit' : Number(this.config.get('config_limit_admin'))
+		});
 
 		user_group_total = await this.model_user_user_group.getTotalUserGroups();
 
@@ -175,7 +176,7 @@ module.exports = class ControllerUserUserPermission extends Controller {
 				'user_group_id' : result['user_group_id'],
 				'name'          : result['name'],
 				'edit'          : await this.url.link('user/user_permission/edit', 'user_token=' + this.session.data['user_token'] + '&user_group_id=' + result['user_group_id'] + url, true)
-			);
+			});
 		}
 
 		if ((this.error['warning'])) {
@@ -225,12 +226,12 @@ module.exports = class ControllerUserUserPermission extends Controller {
 		pagination = new Pagination();
 		pagination.total = user_group_total;
 		pagination.page = page;
-		pagination.limit = this.config.get('config_limit_admin');
+		pagination.limit = Number(this.config.get('config_limit_admin'));
 		pagination.url = await this.url.link('user/user_permission', 'user_token=' + this.session.data['user_token'] + url + '&page={page}', true);
 
 		data['pagination'] = pagination.render();
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (user_group_total) ? ((page - 1) * this.config.get('config_limit_admin')) + 1 : 0, (((page - 1) * this.config.get('config_limit_admin')) > (user_group_total - this.config.get('config_limit_admin'))) ? user_group_total : (((page - 1) * this.config.get('config_limit_admin')) + this.config.get('config_limit_admin')), user_group_total, ceil(user_group_total / this.config.get('config_limit_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (user_group_total) ? ((page - 1) * Number(this.config.get('config_limit_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_limit_admin'))) > (user_group_total - Number(this.config.get('config_limit_admin')))) ? user_group_total : (((page - 1) * Number(this.config.get('config_limit_admin'))) + Number(this.config.get('config_limit_admin'))), user_group_total, Math.ceil(user_group_total / Number(this.config.get('config_limit_admin'))));
 
 		data['sort'] = sort;
 		data['order'] = order;
@@ -276,12 +277,12 @@ module.exports = class ControllerUserUserPermission extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('user/user_permission', 'user_token=' + this.session.data['user_token'] + url, true)
-		);
+		});
 
 		if (!(this.request.get['user_group_id'])) {
 			data['action'] = await this.url.link('user/user_permission/add', 'user_token=' + this.session.data['user_token'] + url, true);
@@ -314,7 +315,7 @@ module.exports = class ControllerUserUserPermission extends Controller {
 			'common/header',
 			'error/not_found',
 			'error/permission'
-		);
+		});
 
 		data['permissions'] = {};
 
@@ -330,12 +331,12 @@ module.exports = class ControllerUserUserPermission extends Controller {
 			for (glob(next) of file) {
 				// If directory add to path array
 				if (is_dir(file)) {
-					path[] = file + '/*';
+					path.push(file + '/*';
 				}
 
 				// Add the file to the files to be deleted array
 				if (is_file(file)) {
-					files[] = file;
+					files.push(file;
 				}
 			}
 		}
@@ -349,7 +350,7 @@ module.exports = class ControllerUserUserPermission extends Controller {
 			permission = substr(controller, 0, strrpos(controller, '.'));
 
 			if (!in_array(permission, ignore)) {
-				data['permissions'][] = permission;
+				data['permissions'].push(permission;
 			}
 		}
 

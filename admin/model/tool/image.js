@@ -1,3 +1,5 @@
+const sharp = require("sharp");
+
 module.exports = class ModelToolImage extends Model {
 	async resize(filename, width_new, height_new) {
 		if (!fs.existsSync(DIR_IMAGE + filename) || fs.realpathSync(DIR_IMAGE + filename).substring(0, DIR_IMAGE.length).replaceAll('\\', '/') != DIR_IMAGE) {
@@ -46,7 +48,7 @@ module.exports = class ModelToolImage extends Model {
 			}
 
 			if (width != width_new || height != height_new) {
-				let image = new global['\Opencart\System\Library\Image'](DIR_IMAGE + image_old);
+				let image = new Image(DIR_IMAGE + image_old);
 				await image.load();
 				await image.resize(width_new, height_new);
 				await image.save(DIR_IMAGE + image_new);

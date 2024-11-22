@@ -98,14 +98,14 @@ module.exports = class ControllerExtensionExtensionTheme extends Controller {
 					'name'   : this.config.get('config_name'),
 					'edit'   : await this.url.link('extension/theme/' + extension, 'user_token=' + this.session.data['user_token'] + '&store_id=0', true),
 					'status' : this.config.get('theme_' + extension + '_status') ? this.language.get('text_enabled') : this.language.get('text_disabled')
-				);
+				});
 									
-				for (stores of store) {
+				for (let store of stores) {
 					store_data.push({
 						'name'   : store['name'],
 						'edit'   : await this.url.link('extension/theme/' + extension, 'user_token=' + this.session.data['user_token'] + '&store_id=' + store['store_id'], true),
 						'status' : await this.model_setting_setting.getSettingValue('theme_' + extension + '_status', store['store_id']) ? this.language.get('text_enabled') : this.language.get('text_disabled')
-					);
+					});
 				}
 				
 				data['extensions'].push({
@@ -114,7 +114,7 @@ module.exports = class ControllerExtensionExtensionTheme extends Controller {
 					'uninstall' : await this.url.link('extension/extension/theme/uninstall', 'user_token=' + this.session.data['user_token'] + '&extension=' + extension, true),
 					'installed' : in_array(extension, extensions),
 					'store'     : store_data
-				);
+				});
 			}
 		}
 

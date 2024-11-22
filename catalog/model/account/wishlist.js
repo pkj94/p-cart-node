@@ -1,4 +1,4 @@
-module.exports =class Wishlist extends global['\Opencart\System\Engine\Model'] {
+module.exports =class Wishlist extends Model {
 	/**
 	 * @param product_id
 	 *

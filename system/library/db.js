@@ -18,6 +18,9 @@ module.exports = class DBLibrary {
     escape(value) {
         return this.adaptor.escape(value);
     }
+    escapeDb(value) {
+        return this.adaptor.escapeDb(value);
+    }
     escapeId(value) {
         return this.adaptor.escapeId(value);
     }

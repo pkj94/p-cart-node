@@ -15,7 +15,7 @@ module.exports = class ControllerExtensionModuleLatest extends Controller {
 				await this.model_setting_module.editModule(this.request.get['module_id'], this.request.post);
 			}
 
-			this.cache.delete('product');
+			await this.cache.delete('product');
 
 			this.session.data['success'] = this.language.get('text_success');
 
@@ -51,23 +51,23 @@ module.exports = class ControllerExtensionModuleLatest extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_extension'),
 			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=module', true)
-		);
+		});
 
 		if (!(this.request.get['module_id'])) {
 			data['breadcrumbs'].push({
 				'text' : this.language.get('heading_title'),
 				'href' : await this.url.link('extension/module/latest', 'user_token=' + this.session.data['user_token'], true)
-			);
+			});
 		} else {
 			data['breadcrumbs'].push({
 				'text' : this.language.get('heading_title'),
 				'href' : await this.url.link('extension/module/latest', 'user_token=' + this.session.data['user_token'] + '&module_id=' + this.request.get['module_id'], true)
-			);
+			});
 		}
 
 		if (!(this.request.get['module_id'])) {

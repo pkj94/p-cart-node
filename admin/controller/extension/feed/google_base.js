@@ -27,17 +27,17 @@ module.exports = class ControllerExtensionFeedGoogleBase extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_extension'),
 			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=feed', true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('extension/feed/google_base', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['action'] = await this.url.link('extension/feed/google_base', 'user_token=' + this.session.data['user_token'], true);
 
@@ -128,7 +128,7 @@ module.exports = class ControllerExtensionFeedGoogleBase extends Controller {
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 
 	async category() {
@@ -146,7 +146,7 @@ module.exports = class ControllerExtensionFeedGoogleBase extends Controller {
 		filter_data = array(
 			'start'       : (page - 1) * limit,
 			'limit'       : limit
-		);
+		});
 		
 		this.load.model('extension/feed/google_base');
 		results = await this.model_extension_feed_google_base.getCategories(filter_data);
@@ -157,7 +157,7 @@ module.exports = class ControllerExtensionFeedGoogleBase extends Controller {
 				'google_base_category'    : result['google_base_category'],
 				'category_id'             : result['category_id'],
 				'category'                : result['category']
-			);
+			});
 		}
 
 		category_total = await this.model_extension_feed_google_base.getTotalCategories();
@@ -170,7 +170,7 @@ module.exports = class ControllerExtensionFeedGoogleBase extends Controller {
 
 		data['pagination'] = pagination.render();
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (category_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (category_total - limit)) ? category_total : (((page - 1) * limit) + limit), category_total, ceil(category_total / limit));
+		data['results'] = sprintf(this.language.get('text_pagination'), (category_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (category_total - limit)) ? category_total : (((page - 1) * limit) + limit), category_total, Math.ceil(category_total / limit));
 
 		this.response.setOutput(await this.load.view('extension/feed/google_base_category', data));
 	}
@@ -191,7 +191,7 @@ module.exports = class ControllerExtensionFeedGoogleBase extends Controller {
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 
 	async removeCategory() {
@@ -210,7 +210,7 @@ module.exports = class ControllerExtensionFeedGoogleBase extends Controller {
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 
 	async autocomplete() {
@@ -229,7 +229,7 @@ module.exports = class ControllerExtensionFeedGoogleBase extends Controller {
 				'filter_name' : html_entity_decode(filter_name),
 				'start'       : 0,
 				'limit'       : 5
-			);
+			});
 
 			results = await this.model_extension_feed_google_base.getGoogleBaseCategories(filter_data);
 
@@ -237,11 +237,11 @@ module.exports = class ControllerExtensionFeedGoogleBase extends Controller {
 				json.push({
 					'google_base_category_id' : result['google_base_category_id'],
 					'name'                    : strip_tags(html_entity_decode(result['name']))
-				);
+				});
 			}
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 }

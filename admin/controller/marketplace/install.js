@@ -28,7 +28,7 @@ module.exports = class ControllerMarketplaceInstall extends Controller {
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 
 	async unzip() {
@@ -75,7 +75,7 @@ module.exports = class ControllerMarketplaceInstall extends Controller {
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 
 	async move() {
@@ -113,10 +113,10 @@ module.exports = class ControllerMarketplaceInstall extends Controller {
 	
 					for (glob(next) of file) {
 						if (is_dir(file)) {
-							path[] = file + '/*';
+							path.push(file + '/*';
 						}
 	
-						files[] = file;
+						files.push(file;
 					}
 				}
 	
@@ -137,7 +137,7 @@ module.exports = class ControllerMarketplaceInstall extends Controller {
 					'system/config/',
 					'system/library/',
 					'image/catalog/'
-				);
+				});
 	
 				// First we need to do some checks
 				for (let file of files) {
@@ -230,7 +230,7 @@ module.exports = class ControllerMarketplaceInstall extends Controller {
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 
 	async xml() {
@@ -327,7 +327,7 @@ module.exports = class ControllerMarketplaceInstall extends Controller {
 								'link'                 : link,
 								'xml'                  : xml,
 								'status'               : 1
-							);
+							});
 	
 							await this.model_setting_modification.addModification(modification_data);
 						}
@@ -345,7 +345,7 @@ module.exports = class ControllerMarketplaceInstall extends Controller {
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 
 	async remove() {
@@ -378,10 +378,10 @@ module.exports = class ControllerMarketplaceInstall extends Controller {
 						file = next + '/' + file;
 	
 						if (is_dir(file)) {
-							path[] = file;
+							path.push(file;
 						}
 	
-						files[] = file;
+						files.push(file;
 					}
 				}
 	
@@ -410,7 +410,7 @@ module.exports = class ControllerMarketplaceInstall extends Controller {
 		}
 		
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 
 	async uninstall() {
@@ -473,10 +473,10 @@ module.exports = class ControllerMarketplaceInstall extends Controller {
 							file = next + '/' + file;
 
 							if (is_dir(file)) {
-								path[] = file;
+								path.push(file;
 							}
 
-							files[] = file;
+							files.push(file;
 						}
 					}
 
@@ -516,7 +516,7 @@ module.exports = class ControllerMarketplaceInstall extends Controller {
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}	
 	private function isDirEmpty (dir_name) {
 		if (!is_dir(dir_name)) {

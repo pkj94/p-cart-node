@@ -70,7 +70,7 @@ class ModelExtensionPaymentG2aPay extends Model {
 				'action' : 'refund',
 				'amount' : refunded_amount,
 				'hash' : hash,
-			);
+			});
 
 			return this.sendCurl(url, fields);
 		} else {
@@ -89,7 +89,7 @@ class ModelExtensionPaymentG2aPay extends Model {
 		if (query.num_rows) {
 			for (query.rows of row) {
 				row['amount'] = this.currency.format(row['amount'], currency_code, true, true);
-				transactions[] = row;
+				transactions.push(row;
 			}
 			return transactions;
 		} else {
@@ -120,7 +120,7 @@ class ModelExtensionPaymentG2aPay extends Model {
 				curl, CURLOPT_HTTPHEADER, array(
 			"Authorization: " + authorization
 				)
-		);
+		});
 
 		response = JSON.parse(curl_exec(curl));
 

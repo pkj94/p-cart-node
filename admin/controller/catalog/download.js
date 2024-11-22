@@ -6,7 +6,7 @@ module.exports = class ControllerCatalogDownload extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('catalog/download');
+		this.load.model('catalog/download',this);
 
 		await this.getList();
 	}
@@ -16,9 +16,9 @@ module.exports = class ControllerCatalogDownload extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('catalog/download');
+		this.load.model('catalog/download',this);
 
-		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_catalog_download.addDownload(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
@@ -48,9 +48,9 @@ module.exports = class ControllerCatalogDownload extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('catalog/download');
+		this.load.model('catalog/download',this);
 
-		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_catalog_download.editDownload(this.request.get['download_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
@@ -80,10 +80,11 @@ module.exports = class ControllerCatalogDownload extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('catalog/download');
+		this.load.model('catalog/download',this);
 
-		if ((this.request.post['selected']) && this.validateDelete()) {
-			for (this.request.post['selected'] of download_id) {
+		if ((this.request.post['selected']) && await this.validateDelete()) {
+this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
+			for (let download_id of this.request.post['selected']) {
 				await this.model_catalog_download.deleteDownload(download_id);
 			}
 
@@ -147,12 +148,12 @@ module.exports = class ControllerCatalogDownload extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('catalog/download', 'user_token=' + this.session.data['user_token'] + url, true)
-		);
+		});
 
 		data['add'] = await this.url.link('catalog/download/add', 'user_token=' + this.session.data['user_token'] + url, true);
 		data['delete'] = await this.url.link('catalog/download/delete', 'user_token=' + this.session.data['user_token'] + url, true);
@@ -162,9 +163,9 @@ module.exports = class ControllerCatalogDownload extends Controller {
 		filter_data = array(
 			'sort'  : sort,
 			'order' : order,
-			'start' : (page - 1) * this.config.get('config_limit_admin'),
-			'limit' : this.config.get('config_limit_admin')
-		);
+			'start' : (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit' : Number(this.config.get('config_limit_admin'))
+		});
 
 		download_total = await this.model_catalog_download.getTotalDownloads();
 
@@ -176,7 +177,7 @@ module.exports = class ControllerCatalogDownload extends Controller {
 				'name'        : result['name'],
 				'date_added'  : date(this.language.get('date_format_short'), strtotime(result['date_added'])),
 				'edit'        : await this.url.link('catalog/download/edit', 'user_token=' + this.session.data['user_token'] + '&download_id=' + result['download_id'] + url, true)
-			);
+			});
 		}
 
 		if ((this.error['warning'])) {
@@ -227,12 +228,12 @@ module.exports = class ControllerCatalogDownload extends Controller {
 		pagination = new Pagination();
 		pagination.total = download_total;
 		pagination.page = page;
-		pagination.limit = this.config.get('config_limit_admin');
+		pagination.limit = Number(this.config.get('config_limit_admin'));
 		pagination.url = await this.url.link('catalog/download', 'user_token=' + this.session.data['user_token'] + url + '&page={page}', true);
 
 		data['pagination'] = pagination.render();
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (download_total) ? ((page - 1) * this.config.get('config_limit_admin')) + 1 : 0, (((page - 1) * this.config.get('config_limit_admin')) > (download_total - this.config.get('config_limit_admin'))) ? download_total : (((page - 1) * this.config.get('config_limit_admin')) + this.config.get('config_limit_admin')), download_total, ceil(download_total / this.config.get('config_limit_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (download_total) ? ((page - 1) * Number(this.config.get('config_limit_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_limit_admin'))) > (download_total - Number(this.config.get('config_limit_admin')))) ? download_total : (((page - 1) * Number(this.config.get('config_limit_admin'))) + Number(this.config.get('config_limit_admin'))), download_total, Math.ceil(download_total / Number(this.config.get('config_limit_admin'))));
 
 		data['sort'] = sort;
 		data['order'] = order;
@@ -290,12 +291,12 @@ module.exports = class ControllerCatalogDownload extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('catalog/download', 'user_token=' + this.session.data['user_token'] + url, true)
-		);
+		});
 
 		if (!(this.request.get['download_id'])) {
 			data['action'] = await this.url.link('catalog/download/add', 'user_token=' + this.session.data['user_token'] + url, true);
@@ -383,9 +384,9 @@ module.exports = class ControllerCatalogDownload extends Controller {
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		this.load.model('catalog/product');
+		this.load.model('catalog/product',this);
 
-		for (this.request.post['selected'] of download_id) {
+		for (let download_id of this.request.post['selected']) {
 			product_total = await this.model_catalog_product.getTotalProductsByDownloadId(download_id);
 
 			if (product_total) {
@@ -424,7 +425,7 @@ module.exports = class ControllerCatalogDownload extends Controller {
 				filetypes = explode("\n", extension_allowed);
 
 				for (filetypes of filetype) {
-					allowed[] = trim(filetype);
+					allowed.push(trim(filetype);
 				}
 
 				if (!in_array(strtolower(substr(strrchr(filename, '.'), 1)), allowed)) {
@@ -439,7 +440,7 @@ module.exports = class ControllerCatalogDownload extends Controller {
 				filetypes = explode("\n", mime_allowed);
 
 				for (filetypes of filetype) {
-					allowed[] = trim(filetype);
+					allowed.push(trim(filetype);
 				}
 
 				if (!in_array(this.request.files['file']['type'], allowed)) {
@@ -474,20 +475,20 @@ module.exports = class ControllerCatalogDownload extends Controller {
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 
 	async autocomplete() {
 		json = {};
 
 		if ((this.request.get['filter_name'])) {
-			this.load.model('catalog/download');
+			this.load.model('catalog/download',this);
 
 			filter_data = array(
 				'filter_name' : this.request.get['filter_name'],
 				'start'       : 0,
 				'limit'       : 5
-			);
+			});
 
 			results = await this.model_catalog_download.getDownloads(filter_data);
 
@@ -495,7 +496,7 @@ module.exports = class ControllerCatalogDownload extends Controller {
 				json.push({
 					'download_id' : result['download_id'],
 					'name'        : strip_tags(html_entity_decode(result['name']))
-				);
+				});
 			}
 		}
 
@@ -508,6 +509,6 @@ module.exports = class ControllerCatalogDownload extends Controller {
 		array_multisort(sort_order, SORT_ASC, json);
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 }

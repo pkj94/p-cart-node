@@ -29,17 +29,17 @@ module.exports = class ControllerExtensionFraudIp extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_extension'),
 			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=fraud', true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('extension/fraud/ip', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['action'] = await this.url.link('extension/fraud/ip', 'user_token=' + this.session.data['user_token'], true);
 
@@ -110,7 +110,7 @@ module.exports = class ControllerExtensionFraudIp extends Controller {
 				'total'      : await this.model_customer_customer.getTotalCustomersByIp(result['ip']),
 				'date_added' : date('d/m/y', strtotime(result['date_added'])),
 				'filter_ip'  : await this.url.link('customer/customer', 'user_token=' + this.session.data['user_token'] + '&filter_ip=' + result['ip'], true)
-			);
+			});
 		}
 
 		ip_total = await this.model_extension_fraud_ip.getTotalIps();
@@ -123,7 +123,7 @@ module.exports = class ControllerExtensionFraudIp extends Controller {
 
 		data['pagination'] = pagination.render();
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (ip_total) ? ((page - 1) * 10) + 1 : 0, (((page - 1) * 10) > (ip_total - 10)) ? ip_total : (((page - 1) * 10) + 10), ip_total, ceil(ip_total / 10));
+		data['results'] = sprintf(this.language.get('text_pagination'), (ip_total) ? ((page - 1) * 10) + 1 : 0, (((page - 1) * 10) > (ip_total - 10)) ? ip_total : (((page - 1) * 10) + 10), ip_total, Math.ceil(ip_total / 10));
 
 		this.response.setOutput(await this.load.view('extension/fraud/ip_ip', data));
 	}
@@ -146,7 +146,7 @@ module.exports = class ControllerExtensionFraudIp extends Controller {
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 
 	async removeIp() {
@@ -165,6 +165,6 @@ module.exports = class ControllerExtensionFraudIp extends Controller {
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 }

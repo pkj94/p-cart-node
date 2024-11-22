@@ -18,7 +18,7 @@ module.exports = class ControllerDesignTranslation extends Controller {
 
 		this.load.model('design/translation');
 
-		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_design_translation.addTranslation(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
@@ -50,7 +50,7 @@ module.exports = class ControllerDesignTranslation extends Controller {
 
 		this.load.model('design/translation');
 
-		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_design_translation.editTranslation(this.request.get['translation_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
@@ -82,7 +82,8 @@ module.exports = class ControllerDesignTranslation extends Controller {
 
 		this.load.model('design/translation');
 
-		if ((this.request.post['selected']) && this.validateDelete()) {
+		if ((this.request.post['selected']) && await this.validateDelete()) {
+this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
 			for (this.request.post['selected'] of translation_id) {
 				await this.model_design_translation.deleteTranslation(translation_id);
 			}
@@ -147,12 +148,12 @@ module.exports = class ControllerDesignTranslation extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('design/translation', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		this.load.model('localisation/language',this);
 
@@ -164,9 +165,9 @@ module.exports = class ControllerDesignTranslation extends Controller {
 		filter_data = array(
 			'sort'  : sort,
 			'order' : order,
-			'start' : (page - 1) * this.config.get('config_limit_admin'),
-			'limit' : this.config.get('config_limit_admin')
-		);
+			'start' : (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit' : Number(this.config.get('config_limit_admin'))
+		});
 
 		translation_total = await this.model_design_translation.getTotalTranslations();
 
@@ -181,7 +182,7 @@ module.exports = class ControllerDesignTranslation extends Controller {
 				'key'            : result['key'],
 				'value'          : result['value'],
 				'edit'           : await this.url.link('design/translation/edit', 'user_token=' + this.session.data['user_token'] + '&translation_id=' + result['translation_id'], true),
-			);
+			});
 		}
 
 		data['user_token'] = this.session.data['user_token'];
@@ -227,12 +228,12 @@ module.exports = class ControllerDesignTranslation extends Controller {
 		pagination = new Pagination();
 		pagination.total = translation_total;
 		pagination.page = page;
-		pagination.limit = this.config.get('config_limit_admin');
+		pagination.limit = Number(this.config.get('config_limit_admin'));
 		pagination.url = await this.url.link('design/translation', 'user_token=' + this.session.data['user_token'] + '&page={page}', true);
 
 		data['pagination'] = pagination.render();
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (translation_total) ? ((page - 1) * this.config.get('config_limit_admin')) + 1 : 0, (((page - 1) * this.config.get('config_limit_admin')) > (translation_total - this.config.get('config_limit_admin'))) ? translation_total : (((page - 1) * this.config.get('config_limit_admin')) + this.config.get('config_limit_admin')), translation_total, ceil(translation_total / this.config.get('config_limit_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (translation_total) ? ((page - 1) * Number(this.config.get('config_limit_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_limit_admin'))) > (translation_total - Number(this.config.get('config_limit_admin')))) ? translation_total : (((page - 1) * Number(this.config.get('config_limit_admin'))) + Number(this.config.get('config_limit_admin'))), translation_total, Math.ceil(translation_total / Number(this.config.get('config_limit_admin'))));
 
 		data['sort'] = sort;
 		data['order'] = order;
@@ -278,12 +279,12 @@ module.exports = class ControllerDesignTranslation extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('design/translation', 'user_token=' + this.session.data['user_token'] + url, true)
-		);
+		});
 
 		if (!(this.request.get['translation_id'])) {
 			data['action'] = await this.url.link('design/translation/add', 'user_token=' + this.session.data['user_token'] + url, true);
@@ -342,11 +343,11 @@ module.exports = class ControllerDesignTranslation extends Controller {
 
 				for (glob(next) of file) {
 					if (is_dir(file)) {
-						path[] = file + '/*';
+						path.push(file + '/*';
 					}
 
 					if (substr(file, -4) == '.php') {
-						data['paths'][] = substr(substr(file, strlen(DIR_CATALOG + 'language/' + code + '/')), 0, -4);
+						data['paths'].push(substr(substr(file, strlen(DIR_CATALOG + 'language/' + code + '/')), 0, -4);
 					}
 				}
 			}
@@ -446,18 +447,18 @@ module.exports = class ControllerDesignTranslation extends Controller {
 
 				for (glob(next) of file) {
 					if (is_dir(file)) {
-						path[] = file + '/*';
+						path.push(file + '/*';
 					}
 
 					if (substr(file, -4) == '.php') {
-						json[] = substr(substr(file, strlen(DIR_CATALOG + 'language/' + language_info['code'] + '/')), 0, -4);
+						json.push(substr(substr(file, strlen(DIR_CATALOG + 'language/' + language_info['code'] + '/')), 0, -4);
 					}
 				}
 			}
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 
 	async translation() {
@@ -498,11 +499,11 @@ module.exports = class ControllerDesignTranslation extends Controller {
 				json.push({
 					'key'   : key,
 					'value' : value
-				);
+				});
 			}
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 }

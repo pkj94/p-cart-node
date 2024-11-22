@@ -362,7 +362,7 @@ class ControllerExtensionPaymentSquareup extends Controller {
         data['is_authorized'] = in_array(transaction_info['transaction_type'], array('AUTHORIZED'));
         data['is_captured'] = in_array(transaction_info['transaction_type'], array('CAPTURED'));
 
-        data['has_refunds'] = (bool)transaction_info['is_refunded'];
+        data['has_refunds'] = transaction_info['is_refunded'];
 
         if (data['has_refunds']) {
             refunds = @JSON.parse(transaction_info['refunds'], true);
@@ -467,8 +467,8 @@ class ControllerExtensionPaymentSquareup extends Controller {
         );
 
         filter_data = array(
-            'start' : (page - 1) * this.config.get('config_limit_admin'),
-            'limit' : this.config.get('config_limit_admin')
+            'start' : (page - 1) * Number(this.config.get('config_limit_admin')),
+            'limit' : Number(this.config.get('config_limit_admin'))
         );
 
         if ((this.request.get['order_id'])) {
@@ -510,7 +510,7 @@ class ControllerExtensionPaymentSquareup extends Controller {
         pagination = new Pagination();
         pagination.total = transactions_total;
         pagination.page = page;
-        pagination.limit = this.config.get('config_limit_admin');
+        pagination.limit = Number(this.config.get('config_limit_admin'));
         pagination.url = '{page}';
 
         result['pagination'] = pagination.render();
@@ -922,7 +922,7 @@ class ControllerExtensionPaymentSquareup extends Controller {
         }
 
         this.response.addHeader('Content-Type: application/json');
-        this.response.setOutput(JSON.stringify(json));
+        this.response.setOutput(json);
     }
 
     async validate() {
@@ -1035,11 +1035,11 @@ class ControllerExtensionPaymentSquareup extends Controller {
         }
 
         this.response.addHeader('Content-Type: application/json');
-        this.response.setOutput(JSON.stringify(json));
+        this.response.setOutput(json);
     }
 
     async pushAlert(alert) {
-        this.session.data['payment_squareup_alerts'][] = alert;
+        this.session.data['payment_squareup_alerts'].push(alert;
     }
 
     async pullAlerts() {

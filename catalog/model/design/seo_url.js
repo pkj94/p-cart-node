@@ -1,4 +1,4 @@
-module.exports = class SeoUrl extends global['\Opencart\System\Engine\Model'] {
+module.exports = class SeoUrl extends Model {
 	/**
 	 * @param string keyword
 	 *

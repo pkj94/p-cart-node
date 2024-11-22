@@ -18,7 +18,7 @@ module.exports = class ControllerLocalisationCurrency extends Controller {
 
 		this.load.model('localisation/currency',this);
 
-		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_localisation_currency.addCurrency(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
@@ -50,7 +50,7 @@ module.exports = class ControllerLocalisationCurrency extends Controller {
 
 		this.load.model('localisation/currency',this);
 
-		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_localisation_currency.editCurrency(this.request.get['currency_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
@@ -82,7 +82,8 @@ module.exports = class ControllerLocalisationCurrency extends Controller {
 
 		this.load.model('localisation/currency',this);
 
-		if ((this.request.post['selected']) && this.validateDelete()) {
+		if ((this.request.post['selected']) && await this.validateDelete()) {
+this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
 			for (this.request.post['selected'] of currency_id) {
 				await this.model_localisation_currency.deleteCurrency(currency_id);
 			}
@@ -177,12 +178,12 @@ module.exports = class ControllerLocalisationCurrency extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('localisation/currency', 'user_token=' + this.session.data['user_token'] + url, true)
-		);
+		});
 
 		data['add'] = await this.url.link('localisation/currency/add', 'user_token=' + this.session.data['user_token'] + url, true);
 		data['delete'] = await this.url.link('localisation/currency/delete', 'user_token=' + this.session.data['user_token'] + url, true);
@@ -193,9 +194,9 @@ module.exports = class ControllerLocalisationCurrency extends Controller {
 		filter_data = array(
 			'sort'  : sort,
 			'order' : order,
-			'start' : (page - 1) * this.config.get('config_limit_admin'),
-			'limit' : this.config.get('config_limit_admin')
-		);
+			'start' : (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit' : Number(this.config.get('config_limit_admin'))
+		});
 
 		currency_total = await this.model_localisation_currency.getTotalCurrencies();
 
@@ -209,7 +210,7 @@ module.exports = class ControllerLocalisationCurrency extends Controller {
 				'value'         : result['value'],
 				'date_modified' : date(this.language.get('date_format_short'), strtotime(result['date_modified'])),
 				'edit'          : await this.url.link('localisation/currency/edit', 'user_token=' + this.session.data['user_token'] + '&currency_id=' + result['currency_id'] + url, true)
-			);
+			});
 		}
 
 		if ((this.error['warning'])) {
@@ -264,12 +265,12 @@ module.exports = class ControllerLocalisationCurrency extends Controller {
 		pagination = new Pagination();
 		pagination.total = currency_total;
 		pagination.page = page;
-		pagination.limit = this.config.get('config_limit_admin');
+		pagination.limit = Number(this.config.get('config_limit_admin'));
 		pagination.url = await this.url.link('localisation/currency', 'user_token=' + this.session.data['user_token'] + url + '&page={page}', true);
 
 		data['pagination'] = pagination.render();
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (currency_total) ? ((page - 1) * this.config.get('config_limit_admin')) + 1 : 0, (((page - 1) * this.config.get('config_limit_admin')) > (currency_total - this.config.get('config_limit_admin'))) ? currency_total : (((page - 1) * this.config.get('config_limit_admin')) + this.config.get('config_limit_admin')), currency_total, ceil(currency_total / this.config.get('config_limit_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (currency_total) ? ((page - 1) * Number(this.config.get('config_limit_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_limit_admin'))) > (currency_total - Number(this.config.get('config_limit_admin')))) ? currency_total : (((page - 1) * Number(this.config.get('config_limit_admin'))) + Number(this.config.get('config_limit_admin'))), currency_total, Math.ceil(currency_total / Number(this.config.get('config_limit_admin'))));
 
 		data['sort'] = sort;
 		data['order'] = order;
@@ -321,12 +322,12 @@ module.exports = class ControllerLocalisationCurrency extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('localisation/currency', 'user_token=' + this.session.data['user_token'] + url, true)
-		);
+		});
 
 		if (!(this.request.get['currency_id'])) {
 			data['action'] = await this.url.link('localisation/currency/add', 'user_token=' + this.session.data['user_token'] + url, true);

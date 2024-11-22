@@ -1,4 +1,4 @@
-module.exports =class Gdpr extends global['\Opencart\System\Engine\Model'] {
+module.exports =class Gdpr extends Model {
 	/**
 	 * @param string code
 	 * @param string email

@@ -70,7 +70,7 @@ module.exports = class ModelSaleReturn extends Model {
 			'status',
 			'r.date_added',
 			'r.date_modified'
-		);
+		});
 
 		if ((data['sort']) && sort_data.includes(data['sort'])) {
 			sql += " ORDER BY " + data['sort'];

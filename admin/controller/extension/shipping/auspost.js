@@ -39,17 +39,17 @@ module.exports = class ControllerExtensionShippingAusPost extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_extension'),
 			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=shipping', true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('extension/shipping/auspost', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['action'] = await this.url.link('extension/shipping/auspost', 'user_token=' + this.session.data['user_token'], true);
 
@@ -73,7 +73,7 @@ module.exports = class ControllerExtensionShippingAusPost extends Controller {
 			data['shipping_auspost_weight_class_id'] = this.config.get('shipping_auspost_weight_class_id');
 		}
 
-		this.load.model('localisation/weight_class');
+		this.load.model('localisation/weight_class',this);
 
 		data['weight_classes'] = await this.model_localisation_weight_class.getWeightClasses();
 
@@ -83,7 +83,7 @@ module.exports = class ControllerExtensionShippingAusPost extends Controller {
 			data['shipping_auspost_tax_class_id'] = this.config.get('shipping_auspost_tax_class_id');
 		}
 
-		this.load.model('localisation/tax_class');
+		this.load.model('localisation/tax_class',this);
 
 		data['tax_classes'] = await this.model_localisation_tax_class.getTaxClasses();
 

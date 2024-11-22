@@ -39,17 +39,17 @@ module.exports = class ControllerExtensionPaymentCardinity extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_extension'),
 			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('extension/payment/cardinity', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['action'] = await this.url.link('extension/payment/cardinity', 'user_token=' + this.session.data['user_token'], true);
 
@@ -164,7 +164,7 @@ module.exports = class ControllerExtensionPaymentCardinity extends Controller {
 
 			successful_statuses = array(
 				'approved'
-			);
+			});
 
 			if (in_array(payment.getStatus(), successful_statuses)) {
 				data['refund_action'] = true;
@@ -178,7 +178,7 @@ module.exports = class ControllerExtensionPaymentCardinity extends Controller {
 				for (refunds of refund) {
 					successful_refund_statuses = array(
 						'approved'
-					);
+					});
 
 					if (in_array(refund.getStatus(), successful_refund_statuses)) {
 						max_refund_amount -= refund.getAmount();
@@ -189,7 +189,7 @@ module.exports = class ControllerExtensionPaymentCardinity extends Controller {
 						'amount'	  : this.currency.format(refund.getAmount(), refund.getCurrency(), '1.00000000', true),
 						'status'	  : refund.getStatus(),
 						'description' : refund.getDescription()
-					);
+					});
 				}
 			}
 
@@ -233,7 +233,7 @@ module.exports = class ControllerExtensionPaymentCardinity extends Controller {
 		json['error'] = error;
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 
 	async validate() {
@@ -282,7 +282,7 @@ module.exports = class ControllerExtensionPaymentCardinity extends Controller {
 			}
 		}
 
-		if (this.error && !(this.error['warning'])) {
+		if (Object.keys(this.error).length && !(this.error['warning'])) {
 			this.error['warning'] = this.language.get('error_warning');
 		}
 

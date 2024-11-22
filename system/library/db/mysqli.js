@@ -21,6 +21,7 @@ module.exports = class MySQLiDBLibrary {
         return new Promise((resolve, reject) => {
             this.connection.connect(async (err) => {
                 if (err) {
+                    console.log(err)
                     reject(new Error(this.error + err.message));
                 } else {
                     await this.query("SET SESSION sql_mode = 'NO_ZERO_IN_DATE,NO_ENGINE_SUBSTITUTION'");
@@ -62,6 +63,9 @@ module.exports = class MySQLiDBLibrary {
 
     escape(value) {
         return value;
+    }
+    escapeDb(value) {
+        return this.connection.escape(value);
     }
 
     countAffected() {

@@ -18,7 +18,7 @@ module.exports = class ControllerLocalisationGeoZone extends Controller {
 
 		this.load.model('localisation/geo_zone');
 
-		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_localisation_geo_zone.addGeoZone(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
@@ -50,7 +50,7 @@ module.exports = class ControllerLocalisationGeoZone extends Controller {
 
 		this.load.model('localisation/geo_zone');
 
-		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_localisation_geo_zone.editGeoZone(this.request.get['geo_zone_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
@@ -82,7 +82,8 @@ module.exports = class ControllerLocalisationGeoZone extends Controller {
 
 		this.load.model('localisation/geo_zone');
 
-		if ((this.request.post['selected']) && this.validateDelete()) {
+		if ((this.request.post['selected']) && await this.validateDelete()) {
+this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
 			for (this.request.post['selected'] of geo_zone_id) {
 				await this.model_localisation_geo_zone.deleteGeoZone(geo_zone_id);
 			}
@@ -147,12 +148,12 @@ module.exports = class ControllerLocalisationGeoZone extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('localisation/geo_zone', 'user_token=' + this.session.data['user_token'] + url, true)
-		);
+		});
 
 		data['add'] = await this.url.link('localisation/geo_zone/add', 'user_token=' + this.session.data['user_token'] + url, true);
 		data['delete'] = await this.url.link('localisation/geo_zone/delete', 'user_token=' + this.session.data['user_token'] + url, true);
@@ -162,9 +163,9 @@ module.exports = class ControllerLocalisationGeoZone extends Controller {
 		filter_data = array(
 			'sort'  : sort,
 			'order' : order,
-			'start' : (page - 1) * this.config.get('config_limit_admin'),
-			'limit' : this.config.get('config_limit_admin')
-		);
+			'start' : (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit' : Number(this.config.get('config_limit_admin'))
+		});
 
 		geo_zone_total = await this.model_localisation_geo_zone.getTotalGeoZones();
 
@@ -176,7 +177,7 @@ module.exports = class ControllerLocalisationGeoZone extends Controller {
 				'name'        : result['name'],
 				'description' : result['description'],
 				'edit'        : await this.url.link('localisation/geo_zone/edit', 'user_token=' + this.session.data['user_token'] + '&geo_zone_id=' + result['geo_zone_id'] + url, true)
-			);
+			});
 		}
 
 		if ((this.error['warning'])) {
@@ -227,12 +228,12 @@ module.exports = class ControllerLocalisationGeoZone extends Controller {
 		pagination = new Pagination();
 		pagination.total = geo_zone_total;
 		pagination.page = page;
-		pagination.limit = this.config.get('config_limit_admin');
+		pagination.limit = Number(this.config.get('config_limit_admin'));
 		pagination.url = await this.url.link('localisation/geo_zone', 'user_token=' + this.session.data['user_token'] + url + '&page={page}', true);
 
 		data['pagination'] = pagination.render();
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (geo_zone_total) ? ((page - 1) * this.config.get('config_limit_admin')) + 1 : 0, (((page - 1) * this.config.get('config_limit_admin')) > (geo_zone_total - this.config.get('config_limit_admin'))) ? geo_zone_total : (((page - 1) * this.config.get('config_limit_admin')) + this.config.get('config_limit_admin')), geo_zone_total, ceil(geo_zone_total / this.config.get('config_limit_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (geo_zone_total) ? ((page - 1) * Number(this.config.get('config_limit_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_limit_admin'))) > (geo_zone_total - Number(this.config.get('config_limit_admin')))) ? geo_zone_total : (((page - 1) * Number(this.config.get('config_limit_admin'))) + Number(this.config.get('config_limit_admin'))), geo_zone_total, Math.ceil(geo_zone_total / Number(this.config.get('config_limit_admin'))));
 
 		data['sort'] = sort;
 		data['order'] = order;
@@ -284,12 +285,12 @@ module.exports = class ControllerLocalisationGeoZone extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('localisation/geo_zone', 'user_token=' + this.session.data['user_token'] + url, true)
-		);
+		});
 
 		if (!(this.request.get['geo_zone_id'])) {
 			data['action'] = await this.url.link('localisation/geo_zone/add', 'user_token=' + this.session.data['user_token'] + url, true);
@@ -336,7 +337,7 @@ module.exports = class ControllerLocalisationGeoZone extends Controller {
 		geo_zone_ids = {};
 		for (data['zone_to_geo_zones'] of zone_to_geo_zone) {
 			if (!in_array(zone_to_geo_zone['geo_zone_id'],geo_zone_ids)) {
-				geo_zone_ids[] = zone_to_geo_zone['geo_zone_id'];
+				geo_zone_ids.push(zone_to_geo_zone['geo_zone_id'];
 			}
 		}
 		data['zones'] = await this.model_localisation_geo_zone.getZonesByGeoZones(geo_zone_ids);

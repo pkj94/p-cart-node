@@ -25,7 +25,7 @@ module.exports = class ModelLocalisationLocation extends Model {
 		let sort_data = [
 			'name',
 			'address',
-		);
+		});
 
 		if ((data['sort']) && sort_data.includes(data['sort'])) {
 			sql += " ORDER BY " + data['sort'];

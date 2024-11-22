@@ -6,7 +6,7 @@ module.exports = class ControllerCatalogCategory extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('catalog/category');
+		this.load.model('catalog/category', this);
 
 		await this.getList();
 	}
@@ -16,14 +16,14 @@ module.exports = class ControllerCatalogCategory extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('catalog/category');
+		this.load.model('catalog/category', this);
 
-		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_catalog_category.addCategory(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -36,7 +36,7 @@ module.exports = class ControllerCatalogCategory extends Controller {
 			if ((this.request.get['page'])) {
 				url += '&page=' + this.request.get['page'];
 			}
-
+			await this.session.save(this.session.data);
 			this.response.setRedirect(await this.url.link('catalog/category', 'user_token=' + this.session.data['user_token'] + url, true));
 		}
 
@@ -48,14 +48,14 @@ module.exports = class ControllerCatalogCategory extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('catalog/category');
+		this.load.model('catalog/category', this);
 
-		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_catalog_category.editCategory(this.request.get['category_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -68,7 +68,7 @@ module.exports = class ControllerCatalogCategory extends Controller {
 			if ((this.request.get['page'])) {
 				url += '&page=' + this.request.get['page'];
 			}
-
+			await this.session.save(this.session.data);
 			this.response.setRedirect(await this.url.link('catalog/category', 'user_token=' + this.session.data['user_token'] + url, true));
 		}
 
@@ -80,16 +80,17 @@ module.exports = class ControllerCatalogCategory extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('catalog/category');
+		this.load.model('catalog/category', this);
 
-		if ((this.request.post['selected']) && this.validateDelete()) {
-			for (this.request.post['selected'] of category_id) {
+		if ((this.request.post['selected']) && await this.validateDelete()) {
+this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
+			for (let category_id of this.request.post['selected']) {
 				await this.model_catalog_category.deleteCategory(category_id);
 			}
 
 			this.session.data['success'] = this.language.get('text_success');
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -102,7 +103,7 @@ module.exports = class ControllerCatalogCategory extends Controller {
 			if ((this.request.get['page'])) {
 				url += '&page=' + this.request.get['page'];
 			}
-
+			await this.session.save(this.session.data);
 			this.response.setRedirect(await this.url.link('catalog/category', 'user_token=' + this.session.data['user_token'] + url, true));
 		}
 
@@ -114,14 +115,14 @@ module.exports = class ControllerCatalogCategory extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('catalog/category');
+		this.load.model('catalog/category', this);
 
 		if (this.validateRepair()) {
 			await this.model_catalog_category.repairCategories();
 
 			this.session.data['success'] = this.language.get('text_success');
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -134,7 +135,7 @@ module.exports = class ControllerCatalogCategory extends Controller {
 			if ((this.request.get['page'])) {
 				url += '&page=' + this.request.get['page'];
 			}
-
+			await this.session.save(this.session.data);
 			this.response.setRedirect(await this.url.link('catalog/category', 'user_token=' + this.session.data['user_token'] + url, true));
 		}
 
@@ -142,25 +143,21 @@ module.exports = class ControllerCatalogCategory extends Controller {
 	}
 
 	async getList() {
+		const data = {};
+		let sort = 'name';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
-		} else {
-			sort = 'name';
 		}
-
+		let order = 'ASC';
 		if ((this.request.get['order'])) {
 			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
 		}
-
+		let page = 1;
 		if ((this.request.get['page'])) {
 			page = this.request.get['page'];
-		} else {
-			page = 1;
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -177,40 +174,40 @@ module.exports = class ControllerCatalogCategory extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('catalog/category', 'user_token=' + this.session.data['user_token'] + url, true)
-		);
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('catalog/category', 'user_token=' + this.session.data['user_token'] + url, true)
+		});
 
 		data['add'] = await this.url.link('catalog/category/add', 'user_token=' + this.session.data['user_token'] + url, true);
 		data['delete'] = await this.url.link('catalog/category/delete', 'user_token=' + this.session.data['user_token'] + url, true);
 		data['repair'] = await this.url.link('catalog/category/repair', 'user_token=' + this.session.data['user_token'] + url, true);
 
-		data['categories'] = {};
+		data['categories'] = [];
 
-		filter_data = array(
-			'sort'  : sort,
-			'order' : order,
-			'start' : (page - 1) * this.config.get('config_limit_admin'),
-			'limit' : this.config.get('config_limit_admin')
-		);
+		let filter_data = {
+			'sort': sort,
+			'order': order,
+			'start': (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit': Number(this.config.get('config_limit_admin'))
+		};
 
-		category_total = await this.model_catalog_category.getTotalCategories();
+		const category_total = await this.model_catalog_category.getTotalCategories();
 
-		results = await this.model_catalog_category.getCategories(filter_data);
+		const results = await this.model_catalog_category.getCategories(filter_data);
 
 		for (let result of results) {
 			data['categories'].push({
-				'category_id' : result['category_id'],
-				'name'        : result['name'],
-				'sort_order'  : result['sort_order'],
-				'edit'        : await this.url.link('catalog/category/edit', 'user_token=' + this.session.data['user_token'] + '&category_id=' + result['category_id'] + url, true),
-				'delete'      : await this.url.link('catalog/category/delete', 'user_token=' + this.session.data['user_token'] + '&category_id=' + result['category_id'] + url, true)
-			);
+				'category_id': result['category_id'],
+				'name': result['name'],
+				'sort_order': result['sort_order'],
+				'edit': await this.url.link('catalog/category/edit', 'user_token=' + this.session.data['user_token'] + '&category_id=' + result['category_id'] + url, true),
+				'delete': await this.url.link('catalog/category/delete', 'user_token=' + this.session.data['user_token'] + '&category_id=' + result['category_id'] + url, true)
+			});
 		}
 
 		if ((this.error['warning'])) {
@@ -222,7 +219,7 @@ module.exports = class ControllerCatalogCategory extends Controller {
 		if ((this.session.data['success'])) {
 			data['success'] = this.session.data['success'];
 
-			delete this.session.data['success']);
+			delete this.session.data['success'];
 		} else {
 			data['success'] = '';
 		}
@@ -230,7 +227,7 @@ module.exports = class ControllerCatalogCategory extends Controller {
 		if ((this.request.post['selected'])) {
 			data['selected'] = this.request.post['selected'];
 		} else {
-			data['selected'] = {};
+			data['selected'] = [];
 		}
 
 		url = '';
@@ -258,27 +255,27 @@ module.exports = class ControllerCatalogCategory extends Controller {
 			url += '&order=' + this.request.get['order'];
 		}
 
-		pagination = new Pagination();
+		const pagination = new Pagination();
 		pagination.total = category_total;
 		pagination.page = page;
-		pagination.limit = this.config.get('config_limit_admin');
+		pagination.limit = Number(this.config.get('config_limit_admin'));
 		pagination.url = await this.url.link('catalog/category', 'user_token=' + this.session.data['user_token'] + url + '&page={page}', true);
 
 		data['pagination'] = pagination.render();
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (category_total) ? ((page - 1) * this.config.get('config_limit_admin')) + 1 : 0, (((page - 1) * this.config.get('config_limit_admin')) > (category_total - this.config.get('config_limit_admin'))) ? category_total : (((page - 1) * this.config.get('config_limit_admin')) + this.config.get('config_limit_admin')), category_total, ceil(category_total / this.config.get('config_limit_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (category_total) ? ((page - 1) * Number(this.config.get('config_limit_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_limit_admin'))) > (category_total - Number(this.config.get('config_limit_admin')))) ? category_total : (((page - 1) * Number(this.config.get('config_limit_admin'))) + Number(this.config.get('config_limit_admin'))), category_total, Math.ceil(category_total / Number(this.config.get('config_limit_admin'))));
 
 		data['sort'] = sort;
 		data['order'] = order;
-
 		data['header'] = await this.load.controller('common/header');
 		data['column_left'] = await this.load.controller('common/column_left');
 		data['footer'] = await this.load.controller('common/footer');
-
+		await this.session.save(this.session.data);
 		this.response.setOutput(await this.load.view('catalog/category_list', data));
 	}
 
 	async getForm() {
+		const data = {};
 		data['text_form'] = !(this.request.get['category_id']) ? this.language.get('text_add') : this.language.get('text_edit');
 
 		if ((this.error['warning'])) {
@@ -311,7 +308,7 @@ module.exports = class ControllerCatalogCategory extends Controller {
 			data['error_parent'] = '';
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -328,14 +325,14 @@ module.exports = class ControllerCatalogCategory extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('catalog/category', 'user_token=' + this.session.data['user_token'] + url, true)
-		);
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('catalog/category', 'user_token=' + this.session.data['user_token'] + url, true)
+		});
 
 		if (!(this.request.get['category_id'])) {
 			data['action'] = await this.url.link('catalog/category/add', 'user_token=' + this.session.data['user_token'] + url, true);
@@ -344,14 +341,14 @@ module.exports = class ControllerCatalogCategory extends Controller {
 		}
 
 		data['cancel'] = await this.url.link('catalog/category', 'user_token=' + this.session.data['user_token'] + url, true);
-
+		let category_info = {};
 		if ((this.request.get['category_id']) && (this.request.server['method'] != 'POST')) {
 			category_info = await this.model_catalog_category.getCategory(this.request.get['category_id']);
 		}
 
 		data['user_token'] = this.session.data['user_token'];
 
-		this.load.model('localisation/language',this);
+		this.load.model('localisation/language', this);
 
 		data['languages'] = await this.model_localisation_language.getLanguages();
 
@@ -379,45 +376,45 @@ module.exports = class ControllerCatalogCategory extends Controller {
 			data['parent_id'] = 0;
 		}
 
-		this.load.model('catalog/filter');
-
+		this.load.model('catalog/filter', this);
+		let filters = [];
 		if ((this.request.post['category_filter'])) {
 			filters = this.request.post['category_filter'];
 		} else if ((this.request.get['category_id'])) {
 			filters = await this.model_catalog_category.getCategoryFilters(this.request.get['category_id']);
 		} else {
-			filters = {};
+			filters = [];
 		}
 
 		data['category_filters'] = {};
 
-		for (filters of filter_id) {
-			filter_info = await this.model_catalog_filter.getFilter(filter_id);
+		for (let filter_id of filters) {
+			const filter_info = await this.model_catalog_filter.getFilter(filter_id);
 
-			if (filter_info) {
+			if (filter_info.filter_id) {
 				data['category_filters'].push({
-					'filter_id' : filter_info['filter_id'],
-					'name'      : filter_info['group'] + ' &gt; ' + filter_info['name']
-				);
+					'filter_id': filter_info['filter_id'],
+					'name': filter_info['group'] + ' &gt; ' + filter_info['name']
+				});
 			}
 		}
 
-		this.load.model('setting/store',this);
+		this.load.model('setting/store', this);
 
-		data['stores'] = {};
+		data['stores'] = [];
 
 		data['stores'].push({
-			'store_id' : 0,
-			'name'     : this.language.get('text_default')
-		);
+			'store_id': 0,
+			'name': this.language.get('text_default')
+		});
 
-		stores = await this.model_setting_store.getStores();
+		const stores = await this.model_setting_store.getStores();
 
-		for (stores of store) {
+		for (let store of stores) {
 			data['stores'].push({
-				'store_id' : store['store_id'],
-				'name'     : store['name']
-			);
+				'store_id': store['store_id'],
+				'name': store['name']
+			});
 		}
 
 		if ((this.request.post['category_store'])) {
@@ -425,7 +422,7 @@ module.exports = class ControllerCatalogCategory extends Controller {
 		} else if ((this.request.get['category_id'])) {
 			data['category_store'] = await this.model_catalog_category.getCategoryStores(this.request.get['category_id']);
 		} else {
-			data['category_store'] = array(0);
+			data['category_store'] = [0];
 		}
 
 		if ((this.request.post['image'])) {
@@ -436,7 +433,7 @@ module.exports = class ControllerCatalogCategory extends Controller {
 			data['image'] = '';
 		}
 
-		this.load.model('tool/image',this);
+		this.load.model('tool/image', this);
 
 		if ((this.request.post['image']) && is_file(DIR_IMAGE + this.request.post['image'])) {
 			data['thumb'] = await this.model_tool_image.resize(this.request.post['image'], 100, 100);
@@ -496,7 +493,7 @@ module.exports = class ControllerCatalogCategory extends Controller {
 			data['category_layout'] = {};
 		}
 
-		this.load.model('design/layout');
+		this.load.model('design/layout', this);
 
 		data['layouts'] = await this.model_design_layout.getLayouts();
 
@@ -512,18 +509,20 @@ module.exports = class ControllerCatalogCategory extends Controller {
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		for (this.request.post['category_description'] of language_id : value) {
+		for (let [language_id, value] of Object.entries(this.request.post['category_description'])) {
 			if ((oc_strlen(value['name']) < 1) || (oc_strlen(value['name']) > 255)) {
+				this.error['name'] = this.error['name'] || {};
 				this.error['name'][language_id] = this.language.get('error_name');
 			}
 
 			if ((oc_strlen(value['meta_title']) < 1) || (oc_strlen(value['meta_title']) > 255)) {
+				this.error['meta_title'] = this.error['meta_title'] || {};
 				this.error['meta_title'][language_id] = this.language.get('error_meta_title');
 			}
 		}
 
 		if ((this.request.get['category_id']) && this.request.post['parent_id']) {
-			results = await this.model_catalog_category.getCategoryPath(this.request.post['parent_id']);
+			const results = await this.model_catalog_category.getCategoryPath(this.request.post['parent_id']);
 
 			for (let result of results) {
 				if (result['path_id'] == this.request.get['category_id']) {
@@ -535,19 +534,24 @@ module.exports = class ControllerCatalogCategory extends Controller {
 		}
 
 		if (this.request.post['category_seo_url']) {
-			this.load.model('design/seo_url');
+			this.load.model('design/seo_url', this);
 
-			for (this.request.post['category_seo_url'] of store_id : language) {
-				for (language of language_id : keyword) {
+			for (let [store_id, language] of Object.entries(this.request.post['category_seo_url'])) {
+				for (let [language_id, keyword] of Object.entries(language)) {
 					if ((keyword)) {
-						if (count(array_keys(language, keyword)) > 1) {
-							this.error['keyword'][store_id][language_id] = this.language.get('error_unique');
+						if (Object.keys(language).filter(key => language[key] === keyword).length > 1) {
+							this.error.keyword = this.error.keyword || {};
+							this.error.keyword[store_id] = this.error.keyword[store_id] || {};
+							this.error.keyword[store_id][language_id] = language.get('error_unique');
 						}
 
-						seo_urls = await this.model_design_seo_url.getSeoUrlsByKeyword(keyword);
 
-						for (seo_urls of seo_url) {
+						const seo_urls = await this.model_design_seo_url.getSeoUrlsByKeyword(keyword);
+
+						for (let seo_url of seo_urls) {
 							if ((seo_url['store_id'] == store_id) && (!(this.request.get['category_id']) || (seo_url['query'] != 'category_id=' + this.request.get['category_id']))) {
+								this.error['keyword'] = this.error['keyword'] || {};
+								this.error['keyword'][store_id] = this.error['keyword'][store_id] || {};
 								this.error['keyword'][store_id][language_id] = this.language.get('error_keyword');
 
 								break;
@@ -558,11 +562,11 @@ module.exports = class ControllerCatalogCategory extends Controller {
 			}
 		}
 
-		if (this.error && !(this.error['warning'])) {
+		if (Object.keys(this.error).length && !(this.error['warning'])) {
 			this.error['warning'] = this.language.get('error_warning');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 
 	async validateDelete() {
@@ -570,7 +574,7 @@ module.exports = class ControllerCatalogCategory extends Controller {
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 
 	async validateRepair() {
@@ -578,42 +582,35 @@ module.exports = class ControllerCatalogCategory extends Controller {
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 
 	async autocomplete() {
-		json = {};
+		let json = [];
 
 		if ((this.request.get['filter_name'])) {
-			this.load.model('catalog/category');
+			this.load.model('catalog/category', this);
 
-			filter_data = array(
-				'filter_name' : this.request.get['filter_name'],
-				'sort'        : 'name',
-				'order'       : 'ASC',
-				'start'       : 0,
-				'limit'       : 5
-			);
+			let filter_data = {
+				'filter_name': this.request.get['filter_name'],
+				'sort': 'name',
+				'order': 'ASC',
+				'start': 0,
+				'limit': 5
+			};
 
-			results = await this.model_catalog_category.getCategories(filter_data);
+			const results = await this.model_catalog_category.getCategories(filter_data);
 
 			for (let result of results) {
 				json.push({
-					'category_id' : result['category_id'],
-					'name'        : strip_tags(html_entity_decode(result['name']))
-				);
+					'category_id': result['category_id'],
+					'name': strip_tags(html_entity_decode(result['name']))
+				});
 			}
 		}
 
-		sort_order = {};
-
-		for (json of key : value) {
-			sort_order[key] = value['name'];
-		}
-
-		array_multisort(sort_order, SORT_ASC, json);
-
+		json = json.sort((a, b) => a.name - b.name);
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 }

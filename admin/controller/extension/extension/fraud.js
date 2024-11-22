@@ -94,7 +94,7 @@ module.exports = class ControllerExtensionExtensionFraud extends Controller {
 					'uninstall' : await this.url.link('extension/extension/fraud/uninstall', 'user_token=' + this.session.data['user_token'] + '&extension=' + extension, true),
 					'installed' : in_array(extension, extensions),
 					'edit'      : await this.url.link('extension/fraud/' + extension, 'user_token=' + this.session.data['user_token'], true)
-				);
+				});
 			}
 		}
 

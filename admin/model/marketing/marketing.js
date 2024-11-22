@@ -58,7 +58,7 @@ module.exports = class ModelMarketingMarketing extends Model {
 			'm.name',
 			'm.code',
 			'm.date_added'
-		);
+		});
 
 		if ((data['sort']) && sort_data.includes(data['sort'])) {
 			sql += " ORDER BY " + data['sort'];

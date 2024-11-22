@@ -66,7 +66,7 @@ module.exports = class ModelExtensionFraudFraudLabsPro extends Model {
 		await this.db.query("INSERT INTO `" + DB_PREFIX + "setting` (`code`, `key`, `value`, `serialized`) VALUES ('fraudlabspro', 'fraud_fraudlabspro_approve_status_id', '2', '0');");
 		await this.db.query("INSERT INTO `" + DB_PREFIX + "setting` (`code`, `key`, `value`, `serialized`) VALUES ('fraudlabspro', 'fraud_fraudlabspro_reject_status_id', '8', '0');");
 
-		this.cache.delete('order_status.' + this.config.get('config_language_id'));
+		await this.cache.delete('order_status.' + this.config.get('config_language_id'));
 	}
 
 	async uninstall() {

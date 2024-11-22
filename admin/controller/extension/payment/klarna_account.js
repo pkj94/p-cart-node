@@ -23,7 +23,7 @@ module.exports = class ControllerExtensionPaymentKlarnaAccount extends Controlle
 			klarna_data = array(
 				'klarna_account_pclasses' : this.pclasses,
 				'klarna_account_status'   : status
-			);
+			});
 
 			await this.model_setting_setting.editSetting('payment_klarna_account', array_merge(this.request.post, klarna_data));
 
@@ -51,17 +51,17 @@ module.exports = class ControllerExtensionPaymentKlarnaAccount extends Controlle
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_extension'),
 			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('extension/payment/klarna_account', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['action'] = await this.url.link('extension/payment/klarna_account', 'user_token=' + this.session.data['user_token'], true);
 
@@ -72,32 +72,32 @@ module.exports = class ControllerExtensionPaymentKlarnaAccount extends Controlle
 		data['countries'].push({
 			'name' : this.language.get('text_germany'),
 			'code' : 'DEU'
-		);
+		});
 
 		data['countries'].push({
 			'name' : this.language.get('text_netherlands'),
 			'code' : 'NLD'
-		);
+		});
 
 		data['countries'].push({
 			'name' : this.language.get('text_denmark'),
 			'code' : 'DNK'
-		);
+		});
 
 		data['countries'].push({
 			'name' : this.language.get('text_sweden'),
 			'code' : 'SWE'
-		);
+		});
 
 		data['countries'].push({
 			'name' : this.language.get('text_norway'),
 			'code' : 'NOR'
-		);
+		});
 
 		data['countries'].push({
 			'name' : this.language.get('text_finland'),
 			'code' : 'FIN'
-		);
+		});
 
 		if ((this.request.post['payment_klarna_account'])) {
 			data['payment_klarna_account'] = this.request.post['payment_klarna_account'];
@@ -168,7 +168,7 @@ module.exports = class ControllerExtensionPaymentKlarnaAccount extends Controlle
 				'country'  : 154,
 				'language' : 101,
 			),
-		);
+		});
 
 		for (this.request.post['klarna_account'] of key : klarna_account) {
 			if (klarna_account['status']) {
@@ -197,8 +197,8 @@ module.exports = class ControllerExtensionPaymentKlarnaAccount extends Controlle
 
 				header = {};
 
-				header[] = 'Content-Type: text/xml';
-				header[] = 'Content-Length: ' + strlen(xml);
+				header.push('Content-Type: text/xml';
+				header.push('Content-Length: ' + strlen(xml);
 
 				curl_setopt(curl, CURLOPT_URL, url);
 				curl_setopt(curl, CURLOPT_SSL_VERIFYPEER, false);
@@ -254,7 +254,7 @@ module.exports = class ControllerExtensionPaymentKlarnaAccount extends Controlle
 							'minamount'    : floatval(pclass[7]),
 							'country'      : intval(pclass[8]),
 							'type'         : intval(pclass[9]),
-						);
+						});
 					}
 				} else {
 					this.error['warning'] = this.language.get('error_log');
@@ -301,7 +301,7 @@ module.exports = class ControllerExtensionPaymentKlarnaAccount extends Controlle
 				entries = xpath.query('.//array/data/value', child);
 
 				for (i = 0; i < entries.length; i++) {
-					value[] = this.parseResponse(entries.item(i).firstChild, document);
+					value.push(this.parseResponse(entries.item(i).firstChild, document);
 				}
 
 				break;

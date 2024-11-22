@@ -18,7 +18,7 @@ module.exports = class ControllerCatalogAttributeGroup extends Controller {
 
 		this.load.model('catalog/attribute_group', this);
 
-		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_catalog_attribute_group.addAttributeGroup(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
@@ -50,7 +50,7 @@ module.exports = class ControllerCatalogAttributeGroup extends Controller {
 
 		this.load.model('catalog/attribute_group', this);
 
-		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_catalog_attribute_group.editAttributeGroup(this.request.get['attribute_group_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
@@ -82,7 +82,8 @@ module.exports = class ControllerCatalogAttributeGroup extends Controller {
 
 		this.load.model('catalog/attribute_group', this);
 
-		if ((this.request.post['selected']) && this.validateDelete()) {
+		if ((this.request.post['selected']) && await this.validateDelete()) {
+this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
 			for (this.request.post['selected'] of attribute_group_id) {
 				await this.model_catalog_attribute_group.deleteAttributeGroup(attribute_group_id);
 			}
@@ -147,12 +148,12 @@ module.exports = class ControllerCatalogAttributeGroup extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('catalog/attribute_group', 'user_token=' + this.session.data['user_token'] + url, true)
-		);
+		});
 
 		data['add'] = await this.url.link('catalog/attribute_group/add', 'user_token=' + this.session.data['user_token'] + url, true);
 		data['delete'] = await this.url.link('catalog/attribute_group/delete', 'user_token=' + this.session.data['user_token'] + url, true);
@@ -162,9 +163,9 @@ module.exports = class ControllerCatalogAttributeGroup extends Controller {
 		filter_data = array(
 			'sort'  : sort,
 			'order' : order,
-			'start' :(page - 1) * this.config.get('config_limit_admin'),
-			'limit' : this.config.get('config_limit_admin')
-		);
+			'start' :(page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit' : Number(this.config.get('config_limit_admin'))
+		});
 
 		attribute_group_total = await this.model_catalog_attribute_group.getTotalAttributeGroups();
 
@@ -176,7 +177,7 @@ module.exports = class ControllerCatalogAttributeGroup extends Controller {
 				'name'               : result['name'],
 				'sort_order'         : result['sort_order'],
 				'edit'               : await this.url.link('catalog/attribute_group/edit', 'user_token=' + this.session.data['user_token'] + '&attribute_group_id=' + result['attribute_group_id'] + url, true)
-			);
+			});
 		}
 
 		if ((this.error['warning'])) {
@@ -227,12 +228,12 @@ module.exports = class ControllerCatalogAttributeGroup extends Controller {
 		pagination = new Pagination();
 		pagination.total = attribute_group_total;
 		pagination.page = page;
-		pagination.limit = this.config.get('config_limit_admin');
+		pagination.limit = Number(this.config.get('config_limit_admin'));
 		pagination.url = await this.url.link('catalog/attribute_group', 'user_token=' + this.session.data['user_token'] + url + '&page={page}', true);
 
 		data['pagination'] = pagination.render();
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (attribute_group_total) ? ((page - 1) * this.config.get('config_limit_admin')) + 1 : 0, (((page - 1) * this.config.get('config_limit_admin')) > (attribute_group_total - this.config.get('config_limit_admin'))) ? attribute_group_total : (((page - 1) * this.config.get('config_limit_admin')) + this.config.get('config_limit_admin')), attribute_group_total, ceil(attribute_group_total / this.config.get('config_limit_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (attribute_group_total) ? ((page - 1) * Number(this.config.get('config_limit_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_limit_admin'))) > (attribute_group_total - Number(this.config.get('config_limit_admin')))) ? attribute_group_total : (((page - 1) * Number(this.config.get('config_limit_admin'))) + Number(this.config.get('config_limit_admin'))), attribute_group_total, Math.ceil(attribute_group_total / Number(this.config.get('config_limit_admin'))));
 
 		data['sort'] = sort;
 		data['order'] = order;
@@ -278,12 +279,12 @@ module.exports = class ControllerCatalogAttributeGroup extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('catalog/attribute_group', 'user_token=' + this.session.data['user_token'] + url, true)
-		);
+		});
 
 		if (!(this.request.get['attribute_group_id'])) {
 			data['action'] = await this.url.link('catalog/attribute_group/add', 'user_token=' + this.session.data['user_token'] + url, true);
@@ -343,7 +344,7 @@ module.exports = class ControllerCatalogAttributeGroup extends Controller {
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		this.load.model('catalog/attribute');
+		this.load.model('catalog/attribute',this);
 
 		for (this.request.post['selected'] of attribute_group_id) {
 			attribute_total = await this.model_catalog_attribute.getTotalAttributesByAttributeGroupId(attribute_group_id);

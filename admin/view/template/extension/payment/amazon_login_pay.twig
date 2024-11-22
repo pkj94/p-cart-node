@@ -373,7 +373,7 @@
       //</script>
   <script type="text/javascript">
       $('input[name=\'payment_amazon_login_pay_ipn_token\']').change(function () {
-        var base = '{{ https_catalog }}index.php?route=extension/payment/amazon_login_pay/ipn&token=';
+        var base = '{{ https_catalog }}?route=extension/payment/amazon_login_pay/ipn&token=';
         var allowedLength = 150 - base.length;
         var newVal = $(this).val().substr(0, allowedLength);
         $(this).val(newVal);

@@ -1,4 +1,4 @@
-module.exports=class Review extends global['\Opencart\System\Engine\Model'] {
+module.exports=class Review extends Model {
 	/**
 	 * @param   product_id
 	 * @param data

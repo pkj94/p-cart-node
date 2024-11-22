@@ -2,7 +2,7 @@ module.exports = class ModelLocalisationCountry extends Model {
 	async addCountry(data) {
 		await this.db.query("INSERT INTO " + DB_PREFIX + "country SET name = '" + this.db.escape(data['name']) + "', iso_code_2 = '" + this.db.escape(data['iso_code_2']) + "', iso_code_3 = '" + this.db.escape(data['iso_code_3']) + "', address_format = '" + this.db.escape(data['address_format']) + "', postcode_required = '" + data['postcode_required'] + "', status = '" + data['status'] + "'");
 
-		this.cache.delete('country');
+		await this.cache.delete('country');
 		
 		return this.db.getLastId();
 	}
@@ -10,13 +10,13 @@ module.exports = class ModelLocalisationCountry extends Model {
 	async editCountry(country_id, data) {
 		await this.db.query("UPDATE " + DB_PREFIX + "country SET name = '" + this.db.escape(data['name']) + "', iso_code_2 = '" + this.db.escape(data['iso_code_2']) + "', iso_code_3 = '" + this.db.escape(data['iso_code_3']) + "', address_format = '" + this.db.escape(data['address_format']) + "', postcode_required = '" + data['postcode_required'] + "', status = '" + data['status'] + "' WHERE country_id = '" + country_id + "'");
 
-		this.cache.delete('country');
+		await this.cache.delete('country');
 	}
 
 	async deleteCountry(country_id) {
 		await this.db.query("DELETE FROM " + DB_PREFIX + "country WHERE country_id = '" + country_id + "'");
 
-		this.cache.delete('country');
+		await this.cache.delete('country');
 	}
 
 	async getCountry(country_id) {
@@ -33,7 +33,7 @@ module.exports = class ModelLocalisationCountry extends Model {
 				'name',
 				'iso_code_2',
 				'iso_code_3'
-			);
+			});
 
 			if ((data['sort']) && sort_data.includes(data['sort'])) {
 				sql += " ORDER BY " + data['sort'];
@@ -65,14 +65,14 @@ if (data['limit'] < 1) {
 
 			return query.rows;
 		} else {
-			country_data = this.cache.get('country.admin');
+			country_data = await this.cache.get('country.admin');
 
 			if (!country_data) {
 				const query = await this.db.query("SELECT * FROM " + DB_PREFIX + "country ORDER BY name ASC");
 
 				country_data = query.rows;
 
-				this.cache.set('country.admin', country_data);
+				await this.cache.set('country.admin', country_data);
 			}
 
 			return country_data;

@@ -2,14 +2,14 @@ module.exports = class ModelLocalisationLengthClass extends Model {
 	async addLengthClass(data) {
 		await this.db.query("INSERT INTO " + DB_PREFIX + "length_class SET value = '" + data['value'] + "'");
 
-		length_class_id = this.db.getLastId();
+		const length_class_id = this.db.getLastId();
 
-		for (data['length_class_description'] of language_id : value) {
+		for (let [language_id, value] of Object.entries(data['length_class_description'])) {
 			await this.db.query("INSERT INTO " + DB_PREFIX + "length_class_description SET length_class_id = '" + length_class_id + "', language_id = '" + language_id + "', title = '" + this.db.escape(value['title']) + "', unit = '" + this.db.escape(value['unit']) + "'");
 		}
 
-		this.cache.delete('length_class');
-		
+		await this.cache.delete('length_class');
+
 		return length_class_id;
 	}
 
@@ -18,18 +18,18 @@ module.exports = class ModelLocalisationLengthClass extends Model {
 
 		await this.db.query("DELETE FROM " + DB_PREFIX + "length_class_description WHERE length_class_id = '" + length_class_id + "'");
 
-		for (data['length_class_description'] of language_id : value) {
+		for (let [language_id, value] of Object.entries(data['length_class_description'])) {
 			await this.db.query("INSERT INTO " + DB_PREFIX + "length_class_description SET length_class_id = '" + length_class_id + "', language_id = '" + language_id + "', title = '" + this.db.escape(value['title']) + "', unit = '" + this.db.escape(value['unit']) + "'");
 		}
 
-		this.cache.delete('length_class');
+		await this.cache.delete('length_class');
 	}
 
 	async deleteLengthClass(length_class_id) {
 		await this.db.query("DELETE FROM " + DB_PREFIX + "length_class WHERE length_class_id = '" + length_class_id + "'");
 		await this.db.query("DELETE FROM " + DB_PREFIX + "length_class_description WHERE length_class_id = '" + length_class_id + "'");
 
-		this.cache.delete('length_class');
+		await this.cache.delete('length_class');
 	}
 
 	async getLengthClasses(data = {}) {
@@ -40,7 +40,7 @@ module.exports = class ModelLocalisationLengthClass extends Model {
 				'title',
 				'unit',
 				'value'
-			);
+			];
 
 			if ((data['sort']) && sort_data.includes(data['sort'])) {
 				sql += " ORDER BY " + data['sort'];
@@ -55,13 +55,13 @@ module.exports = class ModelLocalisationLengthClass extends Model {
 			}
 
 			if ((data['start']) || (data['limit'])) {
-				data['start'] = data['start']||0;
-if (data['start'] < 0) {
+				data['start'] = data['start'] || 0;
+				if (data['start'] < 0) {
 					data['start'] = 0;
 				}
 
-				data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+				data['limit'] = data['limit'] || 20;
+				if (data['limit'] < 1) {
 					data['limit'] = 20;
 				}
 
@@ -72,14 +72,14 @@ if (data['limit'] < 1) {
 
 			return query.rows;
 		} else {
-			length_class_data = this.cache.get('length_class.' + this.config.get('config_language_id'));
+			let length_class_data = await this.cache.get('length_class.' + this.config.get('config_language_id'));
 
 			if (!length_class_data) {
 				const query = await this.db.query("SELECT * FROM " + DB_PREFIX + "length_class lc LEFT JOIN " + DB_PREFIX + "length_class_description lcd ON (lc.length_class_id = lcd.length_class_id) WHERE lcd.language_id = '" + this.config.get('config_language_id') + "'");
 
 				length_class_data = query.rows;
 
-				this.cache.set('length_class.' + this.config.get('config_language_id'), length_class_data);
+				await this.cache.set('length_class.' + this.config.get('config_language_id'), length_class_data);
 			}
 
 			return length_class_data;
@@ -99,15 +99,15 @@ if (data['limit'] < 1) {
 	}
 
 	async getLengthClassDescriptions(length_class_id) {
-		length_class_data = {};
+		let length_class_data = {};
 
 		const query = await this.db.query("SELECT * FROM " + DB_PREFIX + "length_class_description WHERE length_class_id = '" + length_class_id + "'");
 
-		for (let result of query.rows ) {
-			length_class_data[result['language_id']] = array(
-				'title' : result['title'],
-				'unit'  : result['unit']
-			);
+		for (let result of query.rows) {
+			length_class_data[result['language_id']] = {
+				'title': result['title'],
+				'unit': result['unit']
+			};
 		}
 
 		return length_class_data;

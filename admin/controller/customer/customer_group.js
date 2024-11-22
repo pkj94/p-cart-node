@@ -6,7 +6,7 @@ module.exports = class ControllerCustomerCustomerGroup extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('customer/customer_group');
+		this.load.model('customer/customer_group',this);
 
 		await this.getList();
 	}
@@ -16,9 +16,9 @@ module.exports = class ControllerCustomerCustomerGroup extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('customer/customer_group');
+		this.load.model('customer/customer_group',this);
 
-		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_customer_customer_group.addCustomerGroup(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
@@ -48,9 +48,9 @@ module.exports = class ControllerCustomerCustomerGroup extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('customer/customer_group');
+		this.load.model('customer/customer_group',this);
 
-		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_customer_customer_group.editCustomerGroup(this.request.get['customer_group_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
@@ -80,9 +80,10 @@ module.exports = class ControllerCustomerCustomerGroup extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('customer/customer_group');
+		this.load.model('customer/customer_group',this);
 
-		if ((this.request.post['selected']) && this.validateDelete()) {
+		if ((this.request.post['selected']) && await this.validateDelete()) {
+this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
 			for (this.request.post['selected'] of customer_group_id) {
 				await this.model_customer_customer_group.deleteCustomerGroup(customer_group_id);
 			}
@@ -147,12 +148,12 @@ module.exports = class ControllerCustomerCustomerGroup extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('customer/customer_group', 'user_token=' + this.session.data['user_token'] + url, true)
-		);
+		});
 
 		data['add'] = await this.url.link('customer/customer_group/add', 'user_token=' + this.session.data['user_token'] + url, true);
 		data['delete'] = await this.url.link('customer/customer_group/delete', 'user_token=' + this.session.data['user_token'] + url, true);
@@ -162,9 +163,9 @@ module.exports = class ControllerCustomerCustomerGroup extends Controller {
 		filter_data = array(
 			'sort'  : sort,
 			'order' : order,
-			'start' : (page - 1) * this.config.get('config_limit_admin'),
-			'limit' : this.config.get('config_limit_admin')
-		);
+			'start' : (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit' : Number(this.config.get('config_limit_admin'))
+		});
 
 		customer_group_total = await this.model_customer_customer_group.getTotalCustomerGroups();
 
@@ -176,7 +177,7 @@ module.exports = class ControllerCustomerCustomerGroup extends Controller {
 				'name'              : result['name'] + ((result['customer_group_id'] == this.config.get('config_customer_group_id')) ? this.language.get('text_default') : null),
 				'sort_order'        : result['sort_order'],
 				'edit'              : await this.url.link('customer/customer_group/edit', 'user_token=' + this.session.data['user_token'] + '&customer_group_id=' + result['customer_group_id'] + url, true)
-			);
+			});
 		}
 
 		if ((this.error['warning'])) {
@@ -227,12 +228,12 @@ module.exports = class ControllerCustomerCustomerGroup extends Controller {
 		pagination = new Pagination();
 		pagination.total = customer_group_total;
 		pagination.page = page;
-		pagination.limit = this.config.get('config_limit_admin');
+		pagination.limit = Number(this.config.get('config_limit_admin'));
 		pagination.url = await this.url.link('customer/customer_group', 'user_token=' + this.session.data['user_token'] + url + '&page={page}', true);
 
 		data['pagination'] = pagination.render();
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (customer_group_total) ? ((page - 1) * this.config.get('config_limit_admin')) + 1 : 0, (((page - 1) * this.config.get('config_limit_admin')) > (customer_group_total - this.config.get('config_limit_admin'))) ? customer_group_total : (((page - 1) * this.config.get('config_limit_admin')) + this.config.get('config_limit_admin')), customer_group_total, ceil(customer_group_total / this.config.get('config_limit_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (customer_group_total) ? ((page - 1) * Number(this.config.get('config_limit_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_limit_admin'))) > (customer_group_total - Number(this.config.get('config_limit_admin')))) ? customer_group_total : (((page - 1) * Number(this.config.get('config_limit_admin'))) + Number(this.config.get('config_limit_admin'))), customer_group_total, Math.ceil(customer_group_total / Number(this.config.get('config_limit_admin'))));
 
 		data['sort'] = sort;
 		data['order'] = order;
@@ -278,12 +279,12 @@ module.exports = class ControllerCustomerCustomerGroup extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('customer/customer_group', 'user_token=' + this.session.data['user_token'] + url, true)
-		);
+		});
 
 		if (!(this.request.get['customer_group_id'])) {
 			data['action'] = await this.url.link('customer/customer_group/add', 'user_token=' + this.session.data['user_token'] + url, true);

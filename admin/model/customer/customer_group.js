@@ -2,12 +2,12 @@ module.exports = class ModelCustomerCustomerGroup extends Model {
 	async addCustomerGroup(data) {
 		await this.db.query("INSERT INTO " + DB_PREFIX + "customer_group SET approval = '" + data['approval'] + "', sort_order = '" + data['sort_order'] + "'");
 
-		customer_group_id = this.db.getLastId();
+		const customer_group_id = this.db.getLastId();
 
-		for (data['customer_group_description'] of language_id : value) {
+		for (let [language_id, value] of Object.entries(data['customer_group_description'])) {
 			await this.db.query("INSERT INTO " + DB_PREFIX + "customer_group_description SET customer_group_id = '" + customer_group_id + "', language_id = '" + language_id + "', name = '" + this.db.escape(value['name']) + "', description = '" + this.db.escape(value['description']) + "'");
 		}
-		
+
 		return customer_group_id;
 	}
 
@@ -16,7 +16,7 @@ module.exports = class ModelCustomerCustomerGroup extends Model {
 
 		await this.db.query("DELETE FROM " + DB_PREFIX + "customer_group_description WHERE customer_group_id = '" + customer_group_id + "'");
 
-		for (data['customer_group_description'] of language_id : value) {
+		for (let [language_id, value] of Object.entries(data['customer_group_description'])) {
 			await this.db.query("INSERT INTO " + DB_PREFIX + "customer_group_description SET customer_group_id = '" + customer_group_id + "', language_id = '" + language_id + "', name = '" + this.db.escape(value['name']) + "', description = '" + this.db.escape(value['description']) + "'");
 		}
 	}
@@ -42,7 +42,7 @@ module.exports = class ModelCustomerCustomerGroup extends Model {
 		let sort_data = [
 			'cgd.name',
 			'cg.sort_order'
-		);
+		];
 
 		if ((data['sort']) && sort_data.includes(data['sort'])) {
 			sql += " ORDER BY " + data['sort'];
@@ -57,13 +57,13 @@ module.exports = class ModelCustomerCustomerGroup extends Model {
 		}
 
 		if ((data['start']) || (data['limit'])) {
-			data['start'] = data['start']||0;
-if (data['start'] < 0) {
+			data['start'] = data['start'] || 0;
+			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
@@ -76,15 +76,15 @@ if (data['limit'] < 1) {
 	}
 
 	async getCustomerGroupDescriptions(customer_group_id) {
-		customer_group_data = {};
+		let customer_group_data = {};
 
 		const query = await this.db.query("SELECT * FROM " + DB_PREFIX + "customer_group_description WHERE customer_group_id = '" + customer_group_id + "'");
 
-		for (let result of query.rows ) {
-			customer_group_data[result['language_id']] = array(
-				'name'        : result['name'],
-				'description' : result['description']
-			);
+		for (let result of query.rows) {
+			customer_group_data[result['language_id']] = {
+				'name': result['name'],
+				'description': result['description']
+			};
 		}
 
 		return customer_group_data;

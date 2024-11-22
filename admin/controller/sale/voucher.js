@@ -18,7 +18,7 @@ module.exports = class ControllerSaleVoucher extends Controller {
 
 		this.load.model('sale/voucher');
 
-		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_sale_voucher.addVoucher(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
@@ -50,7 +50,7 @@ module.exports = class ControllerSaleVoucher extends Controller {
 
 		this.load.model('sale/voucher');
 
-		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_sale_voucher.editVoucher(this.request.get['voucher_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
@@ -82,7 +82,8 @@ module.exports = class ControllerSaleVoucher extends Controller {
 
 		this.load.model('sale/voucher');
 
-		if ((this.request.post['selected']) && this.validateDelete()) {
+		if ((this.request.post['selected']) && await this.validateDelete()) {
+this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
 			for (this.request.post['selected'] of voucher_id) {
 				await this.model_sale_voucher.deleteVoucher(voucher_id);
 			}
@@ -147,12 +148,12 @@ module.exports = class ControllerSaleVoucher extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('sale/voucher', 'user_token=' + this.session.data['user_token'] + url, true)
-		);
+		});
 
 		data['add'] = await this.url.link('sale/voucher/add', 'user_token=' + this.session.data['user_token'] + url, true);
 		data['delete'] = await this.url.link('sale/voucher/delete', 'user_token=' + this.session.data['user_token'] + url, true);
@@ -162,9 +163,9 @@ module.exports = class ControllerSaleVoucher extends Controller {
 		filter_data = array(
 			'sort'  : sort,
 			'order' : order,
-			'start' : (page - 1) * this.config.get('config_limit_admin'),
-			'limit' : this.config.get('config_limit_admin')
-		);
+			'start' : (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit' : Number(this.config.get('config_limit_admin'))
+		});
 
 		voucher_total = await this.model_sale_voucher.getTotalVouchers();
 
@@ -188,7 +189,7 @@ module.exports = class ControllerSaleVoucher extends Controller {
 				'date_added' : date(this.language.get('date_format_short'), strtotime(result['date_added'])),
 				'edit'       : await this.url.link('sale/voucher/edit', 'user_token=' + this.session.data['user_token'] + '&voucher_id=' + result['voucher_id'] + url, true),
 				'order'      : order_href
-			);
+			});
 		}
 
 		data['user_token'] = this.session.data['user_token'];
@@ -246,12 +247,12 @@ module.exports = class ControllerSaleVoucher extends Controller {
 		pagination = new Pagination();
 		pagination.total = voucher_total;
 		pagination.page = page;
-		pagination.limit = this.config.get('config_limit_admin');
+		pagination.limit = Number(this.config.get('config_limit_admin'));
 		pagination.url = await this.url.link('sale/voucher', 'user_token=' + this.session.data['user_token'] + url + '&page={page}', true);
 
 		data['pagination'] = pagination.render();
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (voucher_total) ? ((page - 1) * this.config.get('config_limit_admin')) + 1 : 0, (((page - 1) * this.config.get('config_limit_admin')) > (voucher_total - this.config.get('config_limit_admin'))) ? voucher_total : (((page - 1) * this.config.get('config_limit_admin')) + this.config.get('config_limit_admin')), voucher_total, ceil(voucher_total / this.config.get('config_limit_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (voucher_total) ? ((page - 1) * Number(this.config.get('config_limit_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_limit_admin'))) > (voucher_total - Number(this.config.get('config_limit_admin')))) ? voucher_total : (((page - 1) * Number(this.config.get('config_limit_admin'))) + Number(this.config.get('config_limit_admin'))), voucher_total, Math.ceil(voucher_total / Number(this.config.get('config_limit_admin'))));
 
 		data['sort'] = sort;
 		data['order'] = order;
@@ -333,12 +334,12 @@ module.exports = class ControllerSaleVoucher extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('sale/voucher', 'user_token=' + this.session.data['user_token'] + url, true)
-		);
+		});
 
 		if (!(this.request.get['voucher_id'])) {
 			data['action'] = await this.url.link('sale/voucher/add', 'user_token=' + this.session.data['user_token'] + url, true);
@@ -527,7 +528,7 @@ module.exports = class ControllerSaleVoucher extends Controller {
 				'customer'   : result['customer'],
 				'amount'     : this.currency.format(result['amount'], this.config.get('config_currency')),
 				'date_added' : date(this.language.get('date_format_short'), strtotime(result['date_added']))
-			);
+			});
 		}
 
 		history_total = await this.model_sale_voucher.getTotalVoucherHistories(this.request.get['voucher_id']);
@@ -540,7 +541,7 @@ module.exports = class ControllerSaleVoucher extends Controller {
 
 		data['pagination'] = pagination.render();
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (history_total) ? ((page - 1) * 10) + 1 : 0, (((page - 1) * 10) > (history_total - 10)) ? history_total : (((page - 1) * 10) + 10), history_total, ceil(history_total / 10));
+		data['results'] = sprintf(this.language.get('text_pagination'), (history_total) ? ((page - 1) * 10) + 1 : 0, (((page - 1) * 10) > (history_total - 10)) ? history_total : (((page - 1) * 10) + 10), history_total, Math.ceil(history_total / 10));
 
 		this.response.setOutput(await this.load.view('sale/voucher_history', data));
 	}
@@ -562,7 +563,7 @@ module.exports = class ControllerSaleVoucher extends Controller {
 			if ((this.request.post['selected'])) {
 				vouchers = this.request.post['selected'];
 			} else if ((this.request.post['voucher_id'])) {
-				vouchers[] = this.request.post['voucher_id'];
+				vouchers.push(this.request.post['voucher_id'];
 			}
 
 			if (vouchers) {
@@ -672,6 +673,6 @@ module.exports = class ControllerSaleVoucher extends Controller {
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 }

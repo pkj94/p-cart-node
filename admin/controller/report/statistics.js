@@ -87,7 +87,7 @@ module.exports = class ControllerReportStatistics extends Controller {
 	
 			for (let result of results) {
 				if (!in_array(result['order_status_id'], array_merge(this.config.get('config_complete_status'), this.config.get('config_processing_status')))) {
-					order_status_data[] = result['order_status_id'];
+					order_status_data.push(result['order_status_id'];
 				}
 			}		
 			
@@ -171,7 +171,7 @@ module.exports = class ControllerReportStatistics extends Controller {
 		this.load.model('report/statistics',this);
 		
 		if (this.validate()) {		
-			this.load.model('catalog/product');
+			this.load.model('catalog/product',this);
 			
 			await this.model_report_statistics.editValue('product', await this.model_catalog_product.getTotalProducts(array('filter_quantity' : 0)));
 
@@ -209,12 +209,12 @@ module.exports = class ControllerReportStatistics extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('report/statistics', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['statistics'] = {};
 		
@@ -227,7 +227,7 @@ module.exports = class ControllerReportStatistics extends Controller {
 				'name'  : this.language.get('text_' + result['code']),
 				'value' : result['value'],
 				'href'  : await this.url.link('report/statistics/' + str_replace('_', '', result['code']), 'user_token=' + this.session.data['user_token'], true)
-			);
+			});
 		}
 				
 		if ((this.error['warning'])) {

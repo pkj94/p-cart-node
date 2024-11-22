@@ -18,7 +18,7 @@ module.exports = class ControllerLocalisationReturnStatus extends Controller {
 
 		this.load.model('localisation/return_status');
 
-		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_localisation_return_status.addReturnStatus(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
@@ -50,7 +50,7 @@ module.exports = class ControllerLocalisationReturnStatus extends Controller {
 
 		this.load.model('localisation/return_status');
 
-		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_localisation_return_status.editReturnStatus(this.request.get['return_status_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
@@ -82,7 +82,8 @@ module.exports = class ControllerLocalisationReturnStatus extends Controller {
 
 		this.load.model('localisation/return_status');
 
-		if ((this.request.post['selected']) && this.validateDelete()) {
+		if ((this.request.post['selected']) && await this.validateDelete()) {
+this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
 			for (this.request.post['selected'] of return_status_id) {
 				await this.model_localisation_return_status.deleteReturnStatus(return_status_id);
 			}
@@ -147,12 +148,12 @@ module.exports = class ControllerLocalisationReturnStatus extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('localisation/return_status', 'user_token=' + this.session.data['user_token'] + url, true)
-		);
+		});
 
 		data['add'] = await this.url.link('localisation/return_status/add', 'user_token=' + this.session.data['user_token'] + url, true);
 		data['delete'] = await this.url.link('localisation/return_status/delete', 'user_token=' + this.session.data['user_token'] + url, true);
@@ -162,9 +163,9 @@ module.exports = class ControllerLocalisationReturnStatus extends Controller {
 		filter_data = array(
 			'sort'  : sort,
 			'order' : order,
-			'start' : (page - 1) * this.config.get('config_limit_admin'),
-			'limit' : this.config.get('config_limit_admin')
-		);
+			'start' : (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit' : Number(this.config.get('config_limit_admin'))
+		});
 
 		return_status_total = await this.model_localisation_return_status.getTotalReturnStatuses();
 
@@ -175,7 +176,7 @@ module.exports = class ControllerLocalisationReturnStatus extends Controller {
 				'return_status_id' : result['return_status_id'],
 				'name'             : result['name'] + ((result['return_status_id'] == this.config.get('config_return_status_id')) ? this.language.get('text_default') : null),
 				'edit'             : await this.url.link('localisation/return_status/edit', 'user_token=' + this.session.data['user_token'] + '&return_status_id=' + result['return_status_id'] + url, true)
-			);
+			});
 		}
 
 		if ((this.error['warning'])) {
@@ -225,12 +226,12 @@ module.exports = class ControllerLocalisationReturnStatus extends Controller {
 		pagination = new Pagination();
 		pagination.total = return_status_total;
 		pagination.page = page;
-		pagination.limit = this.config.get('config_limit_admin');
+		pagination.limit = Number(this.config.get('config_limit_admin'));
 		pagination.url = await this.url.link('localisation/return_status', 'user_token=' + this.session.data['user_token'] + url + '&page={page}', true);
 
 		data['pagination'] = pagination.render();
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (return_status_total) ? ((page - 1) * this.config.get('config_limit_admin')) + 1 : 0, (((page - 1) * this.config.get('config_limit_admin')) > (return_status_total - this.config.get('config_limit_admin'))) ? return_status_total : (((page - 1) * this.config.get('config_limit_admin')) + this.config.get('config_limit_admin')), return_status_total, ceil(return_status_total / this.config.get('config_limit_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (return_status_total) ? ((page - 1) * Number(this.config.get('config_limit_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_limit_admin'))) > (return_status_total - Number(this.config.get('config_limit_admin')))) ? return_status_total : (((page - 1) * Number(this.config.get('config_limit_admin'))) + Number(this.config.get('config_limit_admin'))), return_status_total, Math.ceil(return_status_total / Number(this.config.get('config_limit_admin'))));
 
 		data['sort'] = sort;
 		data['order'] = order;
@@ -276,12 +277,12 @@ module.exports = class ControllerLocalisationReturnStatus extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('localisation/return_status', 'user_token=' + this.session.data['user_token'] + url, true)
-		);
+		});
 
 		if (!(this.request.get['return_status_id'])) {
 			data['action'] = await this.url.link('localisation/return_status/add', 'user_token=' + this.session.data['user_token'] + url, true);

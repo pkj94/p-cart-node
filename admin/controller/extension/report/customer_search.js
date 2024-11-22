@@ -27,17 +27,17 @@ module.exports = class ControllerExtensionReportCustomerSearch extends Controlle
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_extension'),
 			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=report', true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('extension/report/customer_search', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['action'] = await this.url.link('extension/report/customer_search', 'user_token=' + this.session.data['user_token'], true);
 
@@ -110,7 +110,7 @@ module.exports = class ControllerExtensionReportCustomerSearch extends Controlle
 		}
 
 		this.load.model('extension/report/customer');
-		this.load.model('catalog/category');
+		this.load.model('catalog/category',this);
 
 		data['searches'] = {};
 
@@ -120,9 +120,9 @@ module.exports = class ControllerExtensionReportCustomerSearch extends Controlle
 			'filter_keyword'    : filter_keyword,
 			'filter_customer'   : filter_customer,
 			'filter_ip'         : filter_ip,
-			'start'             : (page - 1) * this.config.get('config_limit_admin'),
-			'limit'             : this.config.get('config_limit_admin')
-		);
+			'start'             : (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit'             : Number(this.config.get('config_limit_admin'))
+		});
 
 		search_total = await this.model_extension_report_customer.getTotalCustomerSearches(filter_data);
 
@@ -150,7 +150,7 @@ module.exports = class ControllerExtensionReportCustomerSearch extends Controlle
 				'customer'    : customer,
 				'ip'          : result['ip'],
 				'date_added'  : date(this.language.get('datetime_format'), strtotime(result['date_added']))
-			);
+			});
 		}
 
 		data['user_token'] = this.session.data['user_token'];
@@ -166,11 +166,11 @@ module.exports = class ControllerExtensionReportCustomerSearch extends Controlle
 		}
 
 		if ((this.request.get['filter_keyword'])) {
-			url += '&filter_keyword=' + urlencode(this.request.get['filter_keyword']);
+			url += '&filter_keyword=' + encodeURIComponent(this.request.get['filter_keyword']);
 		}
 
 		if ((this.request.get['filter_customer'])) {
-			url += '&filter_customer=' + urlencode(this.request.get['filter_customer']);
+			url += '&filter_customer=' + encodeURIComponent(this.request.get['filter_customer']);
 		}
 
 		if ((this.request.get['filter_ip'])) {
@@ -180,12 +180,12 @@ module.exports = class ControllerExtensionReportCustomerSearch extends Controlle
 		pagination = new Pagination();
 		pagination.total = search_total;
 		pagination.page = page;
-		pagination.limit = this.config.get('config_limit_admin');
+		pagination.limit = Number(this.config.get('config_limit_admin'));
 		pagination.url = await this.url.link('report/report', 'user_token=' + this.session.data['user_token'] + '&code=customer_search' + url + '&page={page}', true);
 
 		data['pagination'] = pagination.render();
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (search_total) ? ((page - 1) * this.config.get('config_limit_admin')) + 1 : 0, (((page - 1) * this.config.get('config_limit_admin')) > (search_total - this.config.get('config_limit_admin'))) ? search_total : (((page - 1) * this.config.get('config_limit_admin')) + this.config.get('config_limit_admin')), search_total, ceil(search_total / this.config.get('config_limit_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (search_total) ? ((page - 1) * Number(this.config.get('config_limit_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_limit_admin'))) > (search_total - Number(this.config.get('config_limit_admin')))) ? search_total : (((page - 1) * Number(this.config.get('config_limit_admin'))) + Number(this.config.get('config_limit_admin'))), search_total, Math.ceil(search_total / Number(this.config.get('config_limit_admin'))));
 
 		data['filter_date_start'] = filter_date_start;
 		data['filter_date_end'] = filter_date_end;

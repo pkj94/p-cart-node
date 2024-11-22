@@ -8,7 +8,7 @@ module.exports = class ModelLocalisationCurrency extends Model {
 			this.refresh();
 		}
 
-		this.cache.delete('currency');
+		await this.cache.delete('currency');
 		
 		return currency_id;
 	}
@@ -16,13 +16,13 @@ module.exports = class ModelLocalisationCurrency extends Model {
 	async editCurrency(currency_id, data) {
 		await this.db.query("UPDATE " + DB_PREFIX + "currency SET title = '" + this.db.escape(data['title']) + "', code = '" + this.db.escape(data['code']) + "', symbol_left = '" + this.db.escape(data['symbol_left']) + "', symbol_right = '" + this.db.escape(data['symbol_right']) + "', decimal_place = '" + this.db.escape(data['decimal_place']) + "', value = '" + this.db.escape(data['value']) + "', status = '" + data['status'] + "', date_modified = NOW() WHERE currency_id = '" + currency_id + "'");
 
-		this.cache.delete('currency');
+		await this.cache.delete('currency');
 	}
 
 	async deleteCurrency(currency_id) {
 		await this.db.query("DELETE FROM " + DB_PREFIX + "currency WHERE currency_id = '" + currency_id + "'");
 
-		this.cache.delete('currency');
+		await this.cache.delete('currency');
 	}
 
 	async getCurrency(currency_id) {
@@ -46,7 +46,7 @@ module.exports = class ModelLocalisationCurrency extends Model {
 				'code',
 				'value',
 				'date_modified'
-			);
+			});
 
 			if ((data['sort']) && sort_data.includes(data['sort'])) {
 				sql += " ORDER BY " + data['sort'];
@@ -93,7 +93,7 @@ if (data['limit'] < 1) {
 					'value'         : result['value'],
 					'status'        : result['status'],
 					'date_modified' : result['date_modified']
-				);
+				});
 			}
 
 			return currency_data;

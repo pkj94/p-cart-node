@@ -33,17 +33,17 @@ module.exports = class ControllerExtensionFraudFraudLabsPro extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_extension'),
 			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=fraud', true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('extension/fraud/fraudlabspro', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['action'] = await this.url.link('extension/fraud/fraudlabspro', 'user_token=' + this.session.data['user_token'], true);
 
@@ -160,7 +160,7 @@ module.exports = class ControllerExtensionFraudFraudLabsPro extends Controller {
 					'order_status_id':this.config.get('fraud_fraudlabspro_approve_status_id'),
 					'notify':0,
 					'comment':'Approved using FraudLabs Pro.'
-				);
+				});
 
 				await this.model_extension_fraud_fraudlabspro.addOrderHistory(this.request.get['order_id'], data_temp);
 			}
@@ -169,7 +169,7 @@ module.exports = class ControllerExtensionFraudFraudLabsPro extends Controller {
 					'order_status_id':this.config.get('fraud_fraudlabspro_reject_status_id'),
 					'notify':0,
 					'comment':'Rejected using FraudLabs Pro.'
-				);
+				});
 
 				await this.model_extension_fraud_fraudlabspro.addOrderHistory(this.request.get['order_id'], data_temp);
 			}
@@ -331,7 +331,7 @@ module.exports = class ControllerExtensionFraudFraudLabsPro extends Controller {
 				return matches[1] + strtoupper(matches[2]);
 			},
 			s
-		);
+		});
 
 		return s;
 	}

@@ -2,14 +2,14 @@ module.exports = class ModelLocalisationWeightClass extends Model {
 	async addWeightClass(data) {
 		await this.db.query("INSERT INTO " + DB_PREFIX + "weight_class SET value = '" + data['value'] + "'");
 
-		weight_class_id = this.db.getLastId();
+		const weight_class_id = this.db.getLastId();
 
-		for (data['weight_class_description'] of language_id : value) {
+		for (let [language_id, value] of Object.entries(data['weight_class_description'])) {
 			await this.db.query("INSERT INTO " + DB_PREFIX + "weight_class_description SET weight_class_id = '" + weight_class_id + "', language_id = '" + language_id + "', title = '" + this.db.escape(value['title']) + "', unit = '" + this.db.escape(value['unit']) + "'");
 		}
 
-		this.cache.delete('weight_class');
-		
+		await this.cache.delete('weight_class');
+
 		return weight_class_id;
 	}
 
@@ -18,18 +18,18 @@ module.exports = class ModelLocalisationWeightClass extends Model {
 
 		await this.db.query("DELETE FROM " + DB_PREFIX + "weight_class_description WHERE weight_class_id = '" + weight_class_id + "'");
 
-		for (data['weight_class_description'] of language_id : value) {
+		for (let [language_id, value] of Object.entries(data['weight_class_description'])) {
 			await this.db.query("INSERT INTO " + DB_PREFIX + "weight_class_description SET weight_class_id = '" + weight_class_id + "', language_id = '" + language_id + "', title = '" + this.db.escape(value['title']) + "', unit = '" + this.db.escape(value['unit']) + "'");
 		}
 
-		this.cache.delete('weight_class');
+		await this.cache.delete('weight_class');
 	}
 
 	async deleteWeightClass(weight_class_id) {
 		await this.db.query("DELETE FROM " + DB_PREFIX + "weight_class WHERE weight_class_id = '" + weight_class_id + "'");
 		await this.db.query("DELETE FROM " + DB_PREFIX + "weight_class_description WHERE weight_class_id = '" + weight_class_id + "'");
 
-		this.cache.delete('weight_class');
+		await this.cache.delete('weight_class');
 	}
 
 	async getWeightClasses(data = {}) {
@@ -40,7 +40,7 @@ module.exports = class ModelLocalisationWeightClass extends Model {
 				'title',
 				'unit',
 				'value'
-			);
+			];
 
 			if ((data['sort']) && sort_data.includes(data['sort'])) {
 				sql += " ORDER BY " + data['sort'];
@@ -55,13 +55,13 @@ module.exports = class ModelLocalisationWeightClass extends Model {
 			}
 
 			if ((data['start']) || (data['limit'])) {
-				data['start'] = data['start']||0;
-if (data['start'] < 0) {
+				data['start'] = data['start'] || 0;
+				if (data['start'] < 0) {
 					data['start'] = 0;
 				}
 
-				data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+				data['limit'] = data['limit'] || 20;
+				if (data['limit'] < 1) {
 					data['limit'] = 20;
 				}
 
@@ -72,14 +72,14 @@ if (data['limit'] < 1) {
 
 			return query.rows;
 		} else {
-			weight_class_data = this.cache.get('weight_class.' + this.config.get('config_language_id'));
+			let weight_class_data = await this.cache.get('weight_class.' + this.config.get('config_language_id'));
 
 			if (!weight_class_data) {
 				const query = await this.db.query("SELECT * FROM " + DB_PREFIX + "weight_class wc LEFT JOIN " + DB_PREFIX + "weight_class_description wcd ON (wc.weight_class_id = wcd.weight_class_id) WHERE wcd.language_id = '" + this.config.get('config_language_id') + "'");
 
 				weight_class_data = query.rows;
 
-				this.cache.set('weight_class.' + this.config.get('config_language_id'), weight_class_data);
+				await this.cache.set('weight_class.' + this.config.get('config_language_id'), weight_class_data);
 			}
 
 			return weight_class_data;
@@ -99,15 +99,15 @@ if (data['limit'] < 1) {
 	}
 
 	async getWeightClassDescriptions(weight_class_id) {
-		weight_class_data = {};
+		let weight_class_data = {};
 
 		const query = await this.db.query("SELECT * FROM " + DB_PREFIX + "weight_class_description WHERE weight_class_id = '" + weight_class_id + "'");
 
-		for (let result of query.rows ) {
-			weight_class_data[result['language_id']] = array(
-				'title' : result['title'],
-				'unit'  : result['unit']
-			);
+		for (let result of query.rows) {
+			weight_class_data[result['language_id']] = {
+				'title': result['title'],
+				'unit': result['unit']
+			};
 		}
 
 		return weight_class_data;

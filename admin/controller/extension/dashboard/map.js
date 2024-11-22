@@ -107,6 +107,6 @@ module.exports = class ControllerExtensionDashboardMap extends Controller {
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 }

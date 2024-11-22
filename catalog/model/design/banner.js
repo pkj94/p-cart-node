@@ -1,4 +1,4 @@
-module.exports =class Banner extends global['\Opencart\System\Engine\Model'] {
+module.exports =class Banner extends Model {
 	/**
 	 * @param banner_id
 	 *

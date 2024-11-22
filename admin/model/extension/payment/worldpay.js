@@ -103,7 +103,7 @@ class ModelExtensionPaymentWorldpay extends Model {
 		if (query.num_rows) {
 			for (query.rows of row) {
 				row['amount'] = this.currency.format(row['amount'], currency_code, false);
-				transactions[] = row;
+				transactions.push(row;
 			}
 			return transactions;
 		} else {
@@ -146,7 +146,7 @@ class ModelExtensionPaymentWorldpay extends Model {
 			"Content-Type: application/json",
 			"Content-Length: " + strlen(json)
 				)
-		);
+		});
 
 		result = JSON.parse(curl_exec(curl));
 		curl_close(curl);

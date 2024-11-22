@@ -18,7 +18,7 @@ module.exports = class ControllerCatalogReview extends Controller {
 
 		this.load.model('catalog/review');
 
-		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_catalog_review.addReview(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
@@ -26,11 +26,11 @@ module.exports = class ControllerCatalogReview extends Controller {
 			url = '';
 
 			if ((this.request.get['filter_product'])) {
-				url += '&filter_product=' + urlencode(html_entity_decode(this.request.get['filter_product']));
+				url += '&filter_product=' + encodeURIComponent(html_entity_decode(this.request.get['filter_product']));
 			}
 
 			if ((this.request.get['filter_author'])) {
-				url += '&filter_author=' + urlencode(html_entity_decode(this.request.get['filter_author']));
+				url += '&filter_author=' + encodeURIComponent(html_entity_decode(this.request.get['filter_author']));
 			}
 
 			if ((this.request.get['filter_status'])) {
@@ -66,7 +66,7 @@ module.exports = class ControllerCatalogReview extends Controller {
 
 		this.load.model('catalog/review');
 
-		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_catalog_review.editReview(this.request.get['review_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
@@ -74,11 +74,11 @@ module.exports = class ControllerCatalogReview extends Controller {
 			url = '';
 
 			if ((this.request.get['filter_product'])) {
-				url += '&filter_product=' + urlencode(html_entity_decode(this.request.get['filter_product']));
+				url += '&filter_product=' + encodeURIComponent(html_entity_decode(this.request.get['filter_product']));
 			}
 
 			if ((this.request.get['filter_author'])) {
-				url += '&filter_author=' + urlencode(html_entity_decode(this.request.get['filter_author']));
+				url += '&filter_author=' + encodeURIComponent(html_entity_decode(this.request.get['filter_author']));
 			}
 
 			if ((this.request.get['filter_status'])) {
@@ -114,8 +114,9 @@ module.exports = class ControllerCatalogReview extends Controller {
 
 		this.load.model('catalog/review');
 
-		if ((this.request.post['selected']) && this.validateDelete()) {
-			for (this.request.post['selected'] of review_id) {
+		if ((this.request.post['selected']) && await this.validateDelete()) {
+this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
+			for (let review_id of this.request.post['selected']) {
 				await this.model_catalog_review.deleteReview(review_id);
 			}
 
@@ -124,11 +125,11 @@ module.exports = class ControllerCatalogReview extends Controller {
 			url = '';
 
 			if ((this.request.get['filter_product'])) {
-				url += '&filter_product=' + urlencode(html_entity_decode(this.request.get['filter_product']));
+				url += '&filter_product=' + encodeURIComponent(html_entity_decode(this.request.get['filter_product']));
 			}
 
 			if ((this.request.get['filter_author'])) {
-				url += '&filter_author=' + urlencode(html_entity_decode(this.request.get['filter_author']));
+				url += '&filter_author=' + encodeURIComponent(html_entity_decode(this.request.get['filter_author']));
 			}
 
 			if ((this.request.get['filter_status'])) {
@@ -203,11 +204,11 @@ module.exports = class ControllerCatalogReview extends Controller {
 		url = '';
 
 		if ((this.request.get['filter_product'])) {
-			url += '&filter_product=' + urlencode(html_entity_decode(this.request.get['filter_product']));
+			url += '&filter_product=' + encodeURIComponent(html_entity_decode(this.request.get['filter_product']));
 		}
 
 		if ((this.request.get['filter_author'])) {
-			url += '&filter_author=' + urlencode(html_entity_decode(this.request.get['filter_author']));
+			url += '&filter_author=' + encodeURIComponent(html_entity_decode(this.request.get['filter_author']));
 		}
 
 		if ((this.request.get['filter_status'])) {
@@ -235,12 +236,12 @@ module.exports = class ControllerCatalogReview extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('catalog/review', 'user_token=' + this.session.data['user_token'] + url, true)
-		);
+		});
 
 		data['add'] = await this.url.link('catalog/review/add', 'user_token=' + this.session.data['user_token'] + url, true);
 		data['delete'] = await this.url.link('catalog/review/delete', 'user_token=' + this.session.data['user_token'] + url, true);
@@ -254,9 +255,9 @@ module.exports = class ControllerCatalogReview extends Controller {
 			'filter_date_added' : filter_date_added,
 			'sort'              : sort,
 			'order'             : order,
-			'start'             : (page - 1) * this.config.get('config_limit_admin'),
-			'limit'             : this.config.get('config_limit_admin')
-		);
+			'start'             : (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit'             : Number(this.config.get('config_limit_admin'))
+		});
 
 		review_total = await this.model_catalog_review.getTotalReviews(filter_data);
 
@@ -271,7 +272,7 @@ module.exports = class ControllerCatalogReview extends Controller {
 				'status'     : (result['status']) ? this.language.get('text_enabled') : this.language.get('text_disabled'),
 				'date_added' : date(this.language.get('date_format_short'), strtotime(result['date_added'])),
 				'edit'       : await this.url.link('catalog/review/edit', 'user_token=' + this.session.data['user_token'] + '&review_id=' + result['review_id'] + url, true)
-			);
+			});
 		}
 
 		data['user_token'] = this.session.data['user_token'];
@@ -299,11 +300,11 @@ module.exports = class ControllerCatalogReview extends Controller {
 		url = '';
 
 		if ((this.request.get['filter_product'])) {
-			url += '&filter_product=' + urlencode(html_entity_decode(this.request.get['filter_product']));
+			url += '&filter_product=' + encodeURIComponent(html_entity_decode(this.request.get['filter_product']));
 		}
 
 		if ((this.request.get['filter_author'])) {
-			url += '&filter_author=' + urlencode(html_entity_decode(this.request.get['filter_author']));
+			url += '&filter_author=' + encodeURIComponent(html_entity_decode(this.request.get['filter_author']));
 		}
 
 		if ((this.request.get['filter_status'])) {
@@ -333,11 +334,11 @@ module.exports = class ControllerCatalogReview extends Controller {
 		url = '';
 
 		if ((this.request.get['filter_product'])) {
-			url += '&filter_product=' + urlencode(html_entity_decode(this.request.get['filter_product']));
+			url += '&filter_product=' + encodeURIComponent(html_entity_decode(this.request.get['filter_product']));
 		}
 
 		if ((this.request.get['filter_author'])) {
-			url += '&filter_author=' + urlencode(html_entity_decode(this.request.get['filter_author']));
+			url += '&filter_author=' + encodeURIComponent(html_entity_decode(this.request.get['filter_author']));
 		}
 
 		if ((this.request.get['filter_status'])) {
@@ -359,12 +360,12 @@ module.exports = class ControllerCatalogReview extends Controller {
 		pagination = new Pagination();
 		pagination.total = review_total;
 		pagination.page = page;
-		pagination.limit = this.config.get('config_limit_admin');
+		pagination.limit = Number(this.config.get('config_limit_admin'));
 		pagination.url = await this.url.link('catalog/review', 'user_token=' + this.session.data['user_token'] + url + '&page={page}', true);
 
 		data['pagination'] = pagination.render();
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (review_total) ? ((page - 1) * this.config.get('config_limit_admin')) + 1 : 0, (((page - 1) * this.config.get('config_limit_admin')) > (review_total - this.config.get('config_limit_admin'))) ? review_total : (((page - 1) * this.config.get('config_limit_admin')) + this.config.get('config_limit_admin')), review_total, ceil(review_total / this.config.get('config_limit_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (review_total) ? ((page - 1) * Number(this.config.get('config_limit_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_limit_admin'))) > (review_total - Number(this.config.get('config_limit_admin')))) ? review_total : (((page - 1) * Number(this.config.get('config_limit_admin'))) + Number(this.config.get('config_limit_admin'))), review_total, Math.ceil(review_total / Number(this.config.get('config_limit_admin'))));
 
 		data['filter_product'] = filter_product;
 		data['filter_author'] = filter_author;
@@ -417,11 +418,11 @@ module.exports = class ControllerCatalogReview extends Controller {
 		url = '';
 
 		if ((this.request.get['filter_product'])) {
-			url += '&filter_product=' + urlencode(html_entity_decode(this.request.get['filter_product']));
+			url += '&filter_product=' + encodeURIComponent(html_entity_decode(this.request.get['filter_product']));
 		}
 
 		if ((this.request.get['filter_author'])) {
-			url += '&filter_author=' + urlencode(html_entity_decode(this.request.get['filter_author']));
+			url += '&filter_author=' + encodeURIComponent(html_entity_decode(this.request.get['filter_author']));
 		}
 
 		if ((this.request.get['filter_status'])) {
@@ -449,12 +450,12 @@ module.exports = class ControllerCatalogReview extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('catalog/review', 'user_token=' + this.session.data['user_token'] + url, true)
-		);
+		});
 
 		if (!(this.request.get['review_id'])) {
 			data['action'] = await this.url.link('catalog/review/add', 'user_token=' + this.session.data['user_token'] + url, true);
@@ -470,7 +471,7 @@ module.exports = class ControllerCatalogReview extends Controller {
 
 		data['user_token'] = this.session.data['user_token'];
 
-		this.load.model('catalog/product');
+		this.load.model('catalog/product',this);
 
 		if ((this.request.post['product_id'])) {
 			data['product_id'] = this.request.post['product_id'];

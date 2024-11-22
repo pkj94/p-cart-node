@@ -1,4 +1,4 @@
-module.exports = class Setting extends global['\Opencart\System\Engine\Model'] {
+module.exports = class Setting extends Model {
 	/**
 	 * @param store_id
 	 *

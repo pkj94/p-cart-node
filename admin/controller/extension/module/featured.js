@@ -49,23 +49,23 @@ module.exports = class ControllerExtensionModuleFeatured extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_extension'),
 			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=module', true)
-		);
+		});
 
 		if (!(this.request.get['module_id'])) {
 			data['breadcrumbs'].push({
 				'text' : this.language.get('heading_title'),
 				'href' : await this.url.link('extension/module/featured', 'user_token=' + this.session.data['user_token'], true)
-			);
+			});
 		} else {
 			data['breadcrumbs'].push({
 				'text' : this.language.get('heading_title'),
 				'href' : await this.url.link('extension/module/featured', 'user_token=' + this.session.data['user_token'] + '&module_id=' + this.request.get['module_id'], true)
-			);
+			});
 		}
 
 		if (!(this.request.get['module_id'])) {
@@ -90,7 +90,7 @@ module.exports = class ControllerExtensionModuleFeatured extends Controller {
 			data['name'] = '';
 		}
 
-		this.load.model('catalog/product');
+		this.load.model('catalog/product',this);
 
 		data['products'] = {};
 
@@ -109,7 +109,7 @@ module.exports = class ControllerExtensionModuleFeatured extends Controller {
 				data['products'].push({
 					'product_id' : product_info['product_id'],
 					'name'       : product_info['name']
-				);
+				});
 			}
 		}
 

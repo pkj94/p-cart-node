@@ -23,7 +23,7 @@ module.exports = class ControllerExtensionPaymentKlarnaInvoice extends Controlle
 			klarna_data = array(
 				'klarna_invoice_pclasses' : this.pclasses,
 				'klarna_invoice_status'   : status
-			);
+			});
 
 			await this.model_setting_setting.editSetting('payment_klarna_invoice', array_merge(this.request.post, klarna_data));
 
@@ -51,17 +51,17 @@ module.exports = class ControllerExtensionPaymentKlarnaInvoice extends Controlle
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_extension'),
 			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('extension/payment/klarna_invoice', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['action'] = await this.url.link('extension/payment/klarna_invoice', 'user_token=' + this.session.data['user_token'], true);
 
@@ -72,32 +72,32 @@ module.exports = class ControllerExtensionPaymentKlarnaInvoice extends Controlle
 		data['countries'].push({
 			'name' : this.language.get('text_germany'),
 			'code' : 'DEU'
-		);
+		});
 
 		data['countries'].push({
 			'name' : this.language.get('text_netherlands'),
 			'code' : 'NLD'
-		);
+		});
 
 		data['countries'].push({
 			'name' : this.language.get('text_denmark'),
 			'code' : 'DNK'
-		);
+		});
 
 		data['countries'].push({
 			'name' : this.language.get('text_sweden'),
 			'code' : 'SWE'
-		);
+		});
 
 		data['countries'].push({
 			'name' : this.language.get('text_norway'),
 			'code' : 'NOR'
-		);
+		});
 
 		data['countries'].push({
 			'name' : this.language.get('text_finland'),
 			'code' : 'FIN'
-		);
+		});
 
 		if ((this.request.post['payment_klarna_invoice'])) {
 			data['payment_klarna_invoice'] = this.request.post['payment_klarna_invoice'];
@@ -173,7 +173,7 @@ module.exports = class ControllerExtensionPaymentKlarnaInvoice extends Controlle
 				entries = xpath.query('.//array/data/value', child);
 
 				for (i = 0; i < entries.length; i++) {
-					value[] = this.parseResponse(entries.item(i).firstChild, document);
+					value.push(this.parseResponse(entries.item(i).firstChild, document);
 				}
 
 				break;

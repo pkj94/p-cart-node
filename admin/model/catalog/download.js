@@ -2,9 +2,9 @@ module.exports = class ModelCatalogDownload extends Model {
 	async addDownload(data) {
 		await this.db.query("INSERT INTO " + DB_PREFIX + "download SET filename = '" + this.db.escape(data['filename']) + "', mask = '" + this.db.escape(data['mask']) + "', date_added = NOW()");
 
-		download_id = this.db.getLastId();
+		const download_id = this.db.getLastId();
 
-		for (data['download_description'] of language_id : value) {
+		for (let [language_id, value] of Object.entries(data['download_description'])) {
 			await this.db.query("INSERT INTO " + DB_PREFIX + "download_description SET download_id = '" + download_id + "', language_id = '" + language_id + "', name = '" + this.db.escape(value['name']) + "'");
 		}
 
@@ -16,7 +16,7 @@ module.exports = class ModelCatalogDownload extends Model {
 
 		await this.db.query("DELETE FROM " + DB_PREFIX + "download_description WHERE download_id = '" + download_id + "'");
 
-		for (data['download_description'] of language_id : value) {
+		for (let [language_id, value] of Object.entries(data['download_description'])) {
 			await this.db.query("INSERT INTO " + DB_PREFIX + "download_description SET download_id = '" + download_id + "', language_id = '" + language_id + "', name = '" + this.db.escape(value['name']) + "'");
 		}
 	}
@@ -42,7 +42,7 @@ module.exports = class ModelCatalogDownload extends Model {
 		let sort_data = [
 			'dd.name',
 			'd.date_added'
-		);
+		];
 
 		if ((data['sort']) && sort_data.includes(data['sort'])) {
 			sql += " ORDER BY " + data['sort'];
@@ -57,13 +57,13 @@ module.exports = class ModelCatalogDownload extends Model {
 		}
 
 		if ((data['start']) || (data['limit'])) {
-			data['start'] = data['start']||0;
-if (data['start'] < 0) {
+			data['start'] = data['start'] || 0;
+			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
@@ -76,12 +76,12 @@ if (data['limit'] < 1) {
 	}
 
 	async getDownloadDescriptions(download_id) {
-		download_description_data = {};
+		let download_description_data = {};
 
 		const query = await this.db.query("SELECT * FROM " + DB_PREFIX + "download_description WHERE download_id = '" + download_id + "'");
 
-		for (let result of query.rows ) {
-			download_description_data[result['language_id']] = array('name' : result['name']);
+		for (let result of query.rows) {
+			download_description_data[result['language_id']] = { 'name': result['name'] };
 		}
 
 		return download_description_data;

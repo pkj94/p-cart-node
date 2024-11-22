@@ -176,7 +176,7 @@ class ModelExtensionAdvertiseGoogle extends Model {
         result = await this.db.query(sql);
 
         if (result.num_rows) {
-            this.load.model('catalog/product');
+            this.load.model('catalog/product',this);
 
             return await this.model_catalog_product.getProduct(result.row['product_id']);
         }
@@ -303,7 +303,7 @@ class ModelExtensionAdvertiseGoogle extends Model {
 
                 for (product_ids of product_id) {
                     for (target_ids of target_id) {
-                        values[] = '(' + product_id + ',' + store_id + ',' + target_id + ')';
+                        values.push('(' + product_id + ',' + store_id + ',' + target_id + ')';
                     }
                 }
 
@@ -359,7 +359,7 @@ class ModelExtensionAdvertiseGoogle extends Model {
         entry['product_id'] = data['product_id'];
         entry = array_merge(entry, this.makeInsertData(data));
 
-        values[] = "(" + implode(",", entry) + ")";
+        values.push("(" + implode(",", entry) + ")";
 
         sql = "INSERT INTO `" + DB_PREFIX + "googleshopping_product` (`product_id`, `store_id`, `google_product_category`, `condition`, `adult`, `multipack`, `is_bundle`, `age_group`, `color`, `gender`, `size_type`, `size_system`, `size`, `is_modified`) VALUES " + implode(',', values) + " ON DUPLICATE KEY UPDATE " + this.makeOnDuplicateKeyData();
 
@@ -372,11 +372,11 @@ class ModelExtensionAdvertiseGoogle extends Model {
         this.googleshopping.applyFilter(insert_sql, filter_data);
 
         insert_data = {};
-        keys[] = "`product_id`";
+        keys.push("`product_id`";
 
         for (this.makeInsertData(data) of key : value) {
-            insert_data[] = value + " of `" + key + "`";
-            keys[] = "`" + key + "`";
+            insert_data.push(value + " of `" + key + "`";
+            keys.push("`" + key + "`";
         }
 
         sql = "INSERT INTO `" + DB_PREFIX + "googleshopping_product` (" + implode(", ", keys) + ") " + str_replace('{INSERT_DATA}', implode(", ", insert_data), insert_sql) + " ON DUPLICATE KEY UPDATE " + this.makeOnDuplicateKeyData();

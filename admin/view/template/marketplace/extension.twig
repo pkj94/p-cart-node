@@ -105,7 +105,7 @@ $('#extension').on('click', '.btn-danger, .btn-warning', function(e) {
 			success: function(html) {
 				// refresh menu and extension list
 				$.ajax({
-					url: 'index.php?route=marketplace/extension/refreshMenu&user_token={{ user_token }}',
+					url: '?route=marketplace/extension/refreshMenu&user_token={{ user_token }}',
 					dataType: 'html',
 					success: function(html) {
 						if (html) {

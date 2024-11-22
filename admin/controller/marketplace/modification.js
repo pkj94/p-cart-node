@@ -81,11 +81,11 @@ class ControllerMarketplaceModification extends Controller {
 				for (glob(next) of file) {
 					// If directory add to path array
 					if (is_dir(file)) {
-						path[] = file + '/*';
+						path.push(file + '/*';
 					}
 
 					// Add the file to the files to be deleted array
-					files[] = file;
+					files.push(file;
 				}
 			}
 
@@ -110,14 +110,14 @@ class ControllerMarketplaceModification extends Controller {
 			xml = {};
 
 			// Load the default modification XML
-			xml[] = file_get_contents(DIR_SYSTEM + 'modification.xml');
+			xml.push(file_get_contents(DIR_SYSTEM + 'modification.xml');
 
 			// This is purly for developers so they can run mods directly and have them run without upload after each change.
 			files = glob(DIR_SYSTEM + '*.ocmod.xml');
 
 			if (files) {
 				for (let file of files) {
-					xml[] = file_get_contents(file);
+					xml.push(file_get_contents(file);
 				}
 			}
 
@@ -126,7 +126,7 @@ class ControllerMarketplaceModification extends Controller {
 
 			for (let result of results) {
 				if (result['status']) {
-					xml[] = result['xml'];
+					xml.push(result['xml'];
 				}
 			}
 
@@ -142,7 +142,7 @@ class ControllerMarketplaceModification extends Controller {
 				dom.loadXml(xml);
 
 				// Log
-				log[] = 'MOD: ' + dom.getElementsByTagName('name').item(0).textContent;
+				log.push('MOD: ' + dom.getElementsByTagName('name').item(0).textContent;
 
 				// Wipe the past modification store in the backup array
 				recovery = {};
@@ -201,11 +201,11 @@ class ControllerMarketplaceModification extends Controller {
 										original[key] = preg_replace('~\r?\n~', "\n", content);
 
 										// Log
-										log[] = PHP_EOL + 'FILE: ' + key;
+										log.push(PHP_EOL + 'FILE: ' + key;
 
 									} else {
 										// Log
-										log[] = PHP_EOL + 'FILE: (sub modification) ' + key;
+										log.push(PHP_EOL + 'FILE: (sub modification) ' + key;
 									
 									}
 
@@ -257,7 +257,7 @@ class ControllerMarketplaceModification extends Controller {
 											}
 
 											// Log
-											log[] = 'CODE: ' + search;
+											log.push('CODE: ' + search;
 
 											// Check if using indexes
 											if (index !== '') {
@@ -321,7 +321,7 @@ class ControllerMarketplaceModification extends Controller {
 													}
 
 													// Log
-													log[] = 'LINE: ' + line_id;
+													log.push('LINE: ' + line_id;
 
 													status = true;
 												}
@@ -349,10 +349,10 @@ class ControllerMarketplaceModification extends Controller {
 											}
 
 											if (match[0]) {
-												log[] = 'REGEX: ' + search;
+												log.push('REGEX: ' + search;
 
 												for (i = 0; i < count(match[0]); i++) {
-													log[] = 'LINE: ' + (substr_count(substr(modification[key], 0, match[0][i][1]), "\n") + 1);
+													log.push('LINE: ' + (substr_count(substr(modification[key], 0, match[0][i][1]), "\n") + 1);
 												}
 
 												status = true;
@@ -367,19 +367,19 @@ class ControllerMarketplaceModification extends Controller {
 											if (error == 'abort') {
 												modification = recovery;
 												// Log
-												log[] = 'NOT FOUND - ABORTING!';
+												log.push('NOT FOUND - ABORTING!';
 												break 5;
 											}
 											// Skip current operation or break
 											else if (error == 'skip') {
 												// Log
-												log[] = 'NOT FOUND - OPERATION SKIPPED!';
+												log.push('NOT FOUND - OPERATION SKIPPED!';
 												continue;
 											}
 											// Break current operations
 											else {
 												// Log
-												log[] = 'NOT FOUND - OPERATIONS ABORTED!';
+												log.push('NOT FOUND - OPERATIONS ABORTED!';
 											 	break;
 											}
 										}
@@ -391,7 +391,7 @@ class ControllerMarketplaceModification extends Controller {
 				}
 
 				// Log
-				log[] = '----------------------------------------------------------------';
+				log.push('----------------------------------------------------------------';
 			}
 
 			// Log
@@ -468,11 +468,11 @@ class ControllerMarketplaceModification extends Controller {
 				for (glob(next) of file) {
 					// If directory add to path array
 					if (is_dir(file)) {
-						path[] = file + '/*';
+						path.push(file + '/*';
 					}
 
 					// Add the file to the files to be deleted array
-					files[] = file;
+					files.push(file;
 				}
 			}
 
@@ -651,12 +651,12 @@ class ControllerMarketplaceModification extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('marketplace/modification', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['refresh'] = await this.url.link('marketplace/modification/refresh', 'user_token=' + this.session.data['user_token'] + url, true);
 		data['clear'] = await this.url.link('marketplace/modification/clear', 'user_token=' + this.session.data['user_token'] + url, true);
@@ -667,9 +667,9 @@ class ControllerMarketplaceModification extends Controller {
 		filter_data = array(
 			'sort'  : sort,
 			'order' : order,
-			'start' : (page - 1) * this.config.get('config_limit_admin'),
-			'limit' : this.config.get('config_limit_admin')
-		);
+			'start' : (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit' : Number(this.config.get('config_limit_admin'))
+		});
 
 		modification_total = await this.model_setting_modification.getTotalModifications();
 
@@ -687,7 +687,7 @@ class ControllerMarketplaceModification extends Controller {
 				'enable'          : await this.url.link('marketplace/modification/enable', 'user_token=' + this.session.data['user_token'] + '&modification_id=' + result['modification_id'], true),
 				'disable'         : await this.url.link('marketplace/modification/disable', 'user_token=' + this.session.data['user_token'] + '&modification_id=' + result['modification_id'], true),
 				'enabled'         : result['status']
-			);
+			});
 		}
 
 		data['user_token'] = this.session.data['user_token'];
@@ -743,12 +743,12 @@ class ControllerMarketplaceModification extends Controller {
 		pagination = new Pagination();
 		pagination.total = modification_total;
 		pagination.page = page;
-		pagination.limit = this.config.get('config_limit_admin');
+		pagination.limit = Number(this.config.get('config_limit_admin'));
 		pagination.url = await this.url.link('marketplace/modification', 'user_token=' + this.session.data['user_token'] + url + '&page={page}', true);
 
 		data['pagination'] = pagination.render();
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (modification_total) ? ((page - 1) * this.config.get('config_limit_admin')) + 1 : 0, (((page - 1) * this.config.get('config_limit_admin')) > (modification_total - this.config.get('config_limit_admin'))) ? modification_total : (((page - 1) * this.config.get('config_limit_admin')) + this.config.get('config_limit_admin')), modification_total, ceil(modification_total / this.config.get('config_limit_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (modification_total) ? ((page - 1) * Number(this.config.get('config_limit_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_limit_admin'))) > (modification_total - Number(this.config.get('config_limit_admin')))) ? modification_total : (((page - 1) * Number(this.config.get('config_limit_admin'))) + Number(this.config.get('config_limit_admin'))), modification_total, Math.ceil(modification_total / Number(this.config.get('config_limit_admin'))));
 
 		data['sort'] = sort;
 		data['order'] = order;

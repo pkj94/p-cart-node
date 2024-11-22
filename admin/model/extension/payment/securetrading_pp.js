@@ -185,7 +185,7 @@ module.exports = class ModelExtensionPaymentSecureTradingPp extends Model {
 				'Authorization: Basic ' + base64_encode(this.config.get('payment_securetrading_pp_webservice_username') + ':' + this.config.get('payment_securetrading_pp_webservice_password')),
 			),
 			CURLOPT_POSTFIELDS : data,
-		);
+		});
 
 		curl_setopt_array(ch, defaults);
 

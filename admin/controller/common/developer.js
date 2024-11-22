@@ -1,5 +1,8 @@
+const substr = require('locutus/php/strings/substr');
+
 module.exports = class ControllerCommonDeveloper extends Controller {
 	async index() {
+		const data = {};
 		await this.load.language('common/developer');
 
 		data['user_token'] = this.session.data['user_token'];
@@ -7,18 +10,18 @@ module.exports = class ControllerCommonDeveloper extends Controller {
 		data['developer_theme'] = this.config.get('developer_theme');
 		data['developer_sass'] = this.config.get('developer_sass');
 
-		eval = false;
+		let eval1 = false;
 
-		eval = 'eval = true;';
+		eval1 = 'eval = true;';
 
-		eval(eval);
+		eval(eval1);
 
-		if (eval === true) {
+		if (eval1 === true) {
 			data['eval'] = true;
 		} else {
-			this.load.model('setting/setting',this);
+			this.load.model('setting/setting', this);
 
-			await this.model_setting_setting.editSetting('developer', array('developer_theme' : 1), 0);
+			await this.model_setting_setting.editSetting('developer', { 'developer_theme': 1 }, 0);
 
 			data['eval'] = false;
 		}
@@ -29,12 +32,12 @@ module.exports = class ControllerCommonDeveloper extends Controller {
 	async edit() {
 		await this.load.language('common/developer');
 
-		json = {};
+		const json = {};
 
 		if (!await this.user.hasPermission('modify', 'common/developer')) {
 			json['error'] = this.language.get('error_permission');
 		} else {
-			this.load.model('setting/setting',this);
+			this.load.model('setting/setting', this);
 
 			await this.model_setting_setting.editSetting('developer', this.request.post, 0);
 
@@ -42,31 +45,31 @@ module.exports = class ControllerCommonDeveloper extends Controller {
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 
 	async theme() {
 		await this.load.language('common/developer');
 
-		json = {};
+		const json = {};
 
 		if (!await this.user.hasPermission('modify', 'common/developer')) {
 			json['error'] = this.language.get('error_permission');
 		} else {
-			directories = glob(DIR_CACHE + '/template/*', GLOB_ONLYDIR);
+			let directories = require('glob').sync(DIR_CACHE + '/template/*');
 
 			if (directories) {
 				for (directories of directory) {
-					files = glob(directory + '/*');
+					let files = require('glob').sync(directory + '/*');
 
-					for (let file of files) { 
+					for (let file of files) {
 						if (is_file(file)) {
-							unlink(file);
+							fs.unlinkSync(file);
 						}
 					}
 
 					if (is_dir(directory)) {
-						rmdir(directory);
+						fs.rmdirSync(directory);
 					}
 				}
 			}
@@ -75,31 +78,31 @@ module.exports = class ControllerCommonDeveloper extends Controller {
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 
 	async sass() {
 		await this.load.language('common/developer');
 
-		json = {};
+		const json = {};
 
 		if (!await this.user.hasPermission('modify', 'common/developer')) {
 			json['error'] = this.language.get('error_permission');
 		} else {
 			// Before we delete we need to make sure there is a sass file to regenerate the css
-			file = DIR_APPLICATION  + 'view/stylesheet/bootstrap.css';
+			let file = DIR_APPLICATION + 'view/stylesheet/bootstrap.css';
 
 			if (is_file(file) && is_file(DIR_APPLICATION + 'view/stylesheet/sass/_bootstrap.scss')) {
-				unlink(file);
+				fs.unlinkSync(file);
 			}
-			 
-			files = glob(DIR_CATALOG  + 'view/theme/*/stylesheet/sass/_bootstrap.scss');
-			 
+
+			let files = require('glob').sync(DIR_CATALOG + 'view/theme/*/stylesheet/sass/_bootstrap.scss');
+
 			for (let file of files) {
 				file = substr(file, 0, -21) + '/bootstrap.css';
 
 				if (is_file(file)) {
-					unlink(file);
+					fs.unlinkSync(file);
 				}
 			}
 
@@ -107,6 +110,6 @@ module.exports = class ControllerCommonDeveloper extends Controller {
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 }

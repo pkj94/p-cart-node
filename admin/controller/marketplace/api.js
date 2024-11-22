@@ -33,6 +33,6 @@ module.exports = class ControllerMarketplaceApi extends Controller {
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 }

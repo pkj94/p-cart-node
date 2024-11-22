@@ -2,7 +2,7 @@ module.exports = class ModelLocalisationZone extends Model {
 	async addZone(data) {
 		await this.db.query("INSERT INTO " + DB_PREFIX + "zone SET status = '" + data['status'] + "', name = '" + this.db.escape(data['name']) + "', code = '" + this.db.escape(data['code']) + "', country_id = '" + data['country_id'] + "'");
 
-		this.cache.delete('zone');
+		await this.cache.delete('zone');
 		
 		return this.db.getLastId();
 	}
@@ -10,13 +10,13 @@ module.exports = class ModelLocalisationZone extends Model {
 	async editZone(zone_id, data) {
 		await this.db.query("UPDATE " + DB_PREFIX + "zone SET status = '" + data['status'] + "', name = '" + this.db.escape(data['name']) + "', code = '" + this.db.escape(data['code']) + "', country_id = '" + data['country_id'] + "' WHERE zone_id = '" + zone_id + "'");
 
-		this.cache.delete('zone');
+		await this.cache.delete('zone');
 	}
 
 	async deleteZone(zone_id) {
 		await this.db.query("DELETE FROM " + DB_PREFIX + "zone WHERE zone_id = '" + zone_id + "'");
 
-		this.cache.delete('zone');
+		await this.cache.delete('zone');
 	}
 
 	async getZone(zone_id) {
@@ -32,7 +32,7 @@ module.exports = class ModelLocalisationZone extends Model {
 			'c.name',
 			'z.name',
 			'z.code'
-		);
+		});
 
 		if ((data['sort']) && sort_data.includes(data['sort'])) {
 			sql += " ORDER BY " + data['sort'];
@@ -66,14 +66,14 @@ if (data['limit'] < 1) {
 	}
 
 	async getZonesByCountryId(country_id) {
-		zone_data = this.cache.get('zone.' + country_id);
+		zone_data = await this.cache.get('zone.' + country_id);
 
 		if (!zone_data) {
 			const query = await this.db.query("SELECT * FROM " + DB_PREFIX + "zone WHERE country_id = '" + country_id + "' AND status = '1' ORDER BY name");
 
 			zone_data = query.rows;
 
-			this.cache.set('zone.' + country_id, zone_data);
+			await this.cache.set('zone.' + country_id, zone_data);
 		}
 
 		return zone_data;

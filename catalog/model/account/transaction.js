@@ -1,4 +1,4 @@
-module.exports =class Transaction extends global['\Opencart\System\Engine\Model'] {
+module.exports =class Transaction extends Model {
 	/**
 	 * @param data
 	 *

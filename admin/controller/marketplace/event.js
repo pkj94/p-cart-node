@@ -147,12 +147,12 @@ module.exports = class ControllerMarketplaceEvent extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('marketplace/event', 'user_token=' + this.session.data['user_token'] + url, true)
-		);
+		});
 
 		data['delete'] = await this.url.link('marketplace/event/delete', 'user_token=' + this.session.data['user_token'] + url, true);
 
@@ -161,9 +161,9 @@ module.exports = class ControllerMarketplaceEvent extends Controller {
 		filter_data = array(
 			'sort'  : sort,
 			'order' : order,
-			'start' : (page - 1) * this.config.get('config_limit_admin'),
-			'limit' : this.config.get('config_limit_admin')
-		);
+			'start' : (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit' : Number(this.config.get('config_limit_admin'))
+		});
 
 		event_total = await this.model_setting_event.getTotalEvents();
 
@@ -180,7 +180,7 @@ module.exports = class ControllerMarketplaceEvent extends Controller {
 				'enable'     : await this.url.link('marketplace/event/enable', 'user_token=' + this.session.data['user_token'] + '&event_id=' + result['event_id'] + url, true),
 				'disable'    : await this.url.link('marketplace/event/disable', 'user_token=' + this.session.data['user_token'] + '&event_id=' + result['event_id'] + url, true),
 				'enabled'    : result['status']
-			);
+			});
 		}
 
 		if ((this.error['warning'])) {
@@ -232,12 +232,12 @@ module.exports = class ControllerMarketplaceEvent extends Controller {
 		pagination = new Pagination();
 		pagination.total = event_total;
 		pagination.page = page;
-		pagination.limit = this.config.get('config_limit_admin');
+		pagination.limit = Number(this.config.get('config_limit_admin'));
 		pagination.url = await this.url.link('marketplace/event', 'user_token=' + this.session.data['user_token'] + url + '&page={page}', true);
 
 		data['pagination'] = pagination.render();
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (event_total) ? ((page - 1) * this.config.get('config_limit_admin')) + 1 : 0, (((page - 1) * this.config.get('config_limit_admin')) > (event_total - this.config.get('config_limit_admin'))) ? event_total : (((page - 1) * this.config.get('config_limit_admin')) + this.config.get('config_limit_admin')), event_total, ceil(event_total / this.config.get('config_limit_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (event_total) ? ((page - 1) * Number(this.config.get('config_limit_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_limit_admin'))) > (event_total - Number(this.config.get('config_limit_admin')))) ? event_total : (((page - 1) * Number(this.config.get('config_limit_admin'))) + Number(this.config.get('config_limit_admin'))), event_total, Math.ceil(event_total / Number(this.config.get('config_limit_admin'))));
 
 		data['sort'] = sort;
 		data['order'] = order;

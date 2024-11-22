@@ -27,17 +27,17 @@ module.exports = class ControllerExtensionReportCustomerActivity extends Control
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_extension'),
 			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=report', true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('extension/report/customer_activity', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['action'] = await this.url.link('extension/report/customer_activity', 'user_token=' + this.session.data['user_token'], true);
 
@@ -114,7 +114,7 @@ module.exports = class ControllerExtensionReportCustomerActivity extends Control
 			'filter_date_end'	: filter_date_end,
 			'start'             : (page - 1) * 20,
 			'limit'             : 20
-		);
+		});
 
 		activity_total = await this.model_extension_report_customer.getTotalCustomerActivities(filter_data);
 
@@ -126,18 +126,18 @@ module.exports = class ControllerExtensionReportCustomerActivity extends Control
 			find = array(
 				'customer_id=',
 				'order_id='
-			);
+			});
 
 			replace = array(
 				await this.url.link('customer/customer/edit', 'user_token=' + this.session.data['user_token'] + '&customer_id=', true),
 				await this.url.link('sale/order/info', 'user_token=' + this.session.data['user_token'] + '&order_id=', true)
-			);
+			});
 
 			data['activities'].push({
 				'comment'    : str_replace(find, replace, comment),
 				'ip'         : result['ip'],
 				'date_added' : date(this.language.get('datetime_format'), strtotime(result['date_added']))
-			);
+			});
 		}
 
 		data['user_token'] = this.session.data['user_token'];
@@ -145,7 +145,7 @@ module.exports = class ControllerExtensionReportCustomerActivity extends Control
 		url = '';
 
 		if ((this.request.get['filter_customer'])) {
-			url += '&filter_customer=' + urlencode(this.request.get['filter_customer']);
+			url += '&filter_customer=' + encodeURIComponent(this.request.get['filter_customer']);
 		}
 
 		if ((this.request.get['filter_ip'])) {
@@ -163,12 +163,12 @@ module.exports = class ControllerExtensionReportCustomerActivity extends Control
 		pagination = new Pagination();
 		pagination.total = activity_total;
 		pagination.page = page;
-		pagination.limit = this.config.get('config_limit_admin');
+		pagination.limit = Number(this.config.get('config_limit_admin'));
 		pagination.url = await this.url.link('report/report', 'user_token=' + this.session.data['user_token'] + '&code=customer_activity' + url + '&page={page}', true);
 
 		data['pagination'] = pagination.render();
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (activity_total) ? ((page - 1) * this.config.get('config_limit_admin')) + 1 : 0, (((page - 1) * this.config.get('config_limit_admin')) > (activity_total - this.config.get('config_limit_admin'))) ? activity_total : (((page - 1) * this.config.get('config_limit_admin')) + this.config.get('config_limit_admin')), activity_total, ceil(activity_total / this.config.get('config_limit_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (activity_total) ? ((page - 1) * Number(this.config.get('config_limit_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_limit_admin'))) > (activity_total - Number(this.config.get('config_limit_admin')))) ? activity_total : (((page - 1) * Number(this.config.get('config_limit_admin'))) + Number(this.config.get('config_limit_admin'))), activity_total, Math.ceil(activity_total / Number(this.config.get('config_limit_admin'))));
 
 		data['filter_customer'] = filter_customer;
 		data['filter_ip'] = filter_ip;

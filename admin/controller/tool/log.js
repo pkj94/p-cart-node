@@ -29,12 +29,12 @@ module.exports = class ControllerToolLog extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('tool/log', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['download'] = await this.url.link('tool/log/download', 'user_token=' + this.session.data['user_token'], true);
 		data['clear'] = await this.url.link('tool/log/clear', 'user_token=' + this.session.data['user_token'], true);
@@ -57,7 +57,7 @@ module.exports = class ControllerToolLog extends Controller {
 					'EB',
 					'ZB',
 					'YB'
-				);
+				});
 
 				i = 0;
 

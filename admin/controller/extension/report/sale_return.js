@@ -27,17 +27,17 @@ module.exports = class ControllerExtensionReportSaleReturn extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_extension'),
 			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=report', true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('extension/report/sale_return', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['action'] = await this.url.link('extension/report/sale_return', 'user_token=' + this.session.data['user_token'], true);
 
@@ -112,9 +112,9 @@ module.exports = class ControllerExtensionReportSaleReturn extends Controller {
 			'filter_date_end'	      : filter_date_end,
 			'filter_group'            : filter_group,
 			'filter_return_status_id' : filter_return_status_id,
-			'start'                   : (page - 1) * this.config.get('config_limit_admin'),
-			'limit'                   : this.config.get('config_limit_admin')
-		);
+			'start'                   : (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit'                   : Number(this.config.get('config_limit_admin'))
+		});
 
 		return_total = await this.model_extension_report_return.getTotalReturns(filter_data);
 
@@ -125,7 +125,7 @@ module.exports = class ControllerExtensionReportSaleReturn extends Controller {
 				'date_start' : date(this.language.get('date_format_short'), strtotime(result['date_start'])),
 				'date_end'   : date(this.language.get('date_format_short'), strtotime(result['date_end'])),
 				'returns'    : result['returns']
-			);
+			});
 		}
 
 		data['user_token'] = this.session.data['user_token'];
@@ -139,22 +139,22 @@ module.exports = class ControllerExtensionReportSaleReturn extends Controller {
 		data['groups'].push({
 			'text'  : this.language.get('text_year'),
 			'value' : 'year',
-		);
+		});
 
 		data['groups'].push({
 			'text'  : this.language.get('text_month'),
 			'value' : 'month',
-		);
+		});
 
 		data['groups'].push({
 			'text'  : this.language.get('text_week'),
 			'value' : 'week',
-		);
+		});
 
 		data['groups'].push({
 			'text'  : this.language.get('text_day'),
 			'value' : 'day',
-		);
+		});
 
 		url = '';
 
@@ -177,12 +177,12 @@ module.exports = class ControllerExtensionReportSaleReturn extends Controller {
 		pagination = new Pagination();
 		pagination.total = return_total;
 		pagination.page = page;
-		pagination.limit = this.config.get('config_limit_admin');
+		pagination.limit = Number(this.config.get('config_limit_admin'));
 		pagination.url = await this.url.link('report/report', 'user_token=' + this.session.data['user_token'] + '&code=sale_return' + url + '&page={page}', true);
 
 		data['pagination'] = pagination.render();
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (return_total) ? ((page - 1) * this.config.get('config_limit_admin')) + 1 : 0, (((page - 1) * this.config.get('config_limit_admin')) > (return_total - this.config.get('config_limit_admin'))) ? return_total : (((page - 1) * this.config.get('config_limit_admin')) + this.config.get('config_limit_admin')), return_total, ceil(return_total / this.config.get('config_limit_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (return_total) ? ((page - 1) * Number(this.config.get('config_limit_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_limit_admin'))) > (return_total - Number(this.config.get('config_limit_admin')))) ? return_total : (((page - 1) * Number(this.config.get('config_limit_admin'))) + Number(this.config.get('config_limit_admin'))), return_total, Math.ceil(return_total / Number(this.config.get('config_limit_admin'))));
 
 		data['filter_date_start'] = filter_date_start;
 		data['filter_date_end'] = filter_date_end;

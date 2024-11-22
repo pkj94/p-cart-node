@@ -549,7 +549,7 @@ $(document).ready(function() {
 
     var addOrderHistory = function(data, success_callback) {
         $.ajax({
-            url: '{{ catalog }}index.php?route=api/order/history&api_token={{ api_token }}&order_id=' + data.order_id,
+            url: '{{ catalog }}?route=api/order/history&api_token={{ api_token }}&order_id=' + data.order_id,
             type: 'post',
             dataType: 'json',
             data: data,

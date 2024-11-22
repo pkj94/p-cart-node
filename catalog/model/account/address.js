@@ -1,4 +1,4 @@
-module.exports = class Address extends global['\Opencart\System\Engine\Model'] {
+module.exports = class Address extends Model {
 	/**
 	 * @param   customer_id
 	 * @param data

@@ -88,17 +88,17 @@ module.exports = class ControllerExtensionPaymentAmazonLoginPay extends Controll
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_extension'),
 			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('extension/payment/amazon_login_pay', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['action'] = await this.url.link('extension/payment/amazon_login_pay', 'user_token=' + this.session.data['user_token'], true);
 
@@ -316,8 +316,8 @@ module.exports = class ControllerExtensionPaymentAmazonLoginPay extends Controll
 
 		data['unique_id'] = 'oc-' + str_replace(' ', '-', strtolower(this.config.get('config_name'))) + '_' + mt_rand();
 		data['allowed_login_domain'] = html_entity_decode(HTTPS_CATALOG);
-		data['login_redirect_urls'][] = HTTPS_CATALOG + 'index.php?route=payment/amazon_login/login';
-		data['login_redirect_urls'][] = HTTPS_CATALOG + 'index.php?route=payment/amazon_pay/login';
+		data['login_redirect_urls'].push(HTTPS_CATALOG + 'index.php?route=payment/amazon_login/login';
+		data['login_redirect_urls'].push(HTTPS_CATALOG + 'index.php?route=payment/amazon_pay/login';
 		data['store_name'] = this.config.get('config_name');
 		data['simple_path_language'] = str_replace('-', '_', data['payment_amazon_login_pay_language']);
 
@@ -326,7 +326,7 @@ module.exports = class ControllerExtensionPaymentAmazonLoginPay extends Controll
 
 			data['languages'] = array(
 				'en-US' : this.language.get('text_us')
-			);
+			});
 		} else {
 			data['registration_url'] = "https://payments-eu.amazon.com/register?registration_source=SPPL&spId=" + ld;
 
@@ -336,14 +336,14 @@ module.exports = class ControllerExtensionPaymentAmazonLoginPay extends Controll
 				'fr-FR' : this.language.get('text_fr'),
 				'it-IT' : this.language.get('text_it'),
 				'en-GB' : this.language.get('text_uk')
-			);
+			});
 		}
 
 		data['payment_regions'] = array(
 			'EUR' : this.language.get('text_eu_region'),
 			'GBP' : this.language.get('text_uk_region'),
 			'USD' : this.language.get('text_us_region')
-		);
+		});
 
 		data['has_ssl'] = (this.request.server['HTTPS']);
 
@@ -430,7 +430,7 @@ module.exports = class ControllerExtensionPaymentAmazonLoginPay extends Controll
 			json['msg'] = this.language.get('error_data_missing');
 		}
 
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 
 	async capture() {
@@ -488,7 +488,7 @@ module.exports = class ControllerExtensionPaymentAmazonLoginPay extends Controll
 			json['msg'] = this.language.get('error_data_missing');
 		}
 
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 
 	async refund() {
@@ -518,10 +518,10 @@ module.exports = class ControllerExtensionPaymentAmazonLoginPay extends Controll
 					if (total_captured <= 0 && amazon_login_pay_order['capture_status'] == 1) {
 						await this.model_extension_payment_amazon_login_pay.updateRefundStatus(amazon_login_pay_order['amazon_login_pay_order_id'], 1);
 						refund_status = 1;
-						json['msg'][] = this.language.get('text_refund_ok_order') + '<br />';
+						json['msg'].push(this.language.get('text_refund_ok_order') + '<br />';
 					} else {
 						refund_status = 0;
-						json['msg'][] = this.language.get('text_refund_ok') + '<br />';
+						json['msg'].push(this.language.get('text_refund_ok') + '<br />';
 					}
 
 					data = {};
@@ -532,10 +532,10 @@ module.exports = class ControllerExtensionPaymentAmazonLoginPay extends Controll
 					data['amazon_capture_id'] = response['amazon_capture_id'];
 					data['amazon_refund_id'] = response['AmazonRefundId'];
 					data['amount'] = this.currency.format((response['amount'] * -1), amazon_login_pay_order['currency_code'], true, true);
-					json['data'][] = data;
+					json['data'].push(data;
 				} else {
 					json['error'] = true;
-					json['error_msg'][] = (response['status_detail']) && (response['status_detail']) ? response['status_detail'] : 'Unable to refund';
+					json['error_msg'].push((response['status_detail']) && (response['status_detail']) ? response['status_detail'] : 'Unable to refund';
 				}
 			}
 			json['refund_status'] = refund_status;
@@ -543,9 +543,9 @@ module.exports = class ControllerExtensionPaymentAmazonLoginPay extends Controll
 			json['total_refunded'] = this.currency.format(total_refunded, amazon_login_pay_order['currency_code'], true, true);
 		} else {
 			json['error'] = true;
-			json['error_msg'][] = this.language.get('error_data_missing');
+			json['error_msg'].push(this.language.get('error_data_missing');
 		}
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 
     async trimIntegrationDetails() {

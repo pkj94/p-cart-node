@@ -17,12 +17,12 @@ module.exports = class ControllerToolBackup extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('tool/backup', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['user_token'] = this.session.data['user_token'];
 
@@ -128,12 +128,12 @@ module.exports = class ControllerToolBackup extends Controller {
 
 				json['success'] = this.language.get('text_success');
 
-				this.cache.delete('*');
+				await this.cache.delete('*');
 			}
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 
 	async export() {

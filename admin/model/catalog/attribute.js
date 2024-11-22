@@ -2,9 +2,9 @@ module.exports = class ModelCatalogAttribute extends Model {
 	async addAttribute(data) {
 		await this.db.query("INSERT INTO " + DB_PREFIX + "attribute SET attribute_group_id = '" + data['attribute_group_id'] + "', sort_order = '" + data['sort_order'] + "'");
 
-		attribute_id = this.db.getLastId();
+		const attribute_id = this.db.getLastId();
 
-		for (data['attribute_description'] of language_id : value) {
+		for (let [language_id, value] of Object.entries(data['attribute_description'])) {
 			await this.db.query("INSERT INTO " + DB_PREFIX + "attribute_description SET attribute_id = '" + attribute_id + "', language_id = '" + language_id + "', name = '" + this.db.escape(value['name']) + "'");
 		}
 
@@ -16,7 +16,7 @@ module.exports = class ModelCatalogAttribute extends Model {
 
 		await this.db.query("DELETE FROM " + DB_PREFIX + "attribute_description WHERE attribute_id = '" + attribute_id + "'");
 
-		for (data['attribute_description'] of language_id : value) {
+		for (let [language_id, value] of Object.entries(data['attribute_description'])) {
 			await this.db.query("INSERT INTO " + DB_PREFIX + "attribute_description SET attribute_id = '" + attribute_id + "', language_id = '" + language_id + "', name = '" + this.db.escape(value['name']) + "'");
 		}
 	}
@@ -47,7 +47,7 @@ module.exports = class ModelCatalogAttribute extends Model {
 			'ad.name',
 			'attribute_group',
 			'a.sort_order'
-		);
+		];
 
 		if ((data['sort']) && sort_data.includes(data['sort'])) {
 			sql += " ORDER BY " + data['sort'];
@@ -62,13 +62,13 @@ module.exports = class ModelCatalogAttribute extends Model {
 		}
 
 		if ((data['start']) || (data['limit'])) {
-			data['start'] = data['start']||0;
-if (data['start'] < 0) {
+			data['start'] = data['start'] || 0;
+			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
@@ -81,12 +81,12 @@ if (data['limit'] < 1) {
 	}
 
 	async getAttributeDescriptions(attribute_id) {
-		attribute_data = {};
+		let attribute_data = {};
 
 		const query = await this.db.query("SELECT * FROM " + DB_PREFIX + "attribute_description WHERE attribute_id = '" + attribute_id + "'");
 
-		for (let result of query.rows ) {
-			attribute_data[result['language_id']] = array('name' : result['name']);
+		for (let result of query.rows) {
+			attribute_data[result['language_id']] = { 'name': result['name'] };
 		}
 
 		return attribute_data;

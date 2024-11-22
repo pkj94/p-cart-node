@@ -9,12 +9,12 @@ module.exports = class ControllerDesignTheme extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('design/theme', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['user_token'] = this.session.data['user_token'];
 
@@ -28,7 +28,7 @@ module.exports = class ControllerDesignTheme extends Controller {
 			data['stores'].push({
 				'store_id' : result['store_id'],
 				'name'     : result['name']
-			);
+			});
 		}
 
 		data['header'] = await this.load.controller('common/header');
@@ -54,7 +54,7 @@ module.exports = class ControllerDesignTheme extends Controller {
 
 		history_total = await this.model_design_theme.getTotalThemes();
 
-		results = await this.model_design_theme.getThemes((page - 1) * this.config.get('config_limit_admin'), this.config.get('config_limit_admin'));
+		results = await this.model_design_theme.getThemes((page - 1) * Number(this.config.get('config_limit_admin')), Number(this.config.get('config_limit_admin')));
 
 		for (let result of results) {
 			store_info = await this.model_setting_store.getStore(result['store_id']);
@@ -73,18 +73,18 @@ module.exports = class ControllerDesignTheme extends Controller {
 				'date_added' : date(this.language.get('date_format_short'), strtotime(result['date_added'])),
 				'edit'       : await this.url.link('design/theme/template', 'user_token=' + this.session.data['user_token'], true),
 				'delete'     : await this.url.link('design/theme/delete', 'user_token=' + this.session.data['user_token'] + '&theme_id=' + result['theme_id'], true)
-			);
+			});
 		}
 
 		pagination = new Pagination();
 		pagination.total = history_total;
 		pagination.page = page;
-		pagination.limit = this.config.get('config_limit_admin');
+		pagination.limit = Number(this.config.get('config_limit_admin'));
 		pagination.url = await this.url.link('design/theme/history', 'user_token=' + this.session.data['user_token'] + '&page={page}', true);
 
 		data['pagination'] = pagination.render();
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (history_total) ? ((page - 1) * this.config.get('config_limit_admin')) + 1 : 0, (((page - 1) * this.config.get('config_limit_admin')) > (history_total - this.config.get('config_limit_admin'))) ? history_total : (((page - 1) * this.config.get('config_limit_admin')) + this.config.get('config_limit_admin')), history_total, ceil(history_total / this.config.get('config_limit_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (history_total) ? ((page - 1) * Number(this.config.get('config_limit_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_limit_admin'))) > (history_total - Number(this.config.get('config_limit_admin')))) ? history_total : (((page - 1) * Number(this.config.get('config_limit_admin'))) + Number(this.config.get('config_limit_admin'))), history_total, Math.ceil(history_total / Number(this.config.get('config_limit_admin'))));
 
 		this.response.setOutput(await this.load.view('design/theme_history', data));
 	}
@@ -128,17 +128,17 @@ module.exports = class ControllerDesignTheme extends Controller {
 							json['directory'].push({
 								'name' : basename(file),
 								'path' : trim(path + '/' + basename(file), '/')
-							);
+							});
 						}
 
 						if (is_file(file)) {
 							json['file'].push({
 								'name' : basename(file),
 								'path' : trim(path + '/' + basename(file), '/')
-							);
+							});
 						}
 
-						path_data[] = basename(file);
+						path_data.push(basename(file);
 					}
 				}
 			}
@@ -147,12 +147,12 @@ module.exports = class ControllerDesignTheme extends Controller {
 		if ((this.request.get['path'])) {
 			json['back'] = array(
 				'name' : this.language.get('button_back'),
-				'path' : urlencode(substr(path, 0, strrpos(path, '/'))),
-			);
+				'path' : encodeURIComponent(substr(path, 0, strrpos(path, '/'))),
+			});
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 
 	async template() {
@@ -194,7 +194,7 @@ module.exports = class ControllerDesignTheme extends Controller {
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 
 	async save() {
@@ -243,7 +243,7 @@ module.exports = class ControllerDesignTheme extends Controller {
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 
 	async reset() {
@@ -277,7 +277,7 @@ module.exports = class ControllerDesignTheme extends Controller {
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 
 	async delete() {
@@ -305,6 +305,6 @@ module.exports = class ControllerDesignTheme extends Controller {
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 }

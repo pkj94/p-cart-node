@@ -57,7 +57,7 @@ app.get('/ping', (req, res) => {
 });
 
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
-app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.json());
 
 app.use(compression());
 app.use('/image', express.static('image'));
@@ -74,35 +74,23 @@ app.use('/catalog/language', express.static('catalog/language'));
 app.use('/extension', express.static('extension'));
 app.use('/favicon.ico', express.static('./favicon.ico'));
 app.use(morgan('dev'));
-const decodeObject = (obj) => {
-    for (let [key, value] of Object.entries(obj)) {
-        // console.log('value----', typeof value, value)
-        if (typeof value == 'object') {
-            if (Array.isArray(value)) {
-                // console.log('value----', value)
-                if (value.filter(a => a == '0' || a == '1').length == value.length && value.length == 2) {
-                    obj[key] = decodeURIComponent(value[1]);
-                } else
-                    for (let i = 0; i < value.length; i++) {
-                        obj[key][i] = decodeObject(value[i]);
-                    }
-            } else
-                obj[key] = decodeObject(value);
-        }
-        else {
-            try {
-                obj[key] = decodeURIComponent(value);
-            } catch (e) {
-                obj[key] = value
-            }
-        }
+const parseFormData = (formData) => {
+    const data = {};
+
+    for (const [key, value] of Object.entries(formData)) {
+        const keys = key.match(/[^[\]]+/g); // Extract keys from the nested structure
+        keys.reduce((acc, key, index) => {
+            return acc[key] = acc[key] || (index === keys.length - 1 ? value : {});
+        }, data);
     }
-    return obj;
+
+    return data;
 }
+
 app.all('*', (req, res, next) => {
     console.log('request start---', new Date().toISOString())
     // console.log('decoded before---', req.body)
-    req.body = decodeObject(req.body);
+    req.body = parseFormData(req.body);
     // console.log('decoded---', req.body)
     next();
 });

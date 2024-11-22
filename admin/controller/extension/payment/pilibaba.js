@@ -29,17 +29,17 @@ module.exports = class ControllerExtensionPaymentPilibaba extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_extension'),
 			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('extension/payment/pilibaba', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['action'] = await this.url.link('extension/payment/pilibaba', 'user_token=' + this.session.data['user_token'], true);
 
@@ -236,7 +236,7 @@ module.exports = class ControllerExtensionPaymentPilibaba extends Controller {
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 
 	async order() {
@@ -299,7 +299,7 @@ module.exports = class ControllerExtensionPaymentPilibaba extends Controller {
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 
 	async barcode() {
@@ -333,7 +333,7 @@ module.exports = class ControllerExtensionPaymentPilibaba extends Controller {
 			this.error['pilibaba_shipping_fee'] = this.language.get('error_shipping_fee');
 		}
 
-		if (this.error && !(this.error['warning'])) {
+		if (Object.keys(this.error).length && !(this.error['warning'])) {
 			this.error['warning'] = this.language.get('error_warning');
 		}
 

@@ -39,17 +39,17 @@ module.exports = class ControllerExtensionPaymentGlobalpayRemote extends Control
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_extension'),
 			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('extension/payment/globalpay_remote', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['action'] = await this.url.link('extension/payment/globalpay_remote', 'user_token=' + this.session.data['user_token'], true);
 		
@@ -253,7 +253,7 @@ module.exports = class ControllerExtensionPaymentGlobalpayRemote extends Control
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 
 	async capture() {
@@ -302,7 +302,7 @@ module.exports = class ControllerExtensionPaymentGlobalpayRemote extends Control
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 
 	async rebate() {
@@ -350,7 +350,7 @@ module.exports = class ControllerExtensionPaymentGlobalpayRemote extends Control
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 
 	async validate() {

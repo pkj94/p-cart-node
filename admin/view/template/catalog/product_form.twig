@@ -1134,7 +1134,7 @@
   $('input[name=\'manufacturer\']').autocomplete({
 	  'source': function(request, response) {
 		  $.ajax({
-			  url: 'index.php?route=catalog/manufacturer/autocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request),
+			  url: '?route=catalog/manufacturer/autocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request),
 			  dataType: 'json',
 			  success: function(json) {
 				  json.unshift({
@@ -1161,7 +1161,7 @@
   $('input[name=\'category\']').autocomplete({
 	  'source': function(request, response) {
 		  $.ajax({
-			  url: 'index.php?route=catalog/category/autocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request),
+			  url: '?route=catalog/category/autocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request),
 			  dataType: 'json',
 			  success: function(json) {
 				  response($.map(json, function(item) {
@@ -1190,7 +1190,7 @@
   $('input[name=\'filter\']').autocomplete({
 	  'source': function(request, response) {
 		  $.ajax({
-			  url: 'index.php?route=catalog/filter/autocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request),
+			  url: '?route=catalog/filter/autocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request),
 			  dataType: 'json',
 			  success: function(json) {
 				  response($.map(json, function(item) {
@@ -1219,7 +1219,7 @@
   $('input[name=\'download\']').autocomplete({
 	  'source': function(request, response) {
 		  $.ajax({
-			  url: 'index.php?route=catalog/download/autocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request),
+			  url: '?route=catalog/download/autocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request),
 			  dataType: 'json',
 			  success: function(json) {
 				  response($.map(json, function(item) {
@@ -1248,7 +1248,7 @@
   $('input[name=\'related\']').autocomplete({
 	  'source': function(request, response) {
 		  $.ajax({
-			  url: 'index.php?route=catalog/product/autocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request),
+			  url: '?route=catalog/product/autocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request),
 			  dataType: 'json',
 			  success: function(json) {
 				  response($.map(json, function(item) {
@@ -1298,7 +1298,7 @@
 	  $('input[name=\'product_attribute[' + attribute_row + '][name]\']').autocomplete({
 		  'source': function(request, response) {
 			  $.ajax({
-				  url: 'index.php?route=catalog/attribute/autocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request),
+				  url: '?route=catalog/attribute/autocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request),
 				  dataType: 'json',
 				  success: function(json) {
 					  response($.map(json, function(item) {
@@ -1328,7 +1328,7 @@
   $('input[name=\'option\']').autocomplete({
 	  'source': function(request, response) {
 		  $.ajax({
-			  url: 'index.php?route=catalog/option/autocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request),
+			  url: '?route=catalog/option/autocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request),
 			  dataType: 'json',
 			  success: function(json) {
 				  response($.map(json, function(item) {

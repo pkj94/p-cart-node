@@ -47,7 +47,7 @@ module.exports = class ModelUserApi extends Model {
 			'status',
 			'date_added',
 			'date_modified'
-		);
+		});
 
 		if ((data['sort']) && sort_data.includes(data['sort'])) {
 			sql += " ORDER BY " + data['sort'];

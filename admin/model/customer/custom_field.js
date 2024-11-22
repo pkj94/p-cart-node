@@ -105,7 +105,7 @@ module.exports = class ModelCustomerCustomField extends Model {
 			'cf.location',
 			'cf.status',
 			'cf.sort_order'
-		);
+		});
 
 		if ((data['sort']) && sort_data.includes(data['sort'])) {
 			sql += " ORDER BY " + data['sort'];
@@ -165,7 +165,7 @@ if (data['limit'] < 1) {
 			custom_field_value_data[custom_field_value['custom_field_value_id']] = array(
 				'custom_field_value_id' : custom_field_value['custom_field_value_id'],
 				'name'                  : custom_field_value['name']
-			);
+			});
 		}
 
 		return custom_field_value_data;
@@ -195,7 +195,7 @@ if (data['limit'] < 1) {
 				'custom_field_value_id'          : custom_field_value['custom_field_value_id'],
 				'custom_field_value_description' : custom_field_value_description_data,
 				'sort_order'                     : custom_field_value['sort_order']
-			);
+			});
 		}
 
 		return custom_field_value_data;

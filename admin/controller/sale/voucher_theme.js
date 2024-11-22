@@ -18,7 +18,7 @@ module.exports = class ControllerSaleVoucherTheme extends Controller {
 
 		this.load.model('sale/voucher_theme');
 
-		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_sale_voucher_theme.addVoucherTheme(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
@@ -50,7 +50,7 @@ module.exports = class ControllerSaleVoucherTheme extends Controller {
 
 		this.load.model('sale/voucher_theme');
 
-		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_sale_voucher_theme.editVoucherTheme(this.request.get['voucher_theme_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
@@ -82,7 +82,8 @@ module.exports = class ControllerSaleVoucherTheme extends Controller {
 
 		this.load.model('sale/voucher_theme');
 
-		if ((this.request.post['selected']) && this.validateDelete()) {
+		if ((this.request.post['selected']) && await this.validateDelete()) {
+this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
 			for (this.request.post['selected'] of voucher_theme_id) {
 				await this.model_sale_voucher_theme.deleteVoucherTheme(voucher_theme_id);
 			}
@@ -147,12 +148,12 @@ module.exports = class ControllerSaleVoucherTheme extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('sale/voucher_theme', 'user_token=' + this.session.data['user_token'] + url, true)
-		);
+		});
 
 		data['add'] = await this.url.link('sale/voucher_theme/add', 'user_token=' + this.session.data['user_token'] + url, true);
 		data['delete'] = await this.url.link('sale/voucher_theme/delete', 'user_token=' + this.session.data['user_token'] + url, true);
@@ -162,9 +163,9 @@ module.exports = class ControllerSaleVoucherTheme extends Controller {
 		filter_data = array(
 			'sort'  : sort,
 			'order' : order,
-			'start' : (page - 1) * this.config.get('config_limit_admin'),
-			'limit' : this.config.get('config_limit_admin')
-		);
+			'start' : (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit' : Number(this.config.get('config_limit_admin'))
+		});
 
 		voucher_theme_total = await this.model_sale_voucher_theme.getTotalVoucherThemes();
 
@@ -175,7 +176,7 @@ module.exports = class ControllerSaleVoucherTheme extends Controller {
 				'voucher_theme_id' : result['voucher_theme_id'],
 				'name'             : result['name'],
 				'edit'             : await this.url.link('sale/voucher_theme/edit', 'user_token=' + this.session.data['user_token'] + '&voucher_theme_id=' + result['voucher_theme_id'] + url, true)
-			);
+			});
 		}
 
 		if ((this.error['warning'])) {
@@ -225,12 +226,12 @@ module.exports = class ControllerSaleVoucherTheme extends Controller {
 		pagination = new Pagination();
 		pagination.total = voucher_theme_total;
 		pagination.page = page;
-		pagination.limit = this.config.get('config_limit_admin');
+		pagination.limit = Number(this.config.get('config_limit_admin'));
 		pagination.url = await this.url.link('sale/voucher_theme', 'user_token=' + this.session.data['user_token'] + url + '&page={page}', true);
 
 		data['pagination'] = pagination.render();
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (voucher_theme_total) ? ((page - 1) * this.config.get('config_limit_admin')) + 1 : 0, (((page - 1) * this.config.get('config_limit_admin')) > (voucher_theme_total - this.config.get('config_limit_admin'))) ? voucher_theme_total : (((page - 1) * this.config.get('config_limit_admin')) + this.config.get('config_limit_admin')), voucher_theme_total, ceil(voucher_theme_total / this.config.get('config_limit_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (voucher_theme_total) ? ((page - 1) * Number(this.config.get('config_limit_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_limit_admin'))) > (voucher_theme_total - Number(this.config.get('config_limit_admin')))) ? voucher_theme_total : (((page - 1) * Number(this.config.get('config_limit_admin'))) + Number(this.config.get('config_limit_admin'))), voucher_theme_total, Math.ceil(voucher_theme_total / Number(this.config.get('config_limit_admin'))));
 
 		data['sort'] = sort;
 		data['order'] = order;
@@ -282,12 +283,12 @@ module.exports = class ControllerSaleVoucherTheme extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('sale/voucher_theme', 'user_token=' + this.session.data['user_token'] + url, true)
-		);
+		});
 
 		if (!(this.request.get['voucher_theme_id'])) {
 			data['action'] = await this.url.link('sale/voucher_theme/add', 'user_token=' + this.session.data['user_token'] + url, true);

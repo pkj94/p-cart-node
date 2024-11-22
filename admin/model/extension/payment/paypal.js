@@ -7,7 +7,7 @@ module.exports = class ModelExtensionPaymentPayPal extends Model {
 			implode.push("'" + order_status_id + "'";
 		}
 		
-		const query = await this.db.query("SELECT SUM(total) AS paypal_total FROM `" + DB_PREFIX + "order` WHERE order_status_id IN(" + implode(',', implode) + ") AND payment_code = 'paypal'");
+		const query = await this.db.query("SELECT SUM(total) AS paypal_total FROM `" + DB_PREFIX + "order` WHERE order_status_id IN(" + implode.join(",") + ") AND payment_code = 'paypal'");
 
 		return query.row['paypal_total'];
 	}
@@ -26,17 +26,17 @@ module.exports = class ModelExtensionPaymentPayPal extends Model {
 				'hour'  		: i,
 				'total' 		: 0,
 				'paypal_total' 	: 0
-			);
+			});
 		}
 
-		const query = await this.db.query("SELECT SUM(total) AS total, SUM(IF (payment_code = 'paypal', total, 0)) AS paypal_total, HOUR(date_added) AS hour FROM `" + DB_PREFIX + "order` WHERE order_status_id IN(" + implode(',', implode) + ") AND DATE(date_added) = DATE(NOW()) GROUP BY HOUR(date_added) ORDER BY date_added ASC");
+		const query = await this.db.query("SELECT SUM(total) AS total, SUM(IF (payment_code = 'paypal', total, 0)) AS paypal_total, HOUR(date_added) AS hour FROM `" + DB_PREFIX + "order` WHERE order_status_id IN(" + implode.join(",") + ") AND DATE(date_added) = DATE(NOW()) GROUP BY HOUR(date_added) ORDER BY date_added ASC");
 
 		for (let result of query.rows ) {
 			sale_data[result['hour']] = array(
 				'hour'  		: result['hour'],
 				'total' 		: result['total'],
 				'paypal_total'  : result['paypal_total']
-			);
+			});
 		}
 
 		return sale_data;
@@ -60,17 +60,17 @@ module.exports = class ModelExtensionPaymentPayPal extends Model {
 				'day'   		: date('D', strtotime(date)),
 				'total' 		: 0,
 				'paypal_total' 	: 0
-			);
+			});
 		}
 
-		const query = await this.db.query("SELECT SUM(total) AS total, SUM(IF (payment_code = 'paypal', total, 0)) AS paypal_total, date_added FROM `" + DB_PREFIX + "order` WHERE order_status_id IN(" + implode(',', implode) + ") AND DATE(date_added) >= DATE('" + this.db.escape(date('Y-m-d', date_start)) + "') GROUP BY DAYNAME(date_added)");
+		const query = await this.db.query("SELECT SUM(total) AS total, SUM(IF (payment_code = 'paypal', total, 0)) AS paypal_total, date_added FROM `" + DB_PREFIX + "order` WHERE order_status_id IN(" + implode.join(",") + ") AND DATE(date_added) >= DATE('" + this.db.escape(date('Y-m-d', date_start)) + "') GROUP BY DAYNAME(date_added)");
 
 		for (let result of query.rows ) {
 			sale_data[date('w', strtotime(result['date_added']))] = array(
 				'day'   		: date('D', strtotime(result['date_added'])),
 				'total' 		: result['total'],
 				'paypal_total'  : result['paypal_total']
-			);
+			});
 		}
 
 		return sale_data;
@@ -92,17 +92,17 @@ module.exports = class ModelExtensionPaymentPayPal extends Model {
 				'day'   		: date('d', strtotime(date)),
 				'total' 		: 0,
 				'paypal_total' 	: 0
-			);
+			});
 		}
 
-		const query = await this.db.query("SELECT SUM(total) AS total, SUM(IF (payment_code = 'paypal', total, 0)) AS paypal_total, date_added FROM `" + DB_PREFIX + "order` WHERE order_status_id IN(" + implode(',', implode) + ") AND DATE(date_added) >= '" + this.db.escape(date('Y') + '-' + date('m') + '-1') + "' GROUP BY DATE(date_added)");
+		const query = await this.db.query("SELECT SUM(total) AS total, SUM(IF (payment_code = 'paypal', total, 0)) AS paypal_total, date_added FROM `" + DB_PREFIX + "order` WHERE order_status_id IN(" + implode.join(",") + ") AND DATE(date_added) >= '" + this.db.escape(date('Y') + '-' + date('m') + '-1') + "' GROUP BY DATE(date_added)");
 
 		for (let result of query.rows ) {
 			sale_data[date('j', strtotime(result['date_added']))] = array(
 				'day'   : date('d', strtotime(result['date_added'])),
 				'total' 		: result['total'],
 				'paypal_total'  : result['paypal_total']
-			);
+			});
 		}
 
 		return sale_data;
@@ -122,17 +122,17 @@ module.exports = class ModelExtensionPaymentPayPal extends Model {
 				'month' 		: date('M', mktime(0, 0, 0, i)),
 				'total' 		: 0,
 				'paypal_total' 	: 0
-			);
+			});
 		}
 
-		const query = await this.db.query("SELECT SUM(total) AS total, SUM(IF (payment_code = 'paypal', total, 0)) AS paypal_total, date_added FROM `" + DB_PREFIX + "order` WHERE order_status_id IN(" + implode(',', implode) + ") AND YEAR(date_added) = YEAR(NOW()) GROUP BY MONTH(date_added)");
+		const query = await this.db.query("SELECT SUM(total) AS total, SUM(IF (payment_code = 'paypal', total, 0)) AS paypal_total, date_added FROM `" + DB_PREFIX + "order` WHERE order_status_id IN(" + implode.join(",") + ") AND YEAR(date_added) = YEAR(NOW()) GROUP BY MONTH(date_added)");
 
 		for (let result of query.rows ) {
 			sale_data[date('n', strtotime(result['date_added']))] = array(
 				'month' : date('M', strtotime(result['date_added'])),
 				'total' 		: result['total'],
 				'paypal_total'  : result['paypal_total']
-			);
+			});
 		}
 
 		return sale_data;

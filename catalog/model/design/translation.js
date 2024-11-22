@@ -1,4 +1,4 @@
-module.exports =class Translation extends global['\Opencart\System\Engine\Model'] {
+module.exports =class Translation extends Model {
 	/**
 	 * @param string route
 	 *

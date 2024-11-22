@@ -3,7 +3,6 @@ const htmlEntity = require('html-entities');
 // Import required libraries
 const crypto = require('crypto');
 const md5 = require('locutus/php/strings/md5');
-const sprintf = require('locutus/php/strings/sprintf');
 
 // String
 global.oc_strlen = (string) => {
@@ -211,11 +210,7 @@ global.is_dir = (file) => {
     return fs.existsSync(file) ? fs.statSync(file).isDirectory() : false;
 }
 global.sha1 = (string) => { return crypto.createHash('sha1').update(string).digest('hex'); }
-global.sprintf = (key, ...args) => {
-    // console.log('args', args)
-    // console.log('key', key)
-    return sprintf(key, args);
-}
+global.sprintf = require('locutus/php/strings/sprintf');
 global.strtotime = (relativeDate) => {
     const now = new Date();
     const [value, unit] = relativeDate.split(' '); // Split the string into value and unit

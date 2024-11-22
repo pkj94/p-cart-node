@@ -1,7 +1,7 @@
 module.exports = class ControllerEventLanguage extends Controller {
 	async index(route, args, template_code = '') {
 		for (let [key, value] of Object.entries(this.language.all())) {
-			if (!(args[key])) {
+			if (typeof (args[key]) == 'undefined') {
 				args[key] = value;
 			}
 		}

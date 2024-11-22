@@ -9,12 +9,12 @@ module.exports = class ControllerMarketplaceInstaller extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('marketplace/installer', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['user_token'] = this.session.data['user_token'];
 		
@@ -45,7 +45,7 @@ module.exports = class ControllerMarketplaceInstaller extends Controller {
 				'extension_install_id' : result['extension_install_id'],
 				'filename'             : result['filename'],
 				'date_added'           : date(this.language.get('date_format_short'), strtotime(result['date_added']))
-			);
+			});
 		}
 		
 		history_total = await this.model_setting_extension.getTotalExtensionInstalls();
@@ -58,7 +58,7 @@ module.exports = class ControllerMarketplaceInstaller extends Controller {
 
 		data['pagination'] = pagination.render();
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (history_total) ? ((page - 1) * 10) + 1 : 0, (((page - 1) * 10) > (history_total - 10)) ? history_total : (((page - 1) * 10) + 10), history_total, ceil(history_total / 10));
+		data['results'] = sprintf(this.language.get('text_pagination'), (history_total) ? ((page - 1) * 10) + 1 : 0, (((page - 1) * 10) > (history_total - 10)) ? history_total : (((page - 1) * 10) + 10), history_total, Math.ceil(history_total / 10));
 				
 		this.response.setOutput(await this.load.view('marketplace/installer_history', data));
 	}	
@@ -106,10 +106,10 @@ module.exports = class ControllerMarketplaceInstaller extends Controller {
 						file = next + '/' + file;
 	
 						if (is_dir(file)) {
-							path[] = file;
+							path.push(file;
 						}
 	
-						files[] = file;
+						files.push(file;
 					}
 				}
 	
@@ -166,6 +166,6 @@ module.exports = class ControllerMarketplaceInstaller extends Controller {
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 }

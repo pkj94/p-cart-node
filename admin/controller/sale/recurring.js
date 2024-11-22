@@ -81,7 +81,7 @@ module.exports = class ControllerSaleRecurring extends Controller {
 		}
 
 		if ((this.request.get['filter_customer'])) {
-			url += '&filter_customer=' + urlencode(html_entity_decode(this.request.get['filter_customer']));
+			url += '&filter_customer=' + encodeURIComponent(html_entity_decode(this.request.get['filter_customer']));
 		}
 
 		if ((this.request.get['filter_status'])) {
@@ -109,12 +109,12 @@ module.exports = class ControllerSaleRecurring extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('sale/recurring', 'user_token=' + this.session.data['user_token'] + url, true)
-		);
+		});
 
 		data['recurrings'] = {};
 
@@ -127,9 +127,9 @@ module.exports = class ControllerSaleRecurring extends Controller {
 			'filter_date_added'         : filter_date_added,
 			'order'                     : order,
 			'sort'                      : sort,
-			'start'                     : (page - 1) * this.config.get('config_limit_admin'),
-			'limit'                     : this.config.get('config_limit_admin')
-		);
+			'start'                     : (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit'                     : Number(this.config.get('config_limit_admin'))
+		});
 
 		recurrings_total = await this.model_sale_recurring.getTotalRecurrings(filter_data);
 
@@ -151,7 +151,7 @@ module.exports = class ControllerSaleRecurring extends Controller {
 				'date_added'         : date(this.language.get('date_format_short'), strtotime(result['date_added'])),
 				'view'               : await this.url.link('sale/recurring/info', 'user_token=' + this.session.data['user_token'] + '&order_recurring_id=' + result['order_recurring_id'] + url, true),
 				'order'              : await this.url.link('sale/order/info', 'user_token=' + this.session.data['user_token'] + '&order_id=' + result['order_id'], true)
-			);
+			});
 		}
 
 		data['user_token'] = this.session.data['user_token'];
@@ -181,11 +181,11 @@ module.exports = class ControllerSaleRecurring extends Controller {
 		}
 
 		if ((this.request.get['filter_reference'])) {
-			url += '&filter_reference=' + urlencode(html_entity_decode(this.request.get['filter_reference']));
+			url += '&filter_reference=' + encodeURIComponent(html_entity_decode(this.request.get['filter_reference']));
 		}
 
 		if ((this.request.get['filter_customer'])) {
-			url += '&filter_customer=' + urlencode(html_entity_decode(this.request.get['filter_customer']));
+			url += '&filter_customer=' + encodeURIComponent(html_entity_decode(this.request.get['filter_customer']));
 		}
 
 		if ((this.request.get['filter_status'])) {
@@ -224,11 +224,11 @@ module.exports = class ControllerSaleRecurring extends Controller {
 		}
 
 		if ((this.request.get['filter_reference'])) {
-			url += '&filter_reference=' + urlencode(html_entity_decode(this.request.get['filter_reference']));
+			url += '&filter_reference=' + encodeURIComponent(html_entity_decode(this.request.get['filter_reference']));
 		}
 
 		if ((this.request.get['filter_customer'])) {
-			url += '&filter_customer=' + urlencode(html_entity_decode(this.request.get['filter_customer']));
+			url += '&filter_customer=' + encodeURIComponent(html_entity_decode(this.request.get['filter_customer']));
 		}
 
 		if ((this.request.get['filter_status'])) {
@@ -250,12 +250,12 @@ module.exports = class ControllerSaleRecurring extends Controller {
 		pagination = new Pagination();
 		pagination.total = recurrings_total;
 		pagination.page = page;
-		pagination.limit = this.config.get('config_limit_admin');
+		pagination.limit = Number(this.config.get('config_limit_admin'));
 		pagination.url = await this.url.link('sale/recurring', 'user_token=' + this.session.data['user_token'] + '&page={page}' + url, true);
 
 		data['pagination'] = pagination.render();
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (recurrings_total) ? ((page - 1) * this.config.get('config_limit_admin')) + 1 : 0, (((page - 1) * this.config.get('config_limit_admin')) > (recurrings_total - this.config.get('config_limit_admin'))) ? recurrings_total : (((page - 1) * this.config.get('config_limit_admin')) + this.config.get('config_limit_admin')), recurrings_total, ceil(recurrings_total / this.config.get('config_limit_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (recurrings_total) ? ((page - 1) * Number(this.config.get('config_limit_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_limit_admin'))) > (recurrings_total - Number(this.config.get('config_limit_admin')))) ? recurrings_total : (((page - 1) * Number(this.config.get('config_limit_admin'))) + Number(this.config.get('config_limit_admin'))), recurrings_total, Math.ceil(recurrings_total / Number(this.config.get('config_limit_admin'))));
 
 		data['filter_order_recurring_id'] = filter_order_recurring_id;
 		data['filter_order_id'] = filter_order_id;
@@ -272,13 +272,13 @@ module.exports = class ControllerSaleRecurring extends Controller {
 		data['recurring_statuses'][0] = array(
 			'text'  : '',
 			'value' : 0
-		);
+		});
 			
 		for (i = 1; i <= 6; i++) {
 			data['recurring_statuses'][i] = array(
 				'text'  : this.language.get('text_status_' + i),
 				'value' : i,
-			);		
+			});		
 		}
 
 		data['header'] = await this.load.controller('common/header');
@@ -321,7 +321,7 @@ module.exports = class ControllerSaleRecurring extends Controller {
 			}
 
 			if ((this.request.get['filter_customer'])) {
-				url += '&filter_customer=' + urlencode(html_entity_decode(this.request.get['filter_customer']));
+				url += '&filter_customer=' + encodeURIComponent(html_entity_decode(this.request.get['filter_customer']));
 			}
 
 			if ((this.request.get['filter_status'])) {
@@ -349,12 +349,12 @@ module.exports = class ControllerSaleRecurring extends Controller {
 			data['breadcrumbs'].push({
 				'text' : this.language.get('text_home'),
 				'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-			);
+			});
 
 			data['breadcrumbs'].push({
 				'text' : this.language.get('heading_title'),
 				'href' : await this.url.link('sale/recurring', 'user_token=' + this.session.data['user_token'] + url, true)
-			);
+			});
 
 			data['cancel'] = await this.url.link('sale/recurring', 'user_token=' + this.session.data['user_token'] + url, true);
 			
@@ -413,7 +413,7 @@ module.exports = class ControllerSaleRecurring extends Controller {
 					'date_added' : transaction['date_added'],
 					'type'       : transaction['type'],
 					'amount'     : this.currency.format(transaction['amount'], order_info['currency_code'], order_info['currency_value'])
-				);
+				});
 			}
 
 			data['buttons'] = await this.load.controller('extension/payment/' + order_info['payment_code'] + '/recurringButtons');

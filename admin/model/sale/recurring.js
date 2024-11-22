@@ -39,7 +39,7 @@ module.exports = class ModelSaleRecurring extends Model {
 			'customer',
 			'or.status',
 			'or.date_added'
-		);
+		});
 
 		if ((data['sort']) && sort_data.includes(data['sort'])) {
 			sql += " ORDER BY " + data['sort'];
@@ -124,7 +124,7 @@ if (data['limit'] < 1) {
 				'date_added' : result['date_added'],
 				'amount'     : result['amount'],
 				'type'       : type
-			);
+			});
 		}
 
 		return transactions;

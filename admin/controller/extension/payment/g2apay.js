@@ -89,17 +89,17 @@ class ControllerExtensionPaymentG2APay extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_extension'),
 			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('extension/payment/g2apay', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		this.load.model('localisation/order_status');
 		data['order_statuses'] = await this.model_localisation_order_status.getOrderStatuses();
@@ -265,7 +265,7 @@ class ControllerExtensionPaymentG2APay extends Controller {
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 
 	async install() {

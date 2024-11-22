@@ -155,7 +155,7 @@ module.exports = class ControllerExtensionExtensionModule extends Controller {
 						'status'    : ((setting_info['status']) && setting_info['status']) ? this.language.get('text_enabled') : this.language.get('text_disabled'),
 						'edit'      : await this.url.link('extension/module/' + extension, 'user_token=' + this.session.data['user_token'] + '&module_id=' + module['module_id'], true),
 						'delete'    : await this.url.link('extension/extension/module/delete', 'user_token=' + this.session.data['user_token'] + '&module_id=' + module['module_id'], true)
-					);
+					});
 				}
 
 				data['extensions'].push({
@@ -166,7 +166,7 @@ module.exports = class ControllerExtensionExtensionModule extends Controller {
 					'uninstall' : await this.url.link('extension/extension/module/uninstall', 'user_token=' + this.session.data['user_token'] + '&extension=' + extension, true),
 					'installed' : in_array(extension, extensions),
 					'edit'      : await this.url.link('extension/module/' + extension, 'user_token=' + this.session.data['user_token'], true)
-				);
+				});
 			}
 		}
 

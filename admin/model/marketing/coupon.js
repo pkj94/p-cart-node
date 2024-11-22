@@ -68,7 +68,7 @@ module.exports = class ModelMarketingCoupon extends Model {
 			'date_start',
 			'date_end',
 			'status'
-		);
+		});
 
 		if ((data['sort']) && sort_data.includes(data['sort'])) {
 			sql += " ORDER BY " + data['sort'];
@@ -107,7 +107,7 @@ if (data['limit'] < 1) {
 		const query = await this.db.query("SELECT * FROM " + DB_PREFIX + "coupon_product WHERE coupon_id = '" + coupon_id + "'");
 
 		for (let result of query.rows ) {
-			coupon_product_data[] = result['product_id'];
+			coupon_product_data.push(result['product_id'];
 		}
 
 		return coupon_product_data;
@@ -119,7 +119,7 @@ if (data['limit'] < 1) {
 		const query = await this.db.query("SELECT * FROM " + DB_PREFIX + "coupon_category WHERE coupon_id = '" + coupon_id + "'");
 
 		for (let result of query.rows ) {
-			coupon_category_data[] = result['category_id'];
+			coupon_category_data.push(result['category_id'];
 		}
 
 		return coupon_category_data;

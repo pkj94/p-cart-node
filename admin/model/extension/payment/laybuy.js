@@ -23,7 +23,7 @@ module.exports = class ModelExtensionPaymentLaybuy extends Model {
 		initial_payments = {};
 
 		for (i = minimum; i <= maximum; i += 10) {
-			initial_payments[] = i;
+			initial_payments.push(i;
 		}
 
 		return initial_payments;
@@ -48,7 +48,7 @@ module.exports = class ModelExtensionPaymentLaybuy extends Model {
 			months.push({
 				'value' : i,
 				'label' : i + ' ' + ((i > 1) ? this.language.get('text_months') : this.language.get('text_month'))
-			);
+			});
 		}
 
 		return months;
@@ -140,7 +140,7 @@ module.exports = class ModelExtensionPaymentLaybuy extends Model {
 			'lt.last_payment_due',
 			'lt.status',
 			'lt.date_added'
-		);
+		});
 
 		if ((data['sort']) && sort_data.includes(data['sort'])) {
 			sql += " ORDER BY " + data['sort'];
@@ -251,7 +251,7 @@ if (data['limit'] < 1) {
 				'status_id'		: 51,
 				'status_name'	: this.language.get('text_status_51')
 			)
-		);
+		});
 
 		return transaction_statuses;
 	}

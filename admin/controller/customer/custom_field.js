@@ -18,7 +18,7 @@ module.exports = class ControllerCustomerCustomField extends Controller {
 
 		this.load.model('customer/custom_field');
 
-		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_customer_custom_field.addCustomField(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
@@ -50,7 +50,7 @@ module.exports = class ControllerCustomerCustomField extends Controller {
 
 		this.load.model('customer/custom_field');
 
-		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_customer_custom_field.editCustomField(this.request.get['custom_field_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
@@ -82,7 +82,8 @@ module.exports = class ControllerCustomerCustomField extends Controller {
 
 		this.load.model('customer/custom_field');
 
-		if ((this.request.post['selected']) && this.validateDelete()) {
+		if ((this.request.post['selected']) && await this.validateDelete()) {
+this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
 			for (this.request.post['selected'] of custom_field_id) {
 				await this.model_customer_custom_field.deleteCustomField(custom_field_id);
 			}
@@ -147,12 +148,12 @@ module.exports = class ControllerCustomerCustomField extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('customer/custom_field', 'user_token=' + this.session.data['user_token'] + url, true)
-		);
+		});
 
 		data['add'] = await this.url.link('customer/custom_field/add', 'user_token=' + this.session.data['user_token'] + url, true);
 		data['delete'] = await this.url.link('customer/custom_field/delete', 'user_token=' + this.session.data['user_token'] + url, true);
@@ -162,9 +163,9 @@ module.exports = class ControllerCustomerCustomField extends Controller {
 		filter_data = array(
 			'sort'  : sort,
 			'order' : order,
-			'start' : (page - 1) * this.config.get('config_limit_admin'),
-			'limit' : this.config.get('config_limit_admin')
-		);
+			'start' : (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit' : Number(this.config.get('config_limit_admin'))
+		});
 
 		custom_field_total = await this.model_customer_custom_field.getTotalCustomFields();
 
@@ -214,7 +215,7 @@ module.exports = class ControllerCustomerCustomField extends Controller {
 				'status'          : result['status'],
 				'sort_order'      : result['sort_order'],
 				'edit'            : await this.url.link('customer/custom_field/edit', 'user_token=' + this.session.data['user_token'] + '&custom_field_id=' + result['custom_field_id'] + url, true)
-			);
+			});
 		}
 
 		if ((this.error['warning'])) {
@@ -268,12 +269,12 @@ module.exports = class ControllerCustomerCustomField extends Controller {
 		pagination = new Pagination();
 		pagination.total = custom_field_total;
 		pagination.page = page;
-		pagination.limit = this.config.get('config_limit_admin');
+		pagination.limit = Number(this.config.get('config_limit_admin'));
 		pagination.url = await this.url.link('customer/custom_field', 'user_token=' + this.session.data['user_token'] + url + '&page={page}', true);
 
 		data['pagination'] = pagination.render();
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (custom_field_total) ? ((page - 1) * this.config.get('config_limit_admin')) + 1 : 0, (((page - 1) * this.config.get('config_limit_admin')) > (custom_field_total - this.config.get('config_limit_admin'))) ? custom_field_total : (((page - 1) * this.config.get('config_limit_admin')) + this.config.get('config_limit_admin')), custom_field_total, ceil(custom_field_total / this.config.get('config_limit_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (custom_field_total) ? ((page - 1) * Number(this.config.get('config_limit_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_limit_admin'))) > (custom_field_total - Number(this.config.get('config_limit_admin')))) ? custom_field_total : (((page - 1) * Number(this.config.get('config_limit_admin'))) + Number(this.config.get('config_limit_admin'))), custom_field_total, Math.ceil(custom_field_total / Number(this.config.get('config_limit_admin'))));
 
 		data['sort'] = sort;
 		data['order'] = order;
@@ -325,12 +326,12 @@ module.exports = class ControllerCustomerCustomField extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('customer/custom_field', 'user_token=' + this.session.data['user_token'] + url, true)
-		);
+		});
 
 		if (!(this.request.get['custom_field_id'])) {
 			data['action'] = await this.url.link('customer/custom_field/add', 'user_token=' + this.session.data['user_token'] + url, true);
@@ -421,7 +422,7 @@ module.exports = class ControllerCustomerCustomField extends Controller {
 				'custom_field_value_id'          : custom_field_value['custom_field_value_id'],
 				'custom_field_value_description' : custom_field_value['custom_field_value_description'],
 				'sort_order'                     : custom_field_value['sort_order']
-			);
+			});
 		}
 
 		if ((this.request.post['custom_field_customer_group'])) {
@@ -435,18 +436,18 @@ module.exports = class ControllerCustomerCustomField extends Controller {
 		data['custom_field_customer_group'] = {};
 
 		for (custom_field_customer_groups of custom_field_customer_group) {
-			data['custom_field_customer_group'][] = custom_field_customer_group['customer_group_id'];
+			data['custom_field_customer_group'].push(custom_field_customer_group['customer_group_id'];
 		}
 
 		data['custom_field_required'] = {};
 
 		for (custom_field_customer_groups of custom_field_customer_group) {
 			if (custom_field_customer_group['required']) {
-				data['custom_field_required'][] = custom_field_customer_group['customer_group_id'];
+				data['custom_field_required'].push(custom_field_customer_group['customer_group_id'];
 			}
 		}
 
-		this.load.model('customer/customer_group');
+		this.load.model('customer/customer_group',this);
 
 		data['customer_groups'] = await this.model_customer_customer_group.getCustomerGroups();
 

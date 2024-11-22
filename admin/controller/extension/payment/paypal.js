@@ -24,9 +24,9 @@ module.exports = class ControllerExtensionPaymentPayPal extends Controller {
 		
 		config_setting = _config.get('paypal_setting');
 		
-		cache_data = this.cache.get('paypal');
+		cache_data = await this.cache.get('paypal');
 		
-		this.cache.delete('paypal');
+		await this.cache.delete('paypal');
 		
 		if ((cache_data['environment']) && (cache_data['authorization_code']) && (cache_data['shared_id']) && (cache_data['seller_nonce']) && (this.request.get['merchantIdInPayPal'])) {							
 			await this.load.language('extension/payment/paypal');
@@ -41,7 +41,7 @@ module.exports = class ControllerExtensionPaymentPayPal extends Controller {
 				'client_id' : cache_data['shared_id'],
 				'environment' : environment,
 				'partner_attribution_id' : config_setting['partner'][environment]['partner_attribution_id']
-			);
+			});
 					
 			paypal = new PayPal(paypal_info);
 			
@@ -49,7 +49,7 @@ module.exports = class ControllerExtensionPaymentPayPal extends Controller {
 				'grant_type' : 'authorization_code',
 				'code' : cache_data['authorization_code'],
 				'code_verifier' : cache_data['seller_nonce']
-			);
+			});
 			
 			paypal.setAccessToken(token_info);
 							
@@ -69,13 +69,13 @@ module.exports = class ControllerExtensionPaymentPayPal extends Controller {
 				'secret' : secret,
 				'environment' : environment,
 				'partner_attribution_id' : config_setting['partner'][environment]['partner_attribution_id']
-			);
+			});
 		
 			paypal = new PayPal(paypal_info);
 			
 			token_info = array(
 				'grant_type' : 'client_credentials'
-			);	
+			});	
 		
 			paypal.setAccessToken(token_info);
 			
@@ -96,7 +96,7 @@ module.exports = class ControllerExtensionPaymentPayPal extends Controller {
 					array('name' : 'CHECKOUT.ORDER.COMPLETED'),
 					array('name' : 'VAULT.PAYMENT-TOKEN.CREATED')
 				)
-			);
+			});
 			
 			result = paypal.createWebhook(webhook_info);
 						
@@ -117,9 +117,9 @@ module.exports = class ControllerExtensionPaymentPayPal extends Controller {
 					}
 					
 					if ((error['details'][0]['description'])) {
-						error_messages[] = error['details'][0]['description'];
+						error_messages.push(error['details'][0]['description'];
 					} else if ((error['message'])) {
-						error_messages[] = error['message'];
+						error_messages.push(error['message'];
 					}
 					
 					await this.model_extension_payment_paypal.log(error, error['message']);
@@ -196,17 +196,17 @@ module.exports = class ControllerExtensionPaymentPayPal extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_extensions'),
 			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title_main'),
 			'href' : await this.url.link('extension/payment/paypal', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 								
 		data['cancel'] = await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true);
 		data['partner_url'] = str_replace('&amp;', '%26', await this.url.link('extension/payment/paypal', 'user_token=' + this.session.data['user_token'], true));
@@ -241,7 +241,7 @@ module.exports = class ControllerExtensionPaymentPayPal extends Controller {
 				'ppcp' : 'https://www.sandbox.paypal.com/bizsignup/partner/entry?partnerId=' + data['setting']['partner']['sandbox']['partner_id'] + '&partnerClientId=' + data['setting']['partner']['sandbox']['client_id'] + '&features=PAYMENT,REFUND,ACCESS_MERCHANT_INFORMATION,VAULT,BILLING_AGREEMENT&product=PPCP,ADVANCED_VAULTING&capabilities=PAYPAL_WALLET_VAULTING_ADVANCED&integrationType=FO&returnToPartnerUrl=' + data['partner_url'] + '&displayMode=minibrowser&sellerNonce=' + data['seller_nonce'],
 				'express_checkout' : 'https://www.sandbox.paypal.com/bizsignup/partner/entry?partnerId=' + data['setting']['partner']['sandbox']['partner_id'] + '&partnerClientId=' + data['setting']['partner']['sandbox']['client_id'] + '&features=PAYMENT,REFUND,ACCESS_MERCHANT_INFORMATION,VAULT,BILLING_AGREEMENT&product=EXPRESS_CHECKOUT,ADVANCED_VAULTING&capabilities=PAYPAL_WALLET_VAULTING_ADVANCED&integrationType=FO&returnToPartnerUrl=' + data['partner_url'] + '&displayMode=minibrowser&sellerNonce=' + data['seller_nonce']
 			)
-		);
+		});
 		
 		data['text_checkout_express'] = sprintf(this.language.get('text_checkout_express'), data['configure_url'][data['environment']]['express_checkout']);
 		data['text_support'] = sprintf(this.language.get('text_support'), this.request.server['HTTP_HOST']);
@@ -295,17 +295,17 @@ module.exports = class ControllerExtensionPaymentPayPal extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_extensions'),
 			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title_main'),
 			'href' : await this.url.link('extension/payment/paypal', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 		
 		data['href_dashboard'] = await this.url.link('extension/payment/paypal/dashboard', 'user_token=' + this.session.data['user_token'], true);
 		data['href_general'] = await this.url.link('extension/payment/paypal/general', 'user_token=' + this.session.data['user_token'], true);
@@ -426,17 +426,17 @@ module.exports = class ControllerExtensionPaymentPayPal extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_extensions'),
 			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title_main'),
 			'href' : await this.url.link('extension/payment/paypal', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 		
 		// Action
 		data['href_dashboard'] = await this.url.link('extension/payment/paypal/dashboard', 'user_token=' + this.session.data['user_token'], true);
@@ -547,17 +547,17 @@ module.exports = class ControllerExtensionPaymentPayPal extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_extensions'),
 			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title_main'),
 			'href' : await this.url.link('extension/payment/paypal', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 		
 		// Action
 		data['href_dashboard'] = await this.url.link('extension/payment/paypal/dashboard', 'user_token=' + this.session.data['user_token'], true);
@@ -614,13 +614,13 @@ module.exports = class ControllerExtensionPaymentPayPal extends Controller {
 				'secret' : data['secret'],
 				'environment' : data['environment'],
 				'partner_attribution_id' : data['setting']['partner'][data['environment']]['partner_attribution_id']
-			);
+			});
 		
 			paypal = new PayPal(paypal_info);
 			
 			token_info = array(
 				'grant_type' : 'client_credentials'
-			);	
+			});	
 				
 			paypal.setAccessToken(token_info);
 					
@@ -637,9 +637,9 @@ module.exports = class ControllerExtensionPaymentPayPal extends Controller {
 					}
 					
 					if ((error['details'][0]['description'])) {
-						error_messages[] = error['details'][0]['description'];
+						error_messages.push(error['details'][0]['description'];
 					} else if ((error['message'])) {
-						error_messages[] = error['message'];
+						error_messages.push(error['message'];
 					}
 					
 					await this.model_extension_payment_paypal.log(error, error['message']);
@@ -699,17 +699,17 @@ module.exports = class ControllerExtensionPaymentPayPal extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_extensions'),
 			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title_main'),
 			'href' : await this.url.link('extension/payment/paypal', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 		
 		// Action
 		data['href_dashboard'] = await this.url.link('extension/payment/paypal/dashboard', 'user_token=' + this.session.data['user_token'], true);
@@ -766,13 +766,13 @@ module.exports = class ControllerExtensionPaymentPayPal extends Controller {
 				'secret' : data['secret'],
 				'environment' : data['environment'],
 				'partner_attribution_id' : data['setting']['partner'][data['environment']]['partner_attribution_id']
-			);
+			});
 		
 			paypal = new PayPal(paypal_info);
 			
 			token_info = array(
 				'grant_type' : 'client_credentials'
-			);	
+			});	
 				
 			paypal.setAccessToken(token_info);
 		
@@ -789,9 +789,9 @@ module.exports = class ControllerExtensionPaymentPayPal extends Controller {
 					}
 					
 					if ((error['details'][0]['description'])) {
-						error_messages[] = error['details'][0]['description'];
+						error_messages.push(error['details'][0]['description'];
 					} else if ((error['message'])) {
-						error_messages[] = error['message'];
+						error_messages.push(error['message'];
 					}
 					
 					await this.model_extension_payment_paypal.log(error, error['message']);
@@ -851,17 +851,17 @@ module.exports = class ControllerExtensionPaymentPayPal extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_extensions'),
 			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title_main'),
 			'href' : await this.url.link('extension/payment/paypal', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 		
 		// Action
 		data['href_dashboard'] = await this.url.link('extension/payment/paypal/dashboard', 'user_token=' + this.session.data['user_token'], true);
@@ -920,13 +920,13 @@ module.exports = class ControllerExtensionPaymentPayPal extends Controller {
 				'secret' : data['secret'],
 				'environment' : data['environment'],
 				'partner_attribution_id' : data['setting']['partner'][data['environment']]['partner_attribution_id']
-			);
+			});
 		
 			paypal = new PayPal(paypal_info);
 			
 			token_info = array(
 				'grant_type' : 'client_credentials'
-			);	
+			});	
 				
 			paypal.setAccessToken(token_info);
 		
@@ -943,9 +943,9 @@ module.exports = class ControllerExtensionPaymentPayPal extends Controller {
 					}
 					
 					if ((error['details'][0]['description'])) {
-						error_messages[] = error['details'][0]['description'];
+						error_messages.push(error['details'][0]['description'];
 					} else if ((error['message'])) {
-						error_messages[] = error['message'];
+						error_messages.push(error['message'];
 					}
 					
 					await this.model_extension_payment_paypal.log(error, error['message']);
@@ -1005,17 +1005,17 @@ module.exports = class ControllerExtensionPaymentPayPal extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_extensions'),
 			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title_main'),
 			'href' : await this.url.link('extension/payment/paypal', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 		
 		// Action
 		data['href_dashboard'] = await this.url.link('extension/payment/paypal/dashboard', 'user_token=' + this.session.data['user_token'], true);
@@ -1072,13 +1072,13 @@ module.exports = class ControllerExtensionPaymentPayPal extends Controller {
 				'secret' : data['secret'],
 				'environment' : data['environment'],
 				'partner_attribution_id' : data['setting']['partner'][data['environment']]['partner_attribution_id']
-			);
+			});
 		
 			paypal = new PayPal(paypal_info);
 			
 			token_info = array(
 				'grant_type' : 'client_credentials'
-			);	
+			});	
 				
 			paypal.setAccessToken(token_info);
 		
@@ -1095,9 +1095,9 @@ module.exports = class ControllerExtensionPaymentPayPal extends Controller {
 					}
 					
 					if ((error['details'][0]['description'])) {
-						error_messages[] = error['details'][0]['description'];
+						error_messages.push(error['details'][0]['description'];
 					} else if ((error['message'])) {
-						error_messages[] = error['message'];
+						error_messages.push(error['message'];
 					}
 					
 					await this.model_extension_payment_paypal.log(error, error['message']);
@@ -1157,17 +1157,17 @@ module.exports = class ControllerExtensionPaymentPayPal extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_extensions'),
 			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title_main'),
 			'href' : await this.url.link('extension/payment/paypal', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 		
 		// Action
 		data['href_dashboard'] = await this.url.link('extension/payment/paypal/dashboard', 'user_token=' + this.session.data['user_token'], true);
@@ -1225,13 +1225,13 @@ module.exports = class ControllerExtensionPaymentPayPal extends Controller {
 				'secret' : data['secret'],
 				'environment' : data['environment'],
 				'partner_attribution_id' : data['setting']['partner'][data['environment']]['partner_attribution_id']
-			);
+			});
 		
 			paypal = new PayPal(paypal_info);
 			
 			token_info = array(
 				'grant_type' : 'client_credentials'
-			);	
+			});	
 				
 			paypal.setAccessToken(token_info);
 		
@@ -1248,9 +1248,9 @@ module.exports = class ControllerExtensionPaymentPayPal extends Controller {
 					}
 					
 					if ((error['details'][0]['description'])) {
-						error_messages[] = error['details'][0]['description'];
+						error_messages.push(error['details'][0]['description'];
 					} else if ((error['message'])) {
-						error_messages[] = error['message'];
+						error_messages.push(error['message'];
 					}
 					
 					await this.model_extension_payment_paypal.log(error, error['message']);
@@ -1309,17 +1309,17 @@ module.exports = class ControllerExtensionPaymentPayPal extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_extensions'),
 			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title_main'),
 			'href' : await this.url.link('extension/payment/paypal', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 		
 		// Action
 		data['href_dashboard'] = await this.url.link('extension/payment/paypal/dashboard', 'user_token=' + this.session.data['user_token'], true);
@@ -1385,13 +1385,13 @@ module.exports = class ControllerExtensionPaymentPayPal extends Controller {
 				'secret' : data['secret'],
 				'environment' : data['environment'],
 				'partner_attribution_id' : data['setting']['partner'][data['environment']]['partner_attribution_id']
-			);
+			});
 		
 			paypal = new PayPal(paypal_info);
 			
 			token_info = array(
 				'grant_type' : 'client_credentials'
-			);	
+			});	
 				
 			paypal.setAccessToken(token_info);
 		
@@ -1408,9 +1408,9 @@ module.exports = class ControllerExtensionPaymentPayPal extends Controller {
 					}
 					
 					if ((error['details'][0]['description'])) {
-						error_messages[] = error['details'][0]['description'];
+						error_messages.push(error['details'][0]['description'];
 					} else if ((error['message'])) {
-						error_messages[] = error['message'];
+						error_messages.push(error['message'];
 					}
 					
 					await this.model_extension_payment_paypal.log(error, error['message']);
@@ -1465,17 +1465,17 @@ module.exports = class ControllerExtensionPaymentPayPal extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_extensions'),
 			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title_main'),
 			'href' : await this.url.link('extension/payment/paypal', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 		
 		// Action
 		data['href_dashboard'] = await this.url.link('extension/payment/paypal/dashboard', 'user_token=' + this.session.data['user_token'], true);
@@ -1557,17 +1557,17 @@ module.exports = class ControllerExtensionPaymentPayPal extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_extensions'),
 			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title_main'),
 			'href' : await this.url.link('extension/payment/paypal', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 		
 		// Action
 		data['href_dashboard'] = await this.url.link('extension/payment/paypal/dashboard', 'user_token=' + this.session.data['user_token'], true);
@@ -1685,13 +1685,13 @@ module.exports = class ControllerExtensionPaymentPayPal extends Controller {
 				'secret' : secret,
 				'environment' : environment,
 				'partner_attribution_id' : config_setting['partner'][environment]['partner_attribution_id']
-			);
+			});
 		
 			paypal = new PayPal(paypal_info);
 			
 			token_info = array(
 				'grant_type' : 'client_credentials'
-			);	
+			});	
 		
 			result = paypal.setAccessToken(token_info);
 			
@@ -1713,7 +1713,7 @@ module.exports = class ControllerExtensionPaymentPayPal extends Controller {
 						array('name' : 'CHECKOUT.ORDER.COMPLETED'),
 						array('name' : 'VAULT.PAYMENT-TOKEN.CREATED')
 					)
-				);
+				});
 			
 				result = paypal.createWebhook(webhook_info);
 						
@@ -1734,9 +1734,9 @@ module.exports = class ControllerExtensionPaymentPayPal extends Controller {
 						}
 					
 						if ((error['details'][0]['description'])) {
-							error_messages[] = error['details'][0]['description'];
+							error_messages.push(error['details'][0]['description'];
 						} else if ((error['message'])) {
-							error_messages[] = error['message'];
+							error_messages.push(error['message'];
 						}
 					
 						await this.model_extension_payment_paypal.log(error, error['message']);
@@ -1822,7 +1822,7 @@ module.exports = class ControllerExtensionPaymentPayPal extends Controller {
 			cache_data['shared_id'] = this.request.post['shared_id'];
 			cache_data['seller_nonce'] = this.request.post['seller_nonce'];
 			
-			this.cache.set('paypal', cache_data, 30);
+			await this.cache.set('paypal', cache_data, 30);
 		}
 		
 		data['error'] = this.error;
@@ -2104,7 +2104,7 @@ module.exports = class ControllerExtensionPaymentPayPal extends Controller {
 					'code'    : 'paypal',
 					'title'   : this.language.get('extension_payment_paypal').get('heading_title_main'),
 					'content' : await this.load.view('extension/payment/paypal/order', data)
-				);
+				});
 			}
 		}
 	}
@@ -2175,13 +2175,13 @@ module.exports = class ControllerExtensionPaymentPayPal extends Controller {
 				'secret' : secret,
 				'environment' : environment,
 				'partner_attribution_id' : partner_attribution_id
-			);
+			});
 		
 			paypal = new PayPal(paypal_info);
 		
 			token_info = array(
 				'grant_type' : 'client_credentials'
-			);	
+			});	
 						
 			paypal.setAccessToken(token_info);
 
@@ -2198,9 +2198,9 @@ module.exports = class ControllerExtensionPaymentPayPal extends Controller {
 					}
 				
 					if ((error['details'][0]['description'])) {
-						error_messages[] = error['details'][0]['description'];
+						error_messages.push(error['details'][0]['description'];
 					} else if ((error['message'])) {
-						error_messages[] = error['message'];
+						error_messages.push(error['message'];
 					}
 					
 					await this.model_extension_payment_paypal.log(error, error['message']);
@@ -2217,7 +2217,7 @@ module.exports = class ControllerExtensionPaymentPayPal extends Controller {
 					'order_id' : order_id,
 					'transaction_id' : transaction_id,
 					'transaction_status' : transaction_status
-				);
+				});
 
 				await this.model_extension_payment_paypal.editPayPalOrder(paypal_order_data);
 								
@@ -2262,13 +2262,13 @@ module.exports = class ControllerExtensionPaymentPayPal extends Controller {
 				'secret' : secret,
 				'environment' : environment,
 				'partner_attribution_id' : partner_attribution_id
-			);
+			});
 		
 			paypal = new PayPal(paypal_info);
 		
 			token_info = array(
 				'grant_type' : 'client_credentials'
-			);	
+			});	
 						
 			paypal.setAccessToken(token_info);
 		
@@ -2285,9 +2285,9 @@ module.exports = class ControllerExtensionPaymentPayPal extends Controller {
 					}
 				
 					if ((error['details'][0]['description'])) {
-						error_messages[] = error['details'][0]['description'];
+						error_messages.push(error['details'][0]['description'];
 					} else if ((error['message'])) {
-						error_messages[] = error['message'];
+						error_messages.push(error['message'];
 					}
 					
 					await this.model_extension_payment_paypal.log(error, error['message']);
@@ -2306,7 +2306,7 @@ module.exports = class ControllerExtensionPaymentPayPal extends Controller {
 					'order_id' : order_id,
 					'transaction_id' : transaction_id,
 					'transaction_status' : transaction_status
-				);
+				});
 
 				await this.model_extension_payment_paypal.editPayPalOrder(paypal_order_data);
 								
@@ -2351,13 +2351,13 @@ module.exports = class ControllerExtensionPaymentPayPal extends Controller {
 				'secret' : secret,
 				'environment' : environment,
 				'partner_attribution_id' : partner_attribution_id
-			);
+			});
 		
 			paypal = new PayPal(paypal_info);
 		
 			token_info = array(
 				'grant_type' : 'client_credentials'
-			);	
+			});	
 						
 			paypal.setAccessToken(token_info);
 		
@@ -2374,9 +2374,9 @@ module.exports = class ControllerExtensionPaymentPayPal extends Controller {
 					}
 				
 					if ((error['details'][0]['description'])) {
-						error_messages[] = error['details'][0]['description'];
+						error_messages.push(error['details'][0]['description'];
 					} else if ((error['message'])) {
-						error_messages[] = error['message'];
+						error_messages.push(error['message'];
 					}
 					
 					await this.model_extension_payment_paypal.log(error, error['message']);
@@ -2393,7 +2393,7 @@ module.exports = class ControllerExtensionPaymentPayPal extends Controller {
 				paypal_order_data = array(
 					'order_id' : order_id,
 					'transaction_status' : transaction_status
-				);
+				});
 
 				await this.model_extension_payment_paypal.editPayPalOrder(paypal_order_data);
 								
@@ -2438,13 +2438,13 @@ module.exports = class ControllerExtensionPaymentPayPal extends Controller {
 				'secret' : secret,
 				'environment' : environment,
 				'partner_attribution_id' : partner_attribution_id
-			);
+			});
 		
 			paypal = new PayPal(paypal_info);
 		
 			token_info = array(
 				'grant_type' : 'client_credentials'
-			);	
+			});	
 						
 			paypal.setAccessToken(token_info);
 
@@ -2461,9 +2461,9 @@ module.exports = class ControllerExtensionPaymentPayPal extends Controller {
 					}
 				
 					if ((error['details'][0]['description'])) {
-						error_messages[] = error['details'][0]['description'];
+						error_messages.push(error['details'][0]['description'];
 					} else if ((error['message'])) {
-						error_messages[] = error['message'];
+						error_messages.push(error['message'];
 					}
 					
 					await this.model_extension_payment_paypal.log(error, error['message']);
@@ -2478,7 +2478,7 @@ module.exports = class ControllerExtensionPaymentPayPal extends Controller {
 				paypal_order_data = array(
 					'order_id' : order_id,
 					'transaction_status' : transaction_status
-				);
+				});
 
 				await this.model_extension_payment_paypal.editPayPalOrder(paypal_order_data);
 								

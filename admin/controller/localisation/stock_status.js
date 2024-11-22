@@ -6,7 +6,7 @@ module.exports = class ControllerLocalisationStockStatus extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('localisation/stock_status');
+		this.load.model('localisation/stock_status',this);
 
 		await this.getList();
 	}
@@ -16,9 +16,9 @@ module.exports = class ControllerLocalisationStockStatus extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('localisation/stock_status');
+		this.load.model('localisation/stock_status',this);
 
-		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_localisation_stock_status.addStockStatus(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
@@ -48,9 +48,9 @@ module.exports = class ControllerLocalisationStockStatus extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('localisation/stock_status');
+		this.load.model('localisation/stock_status',this);
 
-		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_localisation_stock_status.editStockStatus(this.request.get['stock_status_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
@@ -80,9 +80,10 @@ module.exports = class ControllerLocalisationStockStatus extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('localisation/stock_status');
+		this.load.model('localisation/stock_status',this);
 
-		if ((this.request.post['selected']) && this.validateDelete()) {
+		if ((this.request.post['selected']) && await this.validateDelete()) {
+this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
 			for (this.request.post['selected'] of stock_status_id) {
 				await this.model_localisation_stock_status.deleteStockStatus(stock_status_id);
 			}
@@ -147,12 +148,12 @@ module.exports = class ControllerLocalisationStockStatus extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('localisation/stock_status', 'user_token=' + this.session.data['user_token'] + url, true)
-		);
+		});
 
 		data['add'] = await this.url.link('localisation/stock_status/add', 'user_token=' + this.session.data['user_token'] + url, true);
 		data['delete'] = await this.url.link('localisation/stock_status/delete', 'user_token=' + this.session.data['user_token'] + url, true);
@@ -162,9 +163,9 @@ module.exports = class ControllerLocalisationStockStatus extends Controller {
 		filter_data = array(
 			'sort'  : sort,
 			'order' : order,
-			'start' : (page - 1) * this.config.get('config_limit_admin'),
-			'limit' : this.config.get('config_limit_admin')
-		);
+			'start' : (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit' : Number(this.config.get('config_limit_admin'))
+		});
 
 		stock_status_total = await this.model_localisation_stock_status.getTotalStockStatuses();
 
@@ -175,7 +176,7 @@ module.exports = class ControllerLocalisationStockStatus extends Controller {
 				'stock_status_id' : result['stock_status_id'],
 				'name'            : result['name'],
 				'edit'            : await this.url.link('localisation/stock_status/edit', 'user_token=' + this.session.data['user_token'] + '&stock_status_id=' + result['stock_status_id'] + url, true)
-			);
+			});
 		}
 
 		if ((this.error['warning'])) {
@@ -225,12 +226,12 @@ module.exports = class ControllerLocalisationStockStatus extends Controller {
 		pagination = new Pagination();
 		pagination.total = stock_status_total;
 		pagination.page = page;
-		pagination.limit = this.config.get('config_limit_admin');
+		pagination.limit = Number(this.config.get('config_limit_admin'));
 		pagination.url = await this.url.link('localisation/stock_status', 'user_token=' + this.session.data['user_token'] + url + '&page={page}', true);
 
 		data['pagination'] = pagination.render();
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (stock_status_total) ? ((page - 1) * this.config.get('config_limit_admin')) + 1 : 0, (((page - 1) * this.config.get('config_limit_admin')) > (stock_status_total - this.config.get('config_limit_admin'))) ? stock_status_total : (((page - 1) * this.config.get('config_limit_admin')) + this.config.get('config_limit_admin')), stock_status_total, ceil(stock_status_total / this.config.get('config_limit_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (stock_status_total) ? ((page - 1) * Number(this.config.get('config_limit_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_limit_admin'))) > (stock_status_total - Number(this.config.get('config_limit_admin')))) ? stock_status_total : (((page - 1) * Number(this.config.get('config_limit_admin'))) + Number(this.config.get('config_limit_admin'))), stock_status_total, Math.ceil(stock_status_total / Number(this.config.get('config_limit_admin'))));
 
 		data['sort'] = sort;
 		data['order'] = order;
@@ -276,12 +277,12 @@ module.exports = class ControllerLocalisationStockStatus extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('localisation/stock_status', 'user_token=' + this.session.data['user_token'] + url, true)
-		);
+		});
 
 		if (!(this.request.get['stock_status_id'])) {
 			data['action'] = await this.url.link('localisation/stock_status/add', 'user_token=' + this.session.data['user_token'] + url, true);
@@ -330,7 +331,7 @@ module.exports = class ControllerLocalisationStockStatus extends Controller {
 		}
 
 		this.load.model('setting/store',this);
-		this.load.model('catalog/product');
+		this.load.model('catalog/product',this);
 
 		for (this.request.post['selected'] of stock_status_id) {
 			product_total = await this.model_catalog_product.getTotalProductsByStockStatusId(stock_status_id);

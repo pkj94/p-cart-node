@@ -45,7 +45,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 		}
 
 		if ((this.request.get['filter_customer'])) {
-			url += '&filter_customer=' + urlencode(html_entity_decode(this.request.get['filter_customer']));
+			url += '&filter_customer=' + encodeURIComponent(html_entity_decode(this.request.get['filter_customer']));
 		}
 
 		if ((this.request.get['filter_order_status'])) {
@@ -151,7 +151,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 		}
 
 		if ((this.request.get['filter_customer'])) {
-			url += '&filter_customer=' + urlencode(html_entity_decode(this.request.get['filter_customer']));
+			url += '&filter_customer=' + encodeURIComponent(html_entity_decode(this.request.get['filter_customer']));
 		}
 
 		if ((this.request.get['filter_order_status'])) {
@@ -191,12 +191,12 @@ module.exports = class ControllerSaleOrder extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('sale/order', 'user_token=' + this.session.data['user_token'] + url, true)
-		);
+		});
 
 		data['invoice'] = await this.url.link('sale/order/invoice', 'user_token=' + this.session.data['user_token'], true);
 		data['shipping'] = await this.url.link('sale/order/shipping', 'user_token=' + this.session.data['user_token'], true);
@@ -215,9 +215,9 @@ module.exports = class ControllerSaleOrder extends Controller {
 			'filter_date_modified'   : filter_date_modified,
 			'sort'                   : sort,
 			'order'                  : order,
-			'start'                  : (page - 1) * this.config.get('config_limit_admin'),
-			'limit'                  : this.config.get('config_limit_admin')
-		);
+			'start'                  : (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit'                  : Number(this.config.get('config_limit_admin'))
+		});
 
 		order_total = await this.model_sale_order.getTotalOrders(filter_data);
 
@@ -234,7 +234,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 				'shipping_code' : result['shipping_code'],
 				'view'          : await this.url.link('sale/order/info', 'user_token=' + this.session.data['user_token'] + '&order_id=' + result['order_id'] + url, true),
 				'edit'          : await this.url.link('sale/order/edit', 'user_token=' + this.session.data['user_token'] + '&order_id=' + result['order_id'] + url, true)
-			);
+			});
 		}
 
 		data['user_token'] = this.session.data['user_token'];
@@ -266,7 +266,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 		}
 
 		if ((this.request.get['filter_customer'])) {
-			url += '&filter_customer=' + urlencode(html_entity_decode(this.request.get['filter_customer']));
+			url += '&filter_customer=' + encodeURIComponent(html_entity_decode(this.request.get['filter_customer']));
 		}
 
 		if ((this.request.get['filter_order_status'])) {
@@ -313,7 +313,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 		}
 
 		if ((this.request.get['filter_customer'])) {
-			url += '&filter_customer=' + urlencode(html_entity_decode(this.request.get['filter_customer']));
+			url += '&filter_customer=' + encodeURIComponent(html_entity_decode(this.request.get['filter_customer']));
 		}
 
 		if ((this.request.get['filter_order_status'])) {
@@ -347,12 +347,12 @@ module.exports = class ControllerSaleOrder extends Controller {
 		pagination = new Pagination();
 		pagination.total = order_total;
 		pagination.page = page;
-		pagination.limit = this.config.get('config_limit_admin');
+		pagination.limit = Number(this.config.get('config_limit_admin'));
 		pagination.url = await this.url.link('sale/order', 'user_token=' + this.session.data['user_token'] + url + '&page={page}', true);
 
 		data['pagination'] = pagination.render();
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (order_total) ? ((page - 1) * this.config.get('config_limit_admin')) + 1 : 0, (((page - 1) * this.config.get('config_limit_admin')) > (order_total - this.config.get('config_limit_admin'))) ? order_total : (((page - 1) * this.config.get('config_limit_admin')) + this.config.get('config_limit_admin')), order_total, ceil(order_total / this.config.get('config_limit_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (order_total) ? ((page - 1) * Number(this.config.get('config_limit_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_limit_admin'))) > (order_total - Number(this.config.get('config_limit_admin')))) ? order_total : (((page - 1) * Number(this.config.get('config_limit_admin'))) + Number(this.config.get('config_limit_admin'))), order_total, Math.ceil(order_total / Number(this.config.get('config_limit_admin'))));
 
 		data['filter_order_id'] = filter_order_id;
 		data['filter_customer'] = filter_customer;
@@ -410,7 +410,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 		}
 
 		if ((this.request.get['filter_customer'])) {
-			url += '&filter_customer=' + urlencode(html_entity_decode(this.request.get['filter_customer']));
+			url += '&filter_customer=' + encodeURIComponent(html_entity_decode(this.request.get['filter_customer']));
 		}
 
 		if ((this.request.get['filter_order_status'])) {
@@ -450,12 +450,12 @@ module.exports = class ControllerSaleOrder extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('sale/order', 'user_token=' + this.session.data['user_token'] + url, true)
-		);
+		});
 
 		data['cancel'] = await this.url.link('sale/order', 'user_token=' + this.session.data['user_token'] + url, true);
 
@@ -524,7 +524,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 					'price'      : product['price'],
 					'total'      : product['total'],
 					'reward'     : product['reward']
-				);
+				});
 			}
 
 			// Vouchers
@@ -618,7 +618,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 		data['stores'].push({
 			'store_id' : 0,
 			'name'     : this.language.get('text_default')
-		);
+		});
 
 		results = await this.model_setting_store.getStores();
 
@@ -626,11 +626,11 @@ module.exports = class ControllerSaleOrder extends Controller {
 			data['stores'].push({
 				'store_id' : result['store_id'],
 				'name'     : result['name']
-			);
+			});
 		}
 
 		// Customer Groups
-		this.load.model('customer/customer_group');
+		this.load.model('customer/customer_group',this);
 
 		data['customer_groups'] = await this.model_customer_customer_group.getCustomerGroups();
 
@@ -644,12 +644,12 @@ module.exports = class ControllerSaleOrder extends Controller {
 			'account_custom_field',
 			'payment_custom_field',
 			'shipping_custom_field'
-		);
+		});
 
 		filter_data = array(
 			'sort'  : 'cf.sort_order',
 			'order' : 'ASC'
-		);
+		});
 
 		custom_fields = await this.model_customer_custom_field.getCustomFields(filter_data);
 
@@ -662,7 +662,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 				'type'               : custom_field['type'],
 				'location'           : custom_field['location'],
 				'sort_order'         : custom_field['sort_order']
-			);
+			});
 
 			if(custom_field['type'] == 'file') {
 				for(custom_field_locations of location) {
@@ -759,7 +759,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 			}
 
 			if ((this.request.get['filter_customer'])) {
-				url += '&filter_customer=' + urlencode(html_entity_decode(this.request.get['filter_customer']));
+				url += '&filter_customer=' + encodeURIComponent(html_entity_decode(this.request.get['filter_customer']));
 			}
 
 			if ((this.request.get['filter_order_status'])) {
@@ -799,12 +799,12 @@ module.exports = class ControllerSaleOrder extends Controller {
 			data['breadcrumbs'].push({
 				'text' : this.language.get('text_home'),
 				'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-			);
+			});
 
 			data['breadcrumbs'].push({
 				'text' : this.language.get('heading_title'),
 				'href' : await this.url.link('sale/order', 'user_token=' + this.session.data['user_token'] + url, true)
-			);
+			});
 
 			data['shipping'] = await this.url.link('sale/order/shipping', 'user_token=' + this.session.data['user_token'] + '&order_id=' + this.request.get['order_id'], true);
 			data['invoice'] = await this.url.link('sale/order/invoice', 'user_token=' + this.session.data['user_token'] + '&order_id=' + this.request.get['order_id'], true);
@@ -841,7 +841,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 				data['customer'] = '';
 			}
 
-			this.load.model('customer/customer_group');
+			this.load.model('customer/customer_group',this);
 
 			customer_group_info = await this.model_customer_customer_group.getCustomerGroup(order_info['customer_group_id']);
 
@@ -875,7 +875,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 				'{zone}',
 				'{zone_code}',
 				'{country}'
-			);
+			});
 
 			replace = array(
 				'firstname' : order_info['payment_firstname'],
@@ -888,7 +888,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 				'zone'      : order_info['payment_zone'],
 				'zone_code' : order_info['payment_zone_code'],
 				'country'   : order_info['payment_country']
-			);
+			});
 
 			data['payment_address'] = str_replace(array("\r\n", "\r", "\n"), '<br />', preg_replace(array("/\s\s+/", "/\r\r+/", "/\n\n+/"), '<br />', trim(str_replace(find, replace, format))));
 
@@ -910,7 +910,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 				'{zone}',
 				'{zone_code}',
 				'{country}'
-			);
+			});
 
 			replace = array(
 				'firstname' : order_info['shipping_firstname'],
@@ -923,7 +923,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 				'zone'      : order_info['shipping_zone'],
 				'zone_code' : order_info['shipping_zone_code'],
 				'country'   : order_info['shipping_country']
-			);
+			});
 
 			data['shipping_address'] = str_replace(array("\r\n", "\r", "\n"), '<br />', preg_replace(array("/\s\s+/", "/\r\r+/", "/\n\n+/"), '<br />', trim(str_replace(find, replace, format))));
 
@@ -945,7 +945,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 							'name'  : option['name'],
 							'value' : option['value'],
 							'type'  : option['type']
-						);
+						});
 					} else {
 						upload_info = await this.model_tool_upload.getUploadByCode(option['value']);
 
@@ -955,7 +955,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 								'value' : upload_info['name'],
 								'type'  : option['type'],
 								'href'  : await this.url.link('tool/upload/download', 'user_token=' + this.session.data['user_token'] + '&code=' + upload_info['code'], true)
-							);
+							});
 						}
 					}
 				}
@@ -970,7 +970,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 					'price'    		   : this.currency.format(product['price'] + (this.config.get('config_tax') ? product['tax'] : 0), order_info['currency_code'], order_info['currency_value']),
 					'total'    		   : this.currency.format(product['total'] + (this.config.get('config_tax') ? (product['tax'] * product['quantity']) : 0), order_info['currency_code'], order_info['currency_value']),
 					'href'     		   : await this.url.link('catalog/product/edit', 'user_token=' + this.session.data['user_token'] + '&product_id=' + product['product_id'], true)
-				);
+				});
 			}
 
 			data['vouchers'] = {};
@@ -982,7 +982,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 					'description' : voucher['description'],
 					'amount'      : this.currency.format(voucher['amount'], order_info['currency_code'], order_info['currency_value']),
 					'href'        : await this.url.link('sale/voucher/edit', 'user_token=' + this.session.data['user_token'] + '&voucher_id=' + voucher['voucher_id'], true)
-				);
+				});
 			}
 
 			data['totals'] = {};
@@ -993,7 +993,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 				data['totals'].push({
 					'title' : total['title'],
 					'text'  : this.currency.format(total['value'], order_info['currency_code'], order_info['currency_value'])
-				);
+				});
 			}
 
 			data['comment'] = nl2br(order_info['comment']);
@@ -1041,7 +1041,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 			filter_data = array(
 				'sort'  : 'cf.sort_order',
 				'order' : 'ASC'
-			);
+			});
 
 			custom_fields = await this.model_customer_custom_field.getCustomFields(filter_data);
 
@@ -1054,7 +1054,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 							data['account_custom_fields'].push({
 								'name'  : custom_field['name'],
 								'value' : custom_field_value_info['name']
-							);
+							});
 						}
 					}
 
@@ -1066,7 +1066,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 								data['account_custom_fields'].push({
 									'name'  : custom_field['name'],
 									'value' : custom_field_value_info['name']
-								);
+								});
 							}
 						}
 					}
@@ -1075,7 +1075,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 						data['account_custom_fields'].push({
 							'name'  : custom_field['name'],
 							'value' : order_info['custom_field'][custom_field['custom_field_id']]
-						);
+						});
 					}
 
 					if (custom_field['type'] == 'file') {
@@ -1085,7 +1085,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 							data['account_custom_fields'].push({
 								'name'  : custom_field['name'],
 								'value' : upload_info['name']
-							);
+							});
 						}
 					}
 				}
@@ -1104,7 +1104,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 								'name'  : custom_field['name'],
 								'value' : custom_field_value_info['name'],
 								'sort_order' : custom_field['sort_order']
-							);
+							});
 						}
 					}
 
@@ -1117,7 +1117,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 									'name'  : custom_field['name'],
 									'value' : custom_field_value_info['name'],
 									'sort_order' : custom_field['sort_order']
-								);
+								});
 							}
 						}
 					}
@@ -1127,7 +1127,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 							'name'  : custom_field['name'],
 							'value' : order_info['payment_custom_field'][custom_field['custom_field_id']],
 							'sort_order' : custom_field['sort_order']
-						);
+						});
 					}
 
 					if (custom_field['type'] == 'file') {
@@ -1138,7 +1138,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 								'name'  : custom_field['name'],
 								'value' : upload_info['name'],
 								'sort_order' : custom_field['sort_order']
-							);
+							});
 						}
 					}
 				}
@@ -1157,7 +1157,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 								'name'  : custom_field['name'],
 								'value' : custom_field_value_info['name'],
 								'sort_order' : custom_field['sort_order']
-							);
+							});
 						}
 					}
 
@@ -1170,7 +1170,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 									'name'  : custom_field['name'],
 									'value' : custom_field_value_info['name'],
 									'sort_order' : custom_field['sort_order']
-								);
+								});
 							}
 						}
 					}
@@ -1180,7 +1180,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 							'name'  : custom_field['name'],
 							'value' : order_info['shipping_custom_field'][custom_field['custom_field_id']],
 							'sort_order' : custom_field['sort_order']
-						);
+						});
 					}
 
 					if (custom_field['type'] == 'file') {
@@ -1191,7 +1191,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 								'name'  : custom_field['name'],
 								'value' : upload_info['name'],
 								'sort_order' : custom_field['sort_order']
-							);
+							});
 						}
 					}
 				}
@@ -1219,7 +1219,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 						'code'    : order_info['payment_code'],
 						'title'   : this.language.get('heading_title'),
 						'content' : content
-					);
+					});
 				}
 			}
 
@@ -1238,7 +1238,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 							'code'    : extension,
 							'title'   : this.language.get('extension').get('heading_title'),
 							'content' : content
-						);
+						});
 					}
 				}
 			}
@@ -1311,7 +1311,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 
 	async addReward() {
@@ -1346,7 +1346,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 
 	async removeReward() {
@@ -1377,7 +1377,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 
 	async addCommission() {
@@ -1412,7 +1412,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 
 	async removeCommission() {
@@ -1443,7 +1443,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 
 	async history() {
@@ -1467,7 +1467,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 				'status'     : result['status'],
 				'comment'    : nl2br(result['comment']),
 				'date_added' : date(this.language.get('date_format_short'), strtotime(result['date_added']))
-			);
+			});
 		}
 
 		history_total = await this.model_sale_order.getTotalOrderHistories(this.request.get['order_id']);
@@ -1480,7 +1480,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 
 		data['pagination'] = pagination.render();
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (history_total) ? ((page - 1) * 10) + 1 : 0, (((page - 1) * 10) > (history_total - 10)) ? history_total : (((page - 1) * 10) + 10), history_total, ceil(history_total / 10));
+		data['results'] = sprintf(this.language.get('text_pagination'), (history_total) ? ((page - 1) * 10) + 1 : 0, (((page - 1) * 10) > (history_total - 10)) ? history_total : (((page - 1) * 10) + 10), history_total, Math.ceil(history_total / 10));
 
 		this.response.setOutput(await this.load.view('sale/order_history', data));
 	}
@@ -1511,7 +1511,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 		if ((this.request.post['selected'])) {
 			orders = this.request.post['selected'];
 		} else if ((this.request.get['order_id'])) {
-			orders[] = this.request.get['order_id'];
+			orders.push(this.request.get['order_id'];
 		}
 
 		for (orders of order_id) {
@@ -1557,7 +1557,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 					'{zone}',
 					'{zone_code}',
 					'{country}'
-				);
+				});
 
 				replace = array(
 					'firstname' : order_info['payment_firstname'],
@@ -1570,7 +1570,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 					'zone'      : order_info['payment_zone'],
 					'zone_code' : order_info['payment_zone_code'],
 					'country'   : order_info['payment_country']
-				);
+				});
 
 				payment_address = str_replace(array("\r\n", "\r", "\n"), '<br />', preg_replace(array("/\s\s+/", "/\r\r+/", "/\n\n+/"), '<br />', trim(str_replace(find, replace, format))));
 
@@ -1591,7 +1591,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 					'{zone}',
 					'{zone_code}',
 					'{country}'
-				);
+				});
 
 				replace = array(
 					'firstname' : order_info['shipping_firstname'],
@@ -1604,7 +1604,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 					'zone'      : order_info['shipping_zone'],
 					'zone_code' : order_info['shipping_zone_code'],
 					'country'   : order_info['shipping_country']
-				);
+				});
 
 				shipping_address = str_replace(array("\r\n", "\r", "\n"), '<br />', preg_replace(array("/\s\s+/", "/\r\r+/", "/\n\n+/"), '<br />', trim(str_replace(find, replace, format))));
 
@@ -1635,7 +1635,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 						option_data.push({
 							'name'  : option['name'],
 							'value' : value
-						);
+						});
 					}
 
 					product_data.push({
@@ -1645,7 +1645,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 						'quantity' : product['quantity'],
 						'price'    : this.currency.format(product['price'] + (this.config.get('config_tax') ? product['tax'] : 0), order_info['currency_code'], order_info['currency_value']),
 						'total'    : this.currency.format(product['total'] + (this.config.get('config_tax') ? (product['tax'] * product['quantity']) : 0), order_info['currency_code'], order_info['currency_value'])
-					);
+					});
 				}
 
 				voucher_data = {};
@@ -1656,7 +1656,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 					voucher_data.push({
 						'description' : voucher['description'],
 						'amount'      : this.currency.format(voucher['amount'], order_info['currency_code'], order_info['currency_value'])
-					);
+					});
 				}
 
 				total_data = {};
@@ -1667,7 +1667,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 					total_data.push({
 						'title' : total['title'],
 						'text'  : this.currency.format(total['value'], order_info['currency_code'], order_info['currency_value'])
-					);
+					});
 				}
 
 				data['orders'].push({
@@ -1691,7 +1691,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 					'voucher'          : voucher_data,
 					'total'            : total_data,
 					'comment'          : nl2br(order_info['comment'])
-				);
+				});
 			}
 		}
 
@@ -1714,7 +1714,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 
 		this.load.model('sale/order',this);
 
-		this.load.model('catalog/product');
+		this.load.model('catalog/product',this);
 
 		this.load.model('setting/setting',this);
 
@@ -1725,7 +1725,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 		if ((this.request.post['selected'])) {
 			orders = this.request.post['selected'];
 		} else if ((this.request.get['order_id'])) {
-			orders[] = this.request.get['order_id'];
+			orders.push(this.request.get['order_id'];
 		}
 
 		for (orders of order_id) {
@@ -1768,7 +1768,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 					'{zone}',
 					'{zone_code}',
 					'{country}'
-				);
+				});
 
 				replace = array(
 					'firstname' : order_info['shipping_firstname'],
@@ -1781,7 +1781,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 					'zone'      : order_info['shipping_zone'],
 					'zone_code' : order_info['shipping_zone_code'],
 					'country'   : order_info['shipping_country']
-				);
+				});
 
 				shipping_address = str_replace(array("\r\n", "\r", "\n"), '<br />', preg_replace(array("/\s\s+/", "/\r\r+/", "/\n\n+/"), '<br />', trim(str_replace(find, replace, format))));
 
@@ -1817,7 +1817,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 							option_data.push({
 								'name'  : option['name'],
 								'value' : value
-							);
+							});
 
 							product_option_value_info = await this.model_catalog_product.getProductOptionValue(product['product_id'], option['product_option_value_id']);
 
@@ -1843,7 +1843,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 							'isbn'     : product_info['isbn'],
 							'mpn'      : product_info['mpn'],
 							'weight'   : this.weight.format((product_info['weight'] + option_weight) * product['quantity'], product_info['weight_class_id'], this.language.get('decimal_point'), this.language.get('thousand_point'))
-						);
+						});
 					}
 				}
 
@@ -1862,7 +1862,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 					'shipping_method'  : order_info['shipping_method'],
 					'product'          : product_data,
 					'comment'          : nl2br(order_info['comment'])
-				);
+				});
 			}
 		}
 

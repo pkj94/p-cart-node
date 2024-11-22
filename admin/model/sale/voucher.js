@@ -37,7 +37,7 @@ module.exports = class ModelSaleVoucher extends Model {
 			'v.amount',
 			'v.status',
 			'v.date_added'
-		);
+		});
 
 		if ((data['sort']) && sort_data.includes(data['sort'])) {
 			sql += " ORDER BY " + data['sort'];

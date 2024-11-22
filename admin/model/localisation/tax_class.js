@@ -10,7 +10,7 @@ module.exports = class ModelLocalisationTaxClass extends Model {
 			}
 		}
 
-		this.cache.delete('tax_class');
+		await this.cache.delete('tax_class');
 		
 		return tax_class_id;
 	}
@@ -26,14 +26,14 @@ module.exports = class ModelLocalisationTaxClass extends Model {
 			}
 		}
 
-		this.cache.delete('tax_class');
+		await this.cache.delete('tax_class');
 	}
 
 	async deleteTaxClass(tax_class_id) {
 		await this.db.query("DELETE FROM " + DB_PREFIX + "tax_class WHERE tax_class_id = '" + tax_class_id + "'");
 		await this.db.query("DELETE FROM " + DB_PREFIX + "tax_rule WHERE tax_class_id = '" + tax_class_id + "'");
 
-		this.cache.delete('tax_class');
+		await this.cache.delete('tax_class');
 	}
 
 	async getTaxClass(tax_class_id) {
@@ -72,14 +72,14 @@ if (data['limit'] < 1) {
 
 			return query.rows;
 		} else {
-			tax_class_data = this.cache.get('tax_class');
+			tax_class_data = await this.cache.get('tax_class');
 
 			if (!tax_class_data) {
 				const query = await this.db.query("SELECT * FROM " + DB_PREFIX + "tax_class");
 
 				tax_class_data = query.rows;
 
-				this.cache.set('tax_class', tax_class_data);
+				await this.cache.set('tax_class', tax_class_data);
 			}
 
 			return tax_class_data;

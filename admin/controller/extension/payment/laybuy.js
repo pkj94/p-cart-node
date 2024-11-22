@@ -25,17 +25,17 @@ module.exports = class ControllerExtensionPaymentLaybuy extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_extension'),
 			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('extension/payment/laybuy', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['action'] = await this.url.link('extension/payment/laybuy', 'user_token=' + this.session.data['user_token'], true);
 
@@ -91,7 +91,7 @@ module.exports = class ControllerExtensionPaymentLaybuy extends Controller {
 
 		data['categories'] = {};
 
-		this.load.model('catalog/category');
+		this.load.model('catalog/category',this);
 
 		for (data['payment_laybuy_category'] of category_id) {
 			category_info = await this.model_catalog_category.getCategory(category_id);
@@ -100,7 +100,7 @@ module.exports = class ControllerExtensionPaymentLaybuy extends Controller {
 				data['categories'].push({
 					'category_id' 	: category_info['category_id'],
 					'name' 			: (category_info['path']) ? category_info['path'] + ' &gt; ' + category_info['name'] : category_info['name']
-				);
+				});
 			}
 		}
 
@@ -120,7 +120,7 @@ module.exports = class ControllerExtensionPaymentLaybuy extends Controller {
 
 		data['customer_groups'] = {};
 
-		this.load.model('customer/customer_group');
+		this.load.model('customer/customer_group',this);
 
 		for (data['payment_laybuy_customer_group'] of customer_group_id) {
 			customer_group_info = await this.model_customer_customer_group.getCustomerGroup(customer_group_id);
@@ -129,7 +129,7 @@ module.exports = class ControllerExtensionPaymentLaybuy extends Controller {
 				data['customer_groups'].push({
 					'customer_group_id' : customer_group_info['customer_group_id'],
 					'name'				: customer_group_info['name']
-				);
+				});
 			}
 		}
 
@@ -309,9 +309,9 @@ module.exports = class ControllerExtensionPaymentLaybuy extends Controller {
 			'filter_date_added'	: filter_date_added,
 			'sort'				: sort,
 			'order'				: order,
-			'start'				: (page - 1) * this.config.get('config_limit_admin'),
-			'limit'				: this.config.get('config_limit_admin')
-		);
+			'start'				: (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit'				: Number(this.config.get('config_limit_admin'))
+		});
 
 		report_total = await this.model_extension_payment_laybuy.getTotalTransactions(filter_data);
 
@@ -341,7 +341,7 @@ module.exports = class ControllerExtensionPaymentLaybuy extends Controller {
 				'status'		: await this.model_extension_payment_laybuy.getStatusLabel(result['status']),
 				'date_added'	: date(this.language.get('date_format_short'), strtotime(result['date_added'])),
 				'view'			: await this.url.link('extension/payment/laybuy/transaction', 'user_token=' + this.session.data['user_token'] + '&id=' + result['laybuy_transaction_id'], true)
-			);
+			});
 		}
 
 		if ((this.request.post['selected'])) {
@@ -353,15 +353,15 @@ module.exports = class ControllerExtensionPaymentLaybuy extends Controller {
 		url = '';
 
 		if ((this.request.get['filter_order_id'])) {
-			url += '&filter_order_id=' + urlencode(html_entity_decode(this.request.get['filter_order_id']));
+			url += '&filter_order_id=' + encodeURIComponent(html_entity_decode(this.request.get['filter_order_id']));
 		}
 
 		if ((this.request.get['filter_customer'])) {
-			url += '&filter_customer=' + urlencode(html_entity_decode(this.request.get['filter_customer']));
+			url += '&filter_customer=' + encodeURIComponent(html_entity_decode(this.request.get['filter_customer']));
 		}
 
 		if ((this.request.get['filter_dp_percent'])) {
-			url += '&filter_dp_percent=' + urlencode(html_entity_decode(this.request.get['filter_dp_percent']));
+			url += '&filter_dp_percent=' + encodeURIComponent(html_entity_decode(this.request.get['filter_dp_percent']));
 		}
 
 		if ((this.request.get['filter_months'])) {
@@ -434,12 +434,12 @@ module.exports = class ControllerExtensionPaymentLaybuy extends Controller {
 		pagination = new Pagination();
 		pagination.total = report_total;
 		pagination.page = page;
-		pagination.limit = this.config.get('config_limit_admin');
+		pagination.limit = Number(this.config.get('config_limit_admin'));
 		pagination.url = await this.url.link('extension/payment/laybuy', 'user_token=' + this.session.data['user_token'] + url + '&page={page}#reportstab', true);
 
 		data['pagination'] = pagination.render();
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (report_total) ? ((page - 1) * this.config.get('config_limit_admin')) + 1 : 0, (((page - 1) * this.config.get('config_limit_admin')) > (report_total - this.config.get('config_limit_admin'))) ? report_total : (((page - 1) * this.config.get('config_limit_admin')) + this.config.get('config_limit_admin')), report_total, ceil(report_total / this.config.get('config_limit_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (report_total) ? ((page - 1) * Number(this.config.get('config_limit_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_limit_admin'))) > (report_total - Number(this.config.get('config_limit_admin')))) ? report_total : (((page - 1) * Number(this.config.get('config_limit_admin'))) + Number(this.config.get('config_limit_admin'))), report_total, Math.ceil(report_total / Number(this.config.get('config_limit_admin'))));
 
 		data['filter_order_id']	= filter_order_id;
 		data['filter_customer']	= filter_customer;
@@ -558,7 +558,7 @@ module.exports = class ControllerExtensionPaymentLaybuy extends Controller {
 									'date'			: date,
 									'pp_trans_id'	: payment['txnID'],
 									'status'		: payment['paymentStatus']
-								);
+								});
 							} else if (payment['type'] == 'p') {
 								pending_flag = true;
 
@@ -568,7 +568,7 @@ module.exports = class ControllerExtensionPaymentLaybuy extends Controller {
 									'date'			: date,
 									'pp_trans_id'	: payment['txnID'],
 									'status'		: payment['paymentStatus']
-								);
+								});
 
 								next_payment_status = payment['paymentStatus'];
 							}
@@ -591,7 +591,7 @@ module.exports = class ControllerExtensionPaymentLaybuy extends Controller {
 									'date'			: date,
 									'pp_trans_id'	: '',
 									'status'		: next_payment_status
-								);
+								});
 							}
 						}
 
@@ -676,22 +676,22 @@ module.exports = class ControllerExtensionPaymentLaybuy extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_extension'),
 			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('extension/payment/laybuy', 'user_token=' + this.session.data['user_token'] + '#reportstab', true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_transaction_title'),
 			'href' : await this.url.link('extension/payment/laybuy/transaction', 'user_token=' + this.session.data['user_token'] + '&id=' + id, true)
-		);
+		});
 
 		data['heading_title'] = this.language.get('heading_transaction_title');
 
@@ -720,7 +720,7 @@ module.exports = class ControllerExtensionPaymentLaybuy extends Controller {
 
 			data['order_info'] = array(
 				'currency_value' : order['currency_value']
-			);
+			});
 
 			data['total'] = await this.model_extension_payment_laybuy.getRemainingAmount(transaction_info['amount'], transaction_info['downpayment_amount'], transaction_info['payment_amounts'], transaction_info['transaction']);
 
@@ -747,7 +747,7 @@ module.exports = class ControllerExtensionPaymentLaybuy extends Controller {
 				'first_payment_due'  : date(this.language.get('date_format_short'), strtotime(transaction_info['first_payment_due'])),
 				'last_payment_due'   : date(this.language.get('date_format_short'), strtotime(transaction_info['last_payment_due'])),
 				'report'        	 : JSON.parse(transaction_info['report'], true)
-			);
+			});
 		} else {
 			data['transaction'] = {};
 
@@ -872,7 +872,7 @@ module.exports = class ControllerExtensionPaymentLaybuy extends Controller {
 				json['reload'] = await this.url.link('extension/payment/laybuy/transaction', 'user_token=' + this.session.data['user_token'] + '&id=' + id, true);
 			}
 
-			this.response.setOutput(JSON.stringify(json));
+			this.response.setOutput(json);
 		} else {
 			await this.model_extension_payment_laybuy.log('User does not have permission');
 		}
@@ -1025,7 +1025,7 @@ module.exports = class ControllerExtensionPaymentLaybuy extends Controller {
 					json['reload'] = await this.url.link('extension/payment/laybuy/transaction', 'user_token=' + this.session.data['user_token'] + '&id=' + id, true);
 				}
 
-				this.response.setOutput(JSON.stringify(json));
+				this.response.setOutput(json);
 			} else {
 				await this.model_extension_payment_laybuy.log('No _POST data');
 			}
@@ -1038,7 +1038,7 @@ module.exports = class ControllerExtensionPaymentLaybuy extends Controller {
 		json = {};
 
 		if ((this.request.get['filter_customer_group'])) {
-			this.load.model('customer/customer_group');
+			this.load.model('customer/customer_group',this);
 
 			results = await this.model_customer_customer_group.getCustomerGroups();
 
@@ -1046,12 +1046,12 @@ module.exports = class ControllerExtensionPaymentLaybuy extends Controller {
 				json.push({
 					'customer_group_id' : result['customer_group_id'],
 					'name'       		: strip_tags(html_entity_decode(result['name']))
-				);
+				});
 			}
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 
 	async order() {

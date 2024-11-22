@@ -21,17 +21,17 @@ module.exports = class ControllerExtensionModuleLaybuyLayout extends Controller 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_extension'),
 			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=module', true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('extension/module/laybuy_layout', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		if ((this.error['warning'])) {
 			data['error_warning'] = this.error['warning'];

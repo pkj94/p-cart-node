@@ -95,7 +95,7 @@ $('#button-import').on('click', function() {
 			$('#progress-import .progress-bar').css('width', '0%');
 	
 			$.ajax({
-				url: 'index.php?route=tool/backup/import&user_token={{ user_token }}',
+				url: '?route=tool/backup/import&user_token={{ user_token }}',
 				type: 'post',
 				dataType: 'json',
 				data: new FormData($('#form-upload')[0]),

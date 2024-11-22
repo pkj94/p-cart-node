@@ -1,4 +1,4 @@
-module.exports = class Zone extends global['\Opencart\System\Engine\Model'] {
+module.exports = class Zone extends Model {
 	/**
 	 * @param zone_id
 	 *

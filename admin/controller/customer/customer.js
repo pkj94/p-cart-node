@@ -18,7 +18,7 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 
 		this.load.model('customer/customer',this);
 
-		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_customer_customer.addCustomer(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
@@ -26,11 +26,11 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 			url = '';
 
 			if ((this.request.get['filter_name'])) {
-				url += '&filter_name=' + urlencode(html_entity_decode(this.request.get['filter_name']));
+				url += '&filter_name=' + encodeURIComponent(html_entity_decode(this.request.get['filter_name']));
 			}
 
 			if ((this.request.get['filter_email'])) {
-				url += '&filter_email=' + urlencode(html_entity_decode(this.request.get['filter_email']));
+				url += '&filter_email=' + encodeURIComponent(html_entity_decode(this.request.get['filter_email']));
 			}
 
 			if ((this.request.get['filter_customer_group_id'])) {
@@ -74,7 +74,7 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 
 		this.load.model('customer/customer',this);
 
-		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_customer_customer.editCustomer(this.request.get['customer_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
@@ -82,11 +82,11 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 			url = '';
 
 			if ((this.request.get['filter_name'])) {
-				url += '&filter_name=' + urlencode(html_entity_decode(this.request.get['filter_name']));
+				url += '&filter_name=' + encodeURIComponent(html_entity_decode(this.request.get['filter_name']));
 			}
 
 			if ((this.request.get['filter_email'])) {
-				url += '&filter_email=' + urlencode(html_entity_decode(this.request.get['filter_email']));
+				url += '&filter_email=' + encodeURIComponent(html_entity_decode(this.request.get['filter_email']));
 			}
 
 			if ((this.request.get['filter_customer_group_id'])) {
@@ -130,7 +130,8 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 
 		this.load.model('customer/customer',this);
 
-		if ((this.request.post['selected']) && this.validateDelete()) {
+		if ((this.request.post['selected']) && await this.validateDelete()) {
+this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
 			for (this.request.post['selected'] of customer_id) {
 				await this.model_customer_customer.deleteCustomer(customer_id);
 			}
@@ -140,11 +141,11 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 			url = '';
 
 			if ((this.request.get['filter_name'])) {
-				url += '&filter_name=' + urlencode(html_entity_decode(this.request.get['filter_name']));
+				url += '&filter_name=' + encodeURIComponent(html_entity_decode(this.request.get['filter_name']));
 			}
 
 			if ((this.request.get['filter_email'])) {
-				url += '&filter_email=' + urlencode(html_entity_decode(this.request.get['filter_email']));
+				url += '&filter_email=' + encodeURIComponent(html_entity_decode(this.request.get['filter_email']));
 			}
 
 			if ((this.request.get['filter_customer_group_id'])) {
@@ -188,7 +189,7 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 
 		this.load.model('customer/customer',this);
 
-		if ((this.request.get['email']) && this.validateUnlock()) {
+		if ((this.request.get['email']) && await this.validateUnlock()) {
 			await this.model_customer_customer.deleteLoginAttempts(this.request.get['email']);
 
 			this.session.data['success'] = this.language.get('text_success');
@@ -196,11 +197,11 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 			url = '';
 
 			if ((this.request.get['filter_name'])) {
-				url += '&filter_name=' + urlencode(html_entity_decode(this.request.get['filter_name']));
+				url += '&filter_name=' + encodeURIComponent(html_entity_decode(this.request.get['filter_name']));
 			}
 
 			if ((this.request.get['filter_email'])) {
-				url += '&filter_email=' + urlencode(html_entity_decode(this.request.get['filter_email']));
+				url += '&filter_email=' + encodeURIComponent(html_entity_decode(this.request.get['filter_email']));
 			}
 
 			if ((this.request.get['filter_customer_group_id'])) {
@@ -295,11 +296,11 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 		url = '';
 
 		if ((this.request.get['filter_name'])) {
-			url += '&filter_name=' + urlencode(html_entity_decode(this.request.get['filter_name']));
+			url += '&filter_name=' + encodeURIComponent(html_entity_decode(this.request.get['filter_name']));
 		}
 
 		if ((this.request.get['filter_email'])) {
-			url += '&filter_email=' + urlencode(html_entity_decode(this.request.get['filter_email']));
+			url += '&filter_email=' + encodeURIComponent(html_entity_decode(this.request.get['filter_email']));
 		}
 
 		if ((this.request.get['filter_customer_group_id'])) {
@@ -335,12 +336,12 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('customer/customer', 'user_token=' + this.session.data['user_token'] + url, true)
-		);
+		});
 
 		data['add'] = await this.url.link('customer/customer/add', 'user_token=' + this.session.data['user_token'] + url, true);
 		data['delete'] = await this.url.link('customer/customer/delete', 'user_token=' + this.session.data['user_token'] + url, true);
@@ -360,9 +361,9 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 			'filter_ip'                : filter_ip,
 			'sort'                     : sort,
 			'order'                    : order,
-			'start'                    : (page - 1) * this.config.get('config_limit_admin'),
-			'limit'                    : this.config.get('config_limit_admin')
-		);
+			'start'                    : (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit'                    : Number(this.config.get('config_limit_admin'))
+		});
 
 		customer_total = await this.model_customer_customer.getTotalCustomers(filter_data);
 
@@ -382,13 +383,13 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 			store_data.push({
 				'name' : this.config.get('config_name'),
 				'href' : await this.url.link('customer/customer/login', 'user_token=' + this.session.data['user_token'] + '&customer_id=' + result['customer_id'] + '&store_id=0', true)
-			);
+			});
 
-			for (stores of store) {
+			for (let store of stores) {
 				store_data.push({
 					'name' : store['name'],
 					'href' : await this.url.link('customer/customer/login', 'user_token=' + this.session.data['user_token'] + '&customer_id=' + result['customer_id'] + '&store_id=' + store['store_id'], true)
-				);
+				});
 			}
 
 			data['customers'].push({
@@ -402,7 +403,7 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 				'unlock'         : unlock,
 				'store'          : store_data,
 				'edit'           : await this.url.link('customer/customer/edit', 'user_token=' + this.session.data['user_token'] + '&customer_id=' + result['customer_id'] + url, true)
-			);
+			});
 		}
 
 		data['user_token'] = this.session.data['user_token'];
@@ -430,11 +431,11 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 		url = '';
 
 		if ((this.request.get['filter_name'])) {
-			url += '&filter_name=' + urlencode(html_entity_decode(this.request.get['filter_name']));
+			url += '&filter_name=' + encodeURIComponent(html_entity_decode(this.request.get['filter_name']));
 		}
 
 		if ((this.request.get['filter_email'])) {
-			url += '&filter_email=' + urlencode(html_entity_decode(this.request.get['filter_email']));
+			url += '&filter_email=' + encodeURIComponent(html_entity_decode(this.request.get['filter_email']));
 		}
 
 		if ((this.request.get['filter_customer_group_id'])) {
@@ -473,11 +474,11 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 		url = '';
 
 		if ((this.request.get['filter_name'])) {
-			url += '&filter_name=' + urlencode(html_entity_decode(this.request.get['filter_name']));
+			url += '&filter_name=' + encodeURIComponent(html_entity_decode(this.request.get['filter_name']));
 		}
 
 		if ((this.request.get['filter_email'])) {
-			url += '&filter_email=' + urlencode(html_entity_decode(this.request.get['filter_email']));
+			url += '&filter_email=' + encodeURIComponent(html_entity_decode(this.request.get['filter_email']));
 		}
 
 		if ((this.request.get['filter_customer_group_id'])) {
@@ -507,12 +508,12 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 		pagination = new Pagination();
 		pagination.total = customer_total;
 		pagination.page = page;
-		pagination.limit = this.config.get('config_limit_admin');
+		pagination.limit = Number(this.config.get('config_limit_admin'));
 		pagination.url = await this.url.link('customer/customer', 'user_token=' + this.session.data['user_token'] + url + '&page={page}', true);
 
 		data['pagination'] = pagination.render();
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (customer_total) ? ((page - 1) * this.config.get('config_limit_admin')) + 1 : 0, (((page - 1) * this.config.get('config_limit_admin')) > (customer_total - this.config.get('config_limit_admin'))) ? customer_total : (((page - 1) * this.config.get('config_limit_admin')) + this.config.get('config_limit_admin')), customer_total, ceil(customer_total / this.config.get('config_limit_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (customer_total) ? ((page - 1) * Number(this.config.get('config_limit_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_limit_admin'))) > (customer_total - Number(this.config.get('config_limit_admin')))) ? customer_total : (((page - 1) * Number(this.config.get('config_limit_admin'))) + Number(this.config.get('config_limit_admin'))), customer_total, Math.ceil(customer_total / Number(this.config.get('config_limit_admin'))));
 
 		data['filter_name'] = filter_name;
 		data['filter_email'] = filter_email;
@@ -521,7 +522,7 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 		data['filter_ip'] = filter_ip;
 		data['filter_date_added'] = filter_date_added;
 
-		this.load.model('customer/customer_group');
+		this.load.model('customer/customer_group',this);
 
 		data['customer_groups'] = await this.model_customer_customer_group.getCustomerGroups();
 
@@ -633,11 +634,11 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 		url = '';
 
 		if ((this.request.get['filter_name'])) {
-			url += '&filter_name=' + urlencode(html_entity_decode(this.request.get['filter_name']));
+			url += '&filter_name=' + encodeURIComponent(html_entity_decode(this.request.get['filter_name']));
 		}
 
 		if ((this.request.get['filter_email'])) {
-			url += '&filter_email=' + urlencode(html_entity_decode(this.request.get['filter_email']));
+			url += '&filter_email=' + encodeURIComponent(html_entity_decode(this.request.get['filter_email']));
 		}
 
 		if ((this.request.get['filter_customer_group_id'])) {
@@ -673,12 +674,12 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('customer/customer', 'user_token=' + this.session.data['user_token'] + url, true)
-		);
+		});
 
 		if (!(this.request.get['customer_id'])) {
 			data['action'] = await this.url.link('customer/customer/add', 'user_token=' + this.session.data['user_token'] + url, true);
@@ -692,7 +693,7 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 			customer_info = await this.model_customer_customer.getCustomer(this.request.get['customer_id']);
 		}
 
-		this.load.model('customer/customer_group');
+		this.load.model('customer/customer_group',this);
 
 		data['customer_groups'] = await this.model_customer_customer_group.getCustomerGroups();
 
@@ -761,7 +762,7 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 		filter_data = array(
 			'sort'  : 'cf.sort_order',
 			'order' : 'ASC'
-		);
+		});
 
 		custom_fields = await this.model_customer_custom_field.getCustomFields(filter_data);
 
@@ -774,7 +775,7 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 				'type'               : custom_field['type'],
 				'location'           : custom_field['location'],
 				'sort_order'         : custom_field['sort_order']
-			);
+			});
 
 			if(custom_field['type'] == 'file') {
 				if((data['account_custom_field'][custom_field['custom_field_id']])) {
@@ -1135,7 +1136,7 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 			}
 		}
 
-		if (this.error && !(this.error['warning'])) {
+		if (Object.keys(this.error).length && !(this.error['warning'])) {
 			this.error['warning'] = this.language.get('error_warning');
 		}
 
@@ -1200,12 +1201,12 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 			data['breadcrumbs'].push({
 				'text' : this.language.get('text_home'),
 				'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-			);
+			});
 
 			data['breadcrumbs'].push({
 				'text' : this.language.get('heading_title'),
 				'href' : await this.url.link('error/not_found', 'user_token=' + this.session.data['user_token'], true)
-			);
+			});
 
 			data['header'] = await this.load.controller('common/header');
 			data['column_left'] = await this.load.controller('common/column_left');
@@ -1226,7 +1227,7 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 			page = 1;
 		}
 
-		limit = this.config.get('config_limit_admin');
+		limit = Number(this.config.get('config_limit_admin'));
 
 		data['histories'] = {};
 
@@ -1236,7 +1237,7 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 			data['histories'].push({
 				'comment'    : result['comment'],
 				'date_added' : date(this.language.get('date_format_short'), strtotime(result['date_added']))
-			);
+			});
 		}
 
 		history_total = await this.model_customer_customer.getTotalHistories(this.request.get['customer_id']);
@@ -1249,7 +1250,7 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 
 		data['pagination'] = pagination.render();
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (history_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (history_total - limit)) ? history_total : (((page - 1) * limit) + limit), history_total, ceil(history_total / limit));
+		data['results'] = sprintf(this.language.get('text_pagination'), (history_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (history_total - limit)) ? history_total : (((page - 1) * limit) + limit), history_total, Math.ceil(history_total / limit));
 
 		this.response.setOutput(await this.load.view('customer/customer_history', data));
 	}
@@ -1270,7 +1271,7 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 
 	async transaction() {
@@ -1284,7 +1285,7 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 			page = 1;
 		}
 
-		limit = this.config.get('config_limit_admin');
+		limit = Number(this.config.get('config_limit_admin'));
 
 		data['transactions'] = {};
 
@@ -1295,7 +1296,7 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 				'amount'      : this.currency.format(result['amount'], this.config.get('config_currency')),
 				'description' : result['description'],
 				'date_added'  : date(this.language.get('date_format_short'), strtotime(result['date_added']))
-			);
+			});
 		}
 
 		data['balance'] = this.currency.format(await this.model_customer_customer.getTransactionTotal(this.request.get['customer_id']), this.config.get('config_currency'));
@@ -1310,7 +1311,7 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 
 		data['pagination'] = pagination.render();
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (transaction_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (transaction_total - limit)) ? transaction_total : (((page - 1) * limit) + limit), transaction_total, ceil(transaction_total / limit));
+		data['results'] = sprintf(this.language.get('text_pagination'), (transaction_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (transaction_total - limit)) ? transaction_total : (((page - 1) * limit) + limit), transaction_total, Math.ceil(transaction_total / limit));
 
 		this.response.setOutput(await this.load.view('customer/customer_transaction', data));
 	}
@@ -1331,7 +1332,7 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 
 	async reward() {
@@ -1345,7 +1346,7 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 			page = 1;
 		}
 
-		limit = this.config.get('config_limit_admin');
+		limit = Number(this.config.get('config_limit_admin'));
 
 		data['rewards'] = {};
 
@@ -1356,7 +1357,7 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 				'points'      : result['points'],
 				'description' : result['description'],
 				'date_added'  : date(this.language.get('date_format_short'), strtotime(result['date_added']))
-			);
+			});
 		}
 
 		data['balance'] = await this.model_customer_customer.getRewardTotal(this.request.get['customer_id']);
@@ -1371,7 +1372,7 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 
 		data['pagination'] = pagination.render();
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (reward_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (reward_total - limit)) ? reward_total : (((page - 1) * limit) + limit), reward_total, ceil(reward_total / limit));
+		data['results'] = sprintf(this.language.get('text_pagination'), (reward_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (reward_total - limit)) ? reward_total : (((page - 1) * limit) + limit), reward_total, Math.ceil(reward_total / limit));
 
 		this.response.setOutput(await this.load.view('customer/customer_reward', data));
 	}
@@ -1392,7 +1393,7 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 
 	async ip() {
@@ -1406,7 +1407,7 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 			page = 1;
 		}
 
-		limit = this.config.get('config_limit_admin');
+		limit = Number(this.config.get('config_limit_admin'));
 
 		data['ips'] = {};
 
@@ -1418,7 +1419,7 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 				'total'      : await this.model_customer_customer.getTotalCustomersByIp(result['ip']),
 				'date_added' : date('d/m/y', strtotime(result['date_added'])),
 				'filter_ip'  : await this.url.link('customer/customer', 'user_token=' + this.session.data['user_token'] + '&filter_ip=' + result['ip'], true)
-			);
+			});
 		}
 
 		ip_total = await this.model_customer_customer.getTotalIps(this.request.get['customer_id']);
@@ -1431,7 +1432,7 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 
 		data['pagination'] = pagination.render();
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (ip_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (ip_total - limit)) ? ip_total : (((page - 1) * limit) + limit), ip_total, ceil(ip_total / limit));
+		data['results'] = sprintf(this.language.get('text_pagination'), (ip_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (ip_total - limit)) ? ip_total : (((page - 1) * limit) + limit), ip_total, Math.ceil(ip_total / limit));
 
 		this.response.setOutput(await this.load.view('customer/customer_ip', data));
 	}
@@ -1466,7 +1467,7 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 				'filter_affiliate' : filter_affiliate,
 				'start'            : 0,
 				'limit'            : 5
-			);
+			});
 
 			results = await this.model_customer_customer.getCustomers(filter_data);
 
@@ -1482,7 +1483,7 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 					'telephone'         : result['telephone'],
 					'custom_field'      : JSON.parse(result['custom_field'], true),
 					'address'           : await this.model_customer_customer.getAddresses(result['customer_id'])
-				);
+				});
 			}
 		}
 
@@ -1495,7 +1496,7 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 		array_multisort(sort_order, SORT_ASC, json);
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 
 	async customfield() {
@@ -1516,11 +1517,11 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 			json.push({
 				'custom_field_id' : custom_field['custom_field_id'],
 				'required'        : empty(custom_field['required']) || custom_field['required'] == 0 ? false : true
-			);
+			});
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 
 	async address() {
@@ -1533,6 +1534,6 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 }

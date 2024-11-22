@@ -19,7 +19,7 @@ module.exports = class ModelUserUserGroup extends Model {
 		user_group = array(
 			'name'       : query.row['name'],
 			'permission' : JSON.parse(query.row['permission'], true)
-		);
+		});
 
 		return user_group;
 	}
@@ -66,7 +66,7 @@ if (data['limit'] < 1) {
 		if (user_group_query.num_rows) {
 			data = JSON.parse(user_group_query.row['permission'], true);
 
-			data[type][] = route;
+			data[type].push(route;
 
 			await this.db.query("UPDATE " + DB_PREFIX + "user_group SET permission = '" + this.db.escape(JSON.stringify(data)) + "' WHERE user_group_id = '" + user_group_id + "'");
 		}

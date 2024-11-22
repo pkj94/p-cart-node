@@ -222,7 +222,7 @@ module.exports = class ModelExtensionPaymentSecureTradingWs extends Model {
 				'customercountryiso2a',
 				'customerpostcode',
 				'customertelephones',
-			);
+			});
 		} else {
 			post_data['optionalfields'] = array(
 				'orderreference',
@@ -234,7 +234,7 @@ module.exports = class ModelExtensionPaymentSecureTradingWs extends Model {
 				'mainamount',
 				'billingfirstname',
 				'billinglastname',
-			);
+			});
 		}
 
 		if ((data['currency']) && (data['currency'])) {
@@ -271,7 +271,7 @@ module.exports = class ModelExtensionPaymentSecureTradingWs extends Model {
 				'Authorization: Basic ' + base64_encode(this.config.get('payment_securetrading_ws_csv_username') + ':' + this.config.get('payment_securetrading_ws_csv_password')),
 			),
 			CURLOPT_POSTFIELDS : this.encodePost(post_data),
-		);
+		});
 
 		curl_setopt_array(ch, defaults);
 
@@ -300,10 +300,10 @@ module.exports = class ModelExtensionPaymentSecureTradingWs extends Model {
 		for (data of key : value) {
 			if (Array.isArray(value)) {
 				for (value of v) {
-					params[] = key + '=' + rawurlencode(v);
+					params.push(key + '=' + rawencodeURIComponent(v);
 				}
 			} else {
-				params[] = key + '=' + rawurlencode(value);
+				params.push(key + '=' + rawencodeURIComponent(value);
 			}
 		}
 
@@ -328,7 +328,7 @@ module.exports = class ModelExtensionPaymentSecureTradingWs extends Model {
 				'Authorization: Basic ' + base64_encode(this.config.get('payment_securetrading_ws_username') + ':' + this.config.get('payment_securetrading_ws_password')),
 			),
 			CURLOPT_POSTFIELDS : data,
-		);
+		});
 
 		curl_setopt_array(ch, defaults);
 

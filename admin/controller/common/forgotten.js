@@ -38,12 +38,12 @@ module.exports = class ControllerCommonForgotten extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', '', true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('common/forgotten', 'user_token=' + '', true)
-		);
+		});
 
 		data['action'] = await this.url.link('common/forgotten', '', true);
 

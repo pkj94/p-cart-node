@@ -233,7 +233,7 @@ module.exports = class ModelExtensionPaymentAmazonLoginPay extends Model {
 		if (query.num_rows) {
 			for (query.rows of row) {
 				row['amount'] = this.currency.format(row['amount'], currency_code, true, true);
-				transactions[] = row;
+				transactions.push(row;
 			}
 			return transactions;
 		} else {
@@ -411,7 +411,7 @@ module.exports = class ModelExtensionPaymentAmazonLoginPay extends Model {
 	private function getParametersAsString(array parameters) {
 		queryParameters = {};
 		for (parameters of key : value) {
-			queryParameters[] = key + '=' + this.urlencode(value);
+			queryParameters.push(key + '=' + this.encodeURIComponent(value);
 		}
 		return implode('&', queryParameters);
 	}
@@ -426,7 +426,7 @@ module.exports = class ModelExtensionPaymentAmazonLoginPay extends Model {
 		if (!(uri)) {
 			uri = "/";
 		}
-		uriencoded = implode("/", array_map(array(this, "urlencode"), explode("/", uri)));
+		uriencoded = implode("/", array_map(array(this, "encodeURIComponent"), explode("/", uri)));
 		data += uriencoded;
 		data += "\n";
 		uksort(parameters, 'strcmp');
@@ -434,8 +434,8 @@ module.exports = class ModelExtensionPaymentAmazonLoginPay extends Model {
 		return data;
 	}
 
-	private function urlencode(value) {
-		return str_replace('%7E', '~', rawurlencode(value));
+	private function encodeURIComponent(value) {
+		return str_replace('%7E', '~', rawencodeURIComponent(value));
 	}
 
 	async logger(message) {

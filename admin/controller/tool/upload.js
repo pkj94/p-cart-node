@@ -18,7 +18,8 @@ module.exports = class ControllerToolUpload extends Controller {
 
 		this.load.model('tool/upload');
 
-		if ((this.request.post['selected']) && this.validateDelete()) {
+		if ((this.request.post['selected']) && await this.validateDelete()) {
+this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
 			for (this.request.post['selected'] of upload_id) {
 				// Remove file before deleting DB record.
 				upload_info = await this.model_tool_upload.getUpload(upload_id);
@@ -35,7 +36,7 @@ module.exports = class ControllerToolUpload extends Controller {
 			url = '';
 
 			if ((this.request.get['filter_name'])) {
-				url += '&filter_name=' + urlencode(html_entity_decode(this.request.get['filter_name']));
+				url += '&filter_name=' + encodeURIComponent(html_entity_decode(this.request.get['filter_name']));
 			}
 
 			if ((this.request.get['filter_date_added'])) {
@@ -94,7 +95,7 @@ module.exports = class ControllerToolUpload extends Controller {
 		url = '';
 
 		if ((this.request.get['filter_name'])) {
-			url += '&filter_name=' + urlencode(html_entity_decode(this.request.get['filter_name']));
+			url += '&filter_name=' + encodeURIComponent(html_entity_decode(this.request.get['filter_name']));
 		}
 
 		if ((this.request.get['filter_date_added'])) {
@@ -118,12 +119,12 @@ module.exports = class ControllerToolUpload extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('tool/upload', 'user_token=' + this.session.data['user_token'] + url, true)
-		);
+		});
 
 		data['delete'] = await this.url.link('tool/upload/delete', 'user_token=' + this.session.data['user_token'] + url, true);
 
@@ -134,9 +135,9 @@ module.exports = class ControllerToolUpload extends Controller {
 			'filter_date_added'	: filter_date_added,
 			'sort'              : sort,
 			'order'             : order,
-			'start'             : (page - 1) * this.config.get('config_limit_admin'),
-			'limit'             : this.config.get('config_limit_admin')
-		);
+			'start'             : (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit'             : Number(this.config.get('config_limit_admin'))
+		});
 
 		upload_total = await this.model_tool_upload.getTotalUploads(filter_data);
 
@@ -149,7 +150,7 @@ module.exports = class ControllerToolUpload extends Controller {
 				'filename'   : result['filename'],
 				'date_added' : date(this.language.get('date_format_short'), strtotime(result['date_added'])),
 				'download'   : await this.url.link('tool/upload/download', 'user_token=' + this.session.data['user_token'] + '&code=' + result['code'] + url, true)
-			);
+			});
 		}
 
 		data['user_token'] = this.session.data['user_token'];
@@ -181,7 +182,7 @@ module.exports = class ControllerToolUpload extends Controller {
 		url = '';
 
 		if ((this.request.get['filter_name'])) {
-			url += '&filter_name=' + urlencode(html_entity_decode(this.request.get['filter_name']));
+			url += '&filter_name=' + encodeURIComponent(html_entity_decode(this.request.get['filter_name']));
 		}
 
 		if ((this.request.get['filter_date_added'])) {
@@ -205,7 +206,7 @@ module.exports = class ControllerToolUpload extends Controller {
 		url = '';
 
 		if ((this.request.get['filter_name'])) {
-			url += '&filter_name=' + urlencode(html_entity_decode(this.request.get['filter_name']));
+			url += '&filter_name=' + encodeURIComponent(html_entity_decode(this.request.get['filter_name']));
 		}
 
 		if ((this.request.get['filter_date_added'])) {
@@ -223,12 +224,12 @@ module.exports = class ControllerToolUpload extends Controller {
 		pagination = new Pagination();
 		pagination.total = upload_total;
 		pagination.page = page;
-		pagination.limit = this.config.get('config_limit_admin');
+		pagination.limit = Number(this.config.get('config_limit_admin'));
 		pagination.url = await this.url.link('tool/upload', 'user_token=' + this.session.data['user_token'] + url + '&page={page}', true);
 
 		data['pagination'] = pagination.render();
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (upload_total) ? ((page - 1) * this.config.get('config_limit_admin')) + 1 : 0, (((page - 1) * this.config.get('config_limit_admin')) > (upload_total - this.config.get('config_limit_admin'))) ? upload_total : (((page - 1) * this.config.get('config_limit_admin')) + this.config.get('config_limit_admin')), upload_total, ceil(upload_total / this.config.get('config_limit_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (upload_total) ? ((page - 1) * Number(this.config.get('config_limit_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_limit_admin'))) > (upload_total - Number(this.config.get('config_limit_admin')))) ? upload_total : (((page - 1) * Number(this.config.get('config_limit_admin'))) + Number(this.config.get('config_limit_admin'))), upload_total, Math.ceil(upload_total / Number(this.config.get('config_limit_admin'))));
 
 		data['filter_name'] = filter_name;
 		data['filter_date_added'] = filter_date_added;
@@ -265,7 +266,7 @@ module.exports = class ControllerToolUpload extends Controller {
 		url = '';
 
 		if ((this.request.get['filter_name'])) {
-			url += '&filter_name=' + urlencode(html_entity_decode(this.request.get['filter_name']));
+			url += '&filter_name=' + encodeURIComponent(html_entity_decode(this.request.get['filter_name']));
 		}
 
 		if ((this.request.get['filter_date_added'])) {
@@ -338,7 +339,7 @@ module.exports = class ControllerToolUpload extends Controller {
 				filetypes = explode("\n", extension_allowed);
 
 				for (filetypes of filetype) {
-					allowed[] = trim(filetype);
+					allowed.push(trim(filetype);
 				}
 
 				if (!in_array(strtolower(substr(strrchr(filename, '.'), 1)), allowed)) {
@@ -353,7 +354,7 @@ module.exports = class ControllerToolUpload extends Controller {
 				filetypes = explode("\n", mime_allowed);
 
 				for (filetypes of filetype) {
-					allowed[] = trim(filetype);
+					allowed.push(trim(filetype);
 				}
 
 				if (!in_array(this.request.files['file']['type'], allowed)) {
@@ -390,6 +391,6 @@ module.exports = class ControllerToolUpload extends Controller {
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 }

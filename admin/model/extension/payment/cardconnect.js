@@ -89,8 +89,8 @@ module.exports = class ModelExtensionPaymentCardConnect extends Model {
 
 		header = {};
 
-		header[] = 'Content-type: application/json';
-		header[] = 'Authorization: Basic ' + base64_encode(this.config.get('cardconnect_api_username') + ':' + this.config.get('cardconnect_api_password'));
+		header.push('Content-type: application/json';
+		header.push('Authorization: Basic ' + base64_encode(this.config.get('cardconnect_api_username') + ':' + this.config.get('cardconnect_api_password'));
 
 		await this.model_extension_payment_cardconnect.log('Header: ' + print_r(header, true));
 
@@ -153,7 +153,7 @@ module.exports = class ModelExtensionPaymentCardConnect extends Model {
 				'netamnt'     : product['total'],
 				'taxamnt'     : product['tax'],
 				'discamnt'    : ''
-			);
+			});
 
 			i++;
 		}
@@ -172,7 +172,7 @@ module.exports = class ModelExtensionPaymentCardConnect extends Model {
 			'shipfromzip'   : '',
 			'shiptocountry' : order['shipping_iso_code_2'],
 			'Items'         : items
-		);
+		});
 
 		data_json = JSON.stringify(data);
 
@@ -180,9 +180,9 @@ module.exports = class ModelExtensionPaymentCardConnect extends Model {
 
 		header = {};
 
-		header[] = 'Content-type: application/json';
-		header[] = 'Content-length: ' + strlen(data_json);
-		header[] = 'Authorization: Basic ' + base64_encode(this.config.get('cardconnect_api_username') + ':' + this.config.get('cardconnect_api_password'));
+		header.push('Content-type: application/json';
+		header.push('Content-length: ' + strlen(data_json);
+		header.push('Authorization: Basic ' + base64_encode(this.config.get('cardconnect_api_username') + ':' + this.config.get('cardconnect_api_password'));
 
 		await this.model_extension_payment_cardconnect.log('Header: ' + print_r(header, true));
 
@@ -221,7 +221,7 @@ module.exports = class ModelExtensionPaymentCardConnect extends Model {
 			'amount'    : round(floatval(amount), 2, PHP_ROUND_HALF_DOWN),
 			'currency'  : order_info['currency_code'],
 			'retref'    : order_info['retref']
-		);
+		});
 
 		data_json = JSON.stringify(data);
 
@@ -229,9 +229,9 @@ module.exports = class ModelExtensionPaymentCardConnect extends Model {
 
 		header = {};
 
-		header[] = 'Content-type: application/json';
-		header[] = 'Content-length: ' + strlen(data_json);
-		header[] = 'Authorization: Basic ' + base64_encode(this.config.get('cardconnect_api_username') + ':' + this.config.get('cardconnect_api_password'));
+		header.push('Content-type: application/json';
+		header.push('Content-length: ' + strlen(data_json);
+		header.push('Authorization: Basic ' + base64_encode(this.config.get('cardconnect_api_username') + ':' + this.config.get('cardconnect_api_password'));
 
 		await this.model_extension_payment_cardconnect.log('Header: ' + print_r(header, true));
 
@@ -270,7 +270,7 @@ module.exports = class ModelExtensionPaymentCardConnect extends Model {
 			'amount'    : 0,
 			'currency'  : order_info['currency_code'],
 			'retref'    : retref
-		);
+		});
 
 		data_json = JSON.stringify(data);
 
@@ -278,9 +278,9 @@ module.exports = class ModelExtensionPaymentCardConnect extends Model {
 
 		header = {};
 
-		header[] = 'Content-type: application/json';
-		header[] = 'Content-length: ' + strlen(data_json);
-		header[] = 'Authorization: Basic ' + base64_encode(this.config.get('cardconnect_api_username') + ':' + this.config.get('cardconnect_api_password'));
+		header.push('Content-type: application/json';
+		header.push('Content-length: ' + strlen(data_json);
+		header.push('Authorization: Basic ' + base64_encode(this.config.get('cardconnect_api_username') + ':' + this.config.get('cardconnect_api_password'));
 
 		await this.model_extension_payment_cardconnect.log('Header: ' + print_r(header, true));
 

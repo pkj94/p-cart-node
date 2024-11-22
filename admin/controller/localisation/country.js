@@ -18,7 +18,7 @@ module.exports = class ControllerLocalisationCountry extends Controller {
 
 		this.load.model('localisation/country');
 
-		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_localisation_country.addCountry(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
@@ -50,7 +50,7 @@ module.exports = class ControllerLocalisationCountry extends Controller {
 
 		this.load.model('localisation/country');
 
-		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_localisation_country.editCountry(this.request.get['country_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
@@ -82,7 +82,8 @@ module.exports = class ControllerLocalisationCountry extends Controller {
 
 		this.load.model('localisation/country');
 
-		if ((this.request.post['selected']) && this.validateDelete()) {
+		if ((this.request.post['selected']) && await this.validateDelete()) {
+this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
 			for (this.request.post['selected'] of country_id) {
 				await this.model_localisation_country.deleteCountry(country_id);
 			}
@@ -147,12 +148,12 @@ module.exports = class ControllerLocalisationCountry extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('localisation/country', 'user_token=' + this.session.data['user_token'] + url, true)
-		);
+		});
 
 		data['add'] = await this.url.link('localisation/country/add', 'user_token=' + this.session.data['user_token'] + url, true);
 		data['delete'] = await this.url.link('localisation/country/delete', 'user_token=' + this.session.data['user_token'] + url, true);
@@ -162,9 +163,9 @@ module.exports = class ControllerLocalisationCountry extends Controller {
 		filter_data = array(
 			'sort'  : sort,
 			'order' : order,
-			'start' : (page - 1) * this.config.get('config_limit_admin'),
-			'limit' : this.config.get('config_limit_admin')
-		);
+			'start' : (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit' : Number(this.config.get('config_limit_admin'))
+		});
 
 		country_total = await this.model_localisation_country.getTotalCountries();
 
@@ -177,7 +178,7 @@ module.exports = class ControllerLocalisationCountry extends Controller {
 				'iso_code_2' : result['iso_code_2'],
 				'iso_code_3' : result['iso_code_3'],
 				'edit'       : await this.url.link('localisation/country/edit', 'user_token=' + this.session.data['user_token'] + '&country_id=' + result['country_id'] + url, true)
-			);
+			});
 		}
 
 		if ((this.error['warning'])) {
@@ -229,12 +230,12 @@ module.exports = class ControllerLocalisationCountry extends Controller {
 		pagination = new Pagination();
 		pagination.total = country_total;
 		pagination.page = page;
-		pagination.limit = this.config.get('config_limit_admin');
+		pagination.limit = Number(this.config.get('config_limit_admin'));
 		pagination.url = await this.url.link('localisation/country', 'user_token=' + this.session.data['user_token'] + url + '&page={page}', true);
 
 		data['pagination'] = pagination.render();
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (country_total) ? ((page - 1) * this.config.get('config_limit_admin')) + 1 : 0, (((page - 1) * this.config.get('config_limit_admin')) > (country_total - this.config.get('config_limit_admin'))) ? country_total : (((page - 1) * this.config.get('config_limit_admin')) + this.config.get('config_limit_admin')), country_total, ceil(country_total / this.config.get('config_limit_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (country_total) ? ((page - 1) * Number(this.config.get('config_limit_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_limit_admin'))) > (country_total - Number(this.config.get('config_limit_admin')))) ? country_total : (((page - 1) * Number(this.config.get('config_limit_admin'))) + Number(this.config.get('config_limit_admin'))), country_total, Math.ceil(country_total / Number(this.config.get('config_limit_admin'))));
 
 		data['sort'] = sort;
 		data['order'] = order;
@@ -280,12 +281,12 @@ module.exports = class ControllerLocalisationCountry extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('localisation/country', 'user_token=' + this.session.data['user_token'] + url, true)
-		);
+		});
 
 		if (!(this.request.get['country_id'])) {
 			data['action'] = await this.url.link('localisation/country/add', 'user_token=' + this.session.data['user_token'] + url, true);
@@ -428,10 +429,10 @@ module.exports = class ControllerLocalisationCountry extends Controller {
 				'postcode_required' : country_info['postcode_required'],
 				'zone'              : await this.model_localisation_zone.getZonesByCountryId(this.request.get['country_id']),
 				'status'            : country_info['status']
-			);
+			});
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}	
 }

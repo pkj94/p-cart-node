@@ -1,4 +1,4 @@
-module.exports =class ReturnReason extends global['\Opencart\System\Engine\Model'] {
+module.exports =class ReturnReason extends Model {
 	/**
 	 * @param data
 	 *

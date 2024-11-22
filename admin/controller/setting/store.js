@@ -20,7 +20,7 @@ module.exports = class ControllerSettingStore extends Controller {
 
 		this.load.model('setting/store',this);
 
-		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			store_id = await this.model_setting_store.addStore(this.request.post);
 
 			this.load.model('setting/setting',this);
@@ -42,7 +42,7 @@ module.exports = class ControllerSettingStore extends Controller {
 
 		this.load.model('setting/store',this);
 
-		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_setting_store.editStore(this.request.get['store_id'], this.request.post);
 
 			this.load.model('setting/setting',this);
@@ -64,7 +64,8 @@ module.exports = class ControllerSettingStore extends Controller {
 
 		this.load.model('setting/store',this);
 
-		if ((this.request.post['selected']) && this.validateDelete()) {
+		if ((this.request.post['selected']) && await this.validateDelete()) {
+this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
 			this.load.model('setting/setting',this);
 
 			for (this.request.post['selected'] of store_id) {
@@ -93,12 +94,12 @@ module.exports = class ControllerSettingStore extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('setting/store', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['add'] = await this.url.link('setting/store/add', 'user_token=' + this.session.data['user_token'], true);
 		data['delete'] = await this.url.link('setting/store/delete', 'user_token=' + this.session.data['user_token'], true);
@@ -110,7 +111,7 @@ module.exports = class ControllerSettingStore extends Controller {
 			'name'     : this.config.get('config_name') + this.language.get('text_default'),
 			'url'      : this.config.get('config_secure') ? HTTPS_CATALOG : HTTP_CATALOG,
 			'edit'     : await this.url.link('setting/setting', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		store_total = await this.model_setting_store.getTotalStores();
 
@@ -122,7 +123,7 @@ module.exports = class ControllerSettingStore extends Controller {
 				'name'     : result['name'],
 				'url'      : result['url'],
 				'edit'     : await this.url.link('setting/store/edit', 'user_token=' + this.session.data['user_token'] + '&store_id=' + result['store_id'], true)
-			);
+			});
 		}
 
 		if ((this.error['warning'])) {
@@ -214,23 +215,23 @@ module.exports = class ControllerSettingStore extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('setting/store', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		if (!(this.request.get['store_id'])) {
 			data['breadcrumbs'].push({
 				'text' : this.language.get('text_settings'),
 				'href' : await this.url.link('setting/store/add', 'user_token=' + this.session.data['user_token'], true)
-			);
+			});
 		} else {
 			data['breadcrumbs'].push({
 				'text' : this.language.get('text_settings'),
 				'href' : await this.url.link('setting/store/edit', 'user_token=' + this.session.data['user_token'] + '&store_id=' + this.request.get['store_id'], true)
-			);
+			});
 		}
 
 		if ((this.session.data['success'])) {
@@ -320,7 +321,7 @@ module.exports = class ControllerSettingStore extends Controller {
 			data['themes'].push({
 				'text'  : this.language.get('extension').get('heading_title'),
 				'value' : code
-			);
+			});
 		}
 
 		if ((this.request.post['config_layout_id'])) {
@@ -331,7 +332,7 @@ module.exports = class ControllerSettingStore extends Controller {
 			data['config_layout_id'] = '';
 		}
 
-		this.load.model('design/layout');
+		this.load.model('design/layout',this);
 
 		data['layouts'] = await this.model_design_layout.getLayouts();
 
@@ -515,7 +516,7 @@ module.exports = class ControllerSettingStore extends Controller {
 			data['config_customer_group_id'] = '';
 		}
 
-		this.load.model('customer/customer_group');
+		this.load.model('customer/customer_group',this);
 
 		data['customer_groups'] = await this.model_customer_customer_group.getCustomerGroups();
 
@@ -685,7 +686,7 @@ module.exports = class ControllerSettingStore extends Controller {
 			this.error['customer_group_display'] = this.language.get('error_customer_group_display');
 		}
 
-		if (this.error && !(this.error['warning'])) {
+		if (Object.keys(this.error).length && !(this.error['warning'])) {
 			this.error['warning'] = this.language.get('error_warning');
 		}
 

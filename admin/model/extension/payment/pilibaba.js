@@ -86,7 +86,7 @@ module.exports = class ModelExtensionPaymentPilibaba extends Model {
 			'currency'    : currency,
 			'logistics'   : warehouse,
 			'countryCode' : country
-		);
+		});
 
 		this.log('Data: ' + print_r(data, true));
 

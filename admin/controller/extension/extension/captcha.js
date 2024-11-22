@@ -99,7 +99,7 @@ module.exports = class ControllerExtensionExtensionCaptcha extends Controller {
 					'uninstall' : await this.url.link('extension/extension/captcha/uninstall', 'user_token=' + this.session.data['user_token'] + '&extension=' + extension, true),
 					'installed' : in_array(extension, extensions),
 					'edit'      : await this.url.link('extension/captcha/' + extension, 'user_token=' + this.session.data['user_token'], true)
-				);
+				});
 			}
 		}
 

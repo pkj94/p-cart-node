@@ -9,12 +9,12 @@ module.exports = class ControllerReportReport extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('report/report', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['user_token'] = this.session.data['user_token'];
 
@@ -42,7 +42,7 @@ module.exports = class ControllerReportReport extends Controller {
 					'code'       : code,
 					'sort_order' : this.config.get('report_' + code + '_sort_order'),
 					'href'       : await this.url.link('report/report', 'user_token=' + this.session.data['user_token'] + '&code=' + code, true)
-				);
+				});
 			}
 		}
 		

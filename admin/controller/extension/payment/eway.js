@@ -54,17 +54,17 @@ module.exports = class ControllerExtensionPaymentEway extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_extension'),
 			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('extension/payment/eway', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['action'] = await this.url.link('extension/payment/eway', 'user_token=' + this.session.data['user_token'], true);
 		data['cancel'] = await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'], true);
@@ -290,7 +290,7 @@ module.exports = class ControllerExtensionPaymentEway extends Controller {
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 
 	async capture() {
@@ -347,7 +347,7 @@ module.exports = class ControllerExtensionPaymentEway extends Controller {
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 
 	private function validate() {

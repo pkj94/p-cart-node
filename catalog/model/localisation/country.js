@@ -1,4 +1,4 @@
-module.exports =class Country extends global['\Opencart\System\Engine\Model'] {
+module.exports =class Country extends Model {
 	/**
 	 * @param country_id
 	 *

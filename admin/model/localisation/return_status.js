@@ -10,7 +10,7 @@ module.exports = class ModelLocalisationReturnStatus extends Model {
 			}
 		}
 
-		this.cache.delete('return_status');
+		await this.cache.delete('return_status');
 		
 		return return_status_id;
 	}
@@ -22,13 +22,13 @@ module.exports = class ModelLocalisationReturnStatus extends Model {
 			await this.db.query("INSERT INTO " + DB_PREFIX + "return_status SET return_status_id = '" + return_status_id + "', language_id = '" + language_id + "', name = '" + this.db.escape(value['name']) + "'");
 		}
 
-		this.cache.delete('return_status');
+		await this.cache.delete('return_status');
 	}
 
 	async deleteReturnStatus(return_status_id) {
 		await this.db.query("DELETE FROM " + DB_PREFIX + "return_status WHERE return_status_id = '" + return_status_id + "'");
 
-		this.cache.delete('return_status');
+		await this.cache.delete('return_status');
 	}
 
 	async getReturnStatus(return_status_id) {
@@ -67,14 +67,14 @@ if (data['limit'] < 1) {
 
 			return query.rows;
 		} else {
-			return_status_data = this.cache.get('return_status.' + this.config.get('config_language_id'));
+			return_status_data = await this.cache.get('return_status.' + this.config.get('config_language_id'));
 
 			if (!return_status_data) {
 				const query = await this.db.query("SELECT return_status_id, name FROM " + DB_PREFIX + "return_status WHERE language_id = '" + this.config.get('config_language_id') + "' ORDER BY name");
 
 				return_status_data = query.rows;
 
-				this.cache.set('return_status.' + this.config.get('config_language_id'), return_status_data);
+				await this.cache.set('return_status.' + this.config.get('config_language_id'), return_status_data);
 			}
 
 			return return_status_data;

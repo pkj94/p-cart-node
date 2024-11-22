@@ -2,9 +2,9 @@ module.exports = class ModelCatalogRecurring extends Model {
 	async addRecurring(data) {
 		await this.db.query("INSERT INTO `" + DB_PREFIX + "recurring` SET `sort_order` = " + data['sort_order'] + ", `status` = " + data['status'] + ", `price` = " + data['price'] + ", `frequency` = '" + this.db.escape(data['frequency']) + "', `duration` = " + data['duration'] + ", `cycle` = " + data['cycle'] + ", `trial_status` = " + data['trial_status'] + ", `trial_price` = " + data['trial_price'] + ", `trial_frequency` = '" + this.db.escape(data['trial_frequency']) + "', `trial_duration` = " + data['trial_duration'] + ", `trial_cycle` = '" + data['trial_cycle'] + "'");
 
-		recurring_id = this.db.getLastId();
+		const recurring_id = this.db.getLastId();
 
-		for (data['recurring_description'] of language_id : recurring_description) {
+		for (let [language_id, recurring_description] of Object.entries(data['recurring_description'])) {
 			await this.db.query("INSERT INTO `" + DB_PREFIX + "recurring_description` (`recurring_id`, `language_id`, `name`) VALUES (" + recurring_id + ", " + language_id + ", '" + this.db.escape(recurring_description['name']) + "')");
 		}
 
@@ -16,21 +16,21 @@ module.exports = class ModelCatalogRecurring extends Model {
 
 		await this.db.query("UPDATE `" + DB_PREFIX + "recurring` SET `price` = '" + data['price'] + "', `frequency` = '" + this.db.escape(data['frequency']) + "', `duration` = '" + data['duration'] + "', `cycle` = '" + data['cycle'] + "', `sort_order` = '" + data['sort_order'] + "', `status` = '" + data['status'] + "', `trial_price` = '" + data['trial_price'] + "', `trial_frequency` = '" + this.db.escape(data['trial_frequency']) + "', `trial_duration` = '" + data['trial_duration'] + "', `trial_cycle` = '" + data['trial_cycle'] + "', `trial_status` = '" + data['trial_status'] + "' WHERE recurring_id = '" + recurring_id + "'");
 
-		for (data['recurring_description'] of language_id : recurring_description) {
+		for (let [language_id, recurring_description] of Object.entries(data['recurring_description'])) {
 			await this.db.query("INSERT INTO `" + DB_PREFIX + "recurring_description` (`recurring_id`, `language_id`, `name`) VALUES (" + recurring_id + ", " + language_id + ", '" + this.db.escape(recurring_description['name']) + "')");
 		}
 	}
 
 	async copyRecurring(recurring_id) {
-		data = this.getRecurring(recurring_id);
+		let data = await this.getRecurring(recurring_id);
 
-		data['recurring_description'] = this.getRecurringDescription(recurring_id);
+		data['recurring_description'] = await this.getRecurringDescription(recurring_id);
 
-		for (data['recurring_description'] of &recurring_description) {
+		for (let recurring_description of data['recurring_description']) {
 			recurring_description['name'] += ' - 2';
 		}
 
-		this.addRecurring(data);
+		await this.addRecurring(data);
 	}
 
 	async deleteRecurring(recurring_id) {
@@ -47,12 +47,12 @@ module.exports = class ModelCatalogRecurring extends Model {
 	}
 
 	async getRecurringDescription(recurring_id) {
-		recurring_description_data = {};
+		let recurring_description_data = {};
 
 		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "recurring_description` WHERE `recurring_id` = '" + recurring_id + "'");
 
-		for (let result of query.rows ) {
-			recurring_description_data[result['language_id']] = array('name' : result['name']);
+		for (let result of query.rows) {
+			recurring_description_data[result['language_id']] = { 'name': result['name'] };
 		}
 
 		return recurring_description_data;
@@ -68,7 +68,7 @@ module.exports = class ModelCatalogRecurring extends Model {
 		let sort_data = [
 			'rd.name',
 			'r.sort_order'
-		);
+		];
 
 		if ((data['sort']) && sort_data.includes(data['sort'])) {
 			sql += " ORDER BY " + data['sort'];
@@ -83,13 +83,13 @@ module.exports = class ModelCatalogRecurring extends Model {
 		}
 
 		if ((data['start']) || (data['limit'])) {
-			data['start'] = data['start']||0;
-if (data['start'] < 0) {
+			data['start'] = data['start'] || 0;
+			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 

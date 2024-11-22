@@ -18,7 +18,7 @@ module.exports = class ControllerCatalogInformation extends Controller {
 
 		this.load.model('catalog/information');
 
-		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_catalog_information.addInformation(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
@@ -50,7 +50,7 @@ module.exports = class ControllerCatalogInformation extends Controller {
 
 		this.load.model('catalog/information');
 
-		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_catalog_information.editInformation(this.request.get['information_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
@@ -82,8 +82,9 @@ module.exports = class ControllerCatalogInformation extends Controller {
 
 		this.load.model('catalog/information');
 
-		if ((this.request.post['selected']) && this.validateDelete()) {
-			for (this.request.post['selected'] of information_id) {
+		if ((this.request.post['selected']) && await this.validateDelete()) {
+this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
+			for (let information_id of this.request.post['selected']) {
 				await this.model_catalog_information.deleteInformation(information_id);
 			}
 
@@ -147,12 +148,12 @@ module.exports = class ControllerCatalogInformation extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('catalog/information', 'user_token=' + this.session.data['user_token'] + url, true)
-		);
+		});
 
 		data['add'] = await this.url.link('catalog/information/add', 'user_token=' + this.session.data['user_token'] + url, true);
 		data['delete'] = await this.url.link('catalog/information/delete', 'user_token=' + this.session.data['user_token'] + url, true);
@@ -162,9 +163,9 @@ module.exports = class ControllerCatalogInformation extends Controller {
 		filter_data = array(
 			'sort'  : sort,
 			'order' : order,
-			'start' : (page - 1) * this.config.get('config_limit_admin'),
-			'limit' : this.config.get('config_limit_admin')
-		);
+			'start' : (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit' : Number(this.config.get('config_limit_admin'))
+		});
 
 		information_total = await this.model_catalog_information.getTotalInformations();
 
@@ -176,7 +177,7 @@ module.exports = class ControllerCatalogInformation extends Controller {
 				'title'          : result['title'],
 				'sort_order'     : result['sort_order'],
 				'edit'           : await this.url.link('catalog/information/edit', 'user_token=' + this.session.data['user_token'] + '&information_id=' + result['information_id'] + url, true)
-			);
+			});
 		}
 
 		if ((this.error['warning'])) {
@@ -227,12 +228,12 @@ module.exports = class ControllerCatalogInformation extends Controller {
 		pagination = new Pagination();
 		pagination.total = information_total;
 		pagination.page = page;
-		pagination.limit = this.config.get('config_limit_admin');
+		pagination.limit = Number(this.config.get('config_limit_admin'));
 		pagination.url = await this.url.link('catalog/information', 'user_token=' + this.session.data['user_token'] + url + '&page={page}', true);
 
 		data['pagination'] = pagination.render();
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (information_total) ? ((page - 1) * this.config.get('config_limit_admin')) + 1 : 0, (((page - 1) * this.config.get('config_limit_admin')) > (information_total - this.config.get('config_limit_admin'))) ? information_total : (((page - 1) * this.config.get('config_limit_admin')) + this.config.get('config_limit_admin')), information_total, ceil(information_total / this.config.get('config_limit_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (information_total) ? ((page - 1) * Number(this.config.get('config_limit_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_limit_admin'))) > (information_total - Number(this.config.get('config_limit_admin')))) ? information_total : (((page - 1) * Number(this.config.get('config_limit_admin'))) + Number(this.config.get('config_limit_admin'))), information_total, Math.ceil(information_total / Number(this.config.get('config_limit_admin'))));
 
 		data['sort'] = sort;
 		data['order'] = order;
@@ -296,12 +297,12 @@ module.exports = class ControllerCatalogInformation extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('catalog/information', 'user_token=' + this.session.data['user_token'] + url, true)
-		);
+		});
 
 		if (!(this.request.get['information_id'])) {
 			data['action'] = await this.url.link('catalog/information/add', 'user_token=' + this.session.data['user_token'] + url, true);
@@ -336,15 +337,15 @@ module.exports = class ControllerCatalogInformation extends Controller {
 		data['stores'].push({
 			'store_id' : 0,
 			'name'     : this.language.get('text_default')
-		);
+		});
 
 		stores = await this.model_setting_store.getStores();
 
-		for (stores of store) {
+		for (let store of stores) {
 			data['stores'].push({
 				'store_id' : store['store_id'],
 				'name'     : store['name']
-			);
+			});
 		}
 
 		if ((this.request.post['information_store'])) {
@@ -395,7 +396,7 @@ module.exports = class ControllerCatalogInformation extends Controller {
 			data['information_layout'] = {};
 		}
 
-		this.load.model('design/layout');
+		this.load.model('design/layout',this);
 
 		data['layouts'] = await this.model_design_layout.getLayouts();
 
@@ -426,10 +427,10 @@ module.exports = class ControllerCatalogInformation extends Controller {
 		}
 
 		if (this.request.post['information_seo_url']) {
-			this.load.model('design/seo_url');
+			this.load.model('design/seo_url',this);
 
-			for (this.request.post['information_seo_url'] of store_id : language) {
-				for (language of language_id : keyword) {
+			for (let [store_id , language] of Object.entries(this.request.post['information_seo_url'])) {
+				for (let [language_id , keyword] of Object.entries(language)) {
 					if ((keyword)) {
 						if (count(array_keys(language, keyword)) > 1) {
 							this.error['keyword'][store_id][language_id] = this.language.get('error_unique');
@@ -447,7 +448,7 @@ module.exports = class ControllerCatalogInformation extends Controller {
 			}
 		}
 
-		if (this.error && !(this.error['warning'])) {
+		if (Object.keys(this.error).length && !(this.error['warning'])) {
 			this.error['warning'] = this.language.get('error_warning');
 		}
 
@@ -461,7 +462,7 @@ module.exports = class ControllerCatalogInformation extends Controller {
 
 		this.load.model('setting/store',this);
 
-		for (this.request.post['selected'] of information_id) {
+		for (let information_id of this.request.post['selected']) {
 			if (this.config.get('config_account_id') == information_id) {
 				this.error['warning'] = this.language.get('error_account');
 			}

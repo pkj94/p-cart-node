@@ -1,4 +1,4 @@
-module.exports =class SubscriptionStatus extends global['\Opencart\System\Engine\Model'] {
+module.exports =class SubscriptionStatus extends Model {
 	/**
 	 * @param subscription_status_id
 	 *

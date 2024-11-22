@@ -10,7 +10,7 @@ module.exports = class ModelLocalisationOrderStatus extends Model {
 			}
 		}
 
-		this.cache.delete('order_status');
+		await this.cache.delete('order_status');
 		
 		return order_status_id;
 	}
@@ -22,13 +22,13 @@ module.exports = class ModelLocalisationOrderStatus extends Model {
 			await this.db.query("INSERT INTO " + DB_PREFIX + "order_status SET order_status_id = '" + order_status_id + "', language_id = '" + language_id + "', name = '" + this.db.escape(value['name']) + "'");
 		}
 
-		this.cache.delete('order_status');
+		await this.cache.delete('order_status');
 	}
 
 	async deleteOrderStatus(order_status_id) {
 		await this.db.query("DELETE FROM " + DB_PREFIX + "order_status WHERE order_status_id = '" + order_status_id + "'");
 
-		this.cache.delete('order_status');
+		await this.cache.delete('order_status');
 	}
 
 	async getOrderStatus(order_status_id) {
@@ -67,14 +67,14 @@ if (data['limit'] < 1) {
 
 			return query.rows;
 		} else {
-			order_status_data = this.cache.get('order_status.' + this.config.get('config_language_id'));
+			order_status_data = await this.cache.get('order_status.' + this.config.get('config_language_id'));
 
 			if (!order_status_data) {
 				const query = await this.db.query("SELECT order_status_id, name FROM " + DB_PREFIX + "order_status WHERE language_id = '" + this.config.get('config_language_id') + "' ORDER BY name");
 
 				order_status_data = query.rows;
 
-				this.cache.set('order_status.' + this.config.get('config_language_id'), order_status_data);
+				await this.cache.set('order_status.' + this.config.get('config_language_id'), order_status_data);
 			}
 
 			return order_status_data;

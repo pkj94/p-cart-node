@@ -6,7 +6,7 @@ module.exports = class ControllerDesignSeoUrl extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('design/seo_url');
+		this.load.model('design/seo_url',this);
 
 		await this.getList();
 	}
@@ -16,9 +16,9 @@ module.exports = class ControllerDesignSeoUrl extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('design/seo_url');
+		this.load.model('design/seo_url',this);
 
-		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_design_seo_url.addSeoUrl(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
@@ -26,11 +26,11 @@ module.exports = class ControllerDesignSeoUrl extends Controller {
 			url = '';
 
 			if ((this.request.get['filter_query'])) {
-				url += '&filter_query=' + urlencode(html_entity_decode(this.request.get['filter_query']));
+				url += '&filter_query=' + encodeURIComponent(html_entity_decode(this.request.get['filter_query']));
 			}
 
 			if ((this.request.get['filter_keyword'])) {
-				url += '&filter_keyword=' + urlencode(html_entity_decode(this.request.get['filter_keyword']));
+				url += '&filter_keyword=' + encodeURIComponent(html_entity_decode(this.request.get['filter_keyword']));
 			}
 
 			if ((this.request.get['filter_store_id'])) {
@@ -64,9 +64,9 @@ module.exports = class ControllerDesignSeoUrl extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('design/seo_url');
+		this.load.model('design/seo_url',this);
 
-		if ((this.request.server['method'] == 'POST') && this.validateForm()) {
+		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_design_seo_url.editSeoUrl(this.request.get['seo_url_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
@@ -74,11 +74,11 @@ module.exports = class ControllerDesignSeoUrl extends Controller {
 			url = '';
 
 			if ((this.request.get['filter_query'])) {
-				url += '&filter_query=' + urlencode(html_entity_decode(this.request.get['filter_query']));
+				url += '&filter_query=' + encodeURIComponent(html_entity_decode(this.request.get['filter_query']));
 			}
 
 			if ((this.request.get['filter_keyword'])) {
-				url += '&filter_keyword=' + urlencode(html_entity_decode(this.request.get['filter_keyword']));
+				url += '&filter_keyword=' + encodeURIComponent(html_entity_decode(this.request.get['filter_keyword']));
 			}
 
 			if ((this.request.get['filter_store_id'])) {
@@ -112,9 +112,10 @@ module.exports = class ControllerDesignSeoUrl extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('design/seo_url');
+		this.load.model('design/seo_url',this);
 
-		if ((this.request.post['selected']) && this.validateDelete()) {
+		if ((this.request.post['selected']) && await this.validateDelete()) {
+this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
 			for (this.request.post['selected'] of seo_url_id) {
 				await this.model_design_seo_url.deleteSeoUrl(seo_url_id);
 			}
@@ -124,11 +125,11 @@ module.exports = class ControllerDesignSeoUrl extends Controller {
 			url = '';
 
 			if ((this.request.get['filter_query'])) {
-				url += '&filter_query=' + urlencode(html_entity_decode(this.request.get['filter_query']));
+				url += '&filter_query=' + encodeURIComponent(html_entity_decode(this.request.get['filter_query']));
 			}
 
 			if ((this.request.get['filter_keyword'])) {
-				url += '&filter_keyword=' + urlencode(html_entity_decode(this.request.get['filter_keyword']));
+				url += '&filter_keyword=' + encodeURIComponent(html_entity_decode(this.request.get['filter_keyword']));
 			}
 
 			if ((this.request.get['filter_store_id'])) {
@@ -203,11 +204,11 @@ module.exports = class ControllerDesignSeoUrl extends Controller {
 		url = '';
 
 		if ((this.request.get['filter_query'])) {
-			url += '&filter_query=' + urlencode(html_entity_decode(this.request.get['filter_query']));
+			url += '&filter_query=' + encodeURIComponent(html_entity_decode(this.request.get['filter_query']));
 		}
 
 		if ((this.request.get['filter_keyword'])) {
-			url += '&filter_keyword=' + urlencode(html_entity_decode(this.request.get['filter_keyword']));
+			url += '&filter_keyword=' + encodeURIComponent(html_entity_decode(this.request.get['filter_keyword']));
 		}
 
 		if ((this.request.get['filter_store_id'])) {
@@ -235,12 +236,12 @@ module.exports = class ControllerDesignSeoUrl extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('design/seo_url', 'user_token=' + this.session.data['user_token'] + url, true)
-		);
+		});
 
 		data['add'] = await this.url.link('design/seo_url/add', 'user_token=' + this.session.data['user_token'] + url, true);
 		data['delete'] = await this.url.link('design/seo_url/delete', 'user_token=' + this.session.data['user_token'] + url, true);
@@ -254,9 +255,9 @@ module.exports = class ControllerDesignSeoUrl extends Controller {
 			'filter_language_id' : filter_language_id,
 			'sort'               : sort,
 			'order'              : order,
-			'start'              : (page - 1) * this.config.get('config_limit_admin'),
-			'limit'              : this.config.get('config_limit_admin')
-		);
+			'start'              : (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit'              : Number(this.config.get('config_limit_admin'))
+		});
 
 		seo_url_total = await this.model_design_seo_url.getTotalSeoUrls(filter_data);
 
@@ -270,7 +271,7 @@ module.exports = class ControllerDesignSeoUrl extends Controller {
 				'store'      : result['store_id'] ? result['store'] : this.language.get('text_default'),
 				'language'   : result['language'],
 				'edit'       : await this.url.link('design/seo_url/edit', 'user_token=' + this.session.data['user_token'] + '&seo_url_id=' + result['seo_url_id'] + url, true)
-			);
+			});
 		}
 
 		data['user_token'] = this.session.data['user_token'];
@@ -298,11 +299,11 @@ module.exports = class ControllerDesignSeoUrl extends Controller {
 		url = '';
 
 		if ((this.request.get['filter_query'])) {
-			url += '&filter_query=' + urlencode(html_entity_decode(this.request.get['filter_query']));
+			url += '&filter_query=' + encodeURIComponent(html_entity_decode(this.request.get['filter_query']));
 		}
 
 		if ((this.request.get['filter_keyword'])) {
-			url += '&filter_keyword=' + urlencode(html_entity_decode(this.request.get['filter_keyword']));
+			url += '&filter_keyword=' + encodeURIComponent(html_entity_decode(this.request.get['filter_keyword']));
 		}
 
 		if ((this.request.get['filter_store_id'])) {
@@ -331,11 +332,11 @@ module.exports = class ControllerDesignSeoUrl extends Controller {
 		url = '';
 
 		if ((this.request.get['filter_query'])) {
-			url += '&filter_query=' + urlencode(html_entity_decode(this.request.get['filter_query']));
+			url += '&filter_query=' + encodeURIComponent(html_entity_decode(this.request.get['filter_query']));
 		}
 
 		if ((this.request.get['filter_keyword'])) {
-			url += '&filter_keyword=' + urlencode(html_entity_decode(this.request.get['filter_keyword']));
+			url += '&filter_keyword=' + encodeURIComponent(html_entity_decode(this.request.get['filter_keyword']));
 		}
 
 		if ((this.request.get['filter_store_id'])) {
@@ -357,12 +358,12 @@ module.exports = class ControllerDesignSeoUrl extends Controller {
 		pagination = new Pagination();
 		pagination.total = seo_url_total;
 		pagination.page = page;
-		pagination.limit = this.config.get('config_limit_admin');
+		pagination.limit = Number(this.config.get('config_limit_admin'));
 		pagination.url = await this.url.link('design/seo_url', 'user_token=' + this.session.data['user_token'] + url + '&page={page}', true);
 
 		data['pagination'] = pagination.render();
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (seo_url_total) ? ((page - 1) * this.config.get('config_limit_admin')) + 1 : 0, (((page - 1) * this.config.get('config_limit_admin')) > (seo_url_total - this.config.get('config_limit_admin'))) ? seo_url_total : (((page - 1) * this.config.get('config_limit_admin')) + this.config.get('config_limit_admin')), seo_url_total, ceil(seo_url_total / this.config.get('config_limit_admin')));
+		data['results'] = sprintf(this.language.get('text_pagination'), (seo_url_total) ? ((page - 1) * Number(this.config.get('config_limit_admin'))) + 1 : 0, (((page - 1) * Number(this.config.get('config_limit_admin'))) > (seo_url_total - Number(this.config.get('config_limit_admin')))) ? seo_url_total : (((page - 1) * Number(this.config.get('config_limit_admin'))) + Number(this.config.get('config_limit_admin'))), seo_url_total, Math.ceil(seo_url_total / Number(this.config.get('config_limit_admin'))));
 
 		data['filter_query'] = filter_query;
 		data['filter_keyword'] = filter_keyword;
@@ -427,12 +428,12 @@ module.exports = class ControllerDesignSeoUrl extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('design/seo_url', 'user_token=' + this.session.data['user_token'] + url, true)
-		);
+		});
 
 		if (!(this.request.get['seo_url_id'])) {
 			data['action'] = await this.url.link('design/seo_url/add', 'user_token=' + this.session.data['user_token'] + url, true);
@@ -469,15 +470,15 @@ module.exports = class ControllerDesignSeoUrl extends Controller {
 		data['stores'].push({
 			'store_id' : 0,
 			'name'     : this.language.get('text_default')
-		);
+		});
 
 		stores = await this.model_setting_store.getStores();
 
-		for (stores of store) {
+		for (let store of stores) {
 			data['stores'].push({
 				'store_id' : store['store_id'],
 				'name'     : store['name']
-			);
+			});
 		}
 
 		if ((this.request.post['store_id'])) {

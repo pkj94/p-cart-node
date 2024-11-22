@@ -13,12 +13,12 @@ module.exports = class ControllerMarketingContact extends Controller {
 		data['breadcrumbs'].push({
 			'text' : this.language.get('text_home'),
 			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['breadcrumbs'].push({
 			'text' : this.language.get('heading_title'),
 			'href' : await this.url.link('marketing/contact', 'user_token=' + this.session.data['user_token'], true)
-		);
+		});
 
 		data['cancel'] = await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true);
 
@@ -26,7 +26,7 @@ module.exports = class ControllerMarketingContact extends Controller {
 
 		data['stores'] = await this.model_setting_store.getStores();
 
-		this.load.model('customer/customer_group');
+		this.load.model('customer/customer_group',this);
 
 		data['customer_groups'] = await this.model_customer_customer_group.getCustomerGroups();
 
@@ -89,28 +89,28 @@ module.exports = class ControllerMarketingContact extends Controller {
 							'filter_newsletter' : 1,
 							'start'             : (page - 1) * 10,
 							'limit'             : 10
-						);
+						});
 
 						email_total = await this.model_customer_customer.getTotalCustomers(customer_data);
 
 						results = await this.model_customer_customer.getCustomers(customer_data);
 
 						for (let result of results) {
-							emails[] = result['email'];
+							emails.push(result['email'];
 						}
 						break;
 					case 'customer_all':
 						customer_data = array(
 							'start' : (page - 1) * 10,
 							'limit' : 10
-						);
+						});
 
 						email_total = await this.model_customer_customer.getTotalCustomers(customer_data);
 
 						results = await this.model_customer_customer.getCustomers(customer_data);
 
 						for (let result of results) {
-							emails[] = result['email'];
+							emails.push(result['email'];
 						}
 						break;
 					case 'customer_group':
@@ -118,7 +118,7 @@ module.exports = class ControllerMarketingContact extends Controller {
 							'filter_customer_group_id' : this.request.post['customer_group_id'],
 							'start'                    : (page - 1) * 10,
 							'limit'                    : 10
-						);
+						});
 
 						email_total = await this.model_customer_customer.getTotalCustomers(customer_data);
 
@@ -136,7 +136,7 @@ module.exports = class ControllerMarketingContact extends Controller {
 								customer_info = await this.model_customer_customer.getCustomer(customer_id);
 
 								if (customer_info) {
-									emails[] = customer_info['email'];
+									emails.push(customer_info['email'];
 								}
 							}
 
@@ -148,14 +148,14 @@ module.exports = class ControllerMarketingContact extends Controller {
 							'filter_affiliate' : 1,
 							'start'            : (page - 1) * 10,
 							'limit'            : 10
-						);
+						});
 
 						email_total = await this.model_customer_customer.getTotalCustomers(affiliate_data);
 
 						results = await this.model_customer_customer.getCustomers(affiliate_data);
 
 						for (let result of results) {
-							emails[] = result['email'];
+							emails.push(result['email'];
 						}
 						break;
 					case 'affiliate':
@@ -166,7 +166,7 @@ module.exports = class ControllerMarketingContact extends Controller {
 								affiliate_info = await this.model_customer_customer.getCustomer(affiliate_id);
 
 								if (affiliate_info) {
-									emails[] = affiliate_info['email'];
+									emails.push(affiliate_info['email'];
 								}
 							}
 
@@ -180,7 +180,7 @@ module.exports = class ControllerMarketingContact extends Controller {
 							results = await this.model_sale_order.getEmailsByProductsOrdered(this.request.post['product'], (page - 1) * 10, 10);
 
 							for (let result of results) {
-								emails[] = result['email'];
+								emails.push(result['email'];
 							}
 						}
 						break;
@@ -241,6 +241,6 @@ module.exports = class ControllerMarketingContact extends Controller {
 		}
 
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(json));
+		this.response.setOutput(json);
 	}
 }
