@@ -9,6 +9,7 @@ module.exports = class ModelCatalogFilter extends Model {
 		}
 
 		if ((data['filter'])) {
+			data['filter'] = Array.isArray(data['filter']) ? data['filter'] : Object.values(data['filter']);
 			for (let filter of data['filter']) {
 				await this.db.query("INSERT INTO " + DB_PREFIX + "filter SET filter_group_id = '" + filter_group_id + "', sort_order = '" + filter['sort_order'] + "'");
 
@@ -36,6 +37,7 @@ module.exports = class ModelCatalogFilter extends Model {
 		await this.db.query("DELETE FROM " + DB_PREFIX + "filter_description WHERE filter_group_id = '" + filter_group_id + "'");
 
 		if ((data['filter'])) {
+			data['filter'] = Array.isArray(data['filter']) ? data['filter'] : Object.values(data['filter']);
 			for (let filter of data['filter']) {
 				if (filter['filter_id']) {
 					await this.db.query("INSERT INTO " + DB_PREFIX + "filter SET filter_id = '" + filter['filter_id'] + "', filter_group_id = '" + filter_group_id + "', sort_order = '" + filter['sort_order'] + "'");

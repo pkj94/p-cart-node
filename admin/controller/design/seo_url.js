@@ -196,7 +196,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		}
 
 		if ((this.request.get['page'])) {
-			page = this.request.get['page'];
+			page = Number(this.request.get['page']);
 		} else {
 			page = 1;
 		}
@@ -293,7 +293,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		if ((this.request.post['selected'])) {
 			data['selected'] = this.request.post['selected'];
 		} else {
-			data['selected'] = {};
+			data['selected'] = [];
 		}
 
 		url = '';
@@ -519,7 +519,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			seo_urls = await this.model_design_seo_url.getSeoUrlsByQuery(this.request.post['query']);
 		}
 		
-		for (seo_urls of seo_url) {
+		for (let seo_url of seo_urls) {
 			if (seo_url['store_id'] == this.request.post['store_id'] && seo_url['query'] == this.request.post['query']) {
 				this.error['query'] = this.language.get('error_query_exists');
 
@@ -533,7 +533,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 
 		seo_urls = await this.model_design_seo_url.getSeoUrlsByKeyword(this.request.post['keyword']);
 
-		for (seo_urls of seo_url) {
+		for (let seo_url of seo_urls) {
 			if (seo_url['store_id'] == this.request.post['store_id'] && seo_url['query'] != this.request.post['query']) {
 				this.error['keyword'] = this.language.get('error_exists');
 

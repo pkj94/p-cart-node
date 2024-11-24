@@ -12,7 +12,7 @@ module.exports = {
     text_semi_month: 'Semi Month',
     text_month: 'Month',
     text_year: 'Year',
-    text_recurring: 'fa fa-info-circle" ></i> Recurring amounts are calculated by the frequency and cycles.</p ><p>For example if you use a frequency of "week" and a cycle of "2", then the user will be billed every 2 weeks.</p><p>The duration is the number of times the user will make a payment, set this to 0 if you want payments until they are cancelled.</p>',
+    text_recurring: '<p><i class="fa fa-info-circle"></i> Recurring amounts are calculated by the frequency and cycles.</p><p>For example if you use a frequency of "week" and a cycle of "2", then the user will be billed every 2 weeks.</p><p>The duration is the number of times the user will make a payment, set this to 0 if you want payments until they are cancelled.</p>',
     text_profile: 'Recurring Profile',
     text_trial: 'Trial Profile',
 

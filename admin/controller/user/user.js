@@ -124,7 +124,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		}
 
 		if ((this.request.get['page'])) {
-			page = this.request.get['page'];
+			page = Number(this.request.get['page']);
 		} else {
 			page = 1;
 		}
@@ -198,7 +198,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		if ((this.request.post['selected'])) {
 			data['selected'] = this.request.post['selected'];
 		} else {
-			data['selected'] = {};
+			data['selected'] = [];
 		}
 
 		url = '';
@@ -489,6 +489,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		if (!await this.user.hasPermission('modify', 'user/user')) {
 			this.error['warning'] = this.language.get('error_permission');
 		}
+		this.request.post['selected']  = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']];
 
 		for (this.request.post['selected'] of user_id) {
 			if (await this.user.getId() == user_id) {

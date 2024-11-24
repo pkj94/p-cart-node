@@ -25,7 +25,7 @@ module.exports = class ControllerCatalogFilter extends Controller {
 
 			this.session.data['success'] = this.language.get('text_success');
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -38,7 +38,7 @@ module.exports = class ControllerCatalogFilter extends Controller {
 			if ((this.request.get['page'])) {
 				url += '&page=' + this.request.get['page'];
 			}
-
+			await this.session.save(this.session.data);
 			this.response.setRedirect(await this.url.link('catalog/filter', 'user_token=' + this.session.data['user_token'] + url, true));
 		}
 
@@ -57,7 +57,7 @@ module.exports = class ControllerCatalogFilter extends Controller {
 
 			this.session.data['success'] = this.language.get('text_success');
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -70,7 +70,7 @@ module.exports = class ControllerCatalogFilter extends Controller {
 			if ((this.request.get['page'])) {
 				url += '&page=' + this.request.get['page'];
 			}
-
+			await this.session.save(this.session.data);
 			this.response.setRedirect(await this.url.link('catalog/filter', 'user_token=' + this.session.data['user_token'] + url, true));
 		}
 
@@ -85,14 +85,14 @@ module.exports = class ControllerCatalogFilter extends Controller {
 		this.load.model('catalog/filter', this);
 
 		if ((this.request.post['selected']) && await this.validateDelete()) {
-this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
+			this.request.post['selected'] = Array.isArray(this.request.post['selected']) ? this.request.post['selected'] : [this.request.post['selected']]
 			for (let filter_group_id of this.request.post['selected']) {
 				await this.model_catalog_filter.deleteFilter(filter_group_id);
 			}
 
 			this.session.data['success'] = this.language.get('text_success');
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -105,7 +105,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			if ((this.request.get['page'])) {
 				url += '&page=' + this.request.get['page'];
 			}
-
+			await this.session.save(this.session.data);
 			this.response.setRedirect(await this.url.link('catalog/filter', 'user_token=' + this.session.data['user_token'] + url, true));
 		}
 
@@ -126,7 +126,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		}
 		let page = 1;
 		if ((this.request.get['page'])) {
-			page = this.request.get['page'];
+			page = Number(this.request.get['page']);
 		} else {
 			page = 1;
 		}
@@ -302,7 +302,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		}
 
 		data['cancel'] = await this.url.link('catalog/filter', 'user_token=' + this.session.data['user_token'] + url, true);
-
+		let filter_group_info;
 		if ((this.request.get['filter_group_id']) && (this.request.server['method'] != 'POST')) {
 			filter_group_info = await this.model_catalog_filter.getFilterGroup(this.request.get['filter_group_id']);
 		}
@@ -351,6 +351,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 
 		for (let [language_id, value] of Object.entries(this.request.post['filter_group_description'])) {
 			if ((oc_strlen(value['name']) < 1) || (oc_strlen(value['name']) > 64)) {
+				this.error['group'] = this.error['group'] || {};
 				this.error['group'][language_id] = this.language.get('error_group');
 			}
 		}
@@ -359,6 +360,8 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			for (let [filter_id, filter] of Object.entries(this.request.post['filter'])) {
 				for (let [language_id, filter_description] of Object.entries(filter['filter_description'])) {
 					if ((oc_strlen(filter_description['name']) < 1) || (oc_strlen(filter_description['name']) > 64)) {
+						this.error['filter'] = this.error['filter'] || {};
+						this.error['filter'][filter_id] = this.error['filter'][filter_id] || {};
 						this.error['filter'][filter_id][language_id] = this.language.get('error_name');
 					}
 				}

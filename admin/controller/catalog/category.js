@@ -83,7 +83,7 @@ module.exports = class ControllerCatalogCategory extends Controller {
 		this.load.model('catalog/category', this);
 
 		if ((this.request.post['selected']) && await this.validateDelete()) {
-this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
+			this.request.post['selected'] = Array.isArray(this.request.post['selected']) ? this.request.post['selected'] : [this.request.post['selected']]
 			for (let category_id of this.request.post['selected']) {
 				await this.model_catalog_category.deleteCategory(category_id);
 			}
@@ -154,7 +154,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		}
 		let page = 1;
 		if ((this.request.get['page'])) {
-			page = this.request.get['page'];
+			page = Number(this.request.get['page']);
 		}
 
 		let url = '';

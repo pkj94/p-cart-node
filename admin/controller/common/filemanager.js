@@ -1,70 +1,65 @@
+const rtrim = require("locutus/php/strings/rtrim");
+const str_replace = require("locutus/php/strings/str_replace");
+
 module.exports = class ControllerCommonFileManager extends Controller {
 	async index() {
+		const data = {};
 		await this.load.language('common/filemanager');
 
 		// Find which protocol to use to pass the full image link back
+		let server = HTTP_CATALOG;
 		if (this.request.server['HTTPS']) {
 			server = HTTPS_CATALOG;
-		} else {
-			server = HTTP_CATALOG;
 		}
-
-		if ((this.request.get['filter_name'])) {
-			filter_name = rtrim(str_replace(array('*', '/', '\\'), '', this.request.get['filter_name']), '/');
-		} else {
-			filter_name = '';
-		}
+		let filter_name = this.request.get.filter_name ? this.request.get.filter_name.replace(/[*\/\\]/g, '').replace(/\/$/, '') : ''
 
 		// Make sure we have the correct directory
+		let directory = DIR_IMAGE + 'catalog';
 		if ((this.request.get['directory'])) {
 			directory = rtrim(DIR_IMAGE + 'catalog/' + str_replace('*', '', this.request.get['directory']), '/');
-		} else {
-			directory = DIR_IMAGE + 'catalog';
 		}
-
+		let page = 1;
 		if ((this.request.get['page'])) {
-			page = this.request.get['page'];
-		} else {
-			page = 1;
+			page = Number(this.request.get['page']);
 		}
 
-		directories = {};
-		files = {};
+		let directories = [];
+		let files = [];
 
-		data['images'] = {};
+		data['images'] = [];
 
-		this.load.model('tool/image',this);
+		this.load.model('tool/image', this);
 
-		if (substr(str_replace('\\', '/', realpath(directory) + '/' + filter_name), 0, strlen(DIR_IMAGE + 'catalog')) == str_replace('\\', '/', DIR_IMAGE + 'catalog')) {
+		if (substr(str_replace('\\', '/', expressPath.resolve(directory) + '/' + filter_name), 0, (DIR_IMAGE + 'catalog').length) == str_replace('\\', '/', DIR_IMAGE + 'catalog')) {
 			// Get directories
-			directories = glob(directory + '/' + filter_name + '*', GLOB_ONLYDIR);
+			directories = require('glob').sync(directory + '/' + filter_name + '*').filter(a => a.split('.').pop() != 'html' && is_dir(a));
 
-			if (!directories) {
-				directories = {};
+			if (!directories.length) {
+				directories = [];
 			}
 
 			// Get files
-			files = glob(directory + '/' + filter_name + '*.{jpg,jpeg,png,gif,webp,JPG,JPEG,PNG,GIF,WEBP}', GLOB_BRACE);
+			files = require('glob').sync(directory + '/' + filter_name + '*.{jpg,jpeg,png,gif,webp,JPG,JPEG,PNG,GIF,WEBP}', { nodir: false }).filter(a => a.split('.').pop() != 'html' && is_file(a));
 
-			if (!files) {
-				files = {};
+			if (!files.length) {
+				files = [];
 			}
 		}
 
 		// Merge directories and files
-		images = array_merge(directories, files);
+		let images = [...directories, ...files];
 
 		// Get total number of files and directories
-		image_total = count(images);
+		let image_total = images.length;
 
 		// Split the array based on current page number and max number of items per page of 10
-		images = array_splice(images, (page - 1) * 16, 16);
+		images = images.splice((page - 1) * 16, 16);
 
-		for (images of image) {
-			name = str_split(basename(image), 14);
+		for (let image of images) {
+			let name = expressPath.basename(image).split(14);
 
 			if (is_dir(image)) {
-				url = '';
+				let url = '';
 
 				if ((this.request.get['target'])) {
 					url += '&target=' + this.request.get['target'];
@@ -75,19 +70,19 @@ module.exports = class ControllerCommonFileManager extends Controller {
 				}
 
 				data['images'].push({
-					'thumb' : '',
-					'name'  : implode(' ', name),
-					'type'  : 'directory',
-					'path'  : oc_substr(image, oc_strlen(DIR_IMAGE)),
-					'href'  : await this.url.link('common/filemanager', 'user_token=' + this.session.data['user_token'] + '&directory=' + encodeURIComponent(oc_substr(image, oc_strlen(DIR_IMAGE + 'catalog/'))) + url, true)
+					'thumb': '',
+					'name': name.join(' '),
+					'type': 'directory',
+					'path': oc_substr(image, oc_strlen(DIR_IMAGE)),
+					'href': await this.url.link('common/filemanager', 'user_token=' + this.session.data['user_token'] + '&directory=' + encodeURIComponent(oc_substr(image, oc_strlen(DIR_IMAGE + 'catalog/'))) + url, true)
 				});
 			} else if (is_file(image)) {
 				data['images'].push({
-					'thumb' : await this.model_tool_image.resize(oc_substr(image, oc_strlen(DIR_IMAGE)), 100, 100),
-					'name'  : implode(' ', name),
-					'type'  : 'image',
-					'path'  : oc_substr(image, oc_strlen(DIR_IMAGE)),
-					'href'  : server + 'image/' + oc_substr(image, oc_strlen(DIR_IMAGE))
+					'thumb': await this.model_tool_image.resize(oc_substr(image, oc_strlen(DIR_IMAGE)), 100, 100),
+					'name': name.join(' '),
+					'type': 'image',
+					'path': oc_substr(image, oc_strlen(DIR_IMAGE)),
+					'href': server + 'image/' + oc_substr(image, oc_strlen(DIR_IMAGE))
 				});
 			}
 		}
@@ -121,13 +116,13 @@ module.exports = class ControllerCommonFileManager extends Controller {
 		}
 
 		// Parent
-		url = '';
+		let url = '';
 
 		if ((this.request.get['directory'])) {
-			pos = strrpos(this.request.get['directory'], '/');
+			let pos = this.request.get['directory'].indexOf('/');
 
 			if (pos) {
-				url += '&directory=' + encodeURIComponent(substr(this.request.get['directory'], 0, pos));
+				url += '&directory=' + encodeURIComponent(this.request.get['directory'].substring(0, pos));
 			}
 		}
 
@@ -176,7 +171,7 @@ module.exports = class ControllerCommonFileManager extends Controller {
 			url += '&thumb=' + this.request.get['thumb'];
 		}
 
-		pagination = new Pagination();
+		const pagination = new Pagination();
 		pagination.total = image_total;
 		pagination.page = page;
 		pagination.limit = 16;
@@ -189,8 +184,9 @@ module.exports = class ControllerCommonFileManager extends Controller {
 
 	async upload() {
 		await this.load.language('common/filemanager');
+		const json = {};
 
-		json = {};
+		let base = DIR_IMAGE + 'catalog/';
 
 		// Check user has permission
 		if (!await this.user.hasPermission('modify', 'common/filemanager')) {
@@ -198,89 +194,88 @@ module.exports = class ControllerCommonFileManager extends Controller {
 		}
 
 		// Make sure we have the correct directory
+		let directory = base;
 		if ((this.request.get['directory'])) {
-			directory = rtrim(DIR_IMAGE + 'catalog/' + this.request.get['directory'], '/');
-		} else {
-			directory = DIR_IMAGE + 'catalog';
+			directory = base + html_entity_decode(this.request.get['directory']) + '/';
 		}
 
-		// Check its a directory
-		if (!is_dir(directory) || substr(str_replace('\\', '/', realpath(directory)), 0, strlen(DIR_IMAGE + 'catalog')) != str_replace('\\', '/', DIR_IMAGE + 'catalog')) {
+		// Check it's a directory
+		if (!fs.lstatSync(directory).isDirectory() || (expressPath.resolve(directory).replaceAll('\\', '/') + '/').substring(0, base.length) != base) {
 			json['error'] = this.language.get('error_directory');
 		}
 
-		if (!json) {
+		if (!json.error) {
 			// Check if multiple files are uploaded or just one
-			files = {};
-
-			if ((this.request.files['file']['name']) && Array.isArray(this.request.files['file']['name'])) {
-				for (array_keys(this.request.files['file']['name']) of key) {
-					files.push({
-						'name'     : this.request.files['file']['name'][key],
-						'type'     : this.request.files['file']['type'][key],
-						'tmp_name' : this.request.files['file']['tmp_name'][key],
-						'error'    : this.request.files['file']['error'][key],
-						'size'     : this.request.files['file']['size'][key]
-					});
-				}
+			let files = [];
+			if (this.request.files.file && !Array.isArray(this.request.files.file)) {
+				files = [this.request.files.file];
+			} else if (this.request.files.file) {
+				files = this.request.files.file;
 			}
-
+			if (!files.length) {
+				json['error'] = this.language.get('error_upload');
+			}
 			for (let file of files) {
-				if (is_file(file['tmp_name'])) {
-					// Sanitize the filename
-					filename = basename(html_entity_decode(file['name']));
+				// Sanitize the filename
+				// console.log('file--', file, file['name'])
+				let filename = file['name'].replace(new RegExp('[/\\?%*:|"<>]'), '');
+				// console.log('filename----', filename)
 
-					// Validate the filename length
-					if ((oc_strlen(filename) < 3) || (oc_strlen(filename) > 255)) {
-						json['error'] = this.language.get('error_filename');
-					}
+				// Validate the filename length
+				if ((oc_strlen(filename) < 4) || (oc_strlen(filename) > 255)) {
+					json['error'] = this.language.get('error_filename');
+				}
 
-					// Allowed file extension types
-					allowed = array(
-						'jpg',
-						'jpeg',
-						'gif',
-						'png',
-						'webp'
-					});
+				// Allowed file extension types
+				let allowed = [
+					'ico',
+					'jpg',
+					'jpeg',
+					'png',
+					'gif',
+					'webp',
+					'JPG',
+					'JPEG',
+					'PNG',
+					'GIF'
+				];
+				// console.log('filename------', filename, filename.split('.').pop())
+				if (!allowed.includes(filename.split('.').pop())) {
+					json['error'] = this.language.get('error_file_type');
+				}
 
-					if (!in_array(oc_strtolower(oc_substr(strrchr(filename, '.'), 1)), allowed)) {
-						json['error'] = this.language.get('error_filetype');
-					}
+				// Allowed file mime types
+				allowed = [
+					'image/x-icon',
+					'image/jpeg',
+					'image/pjpeg',
+					'image/png',
+					'image/x-png',
+					'image/gif',
+					'image/webp'
+				];
 
-					// Allowed file mime types
-					allowed = array(
-						'image/jpeg',
-						'image/pjpeg',
-						'image/png',
-						'image/x-png',
-						'image/gif',
-						'image/webp'
-					});
+				if (!allowed.includes(file['mimetype'])) {
+					json['error'] = this.language.get('error_file_type');
+				}
 
-					if (!in_array(file['type'], allowed)) {
-						json['error'] = this.language.get('error_filetype');
-					}
+				// Return any upload error
+				// if (file['error'] != UPLOAD_ERR_OK) {
+				// 	json['error'] = this.language.get('error_upload_' + file['error']);
+				// }
 
-					if (file['size'] > this.config.get('config_file_max_size')) {
-						json['error'] = this.language.get('error_filesize');
-					}
 
-					// Return any upload error
-					if (file['error'] != UPLOAD_ERR_OK) {
+				if (!json.error) {
+					try {
+						await uploadFile(file, directory + filename);
+					} catch (err) {
 						json['error'] = this.language.get('error_upload_' + file['error']);
 					}
-				} else {
-					json['error'] = this.language.get('error_upload');
-				}
-
-				if (!json) {
-					move_uploaded_file(file['tmp_name'], directory + '/' + filename);
 				}
 			}
 		}
 
-		if (!json) {
+		if (!json.error) {
 			json['success'] = this.language.get('text_uploaded');
 		}
 
@@ -291,7 +286,7 @@ module.exports = class ControllerCommonFileManager extends Controller {
 	async folder() {
 		await this.load.language('common/filemanager');
 
-		json = {};
+		const json = {};
 
 		// Check user has permission
 		if (!await this.user.hasPermission('modify', 'common/filemanager')) {
@@ -299,20 +294,19 @@ module.exports = class ControllerCommonFileManager extends Controller {
 		}
 
 		// Make sure we have the correct directory
+		let directory = DIR_IMAGE + 'catalog';
 		if ((this.request.get['directory'])) {
 			directory = rtrim(DIR_IMAGE + 'catalog/' + this.request.get['directory'], '/');
-		} else {
-			directory = DIR_IMAGE + 'catalog';
 		}
 
 		// Check its a directory
-		if (!is_dir(directory) || substr(str_replace('\\', '/', realpath(directory)), 0, strlen(DIR_IMAGE + 'catalog')) != str_replace('\\', '/', DIR_IMAGE + 'catalog')) {
+		if (!fs.lstatSync(directory).isDirectory() || (expressPath.resolve(directory).replaceAll('\\', '/') + '/').substring(0, (DIR_IMAGE + 'catalog').length) != DIR_IMAGE + 'catalog') {
 			json['error'] = this.language.get('error_directory');
 		}
-
+		let folder = '';
 		if (this.request.server['method'] == 'POST') {
 			// Sanitize the folder name
-			folder = basename(html_entity_decode(this.request.post['folder']));
+			folder = expressPath.basename(html_entity_decode(this.request.post['folder']));
 
 			// Validate the filename length
 			if ((oc_strlen(folder) < 3) || (oc_strlen(folder) > 128)) {
@@ -326,10 +320,9 @@ module.exports = class ControllerCommonFileManager extends Controller {
 		}
 
 		if (!(json['error'])) {
-			mkdir(directory + '/' + folder, 0777);
-			chmod(directory + '/' + folder, 0777);
+			fs.mkdirSync(directory + '/' + folder);
 
-			@touch(directory + '/' + folder + '/' + 'index.html');
+			fs.writeFileSync(directory + '/' + folder + '/' + 'index.html', '');
 
 			json['success'] = this.language.get('text_directory');
 		}
@@ -341,71 +334,65 @@ module.exports = class ControllerCommonFileManager extends Controller {
 	async delete() {
 		await this.load.language('common/filemanager');
 
-		json = {};
+		const json = {};
 
 		// Check user has permission
 		if (!await this.user.hasPermission('modify', 'common/filemanager')) {
 			json['error'] = this.language.get('error_permission');
 		}
-
+		let paths = [];
 		if ((this.request.post['path'])) {
 			paths = this.request.post['path'];
-		} else {
-			paths = {};
 		}
-
 		// Loop through each path to run validations
-		for (paths of path) {
+		for (let path of paths) {
 			// Check path exists
-			if (path == DIR_IMAGE + 'catalog' || substr(str_replace('\\', '/', realpath(DIR_IMAGE + path)), 0, strlen(DIR_IMAGE + 'catalog')) != str_replace('\\', '/', DIR_IMAGE + 'catalog')) {
+			if (path == DIR_IMAGE + 'catalog' || expressPath.resolve(DIR_IMAGE + path).replaceAll('\\', '/').substr(0, strlen(DIR_IMAGE + 'catalog')) != (DIR_IMAGE + 'catalog').replaceAll('\\', '/')) {
 				json['error'] = this.language.get('error_delete');
 
 				break;
 			}
 		}
-
-		if (!json) {
+		if (!json.error) {
 			// Loop through each path
-			for (paths of path) {
+			for (let path of paths) {
 				path = rtrim(DIR_IMAGE + path, '/');
-
 				// If path is just a file delete it
 				if (is_file(path)) {
-					unlink(path);
+					fs.unlinkSync(path);
 
-				// If path is a directory beging deleting each file and sub folder
+					// If path is a directory beging deleting each file and sub folder
 				} else if (is_dir(path)) {
-					files = {};
+					let files = [];
 
 					// Make path into an array
-					path = array(path);
+					path = [path];
 
 					// While the path array is still populated keep looping through
-					while (count(path) != 0) {
-						next = array_shift(path);
+					while (path.length != 0) {
+						let next = (path.shift()).replaceAll('\\', '/');
+						for (let file of require('glob').sync(next)) {
 
-						for (glob(next) of file) {
 							// If directory add to path array
 							if (is_dir(file)) {
-								path.push(file + '/*';
+								path.push(file + '/*');
 							}
 
 							// Add the file to the files to be deleted array
-							files.push(file;
+							files.push(file);
 						}
 					}
 
 					// Reverse sort the file array
-					rsort(files);
-
+					files = files.reverse();
 					for (let file of files) {
 						// If file just delete
 						if (is_file(file)) {
-							unlink(file);
+							fs.unlinkSync(file);
 
-						// If directory use the remove directory function
+							// If directory use the remove directory function
 						} else if (is_dir(file)) {
-							rmdir(file);
+							fs.rmdirSync(file);
 						}
 					}
 				}

@@ -6,7 +6,7 @@ module.exports = class ControllerCatalogManufacturer extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('catalog/manufacturer',this);
+		this.load.model('catalog/manufacturer', this);
 
 		await this.getList();
 	}
@@ -16,14 +16,14 @@ module.exports = class ControllerCatalogManufacturer extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('catalog/manufacturer',this);
+		this.load.model('catalog/manufacturer', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_catalog_manufacturer.addManufacturer(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -36,7 +36,7 @@ module.exports = class ControllerCatalogManufacturer extends Controller {
 			if ((this.request.get['page'])) {
 				url += '&page=' + this.request.get['page'];
 			}
-
+			await this.session.save(this.session.data);
 			this.response.setRedirect(await this.url.link('catalog/manufacturer', 'user_token=' + this.session.data['user_token'] + url, true));
 		}
 
@@ -48,14 +48,14 @@ module.exports = class ControllerCatalogManufacturer extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('catalog/manufacturer',this);
+		this.load.model('catalog/manufacturer', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_catalog_manufacturer.editManufacturer(this.request.get['manufacturer_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -68,7 +68,7 @@ module.exports = class ControllerCatalogManufacturer extends Controller {
 			if ((this.request.get['page'])) {
 				url += '&page=' + this.request.get['page'];
 			}
-
+			await this.session.save(this.session.data);
 			this.response.setRedirect(await this.url.link('catalog/manufacturer', 'user_token=' + this.session.data['user_token'] + url, true));
 		}
 
@@ -80,17 +80,17 @@ module.exports = class ControllerCatalogManufacturer extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('catalog/manufacturer',this);
+		this.load.model('catalog/manufacturer', this);
 
 		if ((this.request.post['selected']) && await this.validateDelete()) {
-this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
+			this.request.post['selected'] = Array.isArray(this.request.post['selected']) ? this.request.post['selected'] : [this.request.post['selected']]
 			for (let manufacturer_id of this.request.post['selected']) {
 				await this.model_catalog_manufacturer.deleteManufacturer(manufacturer_id);
 			}
 
 			this.session.data['success'] = this.language.get('text_success');
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -103,7 +103,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			if ((this.request.get['page'])) {
 				url += '&page=' + this.request.get['page'];
 			}
-
+			await this.session.save(this.session.data);
 			this.response.setRedirect(await this.url.link('catalog/manufacturer', 'user_token=' + this.session.data['user_token'] + url, true));
 		}
 
@@ -111,25 +111,21 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 	}
 
 	async getList() {
+		const data = {};
+		let sort = 'name';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
-		} else {
-			sort = 'name';
 		}
-
+		let order = 'ASC';
 		if ((this.request.get['order'])) {
 			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
 		}
-
+		let page = 1;
 		if ((this.request.get['page'])) {
-			page = this.request.get['page'];
-		} else {
-			page = 1;
+			page = Number(this.request.get['page']);
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -146,37 +142,37 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('catalog/manufacturer', 'user_token=' + this.session.data['user_token'] + url, true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('catalog/manufacturer', 'user_token=' + this.session.data['user_token'] + url, true)
 		});
 
 		data['add'] = await this.url.link('catalog/manufacturer/add', 'user_token=' + this.session.data['user_token'] + url, true);
 		data['delete'] = await this.url.link('catalog/manufacturer/delete', 'user_token=' + this.session.data['user_token'] + url, true);
 
-		data['manufacturers'] = {};
+		data['manufacturers'] = [];
 
-		filter_data = array(
-			'sort'  : sort,
-			'order' : order,
-			'start' : (page - 1) * Number(this.config.get('config_limit_admin')),
-			'limit' : Number(this.config.get('config_limit_admin'))
-		});
+		let filter_data = {
+			'sort': sort,
+			'order': order,
+			'start': (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit': Number(this.config.get('config_limit_admin'))
+		};
 
-		manufacturer_total = await this.model_catalog_manufacturer.getTotalManufacturers();
+		const manufacturer_total = await this.model_catalog_manufacturer.getTotalManufacturers();
 
-		results = await this.model_catalog_manufacturer.getManufacturers(filter_data);
+		const results = await this.model_catalog_manufacturer.getManufacturers(filter_data);
 
 		for (let result of results) {
 			data['manufacturers'].push({
-				'manufacturer_id' : result['manufacturer_id'],
-				'name'            : result['name'],
-				'sort_order'      : result['sort_order'],
-				'edit'            : await this.url.link('catalog/manufacturer/edit', 'user_token=' + this.session.data['user_token'] + '&manufacturer_id=' + result['manufacturer_id'] + url, true)
+				'manufacturer_id': result['manufacturer_id'],
+				'name': result['name'],
+				'sort_order': result['sort_order'],
+				'edit': await this.url.link('catalog/manufacturer/edit', 'user_token=' + this.session.data['user_token'] + '&manufacturer_id=' + result['manufacturer_id'] + url, true)
 			});
 		}
 
@@ -189,7 +185,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		if ((this.session.data['success'])) {
 			data['success'] = this.session.data['success'];
 
-			delete this.session.data['success']);
+			delete this.session.data['success'];
 		} else {
 			data['success'] = '';
 		}
@@ -197,7 +193,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		if ((this.request.post['selected'])) {
 			data['selected'] = this.request.post['selected'];
 		} else {
-			data['selected'] = {};
+			data['selected'] = [];
 		}
 
 		url = '';
@@ -225,7 +221,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			url += '&order=' + this.request.get['order'];
 		}
 
-		pagination = new Pagination();
+		const pagination = new Pagination();
 		pagination.total = manufacturer_total;
 		pagination.page = page;
 		pagination.limit = Number(this.config.get('config_limit_admin'));
@@ -241,11 +237,12 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		data['header'] = await this.load.controller('common/header');
 		data['column_left'] = await this.load.controller('common/column_left');
 		data['footer'] = await this.load.controller('common/footer');
-
+		await this.session.save(this.session.data);
 		this.response.setOutput(await this.load.view('catalog/manufacturer_list', data));
 	}
 
 	async getForm() {
+		const data = {};
 		data['text_form'] = !(this.request.get['manufacturer_id']) ? this.language.get('text_add') : this.language.get('text_edit');
 
 		if ((this.error['warning'])) {
@@ -266,7 +263,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			data['error_keyword'] = '';
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -283,13 +280,13 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('catalog/manufacturer', 'user_token=' + this.session.data['user_token'] + url, true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('catalog/manufacturer', 'user_token=' + this.session.data['user_token'] + url, true)
 		});
 
 		if (!(this.request.get['manufacturer_id'])) {
@@ -299,7 +296,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		}
 
 		data['cancel'] = await this.url.link('catalog/manufacturer', 'user_token=' + this.session.data['user_token'] + url, true);
-
+		let manufacturer_info;
 		if ((this.request.get['manufacturer_id']) && (this.request.server['method'] != 'POST')) {
 			manufacturer_info = await this.model_catalog_manufacturer.getManufacturer(this.request.get['manufacturer_id']);
 		}
@@ -314,21 +311,21 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			data['name'] = '';
 		}
 
-		this.load.model('setting/store',this);
+		this.load.model('setting/store', this);
 
-		data['stores'] = {};
+		data['stores'] = [];
 
 		data['stores'].push({
-			'store_id' : 0,
-			'name'     : this.language.get('text_default')
+			'store_id': 0,
+			'name': this.language.get('text_default')
 		});
 
-		stores = await this.model_setting_store.getStores();
+		const stores = await this.model_setting_store.getStores();
 
 		for (let store of stores) {
 			data['stores'].push({
-				'store_id' : store['store_id'],
-				'name'     : store['name']
+				'store_id': store['store_id'],
+				'name': store['name']
 			});
 		}
 
@@ -337,7 +334,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		} else if ((this.request.get['manufacturer_id'])) {
 			data['manufacturer_store'] = await this.model_catalog_manufacturer.getManufacturerStores(this.request.get['manufacturer_id']);
 		} else {
-			data['manufacturer_store'] = array(0);
+			data['manufacturer_store'] = [0];
 		}
 
 		if ((this.request.post['image'])) {
@@ -348,7 +345,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			data['image'] = '';
 		}
 
-		this.load.model('tool/image',this);
+		this.load.model('tool/image', this);
 
 		if ((this.request.post['image']) && is_file(DIR_IMAGE + this.request.post['image'])) {
 			data['thumb'] = await this.model_tool_image.resize(this.request.post['image'], 100, 100);
@@ -368,7 +365,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			data['sort_order'] = '';
 		}
 
-		this.load.model('localisation/language',this);
+		this.load.model('localisation/language', this);
 
 		data['languages'] = await this.model_localisation_language.getLanguages();
 
@@ -397,19 +394,23 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		}
 
 		if (this.request.post['manufacturer_seo_url']) {
-			this.load.model('design/seo_url',this);
-			
-			for (let [store_id , language] of Object.entries(this.request.post['manufacturer_seo_url'])) {
-				for (let [language_id , keyword] of Object.entries(language)) {
+			this.load.model('design/seo_url', this);
+
+			for (let [store_id, language] of Object.entries(this.request.post['manufacturer_seo_url'])) {
+				for (let [language_id, keyword] of Object.entries(language)) {
 					if ((keyword)) {
-						if (count(array_keys(language, keyword)) > 1) {
+						if (Object.keys(language).filter(key => language[key] === keyword).length > 1) {
+							this.error.keyword = this.error.keyword || {};
+							this.error.keyword[store_id] = this.error.keyword[store_id] || {};
 							this.error['keyword'][store_id][language_id] = this.language.get('error_unique');
 						}
 
-						seo_urls = await this.model_design_seo_url.getSeoUrlsByKeyword(keyword);
+						const seo_urls = await this.model_design_seo_url.getSeoUrlsByKeyword(keyword);
 
-						for (seo_urls of seo_url) {
+						for (let seo_url of seo_urls) {
 							if ((seo_url['store_id'] == store_id) && (!(this.request.get['manufacturer_id']) || ((seo_url['query'] != 'manufacturer_id=' + this.request.get['manufacturer_id'])))) {
+								this.error['keyword'] = this.error['keyword'] || {};
+								this.error['keyword'][store_id] = this.error['keyword'][store_id] || {};
 								this.error['keyword'][store_id][language_id] = this.language.get('error_keyword');
 							}
 						}
@@ -418,7 +419,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			}
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 
 	async validateDelete() {
@@ -426,49 +427,43 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		this.load.model('catalog/product',this);
+		this.load.model('catalog/product', this);
+		this.request.post['selected'] = Array.isArray(this.request.post['selected']) ? this.request.post['selected'] : [this.request.post['selected']];
 
 		for (let manufacturer_id of this.request.post['selected']) {
-			product_total = await this.model_catalog_product.getTotalProductsByManufacturerId(manufacturer_id);
+			const product_total = await this.model_catalog_product.getTotalProductsByManufacturerId(manufacturer_id);
 
 			if (product_total) {
 				this.error['warning'] = sprintf(this.language.get('error_product'), product_total);
 			}
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 
 	async autocomplete() {
-		json = {};
+		let json = {};
 
 		if ((this.request.get['filter_name'])) {
-			this.load.model('catalog/manufacturer',this);
+			this.load.model('catalog/manufacturer', this);
 
-			filter_data = array(
-				'filter_name' : this.request.get['filter_name'],
-				'start'       : 0,
-				'limit'       : 5
-			});
+			let filter_data = {
+				'filter_name': this.request.get['filter_name'],
+				'start': 0,
+				'limit': 5
+			};
 
-			results = await this.model_catalog_manufacturer.getManufacturers(filter_data);
+			const results = await this.model_catalog_manufacturer.getManufacturers(filter_data);
 
 			for (let result of results) {
 				json.push({
-					'manufacturer_id' : result['manufacturer_id'],
-					'name'            : strip_tags(html_entity_decode(result['name']))
+					'manufacturer_id': result['manufacturer_id'],
+					'name': strip_tags(html_entity_decode(result['name']))
 				});
 			}
 		}
 
-		sort_order = {};
-
-		for (json of key : value) {
-			sort_order[key] = value['name'];
-		}
-
-		array_multisort(sort_order, SORT_ASC, json);
-
+		json = json.sort((a, b) => a.name - b.name);
 		this.response.addHeader('Content-Type: application/json');
 		this.response.setOutput(json);
 	}

@@ -17,7 +17,7 @@ module.exports = class ControllerReportOnline extends Controller {
 		}
 
 		if ((this.request.get['page'])) {
-			page = this.request.get['page'];
+			page = Number(this.request.get['page']);
 		} else {
 			page = 1;
 		}

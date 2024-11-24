@@ -262,7 +262,7 @@ module.exports = class ControllerCatalogProduct extends Controller {
 		}
 		let page = 1;
 		if ((this.request.get['page'])) {
-			page = this.request.get['page'];
+			page = Number(this.request.get['page']);
 		} else {
 			page = 1;
 		}
@@ -674,7 +674,7 @@ module.exports = class ControllerCatalogProduct extends Controller {
 		} else if ((this.request.get['product_id'])) {
 			data['product_store'] = await this.model_catalog_product.getProductStores(this.request.get['product_id']);
 		} else {
-			data['product_store'] = array(0);
+			data['product_store'] = [0];
 		}
 
 		if ((this.request.post['shipping'])) {

@@ -6,7 +6,7 @@ module.exports = class ControllerCatalogRecurring extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('catalog/recurring',this);
+		this.load.model('catalog/recurring', this);
 
 		await this.getList();
 	}
@@ -16,14 +16,14 @@ module.exports = class ControllerCatalogRecurring extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('catalog/recurring',this);
+		this.load.model('catalog/recurring', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_catalog_recurring.addRecurring(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -36,7 +36,7 @@ module.exports = class ControllerCatalogRecurring extends Controller {
 			if ((this.request.get['page'])) {
 				url += '&page=' + this.request.get['page'];
 			}
-
+			await this.session.save(this.session.data);
 			this.response.setRedirect(await this.url.link('catalog/recurring', 'user_token=' + this.session.data['user_token'] + url, true));
 		}
 
@@ -48,14 +48,14 @@ module.exports = class ControllerCatalogRecurring extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('catalog/recurring',this);
+		this.load.model('catalog/recurring', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_catalog_recurring.editRecurring(this.request.get['recurring_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -68,7 +68,7 @@ module.exports = class ControllerCatalogRecurring extends Controller {
 			if ((this.request.get['page'])) {
 				url += '&page=' + this.request.get['page'];
 			}
-
+			await this.session.save(this.session.data);
 			this.response.setRedirect(await this.url.link('catalog/recurring', 'user_token=' + this.session.data['user_token'] + url, true));
 		}
 
@@ -80,17 +80,17 @@ module.exports = class ControllerCatalogRecurring extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('catalog/recurring',this);
+		this.load.model('catalog/recurring', this);
 
 		if ((this.request.post['selected']) && await this.validateDelete()) {
-this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
-			for (this.request.post['selected'] of recurring_id) {
+			this.request.post['selected'] = Array.isArray(this.request.post['selected']) ? this.request.post['selected'] : [this.request.post['selected']]
+			for (let recurring_id of this.request.post['selected']) {
 				await this.model_catalog_recurring.deleteRecurring(recurring_id);
 			}
 
 			this.session.data['success'] = this.language.get('text_success');
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -103,7 +103,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			if ((this.request.get['page'])) {
 				url += '&page=' + this.request.get['page'];
 			}
-
+			await this.session.save(this.session.data);
 			this.response.setRedirect(await this.url.link('catalog/recurring', 'user_token=' + this.session.data['user_token'] + url, true));
 		}
 
@@ -115,17 +115,17 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('catalog/recurring',this);
+		this.load.model('catalog/recurring', this);
 
 		if ((this.request.post['selected']) && await this.validateCopy()) {
-this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
-			for (this.request.post['selected'] of recurring_id) {
+			this.request.post['selected'] = Array.isArray(this.request.post['selected']) ? this.request.post['selected'] : [this.request.post['selected']]
+			for (let recurring_id of this.request.post['selected']) {
 				await this.model_catalog_recurring.copyRecurring(recurring_id);
 			}
 
 			this.session.data['success'] = this.language.get('text_success');
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -138,7 +138,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			if ((this.request.get['page'])) {
 				url += '&page=' + this.request.get['page'];
 			}
-
+			await this.session.save(this.session.data);
 			this.response.setRedirect(await this.url.link('catalog/recurring', 'user_token=' + this.session.data['user_token'] + url, true));
 		}
 
@@ -146,25 +146,21 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 	}
 
 	async getList() {
+		const data = {};
+		let sort = 'rd.name';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
-		} else {
-			sort = 'rd.name';
 		}
-
+		let order = 'ASC';
 		if ((this.request.get['order'])) {
 			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
 		}
-
+		let page = 1;
 		if ((this.request.get['page'])) {
-			page = this.request.get['page'];
-		} else {
-			page = 1;
+			page = Number(this.request.get['page']);
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -181,38 +177,38 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('catalog/recurring', 'user_token=' + this.session.data['user_token'] + url, true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('catalog/recurring', 'user_token=' + this.session.data['user_token'] + url, true)
 		});
 
 		data['add'] = await this.url.link('catalog/recurring/add', 'user_token=' + this.session.data['user_token'] + url, true);
 		data['copy'] = await this.url.link('catalog/recurring/copy', 'user_token=' + this.session.data['user_token'] + url, true);
 		data['delete'] = await this.url.link('catalog/recurring/delete', 'user_token=' + this.session.data['user_token'] + url, true);
 
-		data['recurrings'] = {};
+		data['recurrings'] = [];
 
-		filter_data = array(
-			'sort'  : sort,
-			'order' : order,
-			'start' : (page - 1) * Number(this.config.get('config_limit_admin')),
-			'limit' : Number(this.config.get('config_limit_admin'))
-		});
+		let filter_data = {
+			'sort': sort,
+			'order': order,
+			'start': (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit': Number(this.config.get('config_limit_admin'))
+		};
 
-		recurring_total = await this.model_catalog_recurring.getTotalRecurrings();
+		const recurring_total = await this.model_catalog_recurring.getTotalRecurrings();
 
-		results = await this.model_catalog_recurring.getRecurrings(filter_data);
+		const results = await this.model_catalog_recurring.getRecurrings(filter_data);
 
 		for (let result of results) {
 			data['recurrings'].push({
-				'recurring_id' : result['recurring_id'],
-				'name'         : result['name'],
-				'sort_order'   : result['sort_order'],
-				'edit'         : await this.url.link('catalog/recurring/edit', 'user_token=' + this.session.data['user_token'] + '&recurring_id=' + result['recurring_id'] + url, true)
+				'recurring_id': result['recurring_id'],
+				'name': result['name'],
+				'sort_order': result['sort_order'],
+				'edit': await this.url.link('catalog/recurring/edit', 'user_token=' + this.session.data['user_token'] + '&recurring_id=' + result['recurring_id'] + url, true)
 			});
 		}
 
@@ -225,7 +221,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		if ((this.session.data['success'])) {
 			data['success'] = this.session.data['success'];
 
-			delete this.session.data['success']);
+			delete this.session.data['success'];
 		} else {
 			data['success'] = '';
 		}
@@ -233,7 +229,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		if ((this.request.post['selected'])) {
 			data['selected'] = this.request.post['selected'];
 		} else {
-			data['selected'] = {};
+			data['selected'] = [];
 		}
 
 		url = '';
@@ -261,7 +257,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			url += '&order=' + this.request.get['order'];
 		}
 
-		pagination = new Pagination();
+		const pagination = new Pagination();
 		pagination.total = recurring_total;
 		pagination.page = page;
 		pagination.limit = Number(this.config.get('config_limit_admin'));
@@ -277,11 +273,12 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		data['header'] = await this.load.controller('common/header');
 		data['column_left'] = await this.load.controller('common/column_left');
 		data['footer'] = await this.load.controller('common/footer');
-
+		await this.session.save(this.session.data);
 		this.response.setOutput(await this.load.view('catalog/recurring_list', data));
 	}
 
 	async getForm() {
+		const data = {};
 		data['text_form'] = !(this.request.get['recurring_id']) ? this.language.get('text_add') : this.language.get('text_edit');
 
 		if ((this.error['warning'])) {
@@ -296,7 +293,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			data['error_name'] = {};
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -313,13 +310,13 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('catalog/recurring', 'user_token=' + this.session.data['user_token'] + url, true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('catalog/recurring', 'user_token=' + this.session.data['user_token'] + url, true)
 		});
 
 		if (!(this.request.get['recurring_id'])) {
@@ -329,14 +326,14 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		}
 
 		data['cancel'] = await this.url.link('catalog/recurring', 'user_token=' + this.session.data['user_token'] + url, true);
-
+		let recurring_info;
 		if ((this.request.get['recurring_id']) && (this.request.server['method'] != 'POST')) {
 			recurring_info = await this.model_catalog_recurring.getRecurring(this.request.get['recurring_id']);
 		}
 
 		data['user_token'] = this.session.data['user_token'];
 
-		this.load.model('localisation/language',this);
+		this.load.model('localisation/language', this);
 
 		data['languages'] = await this.model_localisation_language.getLanguages();
 
@@ -356,31 +353,31 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			data['price'] = 0;
 		}
 
-		data['frequencies'] = {};
+		data['frequencies'] = [];
 
 		data['frequencies'].push({
-			'text'  : this.language.get('text_day'),
-			'value' : 'day'
+			'text': this.language.get('text_day'),
+			'value': 'day'
 		});
 
 		data['frequencies'].push({
-			'text'  : this.language.get('text_week'),
-			'value' : 'week'
+			'text': this.language.get('text_week'),
+			'value': 'week'
 		});
 
 		data['frequencies'].push({
-			'text'  : this.language.get('text_semi_month'),
-			'value' : 'semi_month'
+			'text': this.language.get('text_semi_month'),
+			'value': 'semi_month'
 		});
 
 		data['frequencies'].push({
-			'text'  : this.language.get('text_month'),
-			'value' : 'month'
+			'text': this.language.get('text_month'),
+			'value': 'month'
 		});
 
 		data['frequencies'].push({
-			'text'  : this.language.get('text_year'),
-			'value' : 'year'
+			'text': this.language.get('text_year'),
+			'value': 'year'
 		});
 
 		if ((this.request.post['frequency'])) {
@@ -474,8 +471,9 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		for (this.request.post['recurring_description'] of language_id : value) {
+		for (let [language_id, value] of Object.entries(this.request.post['recurring_description'])) {
 			if ((oc_strlen(value['name']) < 3) || (oc_strlen(value['name']) > 255)) {
+				this.error['name'] = this.error['name'] || {};
 				this.error['name'][language_id] = this.language.get('error_name');
 			}
 		}
@@ -484,7 +482,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			this.error['warning'] = this.language.get('error_warning');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 
 	async validateDelete() {
@@ -492,17 +490,18 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		this.load.model('catalog/product',this);
+		this.load.model('catalog/product', this);
+		this.request.post['selected'] = Array.isArray(this.request.post['selected']) ? this.request.post['selected'] : [this.request.post['selected']];
 
-		for (this.request.post['selected'] of recurring_id) {
-			product_total = await this.model_catalog_product.getTotalProductsByProfileId(recurring_id);
+		for (let recurring_id of this.request.post['selected']) {
+			const product_total = await this.model_catalog_product.getTotalProductsByProfileId(recurring_id);
 
 			if (product_total) {
 				this.error['warning'] = sprintf(this.language.get('error_product'), product_total);
 			}
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 
 	async validateCopy() {
@@ -510,6 +509,6 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 }

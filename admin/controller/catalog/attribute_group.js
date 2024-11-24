@@ -36,7 +36,7 @@ module.exports = class ControllerCatalogAttributeGroup extends Controller {
 			if ((this.request.get['page'])) {
 				url += '&page=' + this.request.get['page'];
 			}
-
+			await this.session.save(this.session.data);
 			this.response.setRedirect(await this.url.link('catalog/attribute_group', 'user_token=' + this.session.data['user_token'] + url, true));
 		}
 
@@ -68,7 +68,7 @@ module.exports = class ControllerCatalogAttributeGroup extends Controller {
 			if ((this.request.get['page'])) {
 				url += '&page=' + this.request.get['page'];
 			}
-
+			await this.session.save(this.session.data);
 			this.response.setRedirect(await this.url.link('catalog/attribute_group', 'user_token=' + this.session.data['user_token'] + url, true));
 		}
 
@@ -83,8 +83,8 @@ module.exports = class ControllerCatalogAttributeGroup extends Controller {
 		this.load.model('catalog/attribute_group', this);
 
 		if ((this.request.post['selected']) && await this.validateDelete()) {
-this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
-			for (this.request.post['selected'] of attribute_group_id) {
+			this.request.post['selected'] = Array.isArray(this.request.post['selected']) ? this.request.post['selected'] : [this.request.post['selected']]
+			for (let attribute_group_id of this.request.post['selected']) {
 				await this.model_catalog_attribute_group.deleteAttributeGroup(attribute_group_id);
 			}
 
@@ -103,7 +103,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			if ((this.request.get['page'])) {
 				url += '&page=' + this.request.get['page'];
 			}
-
+			await this.session.save(this.session.data);
 			this.response.setRedirect(await this.url.link('catalog/attribute_group', 'user_token=' + this.session.data['user_token'] + url, true));
 		}
 
@@ -111,25 +111,21 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 	}
 
 	async getList() {
+		const data = {};
+		let sort = 'agd.name';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
-		} else {
-			sort = 'agd.name';
 		}
-
+		let order = 'ASC';
 		if ((this.request.get['order'])) {
 			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
 		}
-
+		let page = 1;
 		if ((this.request.get['page'])) {
-			page = this.request.get['page'];
-		} else {
-			page = 1;
+			page = Number(this.request.get['page']);
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -146,37 +142,37 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('catalog/attribute_group', 'user_token=' + this.session.data['user_token'] + url, true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('catalog/attribute_group', 'user_token=' + this.session.data['user_token'] + url, true)
 		});
 
 		data['add'] = await this.url.link('catalog/attribute_group/add', 'user_token=' + this.session.data['user_token'] + url, true);
 		data['delete'] = await this.url.link('catalog/attribute_group/delete', 'user_token=' + this.session.data['user_token'] + url, true);
 
-		data['attribute_groups'] = {};
+		data['attribute_groups'] = [];
 
-		filter_data = array(
-			'sort'  : sort,
-			'order' : order,
-			'start' :(page - 1) * Number(this.config.get('config_limit_admin')),
-			'limit' : Number(this.config.get('config_limit_admin'))
-		});
+		let filter_data = {
+			'sort': sort,
+			'order': order,
+			'start': (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit': Number(this.config.get('config_limit_admin'))
+		};
 
-		attribute_group_total = await this.model_catalog_attribute_group.getTotalAttributeGroups();
+		const attribute_group_total = await this.model_catalog_attribute_group.getTotalAttributeGroups();
 
-		results = await this.model_catalog_attribute_group.getAttributeGroups(filter_data);
+		const results = await this.model_catalog_attribute_group.getAttributeGroups(filter_data);
 
 		for (let result of results) {
 			data['attribute_groups'].push({
-				'attribute_group_id' : result['attribute_group_id'],
-				'name'               : result['name'],
-				'sort_order'         : result['sort_order'],
-				'edit'               : await this.url.link('catalog/attribute_group/edit', 'user_token=' + this.session.data['user_token'] + '&attribute_group_id=' + result['attribute_group_id'] + url, true)
+				'attribute_group_id': result['attribute_group_id'],
+				'name': result['name'],
+				'sort_order': result['sort_order'],
+				'edit': await this.url.link('catalog/attribute_group/edit', 'user_token=' + this.session.data['user_token'] + '&attribute_group_id=' + result['attribute_group_id'] + url, true)
 			});
 		}
 
@@ -189,7 +185,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		if ((this.session.data['success'])) {
 			data['success'] = this.session.data['success'];
 
-			delete this.session.data['success']);
+			delete this.session.data['success'];
 		} else {
 			data['success'] = '';
 		}
@@ -197,7 +193,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		if ((this.request.post['selected'])) {
 			data['selected'] = this.request.post['selected'];
 		} else {
-			data['selected'] = {};
+			data['selected'] = [];
 		}
 
 		url = '';
@@ -225,7 +221,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			url += '&order=' + this.request.get['order'];
 		}
 
-		pagination = new Pagination();
+		const pagination = new Pagination();
 		pagination.total = attribute_group_total;
 		pagination.page = page;
 		pagination.limit = Number(this.config.get('config_limit_admin'));
@@ -241,11 +237,12 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		data['header'] = await this.load.controller('common/header');
 		data['column_left'] = await this.load.controller('common/column_left');
 		data['footer'] = await this.load.controller('common/footer');
-
+		await this.session.save(this.session.data);
 		this.response.setOutput(await this.load.view('catalog/attribute_group_list', data));
 	}
 
 	async getForm() {
+		const data = {};
 		data['text_form'] = !(this.request.get['attribute_group_id']) ? this.language.get('text_add') : this.language.get('text_edit');
 
 		if ((this.error['warning'])) {
@@ -260,7 +257,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			data['error_name'] = {};
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -277,13 +274,13 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('catalog/attribute_group', 'user_token=' + this.session.data['user_token'] + url, true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('catalog/attribute_group', 'user_token=' + this.session.data['user_token'] + url, true)
 		});
 
 		if (!(this.request.get['attribute_group_id'])) {
@@ -293,18 +290,18 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		}
 
 		data['cancel'] = await this.url.link('catalog/attribute_group', 'user_token=' + this.session.data['user_token'] + url, true);
-
+		let attribute_group_info;
 		if ((this.request.get['attribute_group_id']) && (this.request.server['method'] != 'POST')) {
 			attribute_group_info = await this.model_catalog_attribute_group.getAttributeGroup(this.request.get['attribute_group_id']);
 		}
 
-		this.load.model('localisation/language',this);
+		this.load.model('localisation/language', this);
 
 		data['languages'] = await this.model_localisation_language.getLanguages();
 
 		if ((this.request.post['attribute_group_description'])) {
 			data['attribute_group_description'] = this.request.post['attribute_group_description'];
-		} else if((this.request.get['attribute_group_id'])) {
+		} else if ((this.request.get['attribute_group_id'])) {
 			data['attribute_group_description'] = await this.model_catalog_attribute_group.getAttributeGroupDescriptions(this.request.get['attribute_group_id']);
 		} else {
 			data['attribute_group_description'] = {};
@@ -312,7 +309,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 
 		if ((this.request.post['sort_order'])) {
 			data['sort_order'] = this.request.post['sort_order'];
-		} else if((attribute_group_info)) {
+		} else if ((attribute_group_info)) {
 			data['sort_order'] = attribute_group_info['sort_order'];
 		} else {
 			data['sort_order'] = '';
@@ -330,13 +327,14 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		for (this.request.post['attribute_group_description'] of language_id : value) {
+		for (let [language_id, value] of Object.entries(this.request.post['attribute_group_description'])) {
 			if ((oc_strlen(value['name']) < 1) || (oc_strlen(value['name']) > 64)) {
+				this.error['name'] = this.error['name'] || {};
 				this.error['name'][language_id] = this.language.get('error_name');
 			}
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 
 	async validateDelete() {
@@ -344,16 +342,17 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		this.load.model('catalog/attribute',this);
+		this.load.model('catalog/attribute', this);
+		this.request.post['selected'] = Array.isArray(this.request.post['selected']) ? this.request.post['selected'] : [this.request.post['selected']];
 
-		for (this.request.post['selected'] of attribute_group_id) {
-			attribute_total = await this.model_catalog_attribute.getTotalAttributesByAttributeGroupId(attribute_group_id);
+		for (let attribute_group_id of this.request.post['selected']) {
+			const attribute_total = await this.model_catalog_attribute.getTotalAttributesByAttributeGroupId(attribute_group_id);
 
 			if (attribute_total) {
 				this.error['warning'] = sprintf(this.language.get('error_attribute'), attribute_total);
 			}
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 }

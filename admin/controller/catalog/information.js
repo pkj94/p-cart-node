@@ -124,7 +124,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		}
 
 		if ((this.request.get['page'])) {
-			page = this.request.get['page'];
+			page = Number(this.request.get['page']);
 		} else {
 			page = 1;
 		}
@@ -197,7 +197,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		if ((this.request.post['selected'])) {
 			data['selected'] = this.request.post['selected'];
 		} else {
-			data['selected'] = {};
+			data['selected'] = [];
 		}
 
 		url = '';
@@ -353,7 +353,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		} else if ((this.request.get['information_id'])) {
 			data['information_store'] = await this.model_catalog_information.getInformationStores(this.request.get['information_id']);
 		} else {
-			data['information_store'] = array(0);
+			data['information_store'] = [0];
 		}
 
 		if ((this.request.post['bottom'])) {
@@ -438,7 +438,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 
 						seo_urls = await this.model_design_seo_url.getSeoUrlsByKeyword(keyword);
 
-						for (seo_urls of seo_url) {
+						for (let seo_url of seo_urls) {
 							if ((seo_url['store_id'] == store_id) && (!(this.request.get['information_id']) || (seo_url['query'] != 'information_id=' + this.request.get['information_id']))) {
 								this.error['keyword'][store_id][language_id] = this.language.get('error_keyword');
 							}
@@ -461,6 +461,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		}
 
 		this.load.model('setting/store',this);
+		this.request.post['selected']  = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']];
 
 		for (let information_id of this.request.post['selected']) {
 			if (this.config.get('config_account_id') == information_id) {

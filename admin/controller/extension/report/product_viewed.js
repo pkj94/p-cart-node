@@ -74,7 +74,7 @@ module.exports = class ControllerExtensionReportProductViewed extends Controller
 		await this.load.language('extension/report/product_viewed');
 
 		if ((this.request.get['page'])) {
-			page = this.request.get['page'];
+			page = Number(this.request.get['page']);
 		} else {
 			page = 1;
 		}

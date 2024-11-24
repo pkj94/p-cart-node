@@ -135,7 +135,7 @@ module.exports = class ControllerExtensionFeedGoogleBase extends Controller {
 		await this.load.language('extension/feed/google_base');
 
 		if ((this.request.get['page'])) {
-			page = this.request.get['page'];
+			page = Number(this.request.get['page']);
 		} else {
 			page = 1;
 		}

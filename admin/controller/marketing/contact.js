@@ -74,7 +74,7 @@ module.exports = class ControllerMarketingContact extends Controller {
 				store_email = (setting['config_email']) ? setting['config_email'] : this.config.get('config_email');
 
 				if ((this.request.get['page'])) {
-					page = this.request.get['page'];
+					page = Number(this.request.get['page']);
 				} else {
 					page = 1;
 				}

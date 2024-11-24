@@ -456,7 +456,7 @@ class ControllerExtensionPaymentSquareup extends Controller {
         this.load.model('extension/payment/squareup');
 
         if ((this.request.get['page'])) {
-            page = this.request.get['page'];
+            page = Number(this.request.get['page']);
         } else {
             page = 1;
         }

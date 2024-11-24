@@ -124,7 +124,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		}
 
 		if ((this.request.get['page'])) {
-			page = this.request.get['page'];
+			page = Number(this.request.get['page']);
 		} else {
 			page = 1;
 		}
@@ -198,7 +198,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		if ((this.request.post['selected'])) {
 			data['selected'] = this.request.post['selected'];
 		} else {
-			data['selected'] = {};
+			data['selected'] = [];
 		}
 
 		url = '';
@@ -363,6 +363,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		this.load.model('setting/store',this);
 		this.load.model('customer/customer',this);
 		this.load.model('localisation/geo_zone');
+		this.request.post['selected']  = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']];
 
 		for (this.request.post['selected'] of zone_id) {
 			if (this.config.get('config_zone_id') == zone_id) {

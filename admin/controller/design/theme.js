@@ -42,7 +42,7 @@ module.exports = class ControllerDesignTheme extends Controller {
 		await this.load.language('design/theme');
 
 		if ((this.request.get['page'])) {
-			page = this.request.get['page'];
+			page = Number(this.request.get['page']);
 		} else {
 			page = 1;
 		}
