@@ -1,97 +1,80 @@
-module.exports = use Cardinity\Client;
-use Cardinity\Method\Payment;
-use Cardinity\Method\Refund;
+module.exports = class ModelExtensionPaymentCardinity extends Model {
 
-class ModelExtensionPaymentCardinity extends Model {
-	async getOrder(order_id) {
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "cardinity_order` WHERE `order_id` = '" + order_id + "' LIMIT 1");
-
-		return query.row;
+	async getOrder(orderId) {
+		const query = await this.db.query("SELECT * FROM `cardinity_order` WHERE `order_id` = '" + orderId + "' LIMIT 1");
+		return query.rows;
 	}
 
-	async createClient(credentials) {
-		return Client::create(array(
-			'consumerKey'    : credentials['key'],
-			'consumerSecret' : credentials['secret'],
-		));
+	createClient(credentials) {
+		return require('axios').create({
+			baseURL: 'https://api.cardinity.com/v1',
+			auth: {
+				username: credentials.key,
+				password: credentials.secret
+			}
+		});
 	}
 
 	async verifyCredentials(client) {
-		method = new Payment\GetAll(10);
-
 		try {
-			client.call(method);
-
-			return true;
-		} catch (Exception e) {
-			this.log(e.getMessage());
-
+			const response = await client.get('/payments?page=1&limit=10');
+			return response.status === 200;
+		} catch (error) {
+			this.log(error.message);
 			return false;
 		}
 	}
 
-	async getPayment(client, payment_id) {
-		method = new Payment\Get(payment_id);
-
+	async getPayment(client, paymentId) {
 		try {
-			payment = client.call(method);
-
-			return payment;
-		} catch (Exception e) {
-			this.log(e.getMessage());
-
+			const response = await client.get(`/payments/${paymentId}`);
+			return response.data;
+		} catch (error) {
+			this.log(error.message);
 			return false;
 		}
 	}
 
-	async getRefunds(client, payment_id) {
-		method = new Refund\GetAll(payment_id);
-
+	async getRefunds(client, paymentId) {
 		try {
-			refunds = client.call(method);
-
-			return refunds;
-		} catch (Exception e) {
-			this.log(e.getMessage());
-
+			const response = await client.get(`/payments/${paymentId}/refunds`);
+			return response.data;
+		} catch (error) {
+			this.log(error.message);
 			return false;
 		}
 	}
 
-	async refundPayment(client, payment_id, amount, description) {
-		method = new Refund\Create(payment_id, amount, description);
-
+	async refundPayment(client, paymentId, amount, description) {
 		try {
-			refund = client.call(method);
-
-			return refund;
-		} catch (Exception e) {
-			this.log(e.getMessage());
-
+			const response = await client.post(`/payments/${paymentId}/refunds`, { amount, description });
+			return response.data;
+		} catch (error) {
+			this.log(error.message);
 			return false;
 		}
 	}
 
-	async log(data) {
+	log(data) {
 		if (this.config.get('payment_cardinity_debug')) {
-			backtrace = debug_backtrace();
-			log = new Log('cardinity.log');
-			log.write('(' + backtrace[1]['class'] + '::' + backtrace[1]['function'] + ') - ' + print_r(data, true));
+			const backtrace = getStackTrace();
+			const log = new Log('cardinity.log');
+			log.write('(' + backtrace[1]['class'] + '::' + backtrace[1]['function'] + ') - ' + JSON.stringify(data, true));
 		}
 	}
 
 	async install() {
-		await this.db.query("
-			CREATE TABLE IF NOT EXISTS `" + DB_PREFIX + "cardinity_order` (
-			  `cardinity_order_id` INT(11) NOT NULL AUTO_INCREMENT,
-			  `order_id` INT(11) NOT NULL,
-			  `payment_id` VARCHAR(255),
-			  PRIMARY KEY (`cardinity_order_id`)
-			) ENGINE=MyISAM DEFAULT COLLATE=oc_general_ci;
-		");
+		await this.db.query(`
+      CREATE TABLE IF NOT EXISTS \`cardinity_order\` (
+        \`cardinity_order_id\` INT(11) NOT NULL AUTO_INCREMENT,
+        \`order_id\` INT(11) NOT NULL,
+        \`payment_id\` VARCHAR(255),
+        PRIMARY KEY (\`cardinity_order_id\`)
+      ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+    `);
 	}
 
 	async uninstall() {
-		await this.db.query("DROP TABLE IF EXISTS `" + DB_PREFIX + "cardinity_order`;");
+		await this.db.query("DROP TABLE IF EXISTS `cardinity_order`;");
 	}
 }

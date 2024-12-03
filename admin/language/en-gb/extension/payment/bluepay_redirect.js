@@ -6,7 +6,7 @@ module.exports = {
     text_extension: 'Extensions',
     text_success: 'Success: You have modified BluePay Redirect account details!',
     text_edit: 'Edit BluePay Redirect (Requires SSL)',
-    text_bluepay_redirect: 'border: 1px solid #EEEEEE," /></a>',
+    text_bluepay_redirect: '<a href="http://www.bluepay.com/preferred-partner/opencart" target="_blank"><img src="view/image/payment/bluepay.jpg" alt="BluePay Redirect" title="BluePay Redirect" style="border: 1px solid #EEEEEE," /></a>',
     text_sim: 'Simulator',
     text_test: 'Test',
     text_live: 'Live',

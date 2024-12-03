@@ -2,6 +2,7 @@ module.exports = class ControllerCatalogAttribute extends Controller {
 	error = {};
 
 	async index() {
+const data = {};
 		await this.load.language('catalog/attribute');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -22,6 +23,7 @@ module.exports = class ControllerCatalogAttribute extends Controller {
 			await this.model_catalog_attribute.addAttribute(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
 			let url = '';
 
@@ -54,6 +56,7 @@ module.exports = class ControllerCatalogAttribute extends Controller {
 			await this.model_catalog_attribute.editAttribute(this.request.get['attribute_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
 			let url = '';
 
@@ -89,6 +92,7 @@ module.exports = class ControllerCatalogAttribute extends Controller {
 			}
 
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
 			let url = '';
 
@@ -111,7 +115,7 @@ module.exports = class ControllerCatalogAttribute extends Controller {
 	}
 
 	async getList() {
-		const data = {};
+				const data = {};
 		let sort = 'ad.name';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];

@@ -225,7 +225,7 @@ $('input[name^=\'selected\']').on('change', function() {
 		$('#button-invoice').prop('disabled', false);
 	}
 
-	for (i = 0; i < selected.length; i++) {
+	for (let i = 0; i < selected.length; i++) {
 		if ($(selected[i]).parent().find('input[name^=\'shipping_code\']').val()) {
 			$('#button-shipping').prop('disabled', false);
 

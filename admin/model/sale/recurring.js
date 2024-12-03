@@ -5,33 +5,33 @@ module.exports = class ModelSaleRecurring extends Model {
 		let implode = [];
 
 		if ((data['filter_order_recurring_id'])) {
-			implode.push("or.order_recurring_id = " + data['filter_order_recurring_id'];
+			implode.push("or.order_recurring_id = " + data['filter_order_recurring_id']);
 		}
 
 		if ((data['filter_order_id'])) {
-			implode.push("or.order_id = " + data['filter_order_id'];
+			implode.push("or.order_id = " + data['filter_order_id']);
 		}
 
 		if ((data['filter_reference'])) {
-			implode.push("or.reference LIKE '" + this.db.escape(data['filter_reference']) + "%'";
+			implode.push("or.reference LIKE '" + this.db.escape(data['filter_reference']) + "%'");
 		}
 
 		if ((data['filter_customer'])) {
-			implode.push("CONCAT(o.firstname, ' ', o.lastname) LIKE '" + this.db.escape(data['filter_customer']) + "%'";
+			implode.push("CONCAT(o.firstname, ' ', o.lastname) LIKE '" + this.db.escape(data['filter_customer']) + "%'");
 		}
 
 		if ((data['filter_status'])) {
-			implode.push("or.status = " + data['filter_status'];
+			implode.push("or.status = " + data['filter_status']);
 		}
 
 		if ((data['filter_date_added'])) {
-			implode.push("DATE(or.date_added) = DATE('" + this.db.escape(data['filter_date_added']) + "')";
+			implode.push("DATE(or.date_added) = DATE('" + this.db.escape(data['filter_date_added']) + "')");
 		}
 
 		if (implode.length) {
 			sql += " WHERE " + implode.join(" AND ");
-		} 
-			 
+		}
+
 		let sort_data = [
 			'or.order_recurring_id',
 			'or.order_id',
@@ -39,7 +39,7 @@ module.exports = class ModelSaleRecurring extends Model {
 			'customer',
 			'or.status',
 			'or.date_added'
-		});
+		];
 
 		if ((data['sort']) && sort_data.includes(data['sort'])) {
 			sql += " ORDER BY " + data['sort'];
@@ -54,13 +54,13 @@ module.exports = class ModelSaleRecurring extends Model {
 		}
 
 		if ((data['start']) || (data['limit'])) {
-			data['start'] = data['start']||0;
-if (data['start'] < 0) {
+			data['start'] = data['start'] || 0;
+			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
@@ -79,11 +79,12 @@ if (data['limit'] < 1) {
 	}
 
 	async getRecurringTransactions(order_recurring_id) {
-		transactions = {};
+		const transactions = [];
 
 		const query = await this.db.query("SELECT amount, type, date_added FROM " + DB_PREFIX + "order_recurring_transaction WHERE order_recurring_id = " + order_recurring_id + " ORDER BY date_added DESC");
 
-		for (let result of query.rows ) {
+		for (let result of query.rows) {
+			let type = '';
 			switch (result['type']) {
 				case 0:
 					type = this.language.get('text_transaction_date_added');
@@ -121,16 +122,17 @@ if (data['limit'] < 1) {
 			}
 
 			transactions.push({
-				'date_added' : result['date_added'],
-				'amount'     : result['amount'],
-				'type'       : type
+				'date_added': result['date_added'],
+				'amount': result['amount'],
+				'type': type
 			});
 		}
 
 		return transactions;
 	}
 
-	private function getStatus(status) {
+	async getStatus(status) {
+		let result;
 		switch (status) {
 			case 1:
 				result = this.language.get('text_status_inactive');
@@ -157,42 +159,42 @@ if (data['limit'] < 1) {
 
 		return result;
 	}
-	
+
 	async getTotalRecurrings(data) {
 		let sql = "SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "order_recurring` `or` LEFT JOIN `" + DB_PREFIX + "order` o ON (`or`.order_id = `o`.order_id)";
-		
+
 		let implode = [];
 
 		if ((data['filter_order_recurring_id'])) {
-			implode.push("or.order_recurring_id = " + data['filter_order_recurring_id'];
+			implode.push("or.order_recurring_id = " + data['filter_order_recurring_id']);
 		}
 
 		if ((data['filter_order_id'])) {
-			implode.push("or.order_id = " + data['filter_order_id'];
+			implode.push("or.order_id = " + data['filter_order_id']);
 		}
 
 		if ((data['filter_payment_reference'])) {
-			implode.push(" or.reference LIKE '" + this.db.escape(data['filter_reference']) + "%'";
+			implode.push(" or.reference LIKE '" + this.db.escape(data['filter_reference']) + "%'");
 		}
 
 		if ((data['filter_customer'])) {
-			implode.push("CONCAT(o.firstname, ' ', o.lastname) LIKE '" + this.db.escape(data['filter_customer']) + "%'";
+			implode.push("CONCAT(o.firstname, ' ', o.lastname) LIKE '" + this.db.escape(data['filter_customer']) + "%'");
 		}
 
 		if ((data['filter_status'])) {
-			implode.push("or.status = " + data['filter_status'];
+			implode.push("or.status = " + data['filter_status']);
 		}
 
 		if ((data['filter_date_added'])) {
-			implode.push("DATE(or.date_added) = DATE('" + this.db.escape(data['filter_date_added']) + "')";
+			implode.push("DATE(or.date_added) = DATE('" + this.db.escape(data['filter_date_added']) + "')");
 		}
-		
+
 		if (implode.length) {
 			sql += " WHERE " + implode.join(" AND ");
-		} 
-		
+		}
+
 		const query = await this.db.query(sql);
 
 		return query.row['total'];
-	}	
+	}
 }

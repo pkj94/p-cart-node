@@ -2,6 +2,7 @@ const substr = require("locutus/php/strings/substr");
 
 module.exports = class ControllerStartupEvent extends Controller {
 	async index() {
+const data = {};
 		// Add events from the DB
 		this.load.model('setting/event', this);
 

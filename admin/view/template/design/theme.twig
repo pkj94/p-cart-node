@@ -76,13 +76,13 @@ $('select[name="store_id"]').on('change', function(e) {
 			html = '';
 
 			if (json['directory']) {
-				for (i = 0; i < json['directory'].length; i++) {
+				for (let i = 0; i < json['directory'].length; i++) {
 					html += '<a href="' + json['directory'][i]['path'] + '" class="list-group-item directory">' + json['directory'][i]['name'] + ' <i class="fa fa-arrow-right fa-fw pull-right"></i></a>';
 				}
 			}
 
 			if (json['file']) {
-				for (i = 0; i < json['file'].length; i++) {
+				for (let i = 0; i < json['file'].length; i++) {
 					html += '<a href="' + json['file'][i]['path'] + '" class="list-group-item file">' + json['file'][i]['name'] + ' <i class="fa fa-arrow-right fa-fw pull-right"></i></a>';
 				}
 			}
@@ -119,13 +119,13 @@ $('#path').on('click', 'a.directory', function(e) {
 			html = '';
 
 			if (json['directory']) {
-				for (i = 0; i < json['directory'].length; i++) {
+				for (let i = 0; i < json['directory'].length; i++) {
 					html += '<a href="' + json['directory'][i]['path'] + '" class="list-group-item directory">' + json['directory'][i]['name'] + ' <i class="fa fa-arrow-right fa-fw pull-right"></i></a>';
 				}
 			}
 
 			if (json['file']) {
-				for (i = 0; i < json['file'].length; i++) {
+				for (let i = 0; i < json['file'].length; i++) {
 					html += '<a href="' + json['file'][i]['path'] + '" class="list-group-item file">' + json['file'][i]['name'] + ' <i class="fa fa-arrow-right fa-fw pull-right"></i></a>';
 				}
 			}
@@ -309,8 +309,9 @@ $('#history').delegate('.pagination a', 'click', function(e) {
 
 	$('#history').load(this.href);
 });
-
+setTimeout(()=>{
 $('#history').load('?route=design/theme/history&user_token={{ user_token }}');
+},500)
 
 $('#history').on('click', '.btn-primary', function(e) {
 	e.preventDefault();

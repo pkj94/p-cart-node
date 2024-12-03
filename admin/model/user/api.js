@@ -2,16 +2,16 @@ module.exports = class ModelUserApi extends Model {
 	async addApi(data) {
 		await this.db.query("INSERT INTO `" + DB_PREFIX + "api` SET username = '" + this.db.escape(data['username']) + "', `key` = '" + this.db.escape(data['key']) + "', status = '" + data['status'] + "', date_added = NOW(), date_modified = NOW()");
 
-		api_id = this.db.getLastId();
+		const api_id = this.db.getLastId();
 
 		if ((data['api_ip'])) {
-			for (data['api_ip'] of ip) {
+			for (let ip of data['api_ip']) {
 				if (ip) {
 					await this.db.query("INSERT INTO `" + DB_PREFIX + "api_ip` SET api_id = '" + api_id + "', ip = '" + this.db.escape(ip) + "'");
 				}
 			}
 		}
-		
+
 		return api_id;
 	}
 
@@ -21,7 +21,7 @@ module.exports = class ModelUserApi extends Model {
 		await this.db.query("DELETE FROM " + DB_PREFIX + "api_ip WHERE api_id = '" + api_id + "'");
 
 		if ((data['api_ip'])) {
-			for (data['api_ip'] of ip) {
+			for (let ip of data['api_ip']) {
 				if (ip) {
 					await this.db.query("INSERT INTO `" + DB_PREFIX + "api_ip` SET api_id = '" + api_id + "', ip = '" + this.db.escape(ip) + "'");
 				}
@@ -47,7 +47,7 @@ module.exports = class ModelUserApi extends Model {
 			'status',
 			'date_added',
 			'date_modified'
-		});
+		];
 
 		if ((data['sort']) && sort_data.includes(data['sort'])) {
 			sql += " ORDER BY " + data['sort'];
@@ -62,13 +62,13 @@ module.exports = class ModelUserApi extends Model {
 		}
 
 		if ((data['start']) || (data['limit'])) {
-			data['start'] = data['start']||0;
-if (data['start'] < 0) {
+			data['start'] = data['start'] || 0;
+			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
@@ -97,28 +97,28 @@ if (data['limit'] < 1) {
 	}
 
 	async addApiSession(api_id, session_id, ip) {
-		api_ip_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "api_ip` WHERE ip = '" + this.db.escape(ip) + "'");
-		
+		const api_ip_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "api_ip` WHERE ip = '" + this.db.escape(ip) + "'");
+
 		if (!api_ip_query.num_rows) {
 			await this.db.query("INSERT INTO `" + DB_PREFIX + "api_ip` SET api_id = '" + api_id + "', ip = '" + this.db.escape(ip) + "'");
 		}
- 		
+
 		await this.db.query("INSERT INTO `" + DB_PREFIX + "api_session` SET api_id = '" + api_id + "', session_id = '" + this.db.escape(session_id) + "', ip = '" + this.db.escape(ip) + "', date_added = NOW(), date_modified = NOW()");
 
 		return this.db.getLastId();
 	}
-	
+
 	async getApiSessions(api_id) {
 		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "api_session` WHERE api_id = '" + api_id + "'");
 
 		return query.rows;
 	}
-	
+
 	async deleteApiSession(api_session_id) {
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "api_session` WHERE api_session_id = '" + api_session_id + "'");
 	}
-	
+
 	async deleteApiSessionBySessionId(session_id) {
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "api_session` WHERE session_id = '" + this.db.escape(session_id) + "'");
-	}		
+	}
 }

@@ -3,6 +3,7 @@ module.exports = class ControllerExtensionModuleAmazonLogin extends Controller {
 	error = {};
 
 	async index() {
+const data = {};
 
 		await this.load.language('extension/module/amazon_login');
 
@@ -19,6 +20,7 @@ module.exports = class ControllerExtensionModuleAmazonLogin extends Controller {
 			await this.model_setting_event.addEvent('amazon_login', 'catalog/controller/account/logout/after', 'extension/module/amazon_login/logout');
 
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=module', true));
 		}

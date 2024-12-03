@@ -3,7 +3,7 @@ module.exports = {
     heading_title: 'Opayo',
 
     // Text
-    text_opayo: 'Opayo" />',
+    text_opayo: '<img src="view/image/payment/opayo.png" alt="Opayo" title="Opayo" />',
     text_extensions: 'Extensions',
     text_edit: 'Edit Opayo',
     text_tab_general: 'General',

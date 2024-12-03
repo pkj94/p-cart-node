@@ -1,18 +1,22 @@
+const JSON.stringify = require("locutus/php/var/JSON.stringify");
+
 module.exports = class ControllerExtensionPaymentBluepayredirect extends Controller {
 	error = {};
 
 	async index() {
+		const data = {};
 
 		await this.load.language('extension/payment/bluepay_redirect');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('setting/setting',this);
+		this.load.model('setting/setting', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validate()) {
 			await this.model_setting_setting.editSetting('payment_bluepay_redirect', this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true));
 		}
@@ -38,18 +42,18 @@ module.exports = class ControllerExtensionPaymentBluepayredirect extends Control
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_extension'),
-			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true)
+			'text': this.language.get('text_extension'),
+			'href': await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('extension/payment/bluepay_redirect', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('extension/payment/bluepay_redirect', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['action'] = await this.url.link('extension/payment/bluepay_redirect', 'user_token=' + this.session.data['user_token'], true);
@@ -100,7 +104,7 @@ module.exports = class ControllerExtensionPaymentBluepayredirect extends Control
 			data['payment_bluepay_redirect_order_status_id'] = 2;
 		}
 
-		this.load.model('localisation/order_status');
+		this.load.model('localisation/order_status', this);
 
 		data['order_statuses'] = await this.model_localisation_order_status.getOrderStatuses();
 
@@ -110,7 +114,7 @@ module.exports = class ControllerExtensionPaymentBluepayredirect extends Control
 			data['payment_bluepay_redirect_geo_zone_id'] = this.config.get('payment_bluepay_redirect_geo_zone_id');
 		}
 
-		this.load.model('localisation/geo_zone');
+		this.load.model('localisation/geo_zone', this);
 
 		data['geo_zones'] = await this.model_localisation_geo_zone.getGeoZones();
 
@@ -140,24 +144,24 @@ module.exports = class ControllerExtensionPaymentBluepayredirect extends Control
 	}
 
 	async install() {
-		this.load.model('extension/payment/bluepay_redirect');
+		this.load.model('extension/payment/bluepay_redirect', this);
 
 		await this.model_extension_payment_bluepay_redirect.install();
 	}
 
 	async uninstall() {
-		this.load.model('extension/payment/bluepay_redirect');
+		this.load.model('extension/payment/bluepay_redirect', this);
 
 		await this.model_extension_payment_bluepay_redirect.uninstall();
 	}
 
 	async order() {
 		if (this.config.get('payment_bluepay_redirect_status')) {
-			this.load.model('extension/payment/bluepay_redirect');
+			this.load.model('extension/payment/bluepay_redirect', this);
 
-			bluepay_redirect_order = await this.model_extension_payment_bluepay_redirect.getOrder(this.request.get['order_id']);
+			const bluepay_redirect_order = await this.model_extension_payment_bluepay_redirect.getOrder(this.request.get['order_id']);
 
-			if ((bluepay_redirect_order)) {
+			if ((bluepay_redirect_order.order_id)) {
 				await this.load.language('extension/payment/bluepay_redirect');
 
 				bluepay_redirect_order['total_released'] = await this.model_extension_payment_bluepay_redirect.getTotalReleased(bluepay_redirect_order['bluepay_redirect_order_id']);
@@ -177,16 +181,16 @@ module.exports = class ControllerExtensionPaymentBluepayredirect extends Control
 
 	async void() {
 		await this.load.language('extension/payment/bluepay_redirect');
-		json = {};
+		const json = {};
 
 		if ((this.request.post['order_id']) && this.request.post['order_id'] != '') {
-			this.load.model('extension/payment/bluepay_redirect');
+			this.load.model('extension/payment/bluepay_redirect', this);
 
-			bluepay_redirect_order = await this.model_extension_payment_bluepay_redirect.getOrder(this.request.post['order_id']);
+			const bluepay_redirect_order = await this.model_extension_payment_bluepay_redirect.getOrder(this.request.post['order_id']);
 
-			void_response = await this.model_extension_payment_bluepay_redirect.void(this.request.post['order_id']);
+			const void_response = await this.model_extension_payment_bluepay_redirect.void(this.request.post['order_id']);
 
-			await this.model_extension_payment_bluepay_redirect.logger('Void result:\r\n' + print_r(void_response, 1));
+			await this.model_extension_payment_bluepay_redirect.logger('Void result:\r\n' + JSON.stringify(void_response, 1));
 
 			if (void_response['Result'] == 'APPROVED') {
 				await this.model_extension_payment_bluepay_redirect.addTransaction(bluepay_redirect_order['bluepay_redirect_order_id'], 'void', bluepay_redirect_order['total']);
@@ -212,24 +216,24 @@ module.exports = class ControllerExtensionPaymentBluepayredirect extends Control
 
 	async release() {
 		await this.load.language('extension/payment/bluepay_redirect');
-		json = {};
+		const json = {};
 
 		if ((this.request.post['order_id']) && this.request.post['order_id'] != '' && (this.request.post['amount']) && this.request.post['amount'] > 0) {
-			this.load.model('extension/payment/bluepay_redirect');
+			this.load.model('extension/payment/bluepay_redirect', this);
 
-			bluepay_redirect_order = await this.model_extension_payment_bluepay_redirect.getOrder(this.request.post['order_id']);
+			const bluepay_redirect_order = await this.model_extension_payment_bluepay_redirect.getOrder(this.request.post['order_id']);
 
-			release_response = await this.model_extension_payment_bluepay_redirect.release(this.request.post['order_id'], this.request.post['amount']);
+			const release_response = await this.model_extension_payment_bluepay_redirect.release(this.request.post['order_id'], this.request.post['amount']);
 
-			await this.model_extension_payment_bluepay_redirect.logger('Release result:\r\n' + print_r(release_response, 1));
+			await this.model_extension_payment_bluepay_redirect.logger('Release result:\r\n' + JSON.stringify(release_response, 1));
 
 			if (release_response['Result'] == 'APPROVED') {
 				await this.model_extension_payment_bluepay_redirect.addTransaction(bluepay_redirect_order['bluepay_redirect_order_id'], 'payment', this.request.post['amount']);
 
 				await this.model_extension_payment_bluepay_redirect.updateTransactionId(bluepay_redirect_order['bluepay_redirect_order_id'], release_response['RRNO']);
 
-				total_released = await this.model_extension_payment_bluepay_redirect.getTotalReleased(bluepay_redirect_order['bluepay_redirect_order_id']);
-
+				const total_released = await this.model_extension_payment_bluepay_redirect.getTotalReleased(bluepay_redirect_order['bluepay_redirect_order_id']);
+				let release_status = 0;
 				if (total_released >= bluepay_redirect_order['total']) {
 					await this.model_extension_payment_bluepay_redirect.updateReleaseStatus(bluepay_redirect_order['bluepay_redirect_order_id'], 1);
 					release_status = 1;
@@ -260,23 +264,23 @@ module.exports = class ControllerExtensionPaymentBluepayredirect extends Control
 
 	async rebate() {
 		await this.load.language('extension/payment/bluepay_redirect');
-		json = {};
+		const json = {};
 
 		if ((this.request.post['order_id']) && (this.request.post['order_id'])) {
-			this.load.model('extension/payment/bluepay_redirect');
+			this.load.model('extension/payment/bluepay_redirect', this);
 
-			bluepay_redirect_order = await this.model_extension_payment_bluepay_redirect.getOrder(this.request.post['order_id']);
+			const bluepay_redirect_order = await this.model_extension_payment_bluepay_redirect.getOrder(this.request.post['order_id']);
 
-			rebate_response = await this.model_extension_payment_bluepay_redirect.rebate(this.request.post['order_id'], this.request.post['amount']);
+			const rebate_response = await this.model_extension_payment_bluepay_redirect.rebate(this.request.post['order_id'], this.request.post['amount']);
 
-			await this.model_extension_payment_bluepay_redirect.logger('Rebate result:\r\n' + print_r(rebate_response, 1));
+			await this.model_extension_payment_bluepay_redirect.logger('Rebate result:\r\n' + JSON.stringify(rebate_response, 1));
 
 			if (rebate_response['Result'] == 'APPROVED') {
 				await this.model_extension_payment_bluepay_redirect.addTransaction(bluepay_redirect_order['bluepay_redirect_order_id'], 'rebate', this.request.post['amount'] * -1);
 
-				total_rebated = await this.model_extension_payment_bluepay_redirect.getTotalRebated(bluepay_redirect_order['bluepay_redirect_order_id']);
-				total_released = await this.model_extension_payment_bluepay_redirect.getTotalReleased(bluepay_redirect_order['bluepay_redirect_order_id']);
-
+				const total_rebated = await this.model_extension_payment_bluepay_redirect.getTotalRebated(bluepay_redirect_order['bluepay_redirect_order_id']);
+				const total_released = await this.model_extension_payment_bluepay_redirect.getTotalReleased(bluepay_redirect_order['bluepay_redirect_order_id']);
+				let rebate_status = 0;
 				if (total_released <= 0 && bluepay_redirect_order['release_status'] == 1) {
 					await this.model_extension_payment_bluepay_redirect.updateRebateStatus(bluepay_redirect_order['bluepay_redirect_order_id'], 1);
 					rebate_status = 1;
@@ -319,12 +323,11 @@ module.exports = class ControllerExtensionPaymentBluepayredirect extends Control
 			this.error['secret_key'] = this.language.get('error_secret_key');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 
 	async callback() {
 		this.response.addHeader('Content-Type: application/json');
-
-		this.response.setOutput(JSON.stringify(this.request.get));
+		this.response.setOutput(this.request.get);
 	}
 }

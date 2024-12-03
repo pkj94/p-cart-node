@@ -2,16 +2,18 @@ module.exports = class ControllerExtensionPaymentRealexRemote extends Controller
 	error = {};
 
 	async index() {
+		const data = {};
 		await this.load.language('extension/payment/realex_remote');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('setting/setting',this);
+		this.load.model('setting/setting', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validate()) {
 			await this.model_setting_setting.editSetting('payment_realex_remote', this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true));
 		}
@@ -37,18 +39,18 @@ module.exports = class ControllerExtensionPaymentRealexRemote extends Controller
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_extension'),
-			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true)
+			'text': this.language.get('text_extension'),
+			'href': await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('extension/payment/realex_remote', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('extension/payment/realex_remote', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['action'] = await this.url.link('extension/payment/realex_remote', 'user_token=' + this.session.data['user_token'], true);
@@ -78,7 +80,7 @@ module.exports = class ControllerExtensionPaymentRealexRemote extends Controller
 			data['payment_realex_remote_geo_zone_id'] = this.config.get('payment_realex_remote_geo_zone_id');
 		}
 
-		this.load.model('localisation/geo_zone');
+		this.load.model('localisation/geo_zone', this);
 
 		data['geo_zones'] = await this.model_localisation_geo_zone.getGeoZones();
 
@@ -178,7 +180,7 @@ module.exports = class ControllerExtensionPaymentRealexRemote extends Controller
 			data['payment_realex_remote_order_status_decline_bank_id'] = this.config.get('payment_realex_remote_order_status_decline_bank_id');
 		}
 
-		this.load.model('localisation/order_status');
+		this.load.model('localisation/order_status', this);
 
 		data['order_statuses'] = await this.model_localisation_order_status.getOrderStatuses();
 
@@ -190,17 +192,17 @@ module.exports = class ControllerExtensionPaymentRealexRemote extends Controller
 	}
 
 	async install() {
-		this.load.model('extension/payment/realex_remote');
+		this.load.model('extension/payment/realex_remote', this);
 		await this.model_extension_payment_realex_remote.install();
 	}
 
 	async order() {
 		if (this.config.get('payment_realex_remote_status')) {
-			this.load.model('extension/payment/realex_remote');
+			this.load.model('extension/payment/realex_remote', this);
 
-			realex_order = await this.model_extension_payment_realex_remote.getOrder(this.request.get['order_id']);
+			const realex_order = await this.model_extension_payment_realex_remote.getOrder(this.request.get['order_id']);
 
-			if ((realex_order)) {
+			if ((realex_order.realex_remote_order_id)) {
 				await this.load.language('extension/payment/realex_remote');
 
 				realex_order['total_captured'] = await this.model_extension_payment_realex_remote.getTotalCaptured(realex_order['realex_remote_order_id']);
@@ -213,7 +215,7 @@ module.exports = class ControllerExtensionPaymentRealexRemote extends Controller
 				data['auto_settle'] = realex_order['settle_type'];
 
 				data['order_id'] = this.request.get['order_id'];
-				
+
 				data['user_token'] = this.session.data['user_token'];
 
 				return await this.load.view('extension/payment/realex_remote_order', data);
@@ -223,16 +225,16 @@ module.exports = class ControllerExtensionPaymentRealexRemote extends Controller
 
 	async void() {
 		await this.load.language('extension/payment/realex_remote');
-		json = {};
+		const json = {};
 
 		if ((this.request.post['order_id']) && this.request.post['order_id'] != '') {
-			this.load.model('extension/payment/realex_remote');
+			this.load.model('extension/payment/realex_remote', this);
 
-			realex_order = await this.model_extension_payment_realex_remote.getOrder(this.request.post['order_id']);
+			const realex_order = await this.model_extension_payment_realex_remote.getOrder(this.request.post['order_id']);
 
-			void_response = await this.model_extension_payment_realex_remote.void(this.request.post['order_id']);
+			const void_response = await this.model_extension_payment_realex_remote.void(this.request.post['order_id']);
 
-			await this.model_extension_payment_realex_remote.logger('Void result:\r\n' + print_r(void_response, 1));
+			await this.model_extension_payment_realex_remote.logger('Void result:\r\n' + JSON.stringify(void_response, 1));
 
 			if ((void_response.result) && void_response.result == '00') {
 				await this.model_extension_payment_realex_remote.addTransaction(realex_order['realex_remote_order_id'], 'void', 0.00);
@@ -257,21 +259,21 @@ module.exports = class ControllerExtensionPaymentRealexRemote extends Controller
 
 	async capture() {
 		await this.load.language('extension/payment/realex');
-		json = {};
+		const json = {};
 
 		if ((this.request.post['order_id']) && this.request.post['order_id'] != '' && (this.request.post['amount']) && this.request.post['amount'] > 0) {
-			this.load.model('extension/payment/realex_remote');
+			this.load.model('extension/payment/realex_remote', this);
 
-			realex_order = await this.model_extension_payment_realex_remote.getOrder(this.request.post['order_id']);
+			const realex_order = await this.model_extension_payment_realex_remote.getOrder(this.request.post['order_id']);
 
-			capture_response = await this.model_extension_payment_realex_remote.capture(this.request.post['order_id'], this.request.post['amount']);
+			const capture_response = await this.model_extension_payment_realex_remote.capture(this.request.post['order_id'], this.request.post['amount']);
 
-			await this.model_extension_payment_realex_remote.logger('Settle result:\r\n' + print_r(capture_response, 1));
+			await this.model_extension_payment_realex_remote.logger('Settle result:\r\n' + JSON.stringify(capture_response, 1));
 
 			if ((capture_response.result) && capture_response.result == '00') {
 				await this.model_extension_payment_realex_remote.addTransaction(realex_order['realex_remote_order_id'], 'payment', this.request.post['amount']);
-				total_captured = await this.model_extension_payment_realex_remote.getTotalCaptured(realex_order['realex_remote_order_id']);
-
+				const total_captured = await this.model_extension_payment_realex_remote.getTotalCaptured(realex_order['realex_remote_order_id']);
+				let capture_status = 0;
 				if (total_captured >= realex_order['total'] || realex_order['settle_type'] == 0) {
 					await this.model_extension_payment_realex_remote.updateCaptureStatus(realex_order['realex_remote_order_id'], 1);
 					capture_status = 1;
@@ -306,23 +308,23 @@ module.exports = class ControllerExtensionPaymentRealexRemote extends Controller
 
 	async rebate() {
 		await this.load.language('extension/payment/realex_remote');
-		json = {};
+		const json = {};
 
 		if ((this.request.post['order_id']) && this.request.post['order_id'] != '') {
-			this.load.model('extension/payment/realex_remote');
+			this.load.model('extension/payment/realex_remote', this);
 
-			realex_order = await this.model_extension_payment_realex_remote.getOrder(this.request.post['order_id']);
+			const realex_order = await this.model_extension_payment_realex_remote.getOrder(this.request.post['order_id']);
 
-			rebate_response = await this.model_extension_payment_realex_remote.rebate(this.request.post['order_id'], this.request.post['amount']);
+			const rebate_response = await this.model_extension_payment_realex_remote.rebate(this.request.post['order_id'], this.request.post['amount']);
 
-			await this.model_extension_payment_realex_remote.logger('Rebate result:\r\n' + print_r(rebate_response, 1));
+			await this.model_extension_payment_realex_remote.logger('Rebate result:\r\n' + JSON.stringify(rebate_response, 1));
 
 			if ((rebate_response.result) && rebate_response.result == '00') {
-				await this.model_extension_payment_realex_remote.addTransaction(realex_order['realex_remote_order_id'], 'rebate', this.request.post['amount']*-1);
+				await this.model_extension_payment_realex_remote.addTransaction(realex_order['realex_remote_order_id'], 'rebate', this.request.post['amount'] * -1);
 
-				total_rebated = await this.model_extension_payment_realex_remote.getTotalRebated(realex_order['realex_remote_order_id']);
-				total_captured = await this.model_extension_payment_realex_remote.getTotalCaptured(realex_order['realex_remote_order_id']);
-
+				const total_rebated = await this.model_extension_payment_realex_remote.getTotalRebated(realex_order['realex_remote_order_id']);
+				const total_captured = await this.model_extension_payment_realex_remote.getTotalCaptured(realex_order['realex_remote_order_id']);
+				let rebate_status = 0;
 				if (total_captured <= 0 && realex_order['capture_status'] == 1) {
 					await this.model_extension_payment_realex_remote.updateRebateStatus(realex_order['realex_remote_order_id'], 1);
 					rebate_status = 1;
@@ -365,6 +367,6 @@ module.exports = class ControllerExtensionPaymentRealexRemote extends Controller
 			this.error['error_secret'] = this.language.get('error_secret');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 }

@@ -11,7 +11,7 @@ module.exports = class ModelDesignLayout extends Model {
 		}
 
 		if ((data['layout_module'])) {
-			for (let layout_module of data['layout_module']) {
+			for (let [key, layout_module] of Object.entries(data['layout_module'])) {
 				await this.db.query("INSERT INTO " + DB_PREFIX + "layout_module SET layout_id = '" + layout_id + "', code = '" + this.db.escape(layout_module['code']) + "', position = '" + this.db.escape(layout_module['position']) + "', sort_order = '" + layout_module['sort_order'] + "'");
 			}
 		}
@@ -33,7 +33,7 @@ module.exports = class ModelDesignLayout extends Model {
 		await this.db.query("DELETE FROM " + DB_PREFIX + "layout_module WHERE layout_id = '" + layout_id + "'");
 
 		if ((data['layout_module'])) {
-			for (let layout_module of data['layout_module']) {
+			for (let [key, layout_module] of Object.entries(data['layout_module'])) {
 				await this.db.query("INSERT INTO " + DB_PREFIX + "layout_module SET layout_id = '" + layout_id + "', code = '" + this.db.escape(layout_module['code']) + "', position = '" + this.db.escape(layout_module['position']) + "', sort_order = '" + layout_module['sort_order'] + "'");
 			}
 		}

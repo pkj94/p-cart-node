@@ -2,6 +2,7 @@ module.exports = class ControllerExtensionPaymentFreeCheckout extends Controller
 	error = {};
 
 	async index() {
+const data = {};
 		await this.load.language('extension/payment/free_checkout');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -12,6 +13,7 @@ module.exports = class ControllerExtensionPaymentFreeCheckout extends Controller
 			await this.model_setting_setting.editSetting('payment_free_checkout', this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true));
 		}
@@ -49,7 +51,7 @@ module.exports = class ControllerExtensionPaymentFreeCheckout extends Controller
 			data['payment_free_checkout_order_status_id'] = this.config.get('payment_free_checkout_order_status_id');
 		}
 
-		this.load.model('localisation/order_status');
+		this.load.model('localisation/order_status',this);
 
 		data['order_statuses'] = await this.model_localisation_order_status.getOrderStatuses();
 

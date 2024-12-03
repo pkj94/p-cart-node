@@ -6,7 +6,7 @@ module.exports = {
     text_extension: 'Extensions',
     text_success: 'Success: You have modified Klarna Payment module!',
     text_edit: 'Edit Klarna Invoice',
-    text_klarna_invoice: 'border: 1px solid #EEEEEE," /></a>',
+    text_klarna_invoice: '<a href="https://merchants.klarna.com/signup?locale=en&partner_id=d5c87110cebc383a826364769047042e777da5e8&utm_campaign=Platform&utm_medium=Partners&utm_source=Opencart" target="_blank"><img src="https://cdn.klarna.com/public/images/global/logos/v1/basic/global_basic_logo_std_blue-black.png?width=60&eid=opencart" alt="Klarna Invoice" title="Klarna Invoice" style="border: 1px solid #EEEEEE," /></a>',
     text_live: 'Live',
     text_beta: 'Beta',
     text_sweden: 'Sweden',

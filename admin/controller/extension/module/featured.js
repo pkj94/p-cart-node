@@ -2,11 +2,12 @@ module.exports = class ControllerExtensionModuleFeatured extends Controller {
 	error = {};
 
 	async index() {
+		const data = {};
 		await this.load.language('extension/module/featured');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('setting/module');
+		this.load.model('setting/module', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validate()) {
 			if (!(this.request.get['module_id'])) {
@@ -16,6 +17,7 @@ module.exports = class ControllerExtensionModuleFeatured extends Controller {
 			}
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=module', true));
 		}
@@ -47,24 +49,24 @@ module.exports = class ControllerExtensionModuleFeatured extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_extension'),
-			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=module', true)
+			'text': this.language.get('text_extension'),
+			'href': await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=module', true)
 		});
 
 		if (!(this.request.get['module_id'])) {
 			data['breadcrumbs'].push({
-				'text' : this.language.get('heading_title'),
-				'href' : await this.url.link('extension/module/featured', 'user_token=' + this.session.data['user_token'], true)
+				'text': this.language.get('heading_title'),
+				'href': await this.url.link('extension/module/featured', 'user_token=' + this.session.data['user_token'], true)
 			});
 		} else {
 			data['breadcrumbs'].push({
-				'text' : this.language.get('heading_title'),
-				'href' : await this.url.link('extension/module/featured', 'user_token=' + this.session.data['user_token'] + '&module_id=' + this.request.get['module_id'], true)
+				'text': this.language.get('heading_title'),
+				'href': await this.url.link('extension/module/featured', 'user_token=' + this.session.data['user_token'] + '&module_id=' + this.request.get['module_id'], true)
 			});
 		}
 
@@ -75,7 +77,7 @@ module.exports = class ControllerExtensionModuleFeatured extends Controller {
 		}
 
 		data['cancel'] = await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=module', true);
-
+		let module_info;
 		if ((this.request.get['module_id']) && (this.request.server['method'] != 'POST')) {
 			module_info = await this.model_setting_module.getModule(this.request.get['module_id']);
 		}
@@ -90,25 +92,23 @@ module.exports = class ControllerExtensionModuleFeatured extends Controller {
 			data['name'] = '';
 		}
 
-		this.load.model('catalog/product',this);
+		this.load.model('catalog/product', this);
 
-		data['products'] = {};
-
+		data['products'] = [];
+		let products = [];
 		if ((this.request.post['product'])) {
 			products = this.request.post['product'];
 		} else if ((module_info['product'])) {
 			products = module_info['product'];
-		} else {
-			products = {};
 		}
 
 		for (let product_id of products) {
-			product_info = await this.model_catalog_product.getProduct(product_id);
+			const product_info = await this.model_catalog_product.getProduct(product_id);
 
-			if (product_info) {
+			if (product_info.product_id) {
 				data['products'].push({
-					'product_id' : product_info['product_id'],
-					'name'       : product_info['name']
+					'product_id': product_info['product_id'],
+					'name': product_info['name']
 				});
 			}
 		}
@@ -169,6 +169,6 @@ module.exports = class ControllerExtensionModuleFeatured extends Controller {
 			this.error['height'] = this.language.get('error_height');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 }

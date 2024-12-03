@@ -127,7 +127,7 @@
           html = '<option value=""></option>';
 
           if (json) {
-            for (i = 0; i < json.length; i++) {
+            for (let i = 0; i < json.length; i++) {
               if (i == 0) {
                 html += '<option value="' + json[i] + '" selected="selected">' + json[i] + '</option>';
               } else {
@@ -178,7 +178,7 @@
           html = '<option value=""></option>';
 
           if (json) {
-            for (i = 0; i < json.length; i++) {
+            for (let i = 0; i < json.length; i++) {
               translation[json[i]['key']] = json[i]['value'];
 
               if (i == 0) {

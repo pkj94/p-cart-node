@@ -22,13 +22,13 @@ module.exports = class ModelExtensionDashboardSale extends Model {
 	async getTotalOrdersByDay() {
 		let implode = [];
 
-		for (this.config.get('config_complete_status') of order_status_id) {
+		for (let order_status_id of this.config.get('config_complete_status')) {
 			implode.push("'" + order_status_id + "'");
 		}
 
 		let order_data = {};
 
-		for (i = 0; i < 24; i++) {
+		for (let i = 0; i < 24; i++) {
 			order_data[i] = {
 				'hour': i,
 				'total': 0
@@ -50,7 +50,7 @@ module.exports = class ModelExtensionDashboardSale extends Model {
 	async getTotalOrdersByWeek() {
 		let implode = [];
 
-		for (this.config.get('config_complete_status') of order_status_id) {
+		for (let order_status_id of this.config.get('config_complete_status') ) {
 			implode.push("'" + order_status_id + "'");
 		}
 
@@ -58,7 +58,7 @@ module.exports = class ModelExtensionDashboardSale extends Model {
 
 		let date_start = strtotime('-' + date('w') + ' days');
 
-		for (i = 0; i < 7; i++) {
+		for (let i = 0; i < 7; i++) {
 			let date = date('Y-m-d', date_start + (i * 86400));
 
 			order_data[date('w', strtotime(date))] = {
@@ -82,13 +82,13 @@ module.exports = class ModelExtensionDashboardSale extends Model {
 	async getTotalOrdersByMonth() {
 		let implode = [];
 
-		for (this.config.get('config_complete_status') of order_status_id) {
+		for (let order_status_id of this.config.get('config_complete_status')) {
 			implode.push("'" + order_status_id + "'");
 		}
 
 		let order_data = {};
 
-		for (i = 1; i <= date('t'); i++) {
+		for (let i = 1; i <= date('t'); i++) {
 			date = date('Y') + '-' + date('m') + '-' + i;
 
 			order_data[date('j', strtotime(date))] = {
@@ -112,13 +112,13 @@ module.exports = class ModelExtensionDashboardSale extends Model {
 	async getTotalOrdersByYear() {
 		let implode = [];
 
-		for (this.config.get('config_complete_status') of order_status_id) {
+		for (let order_status_id of this.config.get('config_complete_status')) {
 			implode.push("'" + order_status_id + "'");
 		}
 
 		let order_data = {};
 
-		for (i = 1; i <= 12; i++) {
+		for (let i = 1; i <= 12; i++) {
 			order_data[i] = {
 				'month': date('M', mktime(0, 0, 0, i)),
 				'total': 0

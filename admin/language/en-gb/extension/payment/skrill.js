@@ -6,7 +6,7 @@ module.exports = {
     text_extension: 'Extensions',
     text_success: 'Success: You have modified the Skrill details.',
     text_edit: 'Edit Skrill',
-    text_skrill: 'border: 1px solid #EEEEEE," /></a>',
+    text_skrill: '<a href="https://content.skrill.com/en/ecommerce-solutions/opencart/" target="_blank"><img src="view/image/payment/skrill.png" alt="Skrill" title="Skrill" style="border: 1px solid #EEEEEE," /></a>',
 
     // Entry
     entry_email: 'E-Mail',

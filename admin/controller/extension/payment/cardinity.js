@@ -1,17 +1,21 @@
+const version_compare = require("locutus/php/info/version_compare");
+
 module.exports = class ControllerExtensionPaymentCardinity extends Controller {
 	error = {};
 
 	async index() {
+		const data = {};
 		await this.load.language('extension/payment/cardinity');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('setting/setting',this);
+		this.load.model('setting/setting', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validate()) {
 			await this.model_setting_setting.editSetting('payment_cardinity', this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true));
 		}
@@ -37,18 +41,18 @@ module.exports = class ControllerExtensionPaymentCardinity extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_extension'),
-			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true)
+			'text': this.language.get('text_extension'),
+			'href': await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('extension/payment/cardinity', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('extension/payment/cardinity', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['action'] = await this.url.link('extension/payment/cardinity', 'user_token=' + this.session.data['user_token'], true);
@@ -85,7 +89,7 @@ module.exports = class ControllerExtensionPaymentCardinity extends Controller {
 			data['payment_cardinity_order_status_id'] = this.config.get('payment_cardinity_order_status_id');
 		}
 
-		this.load.model('localisation/order_status');
+		this.load.model('localisation/order_status', this);
 
 		data['order_statuses'] = await this.model_localisation_order_status.getOrderStatuses();
 
@@ -95,7 +99,7 @@ module.exports = class ControllerExtensionPaymentCardinity extends Controller {
 			data['payment_cardinity_geo_zone_id'] = this.config.get('payment_cardinity_geo_zone_id');
 		}
 
-		this.load.model('localisation/geo_zone');
+		this.load.model('localisation/geo_zone', this);
 
 		data['geo_zones'] = await this.model_localisation_geo_zone.getGeoZones();
 
@@ -110,7 +114,7 @@ module.exports = class ControllerExtensionPaymentCardinity extends Controller {
 		} else {
 			data['payment_cardinity_sort_order'] = this.config.get('payment_cardinity_sort_order');
 		}
-		
+
 		data['header'] = await this.load.controller('common/header');
 		data['column_left'] = await this.load.controller('common/column_left');
 		data['footer'] = await this.load.controller('common/footer');
@@ -119,6 +123,7 @@ module.exports = class ControllerExtensionPaymentCardinity extends Controller {
 	}
 
 	async order() {
+		const data = {};
 		await this.load.language('extension/payment/cardinity');
 
 		data['user_token'] = this.session.data['user_token'];
@@ -128,9 +133,10 @@ module.exports = class ControllerExtensionPaymentCardinity extends Controller {
 	}
 
 	async getPayment() {
+		const data = {};
 		await this.load.language('extension/payment/cardinity');
 
-		this.load.model('extension/payment/cardinity');
+		this.load.model('extension/payment/cardinity', this);
 
 		data['column_refund'] = this.language.get('column_refund');
 		data['column_date'] = this.language.get('column_date');
@@ -144,51 +150,51 @@ module.exports = class ControllerExtensionPaymentCardinity extends Controller {
 
 		data['user_token'] = this.session.data['user_token'];
 
-		client = await this.model_extension_payment_cardinity.createClient(array(
-			'key'    : this.config.get('payment_cardinity_key'),
-			'secret' : this.config.get('payment_cardinity_secret')
-		));
+		const client = await this.model_extension_payment_cardinity.createClient({
+			'key': this.config.get('payment_cardinity_key'),
+			'secret': this.config.get('payment_cardinity_secret')
+		});
 
-		order = await this.model_extension_payment_cardinity.getOrder(this.request.get['order_id']);
+		const order = await this.model_extension_payment_cardinity.getOrder(this.request.get['order_id']);
 
 		data['payment'] = false;
 
-		data['refunds'] = {};
+		data['refunds'] = [];
 
 		if (order && order['payment_id']) {
 			data['payment'] = true;
 
-			payment = await this.model_extension_payment_cardinity.getPayment(client, order['payment_id']);
+			const payment = await this.model_extension_payment_cardinity.getPayment(client, order['payment_id']);
 
 			data['refund_action'] = false;
 
-			successful_statuses = array(
+			const successful_statuses = [
 				'approved'
-			});
+			];
 
-			if (in_array(payment.getStatus(), successful_statuses)) {
+			if (successful_statuses.includes(payment.status)) {
 				data['refund_action'] = true;
 			}
 
-			max_refund_amount = payment.getAmount();
+			const max_refund_amount = payment.amount;
 
-			refunds = await this.model_extension_payment_cardinity.getRefunds(client, order['payment_id']);
+			const refunds = await this.model_extension_payment_cardinity.getRefunds(client, order['payment_id']);
 
-			if (refunds) {
-				for (refunds of refund) {
-					successful_refund_statuses = array(
+			if (refunds.length) {
+				for (let refund of refunds) {
+					const successful_refund_statuses = [
 						'approved'
-					});
-
-					if (in_array(refund.getStatus(), successful_refund_statuses)) {
-						max_refund_amount -= refund.getAmount();
+					];
+					let max_refund_amount = 0;
+					if (successful_refund_statuses.includes(refund.status)) {
+						max_refund_amount -= refund.amount;
 					}
 
 					data['refunds'].push({
-						'date_added'  : date(this.language.get('datetime_format'), strtotime(refund.getCreated())),
-						'amount'	  : this.currency.format(refund.getAmount(), refund.getCurrency(), '1.00000000', true),
-						'status'	  : refund.getStatus(),
-						'description' : refund.getDescription()
+						'date_added': date(this.language.get('datetime_format'), strtotime(refund.getCreated())),
+						'amount': this.currency.format(refund.amount, refund.currency, '1.00000000', true),
+						'status': refund.status,
+						'description': refund.description
 					});
 				}
 			}
@@ -197,11 +203,11 @@ module.exports = class ControllerExtensionPaymentCardinity extends Controller {
 				data['refund_action'] = false;
 			}
 
-			data['payment_id'] = payment.getId();
-			data['symbol_left'] = this.currency.getSymbolLeft(payment.getCurrency());
-			data['symbol_right'] = this.currency.getSymbolRight(payment.getCurrency());
+			data['payment_id'] = payment.id;
+			data['symbol_left'] = this.currency.getSymbolLeft(payment.currency);
+			data['symbol_right'] = this.currency.getSymbolRight(payment.currency);
 
-			data['max_refund_amount'] = this.currency.format(max_refund_amount, payment.getCurrency(), '1.00000000', false);
+			data['max_refund_amount'] = this.currency.format(max_refund_amount, payment.currency, '1.00000000', false);
 		}
 
 		this.response.setOutput(await this.load.view('extension/payment/cardinity_order_ajax', data));
@@ -210,18 +216,18 @@ module.exports = class ControllerExtensionPaymentCardinity extends Controller {
 	async refund() {
 		await this.load.language('extension/payment/cardinity');
 
-		this.load.model('extension/payment/cardinity');
+		this.load.model('extension/payment/cardinity', this);
 
-		json = {};
+		const json = {};
 
-		success = error = '';
+		let success = error = '';
 
-		client = await this.model_extension_payment_cardinity.createClient(array(
-			'key'    : this.config.get('payment_cardinity_key'),
-			'secret' : this.config.get('payment_cardinity_secret')
-		));
+		const client = await this.model_extension_payment_cardinity.createClient({
+			'key': this.config.get('payment_cardinity_key'),
+			'secret': this.config.get('payment_cardinity_secret')
+		});
 
-		refund = await this.model_extension_payment_cardinity.refundPayment(client, this.request.post['payment_id'], number_format(this.request.post['amount'], 2), this.request.post['description']);
+		const refund = await this.model_extension_payment_cardinity.refundPayment(client, this.request.post['payment_id'], this.request.post['amount'].toFixed(2), this.request.post['description']);
 
 		if (refund) {
 			success = this.language.get('text_success_action');
@@ -237,12 +243,12 @@ module.exports = class ControllerExtensionPaymentCardinity extends Controller {
 	}
 
 	async validate() {
-		this.load.model('extension/payment/cardinity');
+		this.load.model('extension/payment/cardinity', this);
 
-		check_credentials = true;
+		let check_credentials = true;
 
-		if (version_compare(phpversion(), '7.3', '<')) {
-			this.error['warning'] = this.language.get('error_php_version');
+		if (process.version < 16) {
+			this.error['warning'] = this.language.get('error_node_version');
 		}
 
 		if (!await this.user.hasPermission('modify', 'extension/payment/cardinity')) {
@@ -263,19 +269,14 @@ module.exports = class ControllerExtensionPaymentCardinity extends Controller {
 			check_credentials = false;
 		}
 
-		if (!class_exists('Cardinity\Client')) {
-			this.error['warning'] = this.language.get('error_composer');
-
-			check_credentials = false;
-		}
 
 		if (check_credentials) {
-			client = await this.model_extension_payment_cardinity.createClient(array(
-				'key'    : this.request.post['payment_cardinity_key'],
-				'secret' : this.request.post['payment_cardinity_secret']
-			));
+			const client = await this.model_extension_payment_cardinity.createClient({
+				'key': this.request.post['payment_cardinity_key'],
+				'secret': this.request.post['payment_cardinity_secret']
+			});
 
-			verify_credentials = await this.model_extension_payment_cardinity.verifyCredentials(client);
+			const verify_credentials = await this.model_extension_payment_cardinity.verifyCredentials(client);
 
 			if (!verify_credentials) {
 				this.error['warning'] = this.language.get('error_connection');
@@ -286,17 +287,17 @@ module.exports = class ControllerExtensionPaymentCardinity extends Controller {
 			this.error['warning'] = this.language.get('error_warning');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 
 	async install() {
-		this.load.model('extension/payment/cardinity');
+		this.load.model('extension/payment/cardinity', this);
 
 		await this.model_extension_payment_cardinity.install();
 	}
 
 	async uninstall() {
-		this.load.model('extension/payment/cardinity');
+		this.load.model('extension/payment/cardinity', this);
 
 		await this.model_extension_payment_cardinity.uninstall();
 	}

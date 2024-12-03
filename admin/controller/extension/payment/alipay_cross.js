@@ -1,18 +1,20 @@
 module.exports = class ControllerExtensionPaymentAlipayCross extends Controller {
 	error = {};
-	currencies = array('GBP', 'HKD', 'USD', 'CHF', 'SGD', 'SEK', 'DKK', 'NOK', 'JPY', 'CAD', 'AUD', 'EUR', 'NZD', 'KRW', 'THB');
+	currencies = ['GBP', 'HKD', 'USD', 'CHF', 'SGD', 'SEK', 'DKK', 'NOK', 'JPY', 'CAD', 'AUD', 'EUR', 'NZD', 'KRW', 'THB'];
 
 	async index() {
+		const data = {};
 		await this.load.language('extension/payment/alipay_cross');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('setting/setting',this);
+		this.load.model('setting/setting', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validate()) {
 			await this.model_setting_setting.editSetting('payment_alipay_cross', this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true));
 		}
@@ -38,18 +40,18 @@ module.exports = class ControllerExtensionPaymentAlipayCross extends Controller 
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_extension'),
-			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true)
+			'text': this.language.get('text_extension'),
+			'href': await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('extension/payment/alipay_cross', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('extension/payment/alipay_cross', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['action'] = await this.url.link('extension/payment/alipay_cross', 'user_token=' + this.session.data['user_token'], true);
@@ -74,15 +76,15 @@ module.exports = class ControllerExtensionPaymentAlipayCross extends Controller 
 			data['payment_alipay_cross_currency'] = this.config.get('payment_alipay_cross_currency');
 		}
 
-		this.load.model('localisation/currency',this);
+		this.load.model('localisation/currency', this);
 
-		currencies = await this.model_localisation_currency.getCurrencies();
-		data['currencies'] = {};
-		for (currencies of currency) {
-			if (in_array(currency['code'], this.currencies)) {
+		const currencies = await this.model_localisation_currency.getCurrencies();
+		data['currencies'] = [];
+		for (let [code, currency] of Object.entries(currencies)) {
+			if (this.currencies.includes(currency['code'])) {
 				data['currencies'].push({
-					'code'   : currency['code'],
-					'title'  : currency['title']
+					'code': currency['code'],
+					'title': currency['title']
 				});
 			}
 		}
@@ -105,7 +107,7 @@ module.exports = class ControllerExtensionPaymentAlipayCross extends Controller 
 			data['payment_alipay_cross_order_status_id'] = this.config.get('payment_alipay_cross_order_status_id');
 		}
 
-		this.load.model('localisation/order_status');
+		this.load.model('localisation/order_status', this);
 
 		data['order_statuses'] = await this.model_localisation_order_status.getOrderStatuses();
 
@@ -115,7 +117,7 @@ module.exports = class ControllerExtensionPaymentAlipayCross extends Controller 
 			data['payment_alipay_cross_geo_zone_id'] = this.config.get('payment_alipay_cross_geo_zone_id');
 		}
 
-		this.load.model('localisation/geo_zone');
+		this.load.model('localisation/geo_zone', this);
 
 		data['geo_zones'] = await this.model_localisation_geo_zone.getGeoZones();
 
@@ -144,7 +146,7 @@ module.exports = class ControllerExtensionPaymentAlipayCross extends Controller 
 		this.response.setOutput(await this.load.view('extension/payment/alipay_cross', data));
 	}
 
-	private function validate() {
+	async validate() {
 		if (!await this.user.hasPermission('modify', 'extension/payment/alipay_cross')) {
 			this.error['warning'] = this.language.get('error_permission');
 		}
@@ -157,6 +159,6 @@ module.exports = class ControllerExtensionPaymentAlipayCross extends Controller 
 			this.error['merchant_private_key'] = this.language.get('error_merchant_private_key');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 }

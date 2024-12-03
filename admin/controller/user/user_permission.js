@@ -2,11 +2,12 @@ module.exports = class ControllerUserUserPermission extends Controller {
 	error = {};
 
 	async index() {
+const data = {};
 		await this.load.language('user/user_group');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('user/user_group');
+		this.load.model('user/user_group',this);
 
 		await this.getList();
 	}
@@ -16,12 +17,13 @@ module.exports = class ControllerUserUserPermission extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('user/user_group');
+		this.load.model('user/user_group',this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_user_user_group.addUserGroup(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
 			url = '';
 
@@ -48,12 +50,13 @@ module.exports = class ControllerUserUserPermission extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('user/user_group');
+		this.load.model('user/user_group',this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_user_user_group.editUserGroup(this.request.get['user_group_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
 			url = '';
 
@@ -80,15 +83,16 @@ module.exports = class ControllerUserUserPermission extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('user/user_group');
+		this.load.model('user/user_group',this);
 
 		if ((this.request.post['selected']) && await this.validateDelete()) {
 this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
-			for (this.request.post['selected'] of user_group_id) {
+			for (let user_group_id of this.request.post['selected'] ) {
 				await this.model_user_user_group.deleteUserGroup(user_group_id);
 			}
 
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
 			url = '';
 
@@ -111,6 +115,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 	}
 
 	async getList() {
+		const data = {};
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
 		} else {
@@ -122,11 +127,9 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		} else {
 			order = 'ASC';
 		}
-
-		if ((this.request.get['page'])) {
+page = 1;
+if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
 		}
 
 		url = '';
@@ -160,7 +163,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 
 		data['user_groups'] = {};
 
-		filter_data = array(
+		const filter_data = {
 			'sort'  : sort,
 			'order' : order,
 			'start' : (page - 1) * Number(this.config.get('config_limit_admin')),
@@ -188,7 +191,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		if ((this.session.data['success'])) {
 			data['success'] = this.session.data['success'];
 
-			delete this.session.data['success']);
+			delete this.session.data['success'];
 		} else {
 			data['success'] = '';
 		}
@@ -223,7 +226,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			url += '&order=' + this.request.get['order'];
 		}
 
-		pagination = new Pagination();
+		const pagination = new Pagination();
 		pagination.total = user_group_total;
 		pagination.page = page;
 		pagination.limit = Number(this.config.get('config_limit_admin'));
@@ -328,7 +331,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		while (count(path) != 0) {
 			next = array_shift(path);
 
-			for (glob(next) of file) {
+			for (require('glob').sync(next) of file) {
 				// If directory add to path array
 				if (is_dir(file)) {
 					path.push(file + '/*';
@@ -397,7 +400,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		this.load.model('user/user',this);
 		this.request.post['selected']  = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']];
 
-		for (this.request.post['selected'] of user_group_id) {
+		for (let user_group_id of this.request.post['selected'] ) {
 			user_total = await this.model_user_user.getTotalUsersByGroupId(user_group_id);
 
 			if (user_total) {

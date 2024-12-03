@@ -1,5 +1,6 @@
 module.exports = class ControllerMarketplaceApi extends Controller {
-	async index() {	
+	async index() {
+const data = {};	
 		await this.load.language('marketplace/api');
 			
 		data['user_token'] = this.session.data['user_token'];	

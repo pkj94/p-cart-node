@@ -2,27 +2,29 @@ module.exports = class ControllerExtensionPaymentFirstdata extends Controller {
 	error = {};
 
 	async index() {
+		const data = {};
 		await this.load.language('extension/payment/firstdata');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('setting/setting',this);
+		this.load.model('setting/setting', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validate()) {
 			await this.model_setting_setting.editSetting('payment_firstdata', this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true));
 		}
 
-		data['notify_url'] = HTTPS_CATALOG + 'index.php?route=extension/payment/firstdata/notify';
+		data['notify_url'] = HTTPS_CATALOG + '?route=extension/payment/firstdata/notify';
 
-		this.load.model('localisation/order_status');
+		this.load.model('localisation/order_status', this);
 
 		data['order_statuses'] = await this.model_localisation_order_status.getOrderStatuses();
 
-		this.load.model('localisation/geo_zone');
+		this.load.model('localisation/geo_zone', this);
 
 		data['geo_zones'] = await this.model_localisation_geo_zone.getGeoZones();
 
@@ -59,22 +61,22 @@ module.exports = class ControllerExtensionPaymentFirstdata extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_extension'),
-			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true)
+			'text': this.language.get('text_extension'),
+			'href': await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('extension/payment/firstdata', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('extension/payment/firstdata', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['action'] = await this.url.link('extension/payment/firstdata', 'user_token=' + this.session.data['user_token'], true);
-		
+
 		data['cancel'] = await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true);
 
 		if ((this.request.post['payment_firstdata_merchant_id'])) {
@@ -163,7 +165,7 @@ module.exports = class ControllerExtensionPaymentFirstdata extends Controller {
 			data['payment_firstdata_live_url'] = this.config.get('payment_firstdata_live_url');
 		}
 
-		if (empty(data['payment_firstdata_live_url'])) {
+		if (!(data['payment_firstdata_live_url'])) {
 			data['payment_firstdata_live_url'] = 'https://ipg-online.com/connect/gateway/processing';
 		}
 
@@ -179,7 +181,7 @@ module.exports = class ControllerExtensionPaymentFirstdata extends Controller {
 			data['payment_firstdata_card_storage'] = this.config.get('payment_firstdata_card_storage');
 		}
 
-		if (empty(data['payment_firstdata_demo_url'])) {
+		if (!(data['payment_firstdata_demo_url'])) {
 			data['payment_firstdata_demo_url'] = 'https://test.ipg-online.com/connect/gateway/processing';
 		}
 
@@ -191,18 +193,18 @@ module.exports = class ControllerExtensionPaymentFirstdata extends Controller {
 	}
 
 	async install() {
-		this.load.model('extension/payment/firstdata');
+		this.load.model('extension/payment/firstdata', this);
 		await this.model_extension_payment_firstdata.install();
 	}
 
 	async uninstall() {
-		this.load.model('extension/payment/firstdata');
+		this.load.model('extension/payment/firstdata', this);
 		await this.model_extension_payment_firstdata.uninstall();
 	}
 
 	async order() {
 		if (this.config.get('payment_firstdata_status')) {
-			this.load.model('extension/payment/firstdata');
+			this.load.model('extension/payment/firstdata', this);
 
 			firstdata_order = await this.model_extension_payment_firstdata.getOrder(this.request.get['order_id']);
 
@@ -224,7 +226,7 @@ module.exports = class ControllerExtensionPaymentFirstdata extends Controller {
 
 				data['void_url'] = await this.url.link('extension/payment/firstdata/void', 'user_token=' + this.session.data['user_token'], true);
 				data['capture_url'] = await this.url.link('extension/payment/firstdata/capture', 'user_token=' + this.session.data['user_token'], true);
-				data['notify_url'] = HTTPS_CATALOG + 'index.php?route=extension/payment/firstdata/notify';
+				data['notify_url'] = HTTPS_CATALOG + '?route=extension/payment/firstdata/notify';
 
 				if (this.config.get('payment_firstdata_live_demo') == 1) {
 					data['action_url'] = this.config.get('payment_firstdata_live_url');
@@ -235,7 +237,7 @@ module.exports = class ControllerExtensionPaymentFirstdata extends Controller {
 				if ((this.session.data['void_success'])) {
 					data['void_success'] = this.session.data['void_success'];
 
-					delete this.session.data['void_success']);
+					delete this.session.data['void_success'];
 				} else {
 					data['void_success'] = '';
 				}
@@ -243,7 +245,7 @@ module.exports = class ControllerExtensionPaymentFirstdata extends Controller {
 				if ((this.session.data['void_error'])) {
 					data['void_error'] = this.session.data['void_error'];
 
-					delete this.session.data['void_error']);
+					delete this.session.data['void_error'];
 				} else {
 					data['void_error'] = '';
 				}
@@ -251,7 +253,7 @@ module.exports = class ControllerExtensionPaymentFirstdata extends Controller {
 				if ((this.session.data['capture_success'])) {
 					data['capture_success'] = this.session.data['capture_success'];
 
-					delete this.session.data['capture_success']);
+					delete this.session.data['capture_success'];
 				} else {
 					data['capture_success'] = '';
 				}
@@ -259,7 +261,7 @@ module.exports = class ControllerExtensionPaymentFirstdata extends Controller {
 				if ((this.session.data['capture_error'])) {
 					data['capture_error'] = this.session.data['capture_error'];
 
-					delete this.session.data['capture_error']);
+					delete this.session.data['capture_error'];
 				} else {
 					data['capture_error'] = '';
 				}
@@ -321,7 +323,7 @@ module.exports = class ControllerExtensionPaymentFirstdata extends Controller {
 		if (this.request.post['status'] == 'APPROVED') {
 			this.session.data['capture_success'] = this.language.get('success_capture');
 		}
-
+		await this.session.save(this.session.data);
 		this.response.setRedirect(await this.url.link('sale/order/info', 'order_id=' + this.request.post['order_id'] + '&user_token=' + this.session.data['user_token'], true));
 	}
 
@@ -346,6 +348,6 @@ module.exports = class ControllerExtensionPaymentFirstdata extends Controller {
 			this.error['error_demo_url'] = this.language.get('error_demo_url');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 }

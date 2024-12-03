@@ -1,16 +1,22 @@
+const mt_rand = require("locutus/php/math/mt_rand");
+const uniqid = require("locutus/php/misc/uniqid");
+const html_entity_decode = require("locutus/php/strings/html_entity_decode");
+const str_repeat = require("locutus/php/strings/str_repeat");
+
 module.exports = class ControllerExtensionPaymentAmazonLoginPay extends Controller {
 	version = '3.2.1';
 	error = {};
 
 	async index() {
+		const data = {};
 
 		await this.load.language('extension/payment/amazon_login_pay');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('setting/setting',this);
+		this.load.model('setting/setting', this);
 
-		this.load.model('extension/payment/amazon_login_pay');
+		this.load.model('extension/payment/amazon_login_pay', this);
 
 		await this.model_extension_payment_amazon_login_pay.install();
 
@@ -23,6 +29,7 @@ module.exports = class ControllerExtensionPaymentAmazonLoginPay extends Controll
 			await this.model_extension_payment_amazon_login_pay.addEvents();
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			if ((this.request.post['language_reload'])) {
 				this.response.setRedirect(await this.url.link('extension/payment/amazon_login_pay', 'user_token=' + this.session.data['user_token'], true));
@@ -86,18 +93,18 @@ module.exports = class ControllerExtensionPaymentAmazonLoginPay extends Controll
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_extension'),
-			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true)
+			'text': this.language.get('text_extension'),
+			'href': await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('extension/payment/amazon_login_pay', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('extension/payment/amazon_login_pay', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['action'] = await this.url.link('extension/payment/amazon_login_pay', 'user_token=' + this.session.data['user_token'], true);
@@ -172,12 +179,12 @@ module.exports = class ControllerExtensionPaymentAmazonLoginPay extends Controll
 			data['payment_amazon_login_pay_payment_region'] = this.request.post['payment_amazon_login_pay_payment_region'];
 		} else if (this.config.get('payment_amazon_login_pay_payment_region')) {
 			data['payment_amazon_login_pay_payment_region'] = this.config.get('payment_amazon_login_pay_payment_region');
-		} else if (in_array(this.config.get('config_currency'), array('EUR', 'GBP', 'USD'))) {
+		} else if (['EUR', 'GBP', 'USD'].includes(this.config.get('config_currency'))) {
 			data['payment_amazon_login_pay_payment_region'] = this.config.get('config_currency');
 		} else {
 			data['payment_amazon_login_pay_payment_region'] = 'USD';
 		}
-
+		let ld = '';
 		if (data['payment_amazon_login_pay_payment_region'] == 'EUR') {
 			data['payment_amazon_login_pay_language'] = 'de-DE';
 			data['sp_id'] = 'AW93DIZMWSDWS';
@@ -233,7 +240,7 @@ module.exports = class ControllerExtensionPaymentAmazonLoginPay extends Controll
 			data['payment_amazon_login_pay_ipn_token'] = sha1(uniqid(mt_rand(), 1));
 		}
 
-		data['ipn_url'] = HTTPS_CATALOG + 'index.php?route=extension/payment/amazon_login_pay/ipn&token=' + data['payment_amazon_login_pay_ipn_token'];
+		data['ipn_url'] = HTTPS_CATALOG + '?route=extension/payment/amazon_login_pay/ipn&token=' + data['payment_amazon_login_pay_ipn_token'];
 
 		if ((this.request.post['payment_amazon_login_pay_minimum_total'])) {
 			data['payment_amazon_login_pay_minimum_total'] = this.request.post['payment_amazon_login_pay_minimum_total'];
@@ -258,20 +265,20 @@ module.exports = class ControllerExtensionPaymentAmazonLoginPay extends Controll
 			data['payment_amazon_login_pay_buyer_multi_currency'] = '0';
 		}
 		//list available currencies for buyer multi-currency feature
-		this.load.model('localisation/currency',this);
-		store_buyer_currencies = {};
-		oc_currencies =  await this.model_localisation_currency.getCurrencies();
-		amazon_supported_currencies = array('AUD', 'GBP','DKK', 'EUR', 'HKD', 'JPY', 'NZD','NOK', 'ZAR', 'SEK', 'CHF', 'USD');
-		for (amazon_supported_currencies of amazon_supported_currency) {
-			if((oc_currencies[amazon_supported_currency]) && oc_currencies[amazon_supported_currency]['status'] == '1') {
-				array_push(store_buyer_currencies,amazon_supported_currency);
+		this.load.model('localisation/currency', this);
+		const store_buyer_currencies = [];
+		const oc_currencies = await this.model_localisation_currency.getCurrencies();
+		const amazon_supported_currencies = ['AUD', 'GBP', 'DKK', 'EUR', 'HKD', 'JPY', 'NZD', 'NOK', 'ZAR', 'SEK', 'CHF', 'USD'];
+		for (let amazon_supported_currency of amazon_supported_currencies) {
+			if ((oc_currencies[amazon_supported_currency]) && oc_currencies[amazon_supported_currency]['status'] == '1') {
+				store_buyer_currencies.push(amazon_supported_currency);
 			}
 		}
 		await this.load.language('common/column_left');
-		data['help_buyer_multi_currency'] = (store_buyer_currencies) ? sprintf(this.language.get('help_buyer_multi_currency'), implode(', ', store_buyer_currencies)) : this.language.get('help_buyer_multi_currency_no_available_currency');
-		data['text_info_buyer_multi_currencies'] = sprintf(this.language.get('text_info_buyer_multi_currencies'), this.session.data['user_token'], this.language.get('text_system'), this.language.get('text_localisation'),this.language.get('text_currency'));
+		data['help_buyer_multi_currency'] = (store_buyer_currencies) ? sprintf(this.language.get('help_buyer_multi_currency'), store_buyer_currencies.join(', ')) : this.language.get('help_buyer_multi_currency_no_available_currency');
+		data['text_info_buyer_multi_currencies'] = sprintf(this.language.get('text_info_buyer_multi_currencies'), this.session.data['user_token'], this.language.get('text_system'), this.language.get('text_localisation'), this.language.get('text_currency'));
 		data['help_capture_oc_status'] = sprintf(this.language.get('help_capture_oc_status'), this.language.get('text_sale'), this.language.get('text_order'), this.language.get('button_view'));
-		
+
 		if ((this.request.post['payment_amazon_login_pay_debug'])) {
 			data['payment_amazon_login_pay_debug'] = this.request.post['payment_amazon_login_pay_debug'];
 		} else if (this.config.get('payment_amazon_login_pay_debug')) {
@@ -304,46 +311,47 @@ module.exports = class ControllerExtensionPaymentAmazonLoginPay extends Controll
 			data['payment_amazon_login_pay_declined_code'] = '';
 		}
 
-		this.load.model('localisation/geo_zone');
+		this.load.model('localisation/geo_zone', this);
 
 		data['geo_zones'] = await this.model_localisation_geo_zone.getGeoZones();
 
-		this.load.model('localisation/order_status');
+		this.load.model('localisation/order_status', this);
 
 		data['order_statuses'] = await this.model_localisation_order_status.getOrderStatuses();
 
-		data['declined_codes'] = array(this.language.get('text_amazon_invalid'), this.language.get('text_amazon_rejected'), this.language.get('text_amazon_timeout'));
+		data['declined_codes'] = [this.language.get('text_amazon_invalid'), this.language.get('text_amazon_rejected'), this.language.get('text_amazon_timeout')];
 
-		data['unique_id'] = 'oc-' + str_replace(' ', '-', strtolower(this.config.get('config_name'))) + '_' + mt_rand();
+		data['unique_id'] = 'pc-' + this.config.get('config_name').toLowerCase().replaceAll(' ', '-') + '_' + mt_rand();
 		data['allowed_login_domain'] = html_entity_decode(HTTPS_CATALOG);
-		data['login_redirect_urls'].push(HTTPS_CATALOG + 'index.php?route=payment/amazon_login/login';
-		data['login_redirect_urls'].push(HTTPS_CATALOG + 'index.php?route=payment/amazon_pay/login';
+		data['login_redirect_urls'] = [];
+		data['login_redirect_urls'].push(HTTPS_CATALOG + '?route=payment/amazon_login/login');
+		data['login_redirect_urls'].push(HTTPS_CATALOG + '?route=payment/amazon_pay/login');
 		data['store_name'] = this.config.get('config_name');
-		data['simple_path_language'] = str_replace('-', '_', data['payment_amazon_login_pay_language']);
+		data['simple_path_language'] = data['payment_amazon_login_pay_language'].replaceAll('-', '_');
 
 		if (data['payment_amazon_login_pay_payment_region'] == 'USD') {
 			data['registration_url'] = "https://payments.amazon.com/register?registration_source=SPPL&spId=" + ld;
 
-			data['languages'] = array(
-				'en-US' : this.language.get('text_us')
-			});
+			data['languages'] = {
+				'en-US': this.language.get('text_us')
+			};
 		} else {
 			data['registration_url'] = "https://payments-eu.amazon.com/register?registration_source=SPPL&spId=" + ld;
 
-			data['languages'] = array(
-				'de-DE' : this.language.get('text_de'),
-				'es-ES' : this.language.get('text_es'),
-				'fr-FR' : this.language.get('text_fr'),
-				'it-IT' : this.language.get('text_it'),
-				'en-GB' : this.language.get('text_uk')
-			});
+			data['languages'] = {
+				'de-DE': this.language.get('text_de'),
+				'es-ES': this.language.get('text_es'),
+				'fr-FR': this.language.get('text_fr'),
+				'it-IT': this.language.get('text_it'),
+				'en-GB': this.language.get('text_uk')
+			};
 		}
 
-		data['payment_regions'] = array(
-			'EUR' : this.language.get('text_eu_region'),
-			'GBP' : this.language.get('text_uk_region'),
-			'USD' : this.language.get('text_us_region')
-		});
+		data['payment_regions'] = {
+			'EUR': this.language.get('text_eu_region'),
+			'GBP': this.language.get('text_uk_region'),
+			'USD': this.language.get('text_us_region')
+		};
 
 		data['has_ssl'] = (this.request.server['HTTPS']);
 
@@ -358,15 +366,15 @@ module.exports = class ControllerExtensionPaymentAmazonLoginPay extends Controll
 	}
 
 	async install() {
-		this.load.model('extension/payment/amazon_login_pay');
+		this.load.model('extension/payment/amazon_login_pay', this);
 		await this.model_extension_payment_amazon_login_pay.install();
 		await this.model_extension_payment_amazon_login_pay.deleteEvents();
 		await this.model_extension_payment_amazon_login_pay.addEvents();
 	}
 
 	async uninstall() {
-		this.load.model('extension/payment/amazon_login_pay');
-		this.load.model('setting/event',this);
+		this.load.model('extension/payment/amazon_login_pay', this);
+		this.load.model('setting/event', this);
 		await this.model_extension_payment_amazon_login_pay.uninstall();
 		await this.model_extension_payment_amazon_login_pay.deleteEvents();
 	}
@@ -375,11 +383,11 @@ module.exports = class ControllerExtensionPaymentAmazonLoginPay extends Controll
 
 		if (this.config.get('payment_amazon_login_pay_status')) {
 
-			this.load.model('extension/payment/amazon_login_pay');
+			this.load.model('extension/payment/amazon_login_pay', this);
 
-			amazon_login_pay_order = await this.model_extension_payment_amazon_login_pay.getOrder(this.request.get['order_id']);
+			const amazon_login_pay_order = await this.model_extension_payment_amazon_login_pay.getOrder(this.request.get['order_id']);
 
-			if ((amazon_login_pay_order)) {
+			if ((amazon_login_pay_order.amazon_login_pay_order_id)) {
 
 				await this.load.language('extension/payment/amazon_login_pay');
 
@@ -400,14 +408,14 @@ module.exports = class ControllerExtensionPaymentAmazonLoginPay extends Controll
 
 	async cancel() {
 		await this.load.language('extension/payment/amazon_login_pay');
-		json = {};
+		const json = {};
 
 		if ((this.request.post['order_id']) && this.request.post['order_id'] != '') {
-			this.load.model('extension/payment/amazon_login_pay');
+			this.load.model('extension/payment/amazon_login_pay', this);
 
-			amazon_login_pay_order = await this.model_extension_payment_amazon_login_pay.getOrder(this.request.post['order_id']);
+			const amazon_login_pay_order = await this.model_extension_payment_amazon_login_pay.getOrder(this.request.post['order_id']);
 
-			cancel_response = await this.model_extension_payment_amazon_login_pay.cancel(amazon_login_pay_order);
+			const cancel_response = await this.model_extension_payment_amazon_login_pay.cancel(amazon_login_pay_order);
 
 			await this.model_extension_payment_amazon_login_pay.logger(cancel_response);
 
@@ -435,14 +443,14 @@ module.exports = class ControllerExtensionPaymentAmazonLoginPay extends Controll
 
 	async capture() {
 		await this.load.language('extension/payment/amazon_login_pay');
-		json = {};
+		const json = {};
 
 		if ((this.request.post['order_id']) && this.request.post['order_id'] != '' && (this.request.post['amount']) && this.request.post['amount'] > 0) {
-			this.load.model('extension/payment/amazon_login_pay');
+			this.load.model('extension/payment/amazon_login_pay', this);
 
-			amazon_login_pay_order = await this.model_extension_payment_amazon_login_pay.getOrder(this.request.post['order_id']);
+			const amazon_login_pay_order = await this.model_extension_payment_amazon_login_pay.getOrder(this.request.post['order_id']);
 
-			capture_response = await this.model_extension_payment_amazon_login_pay.capture(amazon_login_pay_order, this.request.post['amount']);
+			const capture_response = await this.model_extension_payment_amazon_login_pay.capture(amazon_login_pay_order, this.request.post['amount']);
 			await this.model_extension_payment_amazon_login_pay.logger(capture_response);
 
 			if (capture_response['status'] == 'Completed' || capture_response['status'] == 'Pending') {
@@ -450,16 +458,16 @@ module.exports = class ControllerExtensionPaymentAmazonLoginPay extends Controll
 
 				await this.model_extension_payment_amazon_login_pay.updateAuthorizationStatus(capture_response['AmazonAuthorizationId'], 'Closed');
 
-				total_captured = await this.model_extension_payment_amazon_login_pay.getTotalCaptured(amazon_login_pay_order['amazon_login_pay_order_id']);
+				const total_captured = await this.model_extension_payment_amazon_login_pay.getTotalCaptured(amazon_login_pay_order['amazon_login_pay_order_id']);
 
 				if (total_captured > 0) {
-					order_reference_id = amazon_login_pay_order['amazon_order_reference_id'];
+					const order_reference_id = amazon_login_pay_order['amazon_order_reference_id'];
 
 					if (await this.model_extension_payment_amazon_login_pay.isOrderInState(order_reference_id, array('Open', 'Suspended'))) {
-                        await this.model_extension_payment_amazon_login_pay.closeOrderRef(order_reference_id);
-                    }
+						await this.model_extension_payment_amazon_login_pay.closeOrderRef(order_reference_id);
+					}
 				}
-
+				let capture_status = 0;
 				if (total_captured >= amazon_login_pay_order['total']) {
 					await this.model_extension_payment_amazon_login_pay.updateCaptureStatus(amazon_login_pay_order['amazon_login_pay_order_id'], 1);
 					capture_status = 1;
@@ -493,38 +501,40 @@ module.exports = class ControllerExtensionPaymentAmazonLoginPay extends Controll
 
 	async refund() {
 		await this.load.language('extension/payment/amazon_login_pay');
-		json = {};
-
+		const json = {};
+		json['msg'] = [];
+		json['data'] = [];
+		json['error_msg'] = [];
 		if ((this.request.post['order_id']) && (this.request.post['order_id'])) {
-			this.load.model('extension/payment/amazon_login_pay');
+			this.load.model('extension/payment/amazon_login_pay', this);
 
-			amazon_login_pay_order = await this.model_extension_payment_amazon_login_pay.getOrder(this.request.post['order_id']);
+			const amazon_login_pay_order = await this.model_extension_payment_amazon_login_pay.getOrder(this.request.post['order_id']);
 
-			refund_response = await this.model_extension_payment_amazon_login_pay.refund(amazon_login_pay_order, this.request.post['amount']);
+			const refund_response = await this.model_extension_payment_amazon_login_pay.refund(amazon_login_pay_order, this.request.post['amount']);
 
 			await this.model_extension_payment_amazon_login_pay.logger(refund_response);
 
-			refund_status = '';
-			total_captured = '';
-			total_refunded = '';
+			let refund_status = '';
+			let total_captured = '';
+			let total_refunded = '';
 
-			for (refund_response of response) {
+			for (let response of refund_response) {
 				if (response['status'] == 'Pending') {
 					await this.model_extension_payment_amazon_login_pay.addTransaction(amazon_login_pay_order['amazon_login_pay_order_id'], 'refund', response['status'], response['amount'] * -1, response['amazon_authorization_id'], response['amazon_capture_id'], response['AmazonRefundId']);
 
-					total_refunded = await this.model_extension_payment_amazon_login_pay.getTotalRefunded(amazon_login_pay_order['amazon_login_pay_order_id']);
-					total_captured = await this.model_extension_payment_amazon_login_pay.getTotalCaptured(amazon_login_pay_order['amazon_login_pay_order_id']);
-
+					const total_refunded = await this.model_extension_payment_amazon_login_pay.getTotalRefunded(amazon_login_pay_order['amazon_login_pay_order_id']);
+					const total_captured = await this.model_extension_payment_amazon_login_pay.getTotalCaptured(amazon_login_pay_order['amazon_login_pay_order_id']);
+					let refund_status = 0;
 					if (total_captured <= 0 && amazon_login_pay_order['capture_status'] == 1) {
 						await this.model_extension_payment_amazon_login_pay.updateRefundStatus(amazon_login_pay_order['amazon_login_pay_order_id'], 1);
 						refund_status = 1;
-						json['msg'].push(this.language.get('text_refund_ok_order') + '<br />';
+						json['msg'].push(this.language.get('text_refund_ok_order') + '<br />');
 					} else {
 						refund_status = 0;
-						json['msg'].push(this.language.get('text_refund_ok') + '<br />';
+						json['msg'].push(this.language.get('text_refund_ok') + '<br />');
 					}
 
-					data = {};
+					const data = {};
 					data['date_added'] = date("Y-m-d H:i:s");
 					data['type'] = 'refund';
 					data['status'] = response['status'];
@@ -532,10 +542,10 @@ module.exports = class ControllerExtensionPaymentAmazonLoginPay extends Controll
 					data['amazon_capture_id'] = response['amazon_capture_id'];
 					data['amazon_refund_id'] = response['AmazonRefundId'];
 					data['amount'] = this.currency.format((response['amount'] * -1), amazon_login_pay_order['currency_code'], true, true);
-					json['data'].push(data;
+					json['data'].push(data);
 				} else {
 					json['error'] = true;
-					json['error_msg'].push((response['status_detail']) && (response['status_detail']) ? response['status_detail'] : 'Unable to refund';
+					json['error_msg'].push((response['status_detail']) && (response['status_detail']) ? response['status_detail'] : 'Unable to refund');
 				}
 			}
 			json['refund_status'] = refund_status;
@@ -543,29 +553,29 @@ module.exports = class ControllerExtensionPaymentAmazonLoginPay extends Controll
 			json['total_refunded'] = this.currency.format(total_refunded, amazon_login_pay_order['currency_code'], true, true);
 		} else {
 			json['error'] = true;
-			json['error_msg'].push(this.language.get('error_data_missing');
+			json['error_msg'].push(this.language.get('error_data_missing'));
 		}
 		this.response.setOutput(json);
 	}
 
-    async trimIntegrationDetails() {
-        integration_keys = array(
-            'payment_amazon_login_pay_merchant_id',
-            'payment_amazon_login_pay_access_key',
-            'payment_amazon_login_pay_access_secret',
-            'payment_amazon_login_pay_client_id',
-            'payment_amazon_login_pay_client_secret'
-        );
+	trimIntegrationDetails() {
+		const integration_keys = [
+			'payment_amazon_login_pay_merchant_id',
+			'payment_amazon_login_pay_access_key',
+			'payment_amazon_login_pay_access_secret',
+			'payment_amazon_login_pay_client_id',
+			'payment_amazon_login_pay_client_secret'
+		];
 
-        for (this.request.post of key : value) {
-            if (in_array(key, integration_keys)) {
-                this.request.post[key] = trim(value);
-            }
-        }
-    }
+		for (let [key, value] of Object.entries(this.request.post)) {
+			if (integration_keys.includes(key)) {
+				this.request.post[key] = value.trim();
+			}
+		}
+	}
 
 	async validate() {
-		this.load.model('localisation/currency',this);
+		this.load.model('localisation/currency', this);
 
 		if (!await this.user.hasPermission('modify', 'extension/payment/amazon_login_pay')) {
 			this.error['warning'] = this.language.get('error_permission');
@@ -579,9 +589,9 @@ module.exports = class ControllerExtensionPaymentAmazonLoginPay extends Controll
 			this.error['error_access_key'] = this.language.get('error_access_key');
 		}
 
-		if (empty(this.error)) {
-			this.load.model('extension/payment/amazon_login_pay');
-			errors = await this.model_extension_payment_amazon_login_pay.validateDetails(this.request.post);
+		if (!Object.keys(this.error).length) {
+			this.load.model('extension/payment/amazon_login_pay', this);
+			const errors = await this.model_extension_payment_amazon_login_pay.validateDetails(this.request.post);
 			if ((errors['error_code']) && errors['error_code'] == 'InvalidParameterValue') {
 				this.error['error_merchant_id'] = errors['status_detail'];
 			} else if ((errors['error_code']) && errors['error_code'] == 'InvalidAccessKeyId') {
@@ -606,16 +616,16 @@ module.exports = class ControllerExtensionPaymentAmazonLoginPay extends Controll
 		}
 
 		if ((this.request.post['amazon_login_pay_region'])) {
-			currency_code = this.request.post['amazon_login_pay_region'];
+			const currency_code = this.request.post['amazon_login_pay_region'];
 
-			currency = await this.model_localisation_currency.getCurrency(this.currency.getId(currency_code));
+			const currency = await this.model_localisation_currency.getCurrency(await this.currency.getId(currency_code));
 
-			if (empty(currency) || currency['status'] != '1') {
+			if (!currency.currency_id || currency['status'] != '1') {
 				this.error['error_curreny'] = sprintf(this.language.get('error_curreny'), currency_code);
 			}
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 
 }

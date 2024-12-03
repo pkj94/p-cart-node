@@ -14,7 +14,6 @@ module.exports = class ControllerCommonLogin extends Controller {
 		}
 
 		if ((this.request.server['method'] == 'POST') && await this.validate()) {
-			console.log(this.validate)
 			this.session.data['user_token'] = oc_token(32);
 			await this.session.save(this.session.data);
 			if ((this.request.post['redirect']) && (strpos(this.request.post['redirect'], HTTP_SERVER) === 0 || strpos(this.request.post['redirect'], HTTPS_SERVER) === 0)) {
@@ -80,7 +79,6 @@ module.exports = class ControllerCommonLogin extends Controller {
 		} else {
 			data['forgotten'] = '';
 		}
-		console.log(data)
 		data['header'] = await this.load.controller('common/header');
 		data['footer'] = await this.load.controller('common/footer');
 		await this.session.save(this.session.data);

@@ -1,12 +1,16 @@
+const nl2br = require("locutus/php/strings/nl2br");
+const rtrim = require("locutus/php/strings/rtrim");
+
 module.exports = class ControllerSaleOrder extends Controller {
 	error = {};
 
 	async index() {
+		const data = {};
 		await this.load.language('sale/order');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('sale/order',this);
+		this.load.model('sale/order', this);
 
 		await this.getList();
 	}
@@ -16,7 +20,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('sale/order',this);
+		this.load.model('sale/order', this);
 
 		await this.getForm();
 	}
@@ -26,19 +30,20 @@ module.exports = class ControllerSaleOrder extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('sale/order',this);
+		this.load.model('sale/order', this);
 
 		await this.getForm();
 	}
-	
+
 	async delete() {
 		await this.load.language('sale/order');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
 		this.session.data['success'] = this.language.get('text_success');
+		await this.session.save(this.session.data);
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['filter_order_id'])) {
 			url += '&filter_order_id=' + this.request.get['filter_order_id'];
@@ -51,11 +56,11 @@ module.exports = class ControllerSaleOrder extends Controller {
 		if ((this.request.get['filter_order_status'])) {
 			url += '&filter_order_status=' + this.request.get['filter_order_status'];
 		}
-	
+
 		if ((this.request.get['filter_order_status_id'])) {
 			url += '&filter_order_status_id=' + this.request.get['filter_order_status_id'];
 		}
-			
+
 		if ((this.request.get['filter_total'])) {
 			url += '&filter_total=' + this.request.get['filter_total'];
 		}
@@ -82,69 +87,51 @@ module.exports = class ControllerSaleOrder extends Controller {
 
 		this.response.setRedirect(await this.url.link('sale/order', 'user_token=' + this.session.data['user_token'] + url, true));
 	}
-			
+
 	async getList() {
+		const data = {};
+		let filter_order_id = '';
 		if ((this.request.get['filter_order_id'])) {
 			filter_order_id = this.request.get['filter_order_id'];
-		} else {
-			filter_order_id = '';
 		}
-
+		let filter_customer = '';
 		if ((this.request.get['filter_customer'])) {
 			filter_customer = this.request.get['filter_customer'];
-		} else {
-			filter_customer = '';
 		}
-
+		let filter_order_status = '';
 		if ((this.request.get['filter_order_status'])) {
 			filter_order_status = this.request.get['filter_order_status'];
-		} else {
-			filter_order_status = '';
 		}
-		
+		let filter_order_status_id = '';
 		if ((this.request.get['filter_order_status_id'])) {
 			filter_order_status_id = this.request.get['filter_order_status_id'];
-		} else {
-			filter_order_status_id = '';
 		}
-		
+		let filter_total = '';
 		if ((this.request.get['filter_total'])) {
 			filter_total = this.request.get['filter_total'];
-		} else {
-			filter_total = '';
 		}
-
+		let filter_date_added = '';
 		if ((this.request.get['filter_date_added'])) {
 			filter_date_added = this.request.get['filter_date_added'];
-		} else {
-			filter_date_added = '';
 		}
-
+		let filter_date_modified = '';
 		if ((this.request.get['filter_date_modified'])) {
 			filter_date_modified = this.request.get['filter_date_modified'];
-		} else {
-			filter_date_modified = '';
 		}
-
+		let sort = 'o.order_id';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
-		} else {
-			sort = 'o.order_id';
 		}
-
+		let order = 'DESC';
 		if ((this.request.get['order'])) {
 			order = this.request.get['order'];
-		} else {
-			order = 'DESC';
 		}
-
+		let page = 1;
 		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['filter_order_id'])) {
 			url += '&filter_order_id=' + this.request.get['filter_order_id'];
@@ -157,11 +144,11 @@ module.exports = class ControllerSaleOrder extends Controller {
 		if ((this.request.get['filter_order_status'])) {
 			url += '&filter_order_status=' + this.request.get['filter_order_status'];
 		}
-	
+
 		if ((this.request.get['filter_order_status_id'])) {
 			url += '&filter_order_status_id=' + this.request.get['filter_order_status_id'];
 		}
-			
+
 		if ((this.request.get['filter_total'])) {
 			url += '&filter_total=' + this.request.get['filter_total'];
 		}
@@ -189,13 +176,13 @@ module.exports = class ControllerSaleOrder extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('sale/order', 'user_token=' + this.session.data['user_token'] + url, true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('sale/order', 'user_token=' + this.session.data['user_token'] + url, true)
 		});
 
 		data['invoice'] = await this.url.link('sale/order/invoice', 'user_token=' + this.session.data['user_token'], true);
@@ -203,37 +190,37 @@ module.exports = class ControllerSaleOrder extends Controller {
 		data['add'] = await this.url.link('sale/order/add', 'user_token=' + this.session.data['user_token'] + url, true);
 		data['delete'] = str_replace('&amp;', '&', await this.url.link('sale/order/delete', 'user_token=' + this.session.data['user_token'] + url, true));
 
-		data['orders'] = {};
+		data['orders'] = [];
 
-		filter_data = array(
-			'filter_order_id'        : filter_order_id,
-			'filter_customer'	     : filter_customer,
-			'filter_order_status'    : filter_order_status,
-			'filter_order_status_id' : filter_order_status_id,
-			'filter_total'           : filter_total,
-			'filter_date_added'      : filter_date_added,
-			'filter_date_modified'   : filter_date_modified,
-			'sort'                   : sort,
-			'order'                  : order,
-			'start'                  : (page - 1) * Number(this.config.get('config_limit_admin')),
-			'limit'                  : Number(this.config.get('config_limit_admin'))
-		});
+		const filter_data = {
+			'filter_order_id': filter_order_id,
+			'filter_customer': filter_customer,
+			'filter_order_status': filter_order_status,
+			'filter_order_status_id': filter_order_status_id,
+			'filter_total': filter_total,
+			'filter_date_added': filter_date_added,
+			'filter_date_modified': filter_date_modified,
+			'sort': sort,
+			'order': order,
+			'start': (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit': Number(this.config.get('config_limit_admin'))
+		};
 
-		order_total = await this.model_sale_order.getTotalOrders(filter_data);
+		const order_total = await this.model_sale_order.getTotalOrders(filter_data);
 
-		results = await this.model_sale_order.getOrders(filter_data);
+		const results = await this.model_sale_order.getOrders(filter_data);
 
 		for (let result of results) {
 			data['orders'].push({
-				'order_id'      : result['order_id'],
-				'customer'      : result['customer'],
-				'order_status'  : result['order_status'] ? result['order_status'] : this.language.get('text_missing'),
-				'total'         : this.currency.format(result['total'], result['currency_code'], result['currency_value']),
-				'date_added'    : date(this.language.get('date_format_short'), strtotime(result['date_added'])),
-				'date_modified' : date(this.language.get('date_format_short'), strtotime(result['date_modified'])),
-				'shipping_code' : result['shipping_code'],
-				'view'          : await this.url.link('sale/order/info', 'user_token=' + this.session.data['user_token'] + '&order_id=' + result['order_id'] + url, true),
-				'edit'          : await this.url.link('sale/order/edit', 'user_token=' + this.session.data['user_token'] + '&order_id=' + result['order_id'] + url, true)
+				'order_id': result['order_id'],
+				'customer': result['customer'],
+				'order_status': result['order_status'] ? result['order_status'] : this.language.get('text_missing'),
+				'total': this.currency.format(result['total'], result['currency_code'], result['currency_value']),
+				'date_added': date(this.language.get('date_format_short'), strtotime(result['date_added'])),
+				'date_modified': date(this.language.get('date_format_short'), strtotime(result['date_modified'])),
+				'shipping_code': result['shipping_code'],
+				'view': await this.url.link('sale/order/info', 'user_token=' + this.session.data['user_token'] + '&order_id=' + result['order_id'] + url, true),
+				'edit': await this.url.link('sale/order/edit', 'user_token=' + this.session.data['user_token'] + '&order_id=' + result['order_id'] + url, true)
 			});
 		}
 
@@ -248,11 +235,11 @@ module.exports = class ControllerSaleOrder extends Controller {
 		if ((this.session.data['success'])) {
 			data['success'] = this.session.data['success'];
 
-			delete this.session.data['success']);
+			delete this.session.data['success'];
 		} else {
 			data['success'] = '';
 		}
-		
+
 		if ((this.request.post['selected'])) {
 			data['selected'] = this.request.post['selected'];
 		} else {
@@ -272,11 +259,11 @@ module.exports = class ControllerSaleOrder extends Controller {
 		if ((this.request.get['filter_order_status'])) {
 			url += '&filter_order_status=' + this.request.get['filter_order_status'];
 		}
-		
+
 		if ((this.request.get['filter_order_status_id'])) {
 			url += '&filter_order_status_id=' + this.request.get['filter_order_status_id'];
 		}
-			
+
 		if ((this.request.get['filter_total'])) {
 			url += '&filter_total=' + this.request.get['filter_total'];
 		}
@@ -319,11 +306,11 @@ module.exports = class ControllerSaleOrder extends Controller {
 		if ((this.request.get['filter_order_status'])) {
 			url += '&filter_order_status=' + this.request.get['filter_order_status'];
 		}
-		
+
 		if ((this.request.get['filter_order_status_id'])) {
 			url += '&filter_order_status_id=' + this.request.get['filter_order_status_id'];
 		}
-			
+
 		if ((this.request.get['filter_total'])) {
 			url += '&filter_total=' + this.request.get['filter_total'];
 		}
@@ -344,7 +331,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 			url += '&order=' + this.request.get['order'];
 		}
 
-		pagination = new Pagination();
+		const pagination = new Pagination();
 		pagination.total = order_total;
 		pagination.page = page;
 		pagination.limit = Number(this.config.get('config_limit_admin'));
@@ -365,29 +352,29 @@ module.exports = class ControllerSaleOrder extends Controller {
 		data['sort'] = sort;
 		data['order'] = order;
 
-		this.load.model('localisation/order_status');
+		this.load.model('localisation/order_status', this);
 
 		data['order_statuses'] = await this.model_localisation_order_status.getOrderStatuses();
 
 		// API login
 		data['catalog'] = this.request.server['HTTPS'] ? HTTPS_CATALOG : HTTP_CATALOG;
-		
+
 		// API login
-		this.load.model('user/api');
+		this.load.model('user/api', this);
 
-		api_info = await this.model_user_api.getApi(this.config.get('config_api_id'));
+		const api_info = await this.model_user_api.getApi(this.config.get('config_api_id'));
 
-		if (api_info && await this.user.hasPermission('modify', 'sale/order')) {
-			session = new Session(this.config.get('session_engine'), this.registry);
-			
-			session.start();
-					
+		if (api_info.api_id && await this.user.hasPermission('modify', 'sale/order')) {
+			const session = new Session(this.request.server.session);
+			console.log(session)
+			await session.start();
+
 			await this.model_user_api.deleteApiSessionBySessionId(session.getId());
-			
-			await this.model_user_api.addApiSession(api_info['api_id'], session.getId(), this.request.server['REMOTE_ADDR']);
-			
-			session.data['api_id'] = api_info['api_id'];
 
+			await this.model_user_api.addApiSession(api_info['api_id'], session.getId(), this.request.server['REMOTE_ADDR']);
+
+			session.data['api_id'] = api_info['api_id'];
+			await session.save(session.data);
 			data['api_token'] = session.getId();
 		} else {
 			data['api_token'] = '';
@@ -399,11 +386,12 @@ module.exports = class ControllerSaleOrder extends Controller {
 
 		this.response.setOutput(await this.load.view('sale/order_list', data));
 	}
-		
+
 	async getForm() {
+		const data = {};
 		data['text_form'] = !(this.request.get['order_id']) ? this.language.get('text_add') : this.language.get('text_edit');
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['filter_order_id'])) {
 			url += '&filter_order_id=' + this.request.get['filter_order_id'];
@@ -416,11 +404,11 @@ module.exports = class ControllerSaleOrder extends Controller {
 		if ((this.request.get['filter_order_status'])) {
 			url += '&filter_order_status=' + this.request.get['filter_order_status'];
 		}
-		
+
 		if ((this.request.get['filter_order_status_id'])) {
 			url += '&filter_order_status_id=' + this.request.get['filter_order_status_id'];
 		}
-			
+
 		if ((this.request.get['filter_total'])) {
 			url += '&filter_total=' + this.request.get['filter_total'];
 		}
@@ -448,19 +436,19 @@ module.exports = class ControllerSaleOrder extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('sale/order', 'user_token=' + this.session.data['user_token'] + url, true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('sale/order', 'user_token=' + this.session.data['user_token'] + url, true)
 		});
 
 		data['cancel'] = await this.url.link('sale/order', 'user_token=' + this.session.data['user_token'] + url, true);
 
 		data['user_token'] = this.session.data['user_token'];
-
+		let order_info;
 		if ((this.request.get['order_id'])) {
 			order_info = await this.model_sale_order.getOrder(this.request.get['order_id']);
 		}
@@ -479,7 +467,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 			data['telephone'] = order_info['telephone'];
 			data['account_custom_field'] = order_info['custom_field'];
 
-			this.load.model('customer/customer',this);
+			this.load.model('customer/customer', this);
 
 			data['addresses'] = await this.model_customer_customer.getAddresses(order_info['customer_id']);
 
@@ -510,20 +498,20 @@ module.exports = class ControllerSaleOrder extends Controller {
 			data['shipping_code'] = order_info['shipping_code'];
 
 			// Products
-			data['order_products'] = {};
+			data['order_products'] = [];
 
-			products = await this.model_sale_order.getOrderProducts(this.request.get['order_id']);
+			const products = await this.model_sale_order.getOrderProducts(this.request.get['order_id']);
 
-			for (products of product) {
+			for (let product of products) {
 				data['order_products'].push({
-					'product_id' : product['product_id'],
-					'name'       : product['name'],
-					'model'      : product['model'],
-					'option'     : await this.model_sale_order.getOrderOptions(this.request.get['order_id'], product['order_product_id']),
-					'quantity'   : product['quantity'],
-					'price'      : product['price'],
-					'total'      : product['total'],
-					'reward'     : product['reward']
+					'product_id': product['product_id'],
+					'name': product['name'],
+					'model': product['model'],
+					'option': await this.model_sale_order.getOrderOptions(this.request.get['order_id'], product['order_product_id']),
+					'quantity': product['quantity'],
+					'price': product['price'],
+					'total': product['total'],
+					'reward': product['reward']
 				});
 			}
 
@@ -536,15 +524,15 @@ module.exports = class ControllerSaleOrder extends Controller {
 
 			data['order_totals'] = {};
 
-			order_totals = await this.model_sale_order.getOrderTotals(this.request.get['order_id']);
+			const order_totals = await this.model_sale_order.getOrderTotals(this.request.get['order_id']);
 
-			for (order_totals of order_total) {
+			for (let order_total of order_totals) {
 				// If coupon, voucher or reward points
-				start = strpos(order_total['title'], '(') + 1;
-				end = strrpos(order_total['title'], ')');
+				let start = order_total['title'].indexOf('(') + 1;
+				let end = order_total['title'].indexOf(')');
 
 				if (start && end) {
-					data[order_total['code']] = substr(order_total['title'], start, end - start);
+					data[order_total['code']] = order_total['title'].substr(start, end - start);
 				}
 			}
 
@@ -557,7 +545,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 			data['order_id'] = 0;
 			data['store_id'] = 0;
 			data['store_url'] = this.request.server['HTTPS'] ? HTTPS_CATALOG : HTTP_CATALOG;
-			
+
 			data['customer'] = '';
 			data['customer_id'] = '';
 			data['customer_group_id'] = this.config.get('config_customer_group_id');
@@ -565,9 +553,9 @@ module.exports = class ControllerSaleOrder extends Controller {
 			data['lastname'] = '';
 			data['email'] = '';
 			data['telephone'] = '';
-			data['customer_custom_field'] = {};
+			data['customer_custom_field'] = [];
 
-			data['addresses'] = {};
+			data['addresses'] = [];
 
 			data['payment_firstname'] = '';
 			data['payment_lastname'] = '';
@@ -578,7 +566,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 			data['payment_postcode'] = '';
 			data['payment_country_id'] = '';
 			data['payment_zone_id'] = '';
-			data['payment_custom_field'] = {};
+			data['payment_custom_field'] = [];
 			data['payment_method'] = '';
 			data['payment_code'] = '';
 
@@ -591,13 +579,13 @@ module.exports = class ControllerSaleOrder extends Controller {
 			data['shipping_postcode'] = '';
 			data['shipping_country_id'] = '';
 			data['shipping_zone_id'] = '';
-			data['shipping_custom_field'] = {};
+			data['shipping_custom_field'] = [];
 			data['shipping_method'] = '';
 			data['shipping_code'] = '';
 
-			data['order_products'] = {};
-			data['order_vouchers'] = {};
-			data['order_totals'] = {};
+			data['order_products'] = [];
+			data['order_vouchers'] = [];
+			data['order_totals'] = [];
 
 			data['order_status_id'] = this.config.get('config_order_status_id');
 			data['comment'] = '';
@@ -611,68 +599,68 @@ module.exports = class ControllerSaleOrder extends Controller {
 		}
 
 		// Stores
-		this.load.model('setting/store',this);
+		this.load.model('setting/store', this);
 
-		data['stores'] = {};
+		data['stores'] = [];
 
 		data['stores'].push({
-			'store_id' : 0,
-			'name'     : this.language.get('text_default')
+			'store_id': 0,
+			'name': this.language.get('text_default')
 		});
 
-		results = await this.model_setting_store.getStores();
+		const results = await this.model_setting_store.getStores();
 
 		for (let result of results) {
 			data['stores'].push({
-				'store_id' : result['store_id'],
-				'name'     : result['name']
+				'store_id': result['store_id'],
+				'name': result['name']
 			});
 		}
 
 		// Customer Groups
-		this.load.model('customer/customer_group',this);
+		this.load.model('customer/customer_group', this);
 
 		data['customer_groups'] = await this.model_customer_customer_group.getCustomerGroups();
 
 		// Custom Fields
-		this.load.model('customer/custom_field');
-		this.load.model('tool/upload');
+		this.load.model('customer/custom_field', this);
+		this.load.model('tool/upload', this);
 
-		data['custom_fields'] = {};
+		data['custom_fields'] = [];
 
-		custom_field_locations = array(
+		let custom_field_locations = [
 			'account_custom_field',
 			'payment_custom_field',
 			'shipping_custom_field'
-		});
+		];
 
-		filter_data = array(
-			'sort'  : 'cf.sort_order',
-			'order' : 'ASC'
-		});
+		const filter_data = {
+			'sort': 'cf.sort_order',
+			'order': 'ASC'
+		};
 
-		custom_fields = await this.model_customer_custom_field.getCustomFields(filter_data);
+		const custom_fields = await this.model_customer_custom_field.getCustomFields(filter_data);
 
-		for (custom_fields of custom_field) {
+		for (let custom_field of custom_fields) {
 			data['custom_fields'].push({
-				'custom_field_id'    : custom_field['custom_field_id'],
-				'custom_field_value' : await this.model_customer_custom_field.getCustomFieldValues(custom_field['custom_field_id']),
-				'name'               : custom_field['name'],
-				'value'              : custom_field['value'],
-				'type'               : custom_field['type'],
-				'location'           : custom_field['location'],
-				'sort_order'         : custom_field['sort_order']
+				'custom_field_id': custom_field['custom_field_id'],
+				'custom_field_value': await this.model_customer_custom_field.getCustomFieldValues(custom_field['custom_field_id']),
+				'name': custom_field['name'],
+				'value': custom_field['value'],
+				'type': custom_field['type'],
+				'location': custom_field['location'],
+				'sort_order': custom_field['sort_order']
 			});
 
-			if(custom_field['type'] == 'file') {
-				for(custom_field_locations of location) {
-					if((data[location][custom_field['custom_field_id']])) {
-						code = data[location][custom_field['custom_field_id']];
+			if (custom_field['type'] == 'file') {
+				for (let location of custom_field_locations) {
+					if ((data[location][custom_field['custom_field_id']])) {
+						let code = data[location][custom_field['custom_field_id']];
 
-						upload_result = await this.model_tool_upload.getUploadByCode(code);
+						const upload_result = await this.model_tool_upload.getUploadByCode(code);
 
 						data[location][custom_field['custom_field_id']] = {};
-						if(upload_result) {
+						if (upload_result.upload_id) {
 							data[location][custom_field['custom_field_id']]['name'] = upload_result['name'];
 							data[location][custom_field['custom_field_id']]['code'] = upload_result['code'];
 						} else {
@@ -684,44 +672,45 @@ module.exports = class ControllerSaleOrder extends Controller {
 			}
 		}
 
-		this.load.model('localisation/order_status');
+		this.load.model('localisation/order_status', this);
 
 		data['order_statuses'] = await this.model_localisation_order_status.getOrderStatuses();
 
-		this.load.model('localisation/country');
+		this.load.model('localisation/country', this);
 
 		data['countries'] = await this.model_localisation_country.getCountries();
 
-		this.load.model('localisation/currency',this);
+		this.load.model('localisation/currency', this);
 
 		data['currencies'] = await this.model_localisation_currency.getCurrencies();
 
 		data['voucher_min'] = this.config.get('config_voucher_min');
 
-		this.load.model('sale/voucher_theme');
+		this.load.model('sale/voucher_theme', this);
 
 		data['voucher_themes'] = await this.model_sale_voucher_theme.getVoucherThemes();
 
 		// API login
 		data['catalog'] = this.request.server['HTTPS'] ? HTTPS_CATALOG : HTTP_CATALOG;
-		
-		// API login
-		this.load.model('user/api');
 
-		api_info = await this.model_user_api.getApi(this.config.get('config_api_id'));
+		// API login
+		this.load.model('user/api', this);
+
+		const api_info = await this.model_user_api.getApi(this.config.get('config_api_id'));
 
 		if (api_info && await this.user.hasPermission('modify', 'sale/order')) {
-			session = new Session(this.config.get('session_engine'), this.registry);
-			
-			session.start();
-					
+			const session = new Session(this.request.server.session);
+
+			await session.start();
+
 			await this.model_user_api.deleteApiSessionBySessionId(session.getId());
-			
+
 			await this.model_user_api.addApiSession(api_info['api_id'], session.getId(), this.request.server['REMOTE_ADDR']);
-			
+
 			session.data['api_id'] = api_info['api_id'];
 
 			data['api_token'] = session.getId();
+			await session.save(session.data);
 		} else {
 			data['api_token'] = '';
 		}
@@ -734,17 +723,16 @@ module.exports = class ControllerSaleOrder extends Controller {
 	}
 
 	async info() {
-		this.load.model('sale/order',this);
-
+		const data = {};
+		this.load.model('sale/order', this);
+		let order_id = 0;
 		if ((this.request.get['order_id'])) {
 			order_id = this.request.get['order_id'];
-		} else {
-			order_id = 0;
 		}
 
-		order_info = await this.model_sale_order.getOrder(order_id);
+		const order_info = await this.model_sale_order.getOrder(order_id);
 
-		if (order_info) {
+		if (order_info.order_id) {
 			await this.load.language('sale/order');
 
 			this.document.setTitle(this.language.get('heading_title'));
@@ -752,7 +740,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 			data['text_ip_add'] = sprintf(this.language.get('text_ip_add'), this.request.server['REMOTE_ADDR']);
 			data['text_order'] = sprintf(this.language.get('text_order'), this.request.get['order_id']);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['filter_order_id'])) {
 				url += '&filter_order_id=' + this.request.get['filter_order_id'];
@@ -765,11 +753,11 @@ module.exports = class ControllerSaleOrder extends Controller {
 			if ((this.request.get['filter_order_status'])) {
 				url += '&filter_order_status=' + this.request.get['filter_order_status'];
 			}
-			
+
 			if ((this.request.get['filter_order_status_id'])) {
 				url += '&filter_order_status_id=' + this.request.get['filter_order_status_id'];
 			}
-			
+
 			if ((this.request.get['filter_total'])) {
 				url += '&filter_total=' + this.request.get['filter_total'];
 			}
@@ -797,13 +785,13 @@ module.exports = class ControllerSaleOrder extends Controller {
 			data['breadcrumbs'] = [];
 
 			data['breadcrumbs'].push({
-				'text' : this.language.get('text_home'),
-				'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+				'text': this.language.get('text_home'),
+				'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 			});
 
 			data['breadcrumbs'].push({
-				'text' : this.language.get('heading_title'),
-				'href' : await this.url.link('sale/order', 'user_token=' + this.session.data['user_token'] + url, true)
+				'text': this.language.get('heading_title'),
+				'href': await this.url.link('sale/order', 'user_token=' + this.session.data['user_token'] + url, true)
 			});
 
 			data['shipping'] = await this.url.link('sale/order/shipping', 'user_token=' + this.session.data['user_token'] + '&order_id=' + this.request.get['order_id'], true);
@@ -817,7 +805,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 
 			data['store_id'] = order_info['store_id'];
 			data['store_name'] = order_info['store_name'];
-			
+
 			if (order_info['store_id'] == 0) {
 				data['store_url'] = this.request.server['HTTPS'] ? HTTPS_CATALOG : HTTP_CATALOG;
 			} else {
@@ -830,7 +818,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 				data['invoice_no'] = '';
 			}
 
-			data['date_added'] = date(this.language.get('date_format_short'), strtotime(order_info['date_added']));
+			data['date_added'] = date(this.language.get('date_format_short'), new Date(order_info['date_added']));
 
 			data['firstname'] = order_info['firstname'];
 			data['lastname'] = order_info['lastname'];
@@ -841,11 +829,11 @@ module.exports = class ControllerSaleOrder extends Controller {
 				data['customer'] = '';
 			}
 
-			this.load.model('customer/customer_group',this);
+			this.load.model('customer/customer_group', this);
 
-			customer_group_info = await this.model_customer_customer_group.getCustomerGroup(order_info['customer_group_id']);
+			const customer_group_info = await this.model_customer_customer_group.getCustomerGroup(order_info['customer_group_id']);
 
-			if (customer_group_info) {
+			if (customer_group_info.customer_group_id) {
 				data['customer_group'] = customer_group_info['name'];
 			} else {
 				data['customer_group'] = '';
@@ -858,13 +846,12 @@ module.exports = class ControllerSaleOrder extends Controller {
 			data['payment_method'] = order_info['payment_method'];
 
 			// Payment Address
+			let format = '{firstname} {lastname}' + "\n" + '{company}' + "\n" + '{address_1}' + "\n" + '{address_2}' + "\n" + '{city} {postcode}' + "\n" + '{zone}' + "\n" + '{country}';
 			if (order_info['payment_address_format']) {
 				format = order_info['payment_address_format'];
-			} else {
-				format = '{firstname} {lastname}' + "\n" + '{company}' + "\n" + '{address_1}' + "\n" + '{address_2}' + "\n" + '{city} {postcode}' + "\n" + '{zone}' + "\n" + '{country}';
 			}
 
-			find = array(
+			let find = [
 				'{firstname}',
 				'{lastname}',
 				'{company}',
@@ -875,22 +862,25 @@ module.exports = class ControllerSaleOrder extends Controller {
 				'{zone}',
 				'{zone_code}',
 				'{country}'
-			});
+			];
 
-			replace = array(
-				'firstname' : order_info['payment_firstname'],
-				'lastname'  : order_info['payment_lastname'],
-				'company'   : order_info['payment_company'],
-				'address_1' : order_info['payment_address_1'],
-				'address_2' : order_info['payment_address_2'],
-				'city'      : order_info['payment_city'],
-				'postcode'  : order_info['payment_postcode'],
-				'zone'      : order_info['payment_zone'],
-				'zone_code' : order_info['payment_zone_code'],
-				'country'   : order_info['payment_country']
-			});
-
-			data['payment_address'] = str_replace(array("\r\n", "\r", "\n"), '<br />', preg_replace(array("/\s\s+/", "/\r\r+/", "/\n\n+/"), '<br />', trim(str_replace(find, replace, format))));
+			let replace = {
+				'firstname': order_info['payment_firstname'],
+				'lastname': order_info['payment_lastname'],
+				'company': order_info['payment_company'],
+				'address_1': order_info['payment_address_1'],
+				'address_2': order_info['payment_address_2'],
+				'city': order_info['payment_city'],
+				'postcode': order_info['payment_postcode'],
+				'zone': order_info['payment_zone'],
+				'zone_code': order_info['payment_zone_code'],
+				'country': order_info['payment_country']
+			};
+			for (let [key, value] of Object.entries(replace)) {
+				format = format.replace('{' + key + '}', value);
+			}
+			format = format.replaceAll('\r\n"', '<br />').replaceAll('\r"', '<br />').replaceAll('\n"', '<br />').replace(new RegExp("/\s\s+/"), '<br />').replace(new RegExp("/\r\r+/"), '<br />').replace(new RegExp("/\n\n+/"), '<br />')
+			data['payment_address'] = format;
 
 			// Shipping Address
 			if (order_info['shipping_address_format']) {
@@ -899,7 +889,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 				format = '{firstname} {lastname}' + "\n" + '{company}' + "\n" + '{address_1}' + "\n" + '{address_2}' + "\n" + '{city} {postcode}' + "\n" + '{zone}' + "\n" + '{country}';
 			}
 
-			find = array(
+			find = [
 				'{firstname}',
 				'{lastname}',
 				'{company}',
@@ -910,95 +900,99 @@ module.exports = class ControllerSaleOrder extends Controller {
 				'{zone}',
 				'{zone_code}',
 				'{country}'
-			});
+			];
 
-			replace = array(
-				'firstname' : order_info['shipping_firstname'],
-				'lastname'  : order_info['shipping_lastname'],
-				'company'   : order_info['shipping_company'],
-				'address_1' : order_info['shipping_address_1'],
-				'address_2' : order_info['shipping_address_2'],
-				'city'      : order_info['shipping_city'],
-				'postcode'  : order_info['shipping_postcode'],
-				'zone'      : order_info['shipping_zone'],
-				'zone_code' : order_info['shipping_zone_code'],
-				'country'   : order_info['shipping_country']
-			});
+			replace = {
+				'firstname': order_info['shipping_firstname'],
+				'lastname': order_info['shipping_lastname'],
+				'company': order_info['shipping_company'],
+				'address_1': order_info['shipping_address_1'],
+				'address_2': order_info['shipping_address_2'],
+				'city': order_info['shipping_city'],
+				'postcode': order_info['shipping_postcode'],
+				'zone': order_info['shipping_zone'],
+				'zone_code': order_info['shipping_zone_code'],
+				'country': order_info['shipping_country']
+			};
+			for (let [key, value] of Object.entries(replace)) {
+				format = format.replace('{' + key + '}', value);
+			}
+			format = format.replaceAll('\r\n"', '<br />').replaceAll('\r"', '<br />').replaceAll('\n"', '<br />').replace(new RegExp("/\s\s+/"), '<br />').replace(new RegExp("/\r\r+/"), '<br />').replace(new RegExp("/\n\n+/"), '<br />')
+			data['shipping_address'] = format;
 
-			data['shipping_address'] = str_replace(array("\r\n", "\r", "\n"), '<br />', preg_replace(array("/\s\s+/", "/\r\r+/", "/\n\n+/"), '<br />', trim(str_replace(find, replace, format))));
 
 			// Uploaded files
-			this.load.model('tool/upload');
+			this.load.model('tool/upload', this);
 
-			data['products'] = {};
+			data['products'] = [];
 
-			products = await this.model_sale_order.getOrderProducts(this.request.get['order_id']);
+			const products = await this.model_sale_order.getOrderProducts(this.request.get['order_id']);
 
-			for (products of product) {
-				option_data = {};
+			for (let product of products) {
+				let option_data = [];
 
-				options = await this.model_sale_order.getOrderOptions(this.request.get['order_id'], product['order_product_id']);
+				const options = await this.model_sale_order.getOrderOptions(this.request.get['order_id'], product['order_product_id']);
 
-				for (options of option) {
+				for (let option of options) {
 					if (option['type'] != 'file') {
 						option_data.push({
-							'name'  : option['name'],
-							'value' : option['value'],
-							'type'  : option['type']
+							'name': option['name'],
+							'value': option['value'],
+							'type': option['type']
 						});
 					} else {
-						upload_info = await this.model_tool_upload.getUploadByCode(option['value']);
+						const upload_info = await this.model_tool_upload.getUploadByCode(option['value']);
 
-						if (upload_info) {
+						if (upload_info.upload_id) {
 							option_data.push({
-								'name'  : option['name'],
-								'value' : upload_info['name'],
-								'type'  : option['type'],
-								'href'  : await this.url.link('tool/upload/download', 'user_token=' + this.session.data['user_token'] + '&code=' + upload_info['code'], true)
+								'name': option['name'],
+								'value': upload_info['name'],
+								'type': option['type'],
+								'href': await this.url.link('tool/upload/download', 'user_token=' + this.session.data['user_token'] + '&code=' + upload_info['code'], true)
 							});
 						}
 					}
 				}
 
 				data['products'].push({
-					'order_product_id' : product['order_product_id'],
-					'product_id'       : product['product_id'],
-					'name'    	 	   : product['name'],
-					'model'    		   : product['model'],
-					'option'   		   : option_data,
-					'quantity'		   : product['quantity'],
-					'price'    		   : this.currency.format(product['price'] + (this.config.get('config_tax') ? product['tax'] : 0), order_info['currency_code'], order_info['currency_value']),
-					'total'    		   : this.currency.format(product['total'] + (this.config.get('config_tax') ? (product['tax'] * product['quantity']) : 0), order_info['currency_code'], order_info['currency_value']),
-					'href'     		   : await this.url.link('catalog/product/edit', 'user_token=' + this.session.data['user_token'] + '&product_id=' + product['product_id'], true)
+					'order_product_id': product['order_product_id'],
+					'product_id': product['product_id'],
+					'name': product['name'],
+					'model': product['model'],
+					'option': option_data,
+					'quantity': product['quantity'],
+					'price': this.currency.format(product['price'] + (this.config.get('config_tax') ? product['tax'] : 0), order_info['currency_code'], order_info['currency_value']),
+					'total': this.currency.format(product['total'] + (this.config.get('config_tax') ? (product['tax'] * product['quantity']) : 0), order_info['currency_code'], order_info['currency_value']),
+					'href': await this.url.link('catalog/product/edit', 'user_token=' + this.session.data['user_token'] + '&product_id=' + product['product_id'], true)
 				});
 			}
 
-			data['vouchers'] = {};
+			data['vouchers'] = [];
 
-			vouchers = await this.model_sale_order.getOrderVouchers(this.request.get['order_id']);
+			const vouchers = await this.model_sale_order.getOrderVouchers(this.request.get['order_id']);
 
-			for (vouchers of voucher) {
+			for (let voucher of vouchers) {
 				data['vouchers'].push({
-					'description' : voucher['description'],
-					'amount'      : this.currency.format(voucher['amount'], order_info['currency_code'], order_info['currency_value']),
-					'href'        : await this.url.link('sale/voucher/edit', 'user_token=' + this.session.data['user_token'] + '&voucher_id=' + voucher['voucher_id'], true)
+					'description': voucher['description'],
+					'amount': this.currency.format(voucher['amount'], order_info['currency_code'], order_info['currency_value']),
+					'href': await this.url.link('sale/voucher/edit', 'user_token=' + this.session.data['user_token'] + '&voucher_id=' + voucher['voucher_id'], true)
 				});
 			}
 
-			data['totals'] = {};
+			data['totals'] = [];
 
-			totals = await this.model_sale_order.getOrderTotals(this.request.get['order_id']);
+			const totals = await this.model_sale_order.getOrderTotals(this.request.get['order_id']);
 
-			for (totals of total) {
+			for (let total of totals) {
 				data['totals'].push({
-					'title' : total['title'],
-					'text'  : this.currency.format(total['value'], order_info['currency_code'], order_info['currency_value'])
+					'title': total['title'],
+					'text': this.currency.format(total['value'], order_info['currency_code'], order_info['currency_value'])
 				});
 			}
 
 			data['comment'] = nl2br(order_info['comment']);
 
-			this.load.model('customer/customer',this);
+			this.load.model('customer/customer', this);
 
 			data['reward'] = order_info['reward'];
 
@@ -1017,11 +1011,11 @@ module.exports = class ControllerSaleOrder extends Controller {
 
 			data['commission_total'] = await this.model_customer_customer.getTotalTransactionsByOrderId(this.request.get['order_id']);
 
-			this.load.model('localisation/order_status');
+			this.load.model('localisation/order_status', this);
 
-			order_status_info = await this.model_localisation_order_status.getOrderStatus(order_info['order_status_id']);
+			const order_status_info = await this.model_localisation_order_status.getOrderStatus(order_info['order_status_id']);
 
-			if (order_status_info) {
+			if (order_status_info.order_status_id) {
 				data['order_status'] = order_status_info['name'];
 			} else {
 				data['order_status'] = '';
@@ -1034,38 +1028,38 @@ module.exports = class ControllerSaleOrder extends Controller {
 			data['account_custom_field'] = order_info['custom_field'];
 
 			// Custom Fields
-			this.load.model('customer/custom_field');
+			this.load.model('customer/custom_field', this);
 
-			data['account_custom_fields'] = {};
+			data['account_custom_fields'] = [];
 
-			filter_data = array(
-				'sort'  : 'cf.sort_order',
-				'order' : 'ASC'
-			});
+			const filter_data = {
+				'sort': 'cf.sort_order',
+				'order': 'ASC'
+			};
 
-			custom_fields = await this.model_customer_custom_field.getCustomFields(filter_data);
+			const custom_fields = await this.model_customer_custom_field.getCustomFields(filter_data);
 
-			for (custom_fields of custom_field) {
+			for (let custom_field of custom_fields) {
 				if (custom_field['location'] == 'account' && (order_info['custom_field'][custom_field['custom_field_id']])) {
 					if (custom_field['type'] == 'select' || custom_field['type'] == 'radio') {
-						custom_field_value_info = await this.model_customer_custom_field.getCustomFieldValue(order_info['custom_field'][custom_field['custom_field_id']]);
+						const custom_field_value_info = await this.model_customer_custom_field.getCustomFieldValue(order_info['custom_field'][custom_field['custom_field_id']]);
 
-						if (custom_field_value_info) {
+						if (custom_field_value_info.custom_field_value_id) {
 							data['account_custom_fields'].push({
-								'name'  : custom_field['name'],
-								'value' : custom_field_value_info['name']
+								'name': custom_field['name'],
+								'value': custom_field_value_info['name']
 							});
 						}
 					}
 
 					if (custom_field['type'] == 'checkbox' && Array.isArray(order_info['custom_field'][custom_field['custom_field_id']])) {
-						for (order_info['custom_field'][custom_field['custom_field_id']] of custom_field_value_id) {
-							custom_field_value_info = await this.model_customer_custom_field.getCustomFieldValue(custom_field_value_id);
+						for (let custom_field_value_id of order_info['custom_field'][custom_field['custom_field_id']]) {
+							const custom_field_value_info = await this.model_customer_custom_field.getCustomFieldValue(custom_field_value_id);
 
-							if (custom_field_value_info) {
+							if (custom_field_value_info.custom_field_value_id) {
 								data['account_custom_fields'].push({
-									'name'  : custom_field['name'],
-									'value' : custom_field_value_info['name']
+									'name': custom_field['name'],
+									'value': custom_field_value_info['name']
 								});
 							}
 						}
@@ -1073,18 +1067,18 @@ module.exports = class ControllerSaleOrder extends Controller {
 
 					if (custom_field['type'] == 'text' || custom_field['type'] == 'textarea' || custom_field['type'] == 'file' || custom_field['type'] == 'date' || custom_field['type'] == 'datetime' || custom_field['type'] == 'time') {
 						data['account_custom_fields'].push({
-							'name'  : custom_field['name'],
-							'value' : order_info['custom_field'][custom_field['custom_field_id']]
+							'name': custom_field['name'],
+							'value': order_info['custom_field'][custom_field['custom_field_id']]
 						});
 					}
 
 					if (custom_field['type'] == 'file') {
-						upload_info = await this.model_tool_upload.getUploadByCode(order_info['custom_field'][custom_field['custom_field_id']]);
+						const upload_info = await this.model_tool_upload.getUploadByCode(order_info['custom_field'][custom_field['custom_field_id']]);
 
-						if (upload_info) {
+						if (upload_info.upload_id) {
 							data['account_custom_fields'].push({
-								'name'  : custom_field['name'],
-								'value' : upload_info['name']
+								'name': custom_field['name'],
+								'value': upload_info['name']
 							});
 						}
 					}
@@ -1092,31 +1086,31 @@ module.exports = class ControllerSaleOrder extends Controller {
 			}
 
 			// Custom fields
-			data['payment_custom_fields'] = {};
+			data['payment_custom_fields'] = [];
 
-			for (custom_fields of custom_field) {
+			for (let custom_field of custom_fields) {
 				if (custom_field['location'] == 'address' && (order_info['payment_custom_field'][custom_field['custom_field_id']])) {
 					if (custom_field['type'] == 'select' || custom_field['type'] == 'radio') {
-						custom_field_value_info = await this.model_customer_custom_field.getCustomFieldValue(order_info['payment_custom_field'][custom_field['custom_field_id']]);
+						const custom_field_value_info = await this.model_customer_custom_field.getCustomFieldValue(order_info['payment_custom_field'][custom_field['custom_field_id']]);
 
-						if (custom_field_value_info) {
+						if (custom_field_value_info.custom_field_value_id) {
 							data['payment_custom_fields'].push({
-								'name'  : custom_field['name'],
-								'value' : custom_field_value_info['name'],
-								'sort_order' : custom_field['sort_order']
+								'name': custom_field['name'],
+								'value': custom_field_value_info['name'],
+								'sort_order': custom_field['sort_order']
 							});
 						}
 					}
 
 					if (custom_field['type'] == 'checkbox' && Array.isArray(order_info['payment_custom_field'][custom_field['custom_field_id']])) {
-						for (order_info['payment_custom_field'][custom_field['custom_field_id']] of custom_field_value_id) {
-							custom_field_value_info = await this.model_customer_custom_field.getCustomFieldValue(custom_field_value_id);
+						for (let custom_field_value_id of order_info['payment_custom_field'][custom_field['custom_field_id']]) {
+							const custom_field_value_info = await this.model_customer_custom_field.getCustomFieldValue(custom_field_value_id);
 
-							if (custom_field_value_info) {
+							if (custom_field_value_info.custom_field_value_id) {
 								data['payment_custom_fields'].push({
-									'name'  : custom_field['name'],
-									'value' : custom_field_value_info['name'],
-									'sort_order' : custom_field['sort_order']
+									'name': custom_field['name'],
+									'value': custom_field_value_info['name'],
+									'sort_order': custom_field['sort_order']
 								});
 							}
 						}
@@ -1124,20 +1118,20 @@ module.exports = class ControllerSaleOrder extends Controller {
 
 					if (custom_field['type'] == 'text' || custom_field['type'] == 'textarea' || custom_field['type'] == 'file' || custom_field['type'] == 'date' || custom_field['type'] == 'datetime' || custom_field['type'] == 'time') {
 						data['payment_custom_fields'].push({
-							'name'  : custom_field['name'],
-							'value' : order_info['payment_custom_field'][custom_field['custom_field_id']],
-							'sort_order' : custom_field['sort_order']
+							'name': custom_field['name'],
+							'value': order_info['payment_custom_field'][custom_field['custom_field_id']],
+							'sort_order': custom_field['sort_order']
 						});
 					}
 
 					if (custom_field['type'] == 'file') {
-						upload_info = await this.model_tool_upload.getUploadByCode(order_info['payment_custom_field'][custom_field['custom_field_id']]);
+						const upload_info = await this.model_tool_upload.getUploadByCode(order_info['payment_custom_field'][custom_field['custom_field_id']]);
 
-						if (upload_info) {
+						if (upload_info.upload_id) {
 							data['payment_custom_fields'].push({
-								'name'  : custom_field['name'],
-								'value' : upload_info['name'],
-								'sort_order' : custom_field['sort_order']
+								'name': custom_field['name'],
+								'value': upload_info['name'],
+								'sort_order': custom_field['sort_order']
 							});
 						}
 					}
@@ -1145,31 +1139,31 @@ module.exports = class ControllerSaleOrder extends Controller {
 			}
 
 			// Shipping
-			data['shipping_custom_fields'] = {};
+			data['shipping_custom_fields'] = [];
 
-			for (custom_fields of custom_field) {
+			for (let custom_field of custom_fields) {
 				if (custom_field['location'] == 'address' && (order_info['shipping_custom_field'][custom_field['custom_field_id']])) {
 					if (custom_field['type'] == 'select' || custom_field['type'] == 'radio') {
-						custom_field_value_info = await this.model_customer_custom_field.getCustomFieldValue(order_info['shipping_custom_field'][custom_field['custom_field_id']]);
+						const custom_field_value_info = await this.model_customer_custom_field.getCustomFieldValue(order_info['shipping_custom_field'][custom_field['custom_field_id']]);
 
-						if (custom_field_value_info) {
+						if (custom_field_value_info.custom_field_value_id) {
 							data['shipping_custom_fields'].push({
-								'name'  : custom_field['name'],
-								'value' : custom_field_value_info['name'],
-								'sort_order' : custom_field['sort_order']
+								'name': custom_field['name'],
+								'value': custom_field_value_info['name'],
+								'sort_order': custom_field['sort_order']
 							});
 						}
 					}
 
 					if (custom_field['type'] == 'checkbox' && Array.isArray(order_info['shipping_custom_field'][custom_field['custom_field_id']])) {
-						for (order_info['shipping_custom_field'][custom_field['custom_field_id']] of custom_field_value_id) {
-							custom_field_value_info = await this.model_customer_custom_field.getCustomFieldValue(custom_field_value_id);
+						for (let custom_field_value_id of order_info['shipping_custom_field'][custom_field['custom_field_id']]) {
+							const custom_field_value_info = await this.model_customer_custom_field.getCustomFieldValue(custom_field_value_id);
 
-							if (custom_field_value_info) {
+							if (custom_field_value_info.custom_field_value_id) {
 								data['shipping_custom_fields'].push({
-									'name'  : custom_field['name'],
-									'value' : custom_field_value_info['name'],
-									'sort_order' : custom_field['sort_order']
+									'name': custom_field['name'],
+									'value': custom_field_value_info['name'],
+									'sort_order': custom_field['sort_order']
 								});
 							}
 						}
@@ -1177,20 +1171,20 @@ module.exports = class ControllerSaleOrder extends Controller {
 
 					if (custom_field['type'] == 'text' || custom_field['type'] == 'textarea' || custom_field['type'] == 'file' || custom_field['type'] == 'date' || custom_field['type'] == 'datetime' || custom_field['type'] == 'time') {
 						data['shipping_custom_fields'].push({
-							'name'  : custom_field['name'],
-							'value' : order_info['shipping_custom_field'][custom_field['custom_field_id']],
-							'sort_order' : custom_field['sort_order']
+							'name': custom_field['name'],
+							'value': order_info['shipping_custom_field'][custom_field['custom_field_id']],
+							'sort_order': custom_field['sort_order']
 						});
 					}
 
 					if (custom_field['type'] == 'file') {
-						upload_info = await this.model_tool_upload.getUploadByCode(order_info['shipping_custom_field'][custom_field['custom_field_id']]);
+						const upload_info = await this.model_tool_upload.getUploadByCode(order_info['shipping_custom_field'][custom_field['custom_field_id']]);
 
-						if (upload_info) {
+						if (upload_info.upload_id) {
 							data['shipping_custom_fields'].push({
-								'name'  : custom_field['name'],
-								'value' : upload_info['name'],
-								'sort_order' : custom_field['sort_order']
+								'name': custom_field['name'],
+								'value': upload_info['name'],
+								'sort_order': custom_field['sort_order']
 							});
 						}
 					}
@@ -1203,66 +1197,66 @@ module.exports = class ControllerSaleOrder extends Controller {
 			data['accept_language'] = order_info['accept_language'];
 
 			// Additional Tabs
-			data['tabs'] = {};
+			data['tabs'] = [];
 
 			if (await this.user.hasPermission('access', 'extension/payment/' + order_info['payment_code'])) {
-				if (is_file(DIR_CATALOG + 'controller/extension/payment/' + order_info['payment_code'] + '.php')) {
+				let content = '';
+				if (is_file(DIR_CATALOG + 'controller/extension/payment/' + order_info['payment_code'] + '.js')) {
 					content = await this.load.controller('extension/payment/' + order_info['payment_code'] + '/order');
-				} else {
-					content = '';
 				}
 
 				if (content) {
 					await this.load.language('extension/payment/' + order_info['payment_code']);
 
 					data['tabs'].push({
-						'code'    : order_info['payment_code'],
-						'title'   : this.language.get('heading_title'),
-						'content' : content
+						'code': order_info['payment_code'],
+						'title': this.language.get('heading_title'),
+						'content': content
 					});
 				}
 			}
 
-			this.load.model('setting/extension',this);
+			this.load.model('setting/extension', this);
 
-			extensions = await this.model_setting_extension.getInstalled('fraud');
+			const extensions = await this.model_setting_extension.getInstalled('fraud');
 
-			for (extensions of extension) {
-				if (this.config.get('fraud_' + extension + '_status')) {
+			for (let extension of extensions) {
+				if (Number(this.config.get('fraud_' + extension + '_status'))) {
 					await this.load.language('extension/fraud/' + extension, 'extension');
 
-					content = await this.load.controller('extension/fraud/' + extension + '/order');
+					let content = await this.load.controller('extension/fraud/' + extension + '/order');
 
 					if (content) {
 						data['tabs'].push({
-							'code'    : extension,
-							'title'   : this.language.get('extension').get('heading_title'),
-							'content' : content
+							'code': extension,
+							'title': this.language.get('extension').get('heading_title'),
+							'content': content
 						});
 					}
 				}
 			}
-			
+
 			// The URL we send API requests to
 			data['catalog'] = this.request.server['HTTPS'] ? HTTPS_CATALOG : HTTP_CATALOG;
-			
+
 			// API login
-			this.load.model('user/api');
+			this.load.model('user/api', this);
 
-			api_info = await this.model_user_api.getApi(this.config.get('config_api_id'));
+			const api_info = await this.model_user_api.getApi(this.config.get('config_api_id'));
 
-			if (api_info && await this.user.hasPermission('modify', 'sale/order')) {
-				session = new Session(this.config.get('session_engine'), this.registry);
-				
-				session.start();
-				
+			if (api_info.api_id && await this.user.hasPermission('modify', 'sale/order')) {
+				const session = new Session(this.request.server.session);
+
+				await session.start();
+
 				await this.model_user_api.deleteApiSessionBySessionId(session.getId());
-				
+
 				await this.model_user_api.addApiSession(api_info['api_id'], session.getId(), this.request.server['REMOTE_ADDR']);
-				
+
 				session.data['api_id'] = api_info['api_id'];
 
 				data['api_token'] = session.getId();
+				await session.save(session.data);
 			} else {
 				data['api_token'] = '';
 			}
@@ -1276,32 +1270,31 @@ module.exports = class ControllerSaleOrder extends Controller {
 			return new Action('error/not_found');
 		}
 	}
-	
+
 	async validate() {
 		if (!await this.user.hasPermission('modify', 'sale/order')) {
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
-	
+
 	async createInvoiceNo() {
 		await this.load.language('sale/order');
 
-		json = {};
+		const json = {};
 
 		if (!await this.user.hasPermission('modify', 'sale/order')) {
 			json['error'] = this.language.get('error_permission');
 		} else if ((this.request.get['order_id'])) {
+			let order_id = 0;
 			if ((this.request.get['order_id'])) {
 				order_id = this.request.get['order_id'];
-			} else {
-				order_id = 0;
 			}
 
-			this.load.model('sale/order',this);
+			this.load.model('sale/order', this);
 
-			invoice_no = await this.model_sale_order.createInvoiceNo(order_id);
+			const invoice_no = await this.model_sale_order.createInvoiceNo(order_id);
 
 			if (invoice_no) {
 				json['invoice_no'] = invoice_no;
@@ -1317,25 +1310,24 @@ module.exports = class ControllerSaleOrder extends Controller {
 	async addReward() {
 		await this.load.language('sale/order');
 
-		json = {};
+		const json = {};
 
 		if (!await this.user.hasPermission('modify', 'sale/order')) {
 			json['error'] = this.language.get('error_permission');
 		} else {
+			let order_id = 0;
 			if ((this.request.get['order_id'])) {
 				order_id = this.request.get['order_id'];
-			} else {
-				order_id = 0;
 			}
 
-			this.load.model('sale/order',this);
+			this.load.model('sale/order', this);
 
-			order_info = await this.model_sale_order.getOrder(order_id);
+			const order_info = await this.model_sale_order.getOrder(order_id);
 
 			if (order_info && order_info['customer_id'] && (order_info['reward'] > 0)) {
-				this.load.model('customer/customer',this);
+				this.load.model('customer/customer', this);
 
-				reward_total = await this.model_customer_customer.getTotalCustomerRewardsByOrderId(order_id);
+				const reward_total = await this.model_customer_customer.getTotalCustomerRewardsByOrderId(order_id);
 
 				if (!reward_total) {
 					await this.model_customer_customer.addReward(order_info['customer_id'], this.language.get('text_order_id') + ' #' + order_id, order_info['reward'], order_id);
@@ -1352,23 +1344,22 @@ module.exports = class ControllerSaleOrder extends Controller {
 	async removeReward() {
 		await this.load.language('sale/order');
 
-		json = {};
+		const json = {};
 
 		if (!await this.user.hasPermission('modify', 'sale/order')) {
 			json['error'] = this.language.get('error_permission');
 		} else {
+			let order_id = 0;
 			if ((this.request.get['order_id'])) {
 				order_id = this.request.get['order_id'];
-			} else {
-				order_id = 0;
 			}
 
-			this.load.model('sale/order',this);
+			this.load.model('sale/order', this);
 
-			order_info = await this.model_sale_order.getOrder(order_id);
+			const order_info = await this.model_sale_order.getOrder(order_id);
 
-			if (order_info) {
-				this.load.model('customer/customer',this);
+			if (order_info.order_id) {
+				this.load.model('customer/customer', this);
 
 				await this.model_customer_customer.deleteReward(order_id);
 			}
@@ -1383,25 +1374,24 @@ module.exports = class ControllerSaleOrder extends Controller {
 	async addCommission() {
 		await this.load.language('sale/order');
 
-		json = {};
+		const json = {};
 
 		if (!await this.user.hasPermission('modify', 'sale/order')) {
 			json['error'] = this.language.get('error_permission');
 		} else {
+			let order_id = 0;
 			if ((this.request.get['order_id'])) {
 				order_id = this.request.get['order_id'];
-			} else {
-				order_id = 0;
 			}
 
-			this.load.model('sale/order',this);
+			this.load.model('sale/order', this);
 
-			order_info = await this.model_sale_order.getOrder(order_id);
+			const order_info = await this.model_sale_order.getOrder(order_id);
 
-			if (order_info) {
-				this.load.model('customer/customer',this);
+			if (order_info.order_id) {
+				this.load.model('customer/customer', this);
 
-				affiliate_total = await this.model_customer_customer.getTotalTransactionsByOrderId(order_id);
+				const affiliate_total = await this.model_customer_customer.getTotalTransactionsByOrderId(order_id);
 
 				if (!affiliate_total) {
 					await this.model_customer_customer.addTransaction(order_info['affiliate_id'], this.language.get('text_order_id') + ' #' + order_id, order_info['commission'], order_id);
@@ -1418,23 +1408,22 @@ module.exports = class ControllerSaleOrder extends Controller {
 	async removeCommission() {
 		await this.load.language('sale/order');
 
-		json = {};
+		const json = {};
 
 		if (!await this.user.hasPermission('modify', 'sale/order')) {
 			json['error'] = this.language.get('error_permission');
 		} else {
+			let order_id = 0;
 			if ((this.request.get['order_id'])) {
 				order_id = this.request.get['order_id'];
-			} else {
-				order_id = 0;
 			}
 
-			this.load.model('sale/order',this);
+			this.load.model('sale/order', this);
 
-			order_info = await this.model_sale_order.getOrder(order_id);
+			const order_info = await this.model_sale_order.getOrder(order_id);
 
-			if (order_info) {
-				this.load.model('customer/customer',this);
+			if (order_info.order_id) {
+				this.load.model('customer/customer', this);
 
 				await this.model_customer_customer.deleteTransactionByOrderId(order_id);
 			}
@@ -1447,32 +1436,31 @@ module.exports = class ControllerSaleOrder extends Controller {
 	}
 
 	async history() {
+		const data = {};
 		await this.load.language('sale/order');
-
+		let page = 1;
 		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
 		}
 
-		data['histories'] = {};
+		data['histories'] = [];
 
-		this.load.model('sale/order',this);
+		this.load.model('sale/order', this);
 
-		results = await this.model_sale_order.getOrderHistories(this.request.get['order_id'], (page - 1) * 10, 10);
+		const results = await this.model_sale_order.getOrderHistories(this.request.get['order_id'], (page - 1) * 10, 10);
 
 		for (let result of results) {
 			data['histories'].push({
-				'notify'     : result['notify'] ? this.language.get('text_yes') : this.language.get('text_no'),
-				'status'     : result['status'],
-				'comment'    : nl2br(result['comment']),
-				'date_added' : date(this.language.get('date_format_short'), strtotime(result['date_added']))
+				'notify': result['notify'] ? this.language.get('text_yes') : this.language.get('text_no'),
+				'status': result['status'],
+				'comment': nl2br(result['comment']),
+				'date_added': date(this.language.get('date_format_short'), strtotime(result['date_added']))
 			});
 		}
 
-		history_total = await this.model_sale_order.getTotalOrderHistories(this.request.get['order_id']);
+		const history_total = await this.model_sale_order.getTotalOrderHistories(this.request.get['order_id']);
 
-		pagination = new Pagination();
+		const pagination = new Pagination();
 		pagination.total = history_total;
 		pagination.page = page;
 		pagination.limit = 10;
@@ -1486,6 +1474,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 	}
 
 	async invoice() {
+		const data = {};
 		await this.load.language('sale/order');
 
 		data['title'] = this.language.get('text_invoice');
@@ -1497,56 +1486,50 @@ module.exports = class ControllerSaleOrder extends Controller {
 		}
 
 		data['direction'] = this.language.get('direction');
-		
+
 		data['lang'] = this.language.get('code');
 
-		this.load.model('sale/order',this);
+		this.load.model('sale/order', this);
 
-		this.load.model('setting/setting',this);
+		this.load.model('setting/setting', this);
 
-		data['orders'] = {};
+		data['orders'] = [];
 
-		orders = {};
+		let orders = [];
 
 		if ((this.request.post['selected'])) {
 			orders = this.request.post['selected'];
 		} else if ((this.request.get['order_id'])) {
-			orders.push(this.request.get['order_id'];
+			orders.push(this.request.get['order_id']);
 		}
 
-		for (orders of order_id) {
-			order_info = await this.model_sale_order.getOrder(order_id);
-			
-			text_order = sprintf(this.language.get('text_order'), order_id);
-			
-			if (order_info) {
-				store_info = await this.model_setting_setting.getSetting('config', order_info['store_id']);
+		for (let order_id of orders) {
+			const order_info = await this.model_sale_order.getOrder(order_id);
 
-				if (store_info) {
+			const text_order = sprintf(this.language.get('text_order'), order_id);
+
+			if (order_info.order_id) {
+				const store_info = await this.model_setting_setting.getSetting('config', order_info['store_id']);
+				let store_address = this.config.get('config_address');
+				let store_email = this.config.get('config_email');
+				let store_telephone = this.config.get('config_telephone');
+				let store_fax = this.config.get('config_fax');
+				if (store_info.config_email) {
 					store_address = store_info['config_address'];
 					store_email = store_info['config_email'];
 					store_telephone = store_info['config_telephone'];
 					store_fax = store_info['config_fax'];
-				} else {
-					store_address = this.config.get('config_address');
-					store_email = this.config.get('config_email');
-					store_telephone = this.config.get('config_telephone');
-					store_fax = this.config.get('config_fax');
 				}
-
+				let invoice_no = '';
 				if (order_info['invoice_no']) {
 					invoice_no = order_info['invoice_prefix'] + order_info['invoice_no'];
-				} else {
-					invoice_no = '';
 				}
-
+				let format = '{firstname} {lastname}' + "\n" + '{company}' + "\n" + '{address_1}' + "\n" + '{address_2}' + "\n" + '{city} {postcode}' + "\n" + '{zone}' + "\n" + '{country}';
 				if (order_info['payment_address_format']) {
 					format = order_info['payment_address_format'];
-				} else {
-					format = '{firstname} {lastname}' + "\n" + '{company}' + "\n" + '{address_1}' + "\n" + '{address_2}' + "\n" + '{city} {postcode}' + "\n" + '{zone}' + "\n" + '{country}';
 				}
 
-				find = array(
+				let find = [
 					'{firstname}',
 					'{lastname}',
 					'{company}',
@@ -1557,22 +1540,25 @@ module.exports = class ControllerSaleOrder extends Controller {
 					'{zone}',
 					'{zone_code}',
 					'{country}'
-				});
+				];
 
-				replace = array(
-					'firstname' : order_info['payment_firstname'],
-					'lastname'  : order_info['payment_lastname'],
-					'company'   : order_info['payment_company'],
-					'address_1' : order_info['payment_address_1'],
-					'address_2' : order_info['payment_address_2'],
-					'city'      : order_info['payment_city'],
-					'postcode'  : order_info['payment_postcode'],
-					'zone'      : order_info['payment_zone'],
-					'zone_code' : order_info['payment_zone_code'],
-					'country'   : order_info['payment_country']
-				});
+				let replace = {
+					'firstname': order_info['payment_firstname'],
+					'lastname': order_info['payment_lastname'],
+					'company': order_info['payment_company'],
+					'address_1': order_info['payment_address_1'],
+					'address_2': order_info['payment_address_2'],
+					'city': order_info['payment_city'],
+					'postcode': order_info['payment_postcode'],
+					'zone': order_info['payment_zone'],
+					'zone_code': order_info['payment_zone_code'],
+					'country': order_info['payment_country']
+				};
+				for (let [key, value] of Object.entries(replace)) {
+					format = format.replace('{' + key + '}', value);
+				}
+				const payment_address = format.replaceAll('\r\n"', '<br />').replaceAll('\r"', '<br />').replaceAll('\n"', '<br />').replace(new RegExp("/\s\s+/"), '<br />').replace(new RegExp("/\r\r+/"), '<br />').replace(new RegExp("/\n\n+/"), '<br />')
 
-				payment_address = str_replace(array("\r\n", "\r", "\n"), '<br />', preg_replace(array("/\s\s+/", "/\r\r+/", "/\n\n+/"), '<br />', trim(str_replace(find, replace, format))));
 
 				if (order_info['shipping_address_format']) {
 					format = order_info['shipping_address_format'];
@@ -1580,7 +1566,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 					format = '{firstname} {lastname}' + "\n" + '{company}' + "\n" + '{address_1}' + "\n" + '{address_2}' + "\n" + '{city} {postcode}' + "\n" + '{zone}' + "\n" + '{country}';
 				}
 
-				find = array(
+				find = [
 					'{firstname}',
 					'{lastname}',
 					'{company}',
@@ -1591,41 +1577,45 @@ module.exports = class ControllerSaleOrder extends Controller {
 					'{zone}',
 					'{zone_code}',
 					'{country}'
-				});
+				];
 
-				replace = array(
-					'firstname' : order_info['shipping_firstname'],
-					'lastname'  : order_info['shipping_lastname'],
-					'company'   : order_info['shipping_company'],
-					'address_1' : order_info['shipping_address_1'],
-					'address_2' : order_info['shipping_address_2'],
-					'city'      : order_info['shipping_city'],
-					'postcode'  : order_info['shipping_postcode'],
-					'zone'      : order_info['shipping_zone'],
-					'zone_code' : order_info['shipping_zone_code'],
-					'country'   : order_info['shipping_country']
-				});
+				replace = {
+					'firstname': order_info['shipping_firstname'],
+					'lastname': order_info['shipping_lastname'],
+					'company': order_info['shipping_company'],
+					'address_1': order_info['shipping_address_1'],
+					'address_2': order_info['shipping_address_2'],
+					'city': order_info['shipping_city'],
+					'postcode': order_info['shipping_postcode'],
+					'zone': order_info['shipping_zone'],
+					'zone_code': order_info['shipping_zone_code'],
+					'country': order_info['shipping_country']
+				};
+				for (let [key, value] of Object.entries(replace)) {
+					format = format.replace('{' + key + '}', value);
+				}
+				const shipping_address = format.replaceAll('\r\n"', '<br />').replaceAll('\r"', '<br />').replaceAll('\n"', '<br />').replace(new RegExp("/\s\s+/"), '<br />').replace(new RegExp("/\r\r+/"), '<br />').replace(new RegExp("/\n\n+/"), '<br />')
 
-				shipping_address = str_replace(array("\r\n", "\r", "\n"), '<br />', preg_replace(array("/\s\s+/", "/\r\r+/", "/\n\n+/"), '<br />', trim(str_replace(find, replace, format))));
 
-				this.load.model('tool/upload');
+				this.load.model('tool/upload', this);
 
-				product_data = {};
+				const product_data = [];
 
-				products = await this.model_sale_order.getOrderProducts(order_id);
+				const products = await this.model_sale_order.getOrderProducts(order_id);
 
-				for (products of product) {
-					option_data = {};
+				for (let product of products) {
+					const option_data = [];
 
-					options = await this.model_sale_order.getOrderOptions(order_id, product['order_product_id']);
+					const options = await this.model_sale_order.getOrderOptions(order_id, product['order_product_id']);
 
-					for (options of option) {
+					for (let option of options) {
+						let value = '';
 						if (option['type'] != 'file') {
 							value = option['value'];
 						} else {
-							upload_info = await this.model_tool_upload.getUploadByCode(option['value']);
+							const upload_info = await this.model_tool_upload.getUploadByCode(option['value']);
 
-							if (upload_info) {
+							if (upload_info.upload_id) {
 								value = upload_info['name'];
 							} else {
 								value = '';
@@ -1633,64 +1623,64 @@ module.exports = class ControllerSaleOrder extends Controller {
 						}
 
 						option_data.push({
-							'name'  : option['name'],
-							'value' : value
+							'name': option['name'],
+							'value': value
 						});
 					}
 
 					product_data.push({
-						'name'     : product['name'],
-						'model'    : product['model'],
-						'option'   : option_data,
-						'quantity' : product['quantity'],
-						'price'    : this.currency.format(product['price'] + (this.config.get('config_tax') ? product['tax'] : 0), order_info['currency_code'], order_info['currency_value']),
-						'total'    : this.currency.format(product['total'] + (this.config.get('config_tax') ? (product['tax'] * product['quantity']) : 0), order_info['currency_code'], order_info['currency_value'])
+						'name': product['name'],
+						'model': product['model'],
+						'option': option_data,
+						'quantity': product['quantity'],
+						'price': this.currency.format(product['price'] + (this.config.get('config_tax') ? product['tax'] : 0), order_info['currency_code'], order_info['currency_value']),
+						'total': this.currency.format(product['total'] + (this.config.get('config_tax') ? (product['tax'] * product['quantity']) : 0), order_info['currency_code'], order_info['currency_value'])
 					});
 				}
 
-				voucher_data = {};
+				const voucher_data = [];
 
-				vouchers = await this.model_sale_order.getOrderVouchers(order_id);
+				const vouchers = await this.model_sale_order.getOrderVouchers(order_id);
 
-				for (vouchers of voucher) {
+				for (let voucher of vouchers) {
 					voucher_data.push({
-						'description' : voucher['description'],
-						'amount'      : this.currency.format(voucher['amount'], order_info['currency_code'], order_info['currency_value'])
+						'description': voucher['description'],
+						'amount': this.currency.format(voucher['amount'], order_info['currency_code'], order_info['currency_value'])
 					});
 				}
 
-				total_data = {};
+				const total_data = [];
 
-				totals = await this.model_sale_order.getOrderTotals(order_id);
+				const totals = await this.model_sale_order.getOrderTotals(order_id);
 
-				for (totals of total) {
+				for (let total of totals) {
 					total_data.push({
-						'title' : total['title'],
-						'text'  : this.currency.format(total['value'], order_info['currency_code'], order_info['currency_value'])
+						'title': total['title'],
+						'text': this.currency.format(total['value'], order_info['currency_code'], order_info['currency_value'])
 					});
 				}
 
 				data['orders'].push({
-					'order_id'	   : order_id,
-					'invoice_no'       : invoice_no,
-					'text_order'	   : text_order,
-					'date_added'       : date(this.language.get('date_format_short'), strtotime(order_info['date_added'])),
-					'store_name'       : order_info['store_name'],
-					'store_url'        : rtrim(order_info['store_url'], '/'),
-					'store_address'    : nl2br(store_address),
-					'store_email'      : store_email,
-					'store_telephone'  : store_telephone,
-					'store_fax'        : store_fax,
-					'email'            : order_info['email'],
-					'telephone'        : order_info['telephone'],
-					'shipping_address' : shipping_address,
-					'shipping_method'  : order_info['shipping_method'],
-					'payment_address'  : payment_address,
-					'payment_method'   : order_info['payment_method'],
-					'product'          : product_data,
-					'voucher'          : voucher_data,
-					'total'            : total_data,
-					'comment'          : nl2br(order_info['comment'])
+					'order_id': order_id,
+					'invoice_no': invoice_no,
+					'text_order': text_order,
+					'date_added': date(this.language.get('date_format_short'), new Date(order_info['date_added'])),
+					'store_name': order_info['store_name'],
+					'store_url': rtrim(order_info['store_url'], '/'),
+					'store_address': nl2br(store_address),
+					'store_email': store_email,
+					'store_telephone': store_telephone,
+					'store_fax': store_fax,
+					'email': order_info['email'],
+					'telephone': order_info['telephone'],
+					'shipping_address': shipping_address,
+					'shipping_method': order_info['shipping_method'],
+					'payment_address': payment_address,
+					'payment_method': order_info['payment_method'],
+					'product': product_data,
+					'voucher': voucher_data,
+					'total': total_data,
+					'comment': nl2br(order_info['comment'])
 				});
 			}
 		}
@@ -1699,6 +1689,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 	}
 
 	async shipping() {
+		const data = {};
 		await this.load.language('sale/order');
 
 		data['title'] = this.language.get('text_shipping');
@@ -1712,52 +1703,47 @@ module.exports = class ControllerSaleOrder extends Controller {
 		data['direction'] = this.language.get('direction');
 		data['lang'] = this.language.get('code');
 
-		this.load.model('sale/order',this);
+		this.load.model('sale/order', this);
 
-		this.load.model('catalog/product',this);
+		this.load.model('catalog/product', this);
 
-		this.load.model('setting/setting',this);
+		this.load.model('setting/setting', this);
 
-		data['orders'] = {};
+		data['orders'] = [];
 
-		orders = {};
+		let orders = [];
 
 		if ((this.request.post['selected'])) {
 			orders = this.request.post['selected'];
 		} else if ((this.request.get['order_id'])) {
-			orders.push(this.request.get['order_id'];
+			orders.push(this.request.get['order_id']);
 		}
 
-		for (orders of order_id) {
-			order_info = await this.model_sale_order.getOrder(order_id);
+		for (let order_id of orders) {
+			const order_info = await this.model_sale_order.getOrder(order_id);
 
 			// Make sure there is a shipping method
 			if (order_info && order_info['shipping_code']) {
-				store_info = await this.model_setting_setting.getSetting('config', order_info['store_id']);
+				const store_info = await this.model_setting_setting.getSetting('config', order_info['store_id']);
+				let store_address = this.config.get('config_address');
+				let store_email = this.config.get('config_email');
+				let store_telephone = this.config.get('config_telephone');
 
-				if (store_info) {
+				if (store_info.config_email) {
 					store_address = store_info['config_address'];
 					store_email = store_info['config_email'];
 					store_telephone = store_info['config_telephone'];
-				} else {
-					store_address = this.config.get('config_address');
-					store_email = this.config.get('config_email');
-					store_telephone = this.config.get('config_telephone');
 				}
-
+				let invoice_no = '';
 				if (order_info['invoice_no']) {
 					invoice_no = order_info['invoice_prefix'] + order_info['invoice_no'];
-				} else {
-					invoice_no = '';
 				}
-
+				let format = '{firstname} {lastname}' + "\n" + '{company}' + "\n" + '{address_1}' + "\n" + '{address_2}' + "\n" + '{city} {postcode}' + "\n" + '{zone}' + "\n" + '{country}';
 				if (order_info['shipping_address_format']) {
 					format = order_info['shipping_address_format'];
-				} else {
-					format = '{firstname} {lastname}' + "\n" + '{company}' + "\n" + '{address_1}' + "\n" + '{address_2}' + "\n" + '{city} {postcode}' + "\n" + '{zone}' + "\n" + '{country}';
 				}
 
-				find = array(
+				let find = [
 					'{firstname}',
 					'{lastname}',
 					'{company}',
@@ -1768,46 +1754,50 @@ module.exports = class ControllerSaleOrder extends Controller {
 					'{zone}',
 					'{zone_code}',
 					'{country}'
-				});
+				];
 
-				replace = array(
-					'firstname' : order_info['shipping_firstname'],
-					'lastname'  : order_info['shipping_lastname'],
-					'company'   : order_info['shipping_company'],
-					'address_1' : order_info['shipping_address_1'],
-					'address_2' : order_info['shipping_address_2'],
-					'city'      : order_info['shipping_city'],
-					'postcode'  : order_info['shipping_postcode'],
-					'zone'      : order_info['shipping_zone'],
-					'zone_code' : order_info['shipping_zone_code'],
-					'country'   : order_info['shipping_country']
-				});
+				let replace = {
+					'firstname': order_info['shipping_firstname'],
+					'lastname': order_info['shipping_lastname'],
+					'company': order_info['shipping_company'],
+					'address_1': order_info['shipping_address_1'],
+					'address_2': order_info['shipping_address_2'],
+					'city': order_info['shipping_city'],
+					'postcode': order_info['shipping_postcode'],
+					'zone': order_info['shipping_zone'],
+					'zone_code': order_info['shipping_zone_code'],
+					'country': order_info['shipping_country']
+				};
+				for (let [key, value] of Object.entries(replace)) {
+					format = format.replace('{' + key + '}', value);
+				}
+				const shipping_address = format.replaceAll('\r\n"', '<br />').replaceAll('\r"', '<br />').replaceAll('\n"', '<br />').replace(new RegExp("/\s\s+/"), '<br />').replace(new RegExp("/\r\r+/"), '<br />').replace(new RegExp("/\n\n+/"), '<br />')
 
-				shipping_address = str_replace(array("\r\n", "\r", "\n"), '<br />', preg_replace(array("/\s\s+/", "/\r\r+/", "/\n\n+/"), '<br />', trim(str_replace(find, replace, format))));
 
-				this.load.model('tool/upload');
+				this.load.model('tool/upload', this);
 
-				product_data = {};
+				const product_data = [];
 
-				products = await this.model_sale_order.getOrderProducts(order_id);
+				const products = await this.model_sale_order.getOrderProducts(order_id);
 
-				for (products of product) {
-					option_weight = 0;
+				for (let product of products) {
+					let option_weight = 0;
 
-					product_info = await this.model_catalog_product.getProduct(product['product_id']);
+					const product_info = await this.model_catalog_product.getProduct(product['product_id']);
 
-					if (product_info) {
-						option_data = {};
+					if (product_info.product_id) {
+						const option_data = [];
 
-						options = await this.model_sale_order.getOrderOptions(order_id, product['order_product_id']);
+						const options = await this.model_sale_order.getOrderOptions(order_id, product['order_product_id']);
 
 						for (options of option) {
+							let value = '';
 							if (option['type'] != 'file') {
 								value = option['value'];
 							} else {
-								upload_info = await this.model_tool_upload.getUploadByCode(option['value']);
+								const upload_info = await this.model_tool_upload.getUploadByCode(option['value']);
 
-								if (upload_info) {
+								if (upload_info.upload_id) {
 									value = upload_info['name'];
 								} else {
 									value = '';
@@ -1815,11 +1805,11 @@ module.exports = class ControllerSaleOrder extends Controller {
 							}
 
 							option_data.push({
-								'name'  : option['name'],
-								'value' : value
+								'name': option['name'],
+								'value': value
 							});
 
-							product_option_value_info = await this.model_catalog_product.getProductOptionValue(product['product_id'], option['product_option_value_id']);
+							const product_option_value_info = await this.model_catalog_product.getProductOptionValue(product['product_id'], option['product_option_value_id']);
 
 							if ((product_option_value_info['weight'])) {
 								if (product_option_value_info['weight_prefix'] == '+') {
@@ -1831,37 +1821,37 @@ module.exports = class ControllerSaleOrder extends Controller {
 						}
 
 						product_data.push({
-							'name'     : product_info['name'],
-							'model'    : product_info['model'],
-							'option'   : option_data,
-							'quantity' : product['quantity'],
-							'location' : product_info['location'],
-							'sku'      : product_info['sku'],
-							'upc'      : product_info['upc'],
-							'ean'      : product_info['ean'],
-							'jan'      : product_info['jan'],
-							'isbn'     : product_info['isbn'],
-							'mpn'      : product_info['mpn'],
-							'weight'   : this.weight.format((product_info['weight'] + option_weight) * product['quantity'], product_info['weight_class_id'], this.language.get('decimal_point'), this.language.get('thousand_point'))
+							'name': product_info['name'],
+							'model': product_info['model'],
+							'option': option_data,
+							'quantity': product['quantity'],
+							'location': product_info['location'],
+							'sku': product_info['sku'],
+							'upc': product_info['upc'],
+							'ean': product_info['ean'],
+							'jan': product_info['jan'],
+							'isbn': product_info['isbn'],
+							'mpn': product_info['mpn'],
+							'weight': this.weight.format((product_info['weight'] + option_weight) * product['quantity'], product_info['weight_class_id'], this.language.get('decimal_point'), this.language.get('thousand_point'))
 						});
 					}
 				}
 
 				data['orders'].push({
-					'order_id'	       : order_id,
-					'invoice_no'       : invoice_no,
-					'date_added'       : date(this.language.get('date_format_short'), strtotime(order_info['date_added'])),
-					'store_name'       : order_info['store_name'],
-					'store_url'        : rtrim(order_info['store_url'], '/'),
-					'store_address'    : nl2br(store_address),
-					'store_email'      : store_email,
-					'store_telephone'  : store_telephone,
-					'email'            : order_info['email'],
-					'telephone'        : order_info['telephone'],
-					'shipping_address' : shipping_address,
-					'shipping_method'  : order_info['shipping_method'],
-					'product'          : product_data,
-					'comment'          : nl2br(order_info['comment'])
+					'order_id': order_id,
+					'invoice_no': invoice_no,
+					'date_added': date(this.language.get('date_format_short'), new Date(order_info['date_added'])),
+					'store_name': order_info['store_name'],
+					'store_url': rtrim(order_info['store_url'], '/'),
+					'store_address': nl2br(store_address),
+					'store_email': store_email,
+					'store_telephone': store_telephone,
+					'email': order_info['email'],
+					'telephone': order_info['telephone'],
+					'shipping_address': shipping_address,
+					'shipping_method': order_info['shipping_method'],
+					'product': product_data,
+					'comment': nl2br(order_info['comment'])
 				});
 			}
 		}

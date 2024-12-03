@@ -2,6 +2,7 @@ module.exports = class ControllerMarketingMarketing extends Controller {
 	error = {};
 
 	async index() {
+const data = {};
 		await this.load.language('marketing/marketing');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -22,6 +23,7 @@ module.exports = class ControllerMarketingMarketing extends Controller {
 			await this.model_marketing_marketing.addMarketing(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
 			url = '';
 
@@ -66,6 +68,7 @@ module.exports = class ControllerMarketingMarketing extends Controller {
 			await this.model_marketing_marketing.editMarketing(this.request.get['marketing_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
 			url = '';
 
@@ -108,11 +111,12 @@ module.exports = class ControllerMarketingMarketing extends Controller {
 
 		if ((this.request.post['selected']) && await this.validateDelete()) {
 this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
-			for (this.request.post['selected'] of marketing_id) {
+			for (let marketing_id of this.request.post['selected'] ) {
 				await this.model_marketing_marketing.deleteMarketing(marketing_id);
 			}
 
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
 			url = '';
 
@@ -147,6 +151,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 	}
 
 	async getList() {
+		const data = {};
 		if ((this.request.get['filter_name'])) {
 			filter_name = this.request.get['filter_name'];
 		} else {
@@ -176,11 +181,9 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		} else {
 			order = 'ASC';
 		}
-
-		if ((this.request.get['page'])) {
+page = 1;
+if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
 		}
 
 		url = '';
@@ -230,7 +233,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 
 		data['marketings'] = {};
 
-		filter_data = array(
+		const filter_data = {
 			'filter_name'       : filter_name,
 			'filter_code'       : filter_code,
 			'filter_date_added' : filter_date_added,
@@ -267,7 +270,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		if ((this.session.data['success'])) {
 			data['success'] = this.session.data['success'];
 
-			delete this.session.data['success']);
+			delete this.session.data['success'];
 		} else {
 			data['success'] = '';
 		}
@@ -328,7 +331,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			url += '&order=' + this.request.get['order'];
 		}
 
-		pagination = new Pagination();
+		const pagination = new Pagination();
 		pagination.total = marketing_total;
 		pagination.page = page;
 		pagination.limit = Number(this.config.get('config_limit_admin'));

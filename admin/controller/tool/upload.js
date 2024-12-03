@@ -2,11 +2,12 @@ module.exports = class ControllerToolUpload extends Controller {
 	error = {};
 
 	async index() {
+		const data = {};
 		await this.load.language('tool/upload');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('tool/upload');
+		this.load.model('tool/upload', this);
 
 		await this.getList();
 	}
@@ -16,11 +17,11 @@ module.exports = class ControllerToolUpload extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('tool/upload');
+		this.load.model('tool/upload', this);
 
 		if ((this.request.post['selected']) && await this.validateDelete()) {
-this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
-			for (this.request.post['selected'] of upload_id) {
+			this.request.post['selected'] = Array.isArray(this.request.post['selected']) ? this.request.post['selected'] : [this.request.post['selected']]
+			for (let upload_id of this.request.post['selected']) {
 				// Remove file before deleting DB record.
 				upload_info = await this.model_tool_upload.getUpload(upload_id);
 
@@ -32,6 +33,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			}
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			url = '';
 
@@ -62,6 +64,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 	}
 
 	async getList() {
+		const data = {};
 		if ((this.request.get['filter_name'])) {
 			filter_name = this.request.get['filter_name'];
 		} else {
@@ -85,11 +88,9 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		} else {
 			order = 'DESC';
 		}
-
+		page = 1;
 		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
 		}
 
 		url = '';
@@ -117,26 +118,26 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('tool/upload', 'user_token=' + this.session.data['user_token'] + url, true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('tool/upload', 'user_token=' + this.session.data['user_token'] + url, true)
 		});
 
 		data['delete'] = await this.url.link('tool/upload/delete', 'user_token=' + this.session.data['user_token'] + url, true);
 
 		data['uploads'] = {};
 
-		filter_data = array(
-			'filter_name'	    : filter_name,
-			'filter_date_added'	: filter_date_added,
-			'sort'              : sort,
-			'order'             : order,
-			'start'             : (page - 1) * Number(this.config.get('config_limit_admin')),
-			'limit'             : Number(this.config.get('config_limit_admin'))
+		const filter_data = {
+			'filter_name': filter_name,
+			'filter_date_added': filter_date_added,
+			'sort': sort,
+			'order': order,
+			'start': (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit': Number(this.config.get('config_limit_admin'))
 		});
 
 		upload_total = await this.model_tool_upload.getTotalUploads(filter_data);
@@ -145,11 +146,11 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 
 		for (let result of results) {
 			data['uploads'].push({
-				'upload_id'  : result['upload_id'],
-				'name'       : result['name'],
-				'filename'   : result['filename'],
-				'date_added' : date(this.language.get('date_format_short'), strtotime(result['date_added'])),
-				'download'   : await this.url.link('tool/upload/download', 'user_token=' + this.session.data['user_token'] + '&code=' + result['code'] + url, true)
+				'upload_id': result['upload_id'],
+				'name': result['name'],
+				'filename': result['filename'],
+				'date_added': date(this.language.get('date_format_short'), strtotime(result['date_added'])),
+				'download': await this.url.link('tool/upload/download', 'user_token=' + this.session.data['user_token'] + '&code=' + result['code'] + url, true)
 			});
 		}
 
@@ -168,7 +169,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		if ((this.session.data['success'])) {
 			data['success'] = this.session.data['success'];
 
-			delete this.session.data['success']);
+			delete this.session.data['success'];
 		} else {
 			data['success'] = '';
 		}
@@ -221,7 +222,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			url += '&order=' + this.request.get['order'];
 		}
 
-		pagination = new Pagination();
+		const pagination = new Pagination();
 		pagination.total = upload_total;
 		pagination.page = page;
 		pagination.limit = Number(this.config.get('config_limit_admin'));
@@ -249,11 +250,11 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 
 	async download() {
-		this.load.model('tool/upload');
+		this.load.model('tool/upload', this);
 
 		await this.load.language('tool/upload');
 
@@ -299,7 +300,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 				this.response.addheader('Content-Disposition: attachment; filename="' + (mask ? mask : basename(file)) + '"');
 				this.response.addheader('Content-Transfer-Encoding: binary');
 
-				this.response.setOutput(file_get_contents(file, FILE_USE_INCLUDE_PATH, null));
+				this.response.setOutput(fs.readFileSync(file, FILE_USE_INCLUDE_PATH, null));
 			} else {
 				this.session.data['error'] = this.language.get('error_file');
 
@@ -362,7 +363,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 				}
 
 				// Check to see if any PHP files are trying to be uploaded
-				content = file_get_contents(this.request.files['file']['tmp_name']);
+				content = fs.readFileSync(this.request.files['file']['tmp_name']);
 
 				if (preg_match('/\<\?php/i', content)) {
 					json['error'] = this.language.get('error_filetype');
@@ -383,7 +384,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			move_uploaded_file(this.request.files['file']['tmp_name'], DIR_UPLOAD + file);
 
 			// Hide the uploaded file name so people can not link to it directly.
-			this.load.model('tool/upload');
+			this.load.model('tool/upload', this);
 
 			json['code'] = await this.model_tool_upload.addUpload(filename, file);
 

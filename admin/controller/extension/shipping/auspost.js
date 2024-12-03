@@ -2,16 +2,18 @@ module.exports = class ControllerExtensionShippingAusPost extends Controller {
 	error = {};
 
 	async index() {
+		const data = {};
 		await this.load.language('extension/shipping/auspost');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('setting/setting',this);
+		this.load.model('setting/setting', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validate()) {
 			await this.model_setting_setting.editSetting('shipping_auspost', this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=shipping', true));
 		}
@@ -37,18 +39,18 @@ module.exports = class ControllerExtensionShippingAusPost extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_extension'),
-			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=shipping', true)
+			'text': this.language.get('text_extension'),
+			'href': await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=shipping', true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('extension/shipping/auspost', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('extension/shipping/auspost', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['action'] = await this.url.link('extension/shipping/auspost', 'user_token=' + this.session.data['user_token'], true);
@@ -73,7 +75,7 @@ module.exports = class ControllerExtensionShippingAusPost extends Controller {
 			data['shipping_auspost_weight_class_id'] = this.config.get('shipping_auspost_weight_class_id');
 		}
 
-		this.load.model('localisation/weight_class',this);
+		this.load.model('localisation/weight_class', this);
 
 		data['weight_classes'] = await this.model_localisation_weight_class.getWeightClasses();
 
@@ -83,7 +85,7 @@ module.exports = class ControllerExtensionShippingAusPost extends Controller {
 			data['shipping_auspost_tax_class_id'] = this.config.get('shipping_auspost_tax_class_id');
 		}
 
-		this.load.model('localisation/tax_class',this);
+		this.load.model('localisation/tax_class', this);
 
 		data['tax_classes'] = await this.model_localisation_tax_class.getTaxClasses();
 
@@ -93,7 +95,7 @@ module.exports = class ControllerExtensionShippingAusPost extends Controller {
 			data['shipping_auspost_geo_zone_id'] = this.config.get('shipping_auspost_geo_zone_id');
 		}
 
-		this.load.model('localisation/geo_zone');
+		this.load.model('localisation/geo_zone', this);
 
 		data['geo_zones'] = await this.model_localisation_geo_zone.getGeoZones();
 
@@ -129,6 +131,6 @@ module.exports = class ControllerExtensionShippingAusPost extends Controller {
 			this.error['postcode'] = this.language.get('error_postcode');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 }

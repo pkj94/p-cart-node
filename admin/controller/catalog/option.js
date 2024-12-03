@@ -2,6 +2,7 @@ module.exports = class ControllerCatalogOption extends Controller {
 	error = {};
 
 	async index() {
+const data = {};
 		await this.load.language('catalog/option');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -22,6 +23,7 @@ module.exports = class ControllerCatalogOption extends Controller {
 			await this.model_catalog_option.addOption(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
 			let url = '';
 
@@ -54,6 +56,7 @@ module.exports = class ControllerCatalogOption extends Controller {
 			await this.model_catalog_option.editOption(this.request.get['option_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
 			let url = '';
 
@@ -89,6 +92,7 @@ module.exports = class ControllerCatalogOption extends Controller {
 			}
 
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
 			let url = '';
 
@@ -111,7 +115,7 @@ module.exports = class ControllerCatalogOption extends Controller {
 	}
 
 	async getList() {
-		const data = {};
+				const data = {};
 		let sort = 'od.name';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];

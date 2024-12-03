@@ -3,7 +3,7 @@ const ico = require("sharp-ico");
 
 module.exports = class ModelToolImage extends Model {
 	async resize(filename, width_new, height_new) {
-		if (!fs.existsSync(DIR_IMAGE + filename) || fs.realpathSync(DIR_IMAGE + filename).substring(0, DIR_IMAGE.length).replaceAll('\\', '/') != DIR_IMAGE) {
+		if (!fs.existsSync(DIR_IMAGE + filename) || fs.realpathSync(DIR_IMAGE + filename).substr(0, DIR_IMAGE.length).replaceAll('\\', '/') != DIR_IMAGE) {
 			return '';
 		}
 
@@ -14,7 +14,7 @@ module.exports = class ModelToolImage extends Model {
 
 		if (!fs.existsSync(DIR_IMAGE + image_new) || (fs.statSync(DIR_IMAGE + image_old).mtime > fs.statSync(DIR_IMAGE + image_new).mtime)) {
 			let width = 0, height = 0, image_type = '';
-			console.log(image_old)
+			// console.log(image_old)
 			if (image_old.split('.').pop() == 'ico') {
 				const image = await ico.sharpsFromIco(DIR_IMAGE + image_old).forEach(async (icon, index) => {
 					const metadata = await icon.metadata();

@@ -14,7 +14,6 @@ module.exports = class UserLibrary {
         this.init();
     }
     async init() {
-        // console.log('library user-----', this.user_id, JSON.stringify(this.permission));
         if (this.session.data['user_id']) {
             const user_query = await this.db.query("SELECT * FROM " + DB_PREFIX + "user WHERE user_id = '" + this.session.data['user_id'] + "' AND status = '1'");
 
@@ -80,7 +79,7 @@ module.exports = class UserLibrary {
     async hasPermission(key, value) {
         await this.init();
         if ((this.permission[key])) {
-            return this.permission[key].includes(value);
+            return (this.permission[key]||[]).includes(value);
         } else {
             return false;
         }

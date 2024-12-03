@@ -3,25 +3,27 @@ module.exports = class ControllerExtensionPaymentEway extends Controller {
 	error = {};
 
 	async index() {
+		const data = {};
 		await this.load.language('extension/payment/eway');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('setting/setting',this);
+		this.load.model('setting/setting', this);
 
 		if ((this.request.server['method'] == 'POST') && (this.validate())) {
 			await this.model_setting_setting.editSetting('payment_eway', this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'], true));
 		}
 
-		this.load.model('localisation/geo_zone');
+		this.load.model('localisation/geo_zone', this);
 
 		data['geo_zones'] = await this.model_localisation_geo_zone.getGeoZones();
 
-		this.load.model('localisation/order_status');
+		this.load.model('localisation/order_status', this);
 
 		data['order_statuses'] = await this.model_localisation_order_status.getOrderStatuses();
 
@@ -52,18 +54,18 @@ module.exports = class ControllerExtensionPaymentEway extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_extension'),
-			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_extension'),
+			'href': await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('extension/payment/eway', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('extension/payment/eway', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['action'] = await this.url.link('extension/payment/eway', 'user_token=' + this.session.data['user_token'], true);
@@ -167,12 +169,12 @@ module.exports = class ControllerExtensionPaymentEway extends Controller {
 	}
 
 	async install() {
-		this.load.model('extension/payment/eway');
+		this.load.model('extension/payment/eway', this);
 		await this.model_extension_payment_eway.install();
 	}
 
 	async uninstall() {
-		this.load.model('extension/payment/eway');
+		this.load.model('extension/payment/eway', this);
 		await this.model_extension_payment_eway.uninstall();
 	}
 
@@ -187,12 +189,13 @@ module.exports = class ControllerExtensionPaymentEway extends Controller {
 	}
 
 	async order() {
-		if (this.config.get('payment_eway_status')) {
-			this.load.model('extension/payment/eway');
+		const data = {};
+		if (Number(this.config.get('payment_eway_status'))) {
+			this.load.model('extension/payment/eway', this);
 
-			eway_order = await this.model_extension_payment_eway.getOrder(this.request.get['order_id']);
+			const eway_order = await this.model_extension_payment_eway.getOrder(this.request.get['order_id']);
 
-			if ((eway_order)) {
+			if ((eway_order.eway_order_id)) {
 				await this.load.language('extension/payment/eway');
 
 				eway_order['total'] = eway_order['amount'];
@@ -241,33 +244,33 @@ module.exports = class ControllerExtensionPaymentEway extends Controller {
 	async refund() {
 		await this.load.language('extension/payment/eway');
 
-		order_id = this.request.post['order_id'];
-		refund_amount = this.request.post['refund_amount'];
+		const order_id = this.request.post['order_id'];
+		const refund_amount = this.request.post['refund_amount'];
 
 		if (order_id && refund_amount > 0) {
-			this.load.model('extension/payment/eway');
-			result = await this.model_extension_payment_eway.refund(order_id, refund_amount);
+			this.load.model('extension/payment/eway', this);
+			const result = await this.model_extension_payment_eway.refund(order_id, refund_amount);
 
 			// Check if any error returns
 			if ((result.Errors) || result === false) {
 				json['error'] = true;
-				reason = '';
+				let reason = '';
 				if (result === false) {
 					reason = this.language.get('text_unknown_failure');
 				} else {
-					errors = explode(',', result.Errors);
-					for (errors of error) {
+					const errors = result.Errors.split(',');
+					for (let error of errors) {
 						reason += this.language.get('text_card_message_' + result.Errors);
 					}
 				}
 				json['message'] = this.language.get('text_refund_failed') + reason;
 			} else {
-				eway_order = await this.model_extension_payment_eway.getOrder(order_id);
+				const eway_order = await this.model_extension_payment_eway.getOrder(order_id);
 				await this.model_extension_payment_eway.addTransaction(eway_order['eway_order_id'], result.Refund.TransactionID, 'refund', result.Refund.TotalAmount / 100, eway_order['currency_code']);
 
-				total_captured = await this.model_extension_payment_eway.getTotalCaptured(eway_order['eway_order_id']);
-				total_refunded = await this.model_extension_payment_eway.getTotalRefunded(eway_order['eway_order_id']);
-				refund_status = 0;
+				const total_captured = await this.model_extension_payment_eway.getTotalCaptured(eway_order['eway_order_id']);
+				const total_refunded = await this.model_extension_payment_eway.getTotalRefunded(eway_order['eway_order_id']);
+				let refund_status = 0;
 
 				if (total_captured == total_refunded) {
 					refund_status = 1;
@@ -277,7 +280,7 @@ module.exports = class ControllerExtensionPaymentEway extends Controller {
 				json['data'] = {};
 				json['data']['transactionid'] = result.TransactionID;
 				json['data']['created'] = date("Y-m-d H:i:s");
-				json['data']['amount'] = number_format(refund_amount, 2, '.', '');
+				json['data']['amount'] = refund_amount.toFixed(2);
 				json['data']['total_refunded_formatted'] = this.currency.format(total_refunded, eway_order['currency_code'], 1, true);
 				json['data']['refund_status'] = refund_status;
 				json['data']['remaining'] = total_captured - total_refunded;
@@ -296,23 +299,23 @@ module.exports = class ControllerExtensionPaymentEway extends Controller {
 	async capture() {
 		await this.load.language('extension/payment/eway');
 
-		order_id = this.request.post['order_id'];
-		capture_amount = this.request.post['capture_amount'];
+		const order_id = this.request.post['order_id'];
+		const capture_amount = this.request.post['capture_amount'];
 
 		if (order_id && capture_amount > 0) {
-			this.load.model('extension/payment/eway');
-			eway_order = await this.model_extension_payment_eway.getOrder(order_id);
-			result = await this.model_extension_payment_eway.capture(order_id, capture_amount, eway_order['currency_code']);
+			this.load.model('extension/payment/eway', this);
+			const eway_order = await this.model_extension_payment_eway.getOrder(order_id);
+			const result = await this.model_extension_payment_eway.capture(order_id, capture_amount, eway_order['currency_code']);
 
 			// Check if any error returns
 			if ((result.Errors) || result === false) {
 				json['error'] = true;
-				reason = '';
+				let reason = '';
 				if (result === false) {
 					reason = this.language.get('text_unknown_failure');
 				} else {
-					errors = explode(',', result.Errors);
-					for (errors of error) {
+					const errors = result.Errors.split(',');
+					for (let error of errors) {
 						reason += this.language.get('text_card_message_' + result.Errors);
 					}
 				}
@@ -320,10 +323,10 @@ module.exports = class ControllerExtensionPaymentEway extends Controller {
 			} else {
 				await this.model_extension_payment_eway.addTransaction(eway_order['eway_order_id'], result.TransactionID, 'payment', capture_amount, eway_order['currency_code']);
 
-				total_captured = await this.model_extension_payment_eway.getTotalCaptured(eway_order['eway_order_id']);
-				total_refunded = await this.model_extension_payment_eway.getTotalRefunded(eway_order['eway_order_id']);
+				const total_captured = await this.model_extension_payment_eway.getTotalCaptured(eway_order['eway_order_id']);
+				const total_refunded = await this.model_extension_payment_eway.getTotalRefunded(eway_order['eway_order_id']);
 
-				remaining = eway_order['amount'] - capture_amount;
+				let remaining = eway_order['amount'] - capture_amount;
 				if (remaining <= 0) {
 					remaining = 0;
 				}
@@ -350,7 +353,7 @@ module.exports = class ControllerExtensionPaymentEway extends Controller {
 		this.response.setOutput(json);
 	}
 
-	private function validate() {
+	async validate() {
 		if (!await this.user.hasPermission('modify', 'extension/payment/eway')) {
 			this.error['warning'] = this.language.get('error_permission');
 		}
@@ -364,7 +367,7 @@ module.exports = class ControllerExtensionPaymentEway extends Controller {
 			this.error['payment_type'] = this.language.get('error_payment_type');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 
 }

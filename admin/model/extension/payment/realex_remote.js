@@ -1,53 +1,55 @@
+const sha1 = require('locutus/php/strings/sha1');
+
 module.exports = class ModelExtensionPaymentRealexRemote extends Model {
 	async install() {
-		await this.db.query("
-			CREATE TABLE IF NOT EXISTS `" + DB_PREFIX + "realex_remote_order` (
-			  `realex_remote_order_id` INT(11) NOT NULL AUTO_INCREMENT,
-			  `order_id` INT(11) NOT NULL,
-			  `order_ref` CHAR(50) NOT NULL,
-			  `order_ref_previous` CHAR(50) NOT NULL,
-			  `pasref` VARCHAR(50) NOT NULL,
-			  `pasref_previous` VARCHAR(50) NOT NULL,
-			  `date_added` DATETIME NOT NULL,
-			  `date_modified` DATETIME NOT NULL,
-			  `capture_status` INT(1) DEFAULT NULL,
-			  `void_status` INT(1) DEFAULT NULL,
-			  `settle_type` INT(1) DEFAULT NULL,
-			  `rebate_status` INT(1) DEFAULT NULL,
-			  `currency_code` CHAR(3) NOT NULL,
-			  `authcode` VARCHAR(30) NOT NULL,
-			  `account` VARCHAR(30) NOT NULL,
-			  `total` DECIMAL( 10, 2 ) NOT NULL,
-			  PRIMARY KEY (`realex_remote_order_id`)
-			) ENGINE=MyISAM DEFAULT COLLATE=oc_general_ci;");
+		await this.db.query(`
+			CREATE TABLE IF NOT EXISTS \`${DB_PREFIX}realex_remote_order\` (
+			  \`realex_remote_order_id\` INT(11) NOT NULL AUTO_INCREMENT,
+			  \`order_id\` INT(11) NOT NULL,
+			  \`order_ref\` CHAR(50) NOT NULL,
+			  \`order_ref_previous\` CHAR(50) NOT NULL,
+			  \`pasref\` VARCHAR(50) NOT NULL,
+			  \`pasref_previous\` VARCHAR(50) NOT NULL,
+			  \`date_added\` DATETIME NOT NULL,
+			  \`date_modified\` DATETIME NOT NULL,
+			  \`capture_status\` INT(1) DEFAULT NULL,
+			  \`void_status\` INT(1) DEFAULT NULL,
+			  \`settle_type\` INT(1) DEFAULT NULL,
+			  \`rebate_status\` INT(1) DEFAULT NULL,
+			  \`currency_code\` CHAR(3) NOT NULL,
+			  \`authcode\` VARCHAR(30) NOT NULL,
+			  \`account\` VARCHAR(30) NOT NULL,
+			  \`total\` DECIMAL( 10, 2 ) NOT NULL,
+			  PRIMARY KEY (\`realex_remote_order_id\`)
+			) ENGINE=MyISAM DEFAULT COLLATE=utf8_general_ci;`);
 
-		await this.db.query("
-			CREATE TABLE IF NOT EXISTS `" + DB_PREFIX + "realex_remote_order_transaction` (
-			  `realex_remote_order_transaction_id` INT(11) NOT NULL AUTO_INCREMENT,
-			  `realex_remote_order_id` INT(11) NOT NULL,
-			  `date_added` DATETIME NOT NULL,
-			  `type` ENUM('auth', 'payment', 'rebate', 'void') DEFAULT NULL,
-			  `amount` DECIMAL( 10, 2 ) NOT NULL,
-			  PRIMARY KEY (`realex_remote_order_transaction_id`)
-			) ENGINE=MyISAM DEFAULT COLLATE=oc_general_ci;");
+		await this.db.query(`
+			CREATE TABLE IF NOT EXISTS \`${DB_PREFIX}realex_remote_order_transaction\` (
+			  \`realex_remote_order_transaction_id\` INT(11) NOT NULL AUTO_INCREMENT,
+			  \`realex_remote_order_id\` INT(11) NOT NULL,
+			  \`date_added\` DATETIME NOT NULL,
+			  \`type\` ENUM('auth', 'payment', 'rebate', 'void') DEFAULT NULL,
+			  \`amount\` DECIMAL( 10, 2 ) NOT NULL,
+			  PRIMARY KEY (\`realex_remote_order_transaction_id\`)
+			) ENGINE=MyISAM DEFAULT COLLATE=utf8_general_ci;`);
 	}
 
 	async void(order_id) {
-		realex_order = this.getOrder(order_id);
+		const realex_order = await this.getOrder(order_id);
 
-		if ((realex_order)) {
-			timestamp = date("YmdHis");
-			merchant_id = this.config.get('payment_realex_remote_merchant_id');
-			secret = this.config.get('payment_realex_remote_secret');
+		if ((realex_order.order_ref)) {
+			let timestamp = date("YmdHis");
+			let merchant_id = this.config.get('payment_realex_remote_merchant_id');
+			let secret = this.config.get('payment_realex_remote_secret');
 
-			this.logger('Void hash construct: ' + timestamp + '.' + merchant_id + '.' + realex_order['order_ref'] + '...');
+			await this.logger('Void hash construct: ' + timestamp + '.' + merchant_id + '.' + realex_order['order_ref'] + '...');
 
-			tmp = timestamp + '.' + merchant_id + '.' + realex_order['order_ref'] + '...';
-			hash = sha1(tmp);
+			let tmp = timestamp + '.' + merchant_id + '.' + realex_order['order_ref'] + '...';
+			let hash = sha1(tmp);
 			tmp = hash + '.' + secret;
 			hash = sha1(tmp);
 
-			xml = '';
+			let xml = '';
 			xml += '<request type="void" timestamp="' + timestamp + '">';
 			xml += '<merchantid>' + merchant_id + '</merchantid>';
 			xml += '<account>' + realex_order['account'] + '</account>';
@@ -57,19 +59,21 @@ module.exports = class ModelExtensionPaymentRealexRemote extends Model {
 			xml += '<sha1hash>' + hash + '</sha1hash>';
 			xml += '</request>';
 
-			this.logger('Void XML request:\r\n' + print_r(simplexml_load_string(xml), 1));
+			await this.logger('Void XML request:\r\n' + JSON.stringify(await parseXmlString(xml), true));
 
-			ch = curl_init();
-			curl_setopt(ch, CURLOPT_URL, "https://epage.payandshop.com/epage-remote.cgi");
-			curl_setopt(ch, CURLOPT_POST, 1);
-			curl_setopt(ch, CURLOPT_USERAGENT, "OpenCart " + VERSION);
-			curl_setopt(ch, CURLOPT_RETURNTRANSFER, 1);
-			curl_setopt(ch, CURLOPT_POSTFIELDS, xml);
-			curl_setopt(ch, CURLOPT_SSL_VERIFYPEER, false);
-			response = curl_exec (ch);
-			curl_close (ch);
-
-			return simplexml_load_string(response);
+			try {
+				const response = await require('axios').post("https://epage.payandshop.com/epage-remote.cgi", xml, {
+					headers: {
+						'Content-Type': 'text/xml'
+					},
+					httpsAgent: "OpenCart " + VERSION,
+					timeout: 60000,
+				});
+				return await parseXmlString(response.data);
+			} catch (error) {
+				await this.logger('Error:', error);
+				return null;
+			}
 		} else {
 			return false;
 		}
@@ -80,37 +84,37 @@ module.exports = class ModelExtensionPaymentRealexRemote extends Model {
 	}
 
 	async capture(order_id, amount) {
-		realex_order = this.getOrder(order_id);
+		const realex_order = await this.getOrder(order_id);
 
 		if ((realex_order) && realex_order['capture_status'] == 0) {
-			timestamp = date("YmdHis");
-			merchant_id = this.config.get('payment_realex_remote_merchant_id');
-			secret = this.config.get('payment_realex_remote_secret');
-
+			let timestamp = date("YmdHis");
+			let merchant_id = this.config.get('payment_realex_remote_merchant_id');
+			let secret = this.config.get('payment_realex_remote_secret');
+			let hash = '', settle_type = '', xml_amount = '';
 			if (realex_order['settle_type'] == 2) {
-				this.logger('Capture hash construct: ' + timestamp + '.' + merchant_id + '.' + realex_order['order_ref'] + '.' + round(amount*100) + '.' + realex_order['currency_code'] + '.');
+				await this.logger('Capture hash construct: ' + timestamp + '.' + merchant_id + '.' + realex_order['order_ref'] + '.' + Math.round(amount * 100) + '.' + realex_order['currency_code'] + '.');
 
-				tmp = timestamp + '.' + merchant_id + '.' + realex_order['order_ref'] + '.' + round(amount*100) + '.' + realex_order['currency_code'] + '.';
+				let tmp = timestamp + '.' + merchant_id + '.' + realex_order['order_ref'] + '.' + Math.round(amount * 100) + '.' + realex_order['currency_code'] + '.';
 				hash = sha1(tmp);
 				tmp = hash + '.' + secret;
 				hash = sha1(tmp);
 
 				settle_type = 'multisettle';
-				xml_amount = '<amount currency="' + realex_order['currency_code'] + '">' + round(amount*100) + '</amount>';
+				xml_amount = '<amount currency="' + realex_order['currency_code'] + '">' + Math.round(amount * 100) + '</amount>';
 			} else {
 				//this.logger('Capture hash construct: ' + timestamp + '.' + merchant_id + '.' + realex_order['order_ref'] + '...');
-				this.logger('Capture hash construct: ' + timestamp + '.' + merchant_id + '.' + realex_order['order_ref'] + '.' + round(amount*100) + '.' + realex_order['currency_code'] + '.');
+				await this.logger('Capture hash construct: ' + timestamp + '.' + merchant_id + '.' + realex_order['order_ref'] + '.' + Math.round(amount * 100) + '.' + realex_order['currency_code'] + '.');
 
-				tmp = timestamp + '.' + merchant_id + '.' + realex_order['order_ref'] + '.' + round(amount*100) + '.' + realex_order['currency_code'] + '.';
+				let tmp = timestamp + '.' + merchant_id + '.' + realex_order['order_ref'] + '.' + Math.round(amount * 100) + '.' + realex_order['currency_code'] + '.';
 				hash = sha1(tmp);
 				tmp = hash + '.' + secret;
 				hash = sha1(tmp);
 
 				settle_type = 'settle';
-				xml_amount = '<amount currency="' + realex_order['currency_code'] + '">' + round(amount*100) + '</amount>';
+				xml_amount = '<amount currency="' + realex_order['currency_code'] + '">' + Math.round(amount * 100) + '</amount>';
 			}
 
-			xml = '';
+			let xml = '';
 			xml += '<request type="' + settle_type + '" timestamp="' + timestamp + '">';
 			xml += '<merchantid>' + merchant_id + '</merchantid>';
 			xml += '<account>' + realex_order['account'] + '</account>';
@@ -121,19 +125,20 @@ module.exports = class ModelExtensionPaymentRealexRemote extends Model {
 			xml += '<sha1hash>' + hash + '</sha1hash>';
 			xml += '</request>';
 
-			this.logger('Settle XML request:\r\n' + print_r(simplexml_load_string(xml), 1));
-
-			ch = curl_init();
-			curl_setopt(ch, CURLOPT_URL, "https://epage.payandshop.com/epage-remote.cgi");
-			curl_setopt(ch, CURLOPT_POST, 1);
-			curl_setopt(ch, CURLOPT_USERAGENT, "OpenCart " + VERSION);
-			curl_setopt(ch, CURLOPT_RETURNTRANSFER, 1);
-			curl_setopt(ch, CURLOPT_POSTFIELDS, xml);
-			curl_setopt(ch, CURLOPT_SSL_VERIFYPEER, false);
-			response = curl_exec (ch);
-			curl_close (ch);
-
-			return simplexml_load_string(response);
+			await this.logger('Settle XML request:\r\n' + JSON.stringify(await parseXmlString(xml), true));
+			try {
+				const response = await require('axios').post("https://epage.payandshop.com/epage-remote.cgi", xml, {
+					headers: {
+						'Content-Type': 'text/xml'
+					},
+					httpsAgent: "OpenCart " + VERSION,
+					timeout: 60000,
+				});
+				return await parseXmlString(response.data);
+			} catch (error) {
+				await this.logger('Error:', error);
+				return null;
+			}
 		} else {
 			return false;
 		}
@@ -148,13 +153,13 @@ module.exports = class ModelExtensionPaymentRealexRemote extends Model {
 	}
 
 	async rebate(order_id, amount) {
-		realex_order = this.getOrder(order_id);
+		const realex_order = await this.getOrder(order_id);
 
 		if ((realex_order) && realex_order['rebate_status'] != 1) {
-			timestamp = date("YmdHis");
-			merchant_id = this.config.get('payment_realex_remote_merchant_id');
-			secret = this.config.get('payment_realex_remote_secret');
-
+			let timestamp = date("YmdHis");
+			let merchant_id = this.config.get('payment_realex_remote_merchant_id');
+			let secret = this.config.get('payment_realex_remote_secret');
+			let order_ref = '', pas_ref = '';
 			if (realex_order['settle_type'] == 2) {
 				order_ref = '_multisettle_' + realex_order['order_ref'];
 
@@ -168,40 +173,41 @@ module.exports = class ModelExtensionPaymentRealexRemote extends Model {
 				pas_ref = realex_order['pasref'];
 			}
 
-			this.logger('Rebate hash construct: ' + timestamp + '.' + merchant_id + '.' + order_ref + '.' + round(amount*100) + '.' + realex_order['currency_code'] + '.');
+			await this.logger('Rebate hash construct: ' + timestamp + '.' + merchant_id + '.' + order_ref + '.' + Math.round(amount * 100) + '.' + realex_order['currency_code'] + '.');
 
-			tmp = timestamp + '.' + merchant_id + '.' + order_ref + '.' + round(amount*100) + '.' + realex_order['currency_code'] + '.';
-			hash = sha1(tmp);
+			let tmp = timestamp + '.' + merchant_id + '.' + order_ref + '.' + Math.round(amount * 100) + '.' + realex_order['currency_code'] + '.';
+			let hash = sha1(tmp);
 			tmp = hash + '.' + secret;
 			hash = sha1(tmp);
 
-			rebatehash = sha1(this.config.get('payment_realex_remote_rebate_password'));
+			let rebatehash = sha1(this.config.get('payment_realex_remote_rebate_password'));
 
-			xml = '';
+			let xml = '';
 			xml += '<request type="rebate" timestamp="' + timestamp + '">';
 			xml += '<merchantid>' + merchant_id + '</merchantid>';
 			xml += '<account>' + realex_order['account'] + '</account>';
 			xml += '<orderid>' + order_ref + '</orderid>';
 			xml += '<pasref>' + pas_ref + '</pasref>';
 			xml += '<authcode>' + realex_order['authcode'] + '</authcode>';
-			xml += '<amount currency="' + realex_order['currency_code'] + '">' + round(amount*100) + '</amount>';
+			xml += '<amount currency="' + realex_order['currency_code'] + '">' + Math.round(amount * 100) + '</amount>';
 			xml += '<refundhash>' + rebatehash + '</refundhash>';
 			xml += '<sha1hash>' + hash + '</sha1hash>';
 			xml += '</request>';
 
-			this.logger('Rebate XML request:\r\n' + print_r(simplexml_load_string(xml), 1));
-
-			ch = curl_init();
-			curl_setopt(ch, CURLOPT_URL, "https://epage.payandshop.com/epage-remote.cgi");
-			curl_setopt(ch, CURLOPT_POST, 1);
-			curl_setopt(ch, CURLOPT_USERAGENT, "OpenCart " + VERSION);
-			curl_setopt(ch, CURLOPT_RETURNTRANSFER, 1);
-			curl_setopt(ch, CURLOPT_POSTFIELDS, xml);
-			curl_setopt(ch, CURLOPT_SSL_VERIFYPEER, false);
-			response = curl_exec (ch);
-			curl_close (ch);
-
-			return simplexml_load_string(response);
+			await this.logger('Rebate XML request:\r\n' + JSON.stringify(await parseXmlString(xml), true));
+			try {
+				const response = await require('axios').post("https://epage.payandshop.com/epage-remote.cgi", xml, {
+					headers: {
+						'Content-Type': 'text/xml'
+					},
+					httpsAgent: "OpenCart " + VERSION,
+					timeout: 60000,
+				});
+				return await parseXmlString(response.data);
+			} catch (error) {
+				await this.logger('Error:', error);
+				return null;
+			}
 		} else {
 			return false;
 		}
@@ -212,10 +218,10 @@ module.exports = class ModelExtensionPaymentRealexRemote extends Model {
 	}
 
 	async getOrder(order_id) {
-		qry = await this.db.query("SELECT * FROM `" + DB_PREFIX + "realex_remote_order` WHERE `order_id` = '" + order_id + "' LIMIT 1");
+		const qry = await this.db.query("SELECT * FROM `" + DB_PREFIX + "realex_remote_order` WHERE `order_id` = '" + order_id + "' LIMIT 1");
 
 		if (qry.num_rows) {
-			order = qry.row;
+			const order = qry.row;
 			order['transactions'] = this.getTransactions(order['realex_remote_order_id']);
 
 			return order;
@@ -224,8 +230,8 @@ module.exports = class ModelExtensionPaymentRealexRemote extends Model {
 		}
 	}
 
-	private function getTransactions(realex_remote_order_id) {
-		qry = await this.db.query("SELECT * FROM `" + DB_PREFIX + "realex_remote_order_transaction` WHERE `realex_remote_order_id` = '" + realex_remote_order_id + "'");
+	async getTransactions(realex_remote_order_id) {
+		const qry = await this.db.query("SELECT * FROM `" + DB_PREFIX + "realex_remote_order_transaction` WHERE `realex_remote_order_id` = '" + realex_remote_order_id + "'");
 
 		if (qry.num_rows) {
 			return qry.rows;
@@ -240,7 +246,7 @@ module.exports = class ModelExtensionPaymentRealexRemote extends Model {
 
 	async logger(message) {
 		if (this.config.get('payment_realex_remote_debug') == 1) {
-			log = new Log('realex_remote.log');
+			const log = new Log('realex_remote.log');
 			log.write(message);
 		}
 	}

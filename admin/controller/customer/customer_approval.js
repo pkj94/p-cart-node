@@ -1,5 +1,6 @@
 module.exports = class ControllerCustomerCustomerApproval extends Controller {
 	async index() {
+const data = {};
 		await this.load.language('customer/customer_approval');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -123,16 +124,14 @@ module.exports = class ControllerCustomerCustomerApproval extends Controller {
 		} else {
 			filter_date_added = '';
 		}
-
-		if ((this.request.get['page'])) {
+page = 1;
+if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
 		}
 
 		data['customer_approvals'] = {};
 
-		filter_data = array(
+		const filter_data = {
 			'filter_name'              : filter_name,
 			'filter_email'             : filter_email,
 			'filter_customer_group_id' : filter_customer_group_id,
@@ -184,7 +183,7 @@ module.exports = class ControllerCustomerCustomerApproval extends Controller {
 			url += '&filter_date_added=' + this.request.get['filter_date_added'];
 		}
 
-		pagination = new Pagination();
+		const pagination = new Pagination();
 		pagination.total = customer_approval_total;
 		pagination.page = page;
 		pagination.limit = Number(this.config.get('config_limit_admin'));

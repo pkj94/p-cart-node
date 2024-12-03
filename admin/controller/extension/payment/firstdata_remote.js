@@ -2,25 +2,27 @@ module.exports = class ControllerExtensionPaymentFirstdataRemote extends Control
 	error = {};
 
 	async index() {
+		const data = {};
 		await this.load.language('extension/payment/firstdata_remote');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('setting/setting',this);
+		this.load.model('setting/setting', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validate()) {
 			await this.model_setting_setting.editSetting('payment_firstdata_remote', this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true));
 		}
 
-		this.load.model('localisation/order_status');
+		this.load.model('localisation/order_status', this);
 
 		data['order_statuses'] = await this.model_localisation_order_status.getOrderStatuses();
 
-		this.load.model('localisation/geo_zone');
+		this.load.model('localisation/geo_zone', this);
 
 		data['geo_zones'] = await this.model_localisation_geo_zone.getGeoZones();
 
@@ -75,22 +77,22 @@ module.exports = class ControllerExtensionPaymentFirstdataRemote extends Control
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_extension'),
-			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_extension'),
+			'href': await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('extension/payment/firstdata_remote', 'user_token=' + this.session.data['user_token'] + '&type=payment', true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('extension/payment/firstdata_remote', 'user_token=' + this.session.data['user_token'] + '&type=payment', true)
 		});
 
 		data['action'] = await this.url.link('extension/payment/firstdata_remote', 'user_token=' + this.session.data['user_token'], true);
-		
+
 		data['cancel'] = await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true);
 
 		if ((this.request.post['firstdata_remote_merchant_id'])) {
@@ -220,31 +222,31 @@ module.exports = class ControllerExtensionPaymentFirstdataRemote extends Control
 			data['firstdata_remote_card_storage'] = this.config.get('firstdata_remote_card_storage');
 		}
 
-		data['cards'] = {};
+		data['cards'] = [];
 
 		data['cards'].push({
-			'text'  : this.language.get('text_mastercard'),
-			'value' : 'mastercard'
+			'text': this.language.get('text_mastercard'),
+			'value': 'mastercard'
 		});
 
 		data['cards'].push({
-			'text'  : this.language.get('text_visa'),
-			'value' : 'visa'
+			'text': this.language.get('text_visa'),
+			'value': 'visa'
 		});
 
 		data['cards'].push({
-			'text'  : this.language.get('text_diners'),
-			'value' : 'diners'
+			'text': this.language.get('text_diners'),
+			'value': 'diners'
 		});
 
 		data['cards'].push({
-			'text'  : this.language.get('text_amex'),
-			'value' : 'amex'
+			'text': this.language.get('text_amex'),
+			'value': 'amex'
 		});
 
 		data['cards'].push({
-			'text'  : this.language.get('text_maestro'),
-			'value' : 'maestro'
+			'text': this.language.get('text_maestro'),
+			'value': 'maestro'
 		});
 
 		if ((this.request.post['firstdata_remote_cards_accepted'])) {
@@ -263,22 +265,23 @@ module.exports = class ControllerExtensionPaymentFirstdataRemote extends Control
 	}
 
 	async install() {
-		this.load.model('extension/payment/firstdata_remote');
+		this.load.model('extension/payment/firstdata_remote', this);
 		await this.model_extension_payment_firstdata_remote.install();
 	}
 
 	async uninstall() {
-		this.load.model('extension/payment/firstdata_remote');
+		this.load.model('extension/payment/firstdata_remote', this);
 		await this.model_extension_payment_firstdata_remote.uninstall();
 	}
 
 	async order() {
+		const data = {};
 		if (this.config.get('firstdata_remote_status')) {
-			this.load.model('extension/payment/firstdata_remote');
+			this.load.model('extension/payment/firstdata_remote', this);
 
-			firstdata_order = await this.model_extension_payment_firstdata_remote.getOrder(this.request.get['order_id']);
+			const firstdata_order = await this.model_extension_payment_firstdata_remote.getOrder(this.request.get['order_id']);
 
-			if ((firstdata_order)) {
+			if ((firstdata_order.firstdata_order_id)) {
 				await this.load.language('extension/payment/firstdata_remote');
 
 				firstdata_order['total_captured'] = await this.model_extension_payment_firstdata_remote.getTotalCaptured(firstdata_order['firstdata_remote_order_id']);
@@ -320,18 +323,18 @@ module.exports = class ControllerExtensionPaymentFirstdataRemote extends Control
 	async void() {
 		await this.load.language('extension/payment/firstdata_remote');
 
-		json = {};
+		const json = {};
 
 		if ((this.request.post['order_id']) && this.request.post['order_id'] != '') {
-			this.load.model('extension/payment/firstdata_remote');
+			this.load.model('extension/payment/firstdata_remote', this);
 
-			firstdata_order = await this.model_extension_payment_firstdata_remote.getOrder(this.request.post['order_id']);
+			const firstdata_order = await this.model_extension_payment_firstdata_remote.getOrder(this.request.post['order_id']);
 
-			void_response = await this.model_extension_payment_firstdata_remote.void(firstdata_order['order_ref'], firstdata_order['tdate']);
+			const void_response = await this.model_extension_payment_firstdata_remote.void(firstdata_order['order_ref'], firstdata_order['tdate']);
 
-			await this.model_extension_payment_firstdata_remote.logger('Void result:\r\n' + print_r(void_response, 1));
+			await this.model_extension_payment_firstdata_remote.logger('Void result:\r\n' + JSON.stringify(void_response, true));
 
-			if (strtoupper(void_response['transaction_result']) == 'APPROVED') {
+			if (void_response['transaction_result'].toUpperCase() == 'APPROVED') {
 				await this.model_extension_payment_firstdata_remote.addTransaction(firstdata_order['firstdata_remote_order_id'], 'void', 0.00);
 
 				await this.model_extension_payment_firstdata_remote.updateVoidStatus(firstdata_order['firstdata_remote_order_id'], 1);
@@ -355,23 +358,23 @@ module.exports = class ControllerExtensionPaymentFirstdataRemote extends Control
 
 	async capture() {
 		await this.load.language('extension/payment/firstdata');
-		json = {};
+		const json = {};
 
 		if ((this.request.post['order_id']) && this.request.post['order_id'] != '') {
-			this.load.model('extension/payment/firstdata_remote');
+			this.load.model('extension/payment/firstdata_remote', this);
 
-			firstdata_order = await this.model_extension_payment_firstdata_remote.getOrder(this.request.post['order_id']);
+			const firstdata_order = await this.model_extension_payment_firstdata_remote.getOrder(this.request.post['order_id']);
 
-			capture_response = await this.model_extension_payment_firstdata_remote.capture(firstdata_order['order_ref'], firstdata_order['total'], firstdata_order['currency_code']);
+			const capture_response = await this.model_extension_payment_firstdata_remote.capture(firstdata_order['order_ref'], firstdata_order['total'], firstdata_order['currency_code']);
 
-			await this.model_extension_payment_firstdata_remote.logger('Settle result:\r\n' + print_r(capture_response, 1));
+			await this.model_extension_payment_firstdata_remote.logger('Settle result:\r\n' + JSON.stringify(capture_response, true));
 
-			if (strtoupper(capture_response['transaction_result']) == 'APPROVED') {
+			if (capture_response['transaction_result'].toUpperCase() == 'APPROVED') {
 				await this.model_extension_payment_firstdata_remote.addTransaction(firstdata_order['firstdata_remote_order_id'], 'payment', firstdata_order['total']);
-				total_captured = await this.model_extension_payment_firstdata_remote.getTotalCaptured(firstdata_order['firstdata_remote_order_id']);
+				const total_captured = await this.model_extension_payment_firstdata_remote.getTotalCaptured(firstdata_order['firstdata_remote_order_id']);
 
 				await this.model_extension_payment_firstdata_remote.updateCaptureStatus(firstdata_order['firstdata_remote_order_id'], 1);
-				capture_status = 1;
+				let capture_status = 1;
 				json['msg'] = this.language.get('text_capture_ok_order');
 				json['data'] = {};
 				json['data']['column_date_added'] = date("Y-m-d H:i:s");
@@ -397,23 +400,23 @@ module.exports = class ControllerExtensionPaymentFirstdataRemote extends Control
 	async refund() {
 		await this.load.language('extension/payment/firstdata_remote');
 
-		json = {};
+		const json = {};
 
 		if ((this.request.post['order_id']) && this.request.post['order_id'] != '') {
-			this.load.model('extension/payment/firstdata_remote');
+			this.load.model('extension/payment/firstdata_remote', this);
 
-			firstdata_order = await this.model_extension_payment_firstdata_remote.getOrder(this.request.post['order_id']);
+			const firstdata_order = await this.model_extension_payment_firstdata_remote.getOrder(this.request.post['order_id']);
 
-			refund_response = await this.model_extension_payment_firstdata_remote.refund(firstdata_order['order_ref'], firstdata_order['total'], firstdata_order['currency_code']);
+			const refund_response = await this.model_extension_payment_firstdata_remote.refund(firstdata_order['order_ref'], firstdata_order['total'], firstdata_order['currency_code']);
 
-			await this.model_extension_payment_firstdata_remote.logger('Refund result:\r\n' + print_r(refund_response, 1));
+			await this.model_extension_payment_firstdata_remote.logger('Refund result:\r\n' + JSON.stringify(refund_response, true));
 
-			if (strtoupper(refund_response['transaction_result']) == 'APPROVED') {
+			if (refund_response['transaction_result'].toUpperCase() == 'APPROVED') {
 				await this.model_extension_payment_firstdata_remote.addTransaction(firstdata_order['firstdata_remote_order_id'], 'refund', firstdata_order['total'] * -1);
 
-				total_refunded = await this.model_extension_payment_firstdata_remote.getTotalRefunded(firstdata_order['firstdata_remote_order_id']);
-				total_captured = await this.model_extension_payment_firstdata_remote.getTotalCaptured(firstdata_order['firstdata_remote_order_id']);
-
+				const total_refunded = await this.model_extension_payment_firstdata_remote.getTotalRefunded(firstdata_order['firstdata_remote_order_id']);
+				const total_captured = await this.model_extension_payment_firstdata_remote.getTotalCaptured(firstdata_order['firstdata_remote_order_id']);
+				let refund_status = 0;
 				if (total_captured <= 0 && firstdata_order['capture_status'] == 1) {
 					await this.model_extension_payment_firstdata_remote.updateRefundStatus(firstdata_order['firstdata_remote_order_id'], 1);
 					refund_status = 1;
@@ -476,6 +479,6 @@ module.exports = class ControllerExtensionPaymentFirstdataRemote extends Control
 			this.error['error_ca'] = this.language.get('error_ca');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 }

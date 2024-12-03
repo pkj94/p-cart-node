@@ -1,17 +1,22 @@
+const str_replace = require("locutus/php/strings/str_replace");
+const vsprintf = require("locutus/php/strings/vsprintf");
+
 module.exports = class ControllerExtensionReportCustomerActivity extends Controller {
 	error = {};
 
 	async index() {
+		const data = {};
 		await this.load.language('extension/report/customer_activity');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('setting/setting',this);
+		this.load.model('setting/setting', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validate()) {
 			await this.model_setting_setting.editSetting('report_customer_activity', this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=report', true));
 		}
@@ -25,18 +30,18 @@ module.exports = class ControllerExtensionReportCustomerActivity extends Control
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_extension'),
-			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=report', true)
+			'text': this.language.get('text_extension'),
+			'href': await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=report', true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('extension/report/customer_activity', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('extension/report/customer_activity', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['action'] = await this.url.link('extension/report/customer_activity', 'user_token=' + this.session.data['user_token'], true);
@@ -61,88 +66,79 @@ module.exports = class ControllerExtensionReportCustomerActivity extends Control
 
 		this.response.setOutput(await this.load.view('extension/report/customer_activity_form', data));
 	}
-		
+
 	async validate() {
 		if (!await this.user.hasPermission('modify', 'extension/report/customer_activity')) {
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
-		
-	async report() {
-		await this.load.language('extension/report/customer_activity');
 
+	async report() {
+		const data = {};
+		await this.load.language('extension/report/customer_activity');
+		let filter_customer = '';
 		if ((this.request.get['filter_customer'])) {
 			filter_customer = this.request.get['filter_customer'];
-		} else {
-			filter_customer = '';
 		}
-
+		let filter_ip = '';
 		if ((this.request.get['filter_ip'])) {
 			filter_ip = this.request.get['filter_ip'];
-		} else {
-			filter_ip = '';
 		}
-
+		let filter_date_start = '';
 		if ((this.request.get['filter_date_start'])) {
 			filter_date_start = this.request.get['filter_date_start'];
-		} else {
-			filter_date_start = '';
 		}
-
+		let filter_date_end = '';
 		if ((this.request.get['filter_date_end'])) {
 			filter_date_end = this.request.get['filter_date_end'];
-		} else {
-			filter_date_end = '';
 		}
-
+		let page = 1;
 		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
 		}
 
-		this.load.model('extension/report/customer');
+		this.load.model('extension/report/customer',this);
 
 		data['activities'] = {};
 
-		filter_data = array(
-			'filter_customer'   : filter_customer,
-			'filter_ip'         : filter_ip,
-			'filter_date_start'	: filter_date_start,
-			'filter_date_end'	: filter_date_end,
-			'start'             : (page - 1) * 20,
-			'limit'             : 20
-		});
+		let filter_data = {
+			'filter_customer': filter_customer,
+			'filter_ip': filter_ip,
+			'filter_date_start': filter_date_start,
+			'filter_date_end': filter_date_end,
+			'start': (page - 1) * 20,
+			'limit': 20
+		};
 
-		activity_total = await this.model_extension_report_customer.getTotalCustomerActivities(filter_data);
+		const activity_total = await this.model_extension_report_customer.getTotalCustomerActivities(filter_data);
 
-		results = await this.model_extension_report_customer.getCustomerActivities(filter_data);
+		const results = await this.model_extension_report_customer.getCustomerActivities(filter_data);
 
 		for (let result of results) {
-			comment = vsprintf(this.language.get('text_activity_' + result['key']), JSON.parse(result['data'], true));
+			let comment = vsprintf(this.language.get('text_activity_' + result['key']), JSON.parse(result['data']));
 
-			find = array(
+			let find = [
 				'customer_id=',
 				'order_id='
-			});
+			];
 
-			replace = array(
+			let replace = [
 				await this.url.link('customer/customer/edit', 'user_token=' + this.session.data['user_token'] + '&customer_id=', true),
 				await this.url.link('sale/order/info', 'user_token=' + this.session.data['user_token'] + '&order_id=', true)
-			});
+			];
 
 			data['activities'].push({
-				'comment'    : str_replace(find, replace, comment),
-				'ip'         : result['ip'],
-				'date_added' : date(this.language.get('datetime_format'), strtotime(result['date_added']))
+				'comment': str_replace(find, replace, comment),
+				'ip': result['ip'],
+				'date_added': date(this.language.get('datetime_format'), new Date(result['date_added']))
 			});
 		}
 
 		data['user_token'] = this.session.data['user_token'];
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['filter_customer'])) {
 			url += '&filter_customer=' + encodeURIComponent(this.request.get['filter_customer']);
@@ -160,7 +156,7 @@ module.exports = class ControllerExtensionReportCustomerActivity extends Control
 			url += '&filter_date_end=' + this.request.get['filter_date_end'];
 		}
 
-		pagination = new Pagination();
+		const pagination = new Pagination();
 		pagination.total = activity_total;
 		pagination.page = page;
 		pagination.limit = Number(this.config.get('config_limit_admin'));

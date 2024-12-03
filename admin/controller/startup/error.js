@@ -1,5 +1,6 @@
 module.exports = class ControllerStartupError extends Controller {
 	async index() {
+const data = {};
 		this.registry.set('log', new Log(this.config.get('config_error_filename') ? this.config.get('config_error_filename') : this.config.get('error_filename')));
 
 		process.on('uncaughtException', this.handler);

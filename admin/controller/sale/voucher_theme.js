@@ -6,7 +6,7 @@ module.exports = class ControllerSaleVoucherTheme extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('sale/voucher_theme');
+		this.load.model('sale/voucher_theme', this);
 
 		await this.getList();
 	}
@@ -16,14 +16,15 @@ module.exports = class ControllerSaleVoucherTheme extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('sale/voucher_theme');
+		this.load.model('sale/voucher_theme', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_sale_voucher_theme.addVoucherTheme(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -48,14 +49,15 @@ module.exports = class ControllerSaleVoucherTheme extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('sale/voucher_theme');
+		this.load.model('sale/voucher_theme', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_sale_voucher_theme.editVoucherTheme(this.request.get['voucher_theme_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -80,17 +82,18 @@ module.exports = class ControllerSaleVoucherTheme extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('sale/voucher_theme');
+		this.load.model('sale/voucher_theme', this);
 
 		if ((this.request.post['selected']) && await this.validateDelete()) {
-this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
-			for (this.request.post['selected'] of voucher_theme_id) {
+			this.request.post['selected'] = Array.isArray(this.request.post['selected']) ? this.request.post['selected'] : [this.request.post['selected']]
+			for (let voucher_theme_id of this.request.post['selected']) {
 				await this.model_sale_voucher_theme.deleteVoucherTheme(voucher_theme_id);
 			}
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -111,25 +114,21 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 	}
 
 	async getList() {
+		const data = {};
+		let sort = 'vtd.name';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
-		} else {
-			sort = 'vtd.name';
 		}
-
+		let order = 'ASC';
 		if ((this.request.get['order'])) {
 			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
 		}
-
+		let page = 1;
 		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -146,36 +145,36 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('sale/voucher_theme', 'user_token=' + this.session.data['user_token'] + url, true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('sale/voucher_theme', 'user_token=' + this.session.data['user_token'] + url, true)
 		});
 
 		data['add'] = await this.url.link('sale/voucher_theme/add', 'user_token=' + this.session.data['user_token'] + url, true);
 		data['delete'] = await this.url.link('sale/voucher_theme/delete', 'user_token=' + this.session.data['user_token'] + url, true);
 
-		data['voucher_themes'] = {};
+		data['voucher_themes'] = [];
 
-		filter_data = array(
-			'sort'  : sort,
-			'order' : order,
-			'start' : (page - 1) * Number(this.config.get('config_limit_admin')),
-			'limit' : Number(this.config.get('config_limit_admin'))
-		});
+		const filter_data = {
+			'sort': sort,
+			'order': order,
+			'start': (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit': Number(this.config.get('config_limit_admin'))
+		};
 
-		voucher_theme_total = await this.model_sale_voucher_theme.getTotalVoucherThemes();
+		const voucher_theme_total = await this.model_sale_voucher_theme.getTotalVoucherThemes();
 
-		results = await this.model_sale_voucher_theme.getVoucherThemes(filter_data);
+		const results = await this.model_sale_voucher_theme.getVoucherThemes(filter_data);
 
 		for (let result of results) {
 			data['voucher_themes'].push({
-				'voucher_theme_id' : result['voucher_theme_id'],
-				'name'             : result['name'],
-				'edit'             : await this.url.link('sale/voucher_theme/edit', 'user_token=' + this.session.data['user_token'] + '&voucher_theme_id=' + result['voucher_theme_id'] + url, true)
+				'voucher_theme_id': result['voucher_theme_id'],
+				'name': result['name'],
+				'edit': await this.url.link('sale/voucher_theme/edit', 'user_token=' + this.session.data['user_token'] + '&voucher_theme_id=' + result['voucher_theme_id'] + url, true)
 			});
 		}
 
@@ -188,7 +187,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		if ((this.session.data['success'])) {
 			data['success'] = this.session.data['success'];
 
-			delete this.session.data['success']);
+			delete this.session.data['success'];
 		} else {
 			data['success'] = '';
 		}
@@ -223,7 +222,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			url += '&order=' + this.request.get['order'];
 		}
 
-		pagination = new Pagination();
+		const pagination = new Pagination();
 		pagination.total = voucher_theme_total;
 		pagination.page = page;
 		pagination.limit = Number(this.config.get('config_limit_admin'));
@@ -244,6 +243,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 	}
 
 	async getForm() {
+		const data = {};
 		data['text_form'] = !(this.request.get['voucher_theme_id']) ? this.language.get('text_add') : this.language.get('text_edit');
 
 		if ((this.error['warning'])) {
@@ -264,7 +264,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			data['error_image'] = '';
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -281,13 +281,13 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('sale/voucher_theme', 'user_token=' + this.session.data['user_token'] + url, true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('sale/voucher_theme', 'user_token=' + this.session.data['user_token'] + url, true)
 		});
 
 		if (!(this.request.get['voucher_theme_id'])) {
@@ -297,14 +297,14 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		}
 
 		data['cancel'] = await this.url.link('sale/voucher_theme', 'user_token=' + this.session.data['user_token'] + url, true);
-
+		let voucher_theme_info;
 		if ((this.request.get['voucher_theme_id']) && (this.request.server['method'] != 'POST')) {
 			voucher_theme_info = await this.model_sale_voucher_theme.getVoucherTheme(this.request.get['voucher_theme_id']);
 		}
 
 		data['user_token'] = this.session.data['user_token'];
 
-		this.load.model('localisation/language',this);
+		this.load.model('localisation/language', this);
 
 		data['languages'] = await this.model_localisation_language.getLanguages();
 
@@ -324,7 +324,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			data['image'] = '';
 		}
 
-		this.load.model('tool/image',this);
+		this.load.model('tool/image', this);
 
 		if ((this.request.post['image']) && is_file(DIR_IMAGE + this.request.post['image'])) {
 			data['thumb'] = await this.model_tool_image.resize(this.request.post['image'], 100, 100);
@@ -335,7 +335,6 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		}
 
 		data['placeholder'] = await this.model_tool_image.resize('no_image.png', 100, 100);
-
 		data['header'] = await this.load.controller('common/header');
 		data['column_left'] = await this.load.controller('common/column_left');
 		data['footer'] = await this.load.controller('common/footer');
@@ -348,7 +347,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		for (this.request.post['voucher_theme_description'] of language_id : value) {
+		for (let [language_id, value] of Object.entries(this.request.post['voucher_theme_description'])) {
 			if ((oc_strlen(value['name']) < 3) || (oc_strlen(value['name']) > 32)) {
 				this.error['name'][language_id] = this.language.get('error_name');
 			}
@@ -358,7 +357,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			this.error['image'] = this.language.get('error_image');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 
 	async validateDelete() {
@@ -366,17 +365,17 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		this.load.model('sale/voucher');
-		this.request.post['selected']  = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']];
+		this.load.model('sale/voucher', this);
+		this.request.post['selected'] = Array.isArray(this.request.post['selected']) ? this.request.post['selected'] : [this.request.post['selected']];
 
-		for (this.request.post['selected'] of voucher_theme_id) {
-			voucher_total = await this.model_sale_voucher.getTotalVouchersByVoucherThemeId(voucher_theme_id);
+		for (let voucher_theme_id of this.request.post['selected']) {
+			const voucher_total = await this.model_sale_voucher.getTotalVouchersByVoucherThemeId(voucher_theme_id);
 
 			if (voucher_total) {
 				this.error['warning'] = sprintf(this.language.get('error_voucher'), voucher_total);
 			}
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 }

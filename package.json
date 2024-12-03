@@ -46,6 +46,7 @@
     "redis": "^4.7.0",
     "request": "^2.88.2",
     "require-all": "^3.0.0",
+    "sanitize-html": "^2.13.1",
     "sass": "^1.77.6",
     "sharp": "^0.33.5",
     "sharp-ico": "^0.1.5",
@@ -54,6 +55,8 @@
     "twig": "^1.17.1",
     "useragent": "^2.3.0",
     "utf8": "^3.0.0",
+    "xml2js": "^0.6.2",
+    "xmldom": "^0.6.0",
     "yamlparser": "^0.0.2"
   }
 }

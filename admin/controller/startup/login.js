@@ -1,5 +1,6 @@
 module.exports = class ControllerStartupLogin extends Controller {
 	async index() {
+const data = {};
 		let route = (this.request.get['route']) ? this.request.get['route'] : '';
 
 		let ignore = [

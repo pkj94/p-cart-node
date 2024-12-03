@@ -2,16 +2,18 @@ module.exports = class ControllerExtensionShippingFedex extends Controller {
 	error = {};
 
 	async index() {
+		const data = {};
 		await this.load.language('extension/shipping/fedex');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('setting/setting',this);
+		this.load.model('setting/setting', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validate()) {
 			await this.model_setting_setting.editSetting('shipping_fedex', this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=shipping', true));
 		}
@@ -61,18 +63,18 @@ module.exports = class ControllerExtensionShippingFedex extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_extension'),
-			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=shipping', true)
+			'text': this.language.get('text_extension'),
+			'href': await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=shipping', true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('extension/shipping/fedex', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('extension/shipping/fedex', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['action'] = await this.url.link('extension/shipping/fedex', 'user_token=' + this.session.data['user_token'], true);
@@ -123,111 +125,111 @@ module.exports = class ControllerExtensionShippingFedex extends Controller {
 			data['shipping_fedex_service'] = {};
 		}
 
-		data['services'] = {};
+		data['services'] = [];
 
 		data['services'].push({
-			'text'  : this.language.get('text_europe_first_international_priority'),
-			'value' : 'EUROPE_FIRST_INTERNATIONAL_PRIORITY'
+			'text': this.language.get('text_europe_first_international_priority'),
+			'value': 'EUROPE_FIRST_INTERNATIONAL_PRIORITY'
 		});
 
 		data['services'].push({
-			'text'  : this.language.get('text_fedex_1_day_freight'),
-			'value' : 'FEDEX_1_DAY_FREIGHT'
+			'text': this.language.get('text_fedex_1_day_freight'),
+			'value': 'FEDEX_1_DAY_FREIGHT'
 		});
 
 		data['services'].push({
-			'text'  : this.language.get('text_fedex_2_day'),
-			'value' : 'FEDEX_2_DAY'
+			'text': this.language.get('text_fedex_2_day'),
+			'value': 'FEDEX_2_DAY'
 		});
 
 		data['services'].push({
-			'text'  : this.language.get('text_fedex_2_day_am'),
-			'value' : 'FEDEX_2_DAY_AM'
+			'text': this.language.get('text_fedex_2_day_am'),
+			'value': 'FEDEX_2_DAY_AM'
 		});
 
 		data['services'].push({
-			'text'  : this.language.get('text_fedex_2_day_freight'),
-			'value' : 'FEDEX_2_DAY_FREIGHT'
+			'text': this.language.get('text_fedex_2_day_freight'),
+			'value': 'FEDEX_2_DAY_FREIGHT'
 		});
 
 		data['services'].push({
-			'text'  : this.language.get('text_fedex_3_day_freight'),
-			'value' : 'FEDEX_3_DAY_FREIGHT'
+			'text': this.language.get('text_fedex_3_day_freight'),
+			'value': 'FEDEX_3_DAY_FREIGHT'
 		});
 
 		data['services'].push({
-			'text'  : this.language.get('text_fedex_express_saver'),
-			'value' : 'FEDEX_EXPRESS_SAVER'
+			'text': this.language.get('text_fedex_express_saver'),
+			'value': 'FEDEX_EXPRESS_SAVER'
 		});
 
 		data['services'].push({
-			'text'  : this.language.get('text_fedex_first_freight'),
-			'value' : 'FEDEX_FIRST_FREIGHT'
+			'text': this.language.get('text_fedex_first_freight'),
+			'value': 'FEDEX_FIRST_FREIGHT'
 		});
 
 		data['services'].push({
-			'text'  : this.language.get('text_fedex_freight_economy'),
-			'value' : 'FEDEX_FREIGHT_ECONOMY'
+			'text': this.language.get('text_fedex_freight_economy'),
+			'value': 'FEDEX_FREIGHT_ECONOMY'
 		});
 
 		data['services'].push({
-			'text'  : this.language.get('text_fedex_freight_priority'),
-			'value' : 'FEDEX_FREIGHT_PRIORITY'
+			'text': this.language.get('text_fedex_freight_priority'),
+			'value': 'FEDEX_FREIGHT_PRIORITY'
 		});
 
 		data['services'].push({
-			'text'  : this.language.get('text_fedex_ground'),
-			'value' : 'FEDEX_GROUND'
+			'text': this.language.get('text_fedex_ground'),
+			'value': 'FEDEX_GROUND'
 		});
 
 		data['services'].push({
-			'text'  : this.language.get('text_first_overnight'),
-			'value' : 'FIRST_OVERNIGHT'
+			'text': this.language.get('text_first_overnight'),
+			'value': 'FIRST_OVERNIGHT'
 		});
 
 		data['services'].push({
-			'text'  : this.language.get('text_ground_home_delivery'),
-			'value' : 'GROUND_HOME_DELIVERY'
+			'text': this.language.get('text_ground_home_delivery'),
+			'value': 'GROUND_HOME_DELIVERY'
 		});
 
 		data['services'].push({
-			'text'  : this.language.get('text_international_economy'),
-			'value' : 'INTERNATIONAL_ECONOMY'
+			'text': this.language.get('text_international_economy'),
+			'value': 'INTERNATIONAL_ECONOMY'
 		});
 
 		data['services'].push({
-			'text'  : this.language.get('text_international_economy_freight'),
-			'value' : 'INTERNATIONAL_ECONOMY_FREIGHT'
+			'text': this.language.get('text_international_economy_freight'),
+			'value': 'INTERNATIONAL_ECONOMY_FREIGHT'
 		});
 
 		data['services'].push({
-			'text'  : this.language.get('text_international_first'),
-			'value' : 'INTERNATIONAL_FIRST'
+			'text': this.language.get('text_international_first'),
+			'value': 'INTERNATIONAL_FIRST'
 		});
 
 		data['services'].push({
-			'text'  : this.language.get('text_international_priority'),
-			'value' : 'INTERNATIONAL_PRIORITY'
+			'text': this.language.get('text_international_priority'),
+			'value': 'INTERNATIONAL_PRIORITY'
 		});
 
 		data['services'].push({
-			'text'  : this.language.get('text_international_priority_freight'),
-			'value' : 'INTERNATIONAL_PRIORITY_FREIGHT'
+			'text': this.language.get('text_international_priority_freight'),
+			'value': 'INTERNATIONAL_PRIORITY_FREIGHT'
 		});
 
 		data['services'].push({
-			'text'  : this.language.get('text_priority_overnight'),
-			'value' : 'PRIORITY_OVERNIGHT'
+			'text': this.language.get('text_priority_overnight'),
+			'value': 'PRIORITY_OVERNIGHT'
 		});
 
 		data['services'].push({
-			'text'  : this.language.get('text_smart_post'),
-			'value' : 'SMART_POST'
+			'text': this.language.get('text_smart_post'),
+			'value': 'SMART_POST'
 		});
 
 		data['services'].push({
-			'text'  : this.language.get('text_standard_overnight'),
-			'value' : 'STANDARD_OVERNIGHT'
+			'text': this.language.get('text_standard_overnight'),
+			'value': 'STANDARD_OVERNIGHT'
 		});
 
 		if ((this.request.post['shipping_fedex_length'])) {
@@ -254,7 +256,7 @@ module.exports = class ControllerExtensionShippingFedex extends Controller {
 			data['shipping_fedex_length_class_id'] = this.config.get('shipping_fedex_length_class_id');
 		}
 
-		this.load.model('localisation/length_class',this);
+		this.load.model('localisation/length_class', this);
 
 		data['length_classes'] = await this.model_localisation_length_class.getLengthClasses();
 
@@ -300,7 +302,7 @@ module.exports = class ControllerExtensionShippingFedex extends Controller {
 			data['shipping_fedex_weight_class_id'] = this.config.get('shipping_fedex_weight_class_id');
 		}
 
-		this.load.model('localisation/weight_class',this);
+		this.load.model('localisation/weight_class', this);
 
 		data['weight_classes'] = await this.model_localisation_weight_class.getWeightClasses();
 
@@ -310,7 +312,7 @@ module.exports = class ControllerExtensionShippingFedex extends Controller {
 			data['shipping_fedex_tax_class_id'] = this.config.get('shipping_fedex_tax_class_id');
 		}
 
-		this.load.model('localisation/tax_class',this);
+		this.load.model('localisation/tax_class', this);
 
 		data['tax_classes'] = await this.model_localisation_tax_class.getTaxClasses();
 
@@ -320,7 +322,7 @@ module.exports = class ControllerExtensionShippingFedex extends Controller {
 			data['shipping_fedex_geo_zone_id'] = this.config.get('shipping_fedex_geo_zone_id');
 		}
 
-		this.load.model('localisation/geo_zone');
+		this.load.model('localisation/geo_zone', this);
 
 		data['geo_zones'] = await this.model_localisation_geo_zone.getGeoZones();
 
@@ -372,6 +374,6 @@ module.exports = class ControllerExtensionShippingFedex extends Controller {
 			this.error['dimension'] = this.language.get('error_dimension');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 }

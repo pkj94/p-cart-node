@@ -2,14 +2,14 @@ module.exports = class ModelLocalisationTaxRate extends Model {
 	async addTaxRate(data) {
 		await this.db.query("INSERT INTO " + DB_PREFIX + "tax_rate SET name = '" + this.db.escape(data['name']) + "', rate = '" + data['rate'] + "', `type` = '" + this.db.escape(data['type']) + "', geo_zone_id = '" + data['geo_zone_id'] + "', date_added = NOW(), date_modified = NOW()");
 
-		tax_rate_id = this.db.getLastId();
+		const tax_rate_id = this.db.getLastId();
 
 		if ((data['tax_rate_customer_group'])) {
-			for (data['tax_rate_customer_group'] of customer_group_id) {
+			for (let customer_group_id of data['tax_rate_customer_group']) {
 				await this.db.query("INSERT INTO " + DB_PREFIX + "tax_rate_to_customer_group SET tax_rate_id = '" + tax_rate_id + "', customer_group_id = '" + customer_group_id + "'");
 			}
 		}
-		
+
 		return tax_rate_id;
 	}
 
@@ -19,7 +19,7 @@ module.exports = class ModelLocalisationTaxRate extends Model {
 		await this.db.query("DELETE FROM " + DB_PREFIX + "tax_rate_to_customer_group WHERE tax_rate_id = '" + tax_rate_id + "'");
 
 		if ((data['tax_rate_customer_group'])) {
-			for (data['tax_rate_customer_group'] of customer_group_id) {
+			for (let customer_group_id of data['tax_rate_customer_group']) {
 				await this.db.query("INSERT INTO " + DB_PREFIX + "tax_rate_to_customer_group SET tax_rate_id = '" + tax_rate_id + "', customer_group_id = '" + customer_group_id + "'");
 			}
 		}
@@ -46,7 +46,7 @@ module.exports = class ModelLocalisationTaxRate extends Model {
 			'gz.name',
 			'tr.date_added',
 			'tr.date_modified'
-		});
+		];
 
 		if ((data['sort']) && sort_data.includes(data['sort'])) {
 			sql += " ORDER BY " + data['sort'];
@@ -61,13 +61,13 @@ module.exports = class ModelLocalisationTaxRate extends Model {
 		}
 
 		if ((data['start']) || (data['limit'])) {
-			data['start'] = data['start']||0;
-if (data['start'] < 0) {
+			data['start'] = data['start'] || 0;
+			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
@@ -80,12 +80,12 @@ if (data['limit'] < 1) {
 	}
 
 	async getTaxRateCustomerGroups(tax_rate_id) {
-		tax_customer_group_data = {};
+		let tax_customer_group_data = [];
 
 		const query = await this.db.query("SELECT * FROM " + DB_PREFIX + "tax_rate_to_customer_group WHERE tax_rate_id = '" + tax_rate_id + "'");
 
-		for (let result of query.rows ) {
-			tax_customer_group_data.push(result['customer_group_id'];
+		for (let result of query.rows) {
+			tax_customer_group_data.push(result['customer_group_id']);
 		}
 
 		return tax_customer_group_data;

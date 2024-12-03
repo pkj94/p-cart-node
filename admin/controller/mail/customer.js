@@ -35,7 +35,7 @@ module.exports = class ControllerMailCustomer extends Controller {
 
 			data['text_welcome'] = sprintf(language.get('text_welcome'), store_name);
 
-			data['login'] = store_url + 'index.php?route=account/login';
+			data['login'] = store_url + '?route=account/login';
 			data['store'] = store_name;
 
 			mail = new Mail(this.config.get('config_mail_engine'));
@@ -91,7 +91,7 @@ module.exports = class ControllerMailCustomer extends Controller {
 
 			data['text_welcome'] = sprintf(language.get('text_welcome'), store_name);
 
-			data['contact'] = store_url + 'index.php?route=information/contact';
+			data['contact'] = store_url + '?route=information/contact';
 			data['store'] = store_name;
 
 			mail = new Mail(this.config.get('config_mail_engine'));

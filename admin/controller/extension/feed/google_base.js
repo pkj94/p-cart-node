@@ -1,17 +1,21 @@
+const html_entity_decode = require("locutus/php/strings/html_entity_decode");
+
 module.exports = class ControllerExtensionFeedGoogleBase extends Controller {
 	error = {};
 
 	async index() {
+		const data = {};
 		await this.load.language('extension/feed/google_base');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('setting/setting',this);
+		this.load.model('setting/setting', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validate()) {
 			await this.model_setting_setting.editSetting('feed_google_base', this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=feed', true));
 		}
@@ -25,18 +29,18 @@ module.exports = class ControllerExtensionFeedGoogleBase extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_extension'),
-			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=feed', true)
+			'text': this.language.get('text_extension'),
+			'href': await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=feed', true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('extension/feed/google_base', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('extension/feed/google_base', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['action'] = await this.url.link('extension/feed/google_base', 'user_token=' + this.session.data['user_token'], true);
@@ -45,7 +49,7 @@ module.exports = class ControllerExtensionFeedGoogleBase extends Controller {
 
 		data['user_token'] = this.session.data['user_token'];
 
-		data['data_feed'] = HTTP_CATALOG + 'index.php?route=extension/feed/google_base';
+		data['data_feed'] = HTTP_CATALOG + 'index.js?route=extension/feed/google_base';
 
 		if ((this.request.post['feed_google_base_status'])) {
 			data['feed_google_base_status'] = this.request.post['feed_google_base_status'];
@@ -65,17 +69,17 @@ module.exports = class ControllerExtensionFeedGoogleBase extends Controller {
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 
 	async install() {
-		this.load.model('extension/feed/google_base');
+		this.load.model('extension/feed/google_base', this);
 
 		await this.model_extension_feed_google_base.install();
 	}
 
 	async uninstall() {
-		this.load.model('extension/feed/google_base');
+		this.load.model('extension/feed/google_base', this);
 
 		await this.model_extension_feed_google_base.uninstall();
 	}
@@ -83,20 +87,20 @@ module.exports = class ControllerExtensionFeedGoogleBase extends Controller {
 	async import() {
 		await this.load.language('extension/feed/google_base');
 
-		json = {};
+		const json = {};
 
 		// Check user has permission
 		if (!await this.user.hasPermission('modify', 'extension/feed/google_base')) {
 			json['error'] = this.language.get('error_permission');
 		}
 
-		if (!json) {
+		if (!json.error) {
 			if ((this.request.files['file']['name']) && is_file(this.request.files['file']['tmp_name'])) {
 				// Sanitize the filename
-				filename = basename(html_entity_decode(this.request.files['file']['name']));
+				let filename = expressPath.basename(html_entity_decode(this.request.files['file']['name']));
 
 				// Allowed file extension types
-				if (oc_strtolower(oc_substr(strrchr(filename, '.'), 1)) != 'txt') {
+				if (oc_strtolower(oc_substr(filename.substr(filename.lastIndexOf('.')), 1)) != 'txt') {
 					json['error'] = this.language.get('error_filetype');
 				}
 
@@ -114,17 +118,17 @@ module.exports = class ControllerExtensionFeedGoogleBase extends Controller {
 			}
 		}
 
-		if (!json) {
+		if (!json.error) {
 			json['success'] = this.language.get('text_success');
 
-			this.load.model('extension/feed/google_base');
+			this.load.model('extension/feed/google_base', this);
 
 			// Get the contents of the uploaded file
-			content = file_get_contents(this.request.files['file']['tmp_name']);
+			const content = fs.readFileSync(this.request.files['file']['tmp_name']);
 
 			await this.model_extension_feed_google_base.import(content);
 
-			unlink(this.request.files['file']['tmp_name']);
+			delete (this.request.files['file']['tmp_name']);
 		}
 
 		this.response.addHeader('Content-Type: application/json');
@@ -132,37 +136,36 @@ module.exports = class ControllerExtensionFeedGoogleBase extends Controller {
 	}
 
 	async category() {
+		const data = {};
 		await this.load.language('extension/feed/google_base');
-
+		let page = 1;
 		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
 		}
 
-		data['google_base_categories'] = {};
+		data['google_base_categories'] = [];
 
-		limit = 10;
-		filter_data = array(
-			'start'       : (page - 1) * limit,
-			'limit'       : limit
-		});
-		
-		this.load.model('extension/feed/google_base');
-		results = await this.model_extension_feed_google_base.getCategories(filter_data);
+		let limit = 10;
+		let filter_data = {
+			'start': (page - 1) * limit,
+			'limit': limit
+		};
+
+		this.load.model('extension/feed/google_base', this);
+		const results = await this.model_extension_feed_google_base.getCategories(filter_data);
 
 		for (let result of results) {
 			data['google_base_categories'].push({
-				'google_base_category_id' : result['google_base_category_id'],
-				'google_base_category'    : result['google_base_category'],
-				'category_id'             : result['category_id'],
-				'category'                : result['category']
+				'google_base_category_id': result['google_base_category_id'],
+				'google_base_category': result['google_base_category'],
+				'category_id': result['category_id'],
+				'category': result['category']
 			});
 		}
 
-		category_total = await this.model_extension_feed_google_base.getTotalCategories();
+		const category_total = await this.model_extension_feed_google_base.getTotalCategories();
 
-		pagination = new Pagination();
+		const pagination = new Pagination();
 		pagination.total = category_total;
 		pagination.page = page;
 		pagination.limit = limit;
@@ -175,15 +178,15 @@ module.exports = class ControllerExtensionFeedGoogleBase extends Controller {
 		this.response.setOutput(await this.load.view('extension/feed/google_base_category', data));
 	}
 
-	async addCategory() {
+	async addcategory() {
 		await this.load.language('extension/feed/google_base');
 
-		json = {};
+		const json = {};
 
 		if (!await this.user.hasPermission('modify', 'extension/feed/google_base')) {
 			json['error'] = this.language.get('error_permission');
 		} else if ((this.request.post['google_base_category_id']) && (this.request.post['category_id'])) {
-			this.load.model('extension/feed/google_base');
+			this.load.model('extension/feed/google_base', this);
 
 			await this.model_extension_feed_google_base.addCategory(this.request.post);
 
@@ -194,15 +197,15 @@ module.exports = class ControllerExtensionFeedGoogleBase extends Controller {
 		this.response.setOutput(json);
 	}
 
-	async removeCategory() {
+	async removecategory() {
 		await this.load.language('extension/feed/google_base');
 
-		json = {};
+		const json = {};
 
 		if (!await this.user.hasPermission('modify', 'extension/feed/google_base')) {
 			json['error'] = this.language.get('error_permission');
 		} else {
-			this.load.model('extension/feed/google_base');
+			this.load.model('extension/feed/google_base', this);
 
 			await this.model_extension_feed_google_base.deleteCategory(this.request.post['category_id']);
 
@@ -214,29 +217,27 @@ module.exports = class ControllerExtensionFeedGoogleBase extends Controller {
 	}
 
 	async autocomplete() {
-		json = {};
+		let json = [];
 
 		if ((this.request.get['filter_name'])) {
-			this.load.model('extension/feed/google_base');
-
+			this.load.model('extension/feed/google_base', this);
+			let filter_name = '';
 			if ((this.request.get['filter_name'])) {
 				filter_name = this.request.get['filter_name'];
-			} else {
-				filter_name = '';
 			}
 
-			filter_data = array(
-				'filter_name' : html_entity_decode(filter_name),
-				'start'       : 0,
-				'limit'       : 5
-			});
+			let filter_data = {
+				'filter_name': html_entity_decode(filter_name),
+				'start': 0,
+				'limit': 5
+			};
 
-			results = await this.model_extension_feed_google_base.getGoogleBaseCategories(filter_data);
+			const results = await this.model_extension_feed_google_base.getGoogleBaseCategories(filter_data);
 
 			for (let result of results) {
 				json.push({
-					'google_base_category_id' : result['google_base_category_id'],
-					'name'                    : strip_tags(html_entity_decode(result['name']))
+					'google_base_category_id': result['google_base_category_id'],
+					'name': strip_tags(html_entity_decode(result['name']))
 				});
 			}
 		}

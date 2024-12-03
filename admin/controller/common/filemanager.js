@@ -32,14 +32,14 @@ module.exports = class ControllerCommonFileManager extends Controller {
 
 		if (substr(str_replace('\\', '/', expressPath.resolve(directory) + '/' + filter_name), 0, (DIR_IMAGE + 'catalog').length) == str_replace('\\', '/', DIR_IMAGE + 'catalog')) {
 			// Get directories
-			directories = require('glob').sync(directory + '/' + filter_name + '*').filter(a => a.split('.').pop() != 'html' && is_dir(a));
+			directories = require('glob').sync(directory + '/' + filter_name + '*').sort().filter(a => a.split('.').pop() != 'html' && is_dir(a));
 
 			if (!directories.length) {
 				directories = [];
 			}
 
 			// Get files
-			files = require('glob').sync(directory + '/' + filter_name + '*.{jpg,jpeg,png,gif,webp,JPG,JPEG,PNG,GIF,WEBP}', { nodir: false }).filter(a => a.split('.').pop() != 'html' && is_file(a));
+			files = require('glob').sync(directory + '/' + filter_name + '*.{jpg,jpeg,png,gif,webp,JPG,JPEG,PNG,GIF,WEBP}', { nodir: false }).sort().filter(a => a.split('.').pop() != 'html' && is_file(a));
 
 			if (!files.length) {
 				files = [];
@@ -81,7 +81,7 @@ module.exports = class ControllerCommonFileManager extends Controller {
 					'thumb': await this.model_tool_image.resize(oc_substr(image, oc_strlen(DIR_IMAGE)), 100, 100),
 					'name': name.join(' '),
 					'type': 'image',
-					'path': oc_substr(image, oc_strlen(DIR_IMAGE)),
+					'path': oc_substr(image, oc_strlen(DIR_IMAGE)).replaceAll('\\','/'),
 					'href': server + 'image/' + oc_substr(image, oc_strlen(DIR_IMAGE))
 				});
 			}
@@ -122,7 +122,7 @@ module.exports = class ControllerCommonFileManager extends Controller {
 			let pos = this.request.get['directory'].indexOf('/');
 
 			if (pos) {
-				url += '&directory=' + encodeURIComponent(this.request.get['directory'].substring(0, pos));
+				url += '&directory=' + encodeURIComponent(this.request.get['directory'].substr(0, pos));
 			}
 		}
 
@@ -200,7 +200,7 @@ module.exports = class ControllerCommonFileManager extends Controller {
 		}
 
 		// Check it's a directory
-		if (!fs.lstatSync(directory).isDirectory() || (expressPath.resolve(directory).replaceAll('\\', '/') + '/').substring(0, base.length) != base) {
+		if (!fs.lstatSync(directory).isDirectory() || (expressPath.resolve(directory).replaceAll('\\', '/') + '/').substr(0, base.length) != base) {
 			json['error'] = this.language.get('error_directory');
 		}
 
@@ -300,7 +300,7 @@ module.exports = class ControllerCommonFileManager extends Controller {
 		}
 
 		// Check its a directory
-		if (!fs.lstatSync(directory).isDirectory() || (expressPath.resolve(directory).replaceAll('\\', '/') + '/').substring(0, (DIR_IMAGE + 'catalog').length) != DIR_IMAGE + 'catalog') {
+		if (!fs.lstatSync(directory).isDirectory() || (expressPath.resolve(directory).replaceAll('\\', '/') + '/').substr(0, (DIR_IMAGE + 'catalog').length) != DIR_IMAGE + 'catalog') {
 			json['error'] = this.language.get('error_directory');
 		}
 		let folder = '';

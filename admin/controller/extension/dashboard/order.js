@@ -2,6 +2,7 @@ module.exports = class ControllerExtensionDashboardOrder extends Controller {
 	error = {};
 
 	async index() {
+const data = {};
 		await this.load.language('extension/dashboard/order');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -51,7 +52,7 @@ module.exports = class ControllerExtensionDashboardOrder extends Controller {
 
 		data['columns'] = [];
 
-		for (i = 3; i <= 12; i++) {
+		for (let i = 3; i <= 12; i++) {
 			data['columns'].push(i);
 		}
 

@@ -2,6 +2,7 @@ module.exports = class ControllerMarketingContact extends Controller {
 	error = {};
 
 	async index() {
+const data = {};
 		await this.load.language('marketing/contact');
 
 		this.document.setTitle(this.language.get('heading_title'));

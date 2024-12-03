@@ -6,6 +6,7 @@ module.exports = class ControllerStartupSass {
 	}
 
 	async index() {
+const data = {};
 		const DIR_APPLICATION = '/path/to/application'; // Adjust this to your actual path
 		const files = require('glob').sync(`${DIR_APPLICATION}/view/stylesheet/*.scss`);
 

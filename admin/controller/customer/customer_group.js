@@ -2,11 +2,12 @@ module.exports = class ControllerCustomerCustomerGroup extends Controller {
 	error = {};
 
 	async index() {
+		const data = {};
 		await this.load.language('customer/customer_group');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('customer/customer_group',this);
+		this.load.model('customer/customer_group', this);
 
 		await this.getList();
 	}
@@ -16,12 +17,13 @@ module.exports = class ControllerCustomerCustomerGroup extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('customer/customer_group',this);
+		this.load.model('customer/customer_group', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_customer_customer_group.addCustomerGroup(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			url = '';
 
@@ -48,12 +50,13 @@ module.exports = class ControllerCustomerCustomerGroup extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('customer/customer_group',this);
+		this.load.model('customer/customer_group', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_customer_customer_group.editCustomerGroup(this.request.get['customer_group_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			url = '';
 
@@ -80,15 +83,16 @@ module.exports = class ControllerCustomerCustomerGroup extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('customer/customer_group',this);
+		this.load.model('customer/customer_group', this);
 
 		if ((this.request.post['selected']) && await this.validateDelete()) {
-this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
-			for (this.request.post['selected'] of customer_group_id) {
+			this.request.post['selected'] = Array.isArray(this.request.post['selected']) ? this.request.post['selected'] : [this.request.post['selected']]
+			for (let customer_group_id of this.request.post['selected']) {
 				await this.model_customer_customer_group.deleteCustomerGroup(customer_group_id);
 			}
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			url = '';
 
@@ -111,6 +115,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 	}
 
 	async getList() {
+		const data = {};
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
 		} else {
@@ -122,11 +127,9 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		} else {
 			order = 'ASC';
 		}
-
+		page = 1;
 		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
 		}
 
 		url = '';
@@ -146,13 +149,13 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('customer/customer_group', 'user_token=' + this.session.data['user_token'] + url, true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('customer/customer_group', 'user_token=' + this.session.data['user_token'] + url, true)
 		});
 
 		data['add'] = await this.url.link('customer/customer_group/add', 'user_token=' + this.session.data['user_token'] + url, true);
@@ -160,11 +163,11 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 
 		data['customer_groups'] = {};
 
-		filter_data = array(
-			'sort'  : sort,
-			'order' : order,
-			'start' : (page - 1) * Number(this.config.get('config_limit_admin')),
-			'limit' : Number(this.config.get('config_limit_admin'))
+		const filter_data = {
+			'sort': sort,
+			'order': order,
+			'start': (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit': Number(this.config.get('config_limit_admin'))
 		});
 
 		customer_group_total = await this.model_customer_customer_group.getTotalCustomerGroups();
@@ -173,10 +176,10 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 
 		for (let result of results) {
 			data['customer_groups'].push({
-				'customer_group_id' : result['customer_group_id'],
-				'name'              : result['name'] + ((result['customer_group_id'] == this.config.get('config_customer_group_id')) ? this.language.get('text_default') : null),
-				'sort_order'        : result['sort_order'],
-				'edit'              : await this.url.link('customer/customer_group/edit', 'user_token=' + this.session.data['user_token'] + '&customer_group_id=' + result['customer_group_id'] + url, true)
+				'customer_group_id': result['customer_group_id'],
+				'name': result['name'] + ((result['customer_group_id'] == this.config.get('config_customer_group_id')) ? this.language.get('text_default') : null),
+				'sort_order': result['sort_order'],
+				'edit': await this.url.link('customer/customer_group/edit', 'user_token=' + this.session.data['user_token'] + '&customer_group_id=' + result['customer_group_id'] + url, true)
 			});
 		}
 
@@ -189,7 +192,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		if ((this.session.data['success'])) {
 			data['success'] = this.session.data['success'];
 
-			delete this.session.data['success']);
+			delete this.session.data['success'];
 		} else {
 			data['success'] = '';
 		}
@@ -225,7 +228,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			url += '&order=' + this.request.get['order'];
 		}
 
-		pagination = new Pagination();
+		const pagination = new Pagination();
 		pagination.total = customer_group_total;
 		pagination.page = page;
 		pagination.limit = Number(this.config.get('config_limit_admin'));
@@ -277,13 +280,13 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('customer/customer_group', 'user_token=' + this.session.data['user_token'] + url, true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('customer/customer_group', 'user_token=' + this.session.data['user_token'] + url, true)
 		});
 
 		if (!(this.request.get['customer_group_id'])) {
@@ -298,7 +301,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			customer_group_info = await this.model_customer_customer_group.getCustomerGroup(this.request.get['customer_group_id']);
 		}
 
-		this.load.model('localisation/language',this);
+		this.load.model('localisation/language', this);
 
 		data['languages'] = await this.model_localisation_language.getLanguages();
 
@@ -338,13 +341,13 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		for (this.request.post['customer_group_description'] of language_id : value) {
+		for (let [language_id, value] of Object.entries(this.request.post['customer_group_description'])) {
 			if ((oc_strlen(value['name']) < 3) || (oc_strlen(value['name']) > 32)) {
 				this.error['name'][language_id] = this.language.get('error_name');
 			}
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 
 	async validateDelete() {
@@ -352,11 +355,11 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		this.load.model('setting/store',this);
-		this.load.model('customer/customer',this);
-		this.request.post['selected']  = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']];
+		this.load.model('setting/store', this);
+		this.load.model('customer/customer', this);
+		this.request.post['selected'] = Array.isArray(this.request.post['selected']) ? this.request.post['selected'] : [this.request.post['selected']];
 
-		for (this.request.post['selected'] of customer_group_id) {
+		for (let customer_group_id of this.request.post['selected']) {
 			if (this.config.get('config_customer_group_id') == customer_group_id) {
 				this.error['warning'] = this.language.get('error_default');
 			}
@@ -367,13 +370,13 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 				this.error['warning'] = sprintf(this.language.get('error_store'), store_total);
 			}
 
-			customer_total = await this.model_customer_customer.getTotalCustomersByCustomerGroupId(customer_group_id);
+			const customer_total = await this.model_customer_customer.getTotalCustomersByCustomerGroupId(customer_group_id);
 
 			if (customer_total) {
 				this.error['warning'] = sprintf(this.language.get('error_customer'), customer_total);
 			}
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 }

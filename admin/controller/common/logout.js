@@ -1,5 +1,6 @@
 module.exports = class ControllerCommonLogout extends Controller {
 	async index() {
+const data = {};
 		await this.user.logout();
 
 		delete this.session.data['user_token'];

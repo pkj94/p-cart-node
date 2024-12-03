@@ -1,6 +1,6 @@
 module.exports = class ModelCustomerCustomer extends Model {
 	async addCustomer(data) {
-		await this.db.query("INSERT INTO " + DB_PREFIX + "customer SET customer_group_id = '" + data['customer_group_id'] + "', firstname = '" + this.db.escape(data['firstname']) + "', lastname = '" + this.db.escape(data['lastname']) + "', email = '" + this.db.escape(data['email']) + "', telephone = '" + this.db.escape(data['telephone']) + "', custom_field = '" + this.db.escape((data['custom_field']) ? JSON.stringify(data['custom_field']) : JSON.stringify({})) + "', newsletter = '" + data['newsletter'] + "', salt = '" + this.db.escape(salt = token(9)) + "', password = '" + this.db.escape(sha1(salt + sha1(salt + sha1(data['password'])))) + "', status = '" + data['status'] + "', safe = '" + data['safe'] + "', date_added = NOW()");
+		await this.db.query("INSERT INTO " + DB_PREFIX + "customer SET customer_group_id = '" + data['customer_group_id'] + "', firstname = '" + this.db.escape(data['firstname']) + "', lastname = '" + this.db.escape(data['lastname']) + "', email = '" + this.db.escape(data['email']) + "', telephone = '" + this.db.escape(data['telephone']) + "', custom_field = '" + this.db.escape((data['custom_field']) ? JSON.stringify(data['custom_field']) : JSON.stringify({})) + "', newsletter = '" + data['newsletter'] + "', salt = '" + this.db.escape(salt = oc_token(9)) + "', password = '" + this.db.escape(sha1(salt + sha1(salt + sha1(data['password'])))) + "', status = '" + data['status'] + "', safe = '" + data['safe'] + "', date_added = NOW()");
 
 		const customer_id = this.db.getLastId();
 
@@ -27,7 +27,7 @@ module.exports = class ModelCustomerCustomer extends Model {
 		await this.db.query("UPDATE " + DB_PREFIX + "customer SET customer_group_id = '" + data['customer_group_id'] + "', firstname = '" + this.db.escape(data['firstname']) + "', lastname = '" + this.db.escape(data['lastname']) + "', email = '" + this.db.escape(data['email']) + "', telephone = '" + this.db.escape(data['telephone']) + "', custom_field = '" + this.db.escape((data['custom_field']) ? JSON.stringify(data['custom_field']) : JSON.stringify({})) + "', newsletter = '" + data['newsletter'] + "', status = '" + data['status'] + "', safe = '" + data['safe'] + "' WHERE customer_id = '" + customer_id + "'");
 
 		if (data['password']) {
-			await this.db.query("UPDATE " + DB_PREFIX + "customer SET salt = '" + this.db.escape(salt = token(9)) + "', password = '" + this.db.escape(sha1(salt + sha1(salt + sha1(data['password'])))) + "' WHERE customer_id = '" + customer_id + "'");
+			await this.db.query("UPDATE " + DB_PREFIX + "customer SET salt = '" + this.db.escape(salt = oc_token(9)) + "', password = '" + this.db.escape(sha1(salt + sha1(salt + sha1(data['password'])))) + "' WHERE customer_id = '" + customer_id + "'");
 		}
 
 		await this.db.query("DELETE FROM " + DB_PREFIX + "address WHERE customer_id = '" + customer_id + "'");

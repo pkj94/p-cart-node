@@ -6,7 +6,7 @@ module.exports = {
     text_extension: 'Extensions',
     text_success: 'Success: You have modified Web Payment Software account details!',
     text_edit: 'Edit AWeb Payment Software',
-    text_web_payment_software: 'border: 1px solid #EEEEEE," /></a>',
+    text_web_payment_software: '<a href="http://www.web-payment-software.com/" target="_blank"><img src="view/image/payment/wps-logo.jpg" alt="Web Payment Software" title="Web Payment Software" style="border: 1px solid #EEEEEE," /></a>',
     text_test: 'Test',
     text_live: 'Live',
     text_authorization: 'Authorization',

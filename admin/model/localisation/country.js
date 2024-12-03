@@ -3,7 +3,7 @@ module.exports = class ModelLocalisationCountry extends Model {
 		await this.db.query("INSERT INTO " + DB_PREFIX + "country SET name = '" + this.db.escape(data['name']) + "', iso_code_2 = '" + this.db.escape(data['iso_code_2']) + "', iso_code_3 = '" + this.db.escape(data['iso_code_3']) + "', address_format = '" + this.db.escape(data['address_format']) + "', postcode_required = '" + data['postcode_required'] + "', status = '" + data['status'] + "'");
 
 		await this.cache.delete('country');
-		
+
 		return this.db.getLastId();
 	}
 
@@ -26,14 +26,14 @@ module.exports = class ModelLocalisationCountry extends Model {
 	}
 
 	async getCountries(data = {}) {
-		if (data) {
+		if (Object.keys(data).length) {
 			let sql = "SELECT * FROM " + DB_PREFIX + "country";
 
 			let sort_data = [
 				'name',
 				'iso_code_2',
 				'iso_code_3'
-			});
+			];
 
 			if ((data['sort']) && sort_data.includes(data['sort'])) {
 				sql += " ORDER BY " + data['sort'];
@@ -48,13 +48,13 @@ module.exports = class ModelLocalisationCountry extends Model {
 			}
 
 			if ((data['start']) || (data['limit'])) {
-				data['start'] = data['start']||0;
-if (data['start'] < 0) {
+				data['start'] = data['start'] || 0;
+				if (data['start'] < 0) {
 					data['start'] = 0;
 				}
 
-				data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+				data['limit'] = data['limit'] || 20;
+				if (data['limit'] < 1) {
 					data['limit'] = 20;
 				}
 
@@ -65,7 +65,7 @@ if (data['limit'] < 1) {
 
 			return query.rows;
 		} else {
-			country_data = await this.cache.get('country.admin');
+			let country_data = await this.cache.get('country.admin');
 
 			if (!country_data) {
 				const query = await this.db.query("SELECT * FROM " + DB_PREFIX + "country ORDER BY name ASC");

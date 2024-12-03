@@ -2,11 +2,12 @@ module.exports = class ControllerUserApi extends Controller {
 	error = {};
 
 	async index() {
+		const data = {};
 		await this.load.language('user/api');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('user/api');
+		this.load.model('user/api', this);
 
 		await this.getList();
 	}
@@ -16,12 +17,13 @@ module.exports = class ControllerUserApi extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('user/api');
+		this.load.model('user/api', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_user_api.addApi(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			url = '';
 
@@ -48,12 +50,13 @@ module.exports = class ControllerUserApi extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('user/api');
+		this.load.model('user/api', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_user_api.editApi(this.request.get['api_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			url = '';
 
@@ -80,15 +83,16 @@ module.exports = class ControllerUserApi extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('user/api');
+		this.load.model('user/api', this);
 
 		if ((this.request.post['selected']) && await this.validateDelete()) {
-this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
-			for (this.request.post['selected'] of api_id) {
+			this.request.post['selected'] = Array.isArray(this.request.post['selected']) ? this.request.post['selected'] : [this.request.post['selected']]
+			for (let api_id of this.request.post['selected']) {
 				await this.model_user_api.deleteApi(api_id);
 			}
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			url = '';
 
@@ -111,6 +115,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 	}
 
 	async getList() {
+		const data = {};
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
 		} else {
@@ -122,11 +127,9 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		} else {
 			order = 'ASC';
 		}
-
+		page = 1;
 		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
 		}
 
 		url = '';
@@ -146,13 +149,13 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('user/api', 'user_token=' + this.session.data['user_token'] + url, true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('user/api', 'user_token=' + this.session.data['user_token'] + url, true)
 		});
 
 		data['add'] = await this.url.link('user/api/add', 'user_token=' + this.session.data['user_token'] + url, true);
@@ -160,11 +163,11 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 
 		data['apis'] = {};
 
-		filter_data = array(
-			'sort'  : sort,
-			'order' : order,
-			'start' : (page - 1) * Number(this.config.get('config_limit_admin')),
-			'limit' : Number(this.config.get('config_limit_admin'))
+		const filter_data = {
+			'sort': sort,
+			'order': order,
+			'start': (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit': Number(this.config.get('config_limit_admin'))
 		});
 
 		user_total = await this.model_user_api.getTotalApis();
@@ -173,12 +176,12 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 
 		for (let result of results) {
 			data['apis'].push({
-				'api_id'        : result['api_id'],
-				'username'      : result['username'],
-				'status'        : (result['status'] ? this.language.get('text_enabled') : this.language.get('text_disabled')),
-				'date_added'    : date(this.language.get('date_format_short'), strtotime(result['date_added'])),
-				'date_modified' : date(this.language.get('date_format_short'), strtotime(result['date_modified'])),
-				'edit'          : await this.url.link('user/api/edit', 'user_token=' + this.session.data['user_token'] + '&api_id=' + result['api_id'] + url, true)
+				'api_id': result['api_id'],
+				'username': result['username'],
+				'status': (result['status'] ? this.language.get('text_enabled') : this.language.get('text_disabled')),
+				'date_added': date(this.language.get('date_format_short'), strtotime(result['date_added'])),
+				'date_modified': date(this.language.get('date_format_short'), strtotime(result['date_modified'])),
+				'edit': await this.url.link('user/api/edit', 'user_token=' + this.session.data['user_token'] + '&api_id=' + result['api_id'] + url, true)
 			});
 		}
 
@@ -191,7 +194,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		if ((this.session.data['success'])) {
 			data['success'] = this.session.data['success'];
 
-			delete this.session.data['success']);
+			delete this.session.data['success'];
 		} else {
 			data['success'] = '';
 		}
@@ -229,7 +232,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			url += '&order=' + this.request.get['order'];
 		}
 
-		pagination = new Pagination();
+		const pagination = new Pagination();
 		pagination.total = user_total;
 		pagination.page = page;
 		pagination.limit = Number(this.config.get('config_limit_admin'));
@@ -252,7 +255,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 	async getForm() {
 		data['text_form'] = !(this.request.get['api_id']) ? this.language.get('text_add') : this.language.get('text_edit');
 		data['text_ip'] = sprintf(this.language.get('text_ip'), this.request.server['REMOTE_ADDR']);
-		
+
 		data['user_token'] = this.session.data['user_token'];
 
 		if ((this.error['warning'])) {
@@ -272,7 +275,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		} else {
 			data['error_key'] = '';
 		}
-		
+
 		url = '';
 
 		if ((this.request.get['sort'])) {
@@ -290,13 +293,13 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('user/api', 'user_token=' + this.session.data['user_token'] + url, true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('user/api', 'user_token=' + this.session.data['user_token'] + url, true)
 		});
 
 		if (!(this.request.get['api_id'])) {
@@ -343,24 +346,24 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		} else {
 			data['api_ips'] = {};
 		}
-		
+
 		// Session
 		data['api_sessions'] = {};
-		
+
 		if ((this.request.get['api_id'])) {
 			results = await this.model_user_api.getApiSessions(this.request.get['api_id']);
-			
+
 			for (let result of results) {
 				data['api_sessions'].push({
-					'api_session_id' : result['api_session_id'],
-					'session_id'     : result['session_id'],
-					'ip'             : result['ip'],
-					'date_added'     : date(this.language.get('datetime_format'), strtotime(result['date_added'])),
-					'date_modified'  : date(this.language.get('datetime_format'), strtotime(result['date_modified']))
+					'api_session_id': result['api_session_id'],
+					'session_id': result['session_id'],
+					'ip': result['ip'],
+					'date_added': date(this.language.get('datetime_format'), strtotime(result['date_added'])),
+					'date_modified': date(this.language.get('datetime_format'), strtotime(result['date_modified']))
 				});
 			}
 		}
-		
+
 		data['header'] = await this.load.controller('common/header');
 		data['column_left'] = await this.load.controller('common/column_left');
 		data['footer'] = await this.load.controller('common/footer');
@@ -380,12 +383,12 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		if ((oc_strlen(this.request.post['key']) < 64) || (oc_strlen(this.request.post['key']) > 256)) {
 			this.error['key'] = this.language.get('error_key');
 		}
-		
+
 		if (!(this.error['warning']) && !(this.request.post['api_ip'])) {
 			this.error['warning'] = this.language.get('error_ip');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 
 	async validateDelete() {
@@ -393,7 +396,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 
 	async deleteSession() {
@@ -404,7 +407,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		if (!await this.user.hasPermission('modify', 'user/api')) {
 			json['error'] = this.language.get('error_permission');
 		} else {
-			this.load.model('user/api');
+			this.load.model('user/api', this);
 
 			await this.model_user_api.deleteApiSession(this.request.get['api_session_id']);
 
@@ -413,5 +416,5 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 
 		this.response.addHeader('Content-Type: application/json');
 		this.response.setOutput(json);
-	}	
+	}
 }

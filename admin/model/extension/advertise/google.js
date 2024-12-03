@@ -1,56 +1,57 @@
-module.exports = use \googleshopping\Exception\Connection of ConnectionException;
-use \googleshopping\Googleshopping;
+const array_merge = require("locutus/php/array/array_merge");
+const implode = require("locutus/php/strings/implode");
 
-class ModelExtensionAdvertiseGoogle extends Model {
-    events = array(
-        'admin/view/common/column_left/before' : array(
+const Googleshopping = require(DIR_SYSTEM + 'library/googleshopping/googleshopping');
+module.exports = class ModelExtensionAdvertiseGoogle extends Model {
+    events = {
+        'admin/view/common/column_left/before': [
             'extension/advertise/google/admin_link',
-        ),
-        'admin/model/catalog/product/addProduct/after' : array(
+        ],
+        'admin/model/catalog/product/addProduct/after': [
             'extension/advertise/google/addProduct',
-        ),
-        'admin/model/catalog/product/copyProduct/after' : array(
+        ],
+        'admin/model/catalog/product/copyProduct/after': [
             'extension/advertise/google/copyProduct',
-        ),
-        'admin/model/catalog/product/deleteProduct/after' : array(
+        ],
+        'admin/model/catalog/product/deleteProduct/after': [
             'extension/advertise/google/deleteProduct',
-        ),
-        'catalog/controller/checkout/success/before' : array(
+        ],
+        'catalog/controller/checkout/success/before': [
             'extension/advertise/google/before_checkout_success'
-        ),
-        'catalog/view/common/header/after' : array(
+        ],
+        'catalog/view/common/header/after': [
             'extension/advertise/google/google_global_site_tag'
-        ),
-        'catalog/view/common/success/after' : array(
+        ],
+        'catalog/view/common/success/after': [
             'extension/advertise/google/google_dynamic_remarketing_purchase'
-        ),
-        'catalog/view/product/product/after' : array(
+        ],
+        'catalog/view/product/product/after': [
             'extension/advertise/google/google_dynamic_remarketing_product'
-        ),
-        'catalog/view/product/search/after' : array(
+        ],
+        'catalog/view/product/search/after': [
             'extension/advertise/google/google_dynamic_remarketing_searchresults'
-        ),
-        'catalog/view/product/category/after' : array(
+        ],
+        'catalog/view/product/category/after': [
             'extension/advertise/google/google_dynamic_remarketing_category'
-        ),
-        'catalog/view/common/home/after' : array(
+        ],
+        'catalog/view/common/home/after': [
             'extension/advertise/google/google_dynamic_remarketing_home'
-        ),
-        'catalog/view/checkout/cart/after' : array(
+        ],
+        'catalog/view/checkout/cart/after': [
             'extension/advertise/google/google_dynamic_remarketing_cart'
-        )
-    );
+        ]
+    };
 
-    rename_tables = array(
-        'advertise_google_target' : 'googleshopping_target',
-        'category_to_google_product_category' : 'googleshopping_category',
-        'product_advertise_google_status' : 'googleshopping_product_status',
-        'product_advertise_google_target' : 'googleshopping_product_target',
-        'product_advertise_google' : 'googleshopping_product'
-    );
+    rename_tables = {
+        'advertise_google_target': 'googleshopping_target',
+        'category_to_google_product_category': 'googleshopping_category',
+        'product_advertise_google_status': 'googleshopping_product_status',
+        'product_advertise_google_target': 'googleshopping_product_target',
+        'product_advertise_google': 'googleshopping_product'
+    };
 
-    table_columns = array(
-        'googleshopping_target' : array(
+    table_columns = {
+        'googleshopping_target': [
             'advertise_google_target_id',
             'store_id',
             'campaign_name',
@@ -58,13 +59,13 @@ class ModelExtensionAdvertiseGoogle extends Model {
             'budget',
             'feeds',
             'status'
-        ),
-        'googleshopping_category' : array(
+        ],
+        'googleshopping_category': [
             'google_product_category',
             'store_id',
             'category_id'
-        ),
-        'googleshopping_product_status' : array(
+        ],
+        'googleshopping_product_status': [
             'product_id',
             'store_id',
             'product_variation_id',
@@ -72,13 +73,13 @@ class ModelExtensionAdvertiseGoogle extends Model {
             'data_quality_issues',
             'item_level_issues',
             'google_expiration_date'
-        ),
-        'googleshopping_product_target' : array(
+        ],
+        'googleshopping_product_target': [
             'product_id',
             'store_id',
             'advertise_google_target_id'
-        ),
-        'googleshopping_product' : array(
+        ],
+        'googleshopping_product': [
             'product_advertise_google_id',
             'product_id',
             'store_id',
@@ -101,20 +102,20 @@ class ModelExtensionAdvertiseGoogle extends Model {
             'size_system',
             'size',
             'is_modified'
-        )
-    );
+        ]
+    };
 
     async isAppIdUsed(app_id, store_id) {
-        sql = "SELECT `store_id` FROM `" + DB_PREFIX + "setting` WHERE `key`='advertise_google_app_id' AND `value`='" + this.db.escape(store_id) + "' AND `store_id`!=" + store_id + " LIMIT 1";
+        let sql = "SELECT `store_id` FROM `" + DB_PREFIX + "setting` WHERE `key`='advertise_google_app_id' AND `value`='" + this.db.escape(store_id) + "' AND `store_id`!=" + store_id + " LIMIT 1";
 
-        result = await this.db.query(sql);
+        let result = await this.db.query(sql);
 
         if (result.num_rows > 0) {
             try {
-                googleshopping = new Googleshopping(this.registry, result.row['store_id']);
+                let googleshopping = new Googleshopping(this.registry, result.row['store_id']);
 
                 return googleshopping.isConnected();
-            } catch (\RuntimeException e) {
+            } catch (e) {
                 return false;
             }
         }
@@ -123,9 +124,9 @@ class ModelExtensionAdvertiseGoogle extends Model {
     }
 
     async getFinalProductId() {
-        sql = "SELECT product_id FROM `" + DB_PREFIX + "product` ORDER BY product_id DESC LIMIT 1";
+        let sql = "SELECT product_id FROM `" + DB_PREFIX + "product` ORDER BY product_id DESC LIMIT 1";
 
-        result = await this.db.query(sql);
+        let result = await this.db.query(sql);
 
         if (result.num_rows > 0) {
             return result.row['product_id'];
@@ -135,33 +136,33 @@ class ModelExtensionAdvertiseGoogle extends Model {
     }
 
     async isAnyProductCategoryModified(store_id) {
-        sql = "SELECT pag.is_modified FROM `" + DB_PREFIX + "googleshopping_product` pag WHERE pag.google_product_category IS NOT NULL AND pag.store_id=" + store_id + " LIMIT 0,1";
+        let sql = "SELECT pag.is_modified FROM `" + DB_PREFIX + "googleshopping_product` pag WHERE pag.google_product_category IS NOT NULL AND pag.store_id=" + store_id + " LIMIT 0,1";
 
         return await this.db.query(sql).num_rows > 0;
     }
 
     async getAdvertisedCount(store_id) {
-        result = await this.db.query("SELECT COUNT(product_id) of total FROM `" + DB_PREFIX + "googleshopping_product_target` WHERE store_id=" + store_id + " GROUP BY `product_id`");
+        let result = await this.db.query("SELECT COUNT(product_id) as total FROM `" + DB_PREFIX + "googleshopping_product_target` WHERE store_id=" + store_id + " GROUP BY `product_id`");
 
         return result.num_rows > 0 ? result.row['total'] : 0;
     }
 
     async getMapping(store_id) {
-        sql = "SELECT * FROM `" + DB_PREFIX + "googleshopping_category` WHERE store_id=" + store_id;
+        let sql = "SELECT * FROM `" + DB_PREFIX + "googleshopping_category` WHERE store_id=" + store_id;
 
         return await this.db.query(sql).rows;
     }
 
     async setCategoryMapping(google_product_category, store_id, category_id) {
-        sql = "INSERT INTO `" + DB_PREFIX + "googleshopping_category` SET `google_product_category`='" + this.db.escape(google_product_category) + "', `store_id`=" + store_id + ", `category_id`=" + category_id + " ON DUPLICATE KEY UPDATE `category_id`=" + category_id;
+        let sql = "INSERT INTO `" + DB_PREFIX + "googleshopping_category` SET `google_product_category`='" + this.db.escape(google_product_category) + "', `store_id`=" + store_id + ", `category_id`=" + category_id + " ON DUPLICATE KEY UPDATE `category_id`=" + category_id;
 
         await this.db.query(sql);
     }
 
     async getMappedCategory(google_product_category, store_id) {
-        sql = "SELECT GROUP_CONCAT(cd.name ORDER BY cp.level SEPARATOR '&nbsp;&nbsp;&gt;&nbsp;&nbsp;') AS name, cp.category_id FROM " + DB_PREFIX + "category_path cp LEFT JOIN " + DB_PREFIX + "category_description cd ON (cp.path_id = cd.category_id) LEFT JOIN `" + DB_PREFIX + "googleshopping_category` c2gpc ON (c2gpc.category_id = cp.category_id) WHERE cd.language_id=" + this.config.get('config_language_id') + " AND c2gpc.google_product_category='" + this.db.escape(google_product_category) + "' AND c2gpc.store_id=" + store_id;
+        let sql = "SELECT GROUP_CONCAT(cd.name ORDER BY cp.level SEPARATOR '&nbsp;&nbsp;&gt;&nbsp;&nbsp;') AS name, cp.category_id FROM " + DB_PREFIX + "category_path cp LEFT JOIN " + DB_PREFIX + "category_description cd ON (cp.path_id = cd.category_id) LEFT JOIN `" + DB_PREFIX + "googleshopping_category` c2gpc ON (c2gpc.category_id = cp.category_id) WHERE cd.language_id=" + this.config.get('config_language_id') + " AND c2gpc.google_product_category='" + this.db.escape(google_product_category) + "' AND c2gpc.store_id=" + store_id;
 
-        result = await this.db.query(sql);
+        let result = await this.db.query(sql);
 
         if (result.num_rows > 0) {
             return result.row;
@@ -171,25 +172,25 @@ class ModelExtensionAdvertiseGoogle extends Model {
     }
 
     async getProductByProductAdvertiseGoogleId(product_advertise_google_id) {
-        sql = "SELECT pag.product_id FROM `" + DB_PREFIX + "googleshopping_product` pag WHERE pag.product_advertise_google_id=" + product_advertise_google_id;
+        let sql = "SELECT pag.product_id FROM `" + DB_PREFIX + "googleshopping_product` pag WHERE pag.product_advertise_google_id=" + product_advertise_google_id;
 
-        result = await this.db.query(sql);
+        let result = await this.db.query(sql);
 
         if (result.num_rows) {
-            this.load.model('catalog/product',this);
+            this.load.model('catalog/product', this);
 
             return await this.model_catalog_product.getProduct(result.row['product_id']);
         }
     }
 
     async getProductAdvertiseGoogle(product_advertise_google_id) {
-        sql = "SELECT pag.* FROM `" + DB_PREFIX + "googleshopping_product` pag WHERE pag.product_advertise_google_id=" + product_advertise_google_id;
+        let sql = "SELECT pag.* FROM `" + DB_PREFIX + "googleshopping_product` pag WHERE pag.product_advertise_google_id=" + product_advertise_google_id;
 
         return await this.db.query(sql).row;
     }
 
     async hasActiveTarget(store_id) {
-        sql = "SELECT agt.advertise_google_target_id FROM `" + DB_PREFIX + "googleshopping_target` agt WHERE agt.store_id=" + store_id + " AND agt.status='active' LIMIT 1";
+        let sql = "SELECT agt.advertise_google_target_id FROM `" + DB_PREFIX + "googleshopping_target` agt WHERE agt.store_id=" + store_id + " AND agt.status='active' LIMIT 1";
 
         return await this.db.query(sql).num_rows > 0;
     }
@@ -197,15 +198,15 @@ class ModelExtensionAdvertiseGoogle extends Model {
     async getRequiredFieldsByProductIds(product_ids, store_id) {
         this.load.config('googleshopping/googleshopping');
 
-        result = {};
-        countries = this.getTargetCountriesByProductIds(product_ids, store_id);
+        let result = {};
+        let countries = await this.getTargetCountriesByProductIds(product_ids, store_id);
 
-        for (countries of country) {
-            for (this.config.get('advertise_google_country_required_fields') of field : requirements) {
+        for (let country of countries) {
+            for (let [field, requirements] of Object.entries(this.config.get('advertise_google_country_required_fields'))) {
                 if (
-                    ((requirements['countries']) && in_array(country, requirements['countries']))
-                        ||
-                    (Array.isArray(requirements['countries']) && empty(requirements['countries']))
+                    ((requirements['countries']) && requirements['countries'].includes(country))
+                    ||
+                    (Array.isArray(requirements['countries']) && !requirements['countries'])
                 ) {
                     result[field] = requirements;
                 }
@@ -218,15 +219,15 @@ class ModelExtensionAdvertiseGoogle extends Model {
     async getRequiredFieldsByFilter(data, store_id) {
         this.load.config('googleshopping/googleshopping');
 
-        result = {};
-        countries = this.getTargetCountriesByFilter(data, store_id);
+        let result = {};
+        const countries = await this.getTargetCountriesByFilter(data, store_id);
 
-        for (countries of country) {
-            for (this.config.get('advertise_google_country_required_fields') of field : requirements) {
+        for (let country of countries) {
+            for (let [field, requirements] of Object.entries(this.config.get('advertise_google_country_required_fields'))) {
                 if (
-                    ((requirements['countries']) && in_array(country, requirements['countries']))
-                        ||
-                    (Array.isArray(requirements['countries']) && empty(requirements['countries']))
+                    ((requirements['countries']) && requirements['countries'].includes(country))
+                    ||
+                    (Array.isArray(requirements['countries']) && !requirements['countries'])
                 ) {
                     result[field] = requirements;
                 }
@@ -237,21 +238,23 @@ class ModelExtensionAdvertiseGoogle extends Model {
     }
 
     async getTargetCountriesByProductIds(product_ids, store_id) {
-        sql = "SELECT DISTINCT agt.country FROM `" + DB_PREFIX + "googleshopping_product_target` pagt LEFT JOIN `" + DB_PREFIX + "googleshopping_target` agt ON (agt.advertise_google_target_id = pagt.advertise_google_target_id AND agt.store_id = pagt.store_id) WHERE pagt.product_id IN (" + this.googleshopping.productIdsToIntegerExpression(product_ids) + ") AND pagt.store_id=" + store_id;
+        let sql = "SELECT DISTINCT agt.country FROM `" + DB_PREFIX + "googleshopping_product_target` pagt LEFT JOIN `" + DB_PREFIX + "googleshopping_target` agt ON (agt.advertise_google_target_id = pagt.advertise_google_target_id AND agt.store_id = pagt.store_id) WHERE pagt.product_id IN (" + await this.googleshopping.productIdsToIntegerExpression(product_ids) + ") AND pagt.store_id=" + store_id;
 
-        return array_map(array(this, 'country'), await this.db.query(sql).rows);
+        return (await this.db.query(sql)).rows.map(a => {
+            return this.country(a);
+        });
     }
 
     async getTargetCountriesByFilter(data, store_id) {
-        sql = "SELECT DISTINCT agt.country FROM `" + DB_PREFIX + "googleshopping_product_target` pagt LEFT JOIN `" + DB_PREFIX + "googleshopping_target` agt ON (agt.advertise_google_target_id = pagt.advertise_google_target_id AND agt.store_id = pagt.store_id) LEFT JOIN `" + DB_PREFIX + "product` p ON (pagt.product_id = p.product_id) LEFT JOIN `" + DB_PREFIX + "product_description` pd ON (pd.product_id = pagt.product_id) WHERE pagt.store_id=" + store_id + " AND pd.language_id=" + this.config.get('config_language_id');
+        let sql = "SELECT DISTINCT agt.country FROM `" + DB_PREFIX + "googleshopping_product_target` pagt LEFT JOIN `" + DB_PREFIX + "googleshopping_target` agt ON (agt.advertise_google_target_id = pagt.advertise_google_target_id AND agt.store_id = pagt.store_id) LEFT JOIN `" + DB_PREFIX + "product` p ON (pagt.product_id = p.product_id) LEFT JOIN `" + DB_PREFIX + "product_description` pd ON (pd.product_id = pagt.product_id) WHERE pagt.store_id=" + store_id + " AND pd.language_id=" + this.config.get('config_language_id');
 
-        this.googleshopping.applyFilter(sql, data);
+        sql = this.googleshopping.applyFilter(sql, data);
 
-        return array_map(array(this, 'country'), await this.db.query(sql).rows);
+        return (await this.db.query(sql).rows).map(a => this.country(a));
     }
 
     async getProductOptionsByProductIds(product_ids) {
-        sql = "SELECT po.option_id, od.name FROM `" + DB_PREFIX + "product_option` po LEFT JOIN `" + DB_PREFIX + "option_description` od ON (od.option_id=po.option_id AND od.language_id=" + this.config.get('config_language_id') + ") LEFT JOIN `" + DB_PREFIX + "option` o ON (o.option_id = po.option_id) WHERE o.type IN ('select', 'radio') AND po.product_id IN (" + this.googleshopping.productIdsToIntegerExpression(product_ids) + ")";
+        let sql = "SELECT po.option_id, od.name FROM `" + DB_PREFIX + "product_option` po LEFT JOIN `" + DB_PREFIX + "option_description` od ON (od.option_id=po.option_id AND od.language_id=" + this.config.get('config_language_id') + ") LEFT JOIN `" + DB_PREFIX + "option` o ON (o.option_id = po.option_id) WHERE o.type IN ('select', 'radio') AND po.product_id IN (" + await this.googleshopping.productIdsToIntegerExpression(product_ids) + ")";
 
         return await this.db.query(sql).rows;
     }
@@ -259,13 +262,13 @@ class ModelExtensionAdvertiseGoogle extends Model {
     async getProductOptionsByFilter(data) {
         sql = "SELECT DISTINCT po.option_id, od.name FROM `" + DB_PREFIX + "product_option` po LEFT JOIN `" + DB_PREFIX + "option_description` od ON (od.option_id=po.option_id AND od.language_id=" + this.config.get('config_language_id') + ") LEFT JOIN `" + DB_PREFIX + "option` o ON (o.option_id = po.option_id) LEFT JOIN `" + DB_PREFIX + "product` p ON (po.product_id = p.product_id) LEFT JOIN `" + DB_PREFIX + "product_description` pd ON (pd.product_id = po.product_id) WHERE o.type IN ('select', 'radio') AND pd.language_id=" + this.config.get('config_language_id');
 
-        this.googleshopping.applyFilter(sql, data);
+        sql = this.googleshopping.applyFilter(sql, data);
 
         return await this.db.query(sql).rows;
     }
 
     async addTarget(target, store_id) {
-        sql = "INSERT INTO `" + DB_PREFIX + "googleshopping_target` SET `store_id`=" + store_id + ", `campaign_name`='" + this.db.escape(target['campaign_name']) + "', `country`='" + this.db.escape(target['country']) + "', `budget`='" + target['budget'] + "', `feeds`='" + this.db.escape(JSON.stringify(target['feeds'])) + "', `date_added`=NOW(), `roas`=" + target['roas'] + " , `status`='" + this.db.escape(target['status']) + "'";
+        let sql = "INSERT INTO `" + DB_PREFIX + "googleshopping_target` SET `store_id`=" + store_id + ", `campaign_name`='" + this.db.escape(target['campaign_name']) + "', `country`='" + this.db.escape(target['country']) + "', `budget`='" + target['budget'] + "', `feeds`='" + this.db.escape(JSON.stringify(target['feeds'])) + "', `date_added`=NOW(), `roas`=" + target['roas'] + " , `status`='" + this.db.escape(target['status']) + "'";
 
         await this.db.query(sql);
 
@@ -273,15 +276,15 @@ class ModelExtensionAdvertiseGoogle extends Model {
     }
 
     async deleteProducts(product_ids) {
-        sql = "DELETE FROM `" + DB_PREFIX + "googleshopping_product` WHERE `product_id` IN (" + this.googleshopping.productIdsToIntegerExpression(product_ids) + ")";
+        let sql = "DELETE FROM `" + DB_PREFIX + "googleshopping_product` WHERE `product_id` IN (" + await this.googleshopping.productIdsToIntegerExpression(product_ids) + ")";
 
         await this.db.query(sql);
 
-        sql = "DELETE FROM `" + DB_PREFIX + "googleshopping_product_target` WHERE `product_id` IN (" + this.googleshopping.productIdsToIntegerExpression(product_ids) + ")";
+        sql = "DELETE FROM `" + DB_PREFIX + "googleshopping_product_target` WHERE `product_id` IN (" + await this.googleshopping.productIdsToIntegerExpression(product_ids) + ")";
 
         await this.db.query(sql);
 
-        sql = "DELETE FROM `" + DB_PREFIX + "googleshopping_product_status` WHERE `product_id` IN (" + this.googleshopping.productIdsToIntegerExpression(product_ids) + ")";
+        sql = "DELETE FROM `" + DB_PREFIX + "googleshopping_product_status` WHERE `product_id` IN (" + await this.googleshopping.productIdsToIntegerExpression(product_ids) + ")";
 
         await this.db.query(sql);
 
@@ -290,24 +293,24 @@ class ModelExtensionAdvertiseGoogle extends Model {
 
     async setAdvertisingBySelect(post_product_ids, post_target_ids, store_id) {
         if ((post_product_ids)) {
-            product_ids = array_map(array(this.googleshopping, 'integer'), post_product_ids);
+            let product_ids = post_product_ids.map(a => this.googleshopping.integer(a));
 
-            product_ids_expression = implode(',', product_ids);
+            let product_ids_expression = product_ids.join(',');
 
             await this.db.query("DELETE FROM `" + DB_PREFIX + "googleshopping_product_target` WHERE product_id IN (" + product_ids_expression + ") AND store_id=" + store_id);
 
             if ((post_target_ids)) {
-                target_ids = array_map(array(this.googleshopping, 'integer'), post_target_ids);
+                let target_ids = post_target_ids.map(a => this.googleshopping.integer(a));
 
-                values = {};
+                let values = {};
 
-                for (product_ids of product_id) {
-                    for (target_ids of target_id) {
-                        values.push('(' + product_id + ',' + store_id + ',' + target_id + ')';
+                for (let product_id of product_ids) {
+                    for (let target_id of target_ids) {
+                        values.push('(' + product_id + ',' + store_id + ',' + target_id + ')');
                     }
                 }
 
-                sql = "INSERT INTO `" + DB_PREFIX + "googleshopping_product_target` (`product_id`, `store_id`, `advertise_google_target_id`) VALUES " + implode(',', values);
+                let sql = "INSERT INTO `" + DB_PREFIX + "googleshopping_product_target` (`product_id`, `store_id`, `advertise_google_target_id`) VALUES " + values.join(',');
 
                 await this.db.query(sql);
             }
@@ -315,20 +318,20 @@ class ModelExtensionAdvertiseGoogle extends Model {
     }
 
     async setAdvertisingByFilter(data, post_target_ids, store_id) {
-        sql = "DELETE pagt FROM `" + DB_PREFIX + "googleshopping_product_target` pagt LEFT JOIN `" + DB_PREFIX + "product` p ON (pagt.product_id = p.product_id) LEFT JOIN `" + DB_PREFIX + "product_description` pd ON (pd.product_id = p.product_id) WHERE pd.language_id=" + this.config.get('config_language_id');
+        let sql = "DELETE pagt FROM `" + DB_PREFIX + "googleshopping_product_target` pagt LEFT JOIN `" + DB_PREFIX + "product` p ON (pagt.product_id = p.product_id) LEFT JOIN `" + DB_PREFIX + "product_description` pd ON (pd.product_id = p.product_id) WHERE pd.language_id=" + this.config.get('config_language_id');
 
-        this.googleshopping.applyFilter(sql, data);
+        sql = this.googleshopping.applyFilter(sql, data);
 
         await this.db.query(sql);
 
         if ((post_target_ids)) {
-            target_ids = array_map(array(this.googleshopping, 'integer'), post_target_ids);
+            let target_ids = post_target_ids.map(a => this.googleshopping.integer(a));
 
-            insert_sql = "SELECT p.product_id, " + store_id + " of store_id, '{TARGET_ID}' of advertise_google_target_id FROM `" + DB_PREFIX + "product` p LEFT JOIN `" + DB_PREFIX + "product_description` pd ON (pd.product_id = p.product_id) WHERE pd.language_id=" + this.config.get('config_language_id');
+            let insert_sql = "SELECT p.product_id, " + store_id + " as store_id, '{TARGET_ID}' as advertise_google_target_id FROM `" + DB_PREFIX + "product` p LEFT JOIN `" + DB_PREFIX + "product_description` pd ON (pd.product_id = p.product_id) WHERE pd.language_id=" + this.config.get('config_language_id');
 
-            this.googleshopping.applyFilter(insert_sql, data);
+            insert_sql = this.googleshopping.applyFilter(insert_sql, data);
 
-            for (target_ids of target_id) {
+            for (let target_id of target_ids) {
                 sql = "INSERT INTO `" + DB_PREFIX + "googleshopping_product_target` (`product_id`, `store_id`, `advertise_google_target_id`) " + str_replace('{TARGET_ID}', target_id, insert_sql);
 
                 await this.db.query(sql);
@@ -337,55 +340,56 @@ class ModelExtensionAdvertiseGoogle extends Model {
     }
 
     async insertNewProducts(product_ids, store_id) {
-        sql = "INSERT INTO `" + DB_PREFIX + "googleshopping_product` (`product_id`, `store_id`, `google_product_category`) SELECT p.product_id, p2s.store_id, (SELECT c2gpc.google_product_category FROM `" + DB_PREFIX + "product_to_category` p2c LEFT JOIN `" + DB_PREFIX + "category_path` cp ON (p2c.category_id = cp.category_id) LEFT JOIN `" + DB_PREFIX + "googleshopping_category` c2gpc ON (c2gpc.category_id = cp.path_id AND c2gpc.store_id = " + store_id + ") WHERE p2c.product_id = p.product_id AND c2gpc.google_product_category IS NOT NULL ORDER BY cp.level DESC LIMIT 0,1) of `google_product_category` FROM `" + DB_PREFIX + "product` p LEFT JOIN `" + DB_PREFIX + "product_to_store` p2s ON (p2s.product_id = p.product_id AND p2s.store_id = " + store_id + ") LEFT JOIN `" + DB_PREFIX + "googleshopping_product` pag ON (pag.product_id = p.product_id AND pag.store_id=p2s.store_id) WHERE pag.product_id IS NULL AND p2s.store_id IS NOT NULL";
+        let sql = "INSERT INTO `" + DB_PREFIX + "googleshopping_product` (`product_id`, `store_id`, `google_product_category`) SELECT p.product_id, p2s.store_id, (SELECT c2gpc.google_product_category FROM `" + DB_PREFIX + "product_to_category` p2c LEFT JOIN `" + DB_PREFIX + "category_path` cp ON (p2c.category_id = cp.category_id) LEFT JOIN `" + DB_PREFIX + "googleshopping_category` c2gpc ON (c2gpc.category_id = cp.path_id AND c2gpc.store_id = " + store_id + ") WHERE p2c.product_id = p.product_id AND c2gpc.google_product_category IS NOT NULL ORDER BY cp.level DESC LIMIT 0,1) as `google_product_category` FROM `" + DB_PREFIX + "product` p LEFT JOIN `" + DB_PREFIX + "product_to_store` p2s ON (p2s.product_id = p.product_id AND p2s.store_id = " + store_id + ") LEFT JOIN `" + DB_PREFIX + "googleshopping_product` pag ON (pag.product_id = p.product_id AND pag.store_id=p2s.store_id) WHERE pag.product_id IS NULL AND p2s.store_id IS NOT NULL";
 
         if ((product_ids)) {
-            sql += " AND p.product_id IN (" + this.googleshopping.productIdsToIntegerExpression(product_ids) + ")";
+            sql += " AND p.product_id IN (" + await this.googleshopping.productIdsToIntegerExpression(product_ids) + ")";
         }
 
         await this.db.query(sql);
     }
 
     async updateGoogleProductCategoryMapping(store_id) {
-        sql = "INSERT INTO `" + DB_PREFIX + "googleshopping_product` (`product_id`, `store_id`, `google_product_category`) SELECT p.product_id, " + store_id + " of store_id, (SELECT c2gpc.google_product_category FROM `" + DB_PREFIX + "product_to_category` p2c LEFT JOIN `" + DB_PREFIX + "category_path` cp ON (p2c.category_id = cp.category_id) LEFT JOIN `" + DB_PREFIX + "googleshopping_category` c2gpc ON (c2gpc.category_id = cp.path_id AND c2gpc.store_id = " + store_id + ") WHERE p2c.product_id = p.product_id AND c2gpc.google_product_category IS NOT NULL ORDER BY cp.level DESC LIMIT 0,1) of `google_product_category` FROM `" + DB_PREFIX + "product` p LEFT JOIN `" + DB_PREFIX + "googleshopping_product` pag ON (pag.product_id = p.product_id) WHERE pag.product_id IS NOT NULL ON DUPLICATE KEY UPDATE `google_product_category`=VALUES(`google_product_category`)";
+        let sql = "INSERT INTO `" + DB_PREFIX + "googleshopping_product` (`product_id`, `store_id`, `google_product_category`) SELECT p.product_id, " + store_id + " as store_id, (SELECT c2gpc.google_product_category FROM `" + DB_PREFIX + "product_to_category` p2c LEFT JOIN `" + DB_PREFIX + "category_path` cp ON (p2c.category_id = cp.category_id) LEFT JOIN `" + DB_PREFIX + "googleshopping_category` c2gpc ON (c2gpc.category_id = cp.path_id AND c2gpc.store_id = " + store_id + ") WHERE p2c.product_id = p.product_id AND c2gpc.google_product_category IS NOT NULL ORDER BY cp.level DESC LIMIT 0,1) as `google_product_category` FROM `" + DB_PREFIX + "product` p LEFT JOIN `" + DB_PREFIX + "googleshopping_product` pag ON (pag.product_id = p.product_id) WHERE pag.product_id IS NOT NULL ON DUPLICATE KEY UPDATE `google_product_category`=VALUES(`google_product_category`)";
 
         await this.db.query(sql);
     }
 
     async updateSingleProductFields(data) {
-        values = {};
+        let values = [];
 
-        entry = {};
+        let entry = {};
         entry['product_id'] = data['product_id'];
         entry = array_merge(entry, this.makeInsertData(data));
 
-        values.push("(" + implode(",", entry) + ")";
+        values.push("(" + implode(",", entry) + ")");
 
-        sql = "INSERT INTO `" + DB_PREFIX + "googleshopping_product` (`product_id`, `store_id`, `google_product_category`, `condition`, `adult`, `multipack`, `is_bundle`, `age_group`, `color`, `gender`, `size_type`, `size_system`, `size`, `is_modified`) VALUES " + implode(',', values) + " ON DUPLICATE KEY UPDATE " + this.makeOnDuplicateKeyData();
+        let sql = "INSERT INTO `" + DB_PREFIX + "googleshopping_product` (`product_id`, `store_id`, `google_product_category`, `condition`, `adult`, `multipack`, `is_bundle`, `age_group`, `color`, `gender`, `size_type`, `size_system`, `size`, `is_modified`) VALUES " + implode(',', values) + " ON DUPLICATE KEY UPDATE " + this.makeOnDuplicateKeyData();
 
         await this.db.query(sql);
     }
 
     async updateMultipleProductFields(filter_data, data) {
-        insert_sql = "SELECT p.product_id, {INSERT_DATA} FROM `" + DB_PREFIX + "product` p LEFT JOIN `" + DB_PREFIX + "product_description` pd ON (pd.product_id = p.product_id) WHERE pd.language_id=" + this.config.get('config_language_id');
+        let insert_sql = "SELECT p.product_id, {INSERT_DATA} FROM `" + DB_PREFIX + "product` p LEFT JOIN `" + DB_PREFIX + "product_description` pd ON (pd.product_id = p.product_id) WHERE pd.language_id=" + this.config.get('config_language_id');
 
-        this.googleshopping.applyFilter(insert_sql, filter_data);
+        insert_sql = this.googleshopping.applyFilter(insert_sql, filter_data);
 
-        insert_data = {};
-        keys.push("`product_id`";
+        let insert_data = [];
+        let keys = [];
+        keys.push("`product_id`");
 
-        for (this.makeInsertData(data) of key : value) {
-            insert_data.push(value + " of `" + key + "`";
-            keys.push("`" + key + "`";
+        for (let [key, value] of Object.entries(this.makeInsertData(data))) {
+            insert_data.push(value + " as `" + key + "`");
+            keys.push("`" + key + "`");
         }
 
-        sql = "INSERT INTO `" + DB_PREFIX + "googleshopping_product` (" + implode(", ", keys) + ") " + str_replace('{INSERT_DATA}', implode(", ", insert_data), insert_sql) + " ON DUPLICATE KEY UPDATE " + this.makeOnDuplicateKeyData();
+        let sql = "INSERT INTO `" + DB_PREFIX + "googleshopping_product` (" + implode(", ", keys) + ") " + str_replace('{INSERT_DATA}', implode(", ", insert_data), insert_sql) + " ON DUPLICATE KEY UPDATE " + this.makeOnDuplicateKeyData();
 
         await this.db.query(sql);
     }
 
     async makeInsertData(data) {
-        insert_data = {};
+        let insert_data = {};
 
         insert_data['store_id'] = data['store_id'];
         insert_data['google_product_category'] = "'" + this.db.escape(data['google_product_category']) + "'";
@@ -409,7 +413,7 @@ class ModelExtensionAdvertiseGoogle extends Model {
     }
 
     async getCategories(data, store_id) {
-        sql = "SELECT cp.category_id AS category_id, GROUP_CONCAT(cd1.name ORDER BY cp.level SEPARATOR '&nbsp;&nbsp;&gt;&nbsp;&nbsp;') AS name, c1.parent_id, c1.sort_order FROM " + DB_PREFIX + "category_path cp LEFT JOIN `" + DB_PREFIX + "category_to_store` c2s ON (c2s.category_id = cp.category_id AND c2s.store_id=" + store_id + ") LEFT JOIN " + DB_PREFIX + "category c1 ON (cp.category_id = c1.category_id) LEFT JOIN " + DB_PREFIX + "category c2 ON (cp.path_id = c2.category_id) LEFT JOIN " + DB_PREFIX + "category_description cd1 ON (cp.path_id = cd1.category_id) LEFT JOIN " + DB_PREFIX + "category_description cd2 ON (cp.category_id = cd2.category_id) WHERE c2s.store_id IS NOT NULL AND cd1.language_id = '" + this.config.get('config_language_id') + "' AND cd2.language_id = '" + this.config.get('config_language_id') + "'";
+        let sql = "SELECT cp.category_id AS category_id, GROUP_CONCAT(cd1.name ORDER BY cp.level SEPARATOR '&nbsp;&nbsp;&gt;&nbsp;&nbsp;') AS name, c1.parent_id, c1.sort_order FROM " + DB_PREFIX + "category_path cp LEFT JOIN `" + DB_PREFIX + "category_to_store` c2s ON (c2s.category_id = cp.category_id AND c2s.store_id=" + store_id + ") LEFT JOIN " + DB_PREFIX + "category c1 ON (cp.category_id = c1.category_id) LEFT JOIN " + DB_PREFIX + "category c2 ON (cp.path_id = c2.category_id) LEFT JOIN " + DB_PREFIX + "category_description cd1 ON (cp.path_id = cd1.category_id) LEFT JOIN " + DB_PREFIX + "category_description cd2 ON (cp.category_id = cd2.category_id) WHERE c2s.store_id IS NOT NULL AND cd1.language_id = '" + this.config.get('config_language_id') + "' AND cd2.language_id = '" + this.config.get('config_language_id') + "'";
 
         if ((data['filter_name'])) {
             sql += " AND cd2.name LIKE '%" + this.db.escape(data['filter_name']) + "%'";
@@ -420,7 +424,7 @@ class ModelExtensionAdvertiseGoogle extends Model {
         let sort_data = [
             'name',
             'sort_order'
-        );
+        ];
 
         if ((data['sort']) && sort_data.includes(data['sort'])) {
             sql += " ORDER BY " + data['sort'];
@@ -435,68 +439,68 @@ class ModelExtensionAdvertiseGoogle extends Model {
         }
 
         if ((data['start']) || (data['limit'])) {
-            data['start'] = data['start']||0;
-if (data['start'] < 0) {
+            data['start'] = data['start'] || 0;
+            if (data['start'] < 0) {
                 data['start'] = 0;
             }
 
-            data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+            data['limit'] = data['limit'] || 20;
+            if (data['limit'] < 1) {
                 data['limit'] = 20;
             }
 
             sql += " LIMIT " + data['start'] + "," + data['limit'];
         }
 
-        query = await this.db.query(sql);
+        const query = await this.db.query(sql);
 
         return query.rows;
     }
 
     async getProductCampaigns(product_id, store_id) {
-        sql = "SELECT agt.advertise_google_target_id, agt.campaign_name FROM `" + DB_PREFIX + "googleshopping_product_target` pagt LEFT JOIN `" + DB_PREFIX + "googleshopping_target` agt ON (pagt.advertise_google_target_id = agt.advertise_google_target_id) WHERE pagt.product_id=" + product_id + " AND pagt.store_id=" + store_id;
+        let sql = "SELECT agt.advertise_google_target_id, agt.campaign_name FROM `" + DB_PREFIX + "googleshopping_product_target` pagt LEFT JOIN `" + DB_PREFIX + "googleshopping_target` agt ON (pagt.advertise_google_target_id = agt.advertise_google_target_id) WHERE pagt.product_id=" + product_id + " AND pagt.store_id=" + store_id;
 
         return await this.db.query(sql).rows;
     }
 
     async getProductIssues(product_id, store_id) {
-        this.load.model('localisation/language',this);
+        this.load.model('localisation/language', this);
 
-        sql = "SELECT pag.color, pag.size, pd.name, p.model FROM `" + DB_PREFIX + "googleshopping_product` pag LEFT JOIN `" + DB_PREFIX + "product` p ON (p.product_id = pag.product_id) LEFT JOIN `" + DB_PREFIX + "product_description` pd ON (pd.product_id = pag.product_id AND pd.language_id=" + this.config.get('config_language_id') + ") WHERE pag.product_id=" + product_id + " AND pag.store_id=" + store_id;
+        let sql = "SELECT pag.color, pag.size, pd.name, p.model FROM `" + DB_PREFIX + "googleshopping_product` pag LEFT JOIN `" + DB_PREFIX + "product` p ON (p.product_id = pag.product_id) LEFT JOIN `" + DB_PREFIX + "product_description` pd ON (pd.product_id = pag.product_id AND pd.language_id=" + this.config.get('config_language_id') + ") WHERE pag.product_id=" + product_id + " AND pag.store_id=" + store_id;
 
-        product_info = await this.db.query(sql).row;
+        const product_info = await this.db.query(sql).row;
 
         if ((product_info)) {
-            result = {};
+            let result = {};
             result['name'] = product_info['name'];
             result['model'] = product_info['model'];
             result['entries'] = {};
 
-            for (await this.model_localisation_language.getLanguages() of language) {
-                language_id = language['language_id'];
-                groups = this.googleshopping.getGroups(product_id, language_id, product_info['color'], product_info['size']);
+            for (let language of await this.model_localisation_language.getLanguages()) {
+                let language_id = language['language_id'];
+                let groups = await this.googleshopping.getGroups(product_id, language_id, product_info['color'], product_info['size']);
 
-                result['entries'][language_id] = array(
-                    'language_name' : language['name'],
-                    'issues' : {}
-                );
+                result['entries'][language_id] = {
+                    'language_name': language['name'],
+                    'issues': []
+                };
 
-                for (groups of id : group) {
-                    issues = await this.db.query("SELECT * FROM `" + DB_PREFIX + "googleshopping_product_status` WHERE product_id=" + product_id + " AND store_id=" + store_id + " AND product_variation_id='" + this.db.escape(id) + "'").row;
+                for (let [id, group] of Object.entries(groups)) {
+                    let issues = await this.db.query("SELECT * FROM `" + DB_PREFIX + "googleshopping_product_status` WHERE product_id=" + product_id + " AND store_id=" + store_id + " AND product_variation_id='" + this.db.escape(id) + "'").row;
 
-                    destination_statuses = (issues['destination_statuses']) ? JSON.parse(issues['destination_statuses'], true) : {};
-                    data_quality_issues = (issues['data_quality_issues']) ? JSON.parse(issues['data_quality_issues'], true) : {};
-                    item_level_issues = (issues['item_level_issues']) ? JSON.parse(issues['item_level_issues'], true) : {};
-                    google_expiration_date = (issues['google_expiration_date']) ? date(this.language.get('datetime_format'), issues['google_expiration_date']) : this.language.get('text_na');
+                    destination_statuses = (issues['destination_statuses']) ? JSON.parse(issues['destination_statuses']) : {};
+                    data_quality_issues = (issues['data_quality_issues']) ? JSON.parse(issues['data_quality_issues']) : {};
+                    item_level_issues = (issues['item_level_issues']) ? JSON.parse(issues['item_level_issues']) : {};
+                    let google_expiration_date = (issues['google_expiration_date']) ? date(this.language.get('datetime_format'), issues['google_expiration_date']) : this.language.get('text_na');
 
                     result['entries'][language_id]['issues'].push({
-                        'color' : group['color'] != "" ? group['color'] : this.language.get('text_na'),
-                        'size' : group['size'] != "" ? group['size'] : this.language.get('text_na'),
-                        'destination_statuses' : destination_statuses,
-                        'data_quality_issues' : data_quality_issues,
-                        'item_level_issues' : item_level_issues,
-                        'google_expiration_date' : google_expiration_date
-                    );
+                        'color': group['color'] != "" ? group['color'] : this.language.get('text_na'),
+                        'size': group['size'] != "" ? group['size'] : this.language.get('text_na'),
+                        'destination_statuses': destination_statuses,
+                        'data_quality_issues': data_quality_issues,
+                        'item_level_issues': item_level_issues,
+                        'google_expiration_date': google_expiration_date
+                    });
                 }
             }
 
@@ -513,29 +517,28 @@ if (data['limit'] < 1) {
      * Hence, this renaming script was created.
      */
     async renameTables() {
-        for (this.rename_tables of old_table : new_table) {
-            new_table_name = DB_PREFIX + new_table;
-            old_table_name = DB_PREFIX + old_table;
-
-            if (this.tableExists(old_table_name) && !this.tableExists(new_table_name) && this.tableColumnsMatch(old_table_name, this.table_columns[new_table])) {
+        for (let [old_table, new_table] of Object.entries(this.rename_tables)) {
+            let new_table_name = DB_PREFIX + new_table;
+            let old_table_name = DB_PREFIX + old_table;
+            if (await this.tableExists(old_table_name) && !await this.tableExists(new_table_name) && await this.tableColumnsMatch(old_table_name, this.table_columns[new_table])) {
                 await this.db.query("RENAME TABLE `" + old_table_name + "` TO `" + new_table_name + "`");
             }
         }
     }
 
-    private function tableExists(table) {
+    async tableExists(table) {
         return await this.db.query("SHOW TABLES LIKE '" + table + "'").num_rows > 0;
     }
 
-    private function tableColumnsMatch(table, columns) {
-        num_columns = await this.db.query("SHOW COLUMNS FROM `" + table + "` WHERE Field IN (" + implode(',', this.wrap(columns, '"')) + ")").num_rows;
+    async tableColumnsMatch(table, columns) {
+        const num_columns = await this.db.query("SHOW COLUMNS FROM `" + table + "` WHERE Field IN (" + implode(',', this.wrap(columns, '"')) + ")").num_rows;
 
-        return num_columns == count(columns);
+        return num_columns == columns.length;
     }
 
-    private function wrap(text, char) {
+    async wrap(text, char) {
         if (Array.isArray(text)) {
-            for (text of &string) {
+            for (let string of text) {
                 string = char + string + char;
             }
 
@@ -546,85 +549,54 @@ if (data['limit'] < 1) {
     }
 
     async createTables() {
-        await this.db.query("CREATE TABLE IF NOT EXISTS `" + DB_PREFIX + "googleshopping_product` (
-            `product_advertise_google_id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-            `product_id` INT(11),
-            `store_id` INT(11) NOT NULL DEFAULT '0',
-            `has_issues` TINYINT(1),
-            `destination_status` ENUM('pending','approved','disapproved') NOT NULL DEFAULT 'pending',
-            `impressions` INT(11) NOT NULL DEFAULT '0',
-            `clicks` INT(11) NOT NULL DEFAULT '0',
-            `conversions` INT(11) NOT NULL DEFAULT '0.0000',
-            `cost` decimal(15,4) NOT NULL DEFAULT '0.0000',
-            `conversion_value` decimal(15,4) NOT NULL DEFAULT '0.0000',
-            `google_product_category` VARCHAR(10),
-            `condition` ENUM('new','refurbished','used'),
-            `adult` TINYINT(1),
-            `multipack` INT(11),
-            `is_bundle` TINYINT(1),
-            `age_group` ENUM('newborn','infant','toddler','kids','adult'),
-            `color` INT(11),
-            `gender` ENUM('male','female','unisex'),
-            `size_type` ENUM('regular','petite','plus','big and tall','maternity'),
-            `size_system` ENUM('AU','BR','CN','DE','EU','FR','IT','JP','MEX','UK','US'),
-            `size` INT(11),
-            `is_modified` TINYINT(1) NOT NULL DEFAULT '0',
-            PRIMARY KEY (`product_advertise_google_id`),
-            UNIQUE `product_id_store_id` (`product_id`, `store_id`)
-        ) ENGINE=MyISAM DEFAULT CHARSET=utf8");
+        let sql = `CREATE TABLE IF NOT EXISTS \`${DB_PREFIX}googleshopping_product\` (
+            \`product_advertise_google_id\` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+            \`product_id\` INT(11),
+            \`store_id\` INT(11) NOT NULL DEFAULT '0',
+            \`has_issues\` TINYINT(1),
+            \`destination_status\` ENUM('pending','approved','disapproved') NOT NULL DEFAULT 'pending',
+            \`impressions\` INT(11) NOT NULL DEFAULT '0',
+            \`clicks\` INT(11) NOT NULL DEFAULT '0',
+            \`conversions\` INT(11) NOT NULL DEFAULT '0.0000',
+            \`cost\` decimal(15,4) NOT NULL DEFAULT '0.0000',
+            \`conversion_value\` decimal(15,4) NOT NULL DEFAULT '0.0000',
+            \`google_product_category\` VARCHAR(10),
+            \`condition\` ENUM('new','refurbished','used'),
+            \`adult\` TINYINT(1),
+            \`multipack\` INT(11),
+            \`is_bundle\` TINYINT(1),
+            \`age_group\` ENUM('newborn','infant','toddler','kids','adult'),
+            \`color\` INT(11),
+            \`gender\` ENUM('male','female','unisex'),
+            \`size_type\` ENUM('regular','petite','plus','big and tall','maternity'),
+            \`size_system\` ENUM('AU','BR','CN','DE','EU','FR','IT','JP','MEX','UK','US'),
+            \`size\` INT(11),
+            \`is_modified\` TINYINT(1) NOT NULL DEFAULT '0',
+            PRIMARY KEY (\`product_advertise_google_id\`),
+            UNIQUE \`product_id_store_id\` (\`product_id\`, \`store_id\`)
+        ) ENGINE=MyISAM DEFAULT CHARSET=utf8`;
+        await this.db.query(sql);
 
-        await this.db.query("CREATE TABLE IF NOT EXISTS `" + DB_PREFIX + "googleshopping_product_status` (
-            `product_id` INT(11),
-            `store_id` INT(11) NOT NULL DEFAULT '0',
-            `product_variation_id` varchar(64),
-            `destination_statuses` TEXT NOT NULL,
-            `data_quality_issues` TEXT NOT NULL,
-            `item_level_issues` TEXT NOT NULL,
-            `google_expiration_date` INT(11) NOT NULL DEFAULT '0',
-            PRIMARY KEY (`product_id`, `store_id`, `product_variation_id`)
-        ) ENGINE=MyISAM DEFAULT CHARSET=utf8");
+        await this.db.query("CREATE TABLE IF NOT EXISTS `" + DB_PREFIX + "googleshopping_product_status` ( `product_id` INT(11), `store_id` INT(11) NOT NULL DEFAULT '0', `product_variation_id` varchar(64), `destination_statuses` TEXT NOT NULL, `data_quality_issues` TEXT NOT NULL, `item_level_issues` TEXT NOT NULL,  `google_expiration_date` INT(11) NOT NULL DEFAULT '0', PRIMARY KEY(`product_id`, `store_id`, `product_variation_id`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8");
 
-        await this.db.query("CREATE TABLE IF NOT EXISTS `" + DB_PREFIX + "googleshopping_product_target` (
-            `product_id` INT(11) NOT NULL,
-            `store_id` INT(11) NOT NULL DEFAULT '0',
-            `advertise_google_target_id` INT(11) UNSIGNED NOT NULL,
-            PRIMARY KEY (`product_id`, `advertise_google_target_id`)
-        ) ENGINE=MyISAM DEFAULT CHARSET=utf8");
+        await this.db.query("CREATE TABLE IF NOT EXISTS `" + DB_PREFIX + "googleshopping_product_target` ( `product_id` INT(11) NOT NULL, `store_id` INT(11) NOT NULL DEFAULT '0', `advertise_google_target_id` INT(11) UNSIGNED NOT NULL, PRIMARY KEY(`product_id`, `advertise_google_target_id`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8");
 
-        await this.db.query("CREATE TABLE IF NOT EXISTS `" + DB_PREFIX + "googleshopping_category` (
-            `google_product_category` VARCHAR(10) NOT NULL,
-            `store_id` INT(11) NOT NULL DEFAULT '0',
-            `category_id` INT(11) NOT NULL,
-            INDEX `category_id_store_id` (`category_id`, `store_id`),
-            PRIMARY KEY (`google_product_category`, `store_id`)
-        ) ENGINE=MyISAM DEFAULT CHARSET=utf8");
+        await this.db.query("CREATE TABLE IF NOT EXISTS `" + DB_PREFIX + "googleshopping_category` (`google_product_category` VARCHAR(10) NOT NULL, `store_id` INT(11) NOT NULL DEFAULT '0', `category_id` INT(11) NOT NULL, INDEX`category_id_store_id`(`category_id`, `store_id`), PRIMARY KEY(`google_product_category`, `store_id`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8");
 
-        await this.db.query("CREATE TABLE IF NOT EXISTS `" + DB_PREFIX + "googleshopping_target` (
-            `advertise_google_target_id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-            `store_id` INT(11) NOT NULL DEFAULT '0',
-            `campaign_name` varchar(255) NOT NULL DEFAULT '',
-            `country` varchar(2) NOT NULL DEFAULT '',
-            `budget` decimal(15,4) NOT NULL DEFAULT '0.0000',
-            `feeds` text NOT NULL,
-            `date_added` DATE,
-            `roas` INT(11) NOT NULL DEFAULT '0',
-            `status` ENUM('paused','active') NOT NULL DEFAULT 'paused',
-            INDEX `store_id` (`store_id`),
-            PRIMARY KEY (`advertise_google_target_id`)
-        ) ENGINE=MyISAM DEFAULT CHARSET=utf8");
+        await this.db.query("CREATE TABLE IF NOT EXISTS `" + DB_PREFIX + "googleshopping_target` ( `advertise_google_target_id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT, `store_id` INT(11) NOT NULL DEFAULT '0', `campaign_name` varchar(255) NOT NULL DEFAULT '', `country` varchar(2) NOT NULL DEFAULT '', `budget` decimal(15, 4) NOT NULL DEFAULT '0.0000', `feeds` text NOT NULL, `date_added` DATE, `roas` INT(11) NOT NULL DEFAULT '0', `status` ENUM('paused', 'active') NOT NULL DEFAULT 'paused', INDEX`store_id`(`store_id`), PRIMARY KEY(`advertise_google_target_id`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8");
     }
 
     async fixColumns() {
-        has_auto_increment = await this.db.query("SHOW COLUMNS FROM `" + DB_PREFIX + "googleshopping_product` WHERE Field='product_advertise_google_id' AND Extra LIKE '%auto_increment%'").num_rows > 0;
+        const has_auto_increment = await this.db.query("SHOW COLUMNS FROM `" + DB_PREFIX + "googleshopping_product` WHERE Field='product_advertise_google_id' AND Extra LIKE '%auto_increment%'").num_rows > 0;
 
         if (!has_auto_increment) {
             await this.db.query("ALTER TABLE " + DB_PREFIX + "googleshopping_product MODIFY COLUMN product_advertise_google_id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT");
         }
 
-        has_unique_key = await this.db.query("SHOW INDEX FROM `" + DB_PREFIX + "googleshopping_product` WHERE Key_name='product_id_store_id' AND Non_unique=0").num_rows == 2;
-
+        const has_unique_key = (await this.db.query("SHOW INDEX FROM `" + DB_PREFIX + "googleshopping_product` WHERE Key_name='product_id_store_id' AND Non_unique=0")).num_rows == 2;
+        // console.log(has_unique_key)
         if (!has_unique_key) {
-            index_exists = await this.db.query("SHOW INDEX FROM `" + DB_PREFIX + "googleshopping_product` WHERE Key_name='product_id_store_id'").num_rows > 0;
+            const index_exists = await this.db.query("SHOW INDEX FROM `" + DB_PREFIX + "googleshopping_product` WHERE Key_name='product_id_store_id'").num_rows > 0;
 
             if (index_exists) {
                 await this.db.query("ALTER TABLE `" + DB_PREFIX + "googleshopping_product` DROP INDEX product_id_store_id;");
@@ -633,7 +605,7 @@ if (data['limit'] < 1) {
             await this.db.query("CREATE UNIQUE INDEX product_id_store_id ON `" + DB_PREFIX + "googleshopping_product` (product_id, store_id)");
         }
 
-        has_date_added_column = await this.db.query("SHOW COLUMNS FROM `" + DB_PREFIX + "googleshopping_target` WHERE Field='date_added'").num_rows > 0;
+        const has_date_added_column = (await this.db.query("SHOW COLUMNS FROM `" + DB_PREFIX + "googleshopping_target` WHERE Field='date_added'")).num_rows > 0;
 
         if (!has_date_added_column) {
             await this.db.query("ALTER TABLE " + DB_PREFIX + "googleshopping_target ADD COLUMN date_added DATE");
@@ -641,7 +613,7 @@ if (data['limit'] < 1) {
             await this.db.query("UPDATE " + DB_PREFIX + "googleshopping_target SET date_added = NOW() WHERE date_added IS NULL");
         }
 
-        has_roas_column = await this.db.query("SHOW COLUMNS FROM `" + DB_PREFIX + "googleshopping_target` WHERE Field='roas'").num_rows > 0;
+        const has_roas_column = (await this.db.query("SHOW COLUMNS FROM `" + DB_PREFIX + "googleshopping_target` WHERE Field='roas'")).num_rows > 0;
 
         if (!has_roas_column) {
             await this.db.query("ALTER TABLE " + DB_PREFIX + "googleshopping_target ADD COLUMN roas INT(11) NOT NULL DEFAULT '0'");
@@ -657,16 +629,16 @@ if (data['limit'] < 1) {
     }
 
     async deleteEvents() {
-        this.load.model('setting/event',this);
+        this.load.model('setting/event', this);
 
         await this.model_setting_event.deleteEventByCode('advertise_google');
     }
 
     async createEvents() {
-        this.load.model('setting/event',this);
+        this.load.model('setting/event', this);
 
-        for (this.events of trigger : actions) {
-            for (actions of action) {
+        for (let [trigger, actions] of Object.entries(this.events)) {
+            for (let action of actions) {
                 await this.model_setting_event.addEvent('advertise_google', trigger, action, 1, 0);
             }
         }
@@ -675,17 +647,17 @@ if (data['limit'] < 1) {
     async getAllowedTargets() {
         this.load.config('googleshopping/googleshopping');
 
-        result = {};
+        let result = [];
 
-        for (this.config.get('advertise_google_targets') of target) {
+        for (let target of this.config.get('advertise_google_targets')) {
             result.push({
-                'country' : array(
-                    'code' : target['country'],
-                    'name' : this.googleshopping.getCountryName(target['country'])
-                ),
-                'languages' : this.googleshopping.getLanguages(target['languages']),
-                'currencies' : this.googleshopping.getCurrencies(target['currencies'])
-            );
+                'country': {
+                    'code': target['country'],
+                    'name': await this.googleshopping.getCountryName(target['country'])
+                },
+                'languages': await this.googleshopping.getLanguages(target['languages']),
+                'currencies': await this.googleshopping.getCurrencies(target['currencies'])
+            });
         }
 
         return result;

@@ -1,12 +1,13 @@
 module.exports = class ControllerMarketplaceEvent extends Controller {
 	error = {};
-	
+
 	async index() {
+		const data = {};
 		await this.load.language('marketplace/event');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('setting/event',this);
+		this.load.model('setting/event', this);
 
 		await this.getList();
 	}
@@ -16,14 +17,15 @@ module.exports = class ControllerMarketplaceEvent extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('setting/event',this);
+		this.load.model('setting/event', this);
 
 		if ((this.request.get['event_id']) && await this.validate()) {
 			await this.model_setting_event.enableEvent(this.request.get['event_id']);
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -48,14 +50,15 @@ module.exports = class ControllerMarketplaceEvent extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('setting/event',this);
+		this.load.model('setting/event', this);
 
 		if ((this.request.get['event_id']) && await this.validate()) {
 			await this.model_setting_event.disableEvent(this.request.get['event_id']);
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -74,22 +77,23 @@ module.exports = class ControllerMarketplaceEvent extends Controller {
 
 		await this.getList();
 	}
-	
+
 	async delete() {
 		await this.load.language('marketplace/event');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('setting/event',this);
+		this.load.model('setting/event', this);
 
 		if ((this.request.post['selected']) && await this.validate()) {
-			for (this.request.post['selected'] of event_id) {
+			for (let event_id of this.request.post['selected'] ) {
 				await this.model_setting_event.deleteEvent(event_id);
 			}
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -107,28 +111,24 @@ module.exports = class ControllerMarketplaceEvent extends Controller {
 		}
 
 		await this.getList();
-	}	
-	
+	}
+
 	async getList() {
+		const data = {};
+		let sort = 'code';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
-		} else {
-			sort = 'code';
 		}
-
+		let order = 'ASC';
 		if ((this.request.get['order'])) {
 			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
 		}
-
+		let page = 1;
 		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -145,41 +145,41 @@ module.exports = class ControllerMarketplaceEvent extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('marketplace/event', 'user_token=' + this.session.data['user_token'] + url, true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('marketplace/event', 'user_token=' + this.session.data['user_token'] + url, true)
 		});
 
 		data['delete'] = await this.url.link('marketplace/event/delete', 'user_token=' + this.session.data['user_token'] + url, true);
 
-		data['events'] = {};
+		data['events'] = [];
 
-		filter_data = array(
-			'sort'  : sort,
-			'order' : order,
-			'start' : (page - 1) * Number(this.config.get('config_limit_admin')),
-			'limit' : Number(this.config.get('config_limit_admin'))
-		});
+		const filter_data = {
+			'sort': sort,
+			'order': order,
+			'start': (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit': Number(this.config.get('config_limit_admin'))
+		};
 
-		event_total = await this.model_setting_event.getTotalEvents();
+		const event_total = await this.model_setting_event.getTotalEvents();
 
-		results = await this.model_setting_event.getEvents(filter_data);
+		const results = await this.model_setting_event.getEvents(filter_data);
 
 		for (let result of results) {
 			data['events'].push({
-				'event_id'   : result['event_id'],
-				'code'       : result['code'],
-				'trigger'    : result['trigger'],
-				'action'     : result['action'],
-				'sort_order' : result['sort_order'],
-				'status'     : result['status'] ? this.language.get('text_enabled') : this.language.get('text_disabled'),
-				'enable'     : await this.url.link('marketplace/event/enable', 'user_token=' + this.session.data['user_token'] + '&event_id=' + result['event_id'] + url, true),
-				'disable'    : await this.url.link('marketplace/event/disable', 'user_token=' + this.session.data['user_token'] + '&event_id=' + result['event_id'] + url, true),
-				'enabled'    : result['status']
+				'event_id': result['event_id'],
+				'code': result['code'],
+				'trigger': result['trigger'],
+				'action': result['action'],
+				'sort_order': result['sort_order'],
+				'status': result['status'] ? this.language.get('text_enabled') : this.language.get('text_disabled'),
+				'enable': await this.url.link('marketplace/event/enable', 'user_token=' + this.session.data['user_token'] + '&event_id=' + result['event_id'] + url, true),
+				'disable': await this.url.link('marketplace/event/disable', 'user_token=' + this.session.data['user_token'] + '&event_id=' + result['event_id'] + url, true),
+				'enabled': result['status']
 			});
 		}
 
@@ -192,7 +192,7 @@ module.exports = class ControllerMarketplaceEvent extends Controller {
 		if ((this.session.data['success'])) {
 			data['success'] = this.session.data['success'];
 
-			delete this.session.data['success']);
+			delete this.session.data['success'];
 		} else {
 			data['success'] = '';
 		}
@@ -229,7 +229,7 @@ module.exports = class ControllerMarketplaceEvent extends Controller {
 			url += '&order=' + this.request.get['order'];
 		}
 
-		pagination = new Pagination();
+		const pagination = new Pagination();
 		pagination.total = event_total;
 		pagination.page = page;
 		pagination.limit = Number(this.config.get('config_limit_admin'));
@@ -254,6 +254,6 @@ module.exports = class ControllerMarketplaceEvent extends Controller {
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 }

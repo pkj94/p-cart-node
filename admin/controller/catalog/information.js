@@ -2,11 +2,12 @@ module.exports = class ControllerCatalogInformation extends Controller {
 	error = {};
 
 	async index() {
+const data = {};
 		await this.load.language('catalog/information');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('catalog/information');
+		this.load.model('catalog/information', this);
 
 		await this.getList();
 	}
@@ -16,14 +17,15 @@ module.exports = class ControllerCatalogInformation extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('catalog/information');
+		this.load.model('catalog/information', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_catalog_information.addInformation(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -36,7 +38,7 @@ module.exports = class ControllerCatalogInformation extends Controller {
 			if ((this.request.get['page'])) {
 				url += '&page=' + this.request.get['page'];
 			}
-
+			await this.session.save(this.session.data);
 			this.response.setRedirect(await this.url.link('catalog/information', 'user_token=' + this.session.data['user_token'] + url, true));
 		}
 
@@ -48,14 +50,15 @@ module.exports = class ControllerCatalogInformation extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('catalog/information');
+		this.load.model('catalog/information', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_catalog_information.editInformation(this.request.get['information_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -68,7 +71,7 @@ module.exports = class ControllerCatalogInformation extends Controller {
 			if ((this.request.get['page'])) {
 				url += '&page=' + this.request.get['page'];
 			}
-
+			await this.session.save(this.session.data);
 			this.response.setRedirect(await this.url.link('catalog/information', 'user_token=' + this.session.data['user_token'] + url, true));
 		}
 
@@ -80,17 +83,18 @@ module.exports = class ControllerCatalogInformation extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('catalog/information');
+		this.load.model('catalog/information', this);
 
 		if ((this.request.post['selected']) && await this.validateDelete()) {
-this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
+			this.request.post['selected'] = Array.isArray(this.request.post['selected']) ? this.request.post['selected'] : [this.request.post['selected']]
 			for (let information_id of this.request.post['selected']) {
 				await this.model_catalog_information.deleteInformation(information_id);
 			}
 
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -103,7 +107,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			if ((this.request.get['page'])) {
 				url += '&page=' + this.request.get['page'];
 			}
-
+			await this.session.save(this.session.data);
 			this.response.setRedirect(await this.url.link('catalog/information', 'user_token=' + this.session.data['user_token'] + url, true));
 		}
 
@@ -111,25 +115,21 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 	}
 
 	async getList() {
+				const data = {};
+		let sort = 'id.title';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
-		} else {
-			sort = 'id.title';
 		}
-
+		let order = 'ASC';
 		if ((this.request.get['order'])) {
 			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
 		}
-
+		let page = 1;
 		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -146,37 +146,37 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('catalog/information', 'user_token=' + this.session.data['user_token'] + url, true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('catalog/information', 'user_token=' + this.session.data['user_token'] + url, true)
 		});
 
 		data['add'] = await this.url.link('catalog/information/add', 'user_token=' + this.session.data['user_token'] + url, true);
 		data['delete'] = await this.url.link('catalog/information/delete', 'user_token=' + this.session.data['user_token'] + url, true);
 
-		data['informations'] = {};
+		data['informations'] = [];
 
-		filter_data = array(
-			'sort'  : sort,
-			'order' : order,
-			'start' : (page - 1) * Number(this.config.get('config_limit_admin')),
-			'limit' : Number(this.config.get('config_limit_admin'))
-		});
+		let filter_data = {
+			'sort': sort,
+			'order': order,
+			'start': (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit': Number(this.config.get('config_limit_admin'))
+		};
 
-		information_total = await this.model_catalog_information.getTotalInformations();
+		const information_total = await this.model_catalog_information.getTotalInformations();
 
-		results = await this.model_catalog_information.getInformations(filter_data);
+		const results = await this.model_catalog_information.getInformations(filter_data);
 
 		for (let result of results) {
 			data['informations'].push({
-				'information_id' : result['information_id'],
-				'title'          : result['title'],
-				'sort_order'     : result['sort_order'],
-				'edit'           : await this.url.link('catalog/information/edit', 'user_token=' + this.session.data['user_token'] + '&information_id=' + result['information_id'] + url, true)
+				'information_id': result['information_id'],
+				'title': result['title'],
+				'sort_order': result['sort_order'],
+				'edit': await this.url.link('catalog/information/edit', 'user_token=' + this.session.data['user_token'] + '&information_id=' + result['information_id'] + url, true)
 			});
 		}
 
@@ -189,7 +189,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		if ((this.session.data['success'])) {
 			data['success'] = this.session.data['success'];
 
-			delete this.session.data['success']);
+			delete this.session.data['success'];
 		} else {
 			data['success'] = '';
 		}
@@ -225,7 +225,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			url += '&order=' + this.request.get['order'];
 		}
 
-		pagination = new Pagination();
+		const pagination = new Pagination();
 		pagination.total = information_total;
 		pagination.page = page;
 		pagination.limit = Number(this.config.get('config_limit_admin'));
@@ -241,11 +241,12 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		data['header'] = await this.load.controller('common/header');
 		data['column_left'] = await this.load.controller('common/column_left');
 		data['footer'] = await this.load.controller('common/footer');
-
+		await this.session.save(this.session.data);
 		this.response.setOutput(await this.load.view('catalog/information_list', data));
 	}
 
 	async getForm() {
+		const data = {};
 		data['text_form'] = !(this.request.get['information_id']) ? this.language.get('text_add') : this.language.get('text_edit');
 
 		if ((this.error['warning'])) {
@@ -278,7 +279,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			data['error_keyword'] = '';
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -295,13 +296,13 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('catalog/information', 'user_token=' + this.session.data['user_token'] + url, true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('catalog/information', 'user_token=' + this.session.data['user_token'] + url, true)
 		});
 
 		if (!(this.request.get['information_id'])) {
@@ -311,14 +312,14 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		}
 
 		data['cancel'] = await this.url.link('catalog/information', 'user_token=' + this.session.data['user_token'] + url, true);
-
+		let information_info;
 		if ((this.request.get['information_id']) && (this.request.server['method'] != 'POST')) {
 			information_info = await this.model_catalog_information.getInformation(this.request.get['information_id']);
 		}
 
 		data['user_token'] = this.session.data['user_token'];
 
-		this.load.model('localisation/language',this);
+		this.load.model('localisation/language', this);
 
 		data['languages'] = await this.model_localisation_language.getLanguages();
 
@@ -330,21 +331,21 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			data['information_description'] = {};
 		}
 
-		this.load.model('setting/store',this);
+		this.load.model('setting/store', this);
 
-		data['stores'] = {};
+		data['stores'] = [];
 
 		data['stores'].push({
-			'store_id' : 0,
-			'name'     : this.language.get('text_default')
+			'store_id': 0,
+			'name': this.language.get('text_default')
 		});
 
-		stores = await this.model_setting_store.getStores();
+		const stores = await this.model_setting_store.getStores();
 
 		for (let store of stores) {
 			data['stores'].push({
-				'store_id' : store['store_id'],
-				'name'     : store['name']
+				'store_id': store['store_id'],
+				'name': store['name']
 			});
 		}
 
@@ -396,7 +397,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			data['information_layout'] = {};
 		}
 
-		this.load.model('design/layout',this);
+		this.load.model('design/layout', this);
 
 		data['layouts'] = await this.model_design_layout.getLayouts();
 
@@ -412,34 +413,41 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		for (this.request.post['information_description'] of language_id : value) {
+		for (let [language_id, value] of Object.entries(this.request.post['information_description'])) {
 			if ((oc_strlen(value['title']) < 1) || (oc_strlen(value['title']) > 64)) {
+				this.error['title'] = this.error['title'] || {};
 				this.error['title'][language_id] = this.language.get('error_title');
 			}
 
 			if (oc_strlen(value['description']) < 3) {
+				this.error['description'] = this.error['description'] || {};
 				this.error['description'][language_id] = this.language.get('error_description');
 			}
 
 			if ((oc_strlen(value['meta_title']) < 1) || (oc_strlen(value['meta_title']) > 255)) {
+				this.error['meta_title'] = this.error['meta_title'] || {};
 				this.error['meta_title'][language_id] = this.language.get('error_meta_title');
 			}
 		}
 
 		if (this.request.post['information_seo_url']) {
-			this.load.model('design/seo_url',this);
+			this.load.model('design/seo_url', this);
 
-			for (let [store_id , language] of Object.entries(this.request.post['information_seo_url'])) {
-				for (let [language_id , keyword] of Object.entries(language)) {
+			for (let [store_id, language] of Object.entries(this.request.post['information_seo_url'])) {
+				for (let [language_id, keyword] of Object.entries(language)) {
 					if ((keyword)) {
-						if (count(array_keys(language, keyword)) > 1) {
+						if (Object.keys(language).filter(key => language[key] === keyword).length > 1) {
+							this.error.keyword = this.error.keyword || {};
+							this.error.keyword[store_id] = this.error.keyword[store_id] || {};
 							this.error['keyword'][store_id][language_id] = this.language.get('error_unique');
 						}
 
-						seo_urls = await this.model_design_seo_url.getSeoUrlsByKeyword(keyword);
+						const seo_urls = await this.model_design_seo_url.getSeoUrlsByKeyword(keyword);
 
 						for (let seo_url of seo_urls) {
 							if ((seo_url['store_id'] == store_id) && (!(this.request.get['information_id']) || (seo_url['query'] != 'information_id=' + this.request.get['information_id']))) {
+								this.error['keyword'] = this.error['keyword'] || {};
+								this.error['keyword'][store_id] = this.error['keyword'][store_id] || {};
 								this.error['keyword'][store_id][language_id] = this.language.get('error_keyword');
 							}
 						}
@@ -452,7 +460,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			this.error['warning'] = this.language.get('error_warning');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 
 	async validateDelete() {
@@ -460,8 +468,8 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		this.load.model('setting/store',this);
-		this.request.post['selected']  = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']];
+		this.load.model('setting/store', this);
+		this.request.post['selected'] = Array.isArray(this.request.post['selected']) ? this.request.post['selected'] : [this.request.post['selected']];
 
 		for (let information_id of this.request.post['selected']) {
 			if (this.config.get('config_account_id') == information_id) {
@@ -480,13 +488,13 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 				this.error['warning'] = this.language.get('error_return');
 			}
 
-			store_total = await this.model_setting_store.getTotalStoresByInformationId(information_id);
+			const store_total = await this.model_setting_store.getTotalStoresByInformationId(information_id);
 
 			if (store_total) {
 				this.error['warning'] = sprintf(this.language.get('error_store'), store_total);
 			}
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 }

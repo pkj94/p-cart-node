@@ -2,7 +2,7 @@ module.exports = class ModelDesignTheme extends Model {
 	async editTheme(store_id, theme, route, code) {
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "theme` WHERE store_id = '" + store_id + "' AND theme = '" + this.db.escape(theme) + "' AND route = '" + this.db.escape(route) + "'");
 		
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "theme` SET store_id = '" + store_id + "', theme = '" + this.db.escape(theme) + "', route = '" + this.db.escape(route) + "', code = '" + this.db.escape(code) + "', date_added = NOW()");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "theme` SET store_id = '" + store_id + "', theme = '" + this.db.escape(theme) + "', route = '" + this.db.escape(route) + "', code = " + this.db.escapeDb(code) + ", date_added = NOW()");
 	}
 
 	async deleteTheme(theme_id) {

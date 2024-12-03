@@ -2,16 +2,18 @@ module.exports = class ControllerExtensionReportSaleShipping extends Controller 
 	error = {};
 
 	async index() {
+		const data = {};
 		await this.load.language('extension/report/sale_shipping');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('setting/setting',this);
+		this.load.model('setting/setting', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validate()) {
 			await this.model_setting_setting.editSetting('report_sale_shipping', this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=report', true));
 		}
@@ -25,18 +27,18 @@ module.exports = class ControllerExtensionReportSaleShipping extends Controller 
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_extension'),
-			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=report', true)
+			'text': this.language.get('text_extension'),
+			'href': await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=report', true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('extension/report/sale_shipping', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('extension/report/sale_shipping', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['action'] = await this.url.link('extension/report/sale_shipping', 'user_token=' + this.session.data['user_token'], true);
@@ -61,104 +63,97 @@ module.exports = class ControllerExtensionReportSaleShipping extends Controller 
 
 		this.response.setOutput(await this.load.view('extension/report/sale_shipping_form', data));
 	}
-	
+
 	async validate() {
 		if (!await this.user.hasPermission('modify', 'extension/report/sale_shipping')) {
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
-		
+
 	async report() {
+		const data = {};
 		await this.load.language('extension/report/sale_shipping');
-	
+
+		let filter_date_start = '';
 		if ((this.request.get['filter_date_start'])) {
 			filter_date_start = this.request.get['filter_date_start'];
-		} else {
-			filter_date_start = '';
 		}
 
+		let filter_date_end = '';
 		if ((this.request.get['filter_date_end'])) {
 			filter_date_end = this.request.get['filter_date_end'];
-		} else {
-			filter_date_end = '';
 		}
-
+		let filter_group = 'week';
 		if ((this.request.get['filter_group'])) {
 			filter_group = this.request.get['filter_group'];
-		} else {
-			filter_group = 'week';
 		}
-
+		let filter_order_status_id = 0;
 		if ((this.request.get['filter_order_status_id'])) {
 			filter_order_status_id = this.request.get['filter_order_status_id'];
-		} else {
-			filter_order_status_id = 0;
 		}
-
+		let page = 1;
 		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
 		}
 
-		this.load.model('extension/report/sale');
+		this.load.model('extension/report/sale', this);
 
-		data['orders'] = {};
+		data['orders'] = [];
 
-		filter_data = array(
-			'filter_date_start'	     : filter_date_start,
-			'filter_date_end'	     : filter_date_end,
-			'filter_group'           : filter_group,
-			'filter_order_status_id' : filter_order_status_id,
-			'start'                  : (page - 1) * Number(this.config.get('config_limit_admin')),
-			'limit'                  : Number(this.config.get('config_limit_admin'))
-		});
+		const filter_data = {
+			'filter_date_start': filter_date_start,
+			'filter_date_end': filter_date_end,
+			'filter_group': filter_group,
+			'filter_order_status_id': filter_order_status_id,
+			'start': (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit': Number(this.config.get('config_limit_admin'))
+		};
 
-		order_total = await this.model_extension_report_sale.getTotalShipping(filter_data);
+		const order_total = await this.model_extension_report_sale.getTotalShipping(filter_data);
 
-		results = await this.model_extension_report_sale.getShipping(filter_data);
+		const results = await this.model_extension_report_sale.getShipping(filter_data);
 
 		for (let result of results) {
 			data['orders'].push({
-				'date_start' : date(this.language.get('date_format_short'), strtotime(result['date_start'])),
-				'date_end'   : date(this.language.get('date_format_short'), strtotime(result['date_end'])),
-				'title'      : result['title'],
-				'orders'     : result['orders'],
-				'total'      : this.currency.format(result['total'], this.config.get('config_currency'))
+				'date_start': date(this.language.get('date_format_short'), new Date(result['date_start'])),
+				'date_end': date(this.language.get('date_format_short'), new Date(result['date_end'])),
+				'title': result['title'],
+				'orders': result['orders'],
+				'total': this.currency.format(result['total'], this.config.get('config_currency'))
 			});
 		}
-		
+
 		data['user_token'] = this.session.data['user_token'];
 
-		this.load.model('localisation/order_status');
+		this.load.model('localisation/order_status', this);
 
 		data['order_statuses'] = await this.model_localisation_order_status.getOrderStatuses();
 
-		data['groups'] = {};
+		data['groups'] = [];
 
 		data['groups'].push({
-			'text'  : this.language.get('text_year'),
-			'value' : 'year',
+			'text': this.language.get('text_year'),
+			'value': 'year',
 		});
 
 		data['groups'].push({
-			'text'  : this.language.get('text_month'),
-			'value' : 'month',
+			'text': this.language.get('text_month'),
+			'value': 'month',
 		});
 
 		data['groups'].push({
-			'text'  : this.language.get('text_week'),
-			'value' : 'week',
+			'text': this.language.get('text_week'),
+			'value': 'week',
 		});
 
 		data['groups'].push({
-			'text'  : this.language.get('text_day'),
-			'value' : 'day',
+			'text': this.language.get('text_day'),
+			'value': 'day',
 		});
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['filter_date_start'])) {
 			url += '&filter_date_start=' + this.request.get['filter_date_start'];
@@ -176,7 +171,7 @@ module.exports = class ControllerExtensionReportSaleShipping extends Controller 
 			url += '&filter_order_status_id=' + this.request.get['filter_order_status_id'];
 		}
 
-		pagination = new Pagination();
+		const pagination = new Pagination();
 		pagination.total = order_total;
 		pagination.page = page;
 		pagination.limit = Number(this.config.get('config_limit_admin'));

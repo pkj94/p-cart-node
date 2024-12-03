@@ -2,11 +2,12 @@ module.exports = class ControllerDesignBanner extends Controller {
 	error = {};
 
 	async index() {
+		const data = {};
 		await this.load.language('design/banner');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('design/banner');
+		this.load.model('design/banner', this);
 
 		await this.getList();
 	}
@@ -16,14 +17,15 @@ module.exports = class ControllerDesignBanner extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('design/banner');
+		this.load.model('design/banner', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_design_banner.addBanner(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -48,14 +50,15 @@ module.exports = class ControllerDesignBanner extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('design/banner');
+		this.load.model('design/banner', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_design_banner.editBanner(this.request.get['banner_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -80,17 +83,18 @@ module.exports = class ControllerDesignBanner extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('design/banner');
+		this.load.model('design/banner', this);
 
 		if ((this.request.post['selected']) && await this.validateDelete()) {
-this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
-			for (this.request.post['selected'] of banner_id) {
+			this.request.post['selected'] = Array.isArray(this.request.post['selected']) ? this.request.post['selected'] : [this.request.post['selected']]
+			for (let banner_id of this.request.post['selected']) {
 				await this.model_design_banner.deleteBanner(banner_id);
 			}
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -111,25 +115,21 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 	}
 
 	async getList() {
+		const data = {};
+		let sort = 'name';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
-		} else {
-			sort = 'name';
 		}
-
+		let order = 'ASC';
 		if ((this.request.get['order'])) {
 			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
 		}
-
+		let page = 1;
 		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -146,37 +146,37 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('design/banner', 'user_token=' + this.session.data['user_token'] + url, true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('design/banner', 'user_token=' + this.session.data['user_token'] + url, true)
 		});
 
 		data['add'] = await this.url.link('design/banner/add', 'user_token=' + this.session.data['user_token'] + url, true);
 		data['delete'] = await this.url.link('design/banner/delete', 'user_token=' + this.session.data['user_token'] + url, true);
 
-		data['banners'] = {};
+		data['banners'] = [];
 
-		filter_data = array(
-			'sort'  : sort,
-			'order' : order,
-			'start' : (page - 1) * Number(this.config.get('config_limit_admin')),
-			'limit' : Number(this.config.get('config_limit_admin'))
-		});
+		const filter_data = {
+			'sort': sort,
+			'order': order,
+			'start': (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit': Number(this.config.get('config_limit_admin'))
+		};
 
-		banner_total = await this.model_design_banner.getTotalBanners();
+		const banner_total = await this.model_design_banner.getTotalBanners();
 
-		results = await this.model_design_banner.getBanners(filter_data);
+		const results = await this.model_design_banner.getBanners(filter_data);
 
 		for (let result of results) {
 			data['banners'].push({
-				'banner_id' : result['banner_id'],
-				'name'      : result['name'],
-				'status'    : (result['status'] ? this.language.get('text_enabled') : this.language.get('text_disabled')),
-				'edit'      : await this.url.link('design/banner/edit', 'user_token=' + this.session.data['user_token'] + '&banner_id=' + result['banner_id'] + url, true)
+				'banner_id': result['banner_id'],
+				'name': result['name'],
+				'status': (result['status'] ? this.language.get('text_enabled') : this.language.get('text_disabled')),
+				'edit': await this.url.link('design/banner/edit', 'user_token=' + this.session.data['user_token'] + '&banner_id=' + result['banner_id'] + url, true)
 			});
 		}
 
@@ -189,7 +189,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		if ((this.session.data['success'])) {
 			data['success'] = this.session.data['success'];
 
-			delete this.session.data['success']);
+			delete this.session.data['success'];
 		} else {
 			data['success'] = '';
 		}
@@ -225,7 +225,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			url += '&order=' + this.request.get['order'];
 		}
 
-		pagination = new Pagination();
+		const pagination = new Pagination();
 		pagination.total = banner_total;
 		pagination.page = page;
 		pagination.limit = Number(this.config.get('config_limit_admin'));
@@ -246,6 +246,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 	}
 
 	async getForm() {
+		const data = {};
 		data['text_form'] = !(this.request.get['banner_id']) ? this.language.get('text_add') : this.language.get('text_edit');
 
 		if ((this.error['warning'])) {
@@ -266,7 +267,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			data['error_banner_image'] = {};
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -283,13 +284,13 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('design/banner', 'user_token=' + this.session.data['user_token'] + url, true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('design/banner', 'user_token=' + this.session.data['user_token'] + url, true)
 		});
 
 		if (!(this.request.get['banner_id'])) {
@@ -299,7 +300,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		}
 
 		data['cancel'] = await this.url.link('design/banner', 'user_token=' + this.session.data['user_token'] + url, true);
-
+		let banner_info;
 		if ((this.request.get['banner_id']) && (this.request.server['method'] != 'POST')) {
 			banner_info = await this.model_design_banner.getBanner(this.request.get['banner_id']);
 		}
@@ -322,12 +323,12 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			data['status'] = true;
 		}
 
-		this.load.model('localisation/language',this);
+		this.load.model('localisation/language', this);
 
 		data['languages'] = await this.model_localisation_language.getLanguages();
 
-		this.load.model('tool/image',this);
-
+		this.load.model('tool/image', this);
+		let banner_images;
 		if ((this.request.post['banner_image'])) {
 			banner_images = this.request.post['banner_image'];
 		} else if ((this.request.get['banner_id'])) {
@@ -338,22 +339,21 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 
 		data['banner_images'] = {};
 
-		for (banner_images of key : value) {
-			for (value of banner_image) {
+		for (let [key, value] of Object.entries(banner_images)) {
+			for (let [banner_image_id, banner_image] of Object.entries(value)) {
+				let image = '';
+				let thumb = 'no_image.png';
 				if (is_file(DIR_IMAGE + banner_image['image'])) {
 					image = banner_image['image'];
 					thumb = banner_image['image'];
-				} else {
-					image = '';
-					thumb = 'no_image.png';
 				}
-
+				data['banner_images'][key] = data['banner_images'][key] || [];
 				data['banner_images'][key].push({
-					'title'      : banner_image['title'],
-					'link'       : banner_image['link'],
-					'image'      : image,
-					'thumb'      : await this.model_tool_image.resize(thumb, 100, 100),
-					'sort_order' : banner_image['sort_order']
+					'title': banner_image['title'],
+					'link': banner_image['link'],
+					'image': image,
+					'thumb': await this.model_tool_image.resize(thumb, 100, 100),
+					'sort_order': banner_image['sort_order']
 				});
 			}
 		}
@@ -377,16 +377,18 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		}
 
 		if ((this.request.post['banner_image'])) {
-			for (this.request.post['banner_image'] of language_id : value) {
-				for (value of banner_image_id : banner_image) {
+			for (let [language_id, value] of Object.entries(this.request.post['banner_image'])) {
+				for (let [banner_image_id, banner_image] of Object.entries(value)) {
 					if ((oc_strlen(banner_image['title']) < 2) || (oc_strlen(banner_image['title']) > 64)) {
+						this.error['banner_image'] = this.error['banner_image'] || {};
+						this.error['banner_image'][language_id] = this.error['banner_image'][language_id] || {};
 						this.error['banner_image'][language_id][banner_image_id] = this.language.get('error_title');
 					}
 				}
 			}
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 
 	async validateDelete() {
@@ -394,6 +396,6 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 }

@@ -2,11 +2,12 @@ module.exports = class ControllerLocalisationLanguage extends Controller {
 	error = {};
 
 	async index() {
+		const data = {};
 		await this.load.language('localisation/language');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('localisation/language',this);
+		this.load.model('localisation/language', this);
 
 		await this.getList();
 	}
@@ -16,12 +17,13 @@ module.exports = class ControllerLocalisationLanguage extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('localisation/language',this);
+		this.load.model('localisation/language', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_localisation_language.addLanguage(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			url = '';
 
@@ -48,12 +50,13 @@ module.exports = class ControllerLocalisationLanguage extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('localisation/language',this);
+		this.load.model('localisation/language', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_localisation_language.editLanguage(this.request.get['language_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			url = '';
 
@@ -80,15 +83,16 @@ module.exports = class ControllerLocalisationLanguage extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('localisation/language',this);
+		this.load.model('localisation/language', this);
 
 		if ((this.request.post['selected']) && await this.validateDelete()) {
-this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
-			for (this.request.post['selected'] of language_id) {
+			this.request.post['selected'] = Array.isArray(this.request.post['selected']) ? this.request.post['selected'] : [this.request.post['selected']]
+			for (let language_id of this.request.post['selected']) {
 				await this.model_localisation_language.deleteLanguage(language_id);
 			}
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			url = '';
 
@@ -111,6 +115,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 	}
 
 	async getList() {
+		const data = {};
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
 		} else {
@@ -122,11 +127,9 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		} else {
 			order = 'ASC';
 		}
-
+		page = 1;
 		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
 		}
 
 		url = '';
@@ -146,13 +149,13 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('localisation/language', 'user_token=' + this.session.data['user_token'] + url, true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('localisation/language', 'user_token=' + this.session.data['user_token'] + url, true)
 		});
 
 		data['add'] = await this.url.link('localisation/language/add', 'user_token=' + this.session.data['user_token'] + url, true);
@@ -160,11 +163,11 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 
 		data['languages'] = {};
 
-		filter_data = array(
-			'sort'  : sort,
-			'order' : order,
-			'start' : (page - 1) * Number(this.config.get('config_limit_admin')),
-			'limit' : Number(this.config.get('config_limit_admin'))
+		const filter_data = {
+			'sort': sort,
+			'order': order,
+			'start': (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit': Number(this.config.get('config_limit_admin'))
 		});
 
 		language_total = await this.model_localisation_language.getTotalLanguages();
@@ -173,11 +176,11 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 
 		for (let result of results) {
 			data['languages'].push({
-				'language_id' : result['language_id'],
-				'name'        : result['name'] + ((result['code'] == this.config.get('config_language')) ? this.language.get('text_default') : null),
-				'code'        : result['code'],
-				'sort_order'  : result['sort_order'],
-				'edit'        : await this.url.link('localisation/language/edit', 'user_token=' + this.session.data['user_token'] + '&language_id=' + result['language_id'] + url, true)
+				'language_id': result['language_id'],
+				'name': result['name'] + ((result['code'] == this.config.get('config_language')) ? this.language.get('text_default') : null),
+				'code': result['code'],
+				'sort_order': result['sort_order'],
+				'edit': await this.url.link('localisation/language/edit', 'user_token=' + this.session.data['user_token'] + '&language_id=' + result['language_id'] + url, true)
 			});
 		}
 
@@ -190,7 +193,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		if ((this.session.data['success'])) {
 			data['success'] = this.session.data['success'];
 
-			delete this.session.data['success']);
+			delete this.session.data['success'];
 		} else {
 			data['success'] = '';
 		}
@@ -227,7 +230,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			url += '&order=' + this.request.get['order'];
 		}
 
-		pagination = new Pagination();
+		const pagination = new Pagination();
 		pagination.total = language_total;
 		pagination.page = page;
 		pagination.limit = Number(this.config.get('config_limit_admin'));
@@ -239,7 +242,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 
 		data['sort'] = sort;
 		data['order'] = order;
-		
+
 		data['header'] = await this.load.controller('common/header');
 		data['column_left'] = await this.load.controller('common/column_left');
 		data['footer'] = await this.load.controller('common/footer');
@@ -267,13 +270,13 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		} else {
 			data['error_code'] = '';
 		}
-		
+
 		if ((this.error['locale'])) {
 			data['error_locale'] = this.error['locale'];
 		} else {
 			data['error_locale'] = '';
 		}
-		
+
 		url = '';
 
 		if ((this.request.get['sort'])) {
@@ -291,13 +294,13 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('localisation/language', 'user_token=' + this.session.data['user_token'] + url, true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('localisation/language', 'user_token=' + this.session.data['user_token'] + url, true)
 		});
 
 		if (!(this.request.get['language_id'])) {
@@ -327,10 +330,10 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		} else {
 			data['code'] = '';
 		}
-		
+
 		data['languages'] = {};
-		
-		folders = glob(DIR_LANGUAGE + '*', GLOB_ONLYDIR);
+
+		folders = require('glob').sync(DIR_LANGUAGE + '*', GLOB_ONLYDIR);
 
 		for (folders of folder) {
 			data['languages'].push(basename(folder);
@@ -343,7 +346,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		} else {
 			data['locale'] = '';
 		}
-		
+
 		if ((this.request.post['sort_order'])) {
 			data['sort_order'] = this.request.post['sort_order'];
 		} else if ((language_info)) {
@@ -379,11 +382,11 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		if (oc_strlen(this.request.post['code']) < 2) {
 			this.error['code'] = this.language.get('error_code');
 		}
-		
+
 		if (!this.request.post['locale']) {
 			this.error['locale'] = this.language.get('error_locale');
 		}
-		
+
 		language_info = await this.model_localisation_language.getLanguageByCode(this.request.post['code']);
 
 		if (!(this.request.get['language_id'])) {
@@ -396,7 +399,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			}
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 
 	async validateDelete() {
@@ -404,14 +407,14 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		this.load.model('setting/store',this);
-		this.load.model('sale/order',this);
-		this.request.post['selected']  = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']];
+		this.load.model('setting/store', this);
+		this.load.model('sale/order', this);
+		this.request.post['selected'] = Array.isArray(this.request.post['selected']) ? this.request.post['selected'] : [this.request.post['selected']];
 
-		for (this.request.post['selected'] of language_id) {
-			language_info = await this.model_localisation_language.getLanguage(language_id);
+		for (let language_id of this.request.post['selected'] ) {
+			const language_info = await this.model_localisation_language.getLanguage(language_id);
 
-			if (language_info) {
+			if (language_info.language_id) {
 				if (this.config.get('config_language') == language_info['code']) {
 					this.error['warning'] = this.language.get('error_default');
 				}
@@ -420,20 +423,20 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 					this.error['warning'] = this.language.get('error_admin');
 				}
 
-				store_total = await this.model_setting_store.getTotalStoresByLanguage(language_info['code']);
+				const store_total = await this.model_setting_store.getTotalStoresByLanguage(language_info['code']);
 
 				if (store_total) {
 					this.error['warning'] = sprintf(this.language.get('error_store'), store_total);
 				}
 			}
 
-			order_total = await this.model_sale_order.getTotalOrdersByLanguageId(language_id);
+			const order_total = await this.model_sale_order.getTotalOrdersByLanguageId(language_id);
 
 			if (order_total) {
 				this.error['warning'] = sprintf(this.language.get('error_order'), order_total);
 			}
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 }

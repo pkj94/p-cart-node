@@ -1,44 +1,44 @@
 module.exports = class ModelExtensionPaymentFirstdataRemote extends Model {
 	async install() {
-		await this.db.query("
-			CREATE TABLE IF NOT EXISTS `" + DB_PREFIX + "firstdata_remote_order` (
-			  `firstdata_remote_order_id` INT(11) NOT NULL AUTO_INCREMENT,
-			  `order_id` INT(11) NOT NULL,
-			  `order_ref` CHAR(50) NOT NULL,
-			  `date_added` DATETIME NOT NULL,
-			  `date_modified` DATETIME NOT NULL,
-			  `tdate` VARCHAR(30) NOT NULL,
-			  `capture_status` INT(1) DEFAULT NULL,
-			  `void_status` INT(1) DEFAULT NULL,
-			  `refund_status` INT(1) DEFAULT NULL,
-			  `currency_code` CHAR(3) NOT NULL,
-			  `authcode` VARCHAR(30) NOT NULL,
-			  `total` DECIMAL( 10, 2 ) NOT NULL,
-			  PRIMARY KEY (`firstdata_remote_order_id`)
-			) ENGINE=MyISAM DEFAULT COLLATE=oc_general_ci;");
+		await this.db.query(`
+			CREATE TABLE IF NOT EXISTS \`${DB_PREFIX}firstdata_remote_order\` (
+			  \`firstdata_remote_order_id\` INT(11) NOT NULL AUTO_INCREMENT,
+			  \`order_id\` INT(11) NOT NULL,
+			  \`order_ref\` CHAR(50) NOT NULL,
+			  \`date_added\` DATETIME NOT NULL,
+			  \`date_modified\` DATETIME NOT NULL,
+			  \`tdate\` VARCHAR(30) NOT NULL,
+			  \`capture_status\` INT(1) DEFAULT NULL,
+			  \`void_status\` INT(1) DEFAULT NULL,
+			  \`refund_status\` INT(1) DEFAULT NULL,
+			  \`currency_code\` CHAR(3) NOT NULL,
+			  \`authcode\` VARCHAR(30) NOT NULL,
+			  \`total\` DECIMAL( 10, 2 ) NOT NULL,
+			  PRIMARY KEY (\`firstdata_remote_order_id\`)
+			) ENGINE=MyISAM DEFAULT COLLATE=utf8_general_ci;`);
 
-		await this.db.query("
-			CREATE TABLE IF NOT EXISTS `" + DB_PREFIX + "firstdata_remote_order_transaction` (
-			  `firstdata_remote_order_transaction_id` INT(11) NOT NULL AUTO_INCREMENT,
-			  `firstdata_remote_order_id` INT(11) NOT NULL,
-			  `date_added` DATETIME NOT NULL,
-			  `type` ENUM('auth', 'payment', 'refund', 'void') DEFAULT NULL,
-			  `amount` DECIMAL( 10, 2 ) NOT NULL,
-			  PRIMARY KEY (`firstdata_remote_order_transaction_id`)
-			) ENGINE=MyISAM DEFAULT COLLATE=oc_general_ci;");
+		await this.db.query(`
+			CREATE TABLE IF NOT EXISTS \`${DB_PREFIX}firstdata_remote_order_transaction\` (
+			  \`firstdata_remote_order_transaction_id\` INT(11) NOT NULL AUTO_INCREMENT,
+			  \`firstdata_remote_order_id\` INT(11) NOT NULL,
+			  \`date_added\` DATETIME NOT NULL,
+			  \`type\` ENUM('auth', 'payment', 'refund', 'void') DEFAULT NULL,
+			  \`amount\` DECIMAL( 10, 2 ) NOT NULL,
+			  PRIMARY KEY (\`firstdata_remote_order_transaction_id\`)
+			) ENGINE=MyISAM DEFAULT COLLATE=utf8_general_ci;`);
 
-		await this.db.query("
-			CREATE TABLE IF NOT EXISTS `" + DB_PREFIX + "firstdata_remote_card` (
-			  `firstdata_remote_card_id` INT(11) NOT NULL AUTO_INCREMENT,
-			  `customer_id` INT(11) NOT NULL,
-			  `date_added` DATETIME NOT NULL,
-			  `digits` CHAR(4) NOT NULL,
-			  `expire_month` INT(2) NOT NULL,
-			  `expire_year` INT(2) NOT NULL,
-			  `card_type` CHAR(15) NOT NULL,
-			  `token` CHAR(64) NOT NULL,
-			  PRIMARY KEY (`firstdata_remote_card_id`)
-			) ENGINE=MyISAM DEFAULT COLLATE=oc_general_ci;");
+		await this.db.query(`
+			CREATE TABLE IF NOT EXISTS \`${DB_PREFIX}firstdata_remote_card\` (
+			  \`firstdata_remote_card_id\` INT(11) NOT NULL AUTO_INCREMENT,
+			  \`customer_id\` INT(11) NOT NULL,
+			  \`date_added\` DATETIME NOT NULL,
+			  \`digits\` CHAR(4) NOT NULL,
+			  \`expire_month\` INT(2) NOT NULL,
+			  \`expire_year\` INT(2) NOT NULL,
+			  \`card_type\` CHAR(15) NOT NULL,
+			  \`token\` CHAR(64) NOT NULL,
+			  PRIMARY KEY (\`firstdata_remote_card_id\`)
+			) ENGINE=MyISAM DEFAULT COLLATE=utf8_general_ci;`);
 	}
 
 	async uninstall() {
@@ -47,180 +47,220 @@ module.exports = class ModelExtensionPaymentFirstdataRemote extends Model {
 		await this.db.query("DROP TABLE IF EXISTS `" + DB_PREFIX + "firstdata_remote_card`;");
 	}
 
+
 	async call(xml) {
-		ch = curl_init();
-		curl_setopt(ch, CURLOPT_URL, "https://test.ipg-online.com/ipgapi/services");
-		curl_setopt(ch, CURLOPT_POST, 1);
-		curl_setopt(ch, CURLOPT_HTTPHEADER, array("Content-Type: text/xml"));
-		curl_setopt(ch, CURLOPT_HTTPAUTH, 'CURLAUTH_BASIC');
-		curl_setopt(ch, CURLOPT_USERPWD, this.config.get('firstdata_remote_user_id') + ':' + this.config.get('firstdata_remote_password'));
-		curl_setopt(ch, CURLOPT_SSL_VERIFYPEER, 1);
-		curl_setopt(ch, CURLOPT_CAINFO, this.config.get('firstdata_remote_ca'));
-		curl_setopt(ch, CURLOPT_SSLCERT, this.config.get('firstdata_remote_certificate'));
-		curl_setopt(ch, CURLOPT_SSLKEY, this.config.get('firstdata_remote_key'));
-		curl_setopt(ch, CURLOPT_SSLKEYPASSWD, this.config.get('firstdata_remote_key_pw'));
-		curl_setopt(ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt(ch, CURLOPT_POSTFIELDS, xml);
-		//curl_setopt(ch, CURLOPT_STDERR, fopen(DIR_LOGS + "/headers.txt", "w+"));
-		curl_setopt(ch, CURLOPT_VERBOSE, true);
-		response = curl_exec (ch);
+		const url = "https://test.ipg-online.com/ipgapi/services";
+		const auth = `${this.config.firstdata_remote_user_id}:${this.config.firstdata_remote_password}`;
 
-		this.logger('Post data: ' + print_r(this.request.post, 1));
-		this.logger('Request: ' + xml);
-		this.logger('Curl error #: ' + curl_errno(ch));
-		this.logger('Curl error text: ' + curl_error(ch));
-		this.logger('Curl response info: ' + print_r(curl_getinfo(ch), 1));
-		this.logger('Curl response: ' + response);
+		try {
+			const response = await require('axios').post(url, xml, {
+				headers: {
+					'Content-Type': 'text/xml'
+				},
+				auth: {
+					username: this.config.firstdata_remote_user_id,
+					password: this.config.firstdata_remote_password
+				},
+				httpsAgent: new https.Agent({
+					rejectUnauthorized: true,
+					ca: fs.readFileSync(this.config.firstdata_remote_ca),
+					cert: fs.readFileSync(this.config.firstdata_remote_certificate),
+					key: fs.readFileSync(this.config.firstdata_remote_key),
+					passphrase: this.config.firstdata_remote_key_pw
+				}),
+				timeout: 60000,
+				validateStatus: () => true // Accept all HTTP status codes
+			});
 
-		curl_close (ch);
+			this.log('Post data:', this.config.request.post);
+			this.log('Request:', xml);
+			this.log('Response:', response.data);
+			this.log('Response info:', response);
 
-		return response;
-	}
-
-	async void(order_ref, tdate) {
-		xml = '<?xml version="1.0" encoding="UTF-8"?>';
-		xml += '<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">';
-			xml += '<SOAP-ENV:Header />';
-			xml += '<SOAP-ENV:Body>';
-			xml += '<ipgapi:IPGApiOrderRequest xmlns:v1="http://ipg-online.com/ipgapi/schemas/v1" xmlns:ipgapi="http://ipg-online.com/ipgapi/schemas/ipgapi">';
-			xml += '<v1:Transaction>';
-				xml += '<v1:CreditCardTxType>';
-					xml += '<v1:Type>void</v1:Type>';
-				xml += '</v1:CreditCardTxType>';
-				xml += '<v1:TransactionDetails>';
-					xml += '<v1:OrderId>' + order_ref + '</v1:OrderId>';
-					xml += '<v1:TDate>' + tdate + '</v1:TDate>';
-				xml += '</v1:TransactionDetails>';
-			xml += '</v1:Transaction>';
-			xml += '</ipgapi:IPGApiOrderRequest>';
-			xml += '</SOAP-ENV:Body>';
-		xml += '</SOAP-ENV:Envelope>';
-
-		xml = simplexml_load_string(this.call(xml));
-
-		xml.registerXPathNamespace('ipgapi', 'http://ipg-online.com/ipgapi/schemas/ipgapi');
-		xml.registerXPathNamespace('soap', 'http://schemas.xmlsoap.org/soap/envelope/');
-
-		fault = xml.xpath('//soap:Fault');
-
-		response['fault'] = '';
-		if ((fault[0]) && (fault[0].detail)) {
-			response['fault'] = fault[0].detail;
+			return response.data;
+		} catch (error) {
+			await this.logger('Error:', error);
+			return null;
 		}
-
-		string = xml.xpath('//ipgapi:ErrorMessage');
-		response['error'] = (string[0]) ? string[0] : '';
-
-		string = xml.xpath('//ipgapi:TransactionResult');
-		response['transaction_result'] = (string[0]) ? string[0] : '';
-
-		return response;
 	}
+
+	async void(orderRef, tdate) {
+		const xml = `
+      <?xml version="1.0" encoding="UTF-8"?>
+      <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+        <SOAP-ENV:Header />
+        <SOAP-ENV:Body>
+          <ipgapi:IPGApiOrderRequest xmlns:v1="http://ipg-online.com/ipgapi/schemas/v1" xmlns:ipgapi="http://ipg-online.com/ipgapi/schemas/ipgapi">
+            <v1:Transaction>
+              <v1:CreditCardTxType>
+                <v1:Type>void</v1:Type>
+              </v1:CreditCardTxType>
+              <v1:TransactionDetails>
+                <v1:OrderId>${orderRef}</v1:OrderId>
+                <v1:TDate>${tdate}</v1:TDate>
+              </v1:TransactionDetails>
+            </v1:Transaction>
+          </ipgapi:IPGApiOrderRequest>
+        </SOAP-ENV:Body>
+      </SOAP-ENV:Envelope>
+    `;
+
+		try {
+			const response = await this.call(xml);
+
+			const parser = new require('xml2js').Parser({ explicitArray: false });
+			const parsedResponse = await parser.parseStringPromise(response);
+
+			this.log('Request:', xml);
+			this.log('Response:', parsedResponse);
+
+			const fault = parsedResponse['SOAP-ENV:Envelope']['SOAP-ENV:Body']['SOAP-ENV:Fault'];
+			const error = parsedResponse['SOAP-ENV:Envelope']['SOAP-ENV:Body']['ipgapi:IPGApiOrderRequest']['ipgapi:ErrorMessage'];
+			const transactionResult = parsedResponse['SOAP-ENV:Envelope']['SOAP-ENV:Body']['ipgapi:IPGApiOrderRequest']['ipgapi:TransactionResult'];
+
+			return {
+				fault: fault ? fault.detail : '',
+				error: error || '',
+				transaction_result: transactionResult || ''
+			};
+		} catch (error) {
+			this.log('Error:', error);
+			return {
+				fault: '',
+				error: error.message,
+				transaction_result: ''
+			};
+		}
+	}
+
 
 	async updateVoidStatus(firstdata_remote_order_id, status) {
 		await this.db.query("UPDATE `" + DB_PREFIX + "firstdata_remote_order` SET `void_status` = '" + status + "' WHERE `firstdata_remote_order_id` = '" + firstdata_remote_order_id + "'");
 	}
 
-	async capture(order_ref, total, currency_code) {
-		xml = '<?xml version="1.0" encoding="UTF-8"?>';
-		xml += '<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">';
-			xml += '<SOAP-ENV:Header />';
-			xml += '<SOAP-ENV:Body>';
-				xml += '<ipgapi:IPGApiOrderRequest xmlns:v1="http://ipg-online.com/ipgapi/schemas/v1" xmlns:ipgapi="http://ipg-online.com/ipgapi/schemas/ipgapi">';
-					xml += '<v1:Transaction>';
-						xml += '<v1:CreditCardTxType>';
-							xml += '<v1:Type>postAuth</v1:Type>';
-						xml += '</v1:CreditCardTxType>';
-						xml += '<v1:Payment>';
-							xml += '<v1:ChargeTotal>' + total + '</v1:ChargeTotal>';
-							xml += '<v1:Currency>' + this.mapCurrency(currency_code) + '</v1:Currency>';
-						xml += '</v1:Payment>';
-						xml += '<v1:TransactionDetails>';
-							xml += '<v1:OrderId>' + order_ref + '</v1:OrderId>';
-						xml += '</v1:TransactionDetails>';
-					xml += '</v1:Transaction>';
-				xml += '</ipgapi:IPGApiOrderRequest>';
-			xml += '</SOAP-ENV:Body>';
-		xml += '</SOAP-ENV:Envelope>';
 
-		xml = simplexml_load_string(this.call(xml));
+	async capture(orderRef, total, currencyCode) {
+		const xml = `
+      <?xml version="1.0" encoding="UTF-8"?>
+      <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+        <SOAP-ENV:Header />
+        <SOAP-ENV:Body>
+          <ipgapi:IPGApiOrderRequest xmlns:v1="http://ipg-online.com/ipgapi/schemas/v1" xmlns:ipgapi="http://ipg-online.com/ipgapi/schemas/ipgapi">
+            <v1:Transaction>
+              <v1:CreditCardTxType>
+                <v1:Type>postAuth</v1:Type>
+              </v1:CreditCardTxType>
+              <v1:Payment>
+                <v1:ChargeTotal>${total}</v1:ChargeTotal>
+                <v1:Currency>${this.mapCurrency(currencyCode)}</v1:Currency>
+              </v1:Payment>
+              <v1:TransactionDetails>
+                <v1:OrderId>${orderRef}</v1:OrderId>
+              </v1:TransactionDetails>
+            </v1:Transaction>
+          </ipgapi:IPGApiOrderRequest>
+        </SOAP-ENV:Body>
+      </SOAP-ENV:Envelope>
+    `;
 
-		xml.registerXPathNamespace('ipgapi', 'http://ipg-online.com/ipgapi/schemas/ipgapi');
-		xml.registerXPathNamespace('soap', 'http://schemas.xmlsoap.org/soap/envelope/');
+		try {
+			const response = await this.call(xml);
 
-		fault = xml.xpath('//soap:Fault');
+			const parser = new require('xml2js').Parser({ explicitArray: false });
+			const parsedResponse = await parser.parseStringPromise(response);
 
-		response['fault'] = '';
-		if ((fault[0]) && (fault[0].detail)) {
-			response['fault'] = fault[0].detail;
+			this.log('Request:', xml);
+			this.log('Response:', parsedResponse);
+
+			const fault = parsedResponse['SOAP-ENV:Envelope']['SOAP-ENV:Body']['SOAP-ENV:Fault'];
+			const error = parsedResponse['SOAP-ENV:Envelope']['SOAP-ENV:Body']['ipgapi:IPGApiOrderRequest']['ipgapi:ErrorMessage'];
+			const transactionResult = parsedResponse['SOAP-ENV:Envelope']['SOAP-ENV:Body']['ipgapi:IPGApiOrderRequest']['ipgapi:TransactionResult'];
+
+			return {
+				fault: fault ? fault.detail : '',
+				error: error || '',
+				transaction_result: transactionResult || ''
+			};
+		} catch (error) {
+			this.log('Error:', error);
+			return {
+				fault: '',
+				error: error.message,
+				transaction_result: ''
+			};
 		}
-
-		string = xml.xpath('//ipgapi:ErrorMessage');
-		response['error'] = (string[0]) ? string[0] : '';
-
-		string = xml.xpath('//ipgapi:TransactionResult');
-		response['transaction_result'] = (string[0]) ? string[0] : '';
-
-		return response;
 	}
+
 
 	async updateCaptureStatus(firstdata_remote_order_id, status) {
 		await this.db.query("UPDATE `" + DB_PREFIX + "firstdata_remote_order` SET `capture_status` = '" + status + "' WHERE `firstdata_remote_order_id` = '" + firstdata_remote_order_id + "'");
 	}
 
-	async refund(order_ref, total, currency_code) {
-		xml = '<?xml version="1.0" encoding="UTF-8"?>';
-		xml += '<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">';
-		xml += '<SOAP-ENV:Header />';
-		xml += '<SOAP-ENV:Body>';
-		xml += '<ipgapi:IPGApiOrderRequest xmlns:v1="http://ipg-online.com/ipgapi/schemas/v1" xmlns:ipgapi="http://ipg-online.com/ipgapi/schemas/ipgapi">';
-		xml += '<v1:Transaction>';
-		xml += '<v1:CreditCardTxType>';
-		xml += '<v1:Type>return</v1:Type>';
-		xml += '</v1:CreditCardTxType>';
-		xml += '<v1:Payment>';
-		xml += '<v1:ChargeTotal>' + total + '</v1:ChargeTotal>';
-		xml += '<v1:Currency>' + this.mapCurrency(currency_code) + '</v1:Currency>';
-		xml += '</v1:Payment>';
-		xml += '<v1:TransactionDetails>';
-		xml += '<v1:OrderId>' + order_ref + '</v1:OrderId>';
-		xml += '</v1:TransactionDetails>';
-		xml += '</v1:Transaction>';
-		xml += '</ipgapi:IPGApiOrderRequest>';
-		xml += '</SOAP-ENV:Body>';
-		xml += '</SOAP-ENV:Envelope>';
 
-		xml = simplexml_load_string(this.call(xml));
 
-		xml.registerXPathNamespace('ipgapi', 'http://ipg-online.com/ipgapi/schemas/ipgapi');
-		xml.registerXPathNamespace('soap', 'http://schemas.xmlsoap.org/soap/envelope/');
+	async refund(orderRef, total, currencyCode) {
+		const xml = `
+      <?xml version="1.0" encoding="UTF-8"?>
+      <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+        <SOAP-ENV:Header />
+        <SOAP-ENV:Body>
+          <ipgapi:IPGApiOrderRequest xmlns:v1="http://ipg-online.com/ipgapi/schemas/v1" xmlns:ipgapi="http://ipg-online.com/ipgapi/schemas/ipgapi">
+            <v1:Transaction>
+              <v1:CreditCardTxType>
+                <v1:Type>return</v1:Type>
+              </v1:CreditCardTxType>
+              <v1:Payment>
+                <v1:ChargeTotal>${total}</v1:ChargeTotal>
+                <v1:Currency>${this.mapCurrency(currencyCode)}</v1:Currency>
+              </v1:Payment>
+              <v1:TransactionDetails>
+                <v1:OrderId>${orderRef}</v1:OrderId>
+              </v1:TransactionDetails>
+            </v1:Transaction>
+          </ipgapi:IPGApiOrderRequest>
+        </SOAP-ENV:Body>
+      </SOAP-ENV:Envelope>
+    `;
 
-		fault = xml.xpath('//soap:Fault');
+		try {
+			const response = await this.call(xml);
 
-		response['fault'] = '';
-		if ((fault[0]) && (fault[0].detail)) {
-			response['fault'] = fault[0].detail;
+			const parser = new require('xml2js').Parser({ explicitArray: false });
+			const parsedResponse = await parser.parseStringPromise(response.data);
+
+			this.log('Request:', xml);
+			this.log('Response:', parsedResponse);
+
+			const fault = parsedResponse['SOAP-ENV:Envelope']['SOAP-ENV:Body']['SOAP-ENV:Fault'];
+			const error = parsedResponse['SOAP-ENV:Envelope']['SOAP-ENV:Body']['ipgapi:IPGApiOrderRequest']['ipgapi:ErrorMessage'];
+			const transactionResult = parsedResponse['SOAP-ENV:Envelope']['SOAP-ENV:Body']['ipgapi:IPGApiOrderRequest']['ipgapi:TransactionResult'];
+
+			return {
+				fault: fault ? fault.detail : '',
+				error: error || '',
+				transaction_result: transactionResult || ''
+			};
+		} catch (error) {
+			this.log('Error:', error);
+			return {
+				fault: '',
+				error: error.message,
+				transaction_result: ''
+			};
 		}
-
-		string = xml.xpath('//ipgapi:ErrorMessage');
-		response['error'] = (string[0]) ? string[0] : '';
-
-		string = xml.xpath('//ipgapi:TransactionResult');
-		response['transaction_result'] = (string[0]) ? string[0] : '';
-
-		return response;
 	}
+
 
 	async updateRefundStatus(firstdata_remote_order_id, status) {
 		await this.db.query("UPDATE `" + DB_PREFIX + "firstdata_remote_order` SET `refund_status` = '" + status + "' WHERE `firstdata_remote_order_id` = '" + firstdata_remote_order_id + "'");
 	}
 
 	async getOrder(order_id) {
-		qry = await this.db.query("SELECT * FROM `" + DB_PREFIX + "firstdata_remote_order` WHERE `order_id` = '" + order_id + "' LIMIT 1");
+		const qry = await this.db.query("SELECT * FROM `" + DB_PREFIX + "firstdata_remote_order` WHERE `order_id` = '" + order_id + "' LIMIT 1");
 
 		if (qry.num_rows) {
-			order = qry.row;
-			order['transactions'] = this.getTransactions(order['firstdata_remote_order_id']);
+			const order = qry.row;
+			order['transactions'] = await this.getTransactions(order['firstdata_remote_order_id']);
 
 			return order;
 		} else {
@@ -228,8 +268,8 @@ module.exports = class ModelExtensionPaymentFirstdataRemote extends Model {
 		}
 	}
 
-	private function getTransactions(firstdata_remote_order_id) {
-		qry = await this.db.query("SELECT * FROM `" + DB_PREFIX + "firstdata_remote_order_transaction` WHERE `firstdata_remote_order_id` = '" + firstdata_remote_order_id + "'");
+	async getTransactions(firstdata_remote_order_id) {
+		const qry = await this.db.query("SELECT * FROM `" + DB_PREFIX + "firstdata_remote_order_transaction` WHERE `firstdata_remote_order_id` = '" + firstdata_remote_order_id + "'");
 
 		if (qry.num_rows) {
 			return qry.rows;
@@ -244,7 +284,7 @@ module.exports = class ModelExtensionPaymentFirstdataRemote extends Model {
 
 	async logger(message) {
 		if (this.config.get('firstdata_remote_debug') == 1) {
-			log = new Log('firstdata_remote.log');
+			const log = new Log('firstdata_remote.log');
 			log.write(message);
 		}
 	}
@@ -262,13 +302,13 @@ module.exports = class ModelExtensionPaymentFirstdataRemote extends Model {
 	}
 
 	async mapCurrency(code) {
-		currency = array(
-			'GBP' : 826,
-			'USD' : 840,
-			'EUR' : 978,
-		});
+		const currency = {
+			'GBP': 826,
+			'USD': 840,
+			'EUR': 978,
+		};
 
-		if (array_key_exists(code, currency)) {
+		if (currency.includes(code)) {
 			return currency[code];
 		} else {
 			return false;

@@ -15,6 +15,7 @@ module.exports = class ControllerExtensionDashboardChart extends Controller {
 			await this.model_setting_setting.editSetting('dashboard_chart', this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=dashboard', true));
 		}
@@ -116,7 +117,7 @@ module.exports = class ControllerExtensionDashboardChart extends Controller {
 			range = 'day';
 		}
 		let results = {};
-		console.log('--------range========',range)
+		// console.log('--------range========',range)
 		switch (range) {
 			default:
 			case 'day':

@@ -116,7 +116,7 @@ module.exports = class Framework {
         const route = new Router(registry);
 
         // Pre Actions
-        if (config.has('action_pre_action')) {
+        if (config.has('action_pre_action') && Array.isArray(config.get('action_pre_action'))) {
             for (let value of config.get('action_pre_action')) {
                 route.addPreAction(new Action(value));
             }

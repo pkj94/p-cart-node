@@ -1,5 +1,9 @@
+const rtrim = require('locutus/php/strings/rtrim');
+const trim = require('locutus/php/strings/trim');
+
 module.exports = class ControllerDesignTheme extends Controller {
 	async index() {
+		const data = {};
 		await this.load.language('design/theme');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -7,27 +11,27 @@ module.exports = class ControllerDesignTheme extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('design/theme', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('design/theme', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['user_token'] = this.session.data['user_token'];
 
-		data['stores'] = {};
+		data['stores'] = [];
 
-		this.load.model('setting/store',this);
+		this.load.model('setting/store', this);
 
-		results = await this.model_setting_store.getStores();
+		const results = await this.model_setting_store.getStores();
 
 		for (let result of results) {
 			data['stores'].push({
-				'store_id' : result['store_id'],
-				'name'     : result['name']
+				'store_id': result['store_id'],
+				'name': result['name']
 			});
 		}
 
@@ -39,44 +43,41 @@ module.exports = class ControllerDesignTheme extends Controller {
 	}
 
 	async history() {
+		const data = {};
 		await this.load.language('design/theme');
-
+		let page = 1;
 		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
 		}
 
-		data['histories'] = {};
+		data['histories'] = [];
 
-		this.load.model('design/theme');
-		this.load.model('setting/store',this);
+		this.load.model('design/theme', this);
+		this.load.model('setting/store', this);
 
-		history_total = await this.model_design_theme.getTotalThemes();
+		const history_total = await this.model_design_theme.getTotalThemes();
 
-		results = await this.model_design_theme.getThemes((page - 1) * Number(this.config.get('config_limit_admin')), Number(this.config.get('config_limit_admin')));
+		const results = await this.model_design_theme.getThemes((page - 1) * Number(this.config.get('config_limit_admin')), Number(this.config.get('config_limit_admin')));
 
 		for (let result of results) {
-			store_info = await this.model_setting_store.getStore(result['store_id']);
-
-			if (store_info) {
+			const store_info = await this.model_setting_store.getStore(result['store_id']);
+			let store = '';
+			if (store_info.store_id) {
 				store = store_info['name'];
-			} else {
-				store = '';
 			}
 
 			data['histories'].push({
-				'store_id'   : result['store_id'],
-				'store'      : (result['store_id'] ? store : this.language.get('text_default')),
-				'route'      : result['route'],
-				'theme'      : result['theme'],
-				'date_added' : date(this.language.get('date_format_short'), strtotime(result['date_added'])),
-				'edit'       : await this.url.link('design/theme/template', 'user_token=' + this.session.data['user_token'], true),
-				'delete'     : await this.url.link('design/theme/delete', 'user_token=' + this.session.data['user_token'] + '&theme_id=' + result['theme_id'], true)
+				'store_id': result['store_id'],
+				'store': (result['store_id'] ? store : this.language.get('text_default')),
+				'route': result['route'],
+				'theme': result['theme'],
+				'date_added': date(this.language.get('date_format_short'), new Date(result['date_added'])),
+				'edit': await this.url.link('design/theme/template', 'user_token=' + this.session.data['user_token'], true),
+				'delete': await this.url.link('design/theme/delete', 'user_token=' + this.session.data['user_token'] + '&theme_id=' + result['theme_id'], true)
 			});
 		}
 
-		pagination = new Pagination();
+		const pagination = new Pagination();
 		pagination.total = history_total;
 		pagination.page = page;
 		pagination.limit = Number(this.config.get('config_limit_admin'));
@@ -92,63 +93,59 @@ module.exports = class ControllerDesignTheme extends Controller {
 	async path() {
 		await this.load.language('design/theme');
 
-		json = {};
-
+		const json = {};
+		let store_id = 0;
 		if ((this.request.get['store_id'])) {
 			store_id = this.request.get['store_id'];
-		} else {
-			store_id = 0;
 		}
 
-		this.load.model('setting/setting',this);
+		this.load.model('setting/setting', this);
 
-		theme = await this.model_setting_setting.getSettingValue('config_theme', store_id);
-
+		let theme = await this.model_setting_setting.getSettingValue('config_theme', store_id);
 		// This is only here for compatibility with old themes.
 		if (theme == 'default') {
 			theme = await this.model_setting_setting.getSettingValue('theme_default_directory', store_id);
 		}
-
+		let path = '';
 		if ((this.request.get['path'])) {
 			path = this.request.get['path'];
-		} else {
-			path = '';
 		}
 
-		if (substr(str_replace('\\', '/', realpath(DIR_CATALOG + 'view/theme/default/template/' + path)), 0, strlen(DIR_CATALOG + 'view')) == DIR_CATALOG + 'view') {
-			path_data = {};
+		if (fs.realpathSync(DIR_CATALOG + 'view/theme/default/template/' + path).replaceAll('\\', '/').substr(0, (DIR_CATALOG + 'view').length) == DIR_CATALOG + 'view') {
+			let path_data = [];
 
 			// We grab the files from the default theme directory first of the custom themes drops back to the default theme if selected theme files can not be found.
-			files = glob(rtrim(DIR_CATALOG + 'view/theme/{default,' + theme + '}/template/' + path, '/') + '/*', GLOB_BRACE);
-
-			if (files) {
-				for(let file of files) {
-					if (!in_array(basename(file), path_data))  {
+			let files = require('glob').sync(rtrim(DIR_CATALOG + 'view/theme/{default,' + theme + '}/template/' + path, '/') + '/*');
+			json['directory'] = [];
+			json['file'] = [];
+			if (files.length) {
+				for (let file of files.sort()) {
+					if (!path_data.includes(expressPath.basename(file))) {
 						if (is_dir(file)) {
 							json['directory'].push({
-								'name' : basename(file),
-								'path' : trim(path + '/' + basename(file), '/')
+								'name': expressPath.basename(file),
+								'path': trim(path + '/' + expressPath.basename(file), '/')
 							});
 						}
 
 						if (is_file(file)) {
 							json['file'].push({
-								'name' : basename(file),
-								'path' : trim(path + '/' + basename(file), '/')
+								'name': expressPath.basename(file),
+								'path': trim(path + '/' + expressPath.basename(file), '/')
 							});
 						}
 
-						path_data.push(basename(file);
+						path_data.push(expressPath.basename(file));
 					}
 				}
 			}
 		}
 
 		if ((this.request.get['path'])) {
-			json['back'] = array(
-				'name' : this.language.get('button_back'),
-				'path' : encodeURIComponent(substr(path, 0, strrpos(path, '/'))),
-			});
+			json['back'] = {
+				'name': this.language.get('button_back'),
+				'path': encodeURIComponent(substr(path, 0, strrpos(path, '/'))),
+			};
 		}
 
 		this.response.addHeader('Content-Type: application/json');
@@ -158,39 +155,35 @@ module.exports = class ControllerDesignTheme extends Controller {
 	async template() {
 		await this.load.language('design/theme');
 
-		json = {};
-
+		const json = {};
+		let store_id = 0;
 		if ((this.request.get['store_id'])) {
 			store_id = this.request.get['store_id'];
-		} else {
-			store_id = 0;
 		}
 
-		this.load.model('setting/setting',this);
+		this.load.model('setting/setting', this);
 
-		theme = await this.model_setting_setting.getSettingValue('config_theme', store_id);
+		let theme = await this.model_setting_setting.getSettingValue('config_theme', store_id);
 
 		// This is only here for compatibility with old themes.
 		if (theme == 'default') {
 			theme = await this.model_setting_setting.getSettingValue('theme_default_directory', store_id);
 		}
-
+		let path = '';
 		if ((this.request.get['path'])) {
 			path = this.request.get['path'];
-		} else {
-			path = '';
 		}
 
-		this.load.model('design/theme');
+		this.load.model('design/theme', this);
 
-		theme_info = await this.model_design_theme.getTheme(store_id, theme, path);
+		const theme_info = await this.model_design_theme.getTheme(store_id, theme, path);
 
-		if (theme_info) {
+		if (theme_info.theme_id) {
 			json['code'] = html_entity_decode(theme_info['code']);
-		} else if (is_file(DIR_CATALOG + 'view/theme/' + theme + '/template/' + path) && (substr(str_replace('\\', '/', realpath(DIR_CATALOG + 'view/theme/' + theme + '/template/' + path)), 0, strlen(DIR_CATALOG + 'view')) == DIR_CATALOG + 'view')) {
-			json['code'] = file_get_contents(DIR_CATALOG + 'view/theme/' + theme + '/template/' + path);
-		} else if (is_file(DIR_CATALOG + 'view/theme/default/template/' + path) && (substr(str_replace('\\', '/', realpath(DIR_CATALOG + 'view/theme/default/template/' + path)), 0, strlen(DIR_CATALOG + 'view')) == DIR_CATALOG + 'view')) {
-			json['code'] = file_get_contents(DIR_CATALOG + 'view/theme/default/template/' + path);
+		} else if (is_file(DIR_CATALOG + 'view/theme/' + theme + '/template/' + path) && (fs.realpathSync(DIR_CATALOG + 'view/theme/' + theme + '/template/' + path).replaceAll('\\', '/').substr(0, (DIR_CATALOG + 'view').length) == DIR_CATALOG + 'view')) {
+			json['code'] = fs.readFileSync(DIR_CATALOG + 'view/theme/' + theme + '/template/' + path, 'utf-8');
+		} else if (is_file(DIR_CATALOG + 'view/theme/default/template/' + path) && (fs.realpathSync(DIR_CATALOG + 'view/theme/default/template/' + path).replace('\\', '/').substr(0, (DIR_CATALOG + 'view').length) == DIR_CATALOG + 'view')) {
+			json['code'] = fs.readFileSync(DIR_CATALOG + 'view/theme/default/template/' + path);
 		}
 
 		this.response.addHeader('Content-Type: application/json');
@@ -200,44 +193,39 @@ module.exports = class ControllerDesignTheme extends Controller {
 	async save() {
 		await this.load.language('design/theme');
 
-		json = {};
-
+		const json = {};
+		let store_id = 0;
 		if ((this.request.get['store_id'])) {
 			store_id = this.request.get['store_id'];
-		} else {
-			store_id = 0;
 		}
 
-		this.load.model('setting/setting',this);
+		this.load.model('setting/setting', this);
 
-		theme = await this.model_setting_setting.getSettingValue('config_theme', store_id);
+		let theme = await this.model_setting_setting.getSettingValue('config_theme', store_id);
 
 		// This is only here for compatibility with old themes.
 		if (theme == 'default') {
 			theme = await this.model_setting_setting.getSettingValue('theme_default_directory', store_id);
 		}
-
+		let path = '';
 		if ((this.request.get['path'])) {
 			path = this.request.get['path'];
-		} else {
-			path = '';
 		}
 
 		// Check user has permission
 		if (!await this.user.hasPermission('modify', 'design/theme')) {
 			json['error'] = this.language.get('error_permission');
 		}
-
-		if (substr(path, -5) != '.twig') {
+		if (path.substr(-5) != '.twig') {
 			json['error'] = this.language.get('error_twig');
 		}
 
-		if (!json) {
-			this.load.model('design/theme');
+		if (!json.error) {
+			this.load.model('design/theme', this);
 
-			pos = strpos(path, '.');
+			let pos = path.indexOf('.');
 
-			await this.model_design_theme.editTheme(store_id, theme, (pos !== false) ? substr(path, 0, pos) : path, this.request.post['code']);
+			await this.model_design_theme.editTheme(store_id, theme, (pos !== false) ? path.substr(0, pos) : path, this.request.post['code']);
 
 			json['success'] = this.language.get('text_success');
 		}
@@ -249,31 +237,27 @@ module.exports = class ControllerDesignTheme extends Controller {
 	async reset() {
 		await this.load.language('design/theme');
 
-		json = {};
-
+		const json = {};
+		let store_id = 0;
 		if ((this.request.get['store_id'])) {
 			store_id = this.request.get['store_id'];
-		} else {
-			store_id = 0;
 		}
 
-		this.load.model('setting/setting',this);
+		this.load.model('setting/setting', this);
 
-		theme = await this.model_setting_setting.getSettingValue('config_theme', store_id);
+		let theme = await this.model_setting_setting.getSettingValue('config_theme', store_id);
 
 		// This is only here for compatibility with old themes.
 		if (theme == 'default') {
 			theme = await this.model_setting_setting.getSettingValue('theme_default_directory', store_id);
 		}
-
+		let path = '';
 		if ((this.request.get['path'])) {
 			path = this.request.get['path'];
-		} else {
-			path = '';
 		}
 
-		if (is_file(DIR_CATALOG + 'view/theme/' + theme + '/template/' + path) && (substr(str_replace('\\', '/', realpath(DIR_CATALOG + 'view/theme/' + theme + '/template/' + path)), 0, strlen(DIR_CATALOG + 'view')) == DIR_CATALOG + 'view')) {
-			json['code'] = file_get_contents(DIR_CATALOG + 'view/theme/' + theme + '/template/' + path);
+		if (is_file(DIR_CATALOG + 'view/theme/' + theme + '/template/' + path) && (fs.realpathSync(DIR_CATALOG + 'view/theme/' + theme + '/template/' + path).replaceAll('\\', '/').substr(0, (DIR_CATALOG + 'view').length) == DIR_CATALOG + 'view')) {
+			json['code'] = fs.readFileSync(DIR_CATALOG + 'view/theme/' + theme + '/template/' + path, 'utf-8');
 		}
 
 		this.response.addHeader('Content-Type: application/json');
@@ -283,12 +267,10 @@ module.exports = class ControllerDesignTheme extends Controller {
 	async delete() {
 		await this.load.language('design/theme');
 
-		json = {};
-
+		const json = {};
+		let theme_id = 0;
 		if ((this.request.get['theme_id'])) {
 			theme_id = this.request.get['theme_id'];
-		} else {
-			theme_id = 0;
 		}
 
 		// Check user has permission
@@ -296,8 +278,8 @@ module.exports = class ControllerDesignTheme extends Controller {
 			json['error'] = this.language.get('error_permission');
 		}
 
-		if (!json) {
-			this.load.model('design/theme');
+		if (!json.error) {
+			this.load.model('design/theme', this);
 
 			await this.model_design_theme.deleteTheme(theme_id);
 

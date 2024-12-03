@@ -2,9 +2,10 @@ module.exports = class ControllerExtensionPaymentPilibaba extends Controller {
 	error = {};
 
 	async index() {
-		this.load.model('setting/setting',this);
+		const data = {};
+		this.load.model('setting/setting', this);
 
-		this.load.model('extension/payment/pilibaba');
+		this.load.model('extension/payment/pilibaba', this);
 
 		await this.load.language('extension/payment/pilibaba');
 
@@ -20,6 +21,7 @@ module.exports = class ControllerExtensionPaymentPilibaba extends Controller {
 			}
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true));
 		}
@@ -27,18 +29,18 @@ module.exports = class ControllerExtensionPaymentPilibaba extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_extension'),
-			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true)
+			'text': this.language.get('text_extension'),
+			'href': await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('extension/payment/pilibaba', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('extension/payment/pilibaba', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['action'] = await this.url.link('extension/payment/pilibaba', 'user_token=' + this.session.data['user_token'], true);
@@ -112,7 +114,7 @@ module.exports = class ControllerExtensionPaymentPilibaba extends Controller {
 		if ((this.session.data['success'])) {
 			data['success'] = this.session.data['success'];
 
-			delete this.session.data['success']);
+			delete this.session.data['success'];
 		} else {
 			data['success'] = '';
 		}
@@ -146,12 +148,12 @@ module.exports = class ControllerExtensionPaymentPilibaba extends Controller {
 
 			data['warehouses'] = await this.model_extension_payment_pilibaba.getWarehouses();
 
-			this.load.model('localisation/country');
+			this.load.model('localisation/country', this);
 
 			data['countries'] = await this.model_localisation_country.getCountries();
 		}
 
-		this.load.model('localisation/order_status');
+		this.load.model('localisation/order_status', this);
 
 		data['order_statuses'] = await this.model_localisation_order_status.getOrderStatuses();
 
@@ -178,7 +180,7 @@ module.exports = class ControllerExtensionPaymentPilibaba extends Controller {
 
 	async install() {
 		if (await this.user.hasPermission('modify', 'marketplace/extension')) {
-			this.load.model('extension/payment/pilibaba');
+			this.load.model('extension/payment/pilibaba', this);
 
 			await this.model_extension_payment_pilibaba.install();
 		}
@@ -186,7 +188,7 @@ module.exports = class ControllerExtensionPaymentPilibaba extends Controller {
 
 	async uninstall() {
 		if (await this.user.hasPermission('modify', 'marketplace/extension')) {
-			this.load.model('extension/payment/pilibaba');
+			this.load.model('extension/payment/pilibaba', this);
 
 			await this.model_extension_payment_pilibaba.uninstall();
 		}
@@ -195,12 +197,12 @@ module.exports = class ControllerExtensionPaymentPilibaba extends Controller {
 	async register() {
 		await this.load.language('extension/payment/pilibaba');
 
-		json = {};
+		const json = {};
 
 		if ((this.request.post['email_address']) && (this.request.post['password']) && (this.request.post['currency']) && (this.request.post['warehouse']) && (this.request.post['country']) && (this.request.post['environment'])) {
 			if (oc_strlen(this.request.post['email_address']) < 1) {
 				json['error'] = this.language.get('error_email_address');
-			} else if (!filter_var(this.request.post['email_address'], FILTER_VALIDATE_EMAIL)) {
+			} else if (!isEmailValid(this.request.post['email_address'])) {
 				json['error'] = this.language.get('error_email_invalid');
 			} else if (oc_strlen(this.request.post['password']) < 8) {
 				json['error'] = this.language.get('error_password');
@@ -211,15 +213,15 @@ module.exports = class ControllerExtensionPaymentPilibaba extends Controller {
 			} else if (this.request.post['warehouse'] == 'other' && oc_strlen(this.request.post['country']) < 1) {
 				json['error'] = this.language.get('error_country');
 			} else {
-				this.load.model('extension/payment/pilibaba');
+				this.load.model('extension/payment/pilibaba', this);
 
-				response = await this.model_extension_payment_pilibaba.register(this.request.post['email_address'], this.request.post['password'], this.request.post['currency'], this.request.post['warehouse'], this.request.post['country'], this.request.post['environment']);
+				const response = await this.model_extension_payment_pilibaba.register(this.request.post['email_address'], this.request.post['password'], this.request.post['currency'], this.request.post['warehouse'], this.request.post['country'], this.request.post['environment']);
 
 				if ((response['code']) && (response['message'])) {
 					if (response['code'] == '0') {
-						this.load.model('setting/setting',this);
+						this.load.model('setting/setting', this);
 
-						await this.model_setting_setting.editSetting('payment_pilibaba', array('pilibaba_merchant_number' : response['data']['merchantNo'], 'pilibaba_secret_key' : response['data']['privateKey'], 'pilibaba_email_address' : this.request.post['email_address'], 'payment_pilibaba_environment' : this.request.post['environment']), 0);
+						await this.model_setting_setting.editSetting('payment_pilibaba', { 'pilibaba_merchant_number': response['data']['merchantNo'], 'pilibaba_secret_key': response['data']['privateKey'], 'pilibaba_email_address': this.request.post['email_address'], 'payment_pilibaba_environment': this.request.post['environment'] }, 0);
 
 						this.session.data['success'] = this.language.get('text_register_success');
 
@@ -234,22 +236,22 @@ module.exports = class ControllerExtensionPaymentPilibaba extends Controller {
 		} else {
 			json['error'] = this.language.get('error_data_missing');
 		}
-
+		await this.session.save(this.session.data)
 		this.response.addHeader('Content-Type: application/json');
 		this.response.setOutput(json);
 	}
 
 	async order() {
 		if (this.config.get('payment_pilibaba_status')) {
-			this.load.model('extension/payment/pilibaba');
+			this.load.model('extension/payment/pilibaba', this);
 
-			order_id = this.request.get['order_id'];
+			let order_id = this.request.get['order_id'];
 
-			pilibaba_order = await this.model_extension_payment_pilibaba.getOrder(this.request.get['order_id']);
+			const pilibaba_order = await this.model_extension_payment_pilibaba.getOrder(this.request.get['order_id']);
 
-			if (pilibaba_order) {
+			if (pilibaba_order.order_id) {
 				await this.load.language('extension/payment/pilibaba');
-
+				const order_info = {};
 				order_info['order_id'] = pilibaba_order['order_id'];
 
 				order_info['amount'] = '&yen;' + pilibaba_order['amount'];
@@ -258,7 +260,7 @@ module.exports = class ControllerExtensionPaymentPilibaba extends Controller {
 
 				order_info['status'] = 'Success';
 
-				order_info['date_added'] = date(this.language.get('datetime_format'), strtotime(pilibaba_order['date_added']));
+				order_info['date_added'] = date(this.language.get('datetime_format'), new Date(pilibaba_order['date_added']));
 
 				order_info['tracking'] = pilibaba_order['tracking'];
 
@@ -278,12 +280,12 @@ module.exports = class ControllerExtensionPaymentPilibaba extends Controller {
 	async tracking() {
 		await this.load.language('extension/payment/pilibaba');
 
-		json = {};
+		const json = {};
 
 		if (this.config.get('payment_pilibaba_status')) {
 			if ((this.request.post['order_id']) && (this.request.post['tracking'])) {
 				if (oc_strlen(this.request.post['tracking']) > 0 && oc_strlen(this.request.post['tracking']) <= 50) {
-					this.load.model('extension/payment/pilibaba');
+					this.load.model('extension/payment/pilibaba', this);
 
 					await this.model_extension_payment_pilibaba.updateTrackingNumber(this.request.post['order_id'], this.request.post['tracking'], this.config.get('payment_pilibaba_merchant_number'));
 
@@ -305,13 +307,14 @@ module.exports = class ControllerExtensionPaymentPilibaba extends Controller {
 	async barcode() {
 		if (this.config.get('payment_pilibaba_status')) {
 			if ((this.request.get['order_id'])) {
+				let url = 'http://pre.pilibaba.com/pilipay/barCode';
 				if (this.config.get('payment_pilibaba_environment') == 'live') {
 					url = 'https://www.pilibaba.com/pilipay/barCode';
 				} else {
 					url = 'http://pre.pilibaba.com/pilipay/barCode';
 				}
 
-				echo '<img src="' + url + '?orderNo=' + this.request.get['order_id'] + '&merchantNo=' + this.config.get('payment_pilibaba_merchant_number') + '">';
+				return '<img src="' + url + '?orderNo=' + this.request.get['order_id'] + '&merchantNo=' + this.config.get('payment_pilibaba_merchant_number') + '">';
 			}
 		}
 	}
@@ -337,6 +340,6 @@ module.exports = class ControllerExtensionPaymentPilibaba extends Controller {
 			this.error['warning'] = this.language.get('error_warning');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 }

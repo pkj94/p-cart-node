@@ -6,7 +6,7 @@ module.exports = {
     text_extension: 'Extensions',
     text_success: 'Success: You have modified BluePay Hosted Form account details!',
     text_edit: 'Edit BluePay Hosted Form',
-    text_bluepay_hosted: 'border: 1px solid #EEEEEE," /></a>',
+    text_bluepay_hosted: '<a href="http://www.bluepay.com/preferred-partner/opencart" target="_blank"><img src="view/image/payment/bluepay.jpg" alt="BluePay Hosted Form" title="BluePay Hosted Form" style="border: 1px solid #EEEEEE," /></a>',
     text_test: 'Test',
     text_live: 'Live',
     text_sale: 'Sale',

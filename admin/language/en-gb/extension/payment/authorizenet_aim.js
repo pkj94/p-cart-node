@@ -10,7 +10,7 @@ module.exports = {
     text_live: 'Live',
     text_authorization: 'Authorization',
     text_capture: 'Capture',
-    text_authorizenet_aim: 'border: 1px solid #EEEEEE," /></a>',
+    text_authorizenet_aim: '<a href="https://account.authorize.net/signUpNow?resellerID=26357" target="_BLANK"><img src="view/image/payment/authorizenet.png" alt="Authorize.Net" title="Authorize.Net" style="border: 1px solid #EEEEEE," /></a>',
 
     // Entry
     entry_login: 'Login ID',

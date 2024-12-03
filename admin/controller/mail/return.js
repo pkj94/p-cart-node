@@ -25,7 +25,7 @@ module.exports = class ControllerMailReturn extends Controller {
 		}		
 		
 		if (notify) {
-			this.load.model('sale/return');
+			this.load.model('sale/return',this);
 			
 			return_info = await this.model_sale_return.getReturn(return_id);
 			

@@ -2,6 +2,7 @@ module.exports = class ControllerExtensionPaymentPayMate extends Controller {
 	error = {};
 
 	async index() {
+const data = {};
 		await this.load.language('extension/payment/paymate');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -12,6 +13,7 @@ module.exports = class ControllerExtensionPaymentPayMate extends Controller {
 			await this.model_setting_setting.editSetting('payment_paymate', this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true));
 		}
@@ -66,7 +68,7 @@ module.exports = class ControllerExtensionPaymentPayMate extends Controller {
 		} else if (this.config.get('payment_paymate_password')) {
 			data['payment_paymate_password'] = this.config.get('payment_paymate_password');
 		} else {
-			data['payment_paymate_password'] = token(32);
+			data['payment_paymate_password'] = oc_token(32);
 		}
 
 		if ((this.request.post['payment_paymate_test'])) {
@@ -87,7 +89,7 @@ module.exports = class ControllerExtensionPaymentPayMate extends Controller {
 			data['payment_paymate_order_status_id'] = this.config.get('payment_paymate_order_status_id');
 		}
 
-		this.load.model('localisation/order_status');
+		this.load.model('localisation/order_status',this);
 
 		data['order_statuses'] = await this.model_localisation_order_status.getOrderStatuses();
 
@@ -97,7 +99,7 @@ module.exports = class ControllerExtensionPaymentPayMate extends Controller {
 			data['payment_paymate_geo_zone_id'] = this.config.get('payment_paymate_geo_zone_id');
 		}
 
-		this.load.model('localisation/geo_zone');
+		this.load.model('localisation/geo_zone',this);
 
 		data['geo_zones'] = await this.model_localisation_geo_zone.getGeoZones();
 

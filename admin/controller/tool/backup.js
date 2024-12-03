@@ -1,5 +1,6 @@
 module.exports = class ControllerToolBackup extends Controller {
 	async index() {
+const data = {};
 		await this.load.language('tool/backup');
 
 		this.document.setTitle(this.language.get('heading_title'));

@@ -33,7 +33,7 @@ module.exports = class ModelLocalisationLengthClass extends Model {
 	}
 
 	async getLengthClasses(data = {}) {
-		if (data) {
+		if (Object.keys(data).length) {
 			let sql = "SELECT * FROM " + DB_PREFIX + "length_class lc LEFT JOIN " + DB_PREFIX + "length_class_description lcd ON (lc.length_class_id = lcd.length_class_id) WHERE lcd.language_id = '" + this.config.get('config_language_id') + "'";
 
 			let sort_data = [

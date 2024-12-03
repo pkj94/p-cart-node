@@ -3,7 +3,7 @@ module.exports = {
     heading_title: 'First Data EMEA Web Service API',
 
     // Text
-    text_firstdata_remote: 'border: 1px solid #EEEEEE," />',
+    text_firstdata_remote: '<img src="view/image/payment/firstdata.png" alt="First Data" title="First Data" style="border: 1px solid #EEEEEE," />',
     text_extension: 'Extensions',
     text_success: 'Success: You have modified First Data account details!',
     text_edit: 'Edit First Data EMEA Web Service API',

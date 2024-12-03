@@ -2,11 +2,12 @@ module.exports = class ControllerLocalisationZone extends Controller {
 	error = {};
 
 	async index() {
+const data = {};
 		await this.load.language('localisation/zone');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('localisation/zone');
+		this.load.model('localisation/zone',this);
 
 		await this.getList();
 	}
@@ -16,12 +17,13 @@ module.exports = class ControllerLocalisationZone extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('localisation/zone');
+		this.load.model('localisation/zone',this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_localisation_zone.addZone(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
 			url = '';
 
@@ -48,12 +50,13 @@ module.exports = class ControllerLocalisationZone extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('localisation/zone');
+		this.load.model('localisation/zone',this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_localisation_zone.editZone(this.request.get['zone_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
 			url = '';
 
@@ -80,15 +83,16 @@ module.exports = class ControllerLocalisationZone extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('localisation/zone');
+		this.load.model('localisation/zone',this);
 
 		if ((this.request.post['selected']) && await this.validateDelete()) {
 this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
-			for (this.request.post['selected'] of zone_id) {
+			for (let zone_id of this.request.post['selected'] ) {
 				await this.model_localisation_zone.deleteZone(zone_id);
 			}
 
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
 			url = '';
 
@@ -111,6 +115,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 	}
 
 	async getList() {
+		const data = {};
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
 		} else {
@@ -122,11 +127,9 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		} else {
 			order = 'ASC';
 		}
-
-		if ((this.request.get['page'])) {
+page = 1;
+if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
 		}
 
 		url = '';
@@ -160,7 +163,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 
 		data['zones'] = {};
 
-		filter_data = array(
+		const filter_data = {
 			'sort'  : sort,
 			'order' : order,
 			'start' : (page - 1) * Number(this.config.get('config_limit_admin')),
@@ -190,7 +193,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		if ((this.session.data['success'])) {
 			data['success'] = this.session.data['success'];
 
-			delete this.session.data['success']);
+			delete this.session.data['success'];
 		} else {
 			data['success'] = '';
 		}
@@ -227,7 +230,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			url += '&order=' + this.request.get['order'];
 		}
 
-		pagination = new Pagination();
+		const pagination = new Pagination();
 		pagination.total = zone_total;
 		pagination.page = page;
 		pagination.limit = Number(this.config.get('config_limit_admin'));
@@ -332,7 +335,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			data['country_id'] = '';
 		}
 
-		this.load.model('localisation/country');
+		this.load.model('localisation/country',this);
 
 		data['countries'] = await this.model_localisation_country.getCountries();
 
@@ -362,10 +365,10 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 
 		this.load.model('setting/store',this);
 		this.load.model('customer/customer',this);
-		this.load.model('localisation/geo_zone');
+		this.load.model('localisation/geo_zone',this);
 		this.request.post['selected']  = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']];
 
-		for (this.request.post['selected'] of zone_id) {
+		for (let zone_id of this.request.post['selected'] ) {
 			if (this.config.get('config_zone_id') == zone_id) {
 				this.error['warning'] = this.language.get('error_default');
 			}

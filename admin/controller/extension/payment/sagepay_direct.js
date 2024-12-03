@@ -1,17 +1,23 @@
+const mt_rand = require("locutus/php/math/mt_rand");
+const uniqid = require("locutus/php/misc/uniqid");
+const sha1 = require("locutus/php/strings/sha1");
+
 module.exports = class ControllerExtensionPaymentSagepayDirect extends Controller {
 	error = {};
 
 	async index() {
+		const data = {};
 		await this.load.language('extension/payment/sagepay_direct');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('setting/setting',this);
+		this.load.model('setting/setting', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validate()) {
 			await this.model_setting_setting.editSetting('payment_sagepay_direct', this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true));
 		}
@@ -31,18 +37,18 @@ module.exports = class ControllerExtensionPaymentSagepayDirect extends Controlle
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_extension'),
-			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true)
+			'text': this.language.get('text_extension'),
+			'href': await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('extension/payment/sagepay_direct', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('extension/payment/sagepay_direct', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['action'] = await this.url.link('extension/payment/sagepay_direct', 'user_token=' + this.session.data['user_token'], true);
@@ -91,7 +97,7 @@ module.exports = class ControllerExtensionPaymentSagepayDirect extends Controlle
 			data['payment_sagepay_direct_order_status_id'] = this.config.get('payment_sagepay_direct_order_status_id');
 		}
 
-		this.load.model('localisation/order_status');
+		this.load.model('localisation/order_status', this);
 
 		data['order_statuses'] = await this.model_localisation_order_status.getOrderStatuses();
 
@@ -101,7 +107,7 @@ module.exports = class ControllerExtensionPaymentSagepayDirect extends Controlle
 			data['payment_sagepay_direct_geo_zone_id'] = this.config.get('payment_sagepay_direct_geo_zone_id');
 		}
 
-		this.load.model('localisation/geo_zone');
+		this.load.model('localisation/geo_zone', this);
 
 		data['geo_zones'] = await this.model_localisation_geo_zone.getGeoZones();
 
@@ -131,7 +137,7 @@ module.exports = class ControllerExtensionPaymentSagepayDirect extends Controlle
 			data['payment_sagepay_direct_cron_job_token'] = sha1(uniqid(mt_rand(), 1));
 		}
 
-		data['sagepay_direct_cron_job_url'] = HTTPS_CATALOG + 'index.php?route=extension/payment/sagepay_direct/cron&token=' + data['payment_sagepay_direct_cron_job_token'];
+		data['sagepay_direct_cron_job_url'] = HTTPS_CATALOG + '?route=extension/payment/sagepay_direct/cron&token=' + data['payment_sagepay_direct_cron_job_token'];
 
 		if (this.config.get('payment_sagepay_direct_last_cron_job_run')) {
 			data['payment_sagepay_direct_last_cron_job_run'] = this.config.get('payment_sagepay_direct_last_cron_job_run');
@@ -147,22 +153,23 @@ module.exports = class ControllerExtensionPaymentSagepayDirect extends Controlle
 	}
 
 	async install() {
-		this.load.model('extension/payment/sagepay_direct');
+		this.load.model('extension/payment/sagepay_direct', this);
 		await this.model_extension_payment_sagepay_direct.install();
 	}
 
 	async uninstall() {
-		this.load.model('extension/payment/sagepay_direct');
+		this.load.model('extension/payment/sagepay_direct', this);
 		await this.model_extension_payment_sagepay_direct.uninstall();
 	}
 
 	async order() {
+		const data = {};
 		if (this.config.get('payment_sagepay_direct_status')) {
-			this.load.model('extension/payment/sagepay_direct');
+			this.load.model('extension/payment/sagepay_direct', this);
 
-			sagepay_direct_order = await this.model_extension_payment_sagepay_direct.getOrder(this.request.get['order_id']);
+			const sagepay_direct_order = await this.model_extension_payment_sagepay_direct.getOrder(this.request.get['order_id']);
 
-			if ((sagepay_direct_order)) {
+			if ((sagepay_direct_order.sagepay_direct_order_id)) {
 				await this.load.language('extension/payment/sagepay_direct');
 
 				sagepay_direct_order['total_released'] = await this.model_extension_payment_sagepay_direct.getTotalReleased(sagepay_direct_order['sagepay_direct_order_id']);
@@ -175,7 +182,7 @@ module.exports = class ControllerExtensionPaymentSagepayDirect extends Controlle
 				data['auto_settle'] = sagepay_direct_order['settle_type'];
 
 				data['order_id'] = this.request.get['order_id'];
-				
+
 				data['user_token'] = this.session.data['user_token'];
 
 				return await this.load.view('extension/payment/sagepay_direct_order', data);
@@ -185,14 +192,14 @@ module.exports = class ControllerExtensionPaymentSagepayDirect extends Controlle
 
 	async void() {
 		await this.load.language('extension/payment/sagepay_direct');
-		json = {};
+		const json = {};
 
 		if ((this.request.post['order_id']) && this.request.post['order_id'] != '') {
-			this.load.model('extension/payment/sagepay_direct');
+			this.load.model('extension/payment/sagepay_direct', this);
 
-			sagepay_direct_order = await this.model_extension_payment_sagepay_direct.getOrder(this.request.post['order_id']);
+			const sagepay_direct_order = await this.model_extension_payment_sagepay_direct.getOrder(this.request.post['order_id']);
 
-			void_response = await this.model_extension_payment_sagepay_direct.void(this.request.post['order_id']);
+			const void_response = await this.model_extension_payment_sagepay_direct.void(this.request.post['order_id']);
 
 			await this.model_extension_payment_sagepay_direct.logger('Void result', void_response);
 
@@ -220,22 +227,22 @@ module.exports = class ControllerExtensionPaymentSagepayDirect extends Controlle
 
 	async release() {
 		await this.load.language('extension/payment/sagepay_direct');
-		json = {};
+		const json = {};
 
 		if ((this.request.post['order_id']) && this.request.post['order_id'] != '' && (this.request.post['amount']) && this.request.post['amount'] > 0) {
-			this.load.model('extension/payment/sagepay_direct');
+			this.load.model('extension/payment/sagepay_direct', this);
 
-			sagepay_direct_order = await this.model_extension_payment_sagepay_direct.getOrder(this.request.post['order_id']);
+			const sagepay_direct_order = await this.model_extension_payment_sagepay_direct.getOrder(this.request.post['order_id']);
 
-			release_response = await this.model_extension_payment_sagepay_direct.release(this.request.post['order_id'], this.request.post['amount']);
+			const release_response = await this.model_extension_payment_sagepay_direct.release(this.request.post['order_id'], this.request.post['amount']);
 
 			await this.model_extension_payment_sagepay_direct.logger('Release result', release_response);
 
 			if (release_response['Status'] == 'OK') {
 				await this.model_extension_payment_sagepay_direct.addTransaction(sagepay_direct_order['sagepay_direct_order_id'], 'payment', this.request.post['amount']);
 
-				total_released = await this.model_extension_payment_sagepay_direct.getTotalReleased(sagepay_direct_order['sagepay_direct_order_id']);
-
+				const total_released = await this.model_extension_payment_sagepay_direct.getTotalReleased(sagepay_direct_order['sagepay_direct_order_id']);
+				let release_status = 0;
 				if (total_released >= sagepay_direct_order['total'] || sagepay_direct_order['settle_type'] == 0) {
 					await this.model_extension_payment_sagepay_direct.updateReleaseStatus(sagepay_direct_order['sagepay_direct_order_id'], 1);
 					release_status = 1;
@@ -266,23 +273,23 @@ module.exports = class ControllerExtensionPaymentSagepayDirect extends Controlle
 
 	async rebate() {
 		await this.load.language('extension/payment/sagepay_direct');
-		json = {};
+		const json = {};
 
 		if ((this.request.post['order_id']) && (this.request.post['order_id'])) {
-			this.load.model('extension/payment/sagepay_direct');
+			this.load.model('extension/payment/sagepay_direct', this);
 
-			sagepay_direct_order = await this.model_extension_payment_sagepay_direct.getOrder(this.request.post['order_id']);
+			const sagepay_direct_order = await this.model_extension_payment_sagepay_direct.getOrder(this.request.post['order_id']);
 
-			rebate_response = await this.model_extension_payment_sagepay_direct.rebate(this.request.post['order_id'], this.request.post['amount']);
+			const rebate_response = await this.model_extension_payment_sagepay_direct.rebate(this.request.post['order_id'], this.request.post['amount']);
 
 			await this.model_extension_payment_sagepay_direct.logger('Rebate result', rebate_response);
 
 			if (rebate_response['Status'] == 'OK') {
 				await this.model_extension_payment_sagepay_direct.addTransaction(sagepay_direct_order['sagepay_direct_order_id'], 'rebate', this.request.post['amount'] * -1);
 
-				total_rebated = await this.model_extension_payment_sagepay_direct.getTotalRebated(sagepay_direct_order['sagepay_direct_order_id']);
-				total_released = await this.model_extension_payment_sagepay_direct.getTotalReleased(sagepay_direct_order['sagepay_direct_order_id']);
-
+				const total_rebated = await this.model_extension_payment_sagepay_direct.getTotalRebated(sagepay_direct_order['sagepay_direct_order_id']);
+				const total_released = await this.model_extension_payment_sagepay_direct.getTotalReleased(sagepay_direct_order['sagepay_direct_order_id']);
+				let rebate_status = 0;
 				if (total_released <= 0 && sagepay_direct_order['release_status'] == 1) {
 					await this.model_extension_payment_sagepay_direct.updateRebateStatus(sagepay_direct_order['sagepay_direct_order_id'], 1);
 					rebate_status = 1;
@@ -321,6 +328,6 @@ module.exports = class ControllerExtensionPaymentSagepayDirect extends Controlle
 			this.error['vendor'] = this.language.get('error_vendor');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 }

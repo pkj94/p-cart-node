@@ -2,16 +2,18 @@ module.exports = class ControllerExtensionShippingUPS extends Controller {
 	error = {};
 
 	async index() {
+		const data = {};
 		await this.load.language('extension/shipping/ups');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('setting/setting',this);
+		this.load.model('setting/setting', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validate()) {
 			await this.model_setting_setting.editSetting('shipping_ups', this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=shipping', true));
 		}
@@ -67,18 +69,18 @@ module.exports = class ControllerExtensionShippingUPS extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_extension'),
-			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=shipping', true)
+			'text': this.language.get('text_extension'),
+			'href': await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=shipping', true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('extension/shipping/ups', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('extension/shipping/ups', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['action'] = await this.url.link('extension/shipping/ups', 'user_token=' + this.session.data['user_token'], true);
@@ -109,41 +111,41 @@ module.exports = class ControllerExtensionShippingUPS extends Controller {
 			data['shipping_ups_pickup'] = this.config.get('shipping_ups_pickup');
 		}
 
-		data['pickups'] = {};
+		data['pickups'] = [];
 
 		data['pickups'].push({
-			'value' : '01',
-			'text'  : this.language.get('text_daily_pickup')
+			'value': '01',
+			'text': this.language.get('text_daily_pickup')
 		});
 
 		data['pickups'].push({
-			'value' : '03',
-			'text'  : this.language.get('text_customer_counter')
+			'value': '03',
+			'text': this.language.get('text_customer_counter')
 		});
 
 		data['pickups'].push({
-			'value' : '06',
-			'text'  : this.language.get('text_one_time_pickup')
+			'value': '06',
+			'text': this.language.get('text_one_time_pickup')
 		});
 
 		data['pickups'].push({
-			'value' : '07',
-			'text'  : this.language.get('text_on_call_air_pickup')
+			'value': '07',
+			'text': this.language.get('text_on_call_air_pickup')
 		});
 
 		data['pickups'].push({
-			'value' : '19',
-			'text'  : this.language.get('text_letter_center')
+			'value': '19',
+			'text': this.language.get('text_letter_center')
 		});
 
 		data['pickups'].push({
-			'value' : '20',
-			'text'  : this.language.get('text_air_service_center')
+			'value': '20',
+			'text': this.language.get('text_air_service_center')
 		});
 
 		data['pickups'].push({
-			'value' : '11',
-			'text'  : this.language.get('text_suggested_retail_rates')
+			'value': '11',
+			'text': this.language.get('text_suggested_retail_rates')
 		});
 
 		if ((this.request.post['shipping_ups_packaging'])) {
@@ -152,41 +154,41 @@ module.exports = class ControllerExtensionShippingUPS extends Controller {
 			data['shipping_ups_packaging'] = this.config.get('shipping_ups_packaging');
 		}
 
-		data['packages'] = {};
+		data['packages'] = [];
 
 		data['packages'].push({
-			'value' : '02',
-			'text'  : this.language.get('text_package')
+			'value': '02',
+			'text': this.language.get('text_package')
 		});
 
 		data['packages'].push({
-			'value' : '01',
-			'text'  : this.language.get('text_ups_letter')
+			'value': '01',
+			'text': this.language.get('text_ups_letter')
 		});
 
 		data['packages'].push({
-			'value' : '03',
-			'text'  : this.language.get('text_ups_tube')
+			'value': '03',
+			'text': this.language.get('text_ups_tube')
 		});
 
 		data['packages'].push({
-			'value' : '04',
-			'text'  : this.language.get('text_ups_pak')
+			'value': '04',
+			'text': this.language.get('text_ups_pak')
 		});
 
 		data['packages'].push({
-			'value' : '21',
-			'text'  : this.language.get('text_ups_express_box')
+			'value': '21',
+			'text': this.language.get('text_ups_express_box')
 		});
 
 		data['packages'].push({
-			'value' : '24',
-			'text'  : this.language.get('text_ups_25kg_box')
+			'value': '24',
+			'text': this.language.get('text_ups_25kg_box')
 		});
 
 		data['packages'].push({
-			'value' : '25',
-			'text'  : this.language.get('text_ups_10kg_box')
+			'value': '25',
+			'text': this.language.get('text_ups_10kg_box')
 		});
 
 		if ((this.request.post['shipping_ups_classification'])) {
@@ -194,20 +196,20 @@ module.exports = class ControllerExtensionShippingUPS extends Controller {
 		} else {
 			data['shipping_ups_classification'] = this.config.get('shipping_ups_classification');
 		}
-
+		data['classifications'] = [];
 		data['classifications'].push({
-			'value' : '01',
-			'text'  : '01'
+			'value': '01',
+			'text': '01'
 		});
 
 		data['classifications'].push({
-			'value' : '03',
-			'text'  : '03'
+			'value': '03',
+			'text': '03'
 		});
 
 		data['classifications'].push({
-			'value' : '04',
-			'text'  : '04'
+			'value': '04',
+			'text': '04'
 		});
 
 		if ((this.request.post['shipping_ups_origin'])) {
@@ -216,36 +218,36 @@ module.exports = class ControllerExtensionShippingUPS extends Controller {
 			data['shipping_ups_origin'] = this.config.get('shipping_ups_origin');
 		}
 
-		data['origins'] = {};
+		data['origins'] = [];
 
 		data['origins'].push({
-			'value' : 'US',
-			'text'  : this.language.get('text_us')
+			'value': 'US',
+			'text': this.language.get('text_us')
 		});
 
 		data['origins'].push({
-			'value' : 'CA',
-			'text'  : this.language.get('text_ca')
+			'value': 'CA',
+			'text': this.language.get('text_ca')
 		});
 
 		data['origins'].push({
-			'value' : 'EU',
-			'text'  : this.language.get('text_eu')
+			'value': 'EU',
+			'text': this.language.get('text_eu')
 		});
 
 		data['origins'].push({
-			'value' : 'PR',
-			'text'  : this.language.get('text_pr')
+			'value': 'PR',
+			'text': this.language.get('text_pr')
 		});
 
 		data['origins'].push({
-			'value' : 'MX',
-			'text'  : this.language.get('text_mx')
+			'value': 'MX',
+			'text': this.language.get('text_mx')
 		});
 
 		data['origins'].push({
-			'value' : 'other',
-			'text'  : this.language.get('text_other')
+			'value': 'other',
+			'text': this.language.get('text_other')
 		});
 
 		if ((this.request.post['shipping_ups_city'])) {
@@ -284,16 +286,16 @@ module.exports = class ControllerExtensionShippingUPS extends Controller {
 			data['shipping_ups_quote_type'] = this.config.get('shipping_ups_quote_type');
 		}
 
-		data['quote_types'] = {};
+		data['quote_types'] = [];
 
 		data['quote_types'].push({
-			'value' : 'residential',
-			'text'  : this.language.get('text_residential')
+			'value': 'residential',
+			'text': this.language.get('text_residential')
 		});
 
 		data['quote_types'].push({
-			'value' : 'commercial',
-			'text'  : this.language.get('text_commercial')
+			'value': 'commercial',
+			'text': this.language.get('text_commercial')
 		});
 
 		// US
@@ -614,7 +616,7 @@ module.exports = class ControllerExtensionShippingUPS extends Controller {
 			data['shipping_ups_weight_class_id'] = this.config.get('shipping_ups_weight_class_id');
 		}
 
-		this.load.model('localisation/weight_class',this);
+		this.load.model('localisation/weight_class', this);
 
 		data['weight_classes'] = await this.model_localisation_weight_class.getWeightClasses();
 
@@ -630,7 +632,7 @@ module.exports = class ControllerExtensionShippingUPS extends Controller {
 			data['shipping_ups_length_class_id'] = this.config.get('shipping_ups_length_class_id');
 		}
 
-		this.load.model('localisation/length_class',this);
+		this.load.model('localisation/length_class', this);
 
 		data['length_classes'] = await this.model_localisation_length_class.getLengthClasses();
 
@@ -658,7 +660,7 @@ module.exports = class ControllerExtensionShippingUPS extends Controller {
 			data['shipping_ups_tax_class_id'] = this.config.get('shipping_ups_tax_class_id');
 		}
 
-		this.load.model('localisation/tax_class',this);
+		this.load.model('localisation/tax_class', this);
 
 		data['tax_classes'] = await this.model_localisation_tax_class.getTaxClasses();
 
@@ -668,7 +670,7 @@ module.exports = class ControllerExtensionShippingUPS extends Controller {
 			data['shipping_ups_geo_zone_id'] = this.config.get('shipping_ups_geo_zone_id');
 		}
 
-		this.load.model('localisation/geo_zone');
+		this.load.model('localisation/geo_zone', this);
 
 		data['geo_zones'] = await this.model_localisation_geo_zone.getGeoZones();
 
@@ -726,18 +728,18 @@ module.exports = class ControllerExtensionShippingUPS extends Controller {
 			this.error['country'] = this.language.get('error_country');
 		}
 
-		if (empty(this.request.post['shipping_ups_length'])) {
+		if (!(this.request.post['shipping_ups_length'])) {
 			this.error['dimension'] = this.language.get('error_dimension');
 		}
 
-		if (empty(this.request.post['shipping_ups_width'])) {
+		if (!(this.request.post['shipping_ups_width'])) {
 			this.error['dimension'] = this.language.get('error_dimension');
 		}
 
-		if (empty(this.request.post['shipping_ups_height'])) {
+		if (!(this.request.post['shipping_ups_height'])) {
 			this.error['dimension'] = this.language.get('error_dimension');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 }

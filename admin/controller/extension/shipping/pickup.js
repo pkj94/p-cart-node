@@ -2,6 +2,7 @@ module.exports = class ControllerExtensionShippingPickup extends Controller {
 	error = {};
 
 	async index() {
+const data = {};
 		await this.load.language('extension/shipping/pickup');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -12,6 +13,7 @@ module.exports = class ControllerExtensionShippingPickup extends Controller {
 			await this.model_setting_setting.editSetting('shipping_pickup', this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=shipping', true));
 		}
@@ -49,7 +51,7 @@ module.exports = class ControllerExtensionShippingPickup extends Controller {
 			data['shipping_pickup_geo_zone_id'] = this.config.get('shipping_pickup_geo_zone_id');
 		}
 
-		this.load.model('localisation/geo_zone');
+		this.load.model('localisation/geo_zone',this);
 
 		data['geo_zones'] = await this.model_localisation_geo_zone.getGeoZones();
 

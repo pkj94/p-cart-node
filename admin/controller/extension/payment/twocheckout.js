@@ -2,6 +2,7 @@ module.exports = class ControllerExtensionPaymentTwoCheckout extends Controller 
 	error = {};
 
 	async index() {
+const data = {};
 		await this.load.language('extension/payment/twocheckout');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -12,6 +13,7 @@ module.exports = class ControllerExtensionPaymentTwoCheckout extends Controller 
 			await this.model_setting_setting.editSetting('payment_twocheckout', this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true));
 		}
@@ -91,7 +93,7 @@ module.exports = class ControllerExtensionPaymentTwoCheckout extends Controller 
 			data['payment_twocheckout_order_status_id'] = this.config.get('payment_twocheckout_order_status_id');
 		}
 
-		this.load.model('localisation/order_status');
+		this.load.model('localisation/order_status',this);
 
 		data['order_statuses'] = await this.model_localisation_order_status.getOrderStatuses();
 
@@ -101,7 +103,7 @@ module.exports = class ControllerExtensionPaymentTwoCheckout extends Controller 
 			data['payment_twocheckout_geo_zone_id'] = this.config.get('payment_twocheckout_geo_zone_id');
 		}
 
-		this.load.model('localisation/geo_zone');
+		this.load.model('localisation/geo_zone',this);
 
 		data['geo_zones'] = await this.model_localisation_geo_zone.getGeoZones();
 

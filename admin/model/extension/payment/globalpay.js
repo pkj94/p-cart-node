@@ -1,53 +1,55 @@
+const sha1 = require("locutus/php/strings/sha1");
+
 module.exports = class ModelExtensionPaymentGlobalpay extends Model {
 	async install() {
-		await this.db.query("
-			CREATE TABLE IF NOT EXISTS `" + DB_PREFIX + "globalpay_order` (
-			  `globalpay_order_id` INT(11) NOT NULL AUTO_INCREMENT,
-			  `order_id` INT(11) NOT NULL,
-			  `order_ref` CHAR(50) NOT NULL,
-			  `order_ref_previous` CHAR(50) NOT NULL,
-			  `pasref` VARCHAR(50) NOT NULL,
-			  `pasref_previous` VARCHAR(50) NOT NULL,
-			  `date_added` DATETIME NOT NULL,
-			  `date_modified` DATETIME NOT NULL,
-			  `capture_status` INT(1) DEFAULT NULL,
-			  `void_status` INT(1) DEFAULT NULL,
-			  `settle_type` INT(1) DEFAULT NULL,
-			  `rebate_status` INT(1) DEFAULT NULL,
-			  `currency_code` CHAR(3) NOT NULL,
-			  `authcode` VARCHAR(30) NOT NULL,
-			  `account` VARCHAR(30) NOT NULL,
-			  `total` DECIMAL( 10, 2 ) NOT NULL,
-			  PRIMARY KEY (`globalpay_order_id`)
-			) ENGINE=MyISAM DEFAULT COLLATE=oc_general_ci;");
+		await this.db.query(`
+			CREATE TABLE IF NOT EXISTS \`${DB_PREFIX}globalpay_order\` (
+			  \`globalpay_order_id\` INT(11) NOT NULL AUTO_INCREMENT,
+			  \`order_id\` INT(11) NOT NULL,
+			  \`order_ref\` CHAR(50) NOT NULL,
+			  \`order_ref_previous\` CHAR(50) NOT NULL,
+			  \`pasref\` VARCHAR(50) NOT NULL,
+			  \`pasref_previous\` VARCHAR(50) NOT NULL,
+			  \`date_added\` DATETIME NOT NULL,
+			  \`date_modified\` DATETIME NOT NULL,
+			  \`capture_status\` INT(1) DEFAULT NULL,
+			  \`void_status\` INT(1) DEFAULT NULL,
+			  \`settle_type\` INT(1) DEFAULT NULL,
+			  \`rebate_status\` INT(1) DEFAULT NULL,
+			  \`currency_code\` CHAR(3) NOT NULL,
+			  \`authcode\` VARCHAR(30) NOT NULL,
+			  \`account\` VARCHAR(30) NOT NULL,
+			  \`total\` DECIMAL( 10, 2 ) NOT NULL,
+			  PRIMARY KEY (\`globalpay_order_id\`)
+			) ENGINE=MyISAM DEFAULT COLLATE=utf8_general_ci;`);
 
-		await this.db.query("
-			CREATE TABLE IF NOT EXISTS `" + DB_PREFIX + "globalpay_order_transaction` (
-			  `globalpay_order_transaction_id` INT(11) NOT NULL AUTO_INCREMENT,
-			  `globalpay_order_id` INT(11) NOT NULL,
-			  `date_added` DATETIME NOT NULL,
-			  `type` ENUM('auth', 'payment', 'rebate', 'void') DEFAULT NULL,
-			  `amount` DECIMAL( 10, 2 ) NOT NULL,
-			  PRIMARY KEY (`globalpay_order_transaction_id`)
-			) ENGINE=MyISAM DEFAULT COLLATE=oc_general_ci;");
+		await this.db.query(`
+			CREATE TABLE IF NOT EXISTS \`${DB_PREFIX}globalpay_order_transaction\` (
+			  \`globalpay_order_transaction_id\` INT(11) NOT NULL AUTO_INCREMENT,
+			  \`globalpay_order_id\` INT(11) NOT NULL,
+			  \`date_added\` DATETIME NOT NULL,
+			  \`type\` ENUM('auth', 'payment', 'rebate', 'void') DEFAULT NULL,
+			  \`amount\` DECIMAL( 10, 2 ) NOT NULL,
+			  PRIMARY KEY (\`globalpay_order_transaction_id\`)
+			) ENGINE=MyISAM DEFAULT COLLATE=utf8_general_ci;`);
 	}
 
 	async void(order_id) {
-		globalpay_order = this.getOrder(order_id);
+		const globalpay_order = await this.getOrder(order_id);
 
 		if ((globalpay_order)) {
-			timestamp = date("YmdHis");
-			merchant_id = this.config.get('payment_globalpay_merchant_id');
-			secret = this.config.get('payment_globalpay_secret');
+			let timestamp = date("YmdHis");
+			let merchant_id = this.config.get('payment_globalpay_merchant_id');
+			let secret = this.config.get('payment_globalpay_secret');
 
-			this.logger('Void hash construct: ' + timestamp + '.' + merchant_id + '.' + globalpay_order['order_ref'] + '...');
+			await this.logger('Void hash construct: ' + timestamp + '.' + merchant_id + '.' + globalpay_order['order_ref'] + '...');
 
-			tmp = timestamp + '.' + merchant_id + '.' + globalpay_order['order_ref'] + '...';
-			hash = sha1(tmp);
+			let tmp = timestamp + '.' + merchant_id + '.' + globalpay_order['order_ref'] + '...';
+			let hash = sha1(tmp);
 			tmp = hash + '.' + secret;
 			hash = sha1(tmp);
 
-			xml = '';
+			let xml = '';
 			xml += '<request type="void" timestamp="' + timestamp + '">';
 			xml += '<merchantid>' + merchant_id + '</merchantid>';
 			xml += '<account>' + globalpay_order['account'] + '</account>';
@@ -57,19 +59,20 @@ module.exports = class ModelExtensionPaymentGlobalpay extends Model {
 			xml += '<sha1hash>' + hash + '</sha1hash>';
 			xml += '</request>';
 
-			this.logger('Void XML request:\r\n' + print_r(simplexml_load_string(xml), 1));
-
-			ch = curl_init();
-			curl_setopt(ch, CURLOPT_URL, "https://epage.payandshop.com/epage-remote.cgi");
-			curl_setopt(ch, CURLOPT_POST, 1);
-			curl_setopt(ch, CURLOPT_USERAGENT, "OpenCart " + VERSION);
-			curl_setopt(ch, CURLOPT_RETURNTRANSFER, 1);
-			curl_setopt(ch, CURLOPT_POSTFIELDS, xml);
-			curl_setopt(ch, CURLOPT_SSL_VERIFYPEER, false);
-			response = curl_exec (ch);
-			curl_close (ch);
-
-			return simplexml_load_string(response);
+			await this.logger('Void XML request:\r\n' + JSON.stringify(await parseXmlString(xml), true));
+			try {
+				const response = await require('axios').post("https://epage.payandshop.com/epage-remote.cgi", xml, {
+					headers: {
+						'Content-Type': 'text/xml'
+					},
+					httpsAgent: "OpenCart " + VERSION,
+					timeout: 60000,
+				});
+				return await parseXmlString(response.data);
+			} catch (error) {
+				await this.logger('Error:', error);
+				return null;
+			}
 		} else {
 			return false;
 		}
@@ -80,37 +83,37 @@ module.exports = class ModelExtensionPaymentGlobalpay extends Model {
 	}
 
 	async capture(order_id, amount) {
-		globalpay_order = this.getOrder(order_id);
+		const globalpay_order = await this.getOrder(order_id);
 
 		if ((globalpay_order) && globalpay_order['capture_status'] == 0) {
-			timestamp = date("YmdHis");
-			merchant_id = this.config.get('payment_globalpay_merchant_id');
-			secret = this.config.get('payment_globalpay_secret');
-
+			let timestamp = date("YmdHis");
+			let merchant_id = this.config.get('payment_globalpay_merchant_id');
+			let secret = this.config.get('payment_globalpay_secret');
+			let settle_type = '', xml_amount = '';
 			if (globalpay_order['settle_type'] == 2) {
-				this.logger('Capture hash construct: ' + timestamp + '.' + merchant_id + '.' + globalpay_order['order_ref'] + '.' + round(amount*100) + '.' + globalpay_order['currency_code'] + '.');
+				await this.logger('Capture hash construct: ' + timestamp + '.' + merchant_id + '.' + globalpay_order['order_ref'] + '.' + Math.round(amount * 100) + '.' + globalpay_order['currency_code'] + '.');
 
-				tmp = timestamp + '.' + merchant_id + '.' + globalpay_order['order_ref'] + '.' + round(amount*100) + '.' + globalpay_order['currency_code'] + '.';
-				hash = sha1(tmp);
+				let tmp = timestamp + '.' + merchant_id + '.' + globalpay_order['order_ref'] + '.' + Math.round(amount * 100) + '.' + globalpay_order['currency_code'] + '.';
+				let hash = sha1(tmp);
 				tmp = hash + '.' + secret;
 				hash = sha1(tmp);
 
 				settle_type = 'multisettle';
-				xml_amount = '<amount currency="' + globalpay_order['currency_code'] + '">' + round(amount*100) + '</amount>';
+				xml_amount = '<amount currency="' + globalpay_order['currency_code'] + '">' + Math.round(amount * 100) + '</amount>';
 			} else {
 				//this.logger('Capture hash construct: ' + timestamp + '.' + merchant_id + '.' + globalpay_order['order_ref'] + '...');
-				this.logger('Capture hash construct: ' + timestamp + '.' + merchant_id + '.' + globalpay_order['order_ref'] + '.' + round(amount*100) + '.' + globalpay_order['currency_code'] + '.');
+				await this.logger('Capture hash construct: ' + timestamp + '.' + merchant_id + '.' + globalpay_order['order_ref'] + '.' + Math.round(amount * 100) + '.' + globalpay_order['currency_code'] + '.');
 
-				tmp = timestamp + '.' + merchant_id + '.' + globalpay_order['order_ref'] + '.' + round(amount*100) + '.' + globalpay_order['currency_code'] + '.';
-				hash = sha1(tmp);
+				let tmp = timestamp + '.' + merchant_id + '.' + globalpay_order['order_ref'] + '.' + Math.round(amount * 100) + '.' + globalpay_order['currency_code'] + '.';
+				let hash = sha1(tmp);
 				tmp = hash + '.' + secret;
 				hash = sha1(tmp);
 
 				settle_type = 'settle';
-				xml_amount = '<amount currency="' + globalpay_order['currency_code'] + '">' + round(amount*100) + '</amount>';
+				xml_amount = '<amount currency="' + globalpay_order['currency_code'] + '">' + Math.round(amount * 100) + '</amount>';
 			}
 
-			xml = '';
+			let xml = '';
 			xml += '<request type="' + settle_type + '" timestamp="' + timestamp + '">';
 			xml += '<merchantid>' + merchant_id + '</merchantid>';
 			xml += '<account>' + globalpay_order['account'] + '</account>';
@@ -122,19 +125,20 @@ module.exports = class ModelExtensionPaymentGlobalpay extends Model {
 			xml += '<sha1hash>' + hash + '</sha1hash>';
 			xml += '</request>';
 
-			this.logger('Settle XML request:\r\n' + print_r(simplexml_load_string(xml), 1));
-
-			ch = curl_init();
-			curl_setopt(ch, CURLOPT_URL, "https://epage.payandshop.com/epage-remote.cgi");
-			curl_setopt(ch, CURLOPT_POST, 1);
-			curl_setopt(ch, CURLOPT_USERAGENT, "OpenCart " + VERSION);
-			curl_setopt(ch, CURLOPT_RETURNTRANSFER, 1);
-			curl_setopt(ch, CURLOPT_POSTFIELDS, xml);
-			curl_setopt(ch, CURLOPT_SSL_VERIFYPEER, false);
-			response = curl_exec (ch);
-			curl_close (ch);
-
-			return simplexml_load_string(response);
+			await this.logger('Settle XML request:\r\n' + JSON.stringify(await parseXmlString(xml), true));
+			try {
+				const response = await require('axios').post("https://epage.payandshop.com/epage-remote.cgi", xml, {
+					headers: {
+						'Content-Type': 'text/xml'
+					},
+					httpsAgent: "OpenCart " + VERSION,
+					timeout: 60000,
+				});
+				return await parseXmlString(response.data);
+			} catch (error) {
+				await this.logger('Error:', error);
+				return null;
+			}
 		} else {
 			return false;
 		}
@@ -149,13 +153,13 @@ module.exports = class ModelExtensionPaymentGlobalpay extends Model {
 	}
 
 	async rebate(order_id, amount) {
-		globalpay_order = this.getOrder(order_id);
+		const globalpay_order = await this.getOrder(order_id);
 
 		if ((globalpay_order) && globalpay_order['rebate_status'] != 1) {
-			timestamp = date("YmdHis");
-			merchant_id = this.config.get('payment_globalpay_merchant_id');
-			secret = this.config.get('payment_globalpay_secret');
-
+			let timestamp = date("YmdHis");
+			let merchant_id = this.config.get('payment_globalpay_merchant_id');
+			let secret = this.config.get('payment_globalpay_secret');
+			let order_ref = '', pas_ref = '';
 			if (globalpay_order['settle_type'] == 2) {
 				order_ref = '_multisettle_' + globalpay_order['order_ref'];
 
@@ -169,40 +173,42 @@ module.exports = class ModelExtensionPaymentGlobalpay extends Model {
 				pas_ref = globalpay_order['pasref'];
 			}
 
-			this.logger('Rebate hash construct: ' + timestamp + '.' + merchant_id + '.' + order_ref + '.' + round(amount*100) + '.' + globalpay_order['currency_code'] + '.');
+			await this.logger('Rebate hash construct: ' + timestamp + '.' + merchant_id + '.' + order_ref + '.' + Math.round(amount * 100) + '.' + globalpay_order['currency_code'] + '.');
 
-			tmp = timestamp + '.' + merchant_id + '.' + order_ref + '.' + round(amount*100) + '.' + globalpay_order['currency_code'] + '.';
-			hash = sha1(tmp);
+			let tmp = timestamp + '.' + merchant_id + '.' + order_ref + '.' + Math.round(amount * 100) + '.' + globalpay_order['currency_code'] + '.';
+			let hash = sha1(tmp);
 			tmp = hash + '.' + secret;
 			hash = sha1(tmp);
 
-			rebate_hash = sha1(this.config.get('payment_globalpay_rebate_password'));
+			let rebate_hash = sha1(this.config.get('payment_globalpay_rebate_password'));
 
-			xml = '';
+			let xml = '';
 			xml += '<request type="rebate" timestamp="' + timestamp + '">';
 			xml += '<merchantid>' + merchant_id + '</merchantid>';
 			xml += '<account>' + globalpay_order['account'] + '</account>';
 			xml += '<orderid>' + order_ref + '</orderid>';
 			xml += '<pasref>' + pas_ref + '</pasref>';
 			xml += '<authcode>' + globalpay_order['authcode'] + '</authcode>';
-			xml += '<amount currency="' + globalpay_order['currency_code'] + '">' + round(amount*100) + '</amount>';
+			xml += '<amount currency="' + globalpay_order['currency_code'] + '">' + Math.round(amount * 100) + '</amount>';
 			xml += '<refundhash>' + rebate_hash + '</refundhash>';
 			xml += '<sha1hash>' + hash + '</sha1hash>';
 			xml += '</request>';
 
-			this.logger('Rebate XML request:\r\n' + print_r(simplexml_load_string(xml), 1));
+			await this.logger('Rebate XML request:\r\n' + JSON.stringify(await parseXmlString(xml), true));
 
-			ch = curl_init();
-			curl_setopt(ch, CURLOPT_URL, "https://epage.payandshop.com/epage-remote.cgi");
-			curl_setopt(ch, CURLOPT_POST, 1);
-			curl_setopt(ch, CURLOPT_USERAGENT, "OpenCart " + VERSION);
-			curl_setopt(ch, CURLOPT_RETURNTRANSFER, 1);
-			curl_setopt(ch, CURLOPT_POSTFIELDS, xml);
-			curl_setopt(ch, CURLOPT_SSL_VERIFYPEER, false);
-			response = curl_exec (ch);
-			curl_close (ch);
-
-			return simplexml_load_string(response);
+			try {
+				const response = await require('axios').post("https://epage.payandshop.com/epage-remote.cgi", xml, {
+					headers: {
+						'Content-Type': 'text/xml'
+					},
+					httpsAgent: "OpenCart " + VERSION,
+					timeout: 60000,
+				});
+				return await parseXmlString(response.data);
+			} catch (error) {
+				await this.logger('Error:', error);
+				return null;
+			}
 		} else {
 			return false;
 		}
@@ -213,15 +219,15 @@ module.exports = class ModelExtensionPaymentGlobalpay extends Model {
 	}
 
 	async getOrder(order_id) {
-		this.logger('getOrder - ' + order_id);
+		await this.logger('getOrder - ' + order_id);
 
-		qry = await this.db.query("SELECT * FROM `" + DB_PREFIX + "globalpay_order` WHERE `order_id` = '" + order_id + "' LIMIT 1");
+		const qry = await this.db.query("SELECT * FROM `" + DB_PREFIX + "globalpay_order` WHERE `order_id` = '" + order_id + "' LIMIT 1");
 
 		if (qry.num_rows) {
-			order = qry.row;
+			const order = qry.row;
 			order['transactions'] = this.getTransactions(order['globalpay_order_id']);
 
-			this.logger(print_r(order, 1));
+			await this.logger(JSON.stringify(order, true));
 
 			return order;
 		} else {
@@ -229,8 +235,8 @@ module.exports = class ModelExtensionPaymentGlobalpay extends Model {
 		}
 	}
 
-	private function getTransactions(globalpay_order_id) {
-		qry = await this.db.query("SELECT * FROM `" + DB_PREFIX + "globalpay_order_transaction` WHERE `globalpay_order_id` = '" + globalpay_order_id + "'");
+	async getTransactions(globalpay_order_id) {
+		const qry = await this.db.query("SELECT * FROM `" + DB_PREFIX + "globalpay_order_transaction` WHERE `globalpay_order_id` = '" + globalpay_order_id + "'");
 
 		if (qry.num_rows) {
 			return qry.rows;
@@ -245,8 +251,8 @@ module.exports = class ModelExtensionPaymentGlobalpay extends Model {
 
 	async logger(message) {
 		if (this.config.get('payment_globalpay_debug') == 1) {
-			log = new Log('globalpay.log');
-			log.write(message);
+			const log = new Log('globalpay.log');
+			await log.write(message);
 		}
 	}
 

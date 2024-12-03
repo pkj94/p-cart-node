@@ -2,11 +2,12 @@ module.exports = class ControllerCustomerCustomField extends Controller {
 	error = {};
 
 	async index() {
+		const data = {};
 		await this.load.language('customer/custom_field');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('customer/custom_field');
+		this.load.model('customer/custom_field', this);
 
 		await this.getList();
 	}
@@ -16,12 +17,13 @@ module.exports = class ControllerCustomerCustomField extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('customer/custom_field');
+		this.load.model('customer/custom_field', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_customer_custom_field.addCustomField(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			url = '';
 
@@ -48,12 +50,13 @@ module.exports = class ControllerCustomerCustomField extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('customer/custom_field');
+		this.load.model('customer/custom_field', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_customer_custom_field.editCustomField(this.request.get['custom_field_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			url = '';
 
@@ -80,15 +83,16 @@ module.exports = class ControllerCustomerCustomField extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('customer/custom_field');
+		this.load.model('customer/custom_field', this);
 
 		if ((this.request.post['selected']) && await this.validateDelete()) {
-this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
-			for (this.request.post['selected'] of custom_field_id) {
+			this.request.post['selected'] = Array.isArray(this.request.post['selected']) ? this.request.post['selected'] : [this.request.post['selected']]
+			for (let custom_field_id of this.request.post['selected']) {
 				await this.model_customer_custom_field.deleteCustomField(custom_field_id);
 			}
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			url = '';
 
@@ -111,6 +115,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 	}
 
 	async getList() {
+		const data = {};
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
 		} else {
@@ -122,11 +127,9 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		} else {
 			order = 'ASC';
 		}
-
+		page = 1;
 		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
 		}
 
 		url = '';
@@ -146,13 +149,13 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('customer/custom_field', 'user_token=' + this.session.data['user_token'] + url, true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('customer/custom_field', 'user_token=' + this.session.data['user_token'] + url, true)
 		});
 
 		data['add'] = await this.url.link('customer/custom_field/add', 'user_token=' + this.session.data['user_token'] + url, true);
@@ -160,11 +163,11 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 
 		data['custom_fields'] = {};
 
-		filter_data = array(
-			'sort'  : sort,
-			'order' : order,
-			'start' : (page - 1) * Number(this.config.get('config_limit_admin')),
-			'limit' : Number(this.config.get('config_limit_admin'))
+		const filter_data = {
+			'sort': sort,
+			'order': order,
+			'start': (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit': Number(this.config.get('config_limit_admin'))
 		});
 
 		custom_field_total = await this.model_customer_custom_field.getTotalCustomFields();
@@ -208,13 +211,13 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			}
 
 			data['custom_fields'].push({
-				'custom_field_id' : result['custom_field_id'],
-				'name'            : result['name'],
-				'location'        : this.language.get('text_' + result['location']),
-				'type'            : type,
-				'status'          : result['status'],
-				'sort_order'      : result['sort_order'],
-				'edit'            : await this.url.link('customer/custom_field/edit', 'user_token=' + this.session.data['user_token'] + '&custom_field_id=' + result['custom_field_id'] + url, true)
+				'custom_field_id': result['custom_field_id'],
+				'name': result['name'],
+				'location': this.language.get('text_' + result['location']),
+				'type': type,
+				'status': result['status'],
+				'sort_order': result['sort_order'],
+				'edit': await this.url.link('customer/custom_field/edit', 'user_token=' + this.session.data['user_token'] + '&custom_field_id=' + result['custom_field_id'] + url, true)
 			});
 		}
 
@@ -227,7 +230,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		if ((this.session.data['success'])) {
 			data['success'] = this.session.data['success'];
 
-			delete this.session.data['success']);
+			delete this.session.data['success'];
 		} else {
 			data['success'] = '';
 		}
@@ -266,7 +269,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			url += '&order=' + this.request.get['order'];
 		}
 
-		pagination = new Pagination();
+		const pagination = new Pagination();
 		pagination.total = custom_field_total;
 		pagination.page = page;
 		pagination.limit = Number(this.config.get('config_limit_admin'));
@@ -324,13 +327,13 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('customer/custom_field', 'user_token=' + this.session.data['user_token'] + url, true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('customer/custom_field', 'user_token=' + this.session.data['user_token'] + url, true)
 		});
 
 		if (!(this.request.get['custom_field_id'])) {
@@ -347,7 +350,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 
 		data['user_token'] = this.session.data['user_token'];
 
-		this.load.model('localisation/language',this);
+		this.load.model('localisation/language', this);
 
 		data['languages'] = await this.model_localisation_language.getLanguages();
 
@@ -419,9 +422,9 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 
 		for (custom_field_values of custom_field_value) {
 			data['custom_field_values'].push({
-				'custom_field_value_id'          : custom_field_value['custom_field_value_id'],
-				'custom_field_value_description' : custom_field_value['custom_field_value_description'],
-				'sort_order'                     : custom_field_value['sort_order']
+				'custom_field_value_id': custom_field_value['custom_field_value_id'],
+				'custom_field_value_description': custom_field_value['custom_field_value_description'],
+				'sort_order': custom_field_value['sort_order']
 			});
 		}
 
@@ -447,7 +450,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			}
 		}
 
-		this.load.model('customer/customer_group',this);
+		this.load.model('customer/customer_group', this);
 
 		data['customer_groups'] = await this.model_customer_customer_group.getCustomerGroups();
 
@@ -463,7 +466,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		for (this.request.post['custom_field_description'] of language_id : value) {
+		for (let [language_id, value] of Object.entries(this.request.post['custom_field_description'])) {
 			if ((oc_strlen(value['name']) < 1) || (oc_strlen(value['name']) > 128)) {
 				this.error['name'][language_id] = this.language.get('error_name');
 			}
@@ -475,8 +478,8 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			}
 
 			if ((this.request.post['custom_field_value'])) {
-				for (this.request.post['custom_field_value'] of custom_field_value_id : custom_field_value) {
-					for (custom_field_value['custom_field_value_description'] of language_id : custom_field_value_description) {
+				for (let [custom_field_value_id, custom_field_value] of Object.entries(this.request.post['custom_field_value'])) {
+					for (let [language_id, custom_field_value_description] of Object.entries(custom_field_value['custom_field_value_description'])) {
 						if ((oc_strlen(custom_field_value_description['name']) < 1) || (oc_strlen(custom_field_value_description['name']) > 128)) {
 							this.error['custom_field_value'][custom_field_value_id][language_id] = this.language.get('error_custom_value');
 						}
@@ -485,7 +488,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			}
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 
 	async validateDelete() {
@@ -493,6 +496,6 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 }

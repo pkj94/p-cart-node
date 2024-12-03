@@ -1069,7 +1069,7 @@ $('select[name=\'customer_group_id\']').on('change', function() {
 			$('.custom-field').hide();
 			$('.custom-field').removeClass('required');
 
-			for (i = 0; i < json.length; i++) {
+			for (let i = 0; i < json.length; i++) {
 				custom_field = json[i];
 
 				$('.custom-field' + custom_field['custom_field_id']).show();
@@ -1214,7 +1214,7 @@ $('#tab-product input[name=\'product\']').autocomplete({
  			html  = '<fieldset>';
             html += '  <legend>{{ entry_option }}</legend>';
 
-			for (i = 0; i < item['option'].length; i++) {
+			for (let i = 0; i < item['option'].length; i++) {
 				option = item['option'][i];
 
 				if (option['type'] == 'select') {
@@ -1639,7 +1639,7 @@ $('#tab-payment select[name=\'country_id\']').on('change', function() {
 			html = '<option value="">{{ text_select }}</option>';
 
 			if (json['zone'] && json['zone'] != '') {
-				for (i = 0; i < json['zone'].length; i++) {
+				for (let i = 0; i < json['zone'].length; i++) {
         			html += '<option value="' + json['zone'][i]['zone_id'] + '"';
 
 					if (json['zone'][i]['zone_id'] == payment_zone_id) {
@@ -1823,7 +1823,7 @@ $('#tab-shipping select[name=\'country_id\']').on('change', function() {
 			html = '<option value="">{{ text_select }}</option>';
 
 			if (json['zone'] && json['zone'] != '') {
-				for (i = 0; i < json['zone'].length; i++) {
+				for (let i = 0; i < json['zone'].length; i++) {
         			html += '<option value="' + json['zone'][i]['zone_id'] + '"';
 
 					if (json['zone'][i]['zone_id'] == shipping_zone_id) {
@@ -2349,7 +2349,7 @@ $('#button-refresh').on('click', function() {
 			html = '';
 
 			if (json['products'].length) {
-				for (i = 0; i < json['products'].length; i++) {
+				for (let i = 0; i < json['products'].length; i++) {
 					product = json['products'][i];
 
 					html += '<tr>';
@@ -2436,7 +2436,7 @@ $('#button-refresh').on('click', function() {
 			html = '';
 
 			if (json['products'].length) {
-				for (i = 0; i < json['products'].length; i++) {
+				for (let i = 0; i < json['products'].length; i++) {
 					product = json['products'][i];
 
 					html += '<tr>';

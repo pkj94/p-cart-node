@@ -6,7 +6,7 @@ module.exports = {
     text_extension: 'Extensions',
     text_success: 'Success: You have modified Authorize.Net (SIM) account details!',
     text_edit: 'Edit Authorize.Net (SIM)',
-    text_authorizenet_sim: 'border: 1px solid #EEEEEE," /></a>',
+    text_authorizenet_sim: '<a href="https://account.authorize.net/signUpNow?resellerID=26357" target="_BLANK"><img src="view/image/payment/authorizenet.png" alt="Authorize.Net" title="Authorize.Net" style="border: 1px solid #EEEEEE," /></a>',
 
     // Entry
     entry_merchant: 'Merchant ID',
@@ -21,8 +21,8 @@ module.exports = {
     entry_sort_order: 'Sort Order',
 
     // Help
-    help_callback: 'txtLink" > https://secure.authorize.net</a>.',
-    help_md5: 'txtLink" > https://secure.authorize.net</a>.(Optional)',
+    help_callback: 'Please login and set this at <a href="https://secure.authorize.net" target="_blank" class="txtLink">https://secure.authorize.net</a>.',
+    help_md5: 'The Hash feature enables you to authenticate that a transaction response is securely received from Authorize.Net. Please login and set this at <a href="https://secure.authorize.net" target="_blank" class="txtLink">https://secure.authorize.net</a>.(Optional)',
     help_total: 'The checkout total the order must reach before this payment method becomes active.',
 
     // Error

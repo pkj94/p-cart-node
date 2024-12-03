@@ -2,6 +2,7 @@ module.exports = class ControllerCommonForgotten extends Controller {
 	error = {};
 
 	async index() {
+const data = {};
 		if (await this.user.isLogged() && (this.request.get['user_token']) && (this.request.get['user_token'] == this.session.data['user_token'])) {
 			this.response.setRedirect(await this.url.link('common/dashboard', '', true));
 		}
@@ -23,6 +24,7 @@ module.exports = class ControllerCommonForgotten extends Controller {
 			await this.model_user_user.editCode(user_info['email'], token(40));
 
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('common/login', '', true));
 		}

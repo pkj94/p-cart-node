@@ -9,7 +9,7 @@ module.exports = {
     text_edit: '<br><br>',
     text_edit: 'This extension requires the EUR currency to be an available currency.',
     text_edit: '<br><br>',
-    text_edit: '%1">System &gt, Localisation &gt, Currencies</a></b>.',
+    text_edit: 'When enabled, it can be chosen as the currency rate engine at <b><a href="%2">System &gt; Settings</b></a> and you can refresh the currency rates via <b><a href="%1">System &gt; Localisation &gt; Currencies</a></b>.',
 
     // Entry
     entry_ip: 'Server IP-address',

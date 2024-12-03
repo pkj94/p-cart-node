@@ -26,6 +26,7 @@ module.exports = function () {
             } else if (registry.get('response').redirect) {
                 res.redirect(registry.get('response').redirect);
             } else {
+
                 registry.get('response').headers.forEach(header => {
                     res.header((header.split(':')[0] || '').trim(), (header.split(':')[1] || '').trim());
                 });
@@ -64,7 +65,7 @@ module.exports = function () {
                 res.redirect(registry.get('config').get('error_page'));
             }
 
-            return res.status(200).send(registry.get('response').outputData);
+            res.status(200).send(registry.get('response').outputData);
         });
     };
     // loadAdminControllers();

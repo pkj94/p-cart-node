@@ -2,7 +2,7 @@ module.exports = class ModelExtensionReportCustomer extends Model {
 	async getTotalCustomersByDay() {
 		customer_data = {};
 
-		for (i = 0; i < 24; i++) {
+		for (let i = 0; i < 24; i++) {
 			customer_data[i] = array(
 				'hour'  : i,
 				'total' : 0
@@ -26,7 +26,7 @@ module.exports = class ModelExtensionReportCustomer extends Model {
 
 		date_start = strtotime('-' + date('w') + ' days');
 
-		for (i = 0; i < 7; i++) {
+		for (let i = 0; i < 7; i++) {
 			date = date('Y-m-d', date_start + (i * 86400));
 
 			customer_data[date('w', strtotime(date))] = array(
@@ -50,7 +50,7 @@ module.exports = class ModelExtensionReportCustomer extends Model {
 	async getTotalCustomersByMonth() {
 		customer_data = {};
 
-		for (i = 1; i <= date('t'); i++) {
+		for (let i = 1; i <= date('t'); i++) {
 			date = date('Y') + '-' + date('m') + '-' + i;
 
 			customer_data[date('j', strtotime(date))] = array(
@@ -74,7 +74,7 @@ module.exports = class ModelExtensionReportCustomer extends Model {
 	async getTotalCustomersByYear() {
 		customer_data = {};
 
-		for (i = 1; i <= 12; i++) {
+		for (let i = 1; i <= 12; i++) {
 			customer_data[i] = array(
 				'month' : date('M', mktime(0, 0, 0, i)),
 				'total' : 0

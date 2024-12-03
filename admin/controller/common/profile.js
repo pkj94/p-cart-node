@@ -2,6 +2,7 @@ module.exports = class ControllerCommonProfile extends Controller {
 	error = {};
 
 	async index() {
+const data = {};
 		await this.load.language('common/profile');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -17,6 +18,7 @@ module.exports = class ControllerCommonProfile extends Controller {
 			await this.model_user_user.editUser(await this.user.getId(), user_data);
 
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('common/profile', 'user_token=' + this.session.data['user_token'], true));
 		}
@@ -24,7 +26,7 @@ module.exports = class ControllerCommonProfile extends Controller {
 		if ((this.session.data['success'])) {
 			data['success'] = this.session.data['success'];
 
-			delete this.session.data['success']);
+			delete this.session.data['success'];
 		} else {
 			data['success'] = '';
 		}

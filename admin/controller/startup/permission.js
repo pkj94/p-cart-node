@@ -1,5 +1,6 @@
 module.exports = class ControllerStartupPermission extends Controller {
 	async index() {
+const data = {};
 		if ((this.request.get['route'])) {
 			let route = '';
 

@@ -133,7 +133,7 @@ $('#zone-to-geo-zone').on('change', 'select[name$=\'[country_id]\']', function()
 				html = '<option value="0">{{ text_all_zones }}</option>';
 				
 				if (json['zone'] && json['zone'] != '') {	
-					for (i = 0; i < json['zone'].length; i++) {
+					for (let i = 0; i < json['zone'].length; i++) {
 						html += '<option value="' + json['zone'][i]['zone_id'] + '"';
 	
 						if (json['zone'][i]['zone_id'] == $(element).attr('data-zone-id')) {

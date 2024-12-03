@@ -1,7 +1,8 @@
 module.exports = class ControllerToolLog extends Controller {
 	error = {};
 
-	async index() {		
+	async index() {
+const data = {};		
 		await this.load.language('tool/log');
 		
 		this.document.setTitle(this.language.get('heading_title'));
@@ -19,7 +20,7 @@ module.exports = class ControllerToolLog extends Controller {
 		if ((this.session.data['success'])) {
 			data['success'] = this.session.data['success'];
 
-			delete this.session.data['success']);
+			delete this.session.data['success'];
 		} else {
 			data['success'] = '';
 		}
@@ -68,7 +69,7 @@ module.exports = class ControllerToolLog extends Controller {
 
 				data['error_warning'] = sprintf(this.language.get('error_warning'), basename(file), round(substr(size, 0, strpos(size, '.') + 4), 2) + suffix[i]);
 			} else {
-				data['log'] = htmlspecialchars(file_get_contents(file), ENT_COMPAT, 'UTF-8');
+				data['log'] = htmlspecialchars(fs.readFileSync(file), ENT_COMPAT, 'UTF-8');
 			}
 		}
 
@@ -92,7 +93,7 @@ module.exports = class ControllerToolLog extends Controller {
 			this.response.addheader('Content-Disposition: attachment; filename="' + this.config.get('config_name') + '_' + date('Y-m-d_H-i-s', time()) + '_error.log"');
 			this.response.addheader('Content-Transfer-Encoding: binary');
 
-			this.response.setOutput(file_get_contents(file, FILE_USE_INCLUDE_PATH, null));
+			this.response.setOutput(fs.readFileSync(file, FILE_USE_INCLUDE_PATH, null));
 		} else {
 			this.session.data['error'] = sprintf(this.language.get('error_warning'), basename(file), '0B');
 
@@ -113,6 +114,7 @@ module.exports = class ControllerToolLog extends Controller {
 			fclose(handle);
 
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 		}
 
 		this.response.setRedirect(await this.url.link('tool/log', 'user_token=' + this.session.data['user_token'], true));

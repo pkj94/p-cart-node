@@ -2,6 +2,7 @@ module.exports = class ControllerExtensionTotalCoupon extends Controller {
 	error = {};
 
 	async index() {
+const data = {};
 		await this.load.language('extension/total/coupon');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -12,6 +13,7 @@ module.exports = class ControllerExtensionTotalCoupon extends Controller {
 			await this.model_setting_setting.editSetting('total_coupon', this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=total', true));
 		}

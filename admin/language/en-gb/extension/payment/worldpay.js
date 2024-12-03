@@ -5,7 +5,7 @@ module.exports = {
     // Text
     text_extension: 'Extensions',
     text_success: 'Success: You have modified Worldpay account details!',
-    text_worldpay: 'border: 1px solid #EEEEEE," /></a>',
+    text_worldpay: '<a href="https://online.worldpay.com/signup/ee48b6e6-d3e3-42aa-a80e-cbee3f4f8b09" target="_blank"><img src="view/image/payment/worldpay.png" alt="Worldpay" title="Worldpay" style="border: 1px solid #EEEEEE," /></a>',
     text_test: 'Test',
     text_live: 'Live',
     text_authenticate: 'Authenticate',
@@ -75,5 +75,4 @@ module.exports = {
     text_confirm_refund: 'Are you sure you want to refund the payment?',
 
     button_refund: 'Rebate / refund',
-
 }

@@ -1,5 +1,6 @@
 module.exports = class ControllerReportOnline extends Controller {
 	async index() {
+const data = {};
 		await this.load.language('report/online');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -15,11 +16,9 @@ module.exports = class ControllerReportOnline extends Controller {
 		} else {
 			filter_customer = '';
 		}
-
-		if ((this.request.get['page'])) {
+page = 1;
+if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
 		}
 		
 		url = '';
@@ -53,16 +52,16 @@ module.exports = class ControllerReportOnline extends Controller {
 		this.load.model('report/online');
 		this.load.model('customer/customer',this);		
 
-		data['customers'] = {};
+		data['customers'] = [];
 
-		filter_data = array(
+		const filter_data = {
 			'filter_ip'       : filter_ip,
 			'filter_customer' : filter_customer,
 			'start'           : (page - 1) * Number(this.config.get('config_limit_admin')),
 			'limit'           : Number(this.config.get('config_limit_admin'))
 		});
 
-		customer_total = await this.model_report_online.getTotalOnline(filter_data);
+		const customer_total = await this.model_report_online.getTotalOnline(filter_data);
 
 		results = await this.model_report_online.getOnline(filter_data);
 
@@ -98,7 +97,7 @@ module.exports = class ControllerReportOnline extends Controller {
 			url += '&filter_ip=' + this.request.get['filter_ip'];
 		}
 
-		pagination = new Pagination();
+		const pagination = new Pagination();
 		pagination.total = customer_total;
 		pagination.page = page;
 		pagination.limit = Number(this.config.get('config_limit_admin'));

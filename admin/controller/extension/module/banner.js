@@ -2,11 +2,12 @@ module.exports = class ControllerExtensionModuleBanner extends Controller {
 	error = {};
 
 	async index() {
+		const data = {};
 		await this.load.language('extension/module/banner');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('setting/module');
+		this.load.model('setting/module', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validate()) {
 			if (!(this.request.get['module_id'])) {
@@ -16,6 +17,7 @@ module.exports = class ControllerExtensionModuleBanner extends Controller {
 			}
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=module', true));
 		}
@@ -47,24 +49,24 @@ module.exports = class ControllerExtensionModuleBanner extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_extension'),
-			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=module', true)
+			'text': this.language.get('text_extension'),
+			'href': await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=module', true)
 		});
 
 		if (!(this.request.get['module_id'])) {
 			data['breadcrumbs'].push({
-				'text' : this.language.get('heading_title'),
-				'href' : await this.url.link('extension/module/banner', 'user_token=' + this.session.data['user_token'], true)
+				'text': this.language.get('heading_title'),
+				'href': await this.url.link('extension/module/banner', 'user_token=' + this.session.data['user_token'], true)
 			});
 		} else {
 			data['breadcrumbs'].push({
-				'text' : this.language.get('heading_title'),
-				'href' : await this.url.link('extension/module/banner', 'user_token=' + this.session.data['user_token'] + '&module_id=' + this.request.get['module_id'], true)
+				'text': this.language.get('heading_title'),
+				'href': await this.url.link('extension/module/banner', 'user_token=' + this.session.data['user_token'] + '&module_id=' + this.request.get['module_id'], true)
 			});
 		}
 
@@ -75,7 +77,7 @@ module.exports = class ControllerExtensionModuleBanner extends Controller {
 		}
 
 		data['cancel'] = await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=module', true);
-
+		let module_info;
 		if ((this.request.get['module_id']) && (this.request.server['method'] != 'POST')) {
 			module_info = await this.model_setting_module.getModule(this.request.get['module_id']);
 		}
@@ -96,7 +98,7 @@ module.exports = class ControllerExtensionModuleBanner extends Controller {
 			data['banner_id'] = '';
 		}
 
-		this.load.model('design/banner');
+		this.load.model('design/banner', this);
 
 		data['banners'] = await this.model_design_banner.getBanners();
 
@@ -148,6 +150,6 @@ module.exports = class ControllerExtensionModuleBanner extends Controller {
 			this.error['height'] = this.language.get('error_height');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 }

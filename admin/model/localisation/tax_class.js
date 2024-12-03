@@ -2,16 +2,16 @@ module.exports = class ModelLocalisationTaxClass extends Model {
 	async addTaxClass(data) {
 		await this.db.query("INSERT INTO " + DB_PREFIX + "tax_class SET title = '" + this.db.escape(data['title']) + "', description = '" + this.db.escape(data['description']) + "', date_added = NOW()");
 
-		tax_class_id = this.db.getLastId();
+		const tax_class_id = this.db.getLastId();
 
 		if ((data['tax_rule'])) {
-			for (data['tax_rule'] of tax_rule) {
+			for (let tax_rule of data['tax_rule']) {
 				await this.db.query("INSERT INTO " + DB_PREFIX + "tax_rule SET tax_class_id = '" + tax_class_id + "', tax_rate_id = '" + tax_rule['tax_rate_id'] + "', based = '" + this.db.escape(tax_rule['based']) + "', priority = '" + tax_rule['priority'] + "'");
 			}
 		}
 
 		await this.cache.delete('tax_class');
-		
+
 		return tax_class_id;
 	}
 
@@ -21,7 +21,7 @@ module.exports = class ModelLocalisationTaxClass extends Model {
 		await this.db.query("DELETE FROM " + DB_PREFIX + "tax_rule WHERE tax_class_id = '" + tax_class_id + "'");
 
 		if ((data['tax_rule'])) {
-			for (data['tax_rule'] of tax_rule) {
+			for (let tax_rule of data['tax_rule']) {
 				await this.db.query("INSERT INTO " + DB_PREFIX + "tax_rule SET tax_class_id = '" + tax_class_id + "', tax_rate_id = '" + tax_rule['tax_rate_id'] + "', based = '" + this.db.escape(tax_rule['based']) + "', priority = '" + tax_rule['priority'] + "'");
 			}
 		}
@@ -43,7 +43,7 @@ module.exports = class ModelLocalisationTaxClass extends Model {
 	}
 
 	async getTaxClasses(data = {}) {
-		if (data) {
+		if (Object.keys(data).length) {
 			let sql = "SELECT * FROM " + DB_PREFIX + "tax_class";
 
 			sql += " ORDER BY title";
@@ -55,13 +55,13 @@ module.exports = class ModelLocalisationTaxClass extends Model {
 			}
 
 			if ((data['start']) || (data['limit'])) {
-				data['start'] = data['start']||0;
-if (data['start'] < 0) {
+				data['start'] = data['start'] || 0;
+				if (data['start'] < 0) {
 					data['start'] = 0;
 				}
 
-				data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+				data['limit'] = data['limit'] || 20;
+				if (data['limit'] < 1) {
 					data['limit'] = 20;
 				}
 
@@ -72,7 +72,7 @@ if (data['limit'] < 1) {
 
 			return query.rows;
 		} else {
-			tax_class_data = await this.cache.get('tax_class');
+			let tax_class_data = await this.cache.get('tax_class');
 
 			if (!tax_class_data) {
 				const query = await this.db.query("SELECT * FROM " + DB_PREFIX + "tax_class");

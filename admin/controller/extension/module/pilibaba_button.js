@@ -2,6 +2,7 @@ module.exports = class ControllerExtensionModulePilibabaButton extends Controlle
 	error = {};
 
 	async index() {
+const data = {};
 		await this.load.language('extension/module/pilibaba_button');
 
 		this.load.model('setting/setting',this);
@@ -12,6 +13,7 @@ module.exports = class ControllerExtensionModulePilibabaButton extends Controlle
 			await this.model_setting_setting.editSetting('module_pilibaba_button', this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=module', true));
 		}

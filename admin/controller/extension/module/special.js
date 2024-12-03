@@ -2,11 +2,12 @@ module.exports = class ControllerExtensionModuleSpecial extends Controller {
 	error = {};
 
 	async index() {
+const data = {};
 		await this.load.language('extension/module/special');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('setting/module');
+		this.load.model('setting/module',this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validate()) {
 			if (!(this.request.get['module_id'])) {
@@ -18,6 +19,7 @@ module.exports = class ControllerExtensionModuleSpecial extends Controller {
 			await this.cache.delete('product');
 
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=module', true));
 		}
@@ -77,7 +79,7 @@ module.exports = class ControllerExtensionModuleSpecial extends Controller {
 		}
 
 		data['cancel'] = await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=module', true);
-
+		let module_info;
 		if ((this.request.get['module_id']) && (this.request.server['method'] != 'POST')) {
 			module_info = await this.model_setting_module.getModule(this.request.get['module_id']);
 		}

@@ -2,16 +2,18 @@ module.exports = class ControllerExtensionFraudMaxMind extends Controller {
 	error = {};
 
 	async index() {
+		const data = {};
 		await this.load.language('extension/fraud/maxmind');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('setting/setting',this);
+		this.load.model('setting/setting', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validate()) {
 			await this.model_setting_setting.editSetting('fraud_maxmind', this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=fraud', true));
 		}
@@ -31,18 +33,18 @@ module.exports = class ControllerExtensionFraudMaxMind extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_extension'),
-			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=fraud', true)
+			'text': this.language.get('text_extension'),
+			'href': await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=fraud', true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('extension/fraud/maxmind', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('extension/fraud/maxmind', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['action'] = await this.url.link('extension/fraud/maxmind', 'user_token=' + this.session.data['user_token'], true);
@@ -67,7 +69,7 @@ module.exports = class ControllerExtensionFraudMaxMind extends Controller {
 			data['fraud_maxmind_order_status_id'] = this.config.get('fraud_maxmind_order_status_id');
 		}
 
-		this.load.model('localisation/order_status');
+		this.load.model('localisation/order_status', this);
 
 		data['order_statuses'] = await this.model_localisation_order_status.getOrderStatuses();
 
@@ -85,13 +87,13 @@ module.exports = class ControllerExtensionFraudMaxMind extends Controller {
 	}
 
 	async install() {
-		this.load.model('extension/fraud/maxmind');
+		this.load.model('extension/fraud/maxmind',this);
 
 		await this.model_extension_fraud_maxmind.install();
 	}
 
 	async uninstall() {
-		this.load.model('extension/fraud/maxmind');
+		this.load.model('extension/fraud/maxmind',this);
 
 		await this.model_extension_fraud_maxmind.uninstall();
 	}
@@ -105,23 +107,21 @@ module.exports = class ControllerExtensionFraudMaxMind extends Controller {
 			this.error['key'] = this.language.get('error_key');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 
 	async order() {
 		await this.load.language('extension/fraud/maxmind');
 
-		this.load.model('extension/fraud/maxmind');
-
+		this.load.model('extension/fraud/maxmind',this);
+		let order_id = 0;
 		if ((this.request.get['order_id'])) {
 			order_id = this.request.get['order_id'];
-		} else {
-			order_id = 0;
 		}
 
-		fraud_info = await this.model_extension_fraud_maxmind.getOrder(order_id);
+		const fraud_info = await this.model_extension_fraud_maxmind.getOrder(order_id);
 
-		if (fraud_info) {
+		if (fraud_info.fraud_id) {
 			data['text_country_match'] = this.language.get('text_country_match');
 			data['text_country_code'] = this.language.get('text_country_code');
 			data['text_high_risk_country'] = this.language.get('text_high_risk_country');

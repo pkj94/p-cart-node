@@ -2,6 +2,7 @@ module.exports = class ControllerCatalogManufacturer extends Controller {
 	error = {};
 
 	async index() {
+const data = {};
 		await this.load.language('catalog/manufacturer');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -22,6 +23,7 @@ module.exports = class ControllerCatalogManufacturer extends Controller {
 			await this.model_catalog_manufacturer.addManufacturer(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
 			let url = '';
 
@@ -54,6 +56,7 @@ module.exports = class ControllerCatalogManufacturer extends Controller {
 			await this.model_catalog_manufacturer.editManufacturer(this.request.get['manufacturer_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
 			let url = '';
 
@@ -89,6 +92,7 @@ module.exports = class ControllerCatalogManufacturer extends Controller {
 			}
 
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
 			let url = '';
 
@@ -111,7 +115,7 @@ module.exports = class ControllerCatalogManufacturer extends Controller {
 	}
 
 	async getList() {
-		const data = {};
+				const data = {};
 		let sort = 'name';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];

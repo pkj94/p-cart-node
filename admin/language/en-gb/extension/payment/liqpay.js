@@ -8,7 +8,7 @@ module.exports = {
     text_edit: 'Edit LIQPAY',
     text_pay: 'LIQPAY',
     text_card: 'Credit Card',
-    text_liqpay: 'border: 1px solid #EEEEEE," />',
+    text_liqpay: '<img src="view/image/payment/liqpay.png" alt="LIQPAY" title="LIQPAY" style="border: 1px solid #EEEEEE," />',
 
     // Entry
     entry_merchant: 'Merchant ID',

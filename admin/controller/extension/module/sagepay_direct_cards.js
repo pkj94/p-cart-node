@@ -2,6 +2,7 @@ module.exports = class ControllerExtensionModuleSagepayDirectCards extends Contr
 	error = {};
 
 	async index() {
+const data = {};
 		await this.load.language('extension/module/sagepay_direct_cards');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -12,6 +13,7 @@ module.exports = class ControllerExtensionModuleSagepayDirectCards extends Contr
 			await this.model_setting_setting.editSetting('module_sagepay_direct_cards', this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=module', true));
 		}

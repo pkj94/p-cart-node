@@ -2,16 +2,18 @@ module.exports = class ControllerExtensionReportSaleCoupon extends Controller {
 	error = {};
 
 	async index() {
+		const data = {};
 		await this.load.language('extension/report/sale_coupon');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('setting/setting',this);
+		this.load.model('setting/setting', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validate()) {
 			await this.model_setting_setting.editSetting('report_sale_coupon', this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=report', true));
 		}
@@ -25,18 +27,18 @@ module.exports = class ControllerExtensionReportSaleCoupon extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_extension'),
-			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=report', true)
+			'text': this.language.get('text_extension'),
+			'href': await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=report', true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('extension/report/sale_coupon', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('extension/report/sale_coupon', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['action'] = await this.url.link('extension/report/sale_coupon', 'user_token=' + this.session.data['user_token'], true);
@@ -61,64 +63,61 @@ module.exports = class ControllerExtensionReportSaleCoupon extends Controller {
 
 		this.response.setOutput(await this.load.view('extension/report/sale_coupon_form', data));
 	}
-	
+
 	async validate() {
 		if (!await this.user.hasPermission('modify', 'extension/report/sale_coupon')) {
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
-		
+
 	async report() {
+		const data = {};
 		await this.load.language('extension/report/sale_coupon');
 
+		let filter_date_start = '';
 		if ((this.request.get['filter_date_start'])) {
 			filter_date_start = this.request.get['filter_date_start'];
-		} else {
-			filter_date_start = '';
 		}
 
+		let filter_date_end = '';
 		if ((this.request.get['filter_date_end'])) {
 			filter_date_end = this.request.get['filter_date_end'];
-		} else {
-			filter_date_end = '';
 		}
-
+		let page = 1;
 		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
 		}
 
-		this.load.model('extension/report/coupon');
+		this.load.model('extension/report/coupon', this);
 
-		data['coupons'] = {};
+		data['coupons'] = [];
 
-		filter_data = array(
-			'filter_date_start'	: filter_date_start,
-			'filter_date_end'	: filter_date_end,
-			'start'             : (page - 1) * Number(this.config.get('config_limit_admin')),
-			'limit'             : Number(this.config.get('config_limit_admin'))
-		});
+		const filter_data = {
+			'filter_date_start': filter_date_start,
+			'filter_date_end': filter_date_end,
+			'start': (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit': Number(this.config.get('config_limit_admin'))
+		};
 
-		coupon_total = await this.model_extension_report_coupon.getTotalCoupons(filter_data);
+		const coupon_total = await this.model_extension_report_coupon.getTotalCoupons(filter_data);
 
-		results = await this.model_extension_report_coupon.getCoupons(filter_data);
+		const results = await this.model_extension_report_coupon.getCoupons(filter_data);
 
 		for (let result of results) {
 			data['coupons'].push({
-				'name'   : result['name'],
-				'code'   : result['code'],
-				'orders' : result['orders'],
-				'total'  : this.currency.format(result['total'], this.config.get('config_currency')),
-				'edit'   : await this.url.link('marketing/coupon/edit', 'user_token=' + this.session.data['user_token'] + '&coupon_id=' + result['coupon_id'], true)
+				'name': result['name'],
+				'code': result['code'],
+				'orders': result['orders'],
+				'total': this.currency.format(result['total'], this.config.get('config_currency')),
+				'edit': await this.url.link('marketing/coupon/edit', 'user_token=' + this.session.data['user_token'] + '&coupon_id=' + result['coupon_id'], true)
 			});
 		}
 
 		data['user_token'] = this.session.data['user_token'];
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['filter_date_start'])) {
 			url += '&filter_date_start=' + this.request.get['filter_date_start'];
@@ -128,7 +127,7 @@ module.exports = class ControllerExtensionReportSaleCoupon extends Controller {
 			url += '&filter_date_end=' + this.request.get['filter_date_end'];
 		}
 
-		pagination = new Pagination();
+		const pagination = new Pagination();
 		pagination.total = coupon_total;
 		pagination.page = page;
 		pagination.limit = Number(this.config.get('config_limit_admin'));

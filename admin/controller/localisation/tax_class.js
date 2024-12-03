@@ -2,6 +2,7 @@ module.exports = class ControllerLocalisationTaxClass extends Controller {
 	error = {};
 
 	async index() {
+const data = {};
 		await this.load.language('localisation/tax_class');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -22,6 +23,7 @@ module.exports = class ControllerLocalisationTaxClass extends Controller {
 			await this.model_localisation_tax_class.addTaxClass(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
 			url = '';
 
@@ -54,6 +56,7 @@ module.exports = class ControllerLocalisationTaxClass extends Controller {
 			await this.model_localisation_tax_class.editTaxClass(this.request.get['tax_class_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
 			url = '';
 
@@ -84,11 +87,12 @@ module.exports = class ControllerLocalisationTaxClass extends Controller {
 
 		if ((this.request.post['selected']) && await this.validateDelete()) {
 this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
-			for (this.request.post['selected'] of tax_class_id) {
+			for (let tax_class_id of this.request.post['selected'] ) {
 				await this.model_localisation_tax_class.deleteTaxClass(tax_class_id);
 			}
 
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
 			url = '';
 
@@ -111,6 +115,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 	}
 
 	async getList() {
+		const data = {};
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
 		} else {
@@ -122,11 +127,9 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		} else {
 			order = 'ASC';
 		}
-
-		if ((this.request.get['page'])) {
+page = 1;
+if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
 		}
 
 		url = '';
@@ -160,7 +163,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 
 		data['tax_classes'] = {};
 
-		filter_data = array(
+		const filter_data = {
 			'sort'  : sort,
 			'order' : order,
 			'start' : (page - 1) * Number(this.config.get('config_limit_admin')),
@@ -188,7 +191,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		if ((this.session.data['success'])) {
 			data['success'] = this.session.data['success'];
 
-			delete this.session.data['success']);
+			delete this.session.data['success'];
 		} else {
 			data['success'] = '';
 		}
@@ -223,7 +226,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			url += '&order=' + this.request.get['order'];
 		}
 
-		pagination = new Pagination();
+		const pagination = new Pagination();
 		pagination.total = tax_class_total;
 		pagination.page = page;
 		pagination.limit = Number(this.config.get('config_limit_admin'));
@@ -361,8 +364,8 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		this.load.model('catalog/product',this);
 		this.request.post['selected']  = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']];
 
-		for (this.request.post['selected'] of tax_class_id) {
-			product_total = await this.model_catalog_product.getTotalProductsByTaxClassId(tax_class_id);
+		for (let tax_class_id of this.request.post['selected'] ) {
+			const product_total = await this.model_catalog_product.getTotalProductsByTaxClassId(tax_class_id);
 
 			if (product_total) {
 				this.error['warning'] = sprintf(this.language.get('error_product'), product_total);

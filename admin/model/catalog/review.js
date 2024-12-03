@@ -1,8 +1,10 @@
+const strip_tags = require("locutus/php/strings/strip_tags");
+
 module.exports = class ModelCatalogReview extends Model {
 	async addReview(data) {
 		await this.db.query("INSERT INTO " + DB_PREFIX + "review SET author = '" + this.db.escape(data['author']) + "', product_id = '" + data['product_id'] + "', text = '" + this.db.escape(strip_tags(data['text'])) + "', rating = '" + data['rating'] + "', status = '" + data['status'] + "', date_added = '" + this.db.escape(data['date_added']) + "'");
 
-		review_id = this.db.getLastId();
+		const review_id = this.db.getLastId();
 
 		await this.cache.delete('product');
 
@@ -52,7 +54,7 @@ module.exports = class ModelCatalogReview extends Model {
 			'r.rating',
 			'r.status',
 			'r.date_added'
-		});
+		];
 
 		if ((data['sort']) && sort_data.includes(data['sort'])) {
 			sql += " ORDER BY " + data['sort'];
@@ -67,13 +69,13 @@ module.exports = class ModelCatalogReview extends Model {
 		}
 
 		if ((data['start']) || (data['limit'])) {
-			data['start'] = data['start']||0;
-if (data['start'] < 0) {
+			data['start'] = data['start'] || 0;
+			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 

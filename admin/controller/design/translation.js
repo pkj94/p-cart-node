@@ -2,11 +2,12 @@ module.exports = class ControllerDesignTranslation extends Controller {
 	error = {};
 
 	async index() {
+		const data = {};
 		await this.load.language('design/translation');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('design/translation');
+		this.load.model('design/translation', this);
 
 		await this.getList();
 	}
@@ -16,14 +17,15 @@ module.exports = class ControllerDesignTranslation extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('design/translation');
+		this.load.model('design/translation', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_design_translation.addTranslation(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -48,14 +50,15 @@ module.exports = class ControllerDesignTranslation extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('design/translation');
+		this.load.model('design/translation', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_design_translation.editTranslation(this.request.get['translation_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -80,17 +83,18 @@ module.exports = class ControllerDesignTranslation extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('design/translation');
+		this.load.model('design/translation', this);
 
 		if ((this.request.post['selected']) && await this.validateDelete()) {
-this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
-			for (this.request.post['selected'] of translation_id) {
+			this.request.post['selected'] = Array.isArray(this.request.post['selected']) ? this.request.post['selected'] : [this.request.post['selected']]
+			for (let translation_id of this.request.post['selected']) {
 				await this.model_design_translation.deleteTranslation(translation_id);
 			}
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -111,25 +115,21 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 	}
 
 	async getList() {
+		const data = {};
+		let sort = 'store';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
-		} else {
-			sort = 'store';
 		}
-
+		let order = 'ASC';
 		if ((this.request.get['order'])) {
 			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
 		}
-
+		let page = 1;
 		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -146,42 +146,42 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('design/translation', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('design/translation', 'user_token=' + this.session.data['user_token'], true)
 		});
 
-		this.load.model('localisation/language',this);
+		this.load.model('localisation/language', this);
 
 		data['add'] = await this.url.link('design/translation/add', 'user_token=' + this.session.data['user_token'] + url, true);
 		data['delete'] = await this.url.link('design/translation/delete', 'user_token=' + this.session.data['user_token'] + url, true);
 
-		data['translations'] = {};
+		data['translations'] = [];
 
-		filter_data = array(
-			'sort'  : sort,
-			'order' : order,
-			'start' : (page - 1) * Number(this.config.get('config_limit_admin')),
-			'limit' : Number(this.config.get('config_limit_admin'))
-		});
+		const filter_data = {
+			'sort': sort,
+			'order': order,
+			'start': (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit': Number(this.config.get('config_limit_admin'))
+		};
 
-		translation_total = await this.model_design_translation.getTotalTranslations();
+		const translation_total = await this.model_design_translation.getTotalTranslations();
 
-		results = await this.model_design_translation.getTranslations(filter_data);
+		const results = await this.model_design_translation.getTranslations(filter_data);
 
 		for (let result of results) {
 			data['translations'].push({
-				'translation_id' : result['translation_id'],
-				'store'          : (result['store_id'] ? result['store'] : this.language.get('text_default')),
-				'route'          : result['route'],
-				'language'       : result['language'],
-				'key'            : result['key'],
-				'value'          : result['value'],
-				'edit'           : await this.url.link('design/translation/edit', 'user_token=' + this.session.data['user_token'] + '&translation_id=' + result['translation_id'], true),
+				'translation_id': result['translation_id'],
+				'store': (result['store_id'] ? result['store'] : this.language.get('text_default')),
+				'route': result['route'],
+				'language': result['language'],
+				'key': result['key'],
+				'value': result['value'],
+				'edit': await this.url.link('design/translation/edit', 'user_token=' + this.session.data['user_token'] + '&translation_id=' + result['translation_id'], true),
 			});
 		}
 
@@ -196,7 +196,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		if ((this.session.data['success'])) {
 			data['success'] = this.session.data['success'];
 
-			delete this.session.data['success']);
+			delete this.session.data['success'];
 		} else {
 			data['success'] = '';
 		}
@@ -225,7 +225,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		data['sort_key'] = await this.url.link('design/translation', 'user_token=' + this.session.data['user_token'] + '&sort=key' + url, true);
 		data['sort_value'] = await this.url.link('design/translation', 'user_token=' + this.session.data['user_token'] + '&sort=value' + url, true);
 
-		pagination = new Pagination();
+		const pagination = new Pagination();
 		pagination.total = translation_total;
 		pagination.page = page;
 		pagination.limit = Number(this.config.get('config_limit_admin'));
@@ -246,6 +246,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 	}
 
 	async getForm() {
+		const data = {};
 		data['text_form'] = !(this.request.get['translation_id']) ? this.language.get('text_add') : this.language.get('text_edit');
 
 		if ((this.error['warning'])) {
@@ -260,7 +261,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			data['error_key'] = '';
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -277,13 +278,13 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('design/translation', 'user_token=' + this.session.data['user_token'] + url, true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('design/translation', 'user_token=' + this.session.data['user_token'] + url, true)
 		});
 
 		if (!(this.request.get['translation_id'])) {
@@ -295,12 +296,12 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		data['cancel'] = await this.url.link('design/translation', 'user_token=' + this.session.data['user_token'] + url, true);
 
 		data['user_token'] = this.session.data['user_token'];
-
+		let translation_info;
 		if ((this.request.get['translation_id']) && (this.request.server['method'] != 'POST')) {
 			translation_info = await this.model_design_translation.getTranslation(this.request.get['translation_id']);
 		}
 
-		this.load.model('setting/store',this);
+		this.load.model('setting/store', this);
 
 		data['stores'] = await this.model_setting_store.getStores();
 
@@ -312,16 +313,16 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			data['store_id'] = '';
 		}
 
-		this.load.model('localisation/language',this);
+		this.load.model('localisation/language', this);
 
 		data['languages'] = await this.model_localisation_language.getLanguages();
-
+		let language;
+		let code = this.config.get('config_language')
 		if ((translation_info)) {
 			language = await this.model_localisation_language.getLanguage(translation_info['language_id']);
 			code = language['code'];
 		} else {
-			code = this.config.get('config_language');
-			language = await this.model_localisation_language.getLanguageByCode(code);
+			language = await this.model_localisation_language.getLanguageByCode(code)
 		}
 
 		if ((this.request.post['language_id'])) {
@@ -332,22 +333,22 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			data['language_id'] = language['language_id'];
 		}
 
-		if (empty(translation_info)) {
+		if (!(translation_info)) {
 			// Get a list of files ready to upload
-			data['paths'] = {};
+			data['paths'] = [];
 
-			path = glob(DIR_CATALOG + 'language/' + code + '/*');
+			let path = require('glob').sync(DIR_CATALOG + 'language/' + code + '/*');
 
-			while (count(path) != 0) {
-				next = array_shift(path);
+			while (path.length != 0) {
+				let next = path.shift();
 
-				for (glob(next) of file) {
+				for (let file of require('glob').sync(next)) {
 					if (is_dir(file)) {
-						path.push(file + '/*';
+						path.push(file + '/*');
 					}
 
-					if (substr(file, -4) == '.php') {
-						data['paths'].push(substr(substr(file, strlen(DIR_CATALOG + 'language/' + code + '/')), 0, -4);
+					if (file.substr(-4) == '.js') {
+						data['paths'].push(file.substr((DIR_CATALOG + 'language/' + code + '/').length).substr(0, -3));
 					}
 				}
 			}
@@ -370,20 +371,19 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		}
 
 		if ((translation_info)) {
-			directory = DIR_CATALOG + 'language/';
+			let directory = DIR_CATALOG + 'language/';
 
-			if (is_file(directory + code + '/' + translation_info['route'] + '.php') && substr(str_replace('\\', '/', realpath(directory + code + '/' + translation_info['route'] + '.php')), 0, strlen(directory)) == str_replace('\\', '/', directory)) {
-				_ = {};
+			if (is_file(directory + code + '/' + translation_info['route'] + '.js') && fs.realpathSync(directory + code + '/' + translation_info['route'] + '.js').replaceAll('\\', '/').substr(0, (directory).length) == directory.replaceAll('\\', '/')) {
 
-				include(directory + code + '/' + translation_info['route'] + '.php');
+				const lanData = require(directory + code + '/' + translation_info['route'] + '.js');
 
-				for (_ of key : value) {
+				for (let [key, value] of Object.entries(lanData)) {
 					if (translation_info['key'] == key) {
 						data['default'] = value;
 					}
 				}
 
-				if (empty(data['default'])) {
+				if (!(data['default'])) {
 					data['default'] = translation_info['value'];
 				}
 			}
@@ -413,7 +413,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			this.error['key'] = this.language.get('error_key');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 
 	async validateDelete() {
@@ -421,37 +421,36 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 
 	async path() {
 		await this.load.language('design/translation');
 
-		json = {};
-
+		const json = [];
+		let language_id = 0;
 		if ((this.request.get['language_id'])) {
 			language_id = this.request.get['language_id'];
-		} else {
-			language_id = 0;
 		}
 
-		this.load.model('localisation/language',this);
+		this.load.model('localisation/language', this);
 
-		language_info = await this.model_localisation_language.getLanguage(language_id);
+		const language_info = await this.model_localisation_language.getLanguage(language_id);
 
-		if ((language_info)) {
-			path = glob(DIR_CATALOG + 'language/' + language_info['code'] + '/*');
+		if ((language_info.language_id)) {
+			let path = require('glob').sync(DIR_CATALOG + 'language/' + language_info['code'] + '/*').sort();
 
-			while (count(path) != 0) {
-				next = array_shift(path);
-
-				for (glob(next) of file) {
+			while (path.length != 0) {
+				let next = path.shift();
+				for (let file of require('glob').sync(next).sort()) {
 					if (is_dir(file)) {
-						path.push(file + '/*';
+						path.push((DIR_OPENCART + file).replaceAll('\\', '/') + '/*');
 					}
 
-					if (substr(file, -4) == '.php') {
-						json.push(substr(substr(file, strlen(DIR_CATALOG + 'language/' + language_info['code'] + '/')), 0, -4);
+					if (file.substr(-3) == '.js') {
+						file = file.replaceAll('\\', '/').indexOf(DIR_OPENCART) != -1 ? file : DIR_OPENCART.replaceAll('\\', '/') + file;
+
+						json.push(file.substr((DIR_CATALOG + 'language/' + language_info['code'] + '/').length).replace('.js', '').replaceAll('\\', '/'));
 					}
 				}
 			}
@@ -464,41 +463,34 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 	async translation() {
 		await this.load.language('design/translation');
 
-		json = {};
-
+		const json = [];
+		let store_id = 0;
 		if ((this.request.get['store_id'])) {
 			store_id = this.request.get['store_id'];
-		} else {
-			store_id = 0;
 		}
-
+		let language_id = 0;
 		if ((this.request.get['language_id'])) {
 			language_id = this.request.get['language_id'];
-		} else {
-			language_id = 0;
 		}
-
+		let route = '';
 		if ((this.request.get['path'])) {
 			route = this.request.get['path'];
-		} else {
-			route = '';
 		}
 
-		this.load.model('localisation/language',this);
+		this.load.model('localisation/language', this);
 
-		language_info = await this.model_localisation_language.getLanguage(language_id);
+		const language_info = await this.model_localisation_language.getLanguage(language_id);
 
-		directory = DIR_CATALOG + 'language/';
+		let directory = DIR_CATALOG + 'language/';
 
-		if (language_info && is_file(directory + language_info['code'] + '/' + route + '.php') && substr(str_replace('\\', '/', realpath(directory + language_info['code'] + '/' + route + '.php')), 0, strlen(directory)) == str_replace('\\', '/', directory)) {
-			_ = {};
+		if (language_info.language_id && is_file(directory + language_info['code'] + '/' + route + '.js') && fs.realpathSync(directory + language_info['code'] + '/' + route + '.js').replaceAll('\\', '/').substr(0, directory.length) == directory.replaceAll('\\', '/')) {
 
-			include(directory + language_info['code'] + '/' + route + '.php');
+			const langData = require(directory + language_info['code'] + '/' + route + '.js');
 
-			for (_ of key : value) {
+			for (let [key, value] of Object.entries(langData)) {
 				json.push({
-					'key'   : key,
-					'value' : value
+					'key': key,
+					'value': value
 				});
 			}
 		}

@@ -1,51 +1,48 @@
 module.exports = class ModelExtensionPaymentPilibaba extends Model {
 	async install() {
-		await this.db.query("CREATE TABLE IF NOT EXISTS `" + DB_PREFIX + "pilibaba_order` (
-			`pilibaba_order_id` int(11) NOT NULL AUTO_INCREMENT,
-			`order_id` int(11) NOT NULL DEFAULT '0',
-			`amount` double NOT NULL,
-			`fee` double NOT NULL,
-			`tracking` VARCHAR(50) NOT NULL DEFAULT '',
-			`date_added` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-			PRIMARY KEY (`pilibaba_order_id`)
-		) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=oc_general_ci");
+		await this.db.query(`CREATE TABLE IF NOT EXISTS \`${DB_PREFIX}pilibaba_order\` (
+			\`pilibaba_order_id\` int(11) NOT NULL AUTO_INCREMENT,
+			\`order_id\` int(11) NOT NULL DEFAULT '0',
+			\`amount\` double NOT NULL,
+			\`fee\` double NOT NULL,
+			\`tracking\` VARCHAR(50) NOT NULL DEFAULT '',
+			\`date_added\` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+			PRIMARY KEY (\`pilibaba_order_id\`)
+		) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci`);
 	}
 
 	async uninstall() {
 		await this.db.query("DROP TABLE IF EXISTS `" + DB_PREFIX + "pilibaba_order`");
 
-		this.disablePiliExpress();
+		await this.disablePiliExpress();
 
-		this.log('Module uninstalled');
+		await this.log('Module uninstalled');
 	}
 
 	async getCurrencies() {
-		ch = curl_init();
-		curl_setopt(ch, CURLOPT_URL, 'http://www.pilibaba.com/pilipay/getCurrency');
-		curl_setopt(ch, CURLOPT_CUSTOMREQUEST, 'GET');
-		curl_setopt(ch, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt(ch, CURLOPT_HEADER, false);
-		curl_setopt(ch, CURLOPT_TIMEOUT, 30);
-		curl_setopt(ch, CURLOPT_SSL_VERIFYPEER, false);
-		response = curl_exec(ch);
-		curl_close(ch);
-
-		return JSON.parse(response, true);
+		try {
+			const response = await require('axios').get('http://www.pilibaba.com/pilipay/getCurrency', {
+				timeout: 30000, // 30 seconds timeout 
+			});
+			return response.data;
+		} catch (error) {
+			console.error('Error fetching currencies:', error);
+			return null;
+		}
 	}
 
 	async getWarehouses() {
-		ch = curl_init();
-		curl_setopt(ch, CURLOPT_URL, 'http://www.pilibaba.com/pilipay/getAddressList');
-		curl_setopt(ch, CURLOPT_CUSTOMREQUEST, 'GET');
-		curl_setopt(ch, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt(ch, CURLOPT_HEADER, false);
-		curl_setopt(ch, CURLOPT_TIMEOUT, 30);
-		curl_setopt(ch, CURLOPT_SSL_VERIFYPEER, false);
-		response = curl_exec(ch);
-		curl_close(ch);
-
-		return JSON.parse(response, true);
+		try {
+			const response = await require('axios').get('http://www.pilibaba.com/pilipay/getAddressList', {
+				timeout: 30000, // 30 seconds timeout 
+			});
+			return response.data;
+		} catch (error) {
+			console.error('Error fetching currencies:', error);
+			return null;
+		}
 	}
+
 
 	async getOrder(order_id) {
 		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "pilibaba_order` WHERE `order_id` = '" + order_id + "' LIMIT 1");
@@ -58,7 +55,7 @@ module.exports = class ModelExtensionPaymentPilibaba extends Model {
 	}
 
 	async register(email, password, currency, warehouse, country, environment) {
-		this.log('Posting register');
+		await this.log('Posting register');
 
 		if (warehouse == 'other') {
 			warehouse = '';
@@ -67,55 +64,47 @@ module.exports = class ModelExtensionPaymentPilibaba extends Model {
 		if (warehouse) {
 			country = '';
 		}
-
+		let url = '';
 		if (environment == 'live') {
 			url = 'http://en.pilibaba.com/autoRegist';
 		} else {
 			url = 'http://preen.pilibaba.com/autoRegist';
 		}
 
-		this.log('URL: ' + url);
+		await this.log('URL: ' + url);
 
-		app_secret = strtoupper(md5(((warehouse) ? warehouse : country) + '0210000574' + '0b8l3ww5' + currency + email + md5(password)));
+		let app_secret = md5(((warehouse) ? warehouse : country) + '0210000574' + '0b8l3ww5' + currency + email + md5(password)).toUpperCase();
 
-		data = array(
-			'platformNo'  : '0210000574',
-			'appSecret'   : app_secret,
-			'email'       : email,
-			'password'    : md5(password),
-			'currency'    : currency,
-			'logistics'   : warehouse,
-			'countryCode' : country
-		});
+		let data = {
+			'platformNo': '0210000574',
+			'appSecret': app_secret,
+			'email': email,
+			'password': md5(password),
+			'currency': currency,
+			'logistics': warehouse,
+			'countryCode': country
+		};
 
-		this.log('Data: ' + print_r(data, true));
-
-		headers = array('Accept: application/json','Content-Type: application/json');
-
-		ch = curl_init();
-		curl_setopt(ch, CURLOPT_URL, url);
-		curl_setopt(ch, CURLOPT_POST, true);
-		curl_setopt(ch, CURLOPT_POSTFIELDS, JSON.stringify(data));
-		curl_setopt(ch, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt(ch, CURLOPT_HTTPHEADER, headers);
-		curl_setopt(ch, CURLOPT_TIMEOUT, 30);
-		curl_setopt(ch, CURLOPT_SSL_VERIFYPEER, false);
-		response = curl_exec(ch);
-		if (curl_errno(ch)) {
-			this.log('cURL error: ' + curl_errno(ch));
+		await this.log('Data: ' + JSON.stringify(data, true));
+		try {
+			let curl = await require('axios').post(url, data, {
+				headers: {
+					"Accept": "application/json",
+					"Content-Type": "application/json",
+				},
+				timeout: 30000
+			})
+			return curl.data;
+		} catch (e) {
+			await this.log('cURL error: ' + JSON.stringify(e, true));
 		}
-		curl_close(ch);
-
-		this.log('Response: ' + print_r(response, true));
-
-		return JSON.parse(response, true);
 	}
 
 	async updateTrackingNumber(order_id, tracking_number, merchant_number) {
-		this.log('Posting tracking');
+		await this.log('Posting tracking');
 
-		sign_msg = strtoupper(md5(order_id + tracking_number + merchant_number + this.config.get('payment_pilibaba_secret_key')));
-
+		let sign_msg = md5(order_id + tracking_number + merchant_number + this.config.get('payment_pilibaba_secret_key')).toUpperCase();
+		let url = '';
 		if (this.config.get('payment_pilibaba_environment') == 'live') {
 			url = 'https://www.pilibaba.com/pilipay/updateTrackNo';
 		} else {
@@ -124,22 +113,18 @@ module.exports = class ModelExtensionPaymentPilibaba extends Model {
 
 		url += '?orderNo=' + order_id + '&logisticsNo=' + tracking_number + '&merchantNo=' + merchant_number + '&signMsg=' + sign_msg;
 
-		this.log('URL: ' + url);
-
-		ch = curl_init();
-		curl_setopt(ch, CURLOPT_URL, url);
-		curl_setopt(ch, CURLOPT_CUSTOMREQUEST, 'GET');
-		curl_setopt(ch, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt(ch, CURLOPT_HEADER, false);
-		curl_setopt(ch, CURLOPT_TIMEOUT, 30);
-		curl_setopt(ch, CURLOPT_SSL_VERIFYPEER, false);
-		response = curl_exec(ch);
-		if (curl_errno(ch)) {
-			this.log('cURL error: ' + curl_errno(ch));
+		await this.log('URL: ' + url);
+		try {
+			let curl = await require('axios').get(url, {
+				timeout: 30000
+			})
+			const response = curl.data;
+		} catch (e) {
+			await this.log('cURL error: ' + JSON.stringify(e, true));
 		}
-		curl_close(ch);
 
 		await this.db.query("UPDATE `" + DB_PREFIX + "pilibaba_order` SET `tracking` = '" + this.db.escape(tracking_number) + "' WHERE `order_id` = '" + order_id + "'");
+
 	}
 
 	async enablePiliExpress() {
@@ -155,10 +140,10 @@ module.exports = class ModelExtensionPaymentPilibaba extends Model {
 	}
 
 	async log(data) {
-		if (this.config.has('payment_pilibaba_logging') && this.config.get('payment_pilibaba_logging')) {
-			log = new Log('pilibaba.log');
+		if (this.config.has('payment_pilibaba_logging') && Number(this.config.get('payment_pilibaba_logging'))) {
+			const log = new Log('pilibaba.log');
 
-			log.write(data);
+			awaitclog.write(data);
 		}
 	}
 }

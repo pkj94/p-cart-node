@@ -1,7 +1,7 @@
 module.exports = class ModelLocalisationLocation extends Model {
 	async addLocation(data) {
 		await this.db.query("INSERT INTO " + DB_PREFIX + "location SET name = '" + this.db.escape(data['name']) + "', address = '" + this.db.escape(data['address']) + "', geocode = '" + this.db.escape(data['geocode']) + "', telephone = '" + this.db.escape(data['telephone']) + "', fax = '" + this.db.escape(data['fax']) + "', image = '" + this.db.escape(data['image']) + "', open = '" + this.db.escape(data['open']) + "', comment = '" + this.db.escape(data['comment']) + "'");
-	
+
 		return this.db.getLastId();
 	}
 
@@ -25,7 +25,7 @@ module.exports = class ModelLocalisationLocation extends Model {
 		let sort_data = [
 			'name',
 			'address',
-		});
+		];
 
 		if ((data['sort']) && sort_data.includes(data['sort'])) {
 			sql += " ORDER BY " + data['sort'];
@@ -40,13 +40,13 @@ module.exports = class ModelLocalisationLocation extends Model {
 		}
 
 		if ((data['start']) || (data['limit'])) {
-			data['start'] = data['start']||0;
-if (data['start'] < 0) {
+			data['start'] = data['start'] || 0;
+			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 

@@ -10,6 +10,7 @@ class ControllerExtensionPaymentWechatPay extends Controller {
 	error = {};
 
 	async index() {
+const data = {};
 		await this.load.language('extension/payment/wechat_pay');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -20,6 +21,7 @@ class ControllerExtensionPaymentWechatPay extends Controller {
 			await this.model_setting_setting.editSetting('payment_wechat_pay', this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true));
 		}
@@ -117,7 +119,7 @@ class ControllerExtensionPaymentWechatPay extends Controller {
 			data['payment_wechat_pay_completed_status_id'] = this.config.get('payment_wechat_pay_completed_status_id');
 		}
 
-		this.load.model('localisation/order_status');
+		this.load.model('localisation/order_status',this);
 
 		data['order_statuses'] = await this.model_localisation_order_status.getOrderStatuses();
 
@@ -127,7 +129,7 @@ class ControllerExtensionPaymentWechatPay extends Controller {
 			data['payment_wechat_pay_geo_zone_id'] = this.config.get('payment_wechat_pay_geo_zone_id');
 		}
 
-		this.load.model('localisation/geo_zone');
+		this.load.model('localisation/geo_zone',this);
 
 		data['geo_zones'] = await this.model_localisation_geo_zone.getGeoZones();
 
@@ -150,7 +152,7 @@ class ControllerExtensionPaymentWechatPay extends Controller {
 		this.response.setOutput(await this.load.view('extension/payment/wechat_pay', data));
 	}
 
-	private function validate() {
+	async validate() {
 		if (!await this.user.hasPermission('modify', 'extension/payment/wechat_pay')) {
 			this.error['warning'] = this.language.get('error_permission');
 		}

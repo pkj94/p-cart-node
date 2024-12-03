@@ -11,7 +11,7 @@ module.exports = class ModelCatalogInformation extends Model {
 		}
 
 		if ((data['information_store'])) {
-			for (data['information_store'] of store_id) {
+			for (let store_id of data['information_store']) {
 				await this.db.query("INSERT INTO " + DB_PREFIX + "information_to_store SET information_id = '" + information_id + "', store_id = '" + store_id + "'");
 			}
 		}
@@ -50,7 +50,7 @@ module.exports = class ModelCatalogInformation extends Model {
 		await this.db.query("DELETE FROM " + DB_PREFIX + "information_to_store WHERE information_id = '" + information_id + "'");
 
 		if ((data['information_store'])) {
-			for (data['information_store'] of store_id) {
+			for (let store_id of data['information_store']) {
 				await this.db.query("INSERT INTO " + DB_PREFIX + "information_to_store SET information_id = '" + information_id + "', store_id = '" + store_id + "'");
 			}
 		}

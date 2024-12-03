@@ -2,6 +2,7 @@ module.exports = class ControllerReportStatistics extends Controller {
 	error = {};
 	
 	async index() {
+const data = {};
 		await this.load.language('report/statistics');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -18,12 +19,13 @@ module.exports = class ControllerReportStatistics extends Controller {
 
 		this.load.model('report/statistics',this);		
 
-		if (this.validate()) {
+		if (await this.validate()) {
 			this.load.model('sale/order',this);
 			
 			await this.model_report_statistics.editValue('order_sale', await this.model_sale_order.getTotalSales(array('filter_order_status' : implode(',', array_merge(this.config.get('config_complete_status'), this.config.get('config_processing_status'))))));		
 		
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 			
 			this.response.setRedirect(await this.url.link('report/statistics', 'user_token=' + this.session.data['user_token'], true));
 		}
@@ -38,12 +40,13 @@ module.exports = class ControllerReportStatistics extends Controller {
 
 		this.load.model('report/statistics',this);		
 
-		if (this.validate()) {
+		if (await this.validate()) {
 			this.load.model('sale/order',this);
 			
 			await this.model_report_statistics.editValue('order_processing', await this.model_sale_order.getTotalOrders(array('filter_order_status' : implode(',', this.config.get('config_processing_status')))));		
 		
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 			
 			this.response.setRedirect(await this.url.link('report/statistics', 'user_token=' + this.session.data['user_token'], true));
 		}
@@ -58,12 +61,13 @@ module.exports = class ControllerReportStatistics extends Controller {
 		
 		this.load.model('report/statistics',this);
 		
-		if (this.validate()) {
+		if (await this.validate()) {
 			this.load.model('sale/order',this);
 			
 			await this.model_report_statistics.editValue('order_complete', await this.model_sale_order.getTotalOrders(array('filter_order_status' : implode(',', this.config.get('config_complete_status')))));		
 		
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('report/statistics', 'user_token=' + this.session.data['user_token'], true));
 		}		
@@ -78,8 +82,8 @@ module.exports = class ControllerReportStatistics extends Controller {
 		
 		this.load.model('report/statistics',this);
 		
-		if (this.validate()) {
-			this.load.model('localisation/order_status');
+		if (await this.validate()) {
+			this.load.model('localisation/order_status',this);
 				
 			order_status_data = {};
 	
@@ -96,6 +100,7 @@ module.exports = class ControllerReportStatistics extends Controller {
 			await this.model_report_statistics.editValue('order_other', await this.model_sale_order.getTotalOrders(array('filter_order_status' : implode(',', order_status_data))));
 		
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 			
 			this.response.setRedirect(await this.url.link('report/statistics', 'user_token=' + this.session.data['user_token'], true));
 		}
@@ -110,12 +115,13 @@ module.exports = class ControllerReportStatistics extends Controller {
 				
 		this.load.model('report/statistics',this);
 		
-		if (this.validate()) {
-			this.load.model('sale/return');
+		if (await this.validate()) {
+			this.load.model('sale/return',this);
 			
 			await this.model_report_statistics.editValue('return', await this.model_sale_return.getTotalReturns(array('filter_return_status_id' : this.config.get('config_return_status_id'))));
 		
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('report/statistics', 'user_token=' + this.session.data['user_token'], true));		
 		}
@@ -130,12 +136,13 @@ module.exports = class ControllerReportStatistics extends Controller {
 				
 		this.load.model('report/statistics',this);
 		
-		if (this.validate()) {	
+		if (await this.validate()) {	
 			this.load.model('customer/customer',this);
 			
 			await this.model_report_statistics.editValue('customer', await this.model_customer_customer.getTotalCustomers(array('filter_approved' : 0)));
 		
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('report/statistics', 'user_token=' + this.session.data['user_token'], true));		
 		}
@@ -150,12 +157,13 @@ module.exports = class ControllerReportStatistics extends Controller {
 				
 		this.load.model('report/statistics',this);
 		
-		if (this.validate()) {
+		if (await this.validate()) {
 			this.load.model('customer/customer',this);
 	
 			await this.model_report_statistics.editValue('affiliate', await this.model_customer_customer.getTotalAffiliates(array('filter_approved' : 0)));
 			
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 			
 			this.response.setRedirect(await this.url.link('report/statistics', 'user_token=' + this.session.data['user_token'], true));
 		}
@@ -170,12 +178,13 @@ module.exports = class ControllerReportStatistics extends Controller {
 				
 		this.load.model('report/statistics',this);
 		
-		if (this.validate()) {		
+		if (await this.validate()) {		
 			this.load.model('catalog/product',this);
 			
 			await this.model_report_statistics.editValue('product', await this.model_catalog_product.getTotalProducts(array('filter_quantity' : 0)));
 
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('report/statistics', 'user_token=' + this.session.data['user_token'], true));
 		}
@@ -190,12 +199,13 @@ module.exports = class ControllerReportStatistics extends Controller {
 				
 		this.load.model('report/statistics',this);	
 		
-		if (this.validate()) {	
-			this.load.model('catalog/review');
+		if (await this.validate()) {	
+			this.load.model('catalog/review',this);
 				
 			await this.model_report_statistics.editValue('review', await this.model_catalog_review.getTotalReviews(array('filter_status' : 0)));
 			
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('report/statistics', 'user_token=' + this.session.data['user_token'], true));
 		}
@@ -204,6 +214,7 @@ module.exports = class ControllerReportStatistics extends Controller {
 	}
 	
 	async getList() {
+		const data = {};
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
@@ -239,7 +250,7 @@ module.exports = class ControllerReportStatistics extends Controller {
 		if ((this.session.data['success'])) {
 			data['success'] = this.session.data['success'];
 
-			delete this.session.data['success']);
+			delete this.session.data['success'];
 		} else {
 			data['success'] = '';
 		}

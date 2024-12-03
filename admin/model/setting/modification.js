@@ -10,7 +10,7 @@ module.exports = class ModelSettingModification extends Model {
 	async deleteModificationsByExtensionInstallId(extension_install_id) {
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "modification` WHERE `extension_install_id` = '" + extension_install_id + "'");
 	}
-	
+
 	async enableModification(modification_id) {
 		await this.db.query("UPDATE `" + DB_PREFIX + "modification` SET `status` = '1' WHERE `modification_id` = '" + modification_id + "'");
 	}
@@ -34,7 +34,7 @@ module.exports = class ModelSettingModification extends Model {
 			'version',
 			'status',
 			'date_added'
-		});
+		];
 
 		if ((data['sort']) && sort_data.includes(data['sort'])) {
 			sql += " ORDER BY " + data['sort'];
@@ -49,13 +49,13 @@ module.exports = class ModelSettingModification extends Model {
 		}
 
 		if ((data['start']) || (data['limit'])) {
-			data['start'] = data['start']||0;
-if (data['start'] < 0) {
+			data['start'] = data['start'] || 0;
+			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
@@ -72,10 +72,10 @@ if (data['limit'] < 1) {
 
 		return query.row['total'];
 	}
-	
+
 	async getModificationByCode(code) {
 		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "modification` WHERE `code` = '" + this.db.escape(code) + "'");
 
 		return query.row;
-	}	
+	}
 }

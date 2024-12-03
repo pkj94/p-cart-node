@@ -2,14 +2,14 @@ module.exports = class ModelSaleVoucherTheme extends Model {
 	async addVoucherTheme(data) {
 		await this.db.query("INSERT INTO " + DB_PREFIX + "voucher_theme SET image = '" + this.db.escape(data['image']) + "'");
 
-		voucher_theme_id = this.db.getLastId();
+		const voucher_theme_id = this.db.getLastId();
 
-		for (data['voucher_theme_description'] of language_id : value) {
+		for (let [language_id, value] of Object.entries(data['voucher_theme_description'])) {
 			await this.db.query("INSERT INTO " + DB_PREFIX + "voucher_theme_description SET voucher_theme_id = '" + voucher_theme_id + "', language_id = '" + language_id + "', name = '" + this.db.escape(value['name']) + "'");
 		}
 
 		await this.cache.delete('voucher_theme');
-		
+
 		return voucher_theme_id;
 	}
 
@@ -18,7 +18,7 @@ module.exports = class ModelSaleVoucherTheme extends Model {
 
 		await this.db.query("DELETE FROM " + DB_PREFIX + "voucher_theme_description WHERE voucher_theme_id = '" + voucher_theme_id + "'");
 
-		for (data['voucher_theme_description'] of language_id : value) {
+		for (let [language_id, value] of Object.entries(data['voucher_theme_description'])) {
 			await this.db.query("INSERT INTO " + DB_PREFIX + "voucher_theme_description SET voucher_theme_id = '" + voucher_theme_id + "', language_id = '" + language_id + "', name = '" + this.db.escape(value['name']) + "'");
 		}
 
@@ -49,13 +49,13 @@ module.exports = class ModelSaleVoucherTheme extends Model {
 			}
 
 			if ((data['start']) || (data['limit'])) {
-				data['start'] = data['start']||0;
-if (data['start'] < 0) {
+				data['start'] = data['start'] || 0;
+				if (data['start'] < 0) {
 					data['start'] = 0;
 				}
 
-				data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+				data['limit'] = data['limit'] || 20;
+				if (data['limit'] < 1) {
 					data['limit'] = 20;
 				}
 
@@ -66,7 +66,7 @@ if (data['limit'] < 1) {
 
 			return query.rows;
 		} else {
-			voucher_theme_data = await this.cache.get('voucher_theme.' + this.config.get('config_language_id'));
+			let voucher_theme_data = await this.cache.get('voucher_theme.' + this.config.get('config_language_id'));
 
 			if (!voucher_theme_data) {
 				const query = await this.db.query("SELECT * FROM " + DB_PREFIX + "voucher_theme vt LEFT JOIN " + DB_PREFIX + "voucher_theme_description vtd ON (vt.voucher_theme_id = vtd.voucher_theme_id) WHERE vtd.language_id = '" + this.config.get('config_language_id') + "' ORDER BY vtd.name");
@@ -81,12 +81,12 @@ if (data['limit'] < 1) {
 	}
 
 	async getVoucherThemeDescriptions(voucher_theme_id) {
-		voucher_theme_data = {};
+		const voucher_theme_data = {};
 
 		const query = await this.db.query("SELECT * FROM " + DB_PREFIX + "voucher_theme_description WHERE voucher_theme_id = '" + voucher_theme_id + "'");
 
-		for (let result of query.rows ) {
-			voucher_theme_data[result['language_id']] = array('name' : result['name']);
+		for (let result of query.rows) {
+			voucher_theme_data[result['language_id']] = { 'name': result['name'] };
 		}
 
 		return voucher_theme_data;

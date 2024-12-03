@@ -111,7 +111,7 @@ module.exports = class ControllerMarketplaceInstall extends Controller {
 				while (count(path) != 0) {
 					next = array_shift(path);
 	
-					for (glob(next) of file) {
+					for (require('glob').sync(next) of file) {
 						if (is_dir(file)) {
 							path.push(file + '/*';
 						}
@@ -258,10 +258,10 @@ module.exports = class ControllerMarketplaceInstall extends Controller {
 			file = DIR_UPLOAD + 'tmp-' + this.session.data['install'] + '/install.xml';
 
 			if (is_file(file)) {
-				this.load.model('setting/modification');
+				this.load.model('setting/modification',this);
 				
 				// If xml file just put it straight into the DB
-				xml = file_get_contents(file);
+				xml = fs.readFileSync(file);
 	
 				if (xml) {
 					try {
@@ -508,7 +508,7 @@ module.exports = class ControllerMarketplaceInstall extends Controller {
 			await this.model_setting_extension.deleteExtensionInstall(extension_install_id);
 			
 			// Remove any xml modifications
-			this.load.model('setting/modification');
+			this.load.model('setting/modification',this);
 
 			await this.model_setting_modification.deleteModificationsByExtensionInstallId(extension_install_id);
 			
@@ -518,7 +518,7 @@ module.exports = class ControllerMarketplaceInstall extends Controller {
 		this.response.addHeader('Content-Type: application/json');
 		this.response.setOutput(json);
 	}	
-	private function isDirEmpty (dir_name) {
+	async isDirEmpty (dir_name) {
 		if (!is_dir(dir_name)) {
 			return false;
 		}

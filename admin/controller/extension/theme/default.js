@@ -2,16 +2,18 @@ module.exports = class ControllerExtensionThemeDefault extends Controller {
 	error = {};
 
 	async index() {
+		const data = {};
 		await this.load.language('extension/theme/default');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('setting/setting',this);
+		this.load.model('setting/setting', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validate()) {
 			await this.model_setting_setting.editSetting('theme_default', this.request.post, this.request.get['store_id']);
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=theme', true));
 		}
@@ -93,46 +95,45 @@ module.exports = class ControllerExtensionThemeDefault extends Controller {
 		} else {
 			data['error_image_location'] = '';
 		}
-		
+
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_extension'),
-			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=theme', true)
+			'text': this.language.get('text_extension'),
+			'href': await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=theme', true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('extension/theme/default', 'user_token=' + this.session.data['user_token'] + '&store_id=' + this.request.get['store_id'], true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('extension/theme/default', 'user_token=' + this.session.data['user_token'] + '&store_id=' + this.request.get['store_id'], true)
 		});
 
 		data['action'] = await this.url.link('extension/theme/default', 'user_token=' + this.session.data['user_token'] + '&store_id=' + this.request.get['store_id'], true);
 
 		data['cancel'] = await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=theme', true);
-
+		let setting_info;
 		if ((this.request.get['store_id']) && (this.request.server['method'] != 'POST')) {
 			setting_info = await this.model_setting_setting.getSetting('theme_default', this.request.get['store_id']);
 		}
-		
+
 		if ((this.request.post['theme_default_directory'])) {
 			data['theme_default_directory'] = this.request.post['theme_default_directory'];
 		} else if ((setting_info['theme_default_directory'])) {
 			data['theme_default_directory'] = setting_info['theme_default_directory'];
 		} else {
 			data['theme_default_directory'] = 'default';
-		}		
+		}
 
-		data['directories'] = {};
+		data['directories'] = [];
 
-		directories = glob(DIR_CATALOG + 'view/theme/*', GLOB_ONLYDIR);
-
-		for (directories of directory) {
-			data['directories'].push(basename(directory);
+		const directories = require('glob').sync(DIR_CATALOG + 'view/theme/*');
+		for (let directory of directories) {
+			data['directories'].push(expressPath.basename(directory));
 		}
 
 		if ((this.request.post['theme_default_product_limit'])) {
@@ -141,8 +142,8 @@ module.exports = class ControllerExtensionThemeDefault extends Controller {
 			data['theme_default_product_limit'] = setting_info['theme_default_product_limit'];
 		} else {
 			data['theme_default_product_limit'] = 15;
-		}		
-		
+		}
+
 		if ((this.request.post['theme_default_status'])) {
 			data['theme_default_status'] = this.request.post['theme_default_status'];
 		} else if ((setting_info['theme_default_status'])) {
@@ -150,7 +151,7 @@ module.exports = class ControllerExtensionThemeDefault extends Controller {
 		} else {
 			data['theme_default_status'] = '';
 		}
-		
+
 		if ((this.request.post['theme_default_product_description_length'])) {
 			data['theme_default_product_description_length'] = this.request.post['theme_default_product_description_length'];
 		} else if ((setting_info['theme_default_product_description_length'])) {
@@ -158,15 +159,15 @@ module.exports = class ControllerExtensionThemeDefault extends Controller {
 		} else {
 			data['theme_default_product_description_length'] = 100;
 		}
-		
+
 		if ((this.request.post['theme_default_image_category_width'])) {
 			data['theme_default_image_category_width'] = this.request.post['theme_default_image_category_width'];
 		} else if ((setting_info['theme_default_image_category_width'])) {
 			data['theme_default_image_category_width'] = setting_info['theme_default_image_category_width'];
 		} else {
-			data['theme_default_image_category_width'] = 80;		
+			data['theme_default_image_category_width'] = 80;
 		}
-		
+
 		if ((this.request.post['theme_default_image_category_height'])) {
 			data['theme_default_image_category_height'] = this.request.post['theme_default_image_category_height'];
 		} else if ((setting_info['theme_default_image_category_height'])) {
@@ -174,7 +175,7 @@ module.exports = class ControllerExtensionThemeDefault extends Controller {
 		} else {
 			data['theme_default_image_category_height'] = 80;
 		}
-		
+
 		if ((this.request.post['theme_default_image_thumb_width'])) {
 			data['theme_default_image_thumb_width'] = this.request.post['theme_default_image_thumb_width'];
 		} else if ((setting_info['theme_default_image_thumb_width'])) {
@@ -182,15 +183,15 @@ module.exports = class ControllerExtensionThemeDefault extends Controller {
 		} else {
 			data['theme_default_image_thumb_width'] = 228;
 		}
-		
+
 		if ((this.request.post['theme_default_image_thumb_height'])) {
 			data['theme_default_image_thumb_height'] = this.request.post['theme_default_image_thumb_height'];
 		} else if ((setting_info['theme_default_image_thumb_height'])) {
 			data['theme_default_image_thumb_height'] = setting_info['theme_default_image_thumb_height'];
 		} else {
-			data['theme_default_image_thumb_height'] = 228;		
+			data['theme_default_image_thumb_height'] = 228;
 		}
-		
+
 		if ((this.request.post['theme_default_image_popup_width'])) {
 			data['theme_default_image_popup_width'] = this.request.post['theme_default_image_popup_width'];
 		} else if ((setting_info['theme_default_image_popup_width'])) {
@@ -198,7 +199,7 @@ module.exports = class ControllerExtensionThemeDefault extends Controller {
 		} else {
 			data['theme_default_image_popup_width'] = 500;
 		}
-		
+
 		if ((this.request.post['theme_default_image_popup_height'])) {
 			data['theme_default_image_popup_height'] = this.request.post['theme_default_image_popup_height'];
 		} else if ((setting_info['theme_default_image_popup_height'])) {
@@ -206,7 +207,7 @@ module.exports = class ControllerExtensionThemeDefault extends Controller {
 		} else {
 			data['theme_default_image_popup_height'] = 500;
 		}
-		
+
 		if ((this.request.post['theme_default_image_product_width'])) {
 			data['theme_default_image_product_width'] = this.request.post['theme_default_image_product_width'];
 		} else if ((setting_info['theme_default_image_product_width'])) {
@@ -214,7 +215,7 @@ module.exports = class ControllerExtensionThemeDefault extends Controller {
 		} else {
 			data['theme_default_image_product_width'] = 228;
 		}
-		
+
 		if ((this.request.post['theme_default_image_product_height'])) {
 			data['theme_default_image_product_height'] = this.request.post['theme_default_image_product_height'];
 		} else if ((setting_info['theme_default_image_product_height'])) {
@@ -222,7 +223,7 @@ module.exports = class ControllerExtensionThemeDefault extends Controller {
 		} else {
 			data['theme_default_image_product_height'] = 228;
 		}
-		
+
 		if ((this.request.post['theme_default_image_additional_width'])) {
 			data['theme_default_image_additional_width'] = this.request.post['theme_default_image_additional_width'];
 		} else if ((setting_info['theme_default_image_additional_width'])) {
@@ -230,7 +231,7 @@ module.exports = class ControllerExtensionThemeDefault extends Controller {
 		} else {
 			data['theme_default_image_additional_width'] = 74;
 		}
-		
+
 		if ((this.request.post['theme_default_image_additional_height'])) {
 			data['theme_default_image_additional_height'] = this.request.post['theme_default_image_additional_height'];
 		} else if ((setting_info['theme_default_image_additional_height'])) {
@@ -238,7 +239,7 @@ module.exports = class ControllerExtensionThemeDefault extends Controller {
 		} else {
 			data['theme_default_image_additional_height'] = 74;
 		}
-		
+
 		if ((this.request.post['theme_default_image_related_width'])) {
 			data['theme_default_image_related_width'] = this.request.post['theme_default_image_related_width'];
 		} else if ((setting_info['theme_default_image_related_width'])) {
@@ -246,7 +247,7 @@ module.exports = class ControllerExtensionThemeDefault extends Controller {
 		} else {
 			data['theme_default_image_related_width'] = 80;
 		}
-		
+
 		if ((this.request.post['theme_default_image_related_height'])) {
 			data['theme_default_image_related_height'] = this.request.post['theme_default_image_related_height'];
 		} else if ((setting_info['theme_default_image_related_height'])) {
@@ -254,7 +255,7 @@ module.exports = class ControllerExtensionThemeDefault extends Controller {
 		} else {
 			data['theme_default_image_related_height'] = 80;
 		}
-		
+
 		if ((this.request.post['theme_default_image_compare_width'])) {
 			data['theme_default_image_compare_width'] = this.request.post['theme_default_image_compare_width'];
 		} else if ((setting_info['theme_default_image_compare_width'])) {
@@ -262,7 +263,7 @@ module.exports = class ControllerExtensionThemeDefault extends Controller {
 		} else {
 			data['theme_default_image_compare_width'] = 90;
 		}
-		
+
 		if ((this.request.post['theme_default_image_compare_height'])) {
 			data['theme_default_image_compare_height'] = this.request.post['theme_default_image_compare_height'];
 		} else if ((setting_info['theme_default_image_compare_height'])) {
@@ -270,7 +271,7 @@ module.exports = class ControllerExtensionThemeDefault extends Controller {
 		} else {
 			data['theme_default_image_compare_height'] = 90;
 		}
-		
+
 		if ((this.request.post['theme_default_image_wishlist_width'])) {
 			data['theme_default_image_wishlist_width'] = this.request.post['theme_default_image_wishlist_width'];
 		} else if ((setting_info['theme_default_image_wishlist_width'])) {
@@ -278,7 +279,7 @@ module.exports = class ControllerExtensionThemeDefault extends Controller {
 		} else {
 			data['theme_default_image_wishlist_width'] = 47;
 		}
-		
+
 		if ((this.request.post['theme_default_image_wishlist_height'])) {
 			data['theme_default_image_wishlist_height'] = this.request.post['theme_default_image_wishlist_height'];
 		} else if ((setting_info['theme_default_image_wishlist_height'])) {
@@ -286,7 +287,7 @@ module.exports = class ControllerExtensionThemeDefault extends Controller {
 		} else {
 			data['theme_default_image_wishlist_height'] = 47;
 		}
-		
+
 		if ((this.request.post['theme_default_image_cart_width'])) {
 			data['theme_default_image_cart_width'] = this.request.post['theme_default_image_cart_width'];
 		} else if ((setting_info['theme_default_image_cart_width'])) {
@@ -294,7 +295,7 @@ module.exports = class ControllerExtensionThemeDefault extends Controller {
 		} else {
 			data['theme_default_image_cart_width'] = 47;
 		}
-		
+
 		if ((this.request.post['theme_default_image_cart_height'])) {
 			data['theme_default_image_cart_height'] = this.request.post['theme_default_image_cart_height'];
 		} else if ((setting_info['theme_default_image_cart_height'])) {
@@ -302,7 +303,7 @@ module.exports = class ControllerExtensionThemeDefault extends Controller {
 		} else {
 			data['theme_default_image_cart_height'] = 47;
 		}
-		
+
 		if ((this.request.post['theme_default_image_location_width'])) {
 			data['theme_default_image_location_width'] = this.request.post['theme_default_image_location_width'];
 		} else if ((setting_info['theme_default_image_location_width'])) {
@@ -310,7 +311,7 @@ module.exports = class ControllerExtensionThemeDefault extends Controller {
 		} else {
 			data['theme_default_image_location_width'] = 268;
 		}
-		
+
 		if ((this.request.post['theme_default_image_location_height'])) {
 			data['theme_default_image_location_height'] = this.request.post['theme_default_image_location_height'];
 		} else if ((setting_info['theme_default_image_location_height'])) {
@@ -318,7 +319,7 @@ module.exports = class ControllerExtensionThemeDefault extends Controller {
 		} else {
 			data['theme_default_image_location_height'] = 50;
 		}
-		
+
 		data['header'] = await this.load.controller('common/header');
 		data['column_left'] = await this.load.controller('common/column_left');
 		data['footer'] = await this.load.controller('common/footer');
@@ -379,6 +380,6 @@ module.exports = class ControllerExtensionThemeDefault extends Controller {
 			this.error['image_location'] = this.language.get('error_image_location');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 }

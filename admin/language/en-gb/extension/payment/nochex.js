@@ -6,7 +6,7 @@ module.exports = {
     text_extension: 'Extensions',
     text_success: 'Success: You have modified NOCHEX account details!',
     text_edit: 'Edit NOCHEX',
-    text_nochex: 'border: 1px solid #EEEEEE," /></a>',
+    text_nochex: '<a href="https://secure.nochex.com/apply/merchant_info.aspx?partner_id=172198798" target="_blank"><img src="view/image/payment/nochex.png" alt="NOCHEX" title="NOCHEX" style="border: 1px solid #EEEEEE," /></a>',
     text_seller: 'Seller / Personal Account',
     text_merchant: 'Merchant Account',
 

@@ -36,8 +36,8 @@ module.exports = {
     text_x_large: 'Extra large',
     text_background: 'Background',
     text_edit: 'Edit Amazon Pay and Login with Amazon',
-    text_amazon_login_pay: 'border: 1px solid #EEEEEE," /></a>',
-    text_amazon_join: 'Sign-up to Amazon Pay" > <u>Sign-up to Amazon Pay</u></a> ',
+    text_amazon_login_pay: '<a href="https://pay.amazon.com/help/201828820" target="_blank" title="Sign-up to Amazon Pay"><img src="view/image/payment/amazon_lpa.png" alt="Amazon Pay and Login with Amazon" title="Amazon Pay and Login with Amazon" style="border: 1px solid #EEEEEE," /></a>',
+    text_amazon_join: '<a href="https://pay.amazon.com/help/201828820" target="_blank" title="Sign-up to Amazon Pay"><u>Sign-up to Amazon Pay</u></a>',
     text_payment_info: 'Payment information',
     text_capture_ok: 'Capture was successful',
     text_capture_ok_order: 'Capture was successful, authorization has been fully captured',
@@ -76,7 +76,7 @@ module.exports = {
     text_validate_credentials: 'Validate and Use Credentials',
     text_extension: 'Extensions',
     text_info_ssl: '<strong>Important:</strong> SSL (https://) is a requirement and must be enabled on your website for the Amazon Pay and Login with Amazon buttons to work.',
-    text_info_buyer_multi_currencies: '%s">(%s > %s > %s )</b></a>, and then enable the <b>Multi-Currency function</b>',
+    text_info_buyer_multi_currencies: 'This extension supports the Multi-Currency functionality. If you would like to use it, please make sure you have enabled at least one of the <a href="https://pay.amazon.co.uk/help/5BDCWHCUC27485L"><b>Amazon Pay supported currencies</b></a> in your on-line store settings <b><a href="?route=localisation/currency&user_token=%s">(%s > %s > %s )</b></a>, and then enable the <b>Multi-Currency function</b>',
 
     // Columns
     column_status: 'Status',
@@ -104,13 +104,13 @@ module.exports = {
     help_checkout: 'Should payment button also login customer',
     help_capture_status: 'Choose the order status that will trigger automatic capture of an authorized payment.',
     help_capture_oc_status: 'Choose the order status that the order will get once it is captured in Amazon Seller Central or from the capture function in OpenCart Admin > %s > %s > %s.',
-    help_ipn_url: 'Set this of you merhcant URL in Amazon Seller Central',
+    help_ipn_url: 'Set this as you merhcant URL in Amazon Seller Central',
     help_ipn_token: 'Make this long and hard to guess. The resulting IPN URL must not be longer than 150 characters.',
     help_minimum_total: 'This must be above zero',
     help_debug: 'Enabling debug will write sensitive data to a log file. You should always disable unless instructed otherwise',
     help_declined_codes: 'This is for testing purposes only',
     help_buyer_multi_currency: 'Enable this option if you would like the buyer to shop in any of the Amazon Pay supported currencies available in your on-line store: %s',
-    help_buyer_multi_currency_no_available_currency: 'https://pay.amazon.co.uk/help/5BDCWHCUC27485L" > <b>Amazon Pay supported currencies</b></a > available in your on - line store, please add / enable such currencies in order to use this functionality.',
+    help_buyer_multi_currency_no_available_currency: 'There are no <a href="https://pay.amazon.co.uk/help/5BDCWHCUC27485L"><b>Amazon Pay supported currencies</b></a> available in your on-line store, please add/enable such currencies in order to use this functionality.',
 
     // Order Info
     tab_order_adjustment: 'Order Adjustment',

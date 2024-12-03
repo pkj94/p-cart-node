@@ -2,6 +2,7 @@ module.exports = class ControllerCatalogRecurring extends Controller {
 	error = {};
 
 	async index() {
+const data = {};
 		await this.load.language('catalog/recurring');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -22,6 +23,7 @@ module.exports = class ControllerCatalogRecurring extends Controller {
 			await this.model_catalog_recurring.addRecurring(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
 			let url = '';
 
@@ -54,6 +56,7 @@ module.exports = class ControllerCatalogRecurring extends Controller {
 			await this.model_catalog_recurring.editRecurring(this.request.get['recurring_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
 			let url = '';
 
@@ -89,6 +92,7 @@ module.exports = class ControllerCatalogRecurring extends Controller {
 			}
 
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
 			let url = '';
 
@@ -124,6 +128,7 @@ module.exports = class ControllerCatalogRecurring extends Controller {
 			}
 
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
 			let url = '';
 
@@ -146,7 +151,7 @@ module.exports = class ControllerCatalogRecurring extends Controller {
 	}
 
 	async getList() {
-		const data = {};
+				const data = {};
 		let sort = 'rd.name';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];

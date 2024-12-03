@@ -2,11 +2,12 @@ module.exports = class ControllerLocalisationWeightClass extends Controller {
 	error = {};
 
 	async index() {
+		const data = {};
 		await this.load.language('localisation/weight_class');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('localisation/weight_class',this);
+		this.load.model('localisation/weight_class', this);
 
 		await this.getList();
 	}
@@ -16,12 +17,13 @@ module.exports = class ControllerLocalisationWeightClass extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('localisation/weight_class',this);
+		this.load.model('localisation/weight_class', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_localisation_weight_class.addWeightClass(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			url = '';
 
@@ -48,12 +50,13 @@ module.exports = class ControllerLocalisationWeightClass extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('localisation/weight_class',this);
+		this.load.model('localisation/weight_class', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_localisation_weight_class.editWeightClass(this.request.get['weight_class_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			url = '';
 
@@ -80,15 +83,16 @@ module.exports = class ControllerLocalisationWeightClass extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('localisation/weight_class',this);
+		this.load.model('localisation/weight_class', this);
 
 		if ((this.request.post['selected']) && await this.validateDelete()) {
-this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
-			for (this.request.post['selected'] of weight_class_id) {
+			this.request.post['selected'] = Array.isArray(this.request.post['selected']) ? this.request.post['selected'] : [this.request.post['selected']]
+			for (let weight_class_id of this.request.post['selected']) {
 				await this.model_localisation_weight_class.deleteWeightClass(weight_class_id);
 			}
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			url = '';
 
@@ -111,6 +115,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 	}
 
 	async getList() {
+		const data = {};
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
 		} else {
@@ -122,11 +127,9 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		} else {
 			order = 'ASC';
 		}
-
+		page = 1;
 		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
 		}
 
 		url = '';
@@ -146,13 +149,13 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('localisation/weight_class', 'user_token=' + this.session.data['user_token'] + url, true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('localisation/weight_class', 'user_token=' + this.session.data['user_token'] + url, true)
 		});
 
 		data['add'] = await this.url.link('localisation/weight_class/add', 'user_token=' + this.session.data['user_token'] + url, true);
@@ -160,11 +163,11 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 
 		data['weight_classes'] = {};
 
-		filter_data = array(
-			'sort'  : sort,
-			'order' : order,
-			'start' : (page - 1) * Number(this.config.get('config_limit_admin')),
-			'limit' : Number(this.config.get('config_limit_admin'))
+		const filter_data = {
+			'sort': sort,
+			'order': order,
+			'start': (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit': Number(this.config.get('config_limit_admin'))
 		});
 
 		weight_class_total = await this.model_localisation_weight_class.getTotalWeightClasses();
@@ -173,11 +176,11 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 
 		for (let result of results) {
 			data['weight_classes'].push({
-				'weight_class_id' : result['weight_class_id'],
-				'title'           : result['title'] + ((result['weight_class_id'] == this.config.get('config_weight_class_id')) ? this.language.get('text_default') : null),
-				'unit'            : result['unit'],
-				'value'           : result['value'],
-				'edit'            : await this.url.link('localisation/weight_class/edit', 'user_token=' + this.session.data['user_token'] + '&weight_class_id=' + result['weight_class_id'] + url, true)
+				'weight_class_id': result['weight_class_id'],
+				'title': result['title'] + ((result['weight_class_id'] == this.config.get('config_weight_class_id')) ? this.language.get('text_default') : null),
+				'unit': result['unit'],
+				'value': result['value'],
+				'edit': await this.url.link('localisation/weight_class/edit', 'user_token=' + this.session.data['user_token'] + '&weight_class_id=' + result['weight_class_id'] + url, true)
 			});
 		}
 
@@ -190,7 +193,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		if ((this.session.data['success'])) {
 			data['success'] = this.session.data['success'];
 
-			delete this.session.data['success']);
+			delete this.session.data['success'];
 		} else {
 			data['success'] = '';
 		}
@@ -227,7 +230,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			url += '&order=' + this.request.get['order'];
 		}
 
-		pagination = new Pagination();
+		const pagination = new Pagination();
 		pagination.total = weight_class_total;
 		pagination.page = page;
 		pagination.limit = Number(this.config.get('config_limit_admin'));
@@ -285,13 +288,13 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('localisation/weight_class', 'user_token=' + this.session.data['user_token'] + url, true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('localisation/weight_class', 'user_token=' + this.session.data['user_token'] + url, true)
 		});
 
 		if (!(this.request.get['weight_class_id'])) {
@@ -306,7 +309,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			weight_class_info = await this.model_localisation_weight_class.getWeightClass(this.request.get['weight_class_id']);
 		}
 
-		this.load.model('localisation/language',this);
+		this.load.model('localisation/language', this);
 
 		data['languages'] = await this.model_localisation_language.getLanguages();
 
@@ -338,7 +341,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		for (this.request.post['weight_class_description'] of language_id : value) {
+		for (let [language_id, value] of Object.entries(this.request.post['weight_class_description'])) {
 			if ((oc_strlen(value['title']) < 3) || (oc_strlen(value['title']) > 32)) {
 				this.error['title'][language_id] = this.language.get('error_title');
 			}
@@ -348,7 +351,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			}
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 
 	async validateDelete() {
@@ -356,21 +359,21 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		this.load.model('catalog/product',this);
-		this.request.post['selected']  = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']];
+		this.load.model('catalog/product', this);
+		this.request.post['selected'] = Array.isArray(this.request.post['selected']) ? this.request.post['selected'] : [this.request.post['selected']];
 
-		for (this.request.post['selected'] of weight_class_id) {
+		for (let weight_class_id of this.request.post['selected']) {
 			if (this.config.get('config_weight_class_id') == weight_class_id) {
 				this.error['warning'] = this.language.get('error_default');
 			}
 
-			product_total = await this.model_catalog_product.getTotalProductsByWeightClassId(weight_class_id);
+			const product_total = await this.model_catalog_product.getTotalProductsByWeightClassId(weight_class_id);
 
 			if (product_total) {
 				this.error['warning'] = sprintf(this.language.get('error_product'), product_total);
 			}
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 }

@@ -6,13 +6,13 @@ module.exports = {
     text_extension: 'Extensions',
     text_success: 'Success: You have modified your eWAY details!',
     text_edit: 'Edit eWAY',
-    text_eway: 'border: 1px solid #EEEEEE," /></a>',
+    text_eway: '<a target="_BLANK" href="http://www.eway.com.au/"><img src="view/image/payment/eway.png" alt="eWAY" title="eWAY" style="border: 1px solid #EEEEEE," /></a>',
     text_authorisation: 'Authorisation',
     text_sale: 'Sale',
     text_transparent: 'Transparent Redirect (payment form on site)',
     text_iframe: 'IFrame (payment form in window)',
-    text_connect_eway: '0012000000ivcWf">Click Here</a>',
-    text_eway_image: 'img-fluid" /></a>',
+    text_connect_eway: 'eWAY helps businesses to securely process all major credit cards, with built-in fraud prevention, 24/7 technical support and so much more. <a target="_blank" href="https://myeway.force.com/success/accelerator-signup?pid=4382&pa=0012000000ivcWf">Click Here</a>',
+    text_eway_image: '<a target="_blank" href="https://myeway.force.com/success/accelerator-signup?pid=4382&pa=0012000000ivcWf"><img src="view/image/payment/eway_connect.png" alt="eWAY" title="eWAY" class="img-fluid" /></a>',
 
     // Entry
     entry_paymode: 'Payment Mode',

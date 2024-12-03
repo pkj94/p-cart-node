@@ -1,3 +1,6 @@
+const strip_tags = require("locutus/php/strings/strip_tags");
+const trim = require("locutus/php/strings/trim");
+
 module.exports = class ControllerCustomerCustomer extends Controller {
 	error = {};
 
@@ -6,7 +9,7 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('customer/customer',this);
+		this.load.model('customer/customer', this);
 
 		await this.getList();
 	}
@@ -16,14 +19,15 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('customer/customer',this);
+		this.load.model('customer/customer', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_customer_customer.addCustomer(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['filter_name'])) {
 				url += '&filter_name=' + encodeURIComponent(html_entity_decode(this.request.get['filter_name']));
@@ -72,14 +76,15 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('customer/customer',this);
+		this.load.model('customer/customer', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_customer_customer.editCustomer(this.request.get['customer_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['filter_name'])) {
 				url += '&filter_name=' + encodeURIComponent(html_entity_decode(this.request.get['filter_name']));
@@ -128,17 +133,18 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('customer/customer',this);
+		this.load.model('customer/customer', this);
 
 		if ((this.request.post['selected']) && await this.validateDelete()) {
-this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
-			for (this.request.post['selected'] of customer_id) {
+			this.request.post['selected'] = Array.isArray(this.request.post['selected']) ? this.request.post['selected'] : [this.request.post['selected']]
+			for (let customer_id of this.request.post['selected']) {
 				await this.model_customer_customer.deleteCustomer(customer_id);
 			}
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['filter_name'])) {
 				url += '&filter_name=' + encodeURIComponent(html_entity_decode(this.request.get['filter_name']));
@@ -187,14 +193,15 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('customer/customer',this);
+		this.load.model('customer/customer', this);
 
 		if ((this.request.get['email']) && await this.validateUnlock()) {
 			await this.model_customer_customer.deleteLoginAttempts(this.request.get['email']);
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['filter_name'])) {
 				url += '&filter_name=' + encodeURIComponent(html_entity_decode(this.request.get['filter_name']));
@@ -239,61 +246,45 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 	}
 
 	async getList() {
+		const data = {};
+		let filter_name = '';
 		if ((this.request.get['filter_name'])) {
 			filter_name = this.request.get['filter_name'];
-		} else {
-			filter_name = '';
 		}
-
+		let filter_email = '';
 		if ((this.request.get['filter_email'])) {
 			filter_email = this.request.get['filter_email'];
-		} else {
-			filter_email = '';
 		}
-
+		let filter_customer_group_id = '';
 		if ((this.request.get['filter_customer_group_id'])) {
 			filter_customer_group_id = this.request.get['filter_customer_group_id'];
-		} else {
-			filter_customer_group_id = '';
 		}
-
+		let filter_status = '';
 		if ((this.request.get['filter_status'])) {
 			filter_status = this.request.get['filter_status'];
-		} else {
-			filter_status = '';
 		}
-
+		let filter_ip = '';
 		if ((this.request.get['filter_ip'])) {
 			filter_ip = this.request.get['filter_ip'];
-		} else {
-			filter_ip = '';
 		}
-
+		let filter_date_added = '';
 		if ((this.request.get['filter_date_added'])) {
 			filter_date_added = this.request.get['filter_date_added'];
-		} else {
-			filter_date_added = '';
 		}
-
+		let sort = 'name';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
-		} else {
-			sort = 'name';
 		}
-
+		let order = 'ASC';
 		if ((this.request.get['order'])) {
 			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
 		}
-
+		let page = 1;
 		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['filter_name'])) {
 			url += '&filter_name=' + encodeURIComponent(html_entity_decode(this.request.get['filter_name']));
@@ -334,75 +325,73 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('customer/customer', 'user_token=' + this.session.data['user_token'] + url, true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('customer/customer', 'user_token=' + this.session.data['user_token'] + url, true)
 		});
 
 		data['add'] = await this.url.link('customer/customer/add', 'user_token=' + this.session.data['user_token'] + url, true);
 		data['delete'] = await this.url.link('customer/customer/delete', 'user_token=' + this.session.data['user_token'] + url, true);
 
-		this.load.model('setting/store',this);
+		this.load.model('setting/store', this);
 
-		stores = await this.model_setting_store.getStores();
+		const stores = await this.model_setting_store.getStores();
 
-		data['customers'] = {};
+		data['customers'] = [];
 
-		filter_data = array(
-			'filter_name'              : filter_name,
-			'filter_email'             : filter_email,
-			'filter_customer_group_id' : filter_customer_group_id,
-			'filter_status'            : filter_status,
-			'filter_date_added'        : filter_date_added,
-			'filter_ip'                : filter_ip,
-			'sort'                     : sort,
-			'order'                    : order,
-			'start'                    : (page - 1) * Number(this.config.get('config_limit_admin')),
-			'limit'                    : Number(this.config.get('config_limit_admin'))
-		});
+		const filter_data = {
+			'filter_name': filter_name,
+			'filter_email': filter_email,
+			'filter_customer_group_id': filter_customer_group_id,
+			'filter_status': filter_status,
+			'filter_date_added': filter_date_added,
+			'filter_ip': filter_ip,
+			'sort': sort,
+			'order': order,
+			'start': (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit': Number(this.config.get('config_limit_admin'))
+		};
 
-		customer_total = await this.model_customer_customer.getTotalCustomers(filter_data);
+		const customer_total = await this.model_customer_customer.getTotalCustomers(filter_data);
 
-		results = await this.model_customer_customer.getCustomers(filter_data);
+		const results = await this.model_customer_customer.getCustomers(filter_data);
 
 		for (let result of results) {
-			login_info = await this.model_customer_customer.getTotalLoginAttempts(result['email']);
-
+			const login_info = await this.model_customer_customer.getTotalLoginAttempts(result['email']);
+			let unlock = '';
 			if (login_info && login_info['total'] >= this.config.get('config_login_attempts')) {
 				unlock = await this.url.link('customer/customer/unlock', 'user_token=' + this.session.data['user_token'] + '&email=' + result['email'] + url, true);
-			} else {
-				unlock = '';
 			}
 
-			store_data = {};
+			const store_data = [];
 
 			store_data.push({
-				'name' : this.config.get('config_name'),
-				'href' : await this.url.link('customer/customer/login', 'user_token=' + this.session.data['user_token'] + '&customer_id=' + result['customer_id'] + '&store_id=0', true)
+				'name': this.config.get('config_name'),
+				'href': await this.url.link('customer/customer/login', 'user_token=' + this.session.data['user_token'] + '&customer_id=' + result['customer_id'] + '&store_id=0', true)
 			});
 
 			for (let store of stores) {
 				store_data.push({
-					'name' : store['name'],
-					'href' : await this.url.link('customer/customer/login', 'user_token=' + this.session.data['user_token'] + '&customer_id=' + result['customer_id'] + '&store_id=' + store['store_id'], true)
+					'name': store['name'],
+					'href': await this.url.link('customer/customer/login', 'user_token=' + this.session.data['user_token'] + '&customer_id=' + result['customer_id'] + '&store_id=' + store['store_id'], true)
 				});
 			}
 
 			data['customers'].push({
-				'customer_id'    : result['customer_id'],
-				'name'           : result['name'],
-				'email'          : result['email'],
-				'customer_group' : result['customer_group'],
-				'status'         : (result['status'] ? this.language.get('text_enabled') : this.language.get('text_disabled')),
-				'ip'             : result['ip'],
-				'date_added'     : date(this.language.get('date_format_short'), strtotime(result['date_added'])),
-				'unlock'         : unlock,
-				'store'          : store_data,
-				'edit'           : await this.url.link('customer/customer/edit', 'user_token=' + this.session.data['user_token'] + '&customer_id=' + result['customer_id'] + url, true)
+				'customer_id': result['customer_id'],
+				'name': result['name'],
+				'email': result['email'],
+				'customer_group': result['customer_group'],
+				'status': (result['status'] ? this.language.get('text_enabled') : this.language.get('text_disabled')),
+				'ip': result['ip'],
+				'date_added': date(this.language.get('date_format_short'), new Date(result['date_added'])),
+				'unlock': unlock,
+				'store': store_data,
+				'edit': await this.url.link('customer/customer/edit', 'user_token=' + this.session.data['user_token'] + '&customer_id=' + result['customer_id'] + url, true)
 			});
 		}
 
@@ -417,7 +406,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		if ((this.session.data['success'])) {
 			data['success'] = this.session.data['success'];
 
-			delete this.session.data['success']);
+			delete this.session.data['success'];
 		} else {
 			data['success'] = '';
 		}
@@ -505,7 +494,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			url += '&order=' + this.request.get['order'];
 		}
 
-		pagination = new Pagination();
+		const pagination = new Pagination();
 		pagination.total = customer_total;
 		pagination.page = page;
 		pagination.limit = Number(this.config.get('config_limit_admin'));
@@ -522,7 +511,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		data['filter_ip'] = filter_ip;
 		data['filter_date_added'] = filter_date_added;
 
-		this.load.model('customer/customer_group',this);
+		this.load.model('customer/customer_group', this);
 
 		data['customer_groups'] = await this.model_customer_customer_group.getCustomerGroups();
 
@@ -537,6 +526,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 	}
 
 	async getForm() {
+		const data = {};
 		data['text_form'] = !(this.request.get['customer_id']) ? this.language.get('text_add') : this.language.get('text_edit');
 
 		data['user_token'] = this.session.data['user_token'];
@@ -631,7 +621,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			data['error_address'] = {};
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['filter_name'])) {
 			url += '&filter_name=' + encodeURIComponent(html_entity_decode(this.request.get['filter_name']));
@@ -672,13 +662,13 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('customer/customer', 'user_token=' + this.session.data['user_token'] + url, true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('customer/customer', 'user_token=' + this.session.data['user_token'] + url, true)
 		});
 
 		if (!(this.request.get['customer_id'])) {
@@ -688,12 +678,12 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		}
 
 		data['cancel'] = await this.url.link('customer/customer', 'user_token=' + this.session.data['user_token'] + url, true);
-
+		let customer_info;
 		if ((this.request.get['customer_id']) && (this.request.server['method'] != 'POST')) {
 			customer_info = await this.model_customer_customer.getCustomer(this.request.get['customer_id']);
 		}
 
-		this.load.model('customer/customer_group',this);
+		this.load.model('customer/customer_group', this);
 
 		data['customer_groups'] = await this.model_customer_customer_group.getCustomerGroups();
 
@@ -754,37 +744,37 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		}
 
 		// Custom Fields
-		this.load.model('customer/custom_field');
-		this.load.model('tool/upload');
+		this.load.model('customer/custom_field', this);
+		this.load.model('tool/upload', this);
 
-		data['custom_fields'] = {};
+		data['custom_fields'] = [];
 
-		filter_data = array(
-			'sort'  : 'cf.sort_order',
-			'order' : 'ASC'
-		});
+		const filter_data = {
+			'sort': 'cf.sort_order',
+			'order': 'ASC'
+		};
 
-		custom_fields = await this.model_customer_custom_field.getCustomFields(filter_data);
+		const custom_fields = await this.model_customer_custom_field.getCustomFields(filter_data);
 
-		for (custom_fields of custom_field) {
+		for (let custom_field of custom_fields) {
 			data['custom_fields'].push({
-				'custom_field_id'    : custom_field['custom_field_id'],
-				'custom_field_value' : await this.model_customer_custom_field.getCustomFieldValues(custom_field['custom_field_id']),
-				'name'               : custom_field['name'],
-				'value'              : custom_field['value'],
-				'type'               : custom_field['type'],
-				'location'           : custom_field['location'],
-				'sort_order'         : custom_field['sort_order']
+				'custom_field_id': custom_field['custom_field_id'],
+				'custom_field_value': await this.model_customer_custom_field.getCustomFieldValues(custom_field['custom_field_id']),
+				'name': custom_field['name'],
+				'value': custom_field['value'],
+				'type': custom_field['type'],
+				'location': custom_field['location'],
+				'sort_order': custom_field['sort_order']
 			});
 
-			if(custom_field['type'] == 'file') {
-				if((data['account_custom_field'][custom_field['custom_field_id']])) {
-					code = data['account_custom_field'][custom_field['custom_field_id']];
+			if (custom_field['type'] == 'file') {
+				if ((data['account_custom_field'][custom_field['custom_field_id']])) {
+					const code = data['account_custom_field'][custom_field['custom_field_id']];
 
-					upload_result = await this.model_tool_upload.getUploadByCode(code);
+					const upload_result = await this.model_tool_upload.getUploadByCode(code);
 
 					data['account_custom_field'][custom_field['custom_field_id']] = {};
-					if(upload_result) {
+					if (upload_result.upload_id) {
 						data['account_custom_field'][custom_field['custom_field_id']]['name'] = upload_result['name'];
 						data['account_custom_field'][custom_field['custom_field_id']]['code'] = upload_result['code'];
 					} else {
@@ -793,14 +783,14 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 					}
 				}
 
-				for(data['addresses'] of address_id : address) {
-					if((address['custom_field'][custom_field['custom_field_id']])) {
-						code = address['custom_field'][custom_field['custom_field_id']];
+				for (let [address_id, address] of Object.entries(data['addresses'])) {
+					if ((address['custom_field'][custom_field['custom_field_id']])) {
+						const code = address['custom_field'][custom_field['custom_field_id']];
 
-						upload_result = await this.model_tool_upload.getUploadByCode(code);
-						
+						const upload_result = await this.model_tool_upload.getUploadByCode(code);
+
 						data['addresses'][address_id]['custom_field'][custom_field['custom_field_id']] = {};
-						if(upload_result) {
+						if (upload_result.upload_id) {
 							data['addresses'][address_id]['custom_field'][custom_field['custom_field_id']]['name'] = upload_result['name'];
 							data['addresses'][address_id]['custom_field'][custom_field['custom_field_id']]['code'] = upload_result['code'];
 						} else {
@@ -848,7 +838,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			data['confirm'] = '';
 		}
 
-		this.load.model('localisation/country');
+		this.load.model('localisation/country', this);
 
 		data['countries'] = await this.model_localisation_country.getCountries();
 
@@ -861,6 +851,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		}
 
 		// Affliate
+		let affiliate_info;
 		if ((this.request.get['customer_id']) && (this.request.server['method'] != 'POST')) {
 			affiliate_info = await this.model_customer_customer.getAffiliate(this.request.get['customer_id']);
 		}
@@ -894,7 +885,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		} else if ((affiliate_info)) {
 			data['tracking'] = affiliate_info['tracking'];
 		} else {
-			data['tracking'] = token(10);
+			data['tracking'] = oc_token(10);
 		}
 
 		if ((this.request.post['commission'])) {
@@ -980,7 +971,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		if ((this.request.post['custom_field'])) {
 			data['affiliate_custom_field'] = this.request.post['custom_field'];
 		} else if ((affiliate_info)) {
-			data['affiliate_custom_field'] = JSON.parse(affiliate_info['custom_field'], true);
+			data['affiliate_custom_field'] = JSON.parse(affiliate_info['custom_field']);
 		} else {
 			data['affiliate_custom_field'] = {};
 		}
@@ -1005,11 +996,11 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			this.error['lastname'] = this.language.get('error_lastname');
 		}
 
-		if ((oc_strlen(this.request.post['email']) > 96) || !filter_var(this.request.post['email'], FILTER_VALIDATE_EMAIL)) {
+		if ((oc_strlen(this.request.post['email']) > 96) || !isEmailValid(this.request.post['email'])) {
 			this.error['email'] = this.language.get('error_email');
 		}
 
-		customer_info = await this.model_customer_customer.getCustomerByEmail(this.request.post['email']);
+		const customer_info = await this.model_customer_customer.getCustomerByEmail(this.request.post['email']);
 
 		if (!(this.request.get['customer_id'])) {
 			if (customer_info) {
@@ -1026,14 +1017,14 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		}
 
 		// Custom field validation
-		this.load.model('customer/custom_field');
+		this.load.model('customer/custom_field', this);
 
-		custom_fields = await this.model_customer_custom_field.getCustomFields(array('filter_customer_group_id' : this.request.post['customer_group_id']));
+		const custom_fields = await this.model_customer_custom_field.getCustomFields({ 'filter_customer_group_id': this.request.post['customer_group_id'] });
 
-		for (custom_fields of custom_field) {
-			if ((custom_field['location'] == 'account') && custom_field['required'] && empty(this.request.post['custom_field'][custom_field['custom_field_id']])) {
+		for (let custom_field of custom_fields) {
+			if ((custom_field['location'] == 'account') && custom_field['required'] && !(this.request.post['custom_field'][custom_field['custom_field_id']])) {
 				this.error['custom_field'][custom_field['custom_field_id']] = sprintf(this.language.get('error_custom_field'), custom_field['name']);
-			} else if ((custom_field['location'] == 'account') && (custom_field['type'] == 'text') && (custom_field['validation']) && !filter_var(this.request.post['custom_field'][custom_field['custom_field_id']], FILTER_VALIDATE_REGEXP, array('options' : array('regexp' : custom_field['validation'])))) {
+			} else if ((custom_field['location'] == 'account') && (custom_field['type'] == 'text') && (custom_field['validation']) && !new RegExp(custom_field.validation).test(this.request.post['custom_field'][custom_field.custom_field_id])) {
 				this.error['custom_field'][custom_field['custom_field_id']] = sprintf(this.language.get('error_custom_field'), custom_field['name']);
 			}
 		}
@@ -1049,56 +1040,79 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		}
 
 		if ((this.request.post['address'])) {
-			for (this.request.post['address'] of key : value) {
+			console.log(this.request.post['address'])
+			for (let [key, value] of Object.entries(this.request.post['address'])) {
 				if ((oc_strlen(value['firstname']) < 1) || (oc_strlen(value['firstname']) > 32)) {
+					this.error['address'] = this.error['address'] || {};
+					this.error['address'][key] = this.error['address'][key] || {};
 					this.error['address'][key]['firstname'] = this.language.get('error_firstname');
 				}
 
 				if ((oc_strlen(value['lastname']) < 1) || (oc_strlen(value['lastname']) > 32)) {
+					this.error['address'] = this.error['address'] || {};
+					this.error['address'][key] = this.error['address'][key] || {};
 					this.error['address'][key]['lastname'] = this.language.get('error_lastname');
 				}
 
 				if ((oc_strlen(value['address_1']) < 3) || (oc_strlen(value['address_1']) > 128)) {
+					this.error['address'] = this.error['address'] || {};
+					this.error['address'][key] = this.error['address'][key] || {};
 					this.error['address'][key]['address_1'] = this.language.get('error_address_1');
 				}
 
 				if ((oc_strlen(value['city']) < 2) || (oc_strlen(value['city']) > 128)) {
+					this.error['address'] = this.error['address'] || {};
+					this.error['address'][key] = this.error['address'][key] || {};
 					this.error['address'][key]['city'] = this.language.get('error_city');
 				}
 
-				this.load.model('localisation/country');
+				this.load.model('localisation/country', this);
 
-				country_info = await this.model_localisation_country.getCountry(value['country_id']);
+				const country_info = await this.model_localisation_country.getCountry(value['country_id']);
 
 				if (country_info && country_info['postcode_required'] && (oc_strlen(value['postcode']) < 2 || oc_strlen(value['postcode']) > 10)) {
+					this.error['address'] = this.error['address'] || {};
+					this.error['address'][key] = this.error['address'][key] || {};
 					this.error['address'][key]['postcode'] = this.language.get('error_postcode');
 				}
 
 				if (value['country_id'] == '') {
+					this.error['address'] = this.error['address'] || {};
+					this.error['address'][key] = this.error['address'][key] || {};
 					this.error['address'][key]['country'] = this.language.get('error_country');
 				}
 
 				if (!(value['zone_id']) || value['zone_id'] == '') {
+					this.error['address'] = this.error['address'] || {};
+					this.error['address'][key] = this.error['address'][key] || {};
 					this.error['address'][key]['zone'] = this.language.get('error_zone');
 				}
 
-				for (custom_fields of custom_field) {
-					if ((custom_field['location'] == 'address') && custom_field['required'] && empty(value['custom_field'][custom_field['custom_field_id']])) {
+				for (let custom_field of custom_fields) {
+					if ((custom_field['location'] == 'address') && custom_field['required'] && !(value['custom_field'][custom_field['custom_field_id']])) {
+						this.error['address'] = this.error['address'] || {};
+						this.error['address'][key] = this.error['address'][key] || {};
+						this.error['address'][key]['custom_field'] = this.error['address'][key]['custom_field'] || {};
+						this.error['address'][key]['custom_field'][custom_field['custom_field_id']] = this.error['address'][key]['custom_field'][custom_field['custom_field_id']] || {};
 						this.error['address'][key]['custom_field'][custom_field['custom_field_id']] = sprintf(this.language.get('error_custom_field'), custom_field['name']);
-					} else if ((custom_field['location'] == 'address') && (custom_field['type'] == 'text') && (custom_field['validation']) && !filter_var(value['custom_field'][custom_field['custom_field_id']], FILTER_VALIDATE_REGEXP, array('options' : array('regexp' : custom_field['validation'])))) {
+					} else if ((custom_field['location'] == 'address') && (custom_field['type'] == 'text') && (custom_field['validation']) && !new RegExp(custom_field.validation).test(value.custom_field[custom_field.custom_field_id])) {
+						this.error['address'] = this.error['address'] || {};
+						this.error['address'][key] = this.error['address'][key] || {};
+						this.error['address'][key]['custom_field'] = this.error['address'][key]['custom_field'] || {};
+						this.error['address'][key]['custom_field'][custom_field['custom_field_id']] = this.error['address'][key]['custom_field'][custom_field['custom_field_id']] || {};
 						this.error['address'][key]['custom_field'][custom_field['custom_field_id']] = sprintf(this.language.get('error_custom_field'), custom_field['name']);
-                    }
+					}
 				}
 			}
 		}
 
-		if (this.request.post['affiliate']) {
+		if (Number(this.request.post['affiliate'])) {
 			if (this.request.post['payment'] == 'cheque') {
 				if (this.request.post['cheque'] == '') {
 					this.error['cheque'] = this.language.get('error_cheque');
 				}
 			} else if (this.request.post['payment'] == 'paypal') {
-				if ((oc_strlen(this.request.post['paypal']) > 96) || !filter_var(this.request.post['paypal'], FILTER_VALIDATE_EMAIL)) {
+				if ((oc_strlen(this.request.post['paypal']) > 96) || !isEmailValid(this.request.post['paypal'])) {
 					this.error['paypal'] = this.language.get('error_paypal');
 				}
 			} else if (this.request.post['payment'] == 'bank') {
@@ -1115,22 +1129,22 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 				this.error['tracking'] = this.language.get('error_tracking');
 			}
 
-			affiliate_info = await this.model_customer_customer.getAffiliateByTracking(this.request.post['tracking']);
+			const affiliate_info = await this.model_customer_customer.getAffiliateByTracking(this.request.post['tracking']);
 
 			if (!(this.request.get['customer_id'])) {
-				if (affiliate_info) {
+				if (affiliate_info.customer_id) {
 					this.error['tracking'] = this.language.get('error_tracking_exists');
 				}
 			} else {
-				if (affiliate_info && (this.request.get['customer_id'] != affiliate_info['customer_id'])) {
+				if (affiliate_info.customer_id && (this.request.get['customer_id'] != affiliate_info['customer_id'])) {
 					this.error['tracking'] = this.language.get('error_tracking_exists');
 				}
 			}
 
-			for (custom_fields of custom_field) {
-				if ((custom_field['location'] == 'affiliate') && custom_field['required'] && empty(this.request.post['custom_field']['affiliate'][custom_field['custom_field_id']])) {
+			for (let custom_field of custom_fields) {
+				if ((custom_field['location'] == 'affiliate') && custom_field['required'] && !(this.request.post['custom_field']['affiliate'][custom_field['custom_field_id']])) {
 					this.error['custom_field'][custom_field['custom_field_id']] = sprintf(this.language.get('error_custom_field'), custom_field['name']);
-				} else if ((custom_field['location'] == 'affiliate') && (custom_field['type'] == 'text') && (custom_field['validation']) && !filter_var(this.request.post['custom_field']['affiliate'][custom_field['custom_field_id']], FILTER_VALIDATE_REGEXP, array('options' : array('regexp' : custom_field['validation'])))) {
+				} else if ((custom_field['location'] == 'affiliate') && (custom_field['type'] == 'text') && (custom_field['validation']) && !new RegExp(custom_field.validation).test(this.request.post.custom_field[custom_field.custom_field_id])) {
 					this.error['custom_field'][custom_field['custom_field_id']] = sprintf(this.language.get('error_custom_field'), custom_field['name']);
 				}
 			}
@@ -1140,7 +1154,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			this.error['warning'] = this.language.get('error_warning');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 
 	async validateDelete() {
@@ -1148,7 +1162,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 
 	async validateUnlock() {
@@ -1156,42 +1170,40 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 
 	async login() {
+		let customer_id = 0;
 		if ((this.request.get['customer_id'])) {
 			customer_id = this.request.get['customer_id'];
-		} else {
-			customer_id = 0;
 		}
 
-		this.load.model('customer/customer',this);
+		this.load.model('customer/customer', this);
 
-		customer_info = await this.model_customer_customer.getCustomer(customer_id);
+		const customer_info = await this.model_customer_customer.getCustomer(customer_id);
 
-		if (customer_info) {
+		if (customer_info.customer_id) {
 			// Create token to login with
-			token = token(64);
+			let token = oc_token(64);
 
 			await this.model_customer_customer.editToken(customer_id, token);
-
+			let store_id = 0;
 			if ((this.request.get['store_id'])) {
 				store_id = this.request.get['store_id'];
-			} else {
-				store_id = 0;
 			}
 
-			this.load.model('setting/store',this);
+			this.load.model('setting/store', this);
 
-			store_info = await this.model_setting_store.getStore(store_id);
+			const store_info = await this.model_setting_store.getStore(store_id);
 
-			if (store_info) {
-				this.response.setRedirect(store_info['url'] + 'index.php?route=account/login&token=' + token);
+			if (store_info.store_id) {
+				this.response.setRedirect(store_info['url'] + '?route=account/login&token=' + token);
 			} else {
-				this.response.setRedirect(HTTP_CATALOG + 'index.php?route=account/login&token=' + token);
+				this.response.setRedirect(HTTP_CATALOG + '?route=account/login&token=' + token);
 			}
 		} else {
+			const data = {};
 			await this.load.language('error/not_found');
 
 			this.document.setTitle(this.language.get('heading_title'));
@@ -1199,13 +1211,13 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			data['breadcrumbs'] = [];
 
 			data['breadcrumbs'].push({
-				'text' : this.language.get('text_home'),
-				'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+				'text': this.language.get('text_home'),
+				'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 			});
 
 			data['breadcrumbs'].push({
-				'text' : this.language.get('heading_title'),
-				'href' : await this.url.link('error/not_found', 'user_token=' + this.session.data['user_token'], true)
+				'text': this.language.get('heading_title'),
+				'href': await this.url.link('error/not_found', 'user_token=' + this.session.data['user_token'], true)
 			});
 
 			data['header'] = await this.load.controller('common/header');
@@ -1217,32 +1229,31 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 	}
 
 	async history() {
+		const data = {};
 		await this.load.language('customer/customer');
 
-		this.load.model('customer/customer',this);
-
+		this.load.model('customer/customer', this);
+		let page = 1;
 		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
 		}
 
-		limit = Number(this.config.get('config_limit_admin'));
+		let limit = Number(this.config.get('config_limit_admin'));
 
-		data['histories'] = {};
+		data['histories'] = [];
 
-		results = await this.model_customer_customer.getHistories(this.request.get['customer_id'], (page - 1) * limit, limit);
+		const results = await this.model_customer_customer.getHistories(this.request.get['customer_id'], (page - 1) * limit, limit);
 
 		for (let result of results) {
 			data['histories'].push({
-				'comment'    : result['comment'],
-				'date_added' : date(this.language.get('date_format_short'), strtotime(result['date_added']))
+				'comment': result['comment'],
+				'date_added': date(this.language.get('date_format_short'), new Date(result['date_added']))
 			});
 		}
 
-		history_total = await this.model_customer_customer.getTotalHistories(this.request.get['customer_id']);
+		const history_total = await this.model_customer_customer.getTotalHistories(this.request.get['customer_id']);
 
-		pagination = new Pagination();
+		const pagination = new Pagination();
 		pagination.total = history_total;
 		pagination.page = page;
 		pagination.limit = limit;
@@ -1258,12 +1269,12 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 	async addHistory() {
 		await this.load.language('customer/customer');
 
-		json = {};
+		const json = {};
 
 		if (!await this.user.hasPermission('modify', 'customer/customer')) {
 			json['error'] = this.language.get('error_permission');
 		} else {
-			this.load.model('customer/customer',this);
+			this.load.model('customer/customer', this);
 
 			await this.model_customer_customer.addHistory(this.request.get['customer_id'], this.request.post['comment']);
 
@@ -1275,35 +1286,34 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 	}
 
 	async transaction() {
+		const data = {};
 		await this.load.language('customer/customer');
 
-		this.load.model('customer/customer',this);
-
+		this.load.model('customer/customer', this);
+		let page = 1;
 		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
 		}
 
-		limit = Number(this.config.get('config_limit_admin'));
+		let limit = Number(this.config.get('config_limit_admin'));
 
-		data['transactions'] = {};
+		data['transactions'] = [];
 
-		results = await this.model_customer_customer.getTransactions(this.request.get['customer_id'], (page - 1) * limit, limit);
+		const results = await this.model_customer_customer.getTransactions(this.request.get['customer_id'], (page - 1) * limit, limit);
 
 		for (let result of results) {
 			data['transactions'].push({
-				'amount'      : this.currency.format(result['amount'], this.config.get('config_currency')),
-				'description' : result['description'],
-				'date_added'  : date(this.language.get('date_format_short'), strtotime(result['date_added']))
+				'amount': this.currency.format(result['amount'], this.config.get('config_currency')),
+				'description': result['description'],
+				'date_added': date(this.language.get('date_format_short'), new Date(result['date_added']))
 			});
 		}
 
 		data['balance'] = this.currency.format(await this.model_customer_customer.getTransactionTotal(this.request.get['customer_id']), this.config.get('config_currency'));
 
-		transaction_total = await this.model_customer_customer.getTotalTransactions(this.request.get['customer_id']);
+		const transaction_total = await this.model_customer_customer.getTotalTransactions(this.request.get['customer_id']);
 
-		pagination = new Pagination();
+		const pagination = new Pagination();
 		pagination.total = transaction_total;
 		pagination.page = page;
 		pagination.limit = limit;
@@ -1319,12 +1329,12 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 	async addTransaction() {
 		await this.load.language('customer/customer');
 
-		json = {};
+		const json = {};
 
 		if (!await this.user.hasPermission('modify', 'customer/customer')) {
 			json['error'] = this.language.get('error_permission');
 		} else {
-			this.load.model('customer/customer',this);
+			this.load.model('customer/customer', this);
 
 			await this.model_customer_customer.addTransaction(this.request.get['customer_id'], this.request.post['description'], this.request.post['amount']);
 
@@ -1336,35 +1346,34 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 	}
 
 	async reward() {
+		const data = {};
 		await this.load.language('customer/customer');
 
-		this.load.model('customer/customer',this);
-
+		this.load.model('customer/customer', this);
+		let page = 1;
 		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
 		}
 
-		limit = Number(this.config.get('config_limit_admin'));
+		let limit = Number(this.config.get('config_limit_admin'));
 
-		data['rewards'] = {};
+		data['rewards'] = [];
 
-		results = await this.model_customer_customer.getRewards(this.request.get['customer_id'], (page - 1) * limit, limit);
+		const results = await this.model_customer_customer.getRewards(this.request.get['customer_id'], (page - 1) * limit, limit);
 
 		for (let result of results) {
 			data['rewards'].push({
-				'points'      : result['points'],
-				'description' : result['description'],
-				'date_added'  : date(this.language.get('date_format_short'), strtotime(result['date_added']))
+				'points': result['points'],
+				'description': result['description'],
+				'date_added': date(this.language.get('date_format_short'), new Date(result['date_added']))
 			});
 		}
 
 		data['balance'] = await this.model_customer_customer.getRewardTotal(this.request.get['customer_id']);
 
-		reward_total = await this.model_customer_customer.getTotalRewards(this.request.get['customer_id']);
+		const reward_total = await this.model_customer_customer.getTotalRewards(this.request.get['customer_id']);
 
-		pagination = new Pagination();
+		const pagination = new Pagination();
 		pagination.total = reward_total;
 		pagination.page = page;
 		pagination.limit = limit;
@@ -1380,12 +1389,12 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 	async addReward() {
 		await this.load.language('customer/customer');
 
-		json = {};
+		const json = {};
 
 		if (!await this.user.hasPermission('modify', 'customer/customer')) {
 			json['error'] = this.language.get('error_permission');
 		} else {
-			this.load.model('customer/customer',this);
+			this.load.model('customer/customer', this);
 
 			await this.model_customer_customer.addReward(this.request.get['customer_id'], this.request.post['description'], this.request.post['points']);
 
@@ -1397,34 +1406,33 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 	}
 
 	async ip() {
+		const data = {};
 		await this.load.language('customer/customer');
 
-		this.load.model('customer/customer',this);
-
+		this.load.model('customer/customer', this);
+		let page = 1;
 		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
 		}
 
-		limit = Number(this.config.get('config_limit_admin'));
+		let limit = Number(this.config.get('config_limit_admin'));
 
-		data['ips'] = {};
+		data['ips'] = [];
 
-		results = await this.model_customer_customer.getIps(this.request.get['customer_id'], (page - 1) * limit, limit);
+		const results = await this.model_customer_customer.getIps(this.request.get['customer_id'], (page - 1) * limit, limit);
 
 		for (let result of results) {
 			data['ips'].push({
-				'ip'         : result['ip'],
-				'total'      : await this.model_customer_customer.getTotalCustomersByIp(result['ip']),
-				'date_added' : date('d/m/y', strtotime(result['date_added'])),
-				'filter_ip'  : await this.url.link('customer/customer', 'user_token=' + this.session.data['user_token'] + '&filter_ip=' + result['ip'], true)
+				'ip': result['ip'],
+				'total': await this.model_customer_customer.getTotalCustomersByIp(result['ip']),
+				'date_added': date('d/m/y', new Date(result['date_added'])),
+				'filter_ip': await this.url.link('customer/customer', 'user_token=' + this.session.data['user_token'] + '&filter_ip=' + result['ip'], true)
 			});
 		}
 
-		ip_total = await this.model_customer_customer.getTotalIps(this.request.get['customer_id']);
+		const ip_total = await this.model_customer_customer.getTotalIps(this.request.get['customer_id']);
 
-		pagination = new Pagination();
+		const pagination = new Pagination();
 		pagination.total = ip_total;
 		pagination.page = page;
 		pagination.limit = limit;
@@ -1438,85 +1446,70 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 	}
 
 	async autocomplete() {
-		json = {};
+		const json = [];
 
 		if ((this.request.get['filter_name']) || (this.request.get['filter_email'])) {
+			let filter_name = '';
 			if ((this.request.get['filter_name'])) {
 				filter_name = this.request.get['filter_name'];
-			} else {
-				filter_name = '';
 			}
-
+			let filter_email = '';
 			if ((this.request.get['filter_email'])) {
 				filter_email = this.request.get['filter_email'];
-			} else {
-				filter_email = '';
 			}
-
+			let filter_affiliate = '';
 			if ((this.request.get['filter_affiliate'])) {
 				filter_affiliate = this.request.get['filter_affiliate'];
-			} else {
-				filter_affiliate = '';
 			}
 
-			this.load.model('customer/customer',this);
+			this.load.model('customer/customer', this);
 
-			filter_data = array(
-				'filter_name'      : filter_name,
-				'filter_email'     : filter_email,
-				'filter_affiliate' : filter_affiliate,
-				'start'            : 0,
-				'limit'            : 5
-			});
+			const filter_data = {
+				'filter_name': filter_name,
+				'filter_email': filter_email,
+				'filter_affiliate': filter_affiliate,
+				'start': 0,
+				'limit': 5
+			};
 
-			results = await this.model_customer_customer.getCustomers(filter_data);
+			const results = await this.model_customer_customer.getCustomers(filter_data);
 
 			for (let result of results) {
 				json.push({
-					'customer_id'       : result['customer_id'],
-					'customer_group_id' : result['customer_group_id'],
-					'name'              : strip_tags(html_entity_decode(result['name'])),
-					'customer_group'    : result['customer_group'],
-					'firstname'         : result['firstname'],
-					'lastname'          : result['lastname'],
-					'email'             : result['email'],
-					'telephone'         : result['telephone'],
-					'custom_field'      : JSON.parse(result['custom_field'], true),
-					'address'           : await this.model_customer_customer.getAddresses(result['customer_id'])
+					'customer_id': result['customer_id'],
+					'customer_group_id': result['customer_group_id'],
+					'name': strip_tags(html_entity_decode(result['name'])),
+					'customer_group': result['customer_group'],
+					'firstname': result['firstname'],
+					'lastname': result['lastname'],
+					'email': result['email'],
+					'telephone': result['telephone'],
+					'custom_field': JSON.parse(result['custom_field']),
+					'address': await this.model_customer_customer.getAddresses(result['customer_id'])
 				});
 			}
 		}
 
-		sort_order = {};
-
-		for (json of key : value) {
-			sort_order[key] = value['name'];
-		}
-
-		array_multisort(sort_order, SORT_ASC, json);
-
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(json);
+		this.response.setOutput(json.sort((a, b) => a.name - b.name));
 	}
 
 	async customfield() {
-		json = {};
+		const json = [];
 
-		this.load.model('customer/custom_field');
+		this.load.model('customer/custom_field', this);
 
 		// Customer Group
+		let customer_group_id = this.config.get('config_customer_group_id');
 		if ((this.request.get['customer_group_id'])) {
 			customer_group_id = this.request.get['customer_group_id'];
-		} else {
-			customer_group_id = this.config.get('config_customer_group_id');
 		}
+		const custom_fields = await this.model_customer_custom_field.getCustomFields({ 'filter_customer_group_id': customer_group_id });
 
-		custom_fields = await this.model_customer_custom_field.getCustomFields(array('filter_customer_group_id' : customer_group_id));
-
-		for (custom_fields of custom_field) {
+		for (let custom_field of custom_fields) {
 			json.push({
-				'custom_field_id' : custom_field['custom_field_id'],
-				'required'        : empty(custom_field['required']) || custom_field['required'] == 0 ? false : true
+				'custom_field_id': custom_field['custom_field_id'],
+				'required': empty(custom_field['required']) || custom_field['required'] == 0 ? false : true
 			});
 		}
 
@@ -1525,10 +1518,10 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 	}
 
 	async address() {
-		json = {};
+		let json = {};
 
 		if ((this.request.get['address_id'])) {
-			this.load.model('customer/customer',this);
+			this.load.model('customer/customer', this);
 
 			json = await this.model_customer_customer.getAddress(this.request.get['address_id']);
 		}

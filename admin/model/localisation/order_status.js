@@ -1,6 +1,7 @@
 module.exports = class ModelLocalisationOrderStatus extends Model {
 	async addOrderStatus(data) {
-		for (data['order_status'] of language_id : value) {
+		let order_status_id;
+		for (let [language_id, value] of Object.entries(data['order_status'])) {
 			if ((order_status_id)) {
 				await this.db.query("INSERT INTO " + DB_PREFIX + "order_status SET order_status_id = '" + order_status_id + "', language_id = '" + language_id + "', name = '" + this.db.escape(value['name']) + "'");
 			} else {
@@ -11,14 +12,14 @@ module.exports = class ModelLocalisationOrderStatus extends Model {
 		}
 
 		await this.cache.delete('order_status');
-		
+
 		return order_status_id;
 	}
 
 	async editOrderStatus(order_status_id, data) {
 		await this.db.query("DELETE FROM " + DB_PREFIX + "order_status WHERE order_status_id = '" + order_status_id + "'");
 
-		for (data['order_status'] of language_id : value) {
+		for (let [language_id, value] of Object.entries(data['order_status'])) {
 			await this.db.query("INSERT INTO " + DB_PREFIX + "order_status SET order_status_id = '" + order_status_id + "', language_id = '" + language_id + "', name = '" + this.db.escape(value['name']) + "'");
 		}
 
@@ -38,7 +39,7 @@ module.exports = class ModelLocalisationOrderStatus extends Model {
 	}
 
 	async getOrderStatuses(data = {}) {
-		if (data) {
+		if (Object.keys(data).length) {
 			let sql = "SELECT * FROM " + DB_PREFIX + "order_status WHERE language_id = '" + this.config.get('config_language_id') + "'";
 
 			sql += " ORDER BY name";
@@ -50,13 +51,13 @@ module.exports = class ModelLocalisationOrderStatus extends Model {
 			}
 
 			if ((data['start']) || (data['limit'])) {
-				data['start'] = data['start']||0;
-if (data['start'] < 0) {
+				data['start'] = data['start'] || 0;
+				if (data['start'] < 0) {
 					data['start'] = 0;
 				}
 
-				data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+				data['limit'] = data['limit'] || 20;
+				if (data['limit'] < 1) {
 					data['limit'] = 20;
 				}
 
@@ -67,7 +68,7 @@ if (data['limit'] < 1) {
 
 			return query.rows;
 		} else {
-			order_status_data = await this.cache.get('order_status.' + this.config.get('config_language_id'));
+			let order_status_data = await this.cache.get('order_status.' + this.config.get('config_language_id'));
 
 			if (!order_status_data) {
 				const query = await this.db.query("SELECT order_status_id, name FROM " + DB_PREFIX + "order_status WHERE language_id = '" + this.config.get('config_language_id') + "' ORDER BY name");
@@ -82,12 +83,12 @@ if (data['limit'] < 1) {
 	}
 
 	async getOrderStatusDescriptions(order_status_id) {
-		order_status_data = {};
+		let order_status_data = {};
 
 		const query = await this.db.query("SELECT * FROM " + DB_PREFIX + "order_status WHERE order_status_id = '" + order_status_id + "'");
 
-		for (let result of query.rows ) {
-			order_status_data[result['language_id']] = array('name' : result['name']);
+		for (let result of query.rows) {
+			order_status_data[result['language_id']] = { 'name': result['name'] };
 		}
 
 		return order_status_data;

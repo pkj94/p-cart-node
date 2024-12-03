@@ -2,7 +2,7 @@ module.exports = class ModelSettingStore extends Model {
 	async addStore(data) {
 		await this.db.query("INSERT INTO " + DB_PREFIX + "store SET name = '" + this.db.escape(data['config_name']) + "', `url` = '" + this.db.escape(data['config_url']) + "', `ssl` = '" + this.db.escape(data['config_ssl']) + "'");
 
-		store_id = this.db.getLastId();
+		const store_id = this.db.getLastId();
 
 		// Layout Route
 		const query = await this.db.query("SELECT * FROM " + DB_PREFIX + "layout_route WHERE store_id = '0'");
@@ -92,9 +92,9 @@ module.exports = class ModelSettingStore extends Model {
 	}
 
 	async getTotalStoresByInformationId(information_id) {
-		account_query = await this.db.query("SELECT COUNT(*) AS total FROM " + DB_PREFIX + "setting WHERE `key` = 'config_account_id' AND `value` = '" + information_id + "' AND store_id != '0'");
+		const account_query = await this.db.query("SELECT COUNT(*) AS total FROM " + DB_PREFIX + "setting WHERE `key` = 'config_account_id' AND `value` = '" + information_id + "' AND store_id != '0'");
 
-		checkout_query = await this.db.query("SELECT COUNT(*) AS total FROM " + DB_PREFIX + "setting WHERE `key` = 'config_checkout_id' AND `value` = '" + information_id + "' AND store_id != '0'");
+		const checkout_query = await this.db.query("SELECT COUNT(*) AS total FROM " + DB_PREFIX + "setting WHERE `key` = 'config_checkout_id' AND `value` = '" + information_id + "' AND store_id != '0'");
 
 		return (account_query.row['total'] + checkout_query.row['total']);
 	}

@@ -39,7 +39,9 @@ module.exports = class Loader {
             const file = expressPath.join(DIR_APPLICATION, 'model', `${route}.js`);
             const className = `Model${route.replace(/[^a-zA-Z0-9]/g, '')}`;
             if (fs.existsSync(file)) {
+                // console.log('model file', file);
                 const ModelClass = require(file);
+                // console.log('model file', ModelClass);
                 const proxy = new ProxyLocal();
                 // Mimicking the dynamic method assignment
                 Object.getOwnPropertyNames(ModelClass.prototype).forEach(method => {
@@ -82,13 +84,16 @@ module.exports = class Loader {
         return output;
     }
 
-    async library(route) {
+    async library(route, $this) {
         route = this.sanitizeRoute(route);
 
-        const file = expressPath.join(__dirname, 'library', `${route}.js`); // Adjust the path as needed
-        const LibraryClass = require(file);
+        const file = expressPath.join(DIR_SYSTEM, 'library', `${route}.js`); // Adjust the path as needed
+        // console.log('sq----', expressPath.basename(route), file, fs.existsSync(file))
 
-        this.registry.set(expressPath.basename(route), new LibraryClass(this.registry));
+        const LibraryClass = new (require(file))(this.registry);
+
+        this.registry.set(expressPath.basename(route), LibraryClass);
+        $this[expressPath.basename(route)] = LibraryClass;
     }
 
     async helper(route) {
@@ -104,6 +109,7 @@ module.exports = class Loader {
     async config(route) {
         await this.registry.get('event').trigger(`config/${route}/before`, route);
         this.registry.get('config').load(route);
+        // console.log(this.registry.get('config'))
         await this.registry.get('event').trigger(`config/${route}/after`, route);
     }
 

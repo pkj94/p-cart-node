@@ -2,6 +2,7 @@ module.exports = class ControllerSettingSetting extends Controller {
 	error = {};
 
 	async index() {
+const data = {};
 		await this.load.language('setting/setting');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -18,6 +19,7 @@ module.exports = class ControllerSettingSetting extends Controller {
 //			}
 
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('setting/store', 'user_token=' + this.session.data['user_token'], true));
 		}
@@ -150,7 +152,7 @@ module.exports = class ControllerSettingSetting extends Controller {
 		if ((this.session.data['success'])) {
 			data['success'] = this.session.data['success'];
 
-			delete this.session.data['success']);
+			delete this.session.data['success'];
 		} else {
 			data['success'] = '';
 		}
@@ -195,7 +197,7 @@ module.exports = class ControllerSettingSetting extends Controller {
 
 		this.load.model('setting/extension',this);
 
-		extensions = await this.model_setting_extension.getInstalled('theme');
+		const extensions = await this.model_setting_extension.getInstalled('theme');
 
 		for (extensions of code) {
 			await this.load.language('extension/theme/' + code, 'extension');
@@ -306,7 +308,7 @@ module.exports = class ControllerSettingSetting extends Controller {
 			data['config_country_id'] = this.config.get('config_country_id');
 		}
 
-		this.load.model('localisation/country');
+		this.load.model('localisation/country',this);
 
 		data['countries'] = await this.model_localisation_country.getCountries();
 
@@ -523,7 +525,7 @@ module.exports = class ControllerSettingSetting extends Controller {
 			data['config_account_id'] = this.config.get('config_account_id');
 		}
 
-		this.load.model('catalog/information');
+		this.load.model('catalog/information',this);
 
 		data['informations'] = await this.model_catalog_information.getInformations();
 
@@ -581,7 +583,7 @@ module.exports = class ControllerSettingSetting extends Controller {
 			data['config_fraud_status_id'] = this.config.get('config_fraud_status_id');
 		}
 
-		this.load.model('localisation/order_status');
+		this.load.model('localisation/order_status',this);
 
 		data['order_statuses'] = await this.model_localisation_order_status.getOrderStatuses();
 
@@ -591,7 +593,7 @@ module.exports = class ControllerSettingSetting extends Controller {
 			data['config_api_id'] = this.config.get('config_api_id');
 		}
 
-		this.load.model('user/api');
+		this.load.model('user/api',this);
 
 		data['apis'] = await this.model_user_api.getApis();
 
@@ -661,7 +663,7 @@ module.exports = class ControllerSettingSetting extends Controller {
 			data['config_return_status_id'] = this.config.get('config_return_status_id');
 		}
 
-		this.load.model('localisation/return_status');
+		this.load.model('localisation/return_status',this);
 
 		data['return_statuses'] = await this.model_localisation_return_status.getReturnStatuses();
 
@@ -676,7 +678,7 @@ module.exports = class ControllerSettingSetting extends Controller {
 		data['captchas'] = {};
 
 		// Get a list of installed captchas
-		extensions = await this.model_setting_extension.getInstalled('captcha');
+		const extensions = await this.model_setting_extension.getInstalled('captcha');
 
 		for (extensions of code) {
 			await this.load.language('extension/captcha/' + code, 'extension');

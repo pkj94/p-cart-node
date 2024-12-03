@@ -2,16 +2,18 @@ module.exports = class ControllerExtensionFraudFraudLabsPro extends Controller {
 	error = {};
 
 	async index() {
+		const data = {};
 		await this.load.language('extension/fraud/fraudlabspro');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('setting/setting',this);
+		this.load.model('setting/setting', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validate()) {
 			await this.model_setting_setting.editSetting('fraud_fraudlabspro', this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=fraud', true));
 		}
@@ -31,18 +33,18 @@ module.exports = class ControllerExtensionFraudFraudLabsPro extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_extension'),
-			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=fraud', true)
+			'text': this.language.get('text_extension'),
+			'href': await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=fraud', true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('extension/fraud/fraudlabspro', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('extension/fraud/fraudlabspro', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['action'] = await this.url.link('extension/fraud/fraudlabspro', 'user_token=' + this.session.data['user_token'], true);
@@ -91,7 +93,7 @@ module.exports = class ControllerExtensionFraudFraudLabsPro extends Controller {
 			data['fraud_fraudlabspro_simulate_ip'] = this.config.get('fraud_fraudlabspro_simulate_ip');
 		}
 
-		this.load.model('localisation/order_status');
+		this.load.model('localisation/order_status',this);
 
 		data['order_statuses'] = await this.model_localisation_order_status.getOrderStatuses();
 
@@ -109,13 +111,13 @@ module.exports = class ControllerExtensionFraudFraudLabsPro extends Controller {
 	}
 
 	async install() {
-		this.load.model('extension/fraud/fraudlabspro');
+		this.load.model('extension/fraud/fraudlabspro', this);
 
 		await this.model_extension_fraud_fraudlabspro.install();
 	}
 
 	async uninstall() {
-		this.load.model('extension/fraud/fraudlabspro');
+		this.load.model('extension/fraud/fraudlabspro', this);
 
 		await this.model_extension_fraud_fraudlabspro.uninstall();
 	}
@@ -129,61 +131,65 @@ module.exports = class ControllerExtensionFraudFraudLabsPro extends Controller {
 			this.error['key'] = this.language.get('error_key');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 
 	async order() {
+		const data = {};
 		await this.load.language('extension/fraud/fraudlabspro');
 
-		this.load.model('extension/fraud/fraudlabspro');
+		this.load.model('extension/fraud/fraudlabspro', this);
 
 		// Action of the Approve/Reject button click
-		if ((_POST['flp_id'])){
-			flp_status = _POST['new_status'];
+		if ((this.request.post['flp_id'])) {
+			let flp_status = this.request.post['new_status'];
 			data['flp_status'] = flp_status;
 
 			//Feedback FLP status to server
-			fraud_fraudlabspro_key = this.config.get('fraud_fraudlabspro_key');
+			let fraud_fraudlabspro_key = this.config.get('fraud_fraudlabspro_key');
 
-			for(i=0; i<3; i++){
-				result = @file_get_contents('https://api.fraudlabspro.com/v1/order/feedback?key=' + fraud_fraudlabspro_key + '&format=json&id=' + _POST['flp_id'] + '&action=' + flp_status);
-
-				if(result) break;
+			for (let i = 0; i < 3; i++) {
+				try {
+					const response = await require('axios').get('https://api.fraudlabspro.com/v1/order/feedback?key=' + fraud_fraudlabspro_key + '&format=json&id=' + _POST['flp_id'] + '&action=' + flp_status);
+					// response.data;
+				} catch (error) {
+					console.error('Error fetching FraudLabsPro feedback:', error);
+					break;
+				}
 			}
 
 			// Update fraud status into table
 			await this.db.query("UPDATE `" + DB_PREFIX + "fraudlabspro` SET fraudlabspro_status = '" + this.db.escape(flp_status) + "' WHERE order_id = " + this.db.escape(this.request.get['order_id']));
 
 			//Update history record
-			if (strtolower(flp_status) == 'approve'){
-				data_temp = array(
-					'order_status_id':this.config.get('fraud_fraudlabspro_approve_status_id'),
-					'notify':0,
-					'comment':'Approved using FraudLabs Pro.'
-				});
+			let data_temp = {}
+			if (flp_status.toLowerCase() == 'approve') {
+				data_temp = {
+					'order_status_id': this.config.get('fraud_fraudlabspro_approve_status_id'),
+					'notify': 0,
+					'comment': 'Approved using FraudLabs Pro.'
+				};
 
 				await this.model_extension_fraud_fraudlabspro.addOrderHistory(this.request.get['order_id'], data_temp);
 			}
-			else if (strtolower(flp_status) == "reject"){
-				data_temp = array(
-					'order_status_id':this.config.get('fraud_fraudlabspro_reject_status_id'),
-					'notify':0,
-					'comment':'Rejected using FraudLabs Pro.'
-				});
+			else if (flp_status.toLowerCase() == "reject") {
+				data_temp = {
+					'order_status_id': this.config.get('fraud_fraudlabspro_reject_status_id'),
+					'notify': 0,
+					'comment': 'Rejected using FraudLabs Pro.'
+				};
 
 				await this.model_extension_fraud_fraudlabspro.addOrderHistory(this.request.get['order_id'], data_temp);
 			}
 		}
-
+		let order_id = 0;
 		if ((this.request.get['order_id'])) {
 			order_id = this.request.get['order_id'];
-		} else {
-			order_id = 0;
 		}
 
-		fraud_info = await this.model_extension_fraud_fraudlabspro.getOrder(order_id);
+		const fraud_info = await this.model_extension_fraud_fraudlabspro.getOrder(order_id);
 
-		if (fraud_info) {
+		if (fraud_info.fraud_id) {
 			if (fraud_info['ip_address']) {
 				data['flp_ip_address'] = fraud_info['ip_address'];
 			} else {
@@ -322,17 +328,16 @@ module.exports = class ControllerExtensionFraudFraudLabsPro extends Controller {
 		}
 	}
 
-	private function fix_case(s) {
-		s = ucwords(strtolower(s));
-    
-		s = preg_replace_callback(
-			"/( [ a-zA-Z]{1}')([a-zA-Z0-9]{1})/s",
-			function (matches) {
-				return matches[1] + strtoupper(matches[2]);
-			},
-			s
+	fixCase(s) {
+		// Convert the string to lowercase and then capitalize the first letter of each word
+		s = s.toLowerCase().replace(/\b\w/g, char => char.toUpperCase());
+
+		// Use a regular expression to find patterns and replace them with a callback function
+		s = s.replace(/( [a-zA-Z]{1}')([a-zA-Z0-9]{1})/g, (match, p1, p2) => {
+			return p1 + p2.toUpperCase();
 		});
 
 		return s;
 	}
+
 }

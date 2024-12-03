@@ -42,7 +42,7 @@ module.exports = {
     // Session
     session_engine: 'db',
     session_autostart: true,
-    session_name: 'OCSESSID',
+    session_name: 'PCSESSID',
 
     // Template
     template_engine: 'twig',

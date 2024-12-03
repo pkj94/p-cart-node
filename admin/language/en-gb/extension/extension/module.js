@@ -4,7 +4,7 @@ module.exports = {
 
     // Text
     text_success: 'Success: You have modified modules!',
-    text_layout: 'alert-link" > here</a> !',
+    text_layout: 'After you have installed and configured a module you can add it to a layout <a href="%s" class="alert-link">here</a>!',
     text_add: 'Add Module',
     text_list: 'Module List',
 

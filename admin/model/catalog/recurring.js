@@ -25,7 +25,7 @@ module.exports = class ModelCatalogRecurring extends Model {
 		let data = await this.getRecurring(recurring_id);
 
 		data['recurring_description'] = await this.getRecurringDescription(recurring_id);
-		console.log(data)
+		// console.log(data)
 		for (let [language_id, recurring_description] of Object.entries(data['recurring_description'])) {
 			recurring_description['name'] += ' - 2';
 		}

@@ -10,7 +10,7 @@ module.exports = {
     text_extension: 'Extensions',
     text_success: 'Success: You have modified CardConnect payment module!',
     text_edit: 'Edit CardConnect',
-    text_cardconnect: 'CardConnect" ></a> ',
+    text_cardconnect: '<a href="http://www.cardconnect.com" target="_blank"><img src="view/image/payment/cardconnect.png" alt="CardConnect" title="CardConnect"></a>',
     text_payment: 'Payment',
     text_refund: 'Refund',
     text_authorize: 'Authorize',

@@ -1,5 +1,4 @@
-
-global.VERSION = '4.0.2.3';
+global.VERSION = '3.0.4.0';
 global.APPROOT = __dirname;
 global.date = require('php-date-format');
 global.fs = require('fs');
@@ -102,7 +101,7 @@ app.use((req, res, next) => {
         next();
     }
 });
-APP();
+global.APP();
 
 let port = typeof SERVER_PORT == 'undefined' ? 8080 : SERVER_PORT;
 app.listen(port, () => {

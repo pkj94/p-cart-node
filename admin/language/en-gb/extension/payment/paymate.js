@@ -6,7 +6,7 @@ module.exports = {
     text_extension: 'Extensions',
     text_success: 'Success: You have modified Paymate account details!',
     text_edit: 'Edit Paymate',
-    text_paymate: 'border: 1px solid #EEEEEE," />',
+    text_paymate: '<img src="view/image/payment/paymate.png" alt="Paymate" title="Paymate" style="border: 1px solid #EEEEEE," />',
 
     // Entry
     entry_username: 'Paymate Username',

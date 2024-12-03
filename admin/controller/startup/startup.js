@@ -1,5 +1,6 @@
 module.exports = class ControllerStartupStartup extends Controller {
 	async index() {
+const data = {};
 		// Settings
 		let query = await this.db.query("SELECT * FROM " + DB_PREFIX + "setting WHERE store_id = '0'");
 

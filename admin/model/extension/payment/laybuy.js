@@ -16,14 +16,14 @@ module.exports = class ModelExtensionPaymentLaybuy extends Model {
 	}
 
 	async getInitialPayments() {
-		minimum = this.config.get('payment_laybuy_min_deposit') ? this.config.get('payment_laybuy_min_deposit') : 20;
+		let minimum = this.config.get('payment_laybuy_min_deposit') ? this.config.get('payment_laybuy_min_deposit') : 20;
 
-		maximum = this.config.get('payment_laybuy_max_deposit') ? this.config.get('payment_laybuy_max_deposit') : 50;
+		let maximum = this.config.get('payment_laybuy_max_deposit') ? this.config.get('payment_laybuy_max_deposit') : 50;
 
-		initial_payments = {};
+		let initial_payments = [];
 
-		for (i = minimum; i <= maximum; i += 10) {
-			initial_payments.push(i;
+		for (let i = minimum; i <= maximum; i += 10) {
+			initial_payments.push(i);
 		}
 
 		return initial_payments;
@@ -32,7 +32,7 @@ module.exports = class ModelExtensionPaymentLaybuy extends Model {
 	async getMonths() {
 		await this.load.language('extension/payment/laybuy');
 
-		max_months = this.config.get('payment_laybuy_max_months');
+		let max_months = this.config.get('payment_laybuy_max_months');
 
 		if (!max_months) {
 			max_months = 3;
@@ -42,12 +42,12 @@ module.exports = class ModelExtensionPaymentLaybuy extends Model {
 			max_months = 1;
 		}
 
-		months = {};
+		let months = [];
 
-		for (i = 1; i <= max_months; i++) {
+		for (let i = 1; i <= max_months; i++) {
 			months.push({
-				'value' : i,
-				'label' : i + ' ' + ((i > 1) ? this.language.get('text_months') : this.language.get('text_month'))
+				'value': i,
+				'label': i + ' ' + ((i > 1) ? this.language.get('text_months') : this.language.get('text_month'))
 			});
 		}
 
@@ -77,9 +77,9 @@ module.exports = class ModelExtensionPaymentLaybuy extends Model {
 	}
 
 	async getStatusLabel(id) {
-		statuses = this.getTransactionStatuses();
+		const statuses = await this.getTransactionStatuses();
 
-		for (statuses of status) {
+		for (let status of statuses) {
 			if (status['status_id'] == id && status['status_name'] != '') {
 				return status['status_name'];
 
@@ -102,27 +102,27 @@ module.exports = class ModelExtensionPaymentLaybuy extends Model {
 		let implode = [];
 
 		if ((data['filter_order_id'])) {
-			implode.push("`lt`.`order_id` = '" + data['filter_order_id'] + "'";
+			implode.push("`lt`.`order_id` = '" + data['filter_order_id'] + "'");
 		}
 
 		if ((data['filter_customer'])) {
-			implode.push("CONCAT(firstname, ' ', lastname) LIKE '%" + this.db.escape(data['filter_customer']) + "%'";
+			implode.push("CONCAT(firstname, ' ', lastname) LIKE '%" + this.db.escape(data['filter_customer']) + "%'");
 		}
 
 		if ((data['filter_dp_percent'])) {
-			implode.push("`lt`.`downpayment` = '" + data['filter_dp_percent'] + "'";
+			implode.push("`lt`.`downpayment` = '" + data['filter_dp_percent'] + "'");
 		}
 
 		if ((data['filter_months'])) {
-			implode.push("`lt`.`months` = '" + data['filter_months'] + "'";
+			implode.push("`lt`.`months` = '" + data['filter_months'] + "'");
 		}
 
 		if ((data['filter_status'])) {
-			implode.push("`lt`.`status` = '" + data['filter_status'] + "'";
+			implode.push("`lt`.`status` = '" + data['filter_status'] + "'");
 		}
 
 		if ((data['filter_date_added'])) {
-			implode.push("DATE(`lt`.`date_added`) = DATE('" + this.db.escape(data['filter_date_added']) + "')";
+			implode.push("DATE(`lt`.`date_added`) = DATE('" + this.db.escape(data['filter_date_added']) + "')");
 		}
 
 		if (implode.length) {
@@ -140,7 +140,7 @@ module.exports = class ModelExtensionPaymentLaybuy extends Model {
 			'lt.last_payment_due',
 			'lt.status',
 			'lt.date_added'
-		});
+		];
 
 		if ((data['sort']) && sort_data.includes(data['sort'])) {
 			sql += " ORDER BY " + data['sort'];
@@ -159,13 +159,13 @@ module.exports = class ModelExtensionPaymentLaybuy extends Model {
 		}
 
 		if ((data['start']) || (data['limit'])) {
-			data['start'] = data['start']||0;
-if (data['start'] < 0) {
+			data['start'] = data['start'] || 0;
+			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
@@ -183,27 +183,27 @@ if (data['limit'] < 1) {
 		let implode = [];
 
 		if ((data['filter_order_id'])) {
-			implode.push("`lt`.`order_id` = '" + data['filter_order_id'] + "'";
+			implode.push("`lt`.`order_id` = '" + data['filter_order_id'] + "'");
 		}
 
 		if ((data['filter_customer'])) {
-			implode.push("CONCAT(firstname, ' ', lastname) LIKE '%" + this.db.escape(data['filter_customer']) + "%'";
+			implode.push("CONCAT(firstname, ' ', lastname) LIKE '%" + this.db.escape(data['filter_customer']) + "%'");
 		}
 
 		if ((data['filter_dp_percent'])) {
-			implode.push("`lt`.`downpayment` = '" + data['filter_dp_percent'] + "'";
+			implode.push("`lt`.`downpayment` = '" + data['filter_dp_percent'] + "'");
 		}
 
 		if ((data['filter_months'])) {
-			implode.push("`lt`.`months` = '" + data['filter_months'] + "'";
+			implode.push("`lt`.`months` = '" + data['filter_months'] + "'");
 		}
 
 		if ((data['filter_status'])) {
-			implode.push("`lt`.`status` = '" + data['filter_status'] + "'";
+			implode.push("`lt`.`status` = '" + data['filter_status'] + "'");
 		}
 
 		if ((data['filter_date_added'])) {
-			implode.push("DATE(`lt`.`date_added`) = DATE('" + this.db.escape(data['filter_date_added']) + "')";
+			implode.push("DATE(`lt`.`date_added`) = DATE('" + this.db.escape(data['filter_date_added']) + "')");
 		}
 
 		if (implode.length) {
@@ -230,106 +230,105 @@ if (data['limit'] < 1) {
 	async getTransactionStatuses() {
 		await this.load.language('extension/payment/laybuy');
 
-		transaction_statuses = array(
-			array(
-				'status_id'		: 1,
-				'status_name'	: this.language.get('text_status_1')
-			),
-			array(
-				'status_id'		: 5,
-				'status_name'	: this.language.get('text_status_5')
-			),
-			array(
-				'status_id'		: 7,
-				'status_name'	: this.language.get('text_status_7')
-			),
-			array(
-				'status_id'		: 50,
-				'status_name'	: this.language.get('text_status_50')
-			),
-			array(
-				'status_id'		: 51,
-				'status_name'	: this.language.get('text_status_51')
-			)
-		});
+		let transaction_statuses = [
+			{
+				'status_id': 1,
+				'status_name': this.language.get('text_status_1')
+			},
+			{
+				'status_id': 5,
+				'status_name': this.language.get('text_status_5')
+			},
+			{
+				'status_id': 7,
+				'status_name': this.language.get('text_status_7')
+			},
+			{
+				'status_id': 50,
+				'status_name': this.language.get('text_status_50')
+			},
+			{
+				'status_id': 51,
+				'status_name': this.language.get('text_status_51')
+			}
+		];
 
 		return transaction_statuses;
 	}
 
 	async install() {
-		await this.db.query("CREATE TABLE IF NOT EXISTS `" + DB_PREFIX + "laybuy_transaction` (
-			`laybuy_transaction_id` int(11) NOT NULL AUTO_INCREMENT,
-			`order_id` int(11) NOT NULL DEFAULT '0',
-			`firstname` varchar(32) NOT NULL DEFAULT '',
-			`lastname` varchar(32) NOT NULL DEFAULT '',
-			`address` text,
-			`suburb` varchar(128) NOT NULL DEFAULT '',
-			`state` varchar(128) NOT NULL DEFAULT '',
-			`country` varchar(32) NOT NULL DEFAULT '',
-			`postcode` varchar(10) NOT NULL DEFAULT '',
-			`email` varchar(96) NOT NULL DEFAULT '',
-			`amount` double NOT NULL,
-			`currency` varchar(5) NOT NULL,
-			`downpayment` double NOT NULL,
-			`months` int(11) NOT NULL,
-			`downpayment_amount` double NOT NULL,
-			`payment_amounts` double NOT NULL,
-			`first_payment_due` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-			`last_payment_due` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-			`store_id` int(11) NOT NULL DEFAULT '0',
-			`status` int(11) NOT NULL DEFAULT '1',
-			`report` text,
-			`transaction` int(11) NOT NULL DEFAULT '2',
-			`paypal_profile_id` varchar(250) NOT NULL DEFAULT '',
-			`laybuy_ref_no` int(11) NOT NULL DEFAULT '0',
-			`date_added` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-			PRIMARY KEY (`laybuy_transaction_id`)
-		) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=oc_general_ci");
+		await this.db.query(`CREATE TABLE IF NOT EXISTS \`${DB_PREFIX}laybuy_transaction\` (
+			\`laybuy_transaction_id\` int(11) NOT NULL AUTO_INCREMENT,
+			\`order_id\` int(11) NOT NULL DEFAULT '0',
+			\`firstname\` varchar(32) NOT NULL DEFAULT '',
+			\`lastname\` varchar(32) NOT NULL DEFAULT '',
+			\`address\` text,
+			\`suburb\` varchar(128) NOT NULL DEFAULT '',
+			\`state\` varchar(128) NOT NULL DEFAULT '',
+			\`country\` varchar(32) NOT NULL DEFAULT '',
+			\`postcode\` varchar(10) NOT NULL DEFAULT '',
+			\`email\` varchar(96) NOT NULL DEFAULT '',
+			\`amount\` double NOT NULL,
+			\`currency\` varchar(5) NOT NULL,
+			\`downpayment\` double NOT NULL,
+			\`months\` int(11) NOT NULL,
+			\`downpayment_amount\` double NOT NULL,
+			\`payment_amounts\` double NOT NULL,
+			\`first_payment_due\` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+			\`last_payment_due\` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+			\`store_id\` int(11) NOT NULL DEFAULT '0',
+			\`status\` int(11) NOT NULL DEFAULT '1',
+			\`report\` text,
+			\`transaction\` int(11) NOT NULL DEFAULT '2',
+			\`paypal_profile_id\` varchar(250) NOT NULL DEFAULT '',
+			\`laybuy_ref_no\` int(11) NOT NULL DEFAULT '0',
+			\`date_added\` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+			PRIMARY KEY(\`laybuy_transaction_id\`)
+		) ENGINE = MyISAM DEFAULT CHARSET = utf8 COLLATE = utf8_general_ci`);
 
-		await this.db.query("CREATE TABLE IF NOT EXISTS `" + DB_PREFIX + "laybuy_revise_request` (
-			`laybuy_revise_request_id` int(11) NOT NULL AUTO_INCREMENT,
-			`laybuy_transaction_id` int(11) DEFAULT '0',
-			`type` varchar(250) NOT NULL DEFAULT '',
-			`order_id` int(11) NOT NULL DEFAULT '0',
-			`firstname` varchar(32) NOT NULL DEFAULT '',
-			`lastname` varchar(32) NOT NULL DEFAULT '',
-			`address` text,
-			`suburb` varchar(128) NOT NULL DEFAULT '',
-			`state` varchar(128) NOT NULL DEFAULT '',
-			`country` varchar(32) NOT NULL DEFAULT '',
-			`postcode` varchar(10) NOT NULL DEFAULT '',
-			`email` varchar(96) NOT NULL DEFAULT '',
-			`amount` double NOT NULL,
-			`currency` varchar(5) NOT NULL,
-			`downpayment` double NOT NULL,
-			`months` int(11) NOT NULL,
-			`downpayment_amount` double NOT NULL,
-			`payment_amounts` double NOT NULL,
-			`first_payment_due` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-			`last_payment_due` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-			`store_id` int(11) NOT NULL DEFAULT '0',
-			`status` int(11) NOT NULL DEFAULT '1',
-			`report` text,
-			`transaction` int(11) NOT NULL DEFAULT '2',
-			`paypal_profile_id` varchar(250) NOT NULL DEFAULT '',
-			`laybuy_ref_no` int(11) NOT NULL DEFAULT '0',
-			`payment_type` tinyint(1) NOT NULL DEFAULT '1',
-			`date_added` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-			PRIMARY KEY (`laybuy_revise_request_id`)
-		) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=oc_general_ci");
+		await this.db.query(`CREATE TABLE IF NOT EXISTS \`${DB_PREFIX}laybuy_revise_request\` (
+			\`laybuy_revise_request_id\` int(11) NOT NULL AUTO_INCREMENT,
+			\`laybuy_transaction_id\` int(11) DEFAULT '0',
+			\`type\` varchar(250) NOT NULL DEFAULT '',
+			\`order_id\` int(11) NOT NULL DEFAULT '0',
+			\`firstname\` varchar(32) NOT NULL DEFAULT '',
+			\`lastname\` varchar(32) NOT NULL DEFAULT '',
+			\`address\` text,
+			\`suburb\` varchar(128) NOT NULL DEFAULT '',
+			\`state\` varchar(128) NOT NULL DEFAULT '',
+			\`country\` varchar(32) NOT NULL DEFAULT '',
+			\`postcode\` varchar(10) NOT NULL DEFAULT '',
+			\`email\` varchar(96) NOT NULL DEFAULT '',
+			\`amount\` double NOT NULL,
+			\`currency\` varchar(5) NOT NULL,
+			\`downpayment\` double NOT NULL,
+			\`months\` int(11) NOT NULL,
+			\`downpayment_amount\` double NOT NULL,
+			\`payment_amounts\` double NOT NULL,
+			\`first_payment_due\` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+			\`last_payment_due\` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+			\`store_id\` int(11) NOT NULL DEFAULT '0',
+			\`status\` int(11) NOT NULL DEFAULT '1',
+			\`report\` text,
+			\`transaction\` int(11) NOT NULL DEFAULT '2',
+			\`paypal_profile_id\` varchar(250) NOT NULL DEFAULT '',
+			\`laybuy_ref_no\` int(11) NOT NULL DEFAULT '0',
+			\`payment_type\` tinyint(1) NOT NULL DEFAULT '1',
+			\`date_added\` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+			PRIMARY KEY(\`laybuy_revise_request_id\`)
+		) ENGINE = MyISAM DEFAULT CHARSET = utf8 COLLATE = utf8_general_ci`);
 
-		this.load.model('setting/event',this);
+		this.load.model('setting/event', this);
 
 		await this.model_setting_event.addEvent('laybuy', 'catalog/model/checkout/order/deleteOrder/after', 'extension/payment/laybuy/deleteOrder');
 	}
 
 	async log(data, step = 6) {
 		if (this.config.get('payment_laybuy_logging')) {
-			backtrace = debug_backtrace();
+			const backtrace = getStackTrace();
 
-			log = new Log('laybuy.log');
-
-			log.write('(' + backtrace[step]['class'] + '::' + backtrace[step]['function'] + ') - ' + data);
+			const log = new Log('laybuy.log');
+			log.write(JSON.stringify(backtrace) + ' - ' + data);
 		}
 	}
 
@@ -338,7 +337,7 @@ if (data['limit'] < 1) {
 
 		await this.db.query("DROP TABLE IF EXISTS `" + DB_PREFIX + "laybuy_revise_request`");
 
-		this.load.model('setting/event',this);
+		this.load.model('setting/event', this);
 
 		await this.model_setting_event.deleteEventByCode('laybuy');
 	}

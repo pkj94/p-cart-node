@@ -6,7 +6,7 @@ module.exports = {
     text_extension: 'Extensions',
     text_success: 'Success: You have modified the G2APay details.',
     text_edit: 'Edit G2APay',
-    text_g2apay: 'border: 1px solid #EEEEEE," /></a>',
+    text_g2apay: '<a href="https://pay.g2a.com/" target="_blank"><img src="view/image/payment/g2apay.png" alt="G2APay" title="G2APay" style="border: 1px solid #EEEEEE," /></a>',
     text_payment_info: 'Payment information',
     text_refund_status: 'Payment refund',
     text_order_ref: 'Order ref',

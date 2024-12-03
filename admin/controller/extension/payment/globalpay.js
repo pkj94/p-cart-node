@@ -2,21 +2,23 @@ module.exports = class ControllerExtensionPaymentGlobalpay extends Controller {
 	error = {};
 
 	async index() {
+		const data = {};
 		await this.load.language('extension/payment/globalpay');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('setting/setting',this);
+		this.load.model('setting/setting', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validate()) {
 			await this.model_setting_setting.editSetting('payment_globalpay', this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true));
 		}
 
-		data['notify_url'] = HTTPS_CATALOG + 'index.php?route=extension/payment/globalpay/notify';
+		data['notify_url'] = HTTPS_CATALOG + '?route=extension/payment/globalpay/notify';
 
 		if ((this.error['warning'])) {
 			data['error_warning'] = this.error['warning'];
@@ -51,22 +53,22 @@ module.exports = class ControllerExtensionPaymentGlobalpay extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_extension'),
-			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true)
+			'text': this.language.get('text_extension'),
+			'href': await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('extension/payment/globalpay', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('extension/payment/globalpay', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['action'] = await this.url.link('extension/payment/globalpay', 'user_token=' + this.session.data['user_token'], true);
-		
+
 		data['cancel'] = await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true);
 
 		if ((this.request.post['payment_globalpay_merchant_id'])) {
@@ -99,7 +101,7 @@ module.exports = class ControllerExtensionPaymentGlobalpay extends Controller {
 			data['payment_globalpay_geo_zone_id'] = this.config.get('payment_globalpay_geo_zone_id');
 		}
 
-		this.load.model('localisation/geo_zone');
+		this.load.model('localisation/geo_zone', this);
 
 		data['geo_zones'] = await this.model_localisation_geo_zone.getGeoZones();
 
@@ -187,7 +189,7 @@ module.exports = class ControllerExtensionPaymentGlobalpay extends Controller {
 			data['payment_globalpay_order_status_decline_bank_id'] = this.config.get('payment_globalpay_order_status_decline_bank_id');
 		}
 
-		this.load.model('localisation/order_status');
+		this.load.model('localisation/order_status', this);
 
 		data['order_statuses'] = await this.model_localisation_order_status.getOrderStatuses();
 
@@ -197,7 +199,7 @@ module.exports = class ControllerExtensionPaymentGlobalpay extends Controller {
 			data['payment_globalpay_live_url'] = this.config.get('payment_globalpay_live_url');
 		}
 
-		if (empty(data['payment_globalpay_live_url'])) {
+		if (!(data['payment_globalpay_live_url'])) {
 			data['payment_globalpay_live_url'] = 'https://hpp.globaliris.com/pay';
 		}
 
@@ -207,7 +209,7 @@ module.exports = class ControllerExtensionPaymentGlobalpay extends Controller {
 			data['payment_globalpay_demo_url'] = this.config.get('payment_globalpay_demo_url');
 		}
 
-		if (empty(data['payment_globalpay_demo_url'])) {
+		if (!(data['payment_globalpay_demo_url'])) {
 			data['payment_globalpay_demo_url'] = 'https://hpp.sandbox.globaliris.com/pay';
 		}
 
@@ -219,18 +221,19 @@ module.exports = class ControllerExtensionPaymentGlobalpay extends Controller {
 	}
 
 	async install() {
-		this.load.model('extension/payment/globalpay');
+		this.load.model('extension/payment/globalpay', this);
 
 		await this.model_extension_payment_globalpay.install();
 	}
 
 	async order() {
+		const data = {};
 		if (this.config.get('payment_globalpay_status')) {
-			this.load.model('extension/payment/globalpay');
+			this.load.model('extension/payment/globalpay', this);
 
-			globalpay_order = await this.model_extension_payment_globalpay.getOrder(this.request.get['order_id']);
+			const globalpay_order = await this.model_extension_payment_globalpay.getOrder(this.request.get['order_id']);
 
-			if ((globalpay_order)) {
+			if ((globalpay_order.globalpay_order_id)) {
 				await this.load.language('extension/payment/globalpay');
 
 				globalpay_order['total_captured'] = await this.model_extension_payment_globalpay.getTotalCaptured(globalpay_order['globalpay_order_id']);
@@ -243,7 +246,7 @@ module.exports = class ControllerExtensionPaymentGlobalpay extends Controller {
 				data['auto_settle'] = globalpay_order['settle_type'];
 
 				data['order_id'] = this.request.get['order_id'];
-				
+
 				data['user_token'] = this.session.data['user_token'];
 
 				return await this.load.view('extension/payment/globalpay_order', data);
@@ -253,16 +256,16 @@ module.exports = class ControllerExtensionPaymentGlobalpay extends Controller {
 
 	async void() {
 		await this.load.language('extension/payment/globalpay');
-		json = {};
+		const json = {};
 
 		if ((this.request.post['order_id']) && this.request.post['order_id'] != '') {
-			this.load.model('extension/payment/globalpay');
+			this.load.model('extension/payment/globalpay', this);
 
-			globalpay_order = await this.model_extension_payment_globalpay.getOrder(this.request.post['order_id']);
+			const globalpay_order = await this.model_extension_payment_globalpay.getOrder(this.request.post['order_id']);
 
-			void_response = await this.model_extension_payment_globalpay.void(this.request.post['order_id']);
+			const void_response = await this.model_extension_payment_globalpay.void(this.request.post['order_id']);
 
-			await this.model_extension_payment_globalpay.logger('Void result:\r\n' + print_r(void_response, 1));
+			await this.model_extension_payment_globalpay.logger('Void result:\r\n' + JSON.stringify(void_response, 1));
 
 			if ((void_response.result) && void_response.result == '00') {
 				await this.model_extension_payment_globalpay.addTransaction(globalpay_order['globalpay_order_id'], 'void', 0.00);
@@ -287,22 +290,22 @@ module.exports = class ControllerExtensionPaymentGlobalpay extends Controller {
 
 	async capture() {
 		await this.load.language('extension/payment/globalpay');
-		json = {};
+		const json = {};
 
 		if ((this.request.post['order_id']) && this.request.post['order_id'] != '' && (this.request.post['amount']) && this.request.post['amount'] > 0) {
-			this.load.model('extension/payment/globalpay');
+			this.load.model('extension/payment/globalpay', this);
 
-			globalpay_order = await this.model_extension_payment_globalpay.getOrder(this.request.post['order_id']);
+			const globalpay_order = await this.model_extension_payment_globalpay.getOrder(this.request.post['order_id']);
 
-			capture_response = await this.model_extension_payment_globalpay.capture(this.request.post['order_id'], this.request.post['amount']);
+			const capture_response = await this.model_extension_payment_globalpay.capture(this.request.post['order_id'], this.request.post['amount']);
 
-			await this.model_extension_payment_globalpay.logger('Settle result:\r\n' + print_r(capture_response, 1));
+			await this.model_extension_payment_globalpay.logger('Settle result:\r\n' + JSON.stringify(capture_response, true));
 
 			if ((capture_response.result) && capture_response.result == '00') {
 				await this.model_extension_payment_globalpay.addTransaction(globalpay_order['globalpay_order_id'], 'payment', this.request.post['amount']);
 
 				total_captured = await this.model_extension_payment_globalpay.getTotalCaptured(globalpay_order['globalpay_order_id']);
-
+				let capture_status = 0;
 				if (total_captured >= globalpay_order['total'] || globalpay_order['settle_type'] == 0) {
 					await this.model_extension_payment_globalpay.updateCaptureStatus(globalpay_order['globalpay_order_id'], 1);
 					capture_status = 1;
@@ -335,23 +338,23 @@ module.exports = class ControllerExtensionPaymentGlobalpay extends Controller {
 
 	async rebate() {
 		await this.load.language('extension/payment/globalpay');
-		json = {};
+		const json = {};
 
 		if ((this.request.post['order_id']) && (this.request.post['order_id'])) {
-			this.load.model('extension/payment/globalpay');
+			this.load.model('extension/payment/globalpay', this);
 
-			globalpay_order = await this.model_extension_payment_globalpay.getOrder(this.request.post['order_id']);
+			const globalpay_order = await this.model_extension_payment_globalpay.getOrder(this.request.post['order_id']);
 
-			rebate_response = await this.model_extension_payment_globalpay.rebate(this.request.post['order_id'], this.request.post['amount']);
+			const rebate_response = await this.model_extension_payment_globalpay.rebate(this.request.post['order_id'], this.request.post['amount']);
 
-			await this.model_extension_payment_globalpay.logger('Rebate result:\r\n' + print_r(rebate_response, 1));
+			await this.model_extension_payment_globalpay.logger('Rebate result:\r\n' + JSON.stringify(rebate_response, 1));
 
 			if ((rebate_response.result) && rebate_response.result == '00') {
-				await this.model_extension_payment_globalpay.addTransaction(globalpay_order['globalpay_order_id'], 'rebate', this.request.post['amount']*-1);
+				await this.model_extension_payment_globalpay.addTransaction(globalpay_order['globalpay_order_id'], 'rebate', this.request.post['amount'] * -1);
 
-				total_rebated = await this.model_extension_payment_globalpay.getTotalRebated(globalpay_order['globalpay_order_id']);
+				const total_rebated = await this.model_extension_payment_globalpay.getTotalRebated(globalpay_order['globalpay_order_id']);
 				total_captured = await this.model_extension_payment_globalpay.getTotalCaptured(globalpay_order['globalpay_order_id']);
-
+				let rebate_status = 0;
 				if (total_captured <= 0 && globalpay_order['capture_status'] == 1) {
 					await this.model_extension_payment_globalpay.updateRebateStatus(globalpay_order['globalpay_order_id'], 1);
 					rebate_status = 1;
@@ -363,7 +366,7 @@ module.exports = class ControllerExtensionPaymentGlobalpay extends Controller {
 
 				json['data'] = {};
 				json['data']['date_added'] = date("Y-m-d H:i:s");
-				json['data']['amount'] = this.request.post['amount']*-1;
+				json['data']['amount'] = this.request.post['amount'] * -1;
 				json['data']['total_captured'] = total_captured;
 				json['data']['total_rebated'] = total_rebated;
 				json['data']['rebate_status'] = rebate_status;
@@ -402,6 +405,6 @@ module.exports = class ControllerExtensionPaymentGlobalpay extends Controller {
 			this.error['error_demo_url'] = this.language.get('error_demo_url');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 }

@@ -4,6 +4,7 @@ module.exports = class ControllerCatalogProduct extends Controller {
 	error = {};
 
 	async index() {
+const data = {};
 		await this.load.language('catalog/product');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -24,6 +25,7 @@ module.exports = class ControllerCatalogProduct extends Controller {
 			await this.model_catalog_product.addProduct(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
 			let url = '';
 
@@ -76,6 +78,7 @@ module.exports = class ControllerCatalogProduct extends Controller {
 			await this.model_catalog_product.editProduct(this.request.get['product_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
 			let url = '';
 
@@ -131,6 +134,7 @@ module.exports = class ControllerCatalogProduct extends Controller {
 			}
 
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
 			let url = '';
 
@@ -181,12 +185,13 @@ module.exports = class ControllerCatalogProduct extends Controller {
 
 		if ((this.request.post['selected']) && await this.validateCopy()) {
 			this.request.post['selected'] = Array.isArray(this.request.post['selected']) ? this.request.post['selected'] : [this.request.post['selected']];
-			console.log(this.request.post)
+			// console.log(this.request.post)
 			for (let product_id of this.request.post['selected']) {
 				await this.model_catalog_product.copyProduct(product_id);
 			}
 
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
 			let url = '';
 
@@ -229,7 +234,7 @@ module.exports = class ControllerCatalogProduct extends Controller {
 	}
 
 	async getList() {
-		const data = {};
+				const data = {};
 		let filter_name = '';
 		if ((this.request.get['filter_name'])) {
 			filter_name = this.request.get['filter_name'];
@@ -260,11 +265,9 @@ module.exports = class ControllerCatalogProduct extends Controller {
 		} else {
 			order = 'ASC';
 		}
-		let page = 1;
-		if ((this.request.get['page'])) {
+		let page = 1;page = 1;
+if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
 		}
 
 		let url = '';

@@ -2,6 +2,7 @@ module.exports = class ControllerMarketingCoupon extends Controller {
 	error = {};
 
 	async index() {
+		const data = {};
 		await this.load.language('marketing/coupon');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -22,6 +23,7 @@ module.exports = class ControllerMarketingCoupon extends Controller {
 			await this.model_marketing_coupon.addCoupon(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			url = '';
 
@@ -54,6 +56,7 @@ module.exports = class ControllerMarketingCoupon extends Controller {
 			await this.model_marketing_coupon.editCoupon(this.request.get['coupon_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			url = '';
 
@@ -83,12 +86,13 @@ module.exports = class ControllerMarketingCoupon extends Controller {
 		this.load.model('marketing/coupon');
 
 		if ((this.request.post['selected']) && await this.validateDelete()) {
-this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
-			for (this.request.post['selected'] of coupon_id) {
+			this.request.post['selected'] = Array.isArray(this.request.post['selected']) ? this.request.post['selected'] : [this.request.post['selected']]
+			for (let coupon_id of this.request.post['selected']) {
 				await this.model_marketing_coupon.deleteCoupon(coupon_id);
 			}
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			url = '';
 
@@ -111,6 +115,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 	}
 
 	async getList() {
+		const data = {};
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
 		} else {
@@ -122,11 +127,9 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		} else {
 			order = 'ASC';
 		}
-
+		page = 1;
 		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
 		}
 
 		url = '';
@@ -146,13 +149,13 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('marketing/coupon', 'user_token=' + this.session.data['user_token'] + url, true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('marketing/coupon', 'user_token=' + this.session.data['user_token'] + url, true)
 		});
 
 		data['add'] = await this.url.link('marketing/coupon/add', 'user_token=' + this.session.data['user_token'] + url, true);
@@ -160,11 +163,11 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 
 		data['coupons'] = {};
 
-		filter_data = array(
-			'sort'  : sort,
-			'order' : order,
-			'start' : (page - 1) * Number(this.config.get('config_limit_admin')),
-			'limit' : Number(this.config.get('config_limit_admin'))
+		const filter_data = {
+			'sort': sort,
+			'order': order,
+			'start': (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit': Number(this.config.get('config_limit_admin'))
 		});
 
 		coupon_total = await this.model_marketing_coupon.getTotalCoupons();
@@ -173,14 +176,14 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 
 		for (let result of results) {
 			data['coupons'].push({
-				'coupon_id'  : result['coupon_id'],
-				'name'       : result['name'],
-				'code'       : result['code'],
-				'discount'   : result['discount'],
-				'date_start' : date(this.language.get('date_format_short'), strtotime(result['date_start'])),
-				'date_end'   : date(this.language.get('date_format_short'), strtotime(result['date_end'])),
-				'status'     : (result['status'] ? this.language.get('text_enabled') : this.language.get('text_disabled')),
-				'edit'       : await this.url.link('marketing/coupon/edit', 'user_token=' + this.session.data['user_token'] + '&coupon_id=' + result['coupon_id'] + url, true)
+				'coupon_id': result['coupon_id'],
+				'name': result['name'],
+				'code': result['code'],
+				'discount': result['discount'],
+				'date_start': date(this.language.get('date_format_short'), strtotime(result['date_start'])),
+				'date_end': date(this.language.get('date_format_short'), strtotime(result['date_end'])),
+				'status': (result['status'] ? this.language.get('text_enabled') : this.language.get('text_disabled')),
+				'edit': await this.url.link('marketing/coupon/edit', 'user_token=' + this.session.data['user_token'] + '&coupon_id=' + result['coupon_id'] + url, true)
 			});
 		}
 
@@ -193,7 +196,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		if ((this.session.data['success'])) {
 			data['success'] = this.session.data['success'];
 
-			delete this.session.data['success']);
+			delete this.session.data['success'];
 		} else {
 			data['success'] = '';
 		}
@@ -233,7 +236,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			url += '&order=' + this.request.get['order'];
 		}
 
-		pagination = new Pagination();
+		const pagination = new Pagination();
 		pagination.total = coupon_total;
 		pagination.page = page;
 		pagination.limit = Number(this.config.get('config_limit_admin'));
@@ -311,13 +314,13 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('marketing/coupon', 'user_token=' + this.session.data['user_token'] + url, true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('marketing/coupon', 'user_token=' + this.session.data['user_token'] + url, true)
 		});
 
 		if (!(this.request.get['coupon_id'])) {
@@ -396,7 +399,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			products = {};
 		}
 
-		this.load.model('catalog/product',this);
+		this.load.model('catalog/product', this);
 
 		data['coupon_product'] = {};
 
@@ -405,8 +408,8 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 
 			if (product_info) {
 				data['coupon_product'].push({
-					'product_id' : product_info['product_id'],
-					'name'       : product_info['name']
+					'product_id': product_info['product_id'],
+					'name': product_info['name']
 				});
 			}
 		}
@@ -419,7 +422,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			categories = {};
 		}
 
-		this.load.model('catalog/category',this);
+		this.load.model('catalog/category', this);
 
 		data['coupon_category'] = {};
 
@@ -428,8 +431,8 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 
 			if (category_info) {
 				data['coupon_category'].push({
-					'category_id' : category_info['category_id'],
-					'name'        : (category_info['path'] ? category_info['path'] + ' &gt; ' : '') + category_info['name']
+					'category_id': category_info['category_id'],
+					'name': (category_info['path'] ? category_info['path'] + ' &gt; ' : '') + category_info['name']
 				});
 			}
 		}
@@ -504,7 +507,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			}
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 
 	async validateDelete() {
@@ -512,18 +515,16 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 
 	async history() {
 		await this.load.language('marketing/coupon');
 
 		this.load.model('marketing/coupon');
-
+		page = 1;
 		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
 		}
 
 		data['histories'] = {};
@@ -532,16 +533,16 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 
 		for (let result of results) {
 			data['histories'].push({
-				'order_id'   : result['order_id'],
-				'customer'   : result['customer'],
-				'amount'     : result['amount'],
-				'date_added' : date(this.language.get('date_format_short'), strtotime(result['date_added']))
+				'order_id': result['order_id'],
+				'customer': result['customer'],
+				'amount': result['amount'],
+				'date_added': date(this.language.get('date_format_short'), strtotime(result['date_added']))
 			});
 		}
 
 		history_total = await this.model_marketing_coupon.getTotalCouponHistories(this.request.get['coupon_id']);
 
-		pagination = new Pagination();
+		const pagination = new Pagination();
 		pagination.total = history_total;
 		pagination.page = page;
 		pagination.limit = 10;

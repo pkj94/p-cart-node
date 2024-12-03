@@ -10,7 +10,7 @@ module.exports = {
     text_extension: 'Extensions',
     text_success: 'Success: You have modified Pilibaba payment module!',
     text_edit: 'Edit Pilibaba',
-    text_pilibaba: 'Pilibaba" ></a> ',
+    text_pilibaba: '<a href="http://www.pilibaba.com" target="_blank"><img src="view/image/payment/pilibaba.png" alt="Pilibaba" title="Pilibaba"></a>',
     text_live: 'Live',
     text_test: 'Test',
     text_payment_info: 'Payment Info',
@@ -70,7 +70,7 @@ module.exports = {
     error_currency: 'Please select a currency!',
     error_warehouse: 'Please select a warehouse!',
     error_country: 'Please select a country!',
-    error_weight: '%s" > Weight Class</a > setting to grams.It\'s in \'System . Settings\' in the \'Local\' tab.',
+    error_weight: 'Please change your <a href="%s">Weight Class</a> setting to grams. It\'s in \'System -> Settings\' in the \'Local\' tab.',
     error_bad_response: 'An invalid response was received. Please try again later.',
 
     // Button

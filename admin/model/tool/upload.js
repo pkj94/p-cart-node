@@ -1,12 +1,16 @@
+const mt_rand = require("locutus/php/math/mt_rand");
+const uniqid = require("locutus/php/misc/uniqid");
+const sha1 = require("locutus/php/strings/sha1");
+
 module.exports = class ModelToolUpload extends Model {
 	async addUpload(name, filename) {
-		code = sha1(uniqid(mt_rand(), true));
+		const code = sha1(uniqid(mt_rand(), true));
 
 		await this.db.query("INSERT INTO `" + DB_PREFIX + "upload` SET `name` = '" + this.db.escape(name) + "', `filename` = '" + this.db.escape(filename) + "', `code` = '" + this.db.escape(code) + "', `date_added` = NOW()");
 
 		return code;
 	}
-		
+
 	async deleteUpload(upload_id) {
 		await this.db.query("DELETE FROM " + DB_PREFIX + "upload WHERE upload_id = '" + upload_id + "'");
 	}
@@ -29,15 +33,15 @@ module.exports = class ModelToolUpload extends Model {
 		let implode = [];
 
 		if ((data['filter_name'])) {
-			implode.push("name LIKE '" + this.db.escape(data['filter_name']) + "%'";
+			implode.push("name LIKE '" + this.db.escape(data['filter_name']) + "%'");
 		}
 
 		if ((data['filter_filename'])) {
-			implode.push("filename LIKE '" + this.db.escape(data['filter_filename']) + "%'";
+			implode.push("filename LIKE '" + this.db.escape(data['filter_filename']) + "%'");
 		}
 
 		if ((data['filter_date_added'])) {
-			implode.push("DATE(date_added) = DATE('" + this.db.escape(data['filter_date_added']) + "')";
+			implode.push("DATE(date_added) = DATE('" + this.db.escape(data['filter_date_added']) + "')");
 		}
 
 		if (implode.length) {
@@ -48,7 +52,7 @@ module.exports = class ModelToolUpload extends Model {
 			'name',
 			'filename',
 			'date_added'
-		});
+		];
 
 		if ((data['sort']) && sort_data.includes(data['sort'])) {
 			sql += " ORDER BY " + data['sort'];
@@ -63,13 +67,13 @@ module.exports = class ModelToolUpload extends Model {
 		}
 
 		if ((data['start']) || (data['limit'])) {
-			data['start'] = data['start']||0;
-if (data['start'] < 0) {
+			data['start'] = data['start'] || 0;
+			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
@@ -87,15 +91,15 @@ if (data['limit'] < 1) {
 		let implode = [];
 
 		if ((data['filter_name'])) {
-			implode.push("name LIKE '" + this.db.escape(data['filter_name']) + "%'";
+			implode.push("name LIKE '" + this.db.escape(data['filter_name']) + "%'");
 		}
 
 		if ((data['filter_filename'])) {
-			implode.push("filename LIKE '" + this.db.escape(data['filter_filename']) + "%'";
+			implode.push("filename LIKE '" + this.db.escape(data['filter_filename']) + "%'");
 		}
 
 		if ((data['filter_date_added'])) {
-			implode.push("DATE(date_added) = DATE('" + this.db.escape(data['filter_date_added']) + "')";
+			implode.push("DATE(date_added) = DATE('" + this.db.escape(data['filter_date_added']) + "')");
 		}
 
 		if (implode.length) {

@@ -35,7 +35,9 @@ module.exports = class MySQLiDBLibrary {
     async query(sql) {
         return new Promise(async (resolve, reject) => {
             try {
+                // console.log(sql)
                 this.connection.query(sql, (error, results) => {
+                    // console.log(sql,error, results)
                     if (error) {
                         reject(new Error(`Error: ${error.message}\nSQL: ${sql}`));
                     } else {

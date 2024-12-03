@@ -2,16 +2,17 @@ module.exports = class ControllerExtensionTotalKlarnaFee extends Controller {
 	error = {};
 
 	async index() {
+		const data = {};
 		await this.load.language('extension/total/klarna_fee');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('setting/setting',this);
+		this.load.model('setting/setting', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validate()) {
-			status = false;
+			let status = false;
 
-			for (this.request.post['klarna_fee'] of klarna_account) {
+			for (let klarna_account of this.request.post['klarna_fee']) {
 				if (klarna_account['status']) {
 					status = true;
 
@@ -19,9 +20,10 @@ module.exports = class ControllerExtensionTotalKlarnaFee extends Controller {
 				}
 			}
 
-			await this.model_setting_setting.editSetting('total_klarna_fee', array_merge(this.request.post, array('klarna_fee_status' : status)));
+			await this.model_setting_setting.editSetting('total_klarna_fee', { ...this.request.post, ...{ 'klarna_fee_status': status } });
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=total', true));
 		}
@@ -35,18 +37,18 @@ module.exports = class ControllerExtensionTotalKlarnaFee extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_extension'),
-			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=total', true)
+			'text': this.language.get('text_extension'),
+			'href': await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=total', true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('extension/total/klarna_fee', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('extension/total/klarna_fee', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['action'] = await this.url.link('extension/total/klarna_fee', 'user_token=' + this.session.data['user_token'], true);
@@ -56,33 +58,33 @@ module.exports = class ControllerExtensionTotalKlarnaFee extends Controller {
 		data['countries'] = {};
 
 		data['countries'].push({
-			'name' : this.language.get('text_germany'),
-			'code' : 'DEU'
+			'name': this.language.get('text_germany'),
+			'code': 'DEU'
 		});
 
 		data['countries'].push({
-			'name' : this.language.get('text_netherlands'),
-			'code' : 'NLD'
+			'name': this.language.get('text_netherlands'),
+			'code': 'NLD'
 		});
 
 		data['countries'].push({
-			'name' : this.language.get('text_denmark'),
-			'code' : 'DNK'
+			'name': this.language.get('text_denmark'),
+			'code': 'DNK'
 		});
 
 		data['countries'].push({
-			'name' : this.language.get('text_sweden'),
-			'code' : 'SWE'
+			'name': this.language.get('text_sweden'),
+			'code': 'SWE'
 		});
 
 		data['countries'].push({
-			'name' : this.language.get('text_norway'),
-			'code' : 'NOR'
+			'name': this.language.get('text_norway'),
+			'code': 'NOR'
 		});
 
 		data['countries'].push({
-			'name' : this.language.get('text_finland'),
-			'code' : 'FIN'
+			'name': this.language.get('text_finland'),
+			'code': 'FIN'
 		});
 
 		if ((this.request.post['total_klarna_fee'])) {
@@ -91,7 +93,7 @@ module.exports = class ControllerExtensionTotalKlarnaFee extends Controller {
 			data['total_klarna_fee'] = this.config.get('total_klarna_fee');
 		}
 
-		this.load.model('localisation/tax_class',this);
+		this.load.model('localisation/tax_class', this);
 
 		data['tax_classes'] = await this.model_localisation_tax_class.getTaxClasses();
 
@@ -102,11 +104,11 @@ module.exports = class ControllerExtensionTotalKlarnaFee extends Controller {
 		this.response.setOutput(await this.load.view('extension/total/klarna_fee', data));
 	}
 
-	private function validate() {
+	async validate() {
 		if (!await this.user.hasPermission('modify', 'extension/total/klarna_fee')) {
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 }

@@ -1,7 +1,7 @@
 module.exports = class ModelSaleReturn extends Model {
 	async addReturn(data) {
 		await this.db.query("INSERT INTO `" + DB_PREFIX + "return` SET order_id = '" + data['order_id'] + "', product_id = '" + data['product_id'] + "', customer_id = '" + data['customer_id'] + "', firstname = '" + this.db.escape(data['firstname']) + "', lastname = '" + this.db.escape(data['lastname']) + "', email = '" + this.db.escape(data['email']) + "', telephone = '" + this.db.escape(data['telephone']) + "', product = '" + this.db.escape(data['product']) + "', model = '" + this.db.escape(data['model']) + "', quantity = '" + data['quantity'] + "', opened = '" + data['opened'] + "', return_reason_id = '" + data['return_reason_id'] + "', return_action_id = '" + data['return_action_id'] + "', return_status_id = '" + data['return_status_id'] + "', comment = '" + this.db.escape(data['comment']) + "', date_ordered = '" + this.db.escape(data['date_ordered']) + "', date_added = NOW(), date_modified = NOW()");
-	
+
 		return this.db.getLastId();
 	}
 
@@ -26,35 +26,35 @@ module.exports = class ModelSaleReturn extends Model {
 		let implode = [];
 
 		if ((data['filter_return_id'])) {
-			implode.push("r.return_id = '" + data['filter_return_id'] + "'";
+			implode.push("r.return_id = '" + data['filter_return_id'] + "'");
 		}
 
 		if ((data['filter_order_id'])) {
-			implode.push("r.order_id = '" + data['filter_order_id'] + "'";
+			implode.push("r.order_id = '" + data['filter_order_id'] + "'");
 		}
 
 		if ((data['filter_customer'])) {
-			implode.push("CONCAT(r.firstname, ' ', r.lastname) LIKE '" + this.db.escape(data['filter_customer']) + "%'";
+			implode.push("CONCAT(r.firstname, ' ', r.lastname) LIKE '" + this.db.escape(data['filter_customer']) + "%'");
 		}
 
 		if ((data['filter_product'])) {
-			implode.push("r.product = '" + this.db.escape(data['filter_product']) + "'";
+			implode.push("r.product = '" + this.db.escape(data['filter_product']) + "'");
 		}
 
 		if ((data['filter_model'])) {
-			implode.push("r.model = '" + this.db.escape(data['filter_model']) + "'";
+			implode.push("r.model = '" + this.db.escape(data['filter_model']) + "'");
 		}
 
 		if ((data['filter_return_status_id'])) {
-			implode.push("r.return_status_id = '" + data['filter_return_status_id'] + "'";
+			implode.push("r.return_status_id = '" + data['filter_return_status_id'] + "'");
 		}
 
 		if ((data['filter_date_added'])) {
-			implode.push("DATE(r.date_added) = DATE('" + this.db.escape(data['filter_date_added']) + "')";
+			implode.push("DATE(r.date_added) = DATE('" + this.db.escape(data['filter_date_added']) + "')");
 		}
 
 		if ((data['filter_date_modified'])) {
-			implode.push("DATE(r.date_modified) = DATE('" + this.db.escape(data['filter_date_modified']) + "')";
+			implode.push("DATE(r.date_modified) = DATE('" + this.db.escape(data['filter_date_modified']) + "')");
 		}
 
 		if (implode.length) {
@@ -70,7 +70,7 @@ module.exports = class ModelSaleReturn extends Model {
 			'status',
 			'r.date_added',
 			'r.date_modified'
-		});
+		];
 
 		if ((data['sort']) && sort_data.includes(data['sort'])) {
 			sql += " ORDER BY " + data['sort'];
@@ -85,13 +85,13 @@ module.exports = class ModelSaleReturn extends Model {
 		}
 
 		if ((data['start']) || (data['limit'])) {
-			data['start'] = data['start']||0;
-if (data['start'] < 0) {
+			data['start'] = data['start'] || 0;
+			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
@@ -109,35 +109,35 @@ if (data['limit'] < 1) {
 		let implode = [];
 
 		if ((data['filter_return_id'])) {
-			implode.push("r.return_id = '" + data['filter_return_id'] + "'";
+			implode.push("r.return_id = '" + data['filter_return_id'] + "'");
 		}
 
 		if ((data['filter_customer'])) {
-			implode.push("CONCAT(r.firstname, ' ', r.lastname) LIKE '" + this.db.escape(data['filter_customer']) + "%'";
+			implode.push("CONCAT(r.firstname, ' ', r.lastname) LIKE '" + this.db.escape(data['filter_customer']) + "%'");
 		}
 
 		if ((data['filter_order_id'])) {
-			implode.push("r.order_id = '" + this.db.escape(data['filter_order_id']) + "'";
+			implode.push("r.order_id = '" + this.db.escape(data['filter_order_id']) + "'");
 		}
 
 		if ((data['filter_product'])) {
-			implode.push("r.product = '" + this.db.escape(data['filter_product']) + "'";
+			implode.push("r.product = '" + this.db.escape(data['filter_product']) + "'");
 		}
 
 		if ((data['filter_model'])) {
-			implode.push("r.model = '" + this.db.escape(data['filter_model']) + "'";
+			implode.push("r.model = '" + this.db.escape(data['filter_model']) + "'");
 		}
 
 		if ((data['filter_return_status_id'])) {
-			implode.push("r.return_status_id = '" + data['filter_return_status_id'] + "'";
+			implode.push("r.return_status_id = '" + data['filter_return_status_id'] + "'");
 		}
 
 		if ((data['filter_date_added'])) {
-			implode.push("DATE(r.date_added) = DATE('" + this.db.escape(data['filter_date_added']) + "')";
+			implode.push("DATE(r.date_added) = DATE('" + this.db.escape(data['filter_date_added']) + "')");
 		}
 
 		if ((data['filter_date_modified'])) {
-			implode.push("DATE(r.date_modified) = DATE('" + this.db.escape(data['filter_date_modified']) + "')";
+			implode.push("DATE(r.date_modified) = DATE('" + this.db.escape(data['filter_date_modified']) + "')");
 		}
 
 		if (implode.length) {
@@ -166,7 +166,7 @@ if (data['limit'] < 1) {
 
 		return query.row['total'];
 	}
-	
+
 	async addReturnHistory(return_id, return_status_id, comment, notify) {
 		await this.db.query("UPDATE `" + DB_PREFIX + "return` SET `return_status_id` = '" + return_status_id + "', date_modified = NOW() WHERE return_id = '" + return_id + "'");
 		await this.db.query("INSERT INTO `" + DB_PREFIX + "return_history` SET `return_id` = '" + return_id + "', return_status_id = '" + return_status_id + "', notify = '" + notify + "', comment = '" + this.db.escape(strip_tags(comment)) + "', date_added = NOW()");

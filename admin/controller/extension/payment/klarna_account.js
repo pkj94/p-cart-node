@@ -3,16 +3,17 @@ module.exports = class ControllerExtensionPaymentKlarnaAccount extends Controlle
 	pclasses = {};
 
 	async index() {
+		const data = {};
 		await this.load.language('extension/payment/klarna_account');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('setting/setting',this);
+		this.load.model('setting/setting', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validate()) {
-			status = false;
+			let status = false;
 
-			for (this.request.post['payment_klarna_account_'] of klarna_account) {
+			for (let [code, klarna_account] of Object.entries(this.request.post['payment_klarna_account_'])) {
 				if (klarna_account['status']) {
 					status = true;
 
@@ -20,14 +21,15 @@ module.exports = class ControllerExtensionPaymentKlarnaAccount extends Controlle
 				}
 			}
 
-			klarna_data = array(
-				'klarna_account_pclasses' : this.pclasses,
-				'klarna_account_status'   : status
-			});
+			const klarna_data = {
+				'klarna_account_pclasses': this.pclasses,
+				'klarna_account_status': status
+			};
 
-			await this.model_setting_setting.editSetting('payment_klarna_account', array_merge(this.request.post, klarna_data));
+			await this.model_setting_setting.editSetting('payment_klarna_account', { ...this.request.post, ...klarna_data });
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true));
 		}
@@ -41,7 +43,7 @@ module.exports = class ControllerExtensionPaymentKlarnaAccount extends Controlle
 		if ((this.session.data['success'])) {
 			data['success'] = this.session.data['success'];
 
-			delete this.session.data['success']);
+			delete this.session.data['success'];
 		} else {
 			data['success'] = '';
 		}
@@ -49,54 +51,54 @@ module.exports = class ControllerExtensionPaymentKlarnaAccount extends Controlle
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_extension'),
-			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true)
+			'text': this.language.get('text_extension'),
+			'href': await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('extension/payment/klarna_account', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('extension/payment/klarna_account', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['action'] = await this.url.link('extension/payment/klarna_account', 'user_token=' + this.session.data['user_token'], true);
 
 		data['cancel'] = await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true);
 
-		data['countries'] = {};
+		data['countries'] = [];
 
 		data['countries'].push({
-			'name' : this.language.get('text_germany'),
-			'code' : 'DEU'
+			'name': this.language.get('text_germany'),
+			'code': 'DEU'
 		});
 
 		data['countries'].push({
-			'name' : this.language.get('text_netherlands'),
-			'code' : 'NLD'
+			'name': this.language.get('text_netherlands'),
+			'code': 'NLD'
 		});
 
 		data['countries'].push({
-			'name' : this.language.get('text_denmark'),
-			'code' : 'DNK'
+			'name': this.language.get('text_denmark'),
+			'code': 'DNK'
 		});
 
 		data['countries'].push({
-			'name' : this.language.get('text_sweden'),
-			'code' : 'SWE'
+			'name': this.language.get('text_sweden'),
+			'code': 'SWE'
 		});
 
 		data['countries'].push({
-			'name' : this.language.get('text_norway'),
-			'code' : 'NOR'
+			'name': this.language.get('text_norway'),
+			'code': 'NOR'
 		});
 
 		data['countries'].push({
-			'name' : this.language.get('text_finland'),
-			'code' : 'FIN'
+			'name': this.language.get('text_finland'),
+			'code': 'FIN'
 		});
 
 		if ((this.request.post['payment_klarna_account'])) {
@@ -105,18 +107,18 @@ module.exports = class ControllerExtensionPaymentKlarnaAccount extends Controlle
 			data['payment_klarna_account'] = this.config.get('payment_klarna_account');
 		}
 
-		this.load.model('localisation/geo_zone');
+		this.load.model('localisation/geo_zone', this);
 
 		data['geo_zones'] = await this.model_localisation_geo_zone.getGeoZones();
 
-		this.load.model('localisation/order_status');
+		this.load.model('localisation/order_status', this);
 
 		data['order_statuses'] = await this.model_localisation_order_status.getOrderStatuses();
 
-		file = DIR_LOGS + 'klarna_account.log';
+		let file = DIR_LOGS + 'klarna_account.log';
 
-		if (file_exists(file)) {
-			data['log'] = file_get_contents(file, FILE_USE_INCLUDE_PATH, null);
+		if (is_file(file)) {
+			data['log'] = fs.readFileSync(file);
 		} else {
 			data['log'] = '';
 		}
@@ -130,51 +132,53 @@ module.exports = class ControllerExtensionPaymentKlarnaAccount extends Controlle
 		this.response.setOutput(await this.load.view('extension/payment/klarna_account', data));
 	}
 
-	private function validate() {
+	async validate() {
 		if (!await this.user.hasPermission('modify', 'extension/payment/klarna_account')) {
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		log = new Log('klarna_account.log');
+		const log = new Log('klarna_account.log');
 
-		country = array(
-			'NOR' : array(
-				'currency' : 1,
-				'country'  : 164,
-				'language' : 97,
-			),
-			'SWE' : array(
-				'currency' : 0,
-				'country'  : 209,
-				'language' : 138,
-			),
-			'FIN' : array(
-				'currency' : 2,
-				'country'  : 73,
-				'language' : 101,
-			),
-			'DNK' : array(
-				'currency' : 3,
-				'country'  : 59,
-				'language' : 27,
-			),
-			'DEU' : array(
-				'currency' : 2,
-				'country'  : 81,
-				'language' : 28,
-			),
-			'NLD' : array(
-				'currency' : 2,
-				'country'  : 154,
-				'language' : 101,
-			),
-		});
+		let country = {
+			'NOR': {
+				'currency': 1,
+				'country': 164,
+				'language': 97,
+			},
+			'SWE': {
+				'currency': 0,
+				'country': 209,
+				'language': 138,
+			},
+			'FIN': {
+				'currency': 2,
+				'country': 73,
+				'language': 101,
+			},
+			'DNK': {
+				'currency': 3,
+				'country': 59,
+				'language': 27,
+			},
+			'DEU': {
+				'currency': 2,
+				'country': 81,
+				'language': 28,
+			},
+			'NLD': {
+				'currency': 2,
+				'country': 154,
+				'language': 101,
+			},
+		};
 
-		for (this.request.post['klarna_account'] of key : klarna_account) {
+		for (let [key, klarna_account] of Object.entries(this.request.post['klarna_account'] || {})) {
 			if (klarna_account['status']) {
-				digest = base64_encode(pack("H*", hash('sha256', klarna_account['merchant']  + ':' + country[key]['currency'] + ':' + klarna_account['secret'])));
+				const hash = crypto.createHash('sha256').update(`${klarnaAccount.merchant}:${country[key]['currency']}:${klarnaAccount.secret}`).digest('hex');
+				const buffer = Buffer.from(hash, 'hex');
+				const digest = buffer.toString('base64');
 
-				xml  = '<methodCall>';
+				let xml = '<methodCall>';
 				xml += '  <methodName>get_pclasses</methodName>';
 				xml += '  <params>';
 				xml += '    <param><value><string>4.1</string></value></param>';
@@ -186,142 +190,98 @@ module.exports = class ControllerExtensionPaymentKlarnaAccount extends Controlle
 				xml += '    <param><value><int>' + country[key]['language'] + '</int></value></param>';
 				xml += '  </params>';
 				xml += '</methodCall>';
-
+				let url = 'https://payment.testdrive.klarna.com';
 				if (klarna_account['server'] == 'live') {
 					url = 'https://payment.klarna.com';
 				} else {
 					url = 'https://payment.testdrive.klarna.com';
 				}
 
-				curl = curl_init();
+				try {
+					const response = await require('axios').post(url, xml, {
+						headers: {
+							'Content-Type': 'text/xml',
+							'Content-Length': Buffer.byteLength(xml)
+						},
+						timeout: 60000
+					});
 
-				header = {};
-
-				header.push('Content-Type: text/xml';
-				header.push('Content-Length: ' + strlen(xml);
-
-				curl_setopt(curl, CURLOPT_URL, url);
-				curl_setopt(curl, CURLOPT_SSL_VERIFYPEER, false);
-				curl_setopt(curl, CURLOPT_SSL_VERIFYHOST, 2);
-				curl_setopt(curl, CURLOPT_CUSTOMREQUEST, 'POST');
-				curl_setopt(curl, CURLOPT_RETURNTRANSFER, 1);
-				curl_setopt(curl, CURLOPT_HTTPHEADER, header);
-				curl_setopt(curl, CURLOPT_POSTFIELDS, xml);
-
-				response = curl_exec(curl);
-
-				if (response !== false) {
-					xml = new DOMDocument();
-					xml.loadXML(response);
-
-					xpath = new DOMXPath(xml);
-
-					nodes = xpath.query('//methodResponse/params/param/value');
-
-					if (nodes.length == 0) {
-						this.error['warning'] = this.language.get('error_log');
-
-						error_code = xpath.query('//methodResponse/fault/value/struct/member/value/int').item(0).nodeValue;
-						error_message = xpath.query('//methodResponse/fault/value/struct/member/value/string').item(0).nodeValue;
-
-						log.write(sprintf(this.language.get('error_pclass'), key, error_code, error_message));
-
+					const parser = new xml2js.Parser({ explicitArray: false });
+					const parsedResponse = await parser.parseStringPromise(response.data);
+					const nodes = parsedResponse.methodResponse.params.param.value;
+					if (!nodes) {
+						this.error.warning = 'Error parsing response';
+						const errorCode = parsedResponse.methodResponse.fault.value.struct.member[0].value.int;
+						const errorMessage = parsedResponse.methodResponse.fault.value.struct.member[1].value.string;
+						await log.write(`Error Code: ${errorCode}, Error Message: ${errorMessage}\n`);
 						continue;
 					}
-
-					pclasses = this.parseResponse(nodes.item(0).firstChild, xml);
-
-					while (pclasses) {
-						pclass = array_slice(pclasses, 0, 10);
-						pclasses = array_slice(pclasses, 10);
-
+					const pclasses = this.parseResponse(nodes.array.data.value, xml);
+					while (pclasses.length > 0) {
+						const pclass = pclasses.splice(0, 10);
 						pclass[3] /= 100;
 						pclass[4] /= 100;
 						pclass[5] /= 100;
 						pclass[6] /= 100;
-						pclass[9] = (pclass[9] != '-') ? strtotime(pclass[9]) : pclass[9];
-
-						array_unshift(pclass, klarna_account['merchant']);
-
+						pclass[9] = (pclass[9] !== '-') ? new Date(pclass[9]).getTime() / 1000 : pclass[9];
+						this.pclasses[key] = this.pclasses[key] || [];
 						this.pclasses[key].push({
-							'eid'          : intval(pclass[0]),
-							'id'           : intval(pclass[1]),
-							'description'  : pclass[2],
-							'months'       : intval(pclass[3]),
-							'startfee'     : floatval(pclass[4]),
-							'invoicefee'   : floatval(pclass[5]),
-							'interestrate' : floatval(pclass[6]),
-							'minamount'    : floatval(pclass[7]),
-							'country'      : intval(pclass[8]),
-							'type'         : intval(pclass[9]),
+							eid: parseInt(pclass[0], 10),
+							id: parseInt(pclass[1], 10),
+							description: pclass[2],
+							months: parseInt(pclass[3], 10),
+							startfee: parseFloat(pclass[4]),
+							invoicefee: parseFloat(pclass[5]),
+							interestrate: parseFloat(pclass[6]),
+							minamount: parseFloat(pclass[7]),
+							country: parseInt(pclass[8], 10),
+							type: parseInt(pclass[9], 10),
 						});
 					}
-				} else {
-					this.error['warning'] = this.language.get('error_log');
-
-					log.write(sprintf(this.language.get('error_curl'), curl_errno(curl), curl_error(curl)));
+				} catch (error) {
+					this.error.warning = 'Error logging response';
+					await log.write(`cURL Error Code: ${error.code}, Error Message: ${error.message}\n`);
 				}
-
-				curl_close(curl);
 			}
+			return Object.keys(this.error).length ? false : true
 		}
-
-		return Object.keys(this.error).length?false:true
 	}
 
-	private function parseResponse(node, document) {
-		child = node;
-
-		switch (child.nodeName) {
+	parseResponse(node, document) {
+		let value;
+		switch (node.name) {
 			case 'string':
-				value = child.nodeValue;
+				value = node._;
 				break;
 			case 'boolean':
-				value = child.nodeValue;
-
-				if (value == '0') {
-					value = false;
-				} else if (value == '1') {
-					value = true;
-				} else {
-					value = null;
-				}
-
+				value = node._ === '1';
 				break;
 			case 'integer':
 			case 'int':
 			case 'i4':
 			case 'i8':
-				value = child.nodeValue;
+				value = parseInt(node._, 10);
 				break;
 			case 'array':
-				value = {};
-
-				xpath = new DOMXPath(document);
-				entries = xpath.query('.//array/data/value', child);
-
-				for (i = 0; i < entries.length; i++) {
-					value.push(this.parseResponse(entries.item(i).firstChild, document);
-				}
-
+				value = [];
+				node.data.value.forEach((childNode) => {
+					value.push(this.parseResponse(childNode, document));
+				});
 				break;
-			default:
-				value = null;
-		}
-
-		return value;
+			default: value = null;
+		} return value;
 	}
 
 	async clear() {
 		await this.load.language('extension/payment/klarna_account');
 
-		file = DIR_LOGS + 'klarna_account.log';
+		let file = DIR_LOGS + 'klarna_account.log';
 
-		handle = fopen(file, 'w+');
+		fs.weriteFileSync(file, '');
 
-		fclose(handle);
 
 		this.session.data['success'] = this.language.get('text_success');
+		await this.session.save(this.session.data);
 
 		this.response.setRedirect(await this.url.link('extension/payment/klarna_account', 'user_token=' + this.session.data['user_token'], true));
 	}

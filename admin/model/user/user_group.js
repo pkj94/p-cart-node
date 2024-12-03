@@ -1,7 +1,9 @@
+const array_diff = require("locutus/php/array/array_diff");
+
 module.exports = class ModelUserUserGroup extends Model {
 	async addUserGroup(data) {
 		await this.db.query("INSERT INTO " + DB_PREFIX + "user_group SET name = '" + this.db.escape(data['name']) + "', permission = '" + ((data['permission']) ? this.db.escape(JSON.stringify(data['permission'])) : '') + "'");
-	
+
 		return this.db.getLastId();
 	}
 
@@ -16,10 +18,10 @@ module.exports = class ModelUserUserGroup extends Model {
 	async getUserGroup(user_group_id) {
 		const query = await this.db.query("SELECT DISTINCT * FROM " + DB_PREFIX + "user_group WHERE user_group_id = '" + user_group_id + "'");
 
-		user_group = array(
-			'name'       : query.row['name'],
-			'permission' : JSON.parse(query.row['permission'], true)
-		});
+		const user_group = {
+			'name': query.row['name'],
+			'permission': JSON.parse(query.row['permission'], true)
+		};
 
 		return user_group;
 	}
@@ -36,13 +38,13 @@ module.exports = class ModelUserUserGroup extends Model {
 		}
 
 		if ((data['start']) || (data['limit'])) {
-			data['start'] = data['start']||0;
-if (data['start'] < 0) {
+			data['start'] = data['start'] || 0;
+			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
@@ -61,41 +63,41 @@ if (data['limit'] < 1) {
 	}
 
 	async addPermission(user_group_id, type, route) {
-		user_group_query = await this.db.query("SELECT DISTINCT * FROM " + DB_PREFIX + "user_group WHERE user_group_id = '" + user_group_id + "'");
+		const user_group_query = await this.db.query("SELECT DISTINCT * FROM " + DB_PREFIX + "user_group WHERE user_group_id = '" + user_group_id + "'");
 
 		if (user_group_query.num_rows) {
-			data = JSON.parse(user_group_query.row['permission'], true);
+			const data = JSON.parse(user_group_query.row['permission']);
 
-			data[type].push(route;
+			data[type].push(route);
 
 			await this.db.query("UPDATE " + DB_PREFIX + "user_group SET permission = '" + this.db.escape(JSON.stringify(data)) + "' WHERE user_group_id = '" + user_group_id + "'");
 		}
 	}
 
 	async removePermission(user_group_id, type, route) {
-		user_group_query = await this.db.query("SELECT DISTINCT * FROM " + DB_PREFIX + "user_group WHERE user_group_id = '" + user_group_id + "'");
+		const user_group_query = await this.db.query("SELECT DISTINCT * FROM " + DB_PREFIX + "user_group WHERE user_group_id = '" + user_group_id + "'");
 
 		if (user_group_query.num_rows) {
-			data = JSON.parse(user_group_query.row['permission'], true);
+			const data = JSON.parse(user_group_query.row['permission']);
 
-			data[type] = array_diff(data[type], array(route));
+			data[type] = data[type].filter(item => item !== route)
 
 			await this.db.query("UPDATE " + DB_PREFIX + "user_group SET permission = '" + this.db.escape(JSON.stringify(data)) + "' WHERE user_group_id = '" + user_group_id + "'");
 		}
 	}
 
-	async removePermissions( string route ): void {
-		user_groups = this.getUserGroups();
-		for (user_groups of user_group) {
-			user_group_id = user_group['user_group_id'];
-			permission = user_group['permission'];
+	async removePermissions(route) {
+		const user_groups = await this.getUserGroups();
+		for (let user_group of user_groups) {
+			let user_group_id = user_group['user_group_id'];
+			let permission = user_group['permission'];
 			if ((permission)) {
-				permission = JSON.parse(permission,true);
+				permission = JSON.parse(permission);
 				if ((permission['access'])) {
-					this.removePermission(user_group_id, 'access', route);
+					await this.removePermission(user_group_id, 'access', route);
 				}
 				if ((permission['modify'])) {
-					this.removePermission(user_group_id, 'modify', route);
+					await this.removePermission(user_group_id, 'modify', route);
 				}
 			}
 		}

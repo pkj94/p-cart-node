@@ -1,5 +1,6 @@
 module.exports = class ControllerReportReport extends Controller {
 	async index() {
+const data = {};
 		await this.load.language('report/report');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -30,7 +31,7 @@ module.exports = class ControllerReportReport extends Controller {
 		this.load.model('setting/extension',this);
 
 		// Get a list of installed modules
-		extensions = await this.model_setting_extension.getInstalled('report');
+		const extensions = await this.model_setting_extension.getInstalled('report');
 		
 		// Add all the modules which have multiple settings for each module
 		for (extensions of code) {

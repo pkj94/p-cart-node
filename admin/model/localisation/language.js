@@ -268,11 +268,9 @@ module.exports = class ModelLocalisationLanguage extends Model {
 			return query.rows;
 		} else {
 			let language_data = await this.cache.get('admin.language');
-
 			if (!language_data) {
 				language_data = {};
-
-				const query = await this.db.query("SELECT * FROM " + DB_PREFIX + "language ORDER BY sort_order, name");
+				const query = await this.db.query("SELECT * FROM " + DB_PREFIX + "language ORDER BY sort_order, name;");
 
 				for (let result of query.rows) {
 					language_data[result['code']] = {

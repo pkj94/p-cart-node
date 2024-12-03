@@ -2,6 +2,7 @@ module.exports = class ControllerExtensionPaymentAuthorizeNetSim extends Control
 	error = {};
 
 	async index() {
+const data = {};
 		await this.load.language('extension/payment/authorizenet_sim');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -12,6 +13,7 @@ module.exports = class ControllerExtensionPaymentAuthorizeNetSim extends Control
 			await this.model_setting_setting.editSetting('payment_authorizenet_sim', this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true));
 		}
@@ -73,7 +75,7 @@ module.exports = class ControllerExtensionPaymentAuthorizeNetSim extends Control
 			data['payment_authorizenet_sim_test'] = this.config.get('payment_authorizenet_sim_test');
 		}
 
-		data['callback'] = HTTP_CATALOG + 'index.php?route=extension/payment/authorizenet_sim/callback';
+		data['callback'] = HTTP_CATALOG + '?route=extension/payment/authorizenet_sim/callback';
 
 		if ((this.request.post['payment_authorizenet_sim_hash'])) {
 			data['payment_authorizenet_sim_hash'] = this.request.post['payment_authorizenet_sim_hash'];
@@ -93,7 +95,7 @@ module.exports = class ControllerExtensionPaymentAuthorizeNetSim extends Control
 			data['payment_authorizenet_sim_order_status_id'] = this.config.get('payment_authorizenet_sim_order_status_id');
 		}
 
-		this.load.model('localisation/order_status');
+		this.load.model('localisation/order_status',this);
 
 		data['order_statuses'] = await this.model_localisation_order_status.getOrderStatuses();
 
@@ -103,7 +105,7 @@ module.exports = class ControllerExtensionPaymentAuthorizeNetSim extends Control
 			data['payment_authorizenet_sim_geo_zone_id'] = this.config.get('payment_authorizenet_sim_geo_zone_id');
 		}
 
-		this.load.model('localisation/geo_zone');
+		this.load.model('localisation/geo_zone',this);
 
 		data['geo_zones'] = await this.model_localisation_geo_zone.getGeoZones();
 

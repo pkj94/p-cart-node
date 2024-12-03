@@ -1,6 +1,7 @@
 module.exports = class ModelLocalisationReturnAction extends Model {
 	async addReturnAction(data) {
-		for (data['return_action'] of language_id : value) {
+		let return_action_id;
+		for (let [language_id, value] of Object.entries(data['return_action'])) {
 			if ((return_action_id)) {
 				await this.db.query("INSERT INTO " + DB_PREFIX + "return_action SET return_action_id = '" + return_action_id + "', language_id = '" + language_id + "', name = '" + this.db.escape(value['name']) + "'");
 			} else {
@@ -11,14 +12,14 @@ module.exports = class ModelLocalisationReturnAction extends Model {
 		}
 
 		await this.cache.delete('return_action');
-		
+
 		return return_action_id;
 	}
 
 	async editReturnAction(return_action_id, data) {
 		await this.db.query("DELETE FROM " + DB_PREFIX + "return_action WHERE return_action_id = '" + return_action_id + "'");
 
-		for (data['return_action'] of language_id : value) {
+		for (let [language_id, value] of Object.entries(data['return_action'])) {
 			await this.db.query("INSERT INTO " + DB_PREFIX + "return_action SET return_action_id = '" + return_action_id + "', language_id = '" + language_id + "', name = '" + this.db.escape(value['name']) + "'");
 		}
 
@@ -38,7 +39,7 @@ module.exports = class ModelLocalisationReturnAction extends Model {
 	}
 
 	async getReturnActions(data = {}) {
-		if (data) {
+		if (Object.keys(data).length) {
 			let sql = "SELECT * FROM " + DB_PREFIX + "return_action WHERE language_id = '" + this.config.get('config_language_id') + "'";
 
 			sql += " ORDER BY name";
@@ -50,13 +51,13 @@ module.exports = class ModelLocalisationReturnAction extends Model {
 			}
 
 			if ((data['start']) || (data['limit'])) {
-				data['start'] = data['start']||0;
-if (data['start'] < 0) {
+				data['start'] = data['start'] || 0;
+				if (data['start'] < 0) {
 					data['start'] = 0;
 				}
 
-				data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+				data['limit'] = data['limit'] || 20;
+				if (data['limit'] < 1) {
 					data['limit'] = 20;
 				}
 
@@ -67,7 +68,7 @@ if (data['limit'] < 1) {
 
 			return query.rows;
 		} else {
-			return_action_data = await this.cache.get('return_action.' + this.config.get('config_language_id'));
+			let return_action_data = await this.cache.get('return_action.' + this.config.get('config_language_id'));
 
 			if (!return_action_data) {
 				const query = await this.db.query("SELECT return_action_id, name FROM " + DB_PREFIX + "return_action WHERE language_id = '" + this.config.get('config_language_id') + "' ORDER BY name");
@@ -82,12 +83,12 @@ if (data['limit'] < 1) {
 	}
 
 	async getReturnActionDescriptions(return_action_id) {
-		return_action_data = {};
+		let return_action_data = {};
 
 		const query = await this.db.query("SELECT * FROM " + DB_PREFIX + "return_action WHERE return_action_id = '" + return_action_id + "'");
 
-		for (let result of query.rows ) {
-			return_action_data[result['language_id']] = array('name' : result['name']);
+		for (let result of query.rows) {
+			return_action_data[result['language_id']] = { 'name': result['name'] };
 		}
 
 		return return_action_data;

@@ -19,7 +19,7 @@ module.exports = {
     text_settle_delayed: 'Pre auth',
     text_success_void: 'Transaction has been voided',
     text_success_capture: 'Transaction has been captured',
-    text_firstdata: 'border: 1px solid #EEEEEE," />',
+    text_firstdata: '<img src="view/image/payment/firstdata.png" alt="First Data" title="First Data" style="border: 1px solid #EEEEEE," />',
     text_payment_info: 'Payment information',
     text_capture_status: 'Payment captured',
     text_void_status: 'Payment voided',

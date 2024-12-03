@@ -917,7 +917,7 @@
         $('.custom-field').hide();
         $('.custom-field').removeClass('required');
 
-        for (i = 0; i < json.length; i++) {
+        for (let i = 0; i < json.length; i++) {
           custom_field = json[i];
 
           $('.custom-field' + custom_field['custom_field_id']).show();
@@ -1152,6 +1152,7 @@
   //--></script> 
   <script type="text/javascript"><!--
   function country(element, index, zone_id) {
+    if(element.value)
     $.ajax({
       url: '?route=localisation/country/country&user_token={{ user_token }}&country_id=' + element.value,
       dataType: 'json',
@@ -1171,7 +1172,7 @@
         html = '<option value="">{{ text_select }}</option>';
 
         if (json['zone'] && json['zone'] != '') {
-          for (i = 0; i < json['zone'].length; i++) {
+          for (let i = 0; i < json['zone'].length; i++) {
             html += '<option value="' + json['zone'][i]['zone_id'] + '"';
 
             if (json['zone'][i]['zone_id'] == zone_id) {
@@ -1333,9 +1334,9 @@
 
     $('#ip').load(this.href);
   });
-
-  $('#ip').load('?route=customer/customer/ip&user_token={{ user_token }}&customer_id={{ customer_id }}');
-
+  setTimeout(()=>{
+    $('#ip').load('?route=customer/customer/ip&user_token={{ user_token }}&customer_id={{ customer_id }}');
+  },500)
   $('#content').delegate('button[id^=\'button-custom-field\'], button[id^=\'button-address\']', 'click', function() {
     var node = this;
 

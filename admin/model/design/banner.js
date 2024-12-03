@@ -2,12 +2,12 @@ module.exports = class ModelDesignBanner extends Model {
 	async addBanner(data) {
 		await this.db.query("INSERT INTO " + DB_PREFIX + "banner SET name = '" + this.db.escape(data['name']) + "', status = '" + data['status'] + "'");
 
-		banner_id = this.db.getLastId();
+		const banner_id = this.db.getLastId();
 
 		if ((data['banner_image'])) {
-			for (data['banner_image'] of language_id : value) {
-				for (value of banner_image) {
-					await this.db.query("INSERT INTO " + DB_PREFIX + "banner_image SET banner_id = '" + banner_id + "', language_id = '" + language_id + "', title = '" +  this.db.escape(banner_image['title']) + "', link = '" +  this.db.escape(banner_image['link']) + "', image = '" +  this.db.escape(banner_image['image']) + "', sort_order = '" +  banner_image['sort_order'] + "'");
+			for (let [language_id, value] of Object.entries(data['banner_image'])) {
+				for (let [banner_image_id,banner_image] of Object.entries(value)) {
+					await this.db.query("INSERT INTO " + DB_PREFIX + "banner_image SET banner_id = '" + banner_id + "', language_id = '" + language_id + "', title = '" + this.db.escape(banner_image['title']) + "', link = '" + this.db.escape(banner_image['link']) + "', image = '" + this.db.escape(banner_image['image']) + "', sort_order = '" + banner_image['sort_order'] + "'");
 				}
 			}
 		}
@@ -21,9 +21,9 @@ module.exports = class ModelDesignBanner extends Model {
 		await this.db.query("DELETE FROM " + DB_PREFIX + "banner_image WHERE banner_id = '" + banner_id + "'");
 
 		if ((data['banner_image'])) {
-			for (data['banner_image'] of language_id : value) {
-				for (value of banner_image) {
-					await this.db.query("INSERT INTO " + DB_PREFIX + "banner_image SET banner_id = '" + banner_id + "', language_id = '" + language_id + "', title = '" +  this.db.escape(banner_image['title']) + "', link = '" +  this.db.escape(banner_image['link']) + "', image = '" +  this.db.escape(banner_image['image']) + "', sort_order = '" + banner_image['sort_order'] + "'");
+			for (let [language_id, value] of Object.entries(data['banner_image'])) {
+				for (let [banner_image_id, banner_image] of Object.entries(value)) {
+					await this.db.query("INSERT INTO " + DB_PREFIX + "banner_image SET banner_id = '" + banner_id + "', language_id = '" + language_id + "', title = '" + this.db.escape(banner_image['title']) + "', link = '" + this.db.escape(banner_image['link']) + "', image = '" + this.db.escape(banner_image['image']) + "', sort_order = '" + banner_image['sort_order'] + "'");
 				}
 			}
 		}
@@ -46,7 +46,7 @@ module.exports = class ModelDesignBanner extends Model {
 		let sort_data = [
 			'name',
 			'status'
-		});
+		];
 
 		if ((data['sort']) && sort_data.includes(data['sort'])) {
 			sql += " ORDER BY " + data['sort'];
@@ -61,13 +61,13 @@ module.exports = class ModelDesignBanner extends Model {
 		}
 
 		if ((data['start']) || (data['limit'])) {
-			data['start'] = data['start']||0;
-if (data['start'] < 0) {
+			data['start'] = data['start'] || 0;
+			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
@@ -80,16 +80,17 @@ if (data['limit'] < 1) {
 	}
 
 	async getBannerImages(banner_id) {
-		banner_image_data = {};
+		const banner_image_data = {};
 
-		banner_image_query = await this.db.query("SELECT * FROM " + DB_PREFIX + "banner_image WHERE banner_id = '" + banner_id + "' ORDER BY sort_order ASC");
+		const banner_image_query = await this.db.query("SELECT * FROM " + DB_PREFIX + "banner_image WHERE banner_id = '" + banner_id + "' ORDER BY sort_order ASC");
 
-		for (banner_image_query.rows of banner_image) {
+		for (let banner_image of banner_image_query.rows) {
+			banner_image_data[banner_image['language_id']] = banner_image_data[banner_image['language_id']] || [];
 			banner_image_data[banner_image['language_id']].push({
-				'title'      : banner_image['title'],
-				'link'       : banner_image['link'],
-				'image'      : banner_image['image'],
-				'sort_order' : banner_image['sort_order']
+				'title': banner_image['title'],
+				'link': banner_image['link'],
+				'image': banner_image['image'],
+				'sort_order': banner_image['sort_order']
 			});
 		}
 

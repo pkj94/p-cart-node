@@ -6,7 +6,7 @@ module.exports = {
     text_extension: 'Extensions',
     text_success: 'Success: You have modified FraudLabs Pro Settings!',
     text_edit: 'Settings',
-    text_signup: '_blank"><u>sign up here</u></a> for a free API Key.',
+    text_signup: 'FraudLabs Pro is a fraud detection service. You can <a href="http://www.fraudlabspro.com/plan?ref=1730" target="_blank"><u>sign up here</u></a> for a free API Key.',
     text_id: 'FraudLabs Pro ID',
     text_ip_address: 'IP Address',
     text_ip_net_speed: 'IP Net Speed',
@@ -31,8 +31,8 @@ module.exports = {
     text_transaction_id: 'Transaction ID',
     text_credits: 'Balance',
     text_error: 'Error:',
-    text_flp_upgrade: '_blank">[Upgrade]</a>',
-    text_flp_merchant_area: '_blank">FraudLabs Pro Merchant Area</a> for more information about this order.',
+    text_flp_upgrade: '<a href="http://www.fraudlabspro.com/plan" target="_blank">[Upgrade]</a>',
+    text_flp_merchant_area: 'Please login to <a href="http://www.fraudlabspro.com/merchant/login" target="_blank">FraudLabs Pro Merchant Area</a> for more information about this order.',
     text_rule_validation: 'Rules Validation',
     text_testing: 'Testing Purpose',
 
@@ -48,9 +48,9 @@ module.exports = {
 
     // Help
     help_order_status: 'Orders that have a score over your set risk score will be assigned this order status.',
-    help_review_status: 'Orders that marked of review by FraudLabs Pro will be assigned this order status.',
-    help_approve_status: 'Orders that marked of approve by FraudLabs Pro will be assigned this order status.',
-    help_reject_status: 'Orders that marked of reject by FraudLabs Pro will be assigned this order status.',
+    help_review_status: 'Orders that marked as review by FraudLabs Pro will be assigned this order status.',
+    help_approve_status: 'Orders that marked as approve by FraudLabs Pro will be assigned this order status.',
+    help_reject_status: 'Orders that marked as reject by FraudLabs Pro will be assigned this order status.',
     help_simulate_ip: 'Simulate the visitor IP address for testing. Leave blank to disable it.',
     help_fraudlabspro_id: 'Unique identifier for a transaction screened by FraudLabs Pro system.',
     help_ip_address: 'IP Address.',

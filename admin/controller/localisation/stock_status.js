@@ -2,11 +2,12 @@ module.exports = class ControllerLocalisationStockStatus extends Controller {
 	error = {};
 
 	async index() {
+		const data = {};
 		await this.load.language('localisation/stock_status');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('localisation/stock_status',this);
+		this.load.model('localisation/stock_status', this);
 
 		await this.getList();
 	}
@@ -16,12 +17,13 @@ module.exports = class ControllerLocalisationStockStatus extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('localisation/stock_status',this);
+		this.load.model('localisation/stock_status', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_localisation_stock_status.addStockStatus(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			url = '';
 
@@ -48,12 +50,13 @@ module.exports = class ControllerLocalisationStockStatus extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('localisation/stock_status',this);
+		this.load.model('localisation/stock_status', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_localisation_stock_status.editStockStatus(this.request.get['stock_status_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			url = '';
 
@@ -80,15 +83,16 @@ module.exports = class ControllerLocalisationStockStatus extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('localisation/stock_status',this);
+		this.load.model('localisation/stock_status', this);
 
 		if ((this.request.post['selected']) && await this.validateDelete()) {
-this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
-			for (this.request.post['selected'] of stock_status_id) {
+			this.request.post['selected'] = Array.isArray(this.request.post['selected']) ? this.request.post['selected'] : [this.request.post['selected']]
+			for (let stock_status_id of this.request.post['selected']) {
 				await this.model_localisation_stock_status.deleteStockStatus(stock_status_id);
 			}
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			url = '';
 
@@ -111,6 +115,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 	}
 
 	async getList() {
+		const data = {};
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
 		} else {
@@ -122,11 +127,9 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		} else {
 			order = 'ASC';
 		}
-
+		page = 1;
 		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
 		}
 
 		url = '';
@@ -146,13 +149,13 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('localisation/stock_status', 'user_token=' + this.session.data['user_token'] + url, true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('localisation/stock_status', 'user_token=' + this.session.data['user_token'] + url, true)
 		});
 
 		data['add'] = await this.url.link('localisation/stock_status/add', 'user_token=' + this.session.data['user_token'] + url, true);
@@ -160,11 +163,11 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 
 		data['stock_statuses'] = {};
 
-		filter_data = array(
-			'sort'  : sort,
-			'order' : order,
-			'start' : (page - 1) * Number(this.config.get('config_limit_admin')),
-			'limit' : Number(this.config.get('config_limit_admin'))
+		const filter_data = {
+			'sort': sort,
+			'order': order,
+			'start': (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit': Number(this.config.get('config_limit_admin'))
 		});
 
 		stock_status_total = await this.model_localisation_stock_status.getTotalStockStatuses();
@@ -173,9 +176,9 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 
 		for (let result of results) {
 			data['stock_statuses'].push({
-				'stock_status_id' : result['stock_status_id'],
-				'name'            : result['name'],
-				'edit'            : await this.url.link('localisation/stock_status/edit', 'user_token=' + this.session.data['user_token'] + '&stock_status_id=' + result['stock_status_id'] + url, true)
+				'stock_status_id': result['stock_status_id'],
+				'name': result['name'],
+				'edit': await this.url.link('localisation/stock_status/edit', 'user_token=' + this.session.data['user_token'] + '&stock_status_id=' + result['stock_status_id'] + url, true)
 			});
 		}
 
@@ -188,7 +191,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		if ((this.session.data['success'])) {
 			data['success'] = this.session.data['success'];
 
-			delete this.session.data['success']);
+			delete this.session.data['success'];
 		} else {
 			data['success'] = '';
 		}
@@ -223,7 +226,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			url += '&order=' + this.request.get['order'];
 		}
 
-		pagination = new Pagination();
+		const pagination = new Pagination();
 		pagination.total = stock_status_total;
 		pagination.page = page;
 		pagination.limit = Number(this.config.get('config_limit_admin'));
@@ -275,13 +278,13 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('localisation/stock_status', 'user_token=' + this.session.data['user_token'] + url, true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('localisation/stock_status', 'user_token=' + this.session.data['user_token'] + url, true)
 		});
 
 		if (!(this.request.get['stock_status_id'])) {
@@ -292,7 +295,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 
 		data['cancel'] = await this.url.link('localisation/stock_status', 'user_token=' + this.session.data['user_token'] + url, true);
 
-		this.load.model('localisation/language',this);
+		this.load.model('localisation/language', this);
 
 		data['languages'] = await this.model_localisation_language.getLanguages();
 
@@ -316,13 +319,13 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		for (this.request.post['stock_status'] of language_id : value) {
+		for (let [language_id , value] of Object.entries(this.request.post['stock_status'])) {
 			if ((oc_strlen(value['name']) < 3) || (oc_strlen(value['name']) > 32)) {
 				this.error['name'][language_id] = this.language.get('error_name');
 			}
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 
 	async validateDelete() {
@@ -330,11 +333,11 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		this.load.model('setting/store',this);
-		this.load.model('catalog/product',this);
-		this.request.post['selected']  = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']];
+		this.load.model('setting/store', this);
+		this.load.model('catalog/product', this);
+		this.request.post['selected'] = Array.isArray(this.request.post['selected']) ? this.request.post['selected'] : [this.request.post['selected']];
 
-		for (this.request.post['selected'] of stock_status_id) {
+		for (let stock_status_id of this.request.post['selected']) {
 			product_total = await this.model_catalog_product.getTotalProductsByStockStatusId(stock_status_id);
 
 			if (product_total) {
@@ -342,6 +345,6 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			}
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 }

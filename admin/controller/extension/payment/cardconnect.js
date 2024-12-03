@@ -2,9 +2,10 @@ module.exports = class ControllerExtensionPaymentCardConnect extends Controller 
 	error = {};
 
 	async index() {
-		this.load.model('setting/setting',this);
+		const data = {};
+		this.load.model('setting/setting', this);
 
-		this.load.model('extension/payment/cardconnect');
+		this.load.model('extension/payment/cardconnect', this);
 
 		await this.load.language('extension/payment/cardconnect');
 
@@ -14,6 +15,7 @@ module.exports = class ControllerExtensionPaymentCardConnect extends Controller 
 			await this.model_setting_setting.editSetting('payment_cardconnect', this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true));
 		}
@@ -21,18 +23,18 @@ module.exports = class ControllerExtensionPaymentCardConnect extends Controller 
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_extension'),
-			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true)
+			'text': this.language.get('text_extension'),
+			'href': await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('extension/payment/cardconnect', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('extension/payment/cardconnect', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['action'] = await this.url.link('extension/payment/cardconnect', 'user_token=' + this.session.data['user_token'], true);
@@ -112,7 +114,7 @@ module.exports = class ControllerExtensionPaymentCardConnect extends Controller 
 		if ((this.request.post['cardconnect_status'])) {
 			data['cardconnect_status'] = this.request.post['cardconnect_status'];
 		} else {
-			data['cardconnect_status'] = this.config.get('cardconnect_status');
+			data['cardconnect_status'] = Number(this.config.get('cardconnect_status'));
 		}
 
 		if ((this.request.post['cardconnect_logging'])) {
@@ -127,7 +129,7 @@ module.exports = class ControllerExtensionPaymentCardConnect extends Controller 
 			data['cardconnect_sort_order'] = this.config.get('cardconnect_sort_order');
 		}
 
-		data['cardconnect_cron_url'] = HTTPS_CATALOG + 'index.php?route=extension/payment/cardconnect/cron&token=' + data['cardconnect_token'];
+		data['cardconnect_cron_url'] = HTTPS_CATALOG + '?route=extension/payment/cardconnect/cron&token=' + data['cardconnect_token'];
 
 		if (this.config.get('cardconnect_cron_time')) {
 			data['cardconnect_cron_time'] = date(this.language.get('datetime_format'), strtotime(this.config.get('cardconnect_cron_time')));
@@ -160,7 +162,7 @@ module.exports = class ControllerExtensionPaymentCardConnect extends Controller 
 		if ((this.session.data['success'])) {
 			data['success'] = this.session.data['success'];
 
-			delete this.session.data['success']);
+			delete this.session.data['success'];
 		} else {
 			data['success'] = '';
 		}
@@ -195,11 +197,11 @@ module.exports = class ControllerExtensionPaymentCardConnect extends Controller 
 			data['error_cardconnect_site'] = '';
 		}
 
-		this.load.model('localisation/order_status');
+		this.load.model('localisation/order_status', this);
 
 		data['order_statuses'] = await this.model_localisation_order_status.getOrderStatuses();
 
-		this.load.model('localisation/geo_zone');
+		this.load.model('localisation/geo_zone', this);
 
 		data['geo_zones'] = await this.model_localisation_geo_zone.getGeoZones();
 
@@ -214,7 +216,7 @@ module.exports = class ControllerExtensionPaymentCardConnect extends Controller 
 
 	async install() {
 		if (await this.user.hasPermission('modify', 'marketplace/extension')) {
-			this.load.model('extension/payment/cardconnect');
+			this.load.model('extension/payment/cardconnect', this);
 
 			await this.model_extension_payment_cardconnect.install();
 		}
@@ -222,21 +224,21 @@ module.exports = class ControllerExtensionPaymentCardConnect extends Controller 
 
 	async uninstall() {
 		if (await this.user.hasPermission('modify', 'marketplace/extension')) {
-			this.load.model('extension/payment/cardconnect');
+			this.load.model('extension/payment/cardconnect', this);
 
 			await this.model_extension_payment_cardconnect.uninstall();
 		}
 	}
 
 	async order() {
-		if (this.config.get('cardconnect_status')) {
-			this.load.model('extension/payment/cardconnect');
+		if (Number(this.config.get('cardconnect_status'))) {
+			this.load.model('extension/payment/cardconnect', this);
 
-			order_id = this.request.get['order_id'];
+			const order_id = this.request.get['order_id'];
 
-			cardconnect_order = await this.model_extension_payment_cardconnect.getOrder(this.request.get['order_id']);
+			const cardconnect_order = await this.model_extension_payment_cardconnect.getOrder(this.request.get['order_id']);
 
-			if (cardconnect_order) {
+			if (cardconnect_order.currency_code) {
 				await this.load.language('extension/payment/cardconnect');
 
 				if (cardconnect_order['payment_method'] == 'card') {
@@ -251,7 +253,7 @@ module.exports = class ControllerExtensionPaymentCardConnect extends Controller 
 
 				cardconnect_order['total_captured_formatted'] = this.currency.format(cardconnect_order['total_captured'], cardconnect_order['currency_code'], false, true);
 
-				for(cardconnect_order['transactions'] of &transaction) {
+				for (let transaction of cardconnect_order['transactions']) {
 					switch (transaction['type']) {
 						case 'payment':
 							transaction['type'] = 'Payment';
@@ -296,16 +298,16 @@ module.exports = class ControllerExtensionPaymentCardConnect extends Controller 
 	async inquire() {
 		await this.load.language('extension/payment/cardconnect');
 
-		json = {};
+		const json = {};
 
-		if (this.config.get('cardconnect_status')) {
+		if (Number(this.config.get('cardconnect_status'))) {
 			if ((this.request.post['order_id']) && (this.request.post['retref'])) {
-				this.load.model('extension/payment/cardconnect');
+				this.load.model('extension/payment/cardconnect', this);
 
-				cardconnect_order = await this.model_extension_payment_cardconnect.getOrder(this.request.post['order_id']);
+				const cardconnect_order = await this.model_extension_payment_cardconnect.getOrder(this.request.post['order_id']);
 
-				if (cardconnect_order) {
-					inquire_response = await this.model_extension_payment_cardconnect.inquire(cardconnect_order, this.request.post['retref']);
+				if (cardconnect_order.currency_code) {
+					const inquire_response = await this.model_extension_payment_cardconnect.inquire(cardconnect_order, this.request.post['retref']);
 
 					if ((inquire_response['respstat']) && inquire_response['respstat'] == 'C') {
 						json['error'] = inquire_response['resptext'];
@@ -335,17 +337,17 @@ module.exports = class ControllerExtensionPaymentCardConnect extends Controller 
 	async capture() {
 		await this.load.language('extension/payment/cardconnect');
 
-		json = {};
+		const json = {};
 
-		if (this.config.get('cardconnect_status')) {
+		if (Number(this.config.get('cardconnect_status'))) {
 			if ((this.request.post['order_id']) && (this.request.post['amount'])) {
 				if (this.request.post['amount'] > 0) {
-					this.load.model('extension/payment/cardconnect');
+					this.load.model('extension/payment/cardconnect', this);
 
-					cardconnect_order = await this.model_extension_payment_cardconnect.getOrder(this.request.post['order_id']);
+					const cardconnect_order = await this.model_extension_payment_cardconnect.getOrder(this.request.post['order_id']);
 
-					if (cardconnect_order) {
-						capture_response = await this.model_extension_payment_cardconnect.capture(cardconnect_order, this.request.post['amount']);
+					if (cardconnect_order.currency_code) {
+						const capture_response = await this.model_extension_payment_cardconnect.capture(cardconnect_order, this.request.post['amount']);
 
 						if (!(capture_response['retref'])) {
 							json['error'] = this.language.get('error_invalid_response');
@@ -354,7 +356,7 @@ module.exports = class ControllerExtensionPaymentCardConnect extends Controller 
 						} else {
 							await this.model_extension_payment_cardconnect.addTransaction(cardconnect_order['cardconnect_order_id'], 'payment', capture_response['retref'], this.request.post['amount'], capture_response['setlstat']);
 
-							total_captured = await this.model_extension_payment_cardconnect.getTotalCaptured(cardconnect_order['cardconnect_order_id']);
+							const total_captured = await this.model_extension_payment_cardconnect.getTotalCaptured(cardconnect_order['cardconnect_order_id']);
 
 							json['retref'] = capture_response['retref'];
 							json['amount'] = this.currency.format(this.request.post['amount'], cardconnect_order['currency_code'], false, true);
@@ -385,17 +387,17 @@ module.exports = class ControllerExtensionPaymentCardConnect extends Controller 
 	async refund() {
 		await this.load.language('extension/payment/cardconnect');
 
-		json = {};
+		const json = {};
 
-		if (this.config.get('cardconnect_status')) {
+		if (Number(this.config.get('cardconnect_status'))) {
 			if ((this.request.post['order_id']) && (this.request.post['amount'])) {
 				if (this.request.post['amount'] > 0) {
-					this.load.model('extension/payment/cardconnect');
+					this.load.model('extension/payment/cardconnect', this);
 
-					cardconnect_order = await this.model_extension_payment_cardconnect.getOrder(this.request.post['order_id']);
+					const cardconnect_order = await this.model_extension_payment_cardconnect.getOrder(this.request.post['order_id']);
 
-					if (cardconnect_order) {
-						refund_response = await this.model_extension_payment_cardconnect.refund(cardconnect_order, this.request.post['amount']);
+					if (cardconnect_order.currency_code) {
+						const refund_response = await this.model_extension_payment_cardconnect.refund(cardconnect_order, this.request.post['amount']);
 
 						if (!(refund_response['retref'])) {
 							json['error'] = this.language.get('error_invalid_response');
@@ -404,7 +406,7 @@ module.exports = class ControllerExtensionPaymentCardConnect extends Controller 
 						} else {
 							await this.model_extension_payment_cardconnect.addTransaction(cardconnect_order['cardconnect_order_id'], 'refund', refund_response['retref'], this.request.post['amount'] * -1, refund_response['resptext']);
 
-							total_captured = await this.model_extension_payment_cardconnect.getTotalCaptured(cardconnect_order['cardconnect_order_id']);
+							const total_captured = await this.model_extension_payment_cardconnect.getTotalCaptured(cardconnect_order['cardconnect_order_id']);
 
 							json['retref'] = refund_response['retref'];
 							json['amount'] = this.currency.format(this.request.post['amount'] * -1, cardconnect_order['currency_code'], false, true);
@@ -435,16 +437,16 @@ module.exports = class ControllerExtensionPaymentCardConnect extends Controller 
 	async void() {
 		await this.load.language('extension/payment/cardconnect');
 
-		json = {};
+		const json = {};
 
-		if (this.config.get('cardconnect_status')) {
+		if (Number(this.config.get('cardconnect_status'))) {
 			if ((this.request.post['order_id']) && (this.request.post['retref'])) {
-				this.load.model('extension/payment/cardconnect');
+				this.load.model('extension/payment/cardconnect', this);
 
-				cardconnect_order = await this.model_extension_payment_cardconnect.getOrder(this.request.post['order_id']);
+				const cardconnect_order = await this.model_extension_payment_cardconnect.getOrder(this.request.post['order_id']);
 
-				if (cardconnect_order) {
-					void_response = await this.model_extension_payment_cardconnect.void(cardconnect_order, this.request.post['retref']);
+				if (cardconnect_order.currency_code) {
+					const void_response = await this.model_extension_payment_cardconnect.void(cardconnect_order, this.request.post['retref']);
 
 					if (!(void_response['authcode']) || void_response['authcode'] != 'REVERS') {
 						json['error'] = void_response['resptext'];
@@ -495,6 +497,6 @@ module.exports = class ControllerExtensionPaymentCardConnect extends Controller 
 			this.error['cardconnect_site'] = this.language.get('error_site');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 }

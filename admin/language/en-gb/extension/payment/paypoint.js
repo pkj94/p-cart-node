@@ -6,7 +6,7 @@ module.exports = {
     text_extension: 'Extensions',
     text_success: 'Success: You have modified PayPoint account details!',
     text_edit: 'Edit PayPoint',
-    text_paypoint: 'border: 1px solid #EEEEEE," /></a>',
+    text_paypoint: '<a href="https://www.paypoint.net/partners/opencart" target="_blank"><img src="view/image/payment/paypoint.png" alt="PayPoint" title="PayPoint" style="border: 1px solid #EEEEEE," /></a>',
     text_live: 'Production',
     text_successful: 'Always Successful',
     text_fail: 'Always Fail',

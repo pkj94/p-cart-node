@@ -12,7 +12,7 @@ module.exports = {
     entry_status: 'Status',
 
     // Help
-    help_code: '_blank">Create a Google Hangout chatback badge</a> and copy &amp, paste the generated code into the text box.',
+    help_code: 'Goto <a href="https://developers.google.com/+/hangouts/button" target="_blank">Create a Google Hangout chatback badge</a> and copy &amp; paste the generated code into the text box.',
 
     // Error
     error_permission: 'Warning: You do not have permission to modify Google Hangouts module!',

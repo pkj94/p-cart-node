@@ -33,7 +33,7 @@ module.exports = class ModelLocalisationWeightClass extends Model {
 	}
 
 	async getWeightClasses(data = {}) {
-		if (data) {
+		if (Object.keys(data).length) {
 			let sql = "SELECT * FROM " + DB_PREFIX + "weight_class wc LEFT JOIN " + DB_PREFIX + "weight_class_description wcd ON (wc.weight_class_id = wcd.weight_class_id) WHERE wcd.language_id = '" + this.config.get('config_language_id') + "'";
 
 			let sort_data = [

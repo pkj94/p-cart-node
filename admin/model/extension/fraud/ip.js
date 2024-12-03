@@ -1,12 +1,12 @@
 module.exports = class ModelExtensionFraudIp extends Model {
 	async install() {
-		await this.db.query("
-		CREATE TABLE IF NOT EXISTS `" + DB_PREFIX + "fraud_ip` (
-		  `ip` varchar(40) NOT NULL,
-		  `date_added` datetime NOT NULL,
-		  PRIMARY KEY (`ip`)
-		) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=oc_general_ci;
-		");
+		await this.db.query(`
+		CREATE TABLE IF NOT EXISTS \`${DB_PREFIX}fraud_ip\` (
+		  \`ip\` varchar(40) NOT NULL,
+		  \`date_added\` datetime NOT NULL,
+		  PRIMARY KEY (\`ip\`)
+		) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+		`);
 	}
 
 	async uninstall() {
@@ -30,7 +30,7 @@ module.exports = class ModelExtensionFraudIp extends Model {
 			limit = 10;
 		}
 
-        query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "fraud_ip` ORDER BY `ip` ASC LIMIT " + start + "," + limit);
+        const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "fraud_ip` ORDER BY `ip` ASC LIMIT " + start + "," + limit);
 
 		return query.rows;
 	}

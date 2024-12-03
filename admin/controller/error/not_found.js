@@ -1,5 +1,6 @@
 module.exports = class ControllerErrorNotFound extends Controller {
 	async index() {
+const data = {};
 		await this.load.language('error/not_found');
 
 		this.document.setTitle(this.language.get('heading_title'));

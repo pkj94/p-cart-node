@@ -1,9 +1,11 @@
-module.exports = /**
- * Modifcation XML Documentation can be found here:
- *
- * https://github.com/opencart/opencart/wiki/Modification-System
- */
-class ControllerMarketplaceModification extends Controller {
+const htmlentities = require('locutus/php/strings/htmlentities');
+const { DOMParser } = require('xmldom');
+/**
+* Modifcation XML Documentation can be found here:
+*
+* https://github.com/opencart/opencart/wiki/Modification-System
+*/
+module.exports = class ControllerMarketplaceModification extends Controller {
 	error = {};
 
 	async index() {
@@ -11,7 +13,7 @@ class ControllerMarketplaceModification extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('setting/modification');
+		this.load.model('setting/modification', this);
 
 		await this.getList();
 	}
@@ -21,16 +23,17 @@ class ControllerMarketplaceModification extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('setting/modification');
+		this.load.model('setting/modification', this);
 
 		if ((this.request.post['selected']) && await this.validate()) {
-			for (this.request.post['selected'] of modification_id) {
+			for (let modification_id of this.request.post['selected'] ) {
 				await this.model_setting_modification.deleteModification(modification_id);
 			}
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -55,370 +58,247 @@ class ControllerMarketplaceModification extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('setting/modification');
+		this.load.model('setting/modification', this);
 
-		if (this.validate()) {
+		if (await this.validate()) {
 			// Just before files are deleted, if config settings say maintenance mode is off then turn it on
-			maintenance = this.config.get('config_maintenance');
+			const maintenance = this.config.get('config_maintenance');
 
-			this.load.model('setting/setting',this);
+			this.load.model('setting/setting', this);
 
 			await this.model_setting_setting.editSettingValue('config', 'config_maintenance', true);
 
 			//Log
-			log = {};
+			let log = [];
 
 			// Clear all modification files
-			files = {};
+			let files = [];
 
 			// Make path into an array
-			path = array(DIR_MODIFICATION + '*');
+			let path = [DIR_MODIFICATION + '*'];
 
 			// While the path array is still populated keep looping through
-			while (count(path) != 0) {
-				next = array_shift(path);
+			while (path.length != 0) {
+				let next = path.shift();
 
-				for (glob(next) of file) {
+				for (let file of require('glob').sync(next)) {
 					// If directory add to path array
 					if (is_dir(file)) {
-						path.push(file + '/*';
+						path.push(file + '/*');
 					}
 
 					// Add the file to the files to be deleted array
-					files.push(file;
+					files.push(file);
 				}
 			}
 
 			// Reverse sort the file array
-			rsort(files);
+			files = files.reverse();
 
 			// Clear all modification files
 			for (let file of files) {
 				if (file != DIR_MODIFICATION + 'index.html') {
 					// If file just delete
 					if (is_file(file)) {
-						unlink(file);
+						fs.unlinkSync(file);
 
-					// If directory use the remove directory function
+						// If directory use the remove directory function
 					} else if (is_dir(file)) {
-						rmdir(file);
+						fs.rmdirSync(file);
 					}
 				}
 			}
 
 			// Begin
-			xml = {};
+			let xmls = [];
 
 			// Load the default modification XML
-			xml.push(file_get_contents(DIR_SYSTEM + 'modification.xml');
+			xmls.push(fs.readFileSync(DIR_SYSTEM + 'modification.xml').toString());
 
 			// This is purly for developers so they can run mods directly and have them run without upload after each change.
-			files = glob(DIR_SYSTEM + '*.ocmod.xml');
+			files = require('glob').sync(DIR_SYSTEM + '*.ocmod.xml');
 
-			if (files) {
+			if (files.length) {
 				for (let file of files) {
-					xml.push(file_get_contents(file);
+					xmls.push(fs.readFileSync(file).toString());
 				}
 			}
 
 			// Get the default modification file
-			results = await this.model_setting_modification.getModifications();
+			const results = await this.model_setting_modification.getModifications();
 
 			for (let result of results) {
 				if (result['status']) {
-					xml.push(result['xml'];
+					xmls.push(result['xml']);
 				}
 			}
 
-			modification = {};
+			let modification = {};
 
-			for (xml of xml) {
-				if (empty(xml)){
-					continue;
-				}
-				
-				dom = new DOMDocument('1.0', 'UTF-8');
-				dom.preserveWhiteSpace = false;
-				dom.loadXml(xml);
+			let original = {};
 
-				// Log
-				log.push('MOD: ' + dom.getElementsByTagName('name').item(0).textContent;
+			xmls.forEach(xmlString => {
+				if (!xmlString) return;
 
-				// Wipe the past modification store in the backup array
-				recovery = {};
+				const dom = new DOMParser().parseFromString(xmlString, 'text/xml');
+				log.push('MOD: ' + dom.getElementsByTagName('name')[0].textContent);
 
-				// Set the a recovery of the modification code in case we need to use it if an abort attribute is used.
-				if (modification) {
-					recovery = modification;
-				}
+				let recovery = modification ? { ...modification } : {};
 
-				files = dom.getElementsByTagName('modification').item(0).getElementsByTagName('file');
+				const files = dom.getElementsByTagName('modification')[0].getElementsByTagName('file');
 
-				for (let file of files) {
-					operations = file.getElementsByTagName('operation');
+				Array.from(files).forEach(file => {
+					const operations = file.getElementsByTagName('operation');
+					const paths = file.getAttribute('path').replace(/\\/g, '/').split('|');
 
-					files = explode('|', str_replace("\\", '/', file.getAttribute('path')));
+					paths.forEach(filePath => {
+						let fullPath = '';
 
-					for (let file of files) {
-						path = '';
-
-						// Get the full path of the files that are going to be used for modification
-						if ((substr(file, 0, 7) == 'catalog')) {
-							path = DIR_CATALOG + substr(file, 8);
+						if (filePath.startsWith('catalog')) {
+							fullPath = DIR_CATALOG + filePath.substr(8);
+						} else if (filePath.startsWith('admin')) {
+							fullPath = DIR_APPLICATION + filePath.substr(6);
+						} else if (filePath.startsWith('system')) {
+							fullPath = DIR_SYSTEM + filePath.substr(7);
 						}
 
-						if ((substr(file, 0, 5) == 'admin')) {
-							path = DIR_APPLICATION + substr(file, 6);
-						}
+						if (fullPath) {
+							const matchedFiles = require('glob').sync(fullPath);
 
-						if ((substr(file, 0, 6) == 'system')) {
-							path = DIR_SYSTEM + substr(file, 7);
-						}
+							matchedFiles.forEach(file => {
+								let key = '';
 
-						if (path) {
-							files = glob(path, GLOB_BRACE);
-
-							if (files) {
-								for (let file of files) {
-									// Get the key to be used for the modification cache filename.
-									if (substr(file, 0, strlen(DIR_CATALOG)) == DIR_CATALOG) {
-										key = 'catalog/' + substr(file, strlen(DIR_CATALOG));
-									}
-
-									if (substr(file, 0, strlen(DIR_APPLICATION)) == DIR_APPLICATION) {
-										key = 'admin/' + substr(file, strlen(DIR_APPLICATION));
-									}
-
-									if (substr(file, 0, strlen(DIR_SYSTEM)) == DIR_SYSTEM) {
-										key = 'system/' + substr(file, strlen(DIR_SYSTEM));
-									}
-
-									// If file contents is not already in the modification array we need to load it.
-									if (!(modification[key])) {
-										content = file_get_contents(file);
-
-										modification[key] = preg_replace('~\r?\n~', "\n", content);
-										original[key] = preg_replace('~\r?\n~', "\n", content);
-
-										// Log
-										log.push(PHP_EOL + 'FILE: ' + key;
-
-									} else {
-										// Log
-										log.push(PHP_EOL + 'FILE: (sub modification) ' + key;
-									
-									}
-
-									for (operations of operation) {
-										error = operation.getAttribute('error');
-
-										// Ignoreif
-										ignoreif = operation.getElementsByTagName('ignoreif').item(0);
-
-										if (ignoreif) {
-											if (ignoreif.getAttribute('regex') != 'true') {
-												if (strpos(modification[key], ignoreif.textContent) !== false) {
-													continue;
-												}
-											} else {
-												if (preg_match(ignoreif.textContent, modification[key])) {
-													continue;
-												}
-											}
-										}
-
-										status = false;
-
-										// Search and replace
-										if (operation.getElementsByTagName('search').item(0).getAttribute('regex') != 'true') {
-											// Search
-											search = operation.getElementsByTagName('search').item(0).textContent;
-											trim = operation.getElementsByTagName('search').item(0).getAttribute('trim');
-											index = operation.getElementsByTagName('search').item(0).getAttribute('index');
-
-											// Trim line if no trim attribute is set or is set to true.
-											if (!trim || trim == 'true') {
-												search = trim(search);
-											}
-
-											// Add
-											add = operation.getElementsByTagName('add').item(0).textContent;
-											trim = operation.getElementsByTagName('add').item(0).getAttribute('trim');
-											position = operation.getElementsByTagName('add').item(0).getAttribute('position');
-											offset = operation.getElementsByTagName('add').item(0).getAttribute('offset');
-
-											if (offset == '') {
-												offset = 0;
-											}
-
-											// Trim line if is set to true.
-											if (trim == 'true') {
-												add = trim(add);
-											}
-
-											// Log
-											log.push('CODE: ' + search;
-
-											// Check if using indexes
-											if (index !== '') {
-												indexes = explode(',', index);
-											} else {
-												indexes = {};
-											}
-
-											// Get all the matches
-											i = 0;
-
-											lines = explode("\n", modification[key]);
-
-											for (line_id = 0; line_id < count(lines); line_id++) {
-												line = lines[line_id];
-
-												// Status
-												match = false;
-
-												// Check to see if the line matches the search code.
-												if (stripos(line, search) !== false) {
-													// If indexes are not used then just set the found status to true.
-													if (!indexes) {
-														match = true;
-													} else if (in_array(i, indexes)) {
-														match = true;
-													}
-
-													i++;
-												}
-
-												// Now for replacing or adding to the matched elements
-												if (match) {
-													switch (position) {
-														default:
-														case 'replace':
-															new_lines = explode("\n", add);
-
-															if (offset < 0) {
-																array_splice(lines, line_id + offset, abs(offset) + 1, array(str_replace(search, add, line)));
-
-																line_id -= offset;
-															} else {
-																array_splice(lines, line_id, offset + 1, array(str_replace(search, add, line)));
-															}
-															break;
-														case 'before':
-															new_lines = explode("\n", add);
-
-															array_splice(lines, line_id - offset, 0, new_lines);
-
-															line_id += count(new_lines);
-															break;
-														case 'after':
-															new_lines = explode("\n", add);
-
-															array_splice(lines, (line_id + 1) + offset, 0, new_lines);
-
-															line_id += count(new_lines);
-															break;
-													}
-
-													// Log
-													log.push('LINE: ' + line_id;
-
-													status = true;
-												}
-											}
-
-											modification[key] = implode("\n", lines);
-										} else {
-											search = trim(operation.getElementsByTagName('search').item(0).textContent);
-											limit = operation.getElementsByTagName('search').item(0).getAttribute('limit');
-											replace = trim(operation.getElementsByTagName('add').item(0).textContent);
-
-											// Limit
-											if (!limit) {
-												limit = -1;
-											}
-
-											// Log
-											match = {};
-
-											preg_match_all(search, modification[key], match, PREG_OFFSET_CAPTURE);
-
-											// Remove part of the the result if a limit is set.
-											if (limit > 0) {
-												match[0] = array_slice(match[0], 0, limit);
-											}
-
-											if (match[0]) {
-												log.push('REGEX: ' + search;
-
-												for (i = 0; i < count(match[0]); i++) {
-													log.push('LINE: ' + (substr_count(substr(modification[key], 0, match[0][i][1]), "\n") + 1);
-												}
-
-												status = true;
-											}
-
-											// Make the modification
-											modification[key] = preg_replace(search, replace, modification[key], limit);
-										}
-
-										if (!status) {
-											// Abort applying this modification completely.
-											if (error == 'abort') {
-												modification = recovery;
-												// Log
-												log.push('NOT FOUND - ABORTING!';
-												break 5;
-											}
-											// Skip current operation or break
-											else if (error == 'skip') {
-												// Log
-												log.push('NOT FOUND - OPERATION SKIPPED!';
-												continue;
-											}
-											// Break current operations
-											else {
-												// Log
-												log.push('NOT FOUND - OPERATIONS ABORTED!';
-											 	break;
-											}
-										}
-									}
+								if (file.startsWith(DIR_CATALOG)) {
+									key = 'catalog/' + file.substr(DIR_CATALOG.length);
+								} else if (file.startsWith(DIR_APPLICATION)) {
+									key = 'admin/' + file.substr(DIR_APPLICATION.length);
+								} else if (file.startsWith(DIR_SYSTEM)) {
+									key = 'system/' + file.substr(DIR_SYSTEM.length);
 								}
-							}
-						}
-					}
-				}
 
-				// Log
-				log.push('----------------------------------------------------------------';
-			}
+								if (!modification[key]) {
+									const content = fs.readFileSync(file, 'utf8');
+									modification[key] = content.replace(/\r?\n/g, "\n");
+									original[key] = content.replace(/\r?\n/g, "\n");
+
+									log.push('\nFILE: ' + key);
+								} else {
+									log.push('\nFILE: (sub modification) ' + key);
+								}
+
+								Array.from(operations).forEach(operation => {
+									const error = operation.getAttribute('error');
+									const ignoreif = operation.getElementsByTagName('ignoreif')[0];
+
+									if (ignoreif) {
+										const ignoreifText = ignoreif.textContent;
+										if (ignoreif.getAttribute('regex') !== 'true') {
+											if (modification[key].includes(ignoreifText)) return;
+										} else {
+											const regex = new RegExp(ignoreifText);
+											if (regex.test(modification[key])) return;
+										}
+									}
+
+									let status = false;
+									const search = operation.getElementsByTagName('search')[0].textContent;
+									const trim = operation.getElementsByTagName('search')[0].getAttribute('trim');
+									const index = operation.getElementsByTagName('search')[0].getAttribute('index');
+									const add = operation.getElementsByTagName('add')[0].textContent;
+									const addTrim = operation.getElementsByTagName('add')[0].getAttribute('trim');
+									const position = operation.getElementsByTagName('add')[0].getAttribute('position');
+									const offset = operation.getElementsByTagName('add')[0].getAttribute('offset') || 0;
+
+									const searchString = trim !== 'false' ? search.trim() : search;
+									const addString = addTrim === 'true' ? add.trim() : add;
+
+									log.push('CODE: ' + searchString);
+
+									const indexes = index ? index.split(',').map(i => parseInt(i, 10)) : [];
+
+									const lines = modification[key].split('\n');
+									let i = 0;
+
+									for (let lineId = 0; lineId < lines.length; lineId++) {
+										const line = lines[lineId];
+										let match = false;
+
+										if (line.includes(searchString)) {
+											if (indexes.length === 0 || indexes.includes(i)) {
+												match = true;
+											}
+											i++;
+										}
+
+										if (match) {
+											let newLines;
+											switch (position) {
+												case 'before':
+													newLines = addString.split('\n');
+													lines.splice(lineId - offset, 0, ...newLines);
+													lineId += newLines.length;
+													break;
+												case 'after':
+													newLines = addString.split('\n');
+													lines.splice((lineId + 1) + offset, 0, ...newLines);
+													lineId += newLines.length;
+													break;
+												default:
+												case 'replace':
+													newLines = addString.split('\n');
+													lines.splice(lineId, offset + 1, str.replace(searchString, addString));
+													break;
+											}
+
+											log.push('LINE: ' + lineId);
+											status = true;
+										}
+									}
+
+									modification[key] = lines.join('\n');
+
+									if (!status) {
+										if (error === 'abort') {
+											modification = recovery;
+											log.push('NOT FOUND - ABORTING!');
+											return;
+										} else if (error === 'skip') {
+											log.push('NOT FOUND - OPERATION SKIPPED!');
+										} else {
+											log.push('NOT FOUND - OPERATIONS ABORTED!');
+										}
+									}
+								});
+							});
+						}
+					});
+				});
+
+				log.push('----------------------------------------------------------------');
+			});
+
 
 			// Log
-			ocmod = new Log('ocmod.log');
-			ocmod.write(implode("\n", log));
+			let ocmod = new Log('ocmod.log');
+			await ocmod.write(log.join("\n"));
 
 			// Write all modification files
-			for (modification of key : value) {
+			for (let [key, value] of Object.entries(modification)) {
 				// Only create a file if there are changes
 				if (original[key] != value) {
 					path = '';
 
-					directories = explode('/', dirname(key));
+					let directories = expressPath.dirname(key).split('/');
 
-					for (directories of directory) {
+					for (let directory of directories) {
 						path = path + '/' + directory;
 
 						if (!is_dir(DIR_MODIFICATION + path)) {
-							@mkdir(DIR_MODIFICATION + path, 0777);
+							fs.mkdirSync(DIR_MODIFICATION + path);
 						}
 					}
+					fs.writeFileSync(DIR_MODIFICATION + key, value)
 
-					handle = fopen(DIR_MODIFICATION + key, 'w');
-
-					fwrite(handle, value);
-
-					fclose(handle);
 				}
 			}
 
@@ -427,8 +307,9 @@ class ControllerMarketplaceModification extends Controller {
 
 			// Do not return success message if refresh() was called with data
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -453,49 +334,50 @@ class ControllerMarketplaceModification extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('setting/modification');
+		this.load.model('setting/modification', this);
 
-		if (this.validate()) {
-			files = {};
+		if (await this.validate()) {
+			let files = [];
 
 			// Make path into an array
-			path = array(DIR_MODIFICATION + '*');
+			let path = [DIR_MODIFICATION + '*'];
 
 			// While the path array is still populated keep looping through
-			while (count(path) != 0) {
-				next = array_shift(path);
+			while (path.length != 0) {
+				let next = path.shift();
 
-				for (glob(next) of file) {
+				for (let file of require('glob').sync(next)) {
 					// If directory add to path array
 					if (is_dir(file)) {
-						path.push(file + '/*';
+						path.push(file + '/*');
 					}
 
 					// Add the file to the files to be deleted array
-					files.push(file;
+					files.push(file);
 				}
 			}
 
 			// Reverse sort the file array
-			rsort(files);
+			files = files.reverse();
 
 			// Clear all modification files
 			for (let file of files) {
 				if (file != DIR_MODIFICATION + 'index.html') {
 					// If file just delete
 					if (is_file(file)) {
-						unlink(file);
+						fs.unlinkSync(file);
 
-					// If directory use the remove directory function
+						// If directory use the remove directory function
 					} else if (is_dir(file)) {
-						rmdir(file);
+						fs.rmdirSync(file);
 					}
 				}
 			}
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -520,14 +402,15 @@ class ControllerMarketplaceModification extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('setting/modification');
+		this.load.model('setting/modification', this);
 
 		if ((this.request.get['modification_id']) && await this.validate()) {
 			await this.model_setting_modification.enableModification(this.request.get['modification_id']);
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -552,14 +435,15 @@ class ControllerMarketplaceModification extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('setting/modification');
+		this.load.model('setting/modification', this);
 
 		if ((this.request.get['modification_id']) && await this.validate()) {
 			await this.model_setting_modification.disableModification(this.request.get['modification_id']);
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -581,19 +465,18 @@ class ControllerMarketplaceModification extends Controller {
 
 	async clearlog() {
 		await this.load.language('marketplace/modification');
-		
+
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('setting/modification');
-		
-		if (this.validate()) {
-			handle = fopen(DIR_LOGS + 'ocmod.log', 'w+');
+		this.load.model('setting/modification', this);
 
-			fclose(handle);
+		if (await this.validate()) {
+			fs.writeFileSync(DIR_LOGS + 'ocmod.log', '');
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -614,25 +497,21 @@ class ControllerMarketplaceModification extends Controller {
 	}
 
 	async getList() {
+		const data = {};
+		let sort = 'name';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
-		} else {
-			sort = 'name';
 		}
-
+		let order = 'ASC';
 		if ((this.request.get['order'])) {
 			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
 		}
-
+		let page = 1;
 		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -649,13 +528,13 @@ class ControllerMarketplaceModification extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('marketplace/modification', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('marketplace/modification', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['refresh'] = await this.url.link('marketplace/modification/refresh', 'user_token=' + this.session.data['user_token'] + url, true);
@@ -664,29 +543,29 @@ class ControllerMarketplaceModification extends Controller {
 
 		data['modifications'] = {};
 
-		filter_data = array(
-			'sort'  : sort,
-			'order' : order,
-			'start' : (page - 1) * Number(this.config.get('config_limit_admin')),
-			'limit' : Number(this.config.get('config_limit_admin'))
-		});
+		const filter_data = {
+			'sort': sort,
+			'order': order,
+			'start': (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit': Number(this.config.get('config_limit_admin'))
+		};
 
-		modification_total = await this.model_setting_modification.getTotalModifications();
+		const modification_total = await this.model_setting_modification.getTotalModifications();
 
-		results = await this.model_setting_modification.getModifications(filter_data);
+		const results = await this.model_setting_modification.getModifications(filter_data);
 
 		for (let result of results) {
 			data['modifications'].push({
-				'modification_id' : result['modification_id'],
-				'name'            : result['name'],
-				'author'          : result['author'],
-				'version'         : result['version'],
-				'status'          : result['status'] ? this.language.get('text_enabled') : this.language.get('text_disabled'),
-				'date_added'      : date(this.language.get('date_format_short'), strtotime(result['date_added'])),
-				'link'            : result['link'],
-				'enable'          : await this.url.link('marketplace/modification/enable', 'user_token=' + this.session.data['user_token'] + '&modification_id=' + result['modification_id'], true),
-				'disable'         : await this.url.link('marketplace/modification/disable', 'user_token=' + this.session.data['user_token'] + '&modification_id=' + result['modification_id'], true),
-				'enabled'         : result['status']
+				'modification_id': result['modification_id'],
+				'name': result['name'],
+				'author': result['author'],
+				'version': result['version'],
+				'status': result['status'] ? this.language.get('text_enabled') : this.language.get('text_disabled'),
+				'date_added': date(this.language.get('date_format_short'), new Date(result['date_added'])),
+				'link': result['link'],
+				'enable': await this.url.link('marketplace/modification/enable', 'user_token=' + this.session.data['user_token'] + '&modification_id=' + result['modification_id'], true),
+				'disable': await this.url.link('marketplace/modification/disable', 'user_token=' + this.session.data['user_token'] + '&modification_id=' + result['modification_id'], true),
+				'enabled': result['status']
 			});
 		}
 
@@ -701,7 +580,7 @@ class ControllerMarketplaceModification extends Controller {
 		if ((this.session.data['success'])) {
 			data['success'] = this.session.data['success'];
 
-			delete this.session.data['success']);
+			delete this.session.data['success'];
 		} else {
 			data['success'] = '';
 		}
@@ -740,7 +619,7 @@ class ControllerMarketplaceModification extends Controller {
 			url += '&order=' + this.request.get['order'];
 		}
 
-		pagination = new Pagination();
+		const pagination = new Pagination();
 		pagination.total = modification_total;
 		pagination.page = page;
 		pagination.limit = Number(this.config.get('config_limit_admin'));
@@ -754,10 +633,10 @@ class ControllerMarketplaceModification extends Controller {
 		data['order'] = order;
 
 		// Log
-		file = DIR_LOGS + 'ocmod.log';
+		let file = DIR_LOGS + 'ocmod.log';
 
-		if (file_exists(file)) {
-			data['log'] = htmlentities(file_get_contents(file, FILE_USE_INCLUDE_PATH, null));
+		if (is_file(file)) {
+			data['log'] = htmlentities(fs.readFileSync(file));
 		} else {
 			data['log'] = '';
 		}
@@ -776,6 +655,6 @@ class ControllerMarketplaceModification extends Controller {
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 }

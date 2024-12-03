@@ -2,16 +2,18 @@ module.exports = class ControllerExtensionReportCustomerTransaction extends Cont
 	error = {};
 
 	async index() {
+		const data = {};
 		await this.load.language('extension/report/customer_transaction');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('setting/setting',this);
+		this.load.model('setting/setting', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validate()) {
 			await this.model_setting_setting.editSetting('report_customer_transaction', this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=report', true));
 		}
@@ -25,18 +27,18 @@ module.exports = class ControllerExtensionReportCustomerTransaction extends Cont
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_extension'),
-			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=report', true)
+			'text': this.language.get('text_extension'),
+			'href': await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=report', true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('extension/report/customer_transaction', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('extension/report/customer_transaction', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['action'] = await this.url.link('extension/report/customer_transaction', 'user_token=' + this.session.data['user_token'], true);
@@ -61,72 +63,68 @@ module.exports = class ControllerExtensionReportCustomerTransaction extends Cont
 
 		this.response.setOutput(await this.load.view('extension/report/customer_transaction_form', data));
 	}
-	
+
 	async validate() {
 		if (!await this.user.hasPermission('modify', 'extension/report/customer_transaction')) {
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
-		
+
 	async report() {
+		const data = {};
 		await this.load.language('extension/report/customer_transaction');
 
+		let filter_date_start = '';
 		if ((this.request.get['filter_date_start'])) {
 			filter_date_start = this.request.get['filter_date_start'];
-		} else {
-			filter_date_start = '';
 		}
 
+		let filter_date_end = '';
 		if ((this.request.get['filter_date_end'])) {
 			filter_date_end = this.request.get['filter_date_end'];
-		} else {
-			filter_date_end = '';
 		}
 
+		let filter_customer = '';
 		if ((this.request.get['filter_customer'])) {
 			filter_customer = this.request.get['filter_customer'];
-		} else {
-			filter_customer = '';
 		}
-
+		page = 1;
 		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
 		}
 
-		this.load.model('extension/report/customer_transaction');
-		
-		data['customers'] = {};
+		this.load.model('extension/report/customer_transaction', this);
 
-		filter_data = array(
-			'filter_date_start'	: filter_date_start,
-			'filter_date_end'	: filter_date_end,
-			'filter_customer'	: filter_customer,
-			'start'				: (page - 1) * Number(this.config.get('config_limit_admin')),
-			'limit'				: Number(this.config.get('config_limit_admin'))
-		});
+		data['customers'] = [];
 
-		customer_total = await this.model_extension_report_customer_transaction.getTotalTransactions(filter_data);
+		const filter_data = {
+			'filter_date_start': filter_date_start,
+			'filter_date_end': filter_date_end,
+			'filter_customer': filter_customer,
+			'start': (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit': Number(this.config.get('config_limit_admin'))
+		};
 
-		results = await this.model_extension_report_customer_transaction.getTransactions(filter_data);
+		const customer_total = await this.model_extension_report_customer_transaction.getTotalTransactions(filter_data);
+
+		const results = await this.model_extension_report_customer_transaction.getTransactions(filter_data);
 
 		for (let result of results) {
 			data['customers'].push({
-				'customer'       : result['customer'],
-				'email'          : result['email'],
-				'customer_group' : result['customer_group'],
-				'status'         : (result['status'] ? this.language.get('text_enabled') : this.language.get('text_disabled')),
-				'total'          : this.currency.format(result['total'], this.config.get('config_currency')),
-				'edit'           : await this.url.link('customer/customer/edit', 'user_token=' + this.session.data['user_token'] + '&customer_id=' + result['customer_id'], true)
+				'customer': result['customer'],
+				'email': result['email'],
+				'customer_group': result['customer_group'],
+				'status': (result['status'] ? this.language.get('text_enabled') : this.language.get('text_disabled')),
+				'total': this.currency.format(result['total'], this.config.get('config_currency')),
+				'edit': await this.url.link('customer/customer/edit', 'user_token=' + this.session.data['user_token'] + '&customer_id=' + result['customer_id'], true)
 			});
 		}
 
 		data['user_token'] = this.session.data['user_token'];
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['filter_date_start'])) {
 			url += '&filter_date_start=' + this.request.get['filter_date_start'];
@@ -140,7 +138,7 @@ module.exports = class ControllerExtensionReportCustomerTransaction extends Cont
 			url += '&filter_customer=' + encodeURIComponent(this.request.get['filter_customer']);
 		}
 
-		pagination = new Pagination();
+		const pagination = new Pagination();
 		pagination.total = customer_total;
 		pagination.page = page;
 		pagination.limit = Number(this.config.get('config_limit_admin'));

@@ -2,9 +2,10 @@ module.exports = class ControllerExtensionModulePPBraintreeButton extends Contro
 	error = {};
 
 	async index() {
+		const data = {};
 		await this.load.language('extension/module/pp_braintree_button');
 
-		this.load.model('setting/setting',this);
+		this.load.model('setting/setting', this);
 
 		this.document.setTitle(this.language.get('heading_title'));
 
@@ -12,6 +13,7 @@ module.exports = class ControllerExtensionModulePPBraintreeButton extends Contro
 			await this.model_setting_setting.editSetting('module_pp_braintree_button', this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=module', true));
 		}
@@ -25,18 +27,18 @@ module.exports = class ControllerExtensionModulePPBraintreeButton extends Contro
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_extension'),
-			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=module', true)
+			'text': this.language.get('text_extension'),
+			'href': await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=module', true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('extension/module/pp_braintree_button', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('extension/module/pp_braintree_button', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['action'] = await this.url.link('extension/module/pp_braintree_button', 'user_token=' + this.session.data['user_token'], true);
@@ -57,8 +59,8 @@ module.exports = class ControllerExtensionModulePPBraintreeButton extends Contro
 	}
 
 	async install() {
-		this.load.model('setting/setting',this);
-
+		this.load.model('setting/setting', this);
+		const settings = {};
 		settings['module_pp_braintree_button_status'] = 1;
 
 		await this.model_setting_setting.editSetting('module_pp_braintree_button', settings);
@@ -70,8 +72,8 @@ module.exports = class ControllerExtensionModulePPBraintreeButton extends Contro
 		if (!await this.user.hasPermission('modify', 'extension/extension/module')) {
 			this.response.setRedirect(await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'], true));
 		} else {
-			this.load.model('setting/extension',this);
-			this.load.model('user/user_group');
+			this.load.model('setting/extension', this);
+			this.load.model('user/user_group', this);
 
 			await this.model_setting_extension.install('module', 'pp_braintree_button');
 
@@ -89,6 +91,6 @@ module.exports = class ControllerExtensionModulePPBraintreeButton extends Contro
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 }

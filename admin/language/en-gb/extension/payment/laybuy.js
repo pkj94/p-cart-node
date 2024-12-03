@@ -15,7 +15,7 @@ module.exports = {
     text_extension: 'Extensions',
     text_success: 'Success: You have modified Lay-Buy payment module!',
     text_edit: 'Edit Lay-Buy',
-    text_laybuy: 'Lay-Buys" ></a> ',
+    text_laybuy: '<a href="https://www.lay-buys.com" target="_blank"><img src="view/image/payment/laybuys.png" style="width:94px,height:25px" alt="Lay-Buys" title="Lay-Buys"></a>',
     text_cancel_success: 'Transaction was canceled successfully.',
     text_cancel_failure: 'Cancel request was unsuccessful. Please try again!',
     text_revise_success: 'Revise request was successful.',

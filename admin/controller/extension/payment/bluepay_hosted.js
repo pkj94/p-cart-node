@@ -1,17 +1,21 @@
+const JSON.stringify = require("locutus/php/var/JSON.stringify");
+
 module.exports = class ControllerExtensionPaymentBluePayHosted extends Controller {
 	error = {};
 
 	async index() {
+		const data = {};
 		await this.load.language('extension/payment/bluepay_hosted');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('setting/setting',this);
+		this.load.model('setting/setting', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validate()) {
 			await this.model_setting_setting.editSetting('payment_bluepay_hosted', this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true));
 		}
@@ -43,18 +47,18 @@ module.exports = class ControllerExtensionPaymentBluePayHosted extends Controlle
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_extension'),
-			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true)
+			'text': this.language.get('text_extension'),
+			'href': await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('extension/payment/bluepay_hosted', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('extension/payment/bluepay_hosted', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['action'] = await this.url.link('extension/payment/bluepay_hosted', 'user_token=' + this.session.data['user_token'], true);
@@ -117,7 +121,7 @@ module.exports = class ControllerExtensionPaymentBluePayHosted extends Controlle
 			data['payment_bluepay_hosted_order_status_id'] = 2;
 		}
 
-		this.load.model('localisation/order_status');
+		this.load.model('localisation/order_status', this);
 
 		data['order_statuses'] = await this.model_localisation_order_status.getOrderStatuses();
 
@@ -127,7 +131,7 @@ module.exports = class ControllerExtensionPaymentBluePayHosted extends Controlle
 			data['payment_bluepay_hosted_geo_zone_id'] = this.config.get('payment_bluepay_hosted_geo_zone_id');
 		}
 
-		this.load.model('localisation/geo_zone');
+		this.load.model('localisation/geo_zone', this);
 
 		data['geo_zones'] = await this.model_localisation_geo_zone.getGeoZones();
 
@@ -157,24 +161,25 @@ module.exports = class ControllerExtensionPaymentBluePayHosted extends Controlle
 	}
 
 	async install() {
-		this.load.model('extension/payment/bluepay_hosted');
+		this.load.model('extension/payment/bluepay_hosted', this);
 
 		await this.model_extension_payment_bluepay_hosted.install();
 	}
 
 	async uninstall() {
-		this.load.model('extension/payment/bluepay_hosted');
+		this.load.model('extension/payment/bluepay_hosted', this);
 
 		await this.model_extension_payment_bluepay_hosted.uninstall();
 	}
 
 	async order() {
+		const data = {};
 		if (this.config.get('payment_bluepay_hosted_status')) {
-			this.load.model('extension/payment/bluepay_hosted');
+			this.load.model('extension/payment/bluepay_hosted', this);
 
-			bluepay_hosted_order = await this.model_extension_payment_bluepay_hosted.getOrder(this.request.get['order_id']);
+			const bluepay_hosted_order = await this.model_extension_payment_bluepay_hosted.getOrder(this.request.get['order_id']);
 
-			if ((bluepay_hosted_order)) {
+			if ((bluepay_hosted_order.bluepay_hosted_order_id)) {
 				await this.load.language('extension/payment/bluepay_hosted');
 
 				bluepay_hosted_order['total_released'] = await this.model_extension_payment_bluepay_hosted.getTotalReleased(bluepay_hosted_order['bluepay_hosted_order_id']);
@@ -194,16 +199,16 @@ module.exports = class ControllerExtensionPaymentBluePayHosted extends Controlle
 
 	async void() {
 		await this.load.language('extension/payment/bluepay_hosted');
-		json = {};
+		const json = {};
 
 		if ((this.request.post['order_id']) && this.request.post['order_id'] != '') {
-			this.load.model('extension/payment/bluepay_hosted');
+			this.load.model('extension/payment/bluepay_hosted', this);
 
-			bluepay_hosted_order = await this.model_extension_payment_bluepay_hosted.getOrder(this.request.post['order_id']);
+			const bluepay_hosted_order = await this.model_extension_payment_bluepay_hosted.getOrder(this.request.post['order_id']);
 
-			void_response = await this.model_extension_payment_bluepay_hosted.void(this.request.post['order_id']);
+			const void_response = await this.model_extension_payment_bluepay_hosted.void(this.request.post['order_id']);
 
-			await this.model_extension_payment_bluepay_hosted.logger('Void result:\r\n' + print_r(void_response, 1));
+			await this.model_extension_payment_bluepay_hosted.logger('Void result:\r\n' + JSON.stringify(void_response, 1));
 
 			if (void_response['Result'] == 'APPROVED') {
 				await this.model_extension_payment_bluepay_hosted.addTransaction(bluepay_hosted_order['bluepay_hosted_order_id'], 'void', bluepay_hosted_order['total']);
@@ -229,24 +234,24 @@ module.exports = class ControllerExtensionPaymentBluePayHosted extends Controlle
 
 	async release() {
 		await this.load.language('extension/payment/bluepay_hosted');
-		json = {};
+		const json = {};
 
 		if ((this.request.post['order_id']) && this.request.post['order_id'] != '' && (this.request.post['amount']) && this.request.post['amount'] > 0) {
-			this.load.model('extension/payment/bluepay_hosted');
+			this.load.model('extension/payment/bluepay_hosted', this);
 
-			bluepay_hosted_order = await this.model_extension_payment_bluepay_hosted.getOrder(this.request.post['order_id']);
+			const bluepay_hosted_order = await this.model_extension_payment_bluepay_hosted.getOrder(this.request.post['order_id']);
 
-			release_response = await this.model_extension_payment_bluepay_hosted.release(this.request.post['order_id'], this.request.post['amount']);
+			const release_response = await this.model_extension_payment_bluepay_hosted.release(this.request.post['order_id'], this.request.post['amount']);
 
-			await this.model_extension_payment_bluepay_hosted.logger('Release result:\r\n' + print_r(release_response, 1));
+			await this.model_extension_payment_bluepay_hosted.logger('Release result:\r\n' + JSON.stringify(release_response, 1));
 
 			if (release_response['Result'] == 'APPROVED') {
 				await this.model_extension_payment_bluepay_hosted.addTransaction(bluepay_hosted_order['bluepay_hosted_order_id'], 'payment', this.request.post['amount']);
 
 				await this.model_extension_payment_bluepay_hosted.updateTransactionId(bluepay_hosted_order['bluepay_hosted_order_id'], release_response['RRNO']);
 
-				total_released = await this.model_extension_payment_bluepay_hosted.getTotalReleased(bluepay_hosted_order['bluepay_hosted_order_id']);
-
+				const total_released = await this.model_extension_payment_bluepay_hosted.getTotalReleased(bluepay_hosted_order['bluepay_hosted_order_id']);
+				let release_status = 0;
 				if (total_released >= bluepay_hosted_order['total']) {
 					await this.model_extension_payment_bluepay_hosted.updateReleaseStatus(bluepay_hosted_order['bluepay_hosted_order_id'], 1);
 					release_status = 1;
@@ -277,23 +282,23 @@ module.exports = class ControllerExtensionPaymentBluePayHosted extends Controlle
 
 	async rebate() {
 		await this.load.language('extension/payment/bluepay_hosted');
-		json = {};
+		const json = {};
 
 		if ((this.request.post['order_id']) && (this.request.post['order_id'])) {
-			this.load.model('extension/payment/bluepay_hosted');
+			this.load.model('extension/payment/bluepay_hosted', this);
 
-			bluepay_hosted_order = await this.model_extension_payment_bluepay_hosted.getOrder(this.request.post['order_id']);
+			const bluepay_hosted_order = await this.model_extension_payment_bluepay_hosted.getOrder(this.request.post['order_id']);
 
-			rebate_response = await this.model_extension_payment_bluepay_hosted.rebate(this.request.post['order_id'], this.request.post['amount']);
+			const rebate_response = await this.model_extension_payment_bluepay_hosted.rebate(this.request.post['order_id'], this.request.post['amount']);
 
-			await this.model_extension_payment_bluepay_hosted.logger('Rebate result:\r\n' + print_r(rebate_response, 1));
+			await this.model_extension_payment_bluepay_hosted.logger('Rebate result:\r\n' + JSON.stringify(rebate_response, 1));
 
 			if (rebate_response['Result'] == 'APPROVED') {
 				await this.model_extension_payment_bluepay_hosted.addTransaction(bluepay_hosted_order['bluepay_hosted_order_id'], 'rebate', this.request.post['amount'] * -1);
 
-				total_rebated = await this.model_extension_payment_bluepay_hosted.getTotalRebated(bluepay_hosted_order['bluepay_hosted_order_id']);
-				total_released = await this.model_extension_payment_bluepay_hosted.getTotalReleased(bluepay_hosted_order['bluepay_hosted_order_id']);
-
+				const total_rebated = await this.model_extension_payment_bluepay_hosted.getTotalRebated(bluepay_hosted_order['bluepay_hosted_order_id']);
+				const total_released = await this.model_extension_payment_bluepay_hosted.getTotalReleased(bluepay_hosted_order['bluepay_hosted_order_id']);
+				let rebate_status = 0;
 				if (total_released <= 0 && bluepay_hosted_order['release_status'] == 1) {
 					await this.model_extension_payment_bluepay_hosted.updateRebateStatus(bluepay_hosted_order['bluepay_hosted_order_id'], 1);
 					rebate_status = 1;
@@ -340,11 +345,11 @@ module.exports = class ControllerExtensionPaymentBluePayHosted extends Controlle
 			this.error['secret_key'] = this.language.get('error_secret_key');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 
 	async callback() {
 		this.response.addHeader('Content-Type: application/json');
-		this.response.setOutput(JSON.stringify(this.request.get));
+		this.response.setOutput(this.request.get);
 	}
 }

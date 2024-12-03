@@ -19,7 +19,6 @@ module.exports = class ControllerStartupRouter extends Controller {
 		if (result) {
 			return result;
 		}
-
 		let action = new Action(route);
 
 		// Any output needs to be another Action object. 

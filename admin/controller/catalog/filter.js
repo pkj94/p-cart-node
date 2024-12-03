@@ -4,6 +4,7 @@ module.exports = class ControllerCatalogFilter extends Controller {
 	error = {};
 
 	async index() {
+const data = {};
 		await this.load.language('catalog/filter');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -24,6 +25,7 @@ module.exports = class ControllerCatalogFilter extends Controller {
 			await this.model_catalog_filter.addFilter(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
 			let url = '';
 
@@ -56,6 +58,7 @@ module.exports = class ControllerCatalogFilter extends Controller {
 			await this.model_catalog_filter.editFilter(this.request.get['filter_group_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
 			let url = '';
 
@@ -91,6 +94,7 @@ module.exports = class ControllerCatalogFilter extends Controller {
 			}
 
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
 			let url = '';
 
@@ -113,7 +117,7 @@ module.exports = class ControllerCatalogFilter extends Controller {
 	}
 
 	async getList() {
-		const data = {};
+				const data = {};
 		let sort = 'fgd.name';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
@@ -124,11 +128,9 @@ module.exports = class ControllerCatalogFilter extends Controller {
 		} else {
 			order = 'ASC';
 		}
-		let page = 1;
-		if ((this.request.get['page'])) {
+		let page = 1;page = 1;
+if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
 		}
 
 		let url = '';

@@ -2,11 +2,12 @@ module.exports = class ControllerLocalisationGeoZone extends Controller {
 	error = {};
 
 	async index() {
+		const data = {};
 		await this.load.language('localisation/geo_zone');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('localisation/geo_zone');
+		this.load.model('localisation/geo_zone', this);
 
 		await this.getList();
 	}
@@ -16,12 +17,13 @@ module.exports = class ControllerLocalisationGeoZone extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('localisation/geo_zone');
+		this.load.model('localisation/geo_zone', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_localisation_geo_zone.addGeoZone(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			url = '';
 
@@ -48,12 +50,13 @@ module.exports = class ControllerLocalisationGeoZone extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('localisation/geo_zone');
+		this.load.model('localisation/geo_zone', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_localisation_geo_zone.editGeoZone(this.request.get['geo_zone_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			url = '';
 
@@ -80,15 +83,16 @@ module.exports = class ControllerLocalisationGeoZone extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('localisation/geo_zone');
+		this.load.model('localisation/geo_zone', this);
 
 		if ((this.request.post['selected']) && await this.validateDelete()) {
-this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
-			for (this.request.post['selected'] of geo_zone_id) {
+			this.request.post['selected'] = Array.isArray(this.request.post['selected']) ? this.request.post['selected'] : [this.request.post['selected']]
+			for (let geo_zone_id of this.request.post['selected']) {
 				await this.model_localisation_geo_zone.deleteGeoZone(geo_zone_id);
 			}
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			url = '';
 
@@ -111,6 +115,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 	}
 
 	async getList() {
+		const data = {};
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
 		} else {
@@ -122,11 +127,9 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		} else {
 			order = 'ASC';
 		}
-
+		page = 1;
 		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
 		}
 
 		url = '';
@@ -146,13 +149,13 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('localisation/geo_zone', 'user_token=' + this.session.data['user_token'] + url, true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('localisation/geo_zone', 'user_token=' + this.session.data['user_token'] + url, true)
 		});
 
 		data['add'] = await this.url.link('localisation/geo_zone/add', 'user_token=' + this.session.data['user_token'] + url, true);
@@ -160,11 +163,11 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 
 		data['geo_zones'] = {};
 
-		filter_data = array(
-			'sort'  : sort,
-			'order' : order,
-			'start' : (page - 1) * Number(this.config.get('config_limit_admin')),
-			'limit' : Number(this.config.get('config_limit_admin'))
+		const filter_data = {
+			'sort': sort,
+			'order': order,
+			'start': (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit': Number(this.config.get('config_limit_admin'))
 		});
 
 		geo_zone_total = await this.model_localisation_geo_zone.getTotalGeoZones();
@@ -173,10 +176,10 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 
 		for (let result of results) {
 			data['geo_zones'].push({
-				'geo_zone_id' : result['geo_zone_id'],
-				'name'        : result['name'],
-				'description' : result['description'],
-				'edit'        : await this.url.link('localisation/geo_zone/edit', 'user_token=' + this.session.data['user_token'] + '&geo_zone_id=' + result['geo_zone_id'] + url, true)
+				'geo_zone_id': result['geo_zone_id'],
+				'name': result['name'],
+				'description': result['description'],
+				'edit': await this.url.link('localisation/geo_zone/edit', 'user_token=' + this.session.data['user_token'] + '&geo_zone_id=' + result['geo_zone_id'] + url, true)
 			});
 		}
 
@@ -189,7 +192,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		if ((this.session.data['success'])) {
 			data['success'] = this.session.data['success'];
 
-			delete this.session.data['success']);
+			delete this.session.data['success'];
 		} else {
 			data['success'] = '';
 		}
@@ -225,7 +228,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			url += '&order=' + this.request.get['order'];
 		}
 
-		pagination = new Pagination();
+		const pagination = new Pagination();
 		pagination.total = geo_zone_total;
 		pagination.page = page;
 		pagination.limit = Number(this.config.get('config_limit_admin'));
@@ -283,13 +286,13 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('localisation/geo_zone', 'user_token=' + this.session.data['user_token'] + url, true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('localisation/geo_zone', 'user_token=' + this.session.data['user_token'] + url, true)
 		});
 
 		if (!(this.request.get['geo_zone_id'])) {
@@ -322,7 +325,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			data['description'] = '';
 		}
 
-		this.load.model('localisation/country');
+		this.load.model('localisation/country', this);
 
 		data['countries'] = await this.model_localisation_country.getCountries();
 
@@ -336,7 +339,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 
 		geo_zone_ids = {};
 		for (data['zone_to_geo_zones'] of zone_to_geo_zone) {
-			if (!in_array(zone_to_geo_zone['geo_zone_id'],geo_zone_ids)) {
+			if (!in_array(zone_to_geo_zone['geo_zone_id'], geo_zone_ids)) {
 				geo_zone_ids.push(zone_to_geo_zone['geo_zone_id'];
 			}
 		}
@@ -362,7 +365,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			this.error['description'] = this.language.get('error_description');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 
 	async validateDelete() {
@@ -371,16 +374,16 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		}
 
 		this.load.model('localisation/tax_rate');
-		this.request.post['selected']  = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']];
+		this.request.post['selected'] = Array.isArray(this.request.post['selected']) ? this.request.post['selected'] : [this.request.post['selected']];
 
-		for (this.request.post['selected'] of geo_zone_id) {
-			tax_rate_total = await this.model_localisation_tax_rate.getTotalTaxRatesByGeoZoneId(geo_zone_id);
+		for (let geo_zone_id of this.request.post['selected']) {
+			const tax_rate_total = await this.model_localisation_tax_rate.getTotalTaxRatesByGeoZoneId(geo_zone_id);
 
 			if (tax_rate_total) {
 				this.error['warning'] = sprintf(this.language.get('error_tax_rate'), tax_rate_total);
 			}
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 }

@@ -52,7 +52,7 @@ module.exports = class Login extends Controller {
 	 * curl_setopt(curl, CURLOPT_POSTFIELDS, request_data);
 	 *
 	 * // Add the session cookie so we don't have to login again+
-	 * curl_setopt(curl, CURLOPT_COOKIE, 'OCSESSID=' + session_id);
+	 * curl_setopt(curl, CURLOPT_COOKIE, 'PCSESSID=' + session_id);
 	 *
 	 * response = curl_exec(curl);
 	 *

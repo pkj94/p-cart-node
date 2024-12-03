@@ -6,7 +6,7 @@ module.exports = class ControllerLocalisationCountry extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('localisation/country');
+		this.load.model('localisation/country', this);
 
 		await this.getList();
 	}
@@ -16,14 +16,15 @@ module.exports = class ControllerLocalisationCountry extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('localisation/country');
+		this.load.model('localisation/country', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_localisation_country.addCountry(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -48,14 +49,15 @@ module.exports = class ControllerLocalisationCountry extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('localisation/country');
+		this.load.model('localisation/country', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_localisation_country.editCountry(this.request.get['country_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -80,17 +82,18 @@ module.exports = class ControllerLocalisationCountry extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('localisation/country');
+		this.load.model('localisation/country', this);
 
 		if ((this.request.post['selected']) && await this.validateDelete()) {
-this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
-			for (this.request.post['selected'] of country_id) {
+			this.request.post['selected'] = Array.isArray(this.request.post['selected']) ? this.request.post['selected'] : [this.request.post['selected']]
+			for (let country_id of this.request.post['selected']) {
 				await this.model_localisation_country.deleteCountry(country_id);
 			}
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -111,25 +114,21 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 	}
 
 	async getList() {
+		const data = {};
+		let sort = 'name';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
-		} else {
-			sort = 'name';
 		}
-
+		let order = 'ASC';
 		if ((this.request.get['order'])) {
 			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
 		}
-
+		let page = 1;
 		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -146,38 +145,38 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('localisation/country', 'user_token=' + this.session.data['user_token'] + url, true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('localisation/country', 'user_token=' + this.session.data['user_token'] + url, true)
 		});
 
 		data['add'] = await this.url.link('localisation/country/add', 'user_token=' + this.session.data['user_token'] + url, true);
 		data['delete'] = await this.url.link('localisation/country/delete', 'user_token=' + this.session.data['user_token'] + url, true);
 
-		data['countries'] = {};
+		data['countries'] = [];
 
-		filter_data = array(
-			'sort'  : sort,
-			'order' : order,
-			'start' : (page - 1) * Number(this.config.get('config_limit_admin')),
-			'limit' : Number(this.config.get('config_limit_admin'))
-		});
+		const filter_data = {
+			'sort': sort,
+			'order': order,
+			'start': (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit': Number(this.config.get('config_limit_admin'))
+		};
 
-		country_total = await this.model_localisation_country.getTotalCountries();
+		const country_total = await this.model_localisation_country.getTotalCountries();
 
-		results = await this.model_localisation_country.getCountries(filter_data);
+		const results = await this.model_localisation_country.getCountries(filter_data);
 
 		for (let result of results) {
 			data['countries'].push({
-				'country_id' : result['country_id'],
-				'name'       : result['name'] + ((result['country_id'] == this.config.get('config_country_id')) ? this.language.get('text_default') : null),
-				'iso_code_2' : result['iso_code_2'],
-				'iso_code_3' : result['iso_code_3'],
-				'edit'       : await this.url.link('localisation/country/edit', 'user_token=' + this.session.data['user_token'] + '&country_id=' + result['country_id'] + url, true)
+				'country_id': result['country_id'],
+				'name': result['name'] + ((result['country_id'] == this.config.get('config_country_id')) ? this.language.get('text_default') : null),
+				'iso_code_2': result['iso_code_2'],
+				'iso_code_3': result['iso_code_3'],
+				'edit': await this.url.link('localisation/country/edit', 'user_token=' + this.session.data['user_token'] + '&country_id=' + result['country_id'] + url, true)
 			});
 		}
 
@@ -190,7 +189,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		if ((this.session.data['success'])) {
 			data['success'] = this.session.data['success'];
 
-			delete this.session.data['success']);
+			delete this.session.data['success'];
 		} else {
 			data['success'] = '';
 		}
@@ -227,7 +226,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			url += '&order=' + this.request.get['order'];
 		}
 
-		pagination = new Pagination();
+		const pagination = new Pagination();
 		pagination.total = country_total;
 		pagination.page = page;
 		pagination.limit = Number(this.config.get('config_limit_admin'));
@@ -243,11 +242,12 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		data['header'] = await this.load.controller('common/header');
 		data['column_left'] = await this.load.controller('common/column_left');
 		data['footer'] = await this.load.controller('common/footer');
-
+		await this.session.save(this.session.data);
 		this.response.setOutput(await this.load.view('localisation/country_list', data));
 	}
 
 	async getForm() {
+		const data = {};
 		data['text_form'] = !(this.request.get['country_id']) ? this.language.get('text_add') : this.language.get('text_edit');
 
 		if ((this.error['warning'])) {
@@ -262,7 +262,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			data['error_name'] = '';
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -279,13 +279,13 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('localisation/country', 'user_token=' + this.session.data['user_token'] + url, true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('localisation/country', 'user_token=' + this.session.data['user_token'] + url, true)
 		});
 
 		if (!(this.request.get['country_id'])) {
@@ -295,7 +295,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		}
 
 		data['cancel'] = await this.url.link('localisation/country', 'user_token=' + this.session.data['user_token'] + url, true);
-
+		let country_info;
 		if ((this.request.get['country_id']) && (this.request.server['method'] != 'POST')) {
 			country_info = await this.model_localisation_country.getCountry(this.request.get['country_id']);
 		}
@@ -364,7 +364,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			this.error['name'] = this.language.get('error_name');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 
 	async validateDelete() {
@@ -372,68 +372,68 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		this.load.model('setting/store',this);
-		this.load.model('customer/customer',this);
-		this.load.model('localisation/zone');
-		this.load.model('localisation/geo_zone');
-		this.request.post['selected']  = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']];
+		this.load.model('setting/store', this);
+		this.load.model('customer/customer', this);
+		this.load.model('localisation/zone', this);
+		this.load.model('localisation/geo_zone', this);
+		this.request.post['selected'] = Array.isArray(this.request.post['selected']) ? this.request.post['selected'] : [this.request.post['selected']];
 
-		for (this.request.post['selected'] of country_id) {
+		for (let country_id of this.request.post['selected']) {
 			if (this.config.get('config_country_id') == country_id) {
 				this.error['warning'] = this.language.get('error_default');
 			}
 
-			store_total = await this.model_setting_store.getTotalStoresByCountryId(country_id);
+			const store_total = await this.model_setting_store.getTotalStoresByCountryId(country_id);
 
 			if (store_total) {
 				this.error['warning'] = sprintf(this.language.get('error_store'), store_total);
 			}
 
-			address_total = await this.model_customer_customer.getTotalAddressesByCountryId(country_id);
+			const address_total = await this.model_customer_customer.getTotalAddressesByCountryId(country_id);
 
 			if (address_total) {
 				this.error['warning'] = sprintf(this.language.get('error_address'), address_total);
 			}
 
-			zone_total = await this.model_localisation_zone.getTotalZonesByCountryId(country_id);
+			const zone_total = await this.model_localisation_zone.getTotalZonesByCountryId(country_id);
 
 			if (zone_total) {
 				this.error['warning'] = sprintf(this.language.get('error_zone'), zone_total);
 			}
 
-			zone_to_geo_zone_total = await this.model_localisation_geo_zone.getTotalZoneToGeoZoneByCountryId(country_id);
+			const zone_to_geo_zone_total = await this.model_localisation_geo_zone.getTotalZoneToGeoZoneByCountryId(country_id);
 
 			if (zone_to_geo_zone_total) {
 				this.error['warning'] = sprintf(this.language.get('error_zone_to_geo_zone'), zone_to_geo_zone_total);
 			}
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
-	
+
 	async country() {
-		json = {};
+		let json = {};
 
-		this.load.model('localisation/country');
+		this.load.model('localisation/country', this);
 
-		country_info = await this.model_localisation_country.getCountry(this.request.get['country_id']);
+		const country_info = await this.model_localisation_country.getCountry(this.request.get['country_id']);
 
-		if (country_info) {
-			this.load.model('localisation/zone');
+		if (country_info.country_id) {
+			this.load.model('localisation/zone', this);
 
-			json = array(
-				'country_id'        : country_info['country_id'],
-				'name'              : country_info['name'],
-				'iso_code_2'        : country_info['iso_code_2'],
-				'iso_code_3'        : country_info['iso_code_3'],
-				'address_format'    : country_info['address_format'],
-				'postcode_required' : country_info['postcode_required'],
-				'zone'              : await this.model_localisation_zone.getZonesByCountryId(this.request.get['country_id']),
-				'status'            : country_info['status']
-			});
+			json = {
+				'country_id': country_info['country_id'],
+				'name': country_info['name'],
+				'iso_code_2': country_info['iso_code_2'],
+				'iso_code_3': country_info['iso_code_3'],
+				'address_format': country_info['address_format'],
+				'postcode_required': country_info['postcode_required'],
+				'zone': await this.model_localisation_zone.getZonesByCountryId(this.request.get['country_id']),
+				'status': country_info['status']
+			};
 		}
 
 		this.response.addHeader('Content-Type: application/json');
 		this.response.setOutput(json);
-	}	
+	}
 }

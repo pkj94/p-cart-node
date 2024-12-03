@@ -2,16 +2,18 @@ module.exports = class ControllerExtensionPaymentBankTransfer extends Controller
 	error = {};
 
 	async index() {
+		const data = {};
 		await this.load.language('extension/payment/bank_transfer');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('setting/setting',this);
+		this.load.model('setting/setting', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validate()) {
 			await this.model_setting_setting.editSetting('payment_bank_transfer', this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true));
 		}
@@ -31,31 +33,31 @@ module.exports = class ControllerExtensionPaymentBankTransfer extends Controller
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_extension'),
-			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true)
+			'text': this.language.get('text_extension'),
+			'href': await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('extension/payment/bank_transfer', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('extension/payment/bank_transfer', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['action'] = await this.url.link('extension/payment/bank_transfer', 'user_token=' + this.session.data['user_token'], true);
 
 		data['cancel'] = await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true);
 
-		this.load.model('localisation/language',this);
+		this.load.model('localisation/language', this);
 
 		data['payment_bank_transfer_bank'] = {};
 
-		languages = await this.model_localisation_language.getLanguages();
-		
-		for (languages of language) {
+		const languages = await this.model_localisation_language.getLanguages();
+
+		for (let [code, language] of Object.entries(languages)) {
 			if ((this.request.post['payment_bank_transfer_bank' + language['language_id']])) {
 				data['payment_bank_transfer_bank'][language['language_id']] = this.request.post['payment_bank_transfer_bank' + language['language_id']];
 			} else {
@@ -77,7 +79,7 @@ module.exports = class ControllerExtensionPaymentBankTransfer extends Controller
 			data['payment_bank_transfer_order_status_id'] = this.config.get('payment_bank_transfer_order_status_id');
 		}
 
-		this.load.model('localisation/order_status');
+		this.load.model('localisation/order_status', this);
 
 		data['order_statuses'] = await this.model_localisation_order_status.getOrderStatuses();
 
@@ -87,7 +89,7 @@ module.exports = class ControllerExtensionPaymentBankTransfer extends Controller
 			data['payment_bank_transfer_geo_zone_id'] = this.config.get('payment_bank_transfer_geo_zone_id');
 		}
 
-		this.load.model('localisation/geo_zone');
+		this.load.model('localisation/geo_zone', this);
 
 		data['geo_zones'] = await this.model_localisation_geo_zone.getGeoZones();
 
@@ -115,16 +117,17 @@ module.exports = class ControllerExtensionPaymentBankTransfer extends Controller
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		this.load.model('localisation/language',this);
+		this.load.model('localisation/language', this);
 
-		languages = await this.model_localisation_language.getLanguages();
+		const languages = await this.model_localisation_language.getLanguages();
 
-		for (languages of language) {
-			if (empty(this.request.post['payment_bank_transfer_bank' + language['language_id']])) {
+		for (let [code, language] of Object.entries(languages)) {
+			if (!(this.request.post['payment_bank_transfer_bank' + language['language_id']])) {
+				this.error['bank'] = this.error['bank'] || {};
 				this.error['bank'][language['language_id']] = this.language.get('error_bank');
 			}
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 }

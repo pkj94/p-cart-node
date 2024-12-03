@@ -1,7 +1,13 @@
+const array_replace_recursive = require("locutus/php/array/array_replace_recursive");
+const mt_rand = require("locutus/php/math/mt_rand");
+const uniqid = require("locutus/php/misc/uniqid");
+const sha1 = require("locutus/php/strings/sha1");
+
 module.exports = class ControllerExtensionPaymentOpayo extends Controller {
 	error = {};
 
 	async index() {
+const data = {};
 		await this.load.language('extension/payment/opayo');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -48,18 +54,16 @@ module.exports = class ControllerExtensionPaymentOpayo extends Controller {
 		data['action'] = await this.url.link('extension/payment/opayo', 'user_token=' + this.session.data['user_token'], true);
 
 		data['cancel'] = await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true);
-		
+		let server = HTTP_SERVER;
+		let catalog = HTTP_CATALOG;
 		if ((this.request.server['HTTPS']) && ((this.request.server['HTTPS'] == 'on') || (this.request.server['HTTPS'] == '1'))) {
 			server = HTTPS_SERVER;
 			catalog = HTTPS_CATALOG;
-		} else {
-			server = HTTP_SERVER;
-			catalog = HTTP_CATALOG;
-		}
+		} 
 		
 		// Setting 		
-		_config = new Config();
-		_config.load('opayo');
+		const _config = new Config();
+		await _config.load('opayo');
 		
 		data['setting'] = _config.get('opayo_setting');
 		
@@ -81,7 +85,7 @@ module.exports = class ControllerExtensionPaymentOpayo extends Controller {
 			data['total'] = this.config.get('payment_opayo_total');
 		}
 
-		this.load.model('localisation/order_status');
+		this.load.model('localisation/order_status',this);
 
 		data['order_statuses'] = await this.model_localisation_order_status.getOrderStatuses();
 
@@ -91,7 +95,7 @@ module.exports = class ControllerExtensionPaymentOpayo extends Controller {
 			data['geo_zone_id'] = this.config.get('payment_opayo_geo_zone_id');
 		}
 
-		this.load.model('localisation/geo_zone');
+		this.load.model('localisation/geo_zone',this);
 
 		data['geo_zones'] = await this.model_localisation_geo_zone.getGeoZones();
 
@@ -112,7 +116,7 @@ module.exports = class ControllerExtensionPaymentOpayo extends Controller {
 		}
 
 		if (!data['setting']['cron']['url']) {
-			data['setting']['cron']['url'] = catalog + 'index.php?route=extension/payment/opayo/cron&token=' + data['setting']['cron']['token'];
+			data['setting']['cron']['url'] = catalog + '?route=extension/payment/opayo/cron&token=' + data['setting']['cron']['token'];
 		}
 
 		data['header'] = await this.load.controller('common/header');
@@ -123,20 +127,20 @@ module.exports = class ControllerExtensionPaymentOpayo extends Controller {
 	}
 
 	async install() {
-		this.load.model('extension/payment/opayo');
+		this.load.model('extension/payment/opayo',this);
 		
 		await this.model_extension_payment_opayo.install();
 	}
 
 	async uninstall() {
-		this.load.model('extension/payment/opayo');
+		this.load.model('extension/payment/opayo',this);
 		
 		await this.model_extension_payment_opayo.uninstall();
 	}
 
 	async order() {
 		if (this.config.get('payment_opayo_status')) {
-			this.load.model('extension/payment/opayo');
+			this.load.model('extension/payment/opayo',this);
 
 			opayo_order = await this.model_extension_payment_opayo.getOrder(this.request.get['order_id']);
 
@@ -167,7 +171,7 @@ module.exports = class ControllerExtensionPaymentOpayo extends Controller {
 		json = {};
 
 		if ((this.request.post['order_id'])) {
-			this.load.model('extension/payment/opayo');
+			this.load.model('extension/payment/opayo',this);
 
 			opayo_order = await this.model_extension_payment_opayo.getOrder(this.request.post['order_id']);
 
@@ -203,7 +207,7 @@ module.exports = class ControllerExtensionPaymentOpayo extends Controller {
 		json = {};
 
 		if ((this.request.post['order_id']) && (this.request.post['amount']) && this.request.post['amount'] > 0) {
-			this.load.model('extension/payment/opayo');
+			this.load.model('extension/payment/opayo',this);
 
 			opayo_order = await this.model_extension_payment_opayo.getOrder(this.request.post['order_id']);
 
@@ -250,7 +254,7 @@ module.exports = class ControllerExtensionPaymentOpayo extends Controller {
 		json = {};
 
 		if ((this.request.post['order_id'])) {
-			this.load.model('extension/payment/opayo');
+			this.load.model('extension/payment/opayo',this);
 
 			opayo_order = await this.model_extension_payment_opayo.getOrder(this.request.post['order_id']);
 
@@ -299,7 +303,7 @@ module.exports = class ControllerExtensionPaymentOpayo extends Controller {
 		if ((this.request.get['order_recurring_id'])) {
 			await this.load.language('extension/payment/opayo');
 		
-			this.load.model('sale/recurring');
+			this.load.model('sale/recurring',this);
 			
 			data['order_recurring_id'] = this.request.get['order_recurring_id'];
 
@@ -327,7 +331,7 @@ module.exports = class ControllerExtensionPaymentOpayo extends Controller {
 		if ((this.request.post['order_recurring_id'])) {
 			await this.load.language('extension/payment/opayo');
 			
-			this.load.model('extension/payment/opayo');
+			this.load.model('extension/payment/opayo',this);
 			
 			order_recurring_id = this.request.post['order_recurring_id'];
 			
@@ -346,7 +350,7 @@ module.exports = class ControllerExtensionPaymentOpayo extends Controller {
 		if ((this.request.post['order_recurring_id'])) {
 			await this.load.language('extension/payment/opayo');
 			
-			this.load.model('extension/payment/opayo');
+			this.load.model('extension/payment/opayo',this);
 			
 			order_recurring_id = this.request.post['order_recurring_id'];
 			
@@ -361,7 +365,7 @@ module.exports = class ControllerExtensionPaymentOpayo extends Controller {
 		this.response.setOutput(JSON.stringify(data));
 	}
 
-	private function validate() {
+	async validate() {
 		if (!await this.user.hasPermission('modify', 'extension/payment/opayo')) {
 			this.error['warning'] = this.language.get('error_permission');
 		}

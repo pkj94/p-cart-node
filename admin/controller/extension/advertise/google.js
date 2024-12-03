@@ -7,19 +7,21 @@ const strtolower = require("locutus/php/strings/strtolower");
 const trim = require("locutus/php/strings/trim");
 
 module.exports = class ControllerExtensionAdvertiseGoogle extends Controller {
-
-    error = {};
-    store_id = 0;
-
     constructor(registry) {
         super(registry);
         this.store_id = (this.request.get['store_id']) ? this.request.get['store_id'] : 0;
+        this.error = {};
     }
-
-    async index() {
+    async init() {
         await this.loadStore(this.store_id);
-
-        await this.loadLibrary(this.store_id);
+        const Googleshopping = new (require(DIR_SYSTEM + 'library/googleshopping/googleshopping'))(this.registry, this.store_id);
+        await Googleshopping.init();
+        this.registry.set('googleshopping', Googleshopping);
+        this.googleshopping = Googleshopping;
+    }
+    async index() {
+        const data = {};
+        await this.init();
         await this.load.language('extension/advertise/google');
 
         this.load.model('extension/advertise/google', this);
@@ -31,7 +33,6 @@ module.exports = class ControllerExtensionAdvertiseGoogle extends Controller {
 
         // Even though this should be ran during install, there are known cases of webstores which do not trigger the install method. This is why we run createTables here explicitly.
         await this.model_extension_advertise_google.createTables();
-
         // Fix a missing AUTO_INCREMENT
         await this.model_extension_advertise_google.fixColumns();
 
@@ -39,7 +40,6 @@ module.exports = class ControllerExtensionAdvertiseGoogle extends Controller {
         if (!this.setting.get('advertise_google_checklist_confirmed')) {
             this.response.setRedirect(await this.url.link('extension/advertise/google/checklist', 'store_id=' + this.store_id + '&user_token=' + this.session.data['user_token'], true));
         }
-
         try {
             // If we have not connected, navigate to connect screen
             if (!this.setting.has('advertise_google_access_token')) {
@@ -68,13 +68,13 @@ module.exports = class ControllerExtensionAdvertiseGoogle extends Controller {
             // Pull the campaign reports
             await this.googleshopping.getCampaignReports();
         } catch (e) {
-            this.session.data['error'] = e.getMessage();
+            // console.log('error 111=====',e)
+            this.session.data['error'] = e.toString();
             await this.session.save(this.session.data);
             this.response.setRedirect(await this.url.link('extension/advertise/google/connect', 'store_id=' + this.store_id + '&user_token=' + this.session.data['user_token'], true));
-            this.error['warning'] = e.getMessage();
+            this.error['warning'] = e.toString();
 
         }
-
         if (this.request.server['method'] == 'POST' && await this.validateSettings()) {
             await this.applyNewSettings(this.request.post);
 
@@ -96,7 +96,6 @@ module.exports = class ControllerExtensionAdvertiseGoogle extends Controller {
 
         this.document.setTitle(this.language.get('heading_title'));
 
-        const data = {};
 
         data['text_connected'] = sprintf(this.language.get('text_connected'), this.setting.get('advertise_google_gmc_account_id'));
 
@@ -118,7 +117,6 @@ module.exports = class ControllerExtensionAdvertiseGoogle extends Controller {
             data['success'] = this.session.data['success'];
             delete this.session.data['success'];
         }
-
         const advertised_count = await this.model_extension_advertise_google.getAdvertisedCount(this.store_id);
         const last_cron_executed = this.setting.get('advertise_google_cron_last_executed');
 
@@ -180,25 +178,25 @@ module.exports = class ControllerExtensionAdvertiseGoogle extends Controller {
             data['advertise_google_reporting_interval'] = this.config.get('advertise_google_reporting_intervals_default');
         }
 
-        server = this.googleshopping.getStoreUrl();
-
-        data['advertise_google_cron_command'] = 'export CUSTOM_SERVER_NAME=' + parse_url(server, PHP_URL_HOST) + '; export CUSTOM_SERVER_PORT=443; export ADVERTISE_GOOGLE_CRON=1; export ADVERTISE_GOOGLE_STORE_ID=' + this.store_id + '; ' + PHP_BINDIR + '/php -d session.save_path=' + session_save_path() + ' -d memory_limit=256M ' + DIR_SYSTEM + 'library/googleshopping/cron.php > /dev/null 2> /dev/null';
+        let server = await this.googleshopping.getStoreUrl();
+        const url = new URL(server);
+        data['advertise_google_cron_command'] = 'export CUSTOM_SERVER_NAME=' + url.hostname + '; export CUSTOM_SERVER_PORT=443; export ADVERTISE_GOOGLE_CRON=1; export ADVERTISE_GOOGLE_STORE_ID=' + this.store_id + '; ' + expressPath.dirname(process.execPath) + '/node ' + DIR_SYSTEM + 'library/googleshopping/cron.js > /dev/null 2> /dev/null';
 
         if (!this.setting.get('advertise_google_cron_token')) {
             data['advertise_google_cron_token'] = md5(mt_rand());
         }
 
-        const host_and_uri = parse_url(server, PHP_URL_HOST) + parse_url(server, PHP_URL_PATH);
+        const host_and_uri = url.hostname + url.pathname;
 
-        data['advertise_google_cron_url'] = 'https://' + rtrim(host_and_uri, '/') + '/index.php?route=extension/advertise/google/cron&cron_token={CRON_TOKEN}';
+        data['advertise_google_cron_url'] = 'https://' + rtrim(host_and_uri, '/') + '/?route=extension/advertise/google/cron&cron_token={CRON_TOKEN}';
 
         data['reporting_intervals'] = {};
 
-        for (reporting_intervals of interval) {
+        for (let interval of reporting_intervals) {
             data['reporting_intervals'][interval] = this.language.get('text_reporting_interval_' + interval);
         }
 
-        const campaign_reports = this.setting.get('advertise_google_report_campaigns');
+        const campaign_reports = this.setting.get('advertise_google_report_campaigns') || {};
 
         data['campaigns'] = await this.googleshopping.getTargets(this.store_id);
 
@@ -767,6 +765,7 @@ module.exports = class ControllerExtensionAdvertiseGoogle extends Controller {
     }
 
     async campaign() {
+        await this.init();
         await this.load.language('extension/advertise/google');
 
         this.document.setTitle(this.language.get('heading_campaign'));
@@ -1205,6 +1204,7 @@ module.exports = class ControllerExtensionAdvertiseGoogle extends Controller {
     }
 
     async connect() {
+        await this.init();
         await this.load.language('extension/advertise/google');
 
         this.document.setTitle(this.language.get('heading_title'));
@@ -1237,7 +1237,7 @@ module.exports = class ControllerExtensionAdvertiseGoogle extends Controller {
         data['error'] = '';
 
         if ((this.session.data['error'])) {
-            if (!this.session.data['success'] && await this.getSettingValue('advertise_google_app_id', false) && await this.getSettingValue('advertise_google_app_secret', false)) {
+            if (!this.session.data['success'] && this.getSettingValue('advertise_google_app_id', false) && this.getSettingValue('advertise_google_app_secret', false)) {
                 data['error'] = this.session.data['error'];
             }
             delete this.session.data['error'];
@@ -1281,25 +1281,25 @@ module.exports = class ControllerExtensionAdvertiseGoogle extends Controller {
             'href': await this.url.link('extension/advertise/google/connect', 'store_id=' + this.store_id + '&user_token=' + this.session.data['user_token'], true),
         });
 
-        data['advertise_google_status'] = await this.getSettingValue('advertise_google_status', 1);
-        data['advertise_google_app_id'] = await this.getSettingValue('advertise_google_app_id', '');
-        data['advertise_google_app_secret'] = await this.getSettingValue('advertise_google_app_secret', '');
-        data['advertise_google_cron_email_status'] = await this.getSettingValue('advertise_google_cron_email_status');
-        data['advertise_google_cron_email'] = await this.getSettingValue('advertise_google_cron_email', this.config.get('config_email'));
-        data['advertise_google_cron_token'] = await this.getSettingValue('advertise_google_cron_token');
-        data['advertise_google_cron_acknowledge'] = await this.getSettingValue('advertise_google_cron_acknowledge', null, true);
+        data['advertise_google_status'] = this.getSettingValue('advertise_google_status', 1);
+        data['advertise_google_app_id'] = this.getSettingValue('advertise_google_app_id', '');
+        data['advertise_google_app_secret'] = this.getSettingValue('advertise_google_app_secret', '');
+        data['advertise_google_cron_email_status'] = this.getSettingValue('advertise_google_cron_email_status');
+        data['advertise_google_cron_email'] = this.getSettingValue('advertise_google_cron_email', this.config.get('config_email'));
+        data['advertise_google_cron_token'] = this.getSettingValue('advertise_google_cron_token');
+        data['advertise_google_cron_acknowledge'] = this.getSettingValue('advertise_google_cron_acknowledge', null, true);
 
         let server = await this.googleshopping.getStoreUrl();
-
-        data['advertise_google_cron_command'] = 'export CUSTOM_SERVER_NAME=' + parse_url(server, PHP_URL_HOST) + '; export CUSTOM_SERVER_PORT=443; export ADVERTISE_GOOGLE_CRON=1; export ADVERTISE_GOOGLE_STORE_ID=' + this.store_id + '; ' + PHP_BINDIR + '/php -d session.save_path=' + session_save_path() + ' -d memory_limit=256M ' + DIR_SYSTEM + 'library/googleshopping/cron.php > /dev/null 2> /dev/null';
+        let url = new URL(server)
+        data['advertise_google_cron_command'] = 'export CUSTOM_SERVER_NAME=' + url.hostname + '; export CUSTOM_SERVER_PORT=443; export ADVERTISE_GOOGLE_CRON=1; export ADVERTISE_GOOGLE_STORE_ID=' + this.store_id + '; /node ' + DIR_SYSTEM + 'library/googleshopping/cron.js > /dev/null 2> /dev/null';
 
         if (!this.setting.get('advertise_google_cron_token')) {
             data['advertise_google_cron_token'] = md5(mt_rand());
         }
 
-        let host_and_uri = parse_url(server, PHP_URL_HOST) + dirname(parse_url(server, PHP_URL_PATH));
+        let host_and_uri = url.host + expressPath.dirname(url.pathname);
 
-        data['advertise_google_cron_url'] = 'https://' + rtrim(host_and_uri, '/') + '/index.php?route=extension/advertise/google/cron&cron_token={CRON_TOKEN}';
+        data['advertise_google_cron_url'] = 'https://' + rtrim(host_and_uri, '/') + '/?route=extension/advertise/google/cron&cron_token={CRON_TOKEN}';
 
         data['header'] = await this.load.controller('common/header');
         data['column_left'] = await this.load.controller('common/column_left');
@@ -1318,6 +1318,7 @@ module.exports = class ControllerExtensionAdvertiseGoogle extends Controller {
     }
 
     async disconnect() {
+        await this.init();
         await this.load.language('extension/advertise/google');
 
         if (await this.validatePermission()) {
@@ -1326,8 +1327,8 @@ module.exports = class ControllerExtensionAdvertiseGoogle extends Controller {
 
                 await this.googleshopping.disconnect();
 
-                for (this.googleshopping.getTargets(this.store_id) of target) {
-                    this.googleshopping.deleteTarget(target['target_id']);
+                for (let target of this.googleshopping.getTargets(this.store_id)) {
+                    await this.googleshopping.deleteTarget(target['target_id']);
                 }
 
                 let setting = await this.model_setting_setting.getSetting('advertise_google', this.store_id);
@@ -1361,6 +1362,7 @@ module.exports = class ControllerExtensionAdvertiseGoogle extends Controller {
     }
 
     async checklist() {
+        await this.init();
         await this.load.language('extension/advertise/google');
 
         this.document.setTitle(this.language.get('heading_title'));
@@ -2107,5 +2109,15 @@ module.exports = class ControllerExtensionAdvertiseGoogle extends Controller {
         }
 
         return Object.keys(this.error).length ? false : true
+    }
+    async loadStore(store_id) {
+        this.registry.set('setting', new Config());
+
+        this.load.model('setting/setting', this);
+        let settings = await this.model_setting_setting.getSetting('advertise_google', store_id);
+        if (settings)
+            for (let [key, value] of Object.entries(settings)) {
+                this.setting.set(key, value);
+            }
     }
 }

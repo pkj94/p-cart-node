@@ -3,16 +3,16 @@ module.exports = class ControllerExtensionPaymentKlarnaInvoice extends Controlle
 	pclasses = {};
 
 	async index() {
+		const data = {};
 		await this.load.language('extension/payment/klarna_invoice');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('setting/setting',this);
+		this.load.model('setting/setting', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validate()) {
-			status = false;
-
-			for (this.request.post['payment_klarna_invoice'] of klarna_invoice) {
+			let status = false;
+			for (let [code, klarna_invoice] of Object.entries(this.request.post['payment_klarna_invoice'])) {
 				if (klarna_invoice['status']) {
 					status = true;
 
@@ -20,14 +20,15 @@ module.exports = class ControllerExtensionPaymentKlarnaInvoice extends Controlle
 				}
 			}
 
-			klarna_data = array(
-				'klarna_invoice_pclasses' : this.pclasses,
-				'klarna_invoice_status'   : status
-			});
+			let klarna_data = {
+				'klarna_invoice_pclasses': this.pclasses,
+				'klarna_invoice_status': status
+			};
 
-			await this.model_setting_setting.editSetting('payment_klarna_invoice', array_merge(this.request.post, klarna_data));
+			await this.model_setting_setting.editSetting('payment_klarna_invoice', { ...this.request.post, ...klarna_data });
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true));
 		}
@@ -41,7 +42,7 @@ module.exports = class ControllerExtensionPaymentKlarnaInvoice extends Controlle
 		if ((this.session.data['success'])) {
 			data['success'] = this.session.data['success'];
 
-			delete this.session.data['success']);
+			delete this.session.data['success'];
 		} else {
 			data['success'] = '';
 		}
@@ -49,54 +50,54 @@ module.exports = class ControllerExtensionPaymentKlarnaInvoice extends Controlle
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_extension'),
-			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true)
+			'text': this.language.get('text_extension'),
+			'href': await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('extension/payment/klarna_invoice', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('extension/payment/klarna_invoice', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['action'] = await this.url.link('extension/payment/klarna_invoice', 'user_token=' + this.session.data['user_token'], true);
 
 		data['cancel'] = await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true);
 
-		data['countries'] = {};
+		data['countries'] = [];
 
 		data['countries'].push({
-			'name' : this.language.get('text_germany'),
-			'code' : 'DEU'
+			'name': this.language.get('text_germany'),
+			'code': 'DEU'
 		});
 
 		data['countries'].push({
-			'name' : this.language.get('text_netherlands'),
-			'code' : 'NLD'
+			'name': this.language.get('text_netherlands'),
+			'code': 'NLD'
 		});
 
 		data['countries'].push({
-			'name' : this.language.get('text_denmark'),
-			'code' : 'DNK'
+			'name': this.language.get('text_denmark'),
+			'code': 'DNK'
 		});
 
 		data['countries'].push({
-			'name' : this.language.get('text_sweden'),
-			'code' : 'SWE'
+			'name': this.language.get('text_sweden'),
+			'code': 'SWE'
 		});
 
 		data['countries'].push({
-			'name' : this.language.get('text_norway'),
-			'code' : 'NOR'
+			'name': this.language.get('text_norway'),
+			'code': 'NOR'
 		});
 
 		data['countries'].push({
-			'name' : this.language.get('text_finland'),
-			'code' : 'FIN'
+			'name': this.language.get('text_finland'),
+			'code': 'FIN'
 		});
 
 		if ((this.request.post['payment_klarna_invoice'])) {
@@ -105,18 +106,18 @@ module.exports = class ControllerExtensionPaymentKlarnaInvoice extends Controlle
 			data['payment_klarna_invoice'] = this.config.get('payment_klarna_invoice');
 		}
 
-		this.load.model('localisation/geo_zone');
+		this.load.model('localisation/geo_zone', this);
 
 		data['geo_zones'] = await this.model_localisation_geo_zone.getGeoZones();
 
-		this.load.model('localisation/order_status');
+		this.load.model('localisation/order_status', this);
 
 		data['order_statuses'] = await this.model_localisation_order_status.getOrderStatuses();
 
-		file = DIR_LOGS + 'klarna_invoice.log';
+		let file = DIR_LOGS + 'klarna_invoice.log';
 
-		if (file_exists(file)) {
-			data['log'] = file_get_contents(file, FILE_USE_INCLUDE_PATH, null);
+		if (is_file(file)) {
+			data['log'] = fs.readFileSync(file);
 		} else {
 			data['log'] = '';
 		}
@@ -130,71 +131,48 @@ module.exports = class ControllerExtensionPaymentKlarnaInvoice extends Controlle
 		this.response.setOutput(await this.load.view('extension/payment/klarna_invoice', data));
 	}
 
-	private function validate() {
+	async validate() {
 		if (!await this.user.hasPermission('modify', 'extension/payment/klarna_invoice')) {
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 
-	private function parseResponse(node, document) {
-		child = node;
-
-		switch (child.nodeName) {
+	parseResponse(node, document) {
+		let value;
+		switch (node.name) {
 			case 'string':
-				value = child.nodeValue;
+				value = node._;
 				break;
-
 			case 'boolean':
-				value = child.nodeValue;
-
-				if (value == '0') {
-					value = false;
-				} else if (value == '1') {
-					value = true;
-				} else {
-					value = null;
-				}
-
+				value = node._ === '1';
 				break;
-
 			case 'integer':
 			case 'int':
 			case 'i4':
 			case 'i8':
-				value = child.nodeValue;
+				value = parseInt(node._, 10);
 				break;
-
 			case 'array':
-				value = {};
-
-				xpath = new DOMXPath(document);
-				entries = xpath.query('.//array/data/value', child);
-
-				for (i = 0; i < entries.length; i++) {
-					value.push(this.parseResponse(entries.item(i).firstChild, document);
-				}
-
+				value = [];
+				node.data.value.forEach((childNode) => {
+					value.push(this.parseResponse(childNode, document));
+				});
 				break;
-
-			default:
-				value = null;
-		}
-
-		return value;
+			default: value = null;
+		} return value;
 	}
 
 	async clear() {
 		await this.load.language('extension/payment/klarna_invoice');
 
-		file = DIR_LOGS + 'klarna_invoice.log';
+		let file = DIR_LOGS + 'klarna_invoice.log';
 
-		handle = fopen(file, 'w+');
-
-		fclose(handle);
+		fs.weriteFileSync(file, '');
 
 		this.session.data['success'] = this.language.get('text_success');
+		await this.session.save(this.session.data);
 
 		this.response.setRedirect(await this.url.link('extension/payment/klarna_invoice', 'user_token=' + this.session.data['user_token'], true));
 	}

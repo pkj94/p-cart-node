@@ -2,6 +2,7 @@ module.exports = class ControllerExtensionModuleLaybuyLayout extends Controller 
 	error = {};
 
 	async index() {
+const data = {};
 		this.load.model('setting/setting',this);
 
 		await this.load.language('extension/module/laybuy_layout');
@@ -12,6 +13,7 @@ module.exports = class ControllerExtensionModuleLaybuyLayout extends Controller 
 			await this.model_setting_setting.editSetting('module_laybuy_layout', this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=module', true));
 		}

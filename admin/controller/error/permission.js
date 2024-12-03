@@ -1,5 +1,6 @@
 module.exports = class ControllerErrorPermission extends Controller {
 	async index() {
+const data = {};
 		await this.load.language('error/permission');
 
 		this.document.setTitle(this.language.get('heading_title'));

@@ -2,14 +2,14 @@ module.exports = class ModelLocalisationCurrency extends Model {
 	async addCurrency(data) {
 		await this.db.query("INSERT INTO " + DB_PREFIX + "currency SET title = '" + this.db.escape(data['title']) + "', code = '" + this.db.escape(data['code']) + "', symbol_left = '" + this.db.escape(data['symbol_left']) + "', symbol_right = '" + this.db.escape(data['symbol_right']) + "', decimal_place = '" + this.db.escape(data['decimal_place']) + "', value = '" + this.db.escape(data['value']) + "', status = '" + data['status'] + "', date_modified = NOW()");
 
-		currency_id = this.db.getLastId();
+		const currency_id = this.db.getLastId();
 
 		if (this.config.get('config_currency_auto')) {
-			this.refresh();
+			await this.refresh();
 		}
 
 		await this.cache.delete('currency');
-		
+
 		return currency_id;
 	}
 
@@ -38,7 +38,7 @@ module.exports = class ModelLocalisationCurrency extends Model {
 	}
 
 	async getCurrencies(data = {}) {
-		if (data) {
+		if (Object.keys(data).length) {
 			let sql = "SELECT * FROM " + DB_PREFIX + "currency";
 
 			let sort_data = [
@@ -46,7 +46,7 @@ module.exports = class ModelLocalisationCurrency extends Model {
 				'code',
 				'value',
 				'date_modified'
-			});
+			];
 
 			if ((data['sort']) && sort_data.includes(data['sort'])) {
 				sql += " ORDER BY " + data['sort'];
@@ -61,13 +61,13 @@ module.exports = class ModelLocalisationCurrency extends Model {
 			}
 
 			if ((data['start']) || (data['limit'])) {
-				data['start'] = data['start']||0;
-if (data['start'] < 0) {
+				data['start'] = data['start'] || 0;
+				if (data['start'] < 0) {
 					data['start'] = 0;
 				}
 
-				data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+				data['limit'] = data['limit'] || 20;
+				if (data['limit'] < 1) {
 					data['limit'] = 20;
 				}
 
@@ -78,22 +78,22 @@ if (data['limit'] < 1) {
 
 			return query.rows;
 		} else {
-			currency_data = {};
+			let currency_data = {};
 
 			const query = await this.db.query("SELECT * FROM " + DB_PREFIX + "currency ORDER BY title ASC");
 
-			for (let result of query.rows ) {
-				currency_data[result['code']] = array(
-					'currency_id'   : result['currency_id'],
-					'title'         : result['title'],
-					'code'          : result['code'],
-					'symbol_left'   : result['symbol_left'],
-					'symbol_right'  : result['symbol_right'],
-					'decimal_place' : result['decimal_place'],
-					'value'         : result['value'],
-					'status'        : result['status'],
-					'date_modified' : result['date_modified']
-				});
+			for (let result of query.rows) {
+				currency_data[result['code']] = {
+					'currency_id': result['currency_id'],
+					'title': result['title'],
+					'code': result['code'],
+					'symbol_left': result['symbol_left'],
+					'symbol_right': result['symbol_right'],
+					'decimal_place': result['decimal_place'],
+					'value': result['value'],
+					'status': result['status'],
+					'date_modified': result['date_modified']
+				};
 			}
 
 			return currency_data;
@@ -101,10 +101,10 @@ if (data['limit'] < 1) {
 	}
 
 	async refresh() {
-		config_currency_engine = this.config.get('config_currency_engine');
+		const config_currency_engine = this.config.get('config_currency_engine');
 		if (config_currency_engine) {
-			this.load.model('extension/currency/'.config_currency_engine);
-			this.{'model_extension_currency_'.config_currency_engine}.refresh();
+			this.load.model('extension/currency/' + config_currency_engine, this);
+			await this['model_extension_currency_'.config_currency_engine].refresh();
 		}
 	}
 

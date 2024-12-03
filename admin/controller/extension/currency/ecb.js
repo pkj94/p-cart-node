@@ -13,6 +13,7 @@ module.exports = class ControllerExtensionCurrencyEcb extends Controller {
 		if ((this.request.server['method'] == 'POST') && await this.validate()) {
 			await this.model_setting_setting.editSetting('currency_ecb', this.request.post);
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 			this.response.setRedirect(await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=currency', true));
 		}
 

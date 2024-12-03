@@ -30,7 +30,7 @@ module.exports = class Action {
 
         const file = expressPath.join(DIR_APPLICATION, 'controller', `${this.route}.js`);
         // console.log('====', file, this)
-        const className = `Controller${this.route.replace(/[^a-zA-Z0-9]/g, '')}`;
+        // const className = `Controller${this.route.replace(/[^a-zA-Z0-9]/g, '')}`;
 
         // Initialize the class
         if (fs.existsSync(file)) {
@@ -40,7 +40,8 @@ module.exports = class Action {
             if (typeof controller[this.method] === 'function') {
                 return controller[this.method](...args);
             } else {
-                throw new Error(`Error: Could not call ${this.route}/${this.method}!`);
+                console.log(`Error: Could not call ${this.route}/${this.method}!`)
+                // throw new Error(`Error: Could not call ${this.route}/${this.method}!`);
             }
         } else {
             throw new Error(`Error: Could not call ${this.route}/${this.method}!`);

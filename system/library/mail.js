@@ -1,71 +1,135 @@
+/**
+ * @package		OpenCart
+ * @author		Daniel Kerr
+ * @copyright	Copyright (c) 2005 - 2017, OpenCart, Ltd. (https://www.opencart.com/)
+ * @license		https://opensource.org/licenses/GPL-3.0
+ * @link		https://www.opencart.com
+*/
+
+/**
+* Mail class
+*/
 module.exports = class Mail {
-    constructor(adaptor = 'mail', option = {}) {
-        let className = 'Opencart\System\Library\Mail' + ucfirst(adaptor);
 
+
+    /**
+     * Constructor
+     *
+     * @param	string	adaptor
+     *
+      */
+    constructor(adaptor = 'mail') {
+        let className = 'Mail' + ucfirst(adaptor);
         if (global[className]) {
-            this.option = option;
-            this.adaptor = new global[className](option);
+            this.adaptor = new global[className]();
+            this.attachments = [];
         } else {
-            throw new Error(`Error: Could not load template adaptor ${adaptor}!`);
+            throw new Error(`Error: Could not load mail adaptor ${adaptor}!`);
         }
+
     }
 
-    setTo(to) {
-        this.option.to = to;
+    /**
+     * 
+     *
+     * @param	mixed	to
+     */
+    async setTo(to) {
+        this.to = to;
     }
 
-    setFrom(from) {
-        this.option.from = from;
+    /**
+     * 
+     *
+     * @param	string	from
+     */
+    async setFrom(from) {
+        this.from = from;
     }
 
-    setSender(sender) {
-        this.option.sender = sender;
+    /**
+     * 
+     *
+     * @param	string	sender
+     */
+    async setSender(sender) {
+        this.sender = sender;
     }
 
-    setReplyTo(reply_to) {
-        this.option.reply_to = reply_to;
+    /**
+     * 
+     *
+     * @param	string	reply_to
+     */
+    async setReplyTo(reply_to) {
+        this.reply_to = reply_to;
     }
 
-    setSubject(subject) {
-        this.option.subject = subject;
+    /**
+     * 
+     *
+     * @param	string	subject
+     */
+    async setSubject(subject) {
+        this.subject = subject;
     }
 
-    setText(text) {
-        this.option.text = text;
+    /**
+     * 
+     *
+     * @param	string	text
+     */
+    async setText(text) {
+        this.text = text;
     }
 
-    setHtml(html) {
-        this.option.html = html;
+    /**
+     * 
+     *
+     * @param	string	html
+     */
+    async setHtml(html) {
+        this.html = html;
     }
 
-    addAttachment(filename) {
-        this.option.attachments = this.option.attachments || [];
-        this.option.attachments.push(filename);
+    /**
+     * 
+     *
+     * @param	string	filename
+     */
+    async addAttachment(filename) {
+        this.attachments.push(filename);
     }
 
-    send() {
-        if (!this.option.to) {
+    /**
+     * 
+     *
+     */
+    async send() {
+        if (!this.to) {
             throw new Error('Error: E-Mail to required!');
         }
 
-        if (!this.option.from) {
+        if (!this.from) {
             throw new Error('Error: E-Mail from required!');
         }
 
-        if (!this.option.sender) {
+        if (!this.sender) {
             throw new Error('Error: E-Mail sender required!');
         }
 
-        if (!this.option.subject) {
+        if (!this.subject) {
             throw new Error('Error: E-Mail subject required!');
         }
 
-        if (!this.option.text && !this.option.html) {
+        if ((!this.text) && (!this.html)) {
             throw new Error('Error: E-Mail message required!');
         }
 
-        return this.adaptor.send();
+        for (let [key, value] of Object.entries(this)) {
+            this.adaptor.key = value;
+        }
+
+        await this.adaptor.send();
     }
 }
-
-

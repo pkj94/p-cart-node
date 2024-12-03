@@ -1,58 +1,45 @@
+const str_replace = require('locutus/php/strings/str_replace');
+
 module.exports = class ControllerMarketplaceMarketplace extends Controller {
 	async index() {
+		const data = {};
 		await this.load.language('marketplace/marketplace');
 
 		this.document.setTitle(this.language.get('heading_title'));
-
+		let filter_search = '';
 		if ((this.request.get['filter_search'])) {
 			filter_search = this.request.get['filter_search'];
-		} else {
-			filter_search = '';
 		}
-
+		let filter_category = '';
 		if ((this.request.get['filter_category'])) {
 			filter_category = this.request.get['filter_category'];
-		} else {
-			filter_category = '';
 		}
-
+		let filter_license = '';
 		if ((this.request.get['filter_license'])) {
 			filter_license = this.request.get['filter_license'];
-		} else {
-			filter_license = '';
 		}
-
+		let filter_rating = '';
 		if ((this.request.get['filter_rating'])) {
 			filter_rating = this.request.get['filter_rating'];
-		} else {
-			filter_rating = '';
 		}
-
+		let filter_member_type = '';
 		if ((this.request.get['filter_member_type'])) {
 			filter_member_type = this.request.get['filter_member_type'];
-		} else {
-			filter_member_type = '';
 		}
-
+		let filter_member = '';
 		if ((this.request.get['filter_member'])) {
 			filter_member = this.request.get['filter_member'];
-		} else {
-			filter_member = '';
 		}
-
+		let sort = 'date_modified';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
-		} else {
-			sort = 'date_modified';
 		}
-
+		let page = 1;
 		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['filter_search'])) {
 			url += '&filter_search=' + this.request.get['filter_search'];
@@ -89,31 +76,31 @@ module.exports = class ControllerMarketplaceMarketplace extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('marketplace/marketplace', 'user_token=' + this.session.data['user_token'] + url, true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('marketplace/marketplace', 'user_token=' + this.session.data['user_token'] + url, true)
 		});
-		
-		time = time();
-		
+
+		let time = new Date().getTime() / 1000;
+
 		// We create a hash from the data in a similar method to how amazon does things.
-		string  = 'marketplace/api/list' + "\n";
-		string += this.config.get('opencart_username') + "\n";
-		string += this.request.server['HTTP_HOST'] + "\n";
+		let string = 'marketplace/api/list' + "\n";
+		string += this.config.get('opencart_username')||'' + "\n";
+		string += this.request.server['host'] + "\n";
 		string += VERSION + "\n";
 		string += time + "\n";
+		// console.log(this.config.get('opencart_secret'))
+		let signature = hash_hmac('sha1', string, this.config.get('opencart_secret'), 1).toString('base64');
 
-		signature = base64_encode(hash_hmac('sha1', string, this.config.get('opencart_secret'), 1));
-
-		url  = '&username=' + encodeURIComponent(this.config.get('opencart_username'));
-		url += '&domain=' + this.request.server['HTTP_HOST'];
+		url = '&username=' + encodeURIComponent(this.config.get('opencart_username')||'');
+		url += '&domain=' + this.request.server['host'];
 		url += '&version=' + encodeURIComponent(VERSION);
 		url += '&time=' + time;
-		url += '&signature=' + rawencodeURIComponent(signature);
+		url += '&signature=' + encodeURIComponent(signature);
 
 		if ((this.request.get['filter_search'])) {
 			url += '&filter_search=' + encodeURIComponent(this.request.get['filter_search']);
@@ -146,26 +133,18 @@ module.exports = class ControllerMarketplaceMarketplace extends Controller {
 		if ((this.request.get['page'])) {
 			url += '&page=' + this.request.get['page'];
 		}
+		// console.log(OPENCART_SERVER + 'index.php?route=marketplace/api' + url);
+		const curl = await fetch(OPENCART_SERVER + 'index.php?route=marketplace/api' + url).then(response => response.json());
+		// console.log(curl)
 
-		curl = curl_init(OPENCART_SERVER + 'index.php?route=marketplace/api' + url);
+		const response = curl.data;
 
-		curl_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0);
-		curl_setopt(curl, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt(curl, CURLOPT_FORBID_REUSE, 1);
-		curl_setopt(curl, CURLOPT_FRESH_CONNECT, 1);
-		curl_setopt(curl, CURLOPT_POST, 1);
 
-		response = curl_exec(curl);
+		const response_info = typeof response == 'string' ? JSON.parse(response) : response;
 
-		status = curl_getinfo(curl, CURLINFO_HTTP_CODE);
+		const extension_total = response_info['extension_total'] ?? 0;
 
-		curl_close(curl);
-
-		response_info = JSON.parse(response, true);
-
-		extension_total = response_info['extension_total'] ?? 0;
-
-		url  = '';
+		url = '';
 
 		if ((this.request.get['filter_search'])) {
 			url += '&filter_search=' + this.request.get['filter_search'];
@@ -199,36 +178,36 @@ module.exports = class ControllerMarketplaceMarketplace extends Controller {
 			url += '&page=' + this.request.get['page'];
 		}
 
-		data['promotions'] = {};
+		data['promotions'] = [];
 
 		if ((response_info['promotions']) && response_info['promotions'] && page == 1) {
-			for (response_info['promotions'] of result) {
+			for (let result of response_info['promotions']) {
 				data['promotions'].push({
-					'name'         : result['name'],
-					'description'  : result['description'],
-					'image'        : result['image'],
-					'license'      : result['license'],
-					'price'        : result['price'],
-					'rating'       : result['rating'],
-					'rating_total' : result['rating_total'],
-					'href'         : await this.url.link('marketplace/marketplace/info', 'user_token=' + this.session.data['user_token'] + '&extension_id=' + result['extension_id'] + url, true)
+					'name': result['name'],
+					'description': result['description'],
+					'image': result['image'],
+					'license': result['license'],
+					'price': result['price'],
+					'rating': result['rating'],
+					'rating_total': result['rating_total'],
+					'href': await this.url.link('marketplace/marketplace/info', 'user_token=' + this.session.data['user_token'] + '&extension_id=' + result['extension_id'] + url, true)
 				});
 			}
 		}
 
-		data['extensions'] = {};
+		data['extensions'] = [];
 
 		if ((response_info['extensions']) && response_info['extensions']) {
-			for (response_info['extensions'] of result) {
+			for (let result of response_info['extensions']) {
 				data['extensions'].push({
-					'name'         : result['name'],
-					'description'  : result['description'],
-					'image'        : result['image'],
-					'license'      : result['license'],
-					'price'        : result['price'],
-					'rating'       : result['rating'],
-					'rating_total' : result['rating_total'],
-					'href'         : await this.url.link('marketplace/marketplace/info', 'user_token=' + this.session.data['user_token'] + '&extension_id=' + result['extension_id'] + url, true)
+					'name': result['name'],
+					'description': result['description'],
+					'image': result['image'],
+					'license': result['license'],
+					'price': result['price'],
+					'rating': result['rating'],
+					'rating_total': result['rating_total'],
+					'href': await this.url.link('marketplace/marketplace/info', 'user_token=' + this.session.data['user_token'] + '&extension_id=' + result['extension_id'] + url, true)
 				});
 			}
 		}
@@ -268,72 +247,72 @@ module.exports = class ControllerMarketplaceMarketplace extends Controller {
 			url += '&sort=' + this.request.get['sort'];
 		}
 
-		data['categories'] = {};
+		data['categories'] = [];
 
 		data['categories'].push({
-			'text'  : this.language.get('text_all'),
-			'value' : '',
-			'href'  : await this.url.link('marketplace/marketplace', 'user_token=' + this.session.data['user_token'] + url, true)
+			'text': this.language.get('text_all'),
+			'value': '',
+			'href': await this.url.link('marketplace/marketplace', 'user_token=' + this.session.data['user_token'] + url, true)
 		});
 
 		data['categories'].push({
-			'text'  : this.language.get('text_theme'),
-			'value' : 'theme',
-			'href'  : await this.url.link('marketplace/marketplace', 'user_token=' + this.session.data['user_token'] + '&filter_category=theme' + url, true)
+			'text': this.language.get('text_theme'),
+			'value': 'theme',
+			'href': await this.url.link('marketplace/marketplace', 'user_token=' + this.session.data['user_token'] + '&filter_category=theme' + url, true)
 		});
 
 		data['categories'].push({
-			'text'  : this.language.get('text_marketplace'),
-			'value' : 'marketplace',
-			'href'  : await this.url.link('marketplace/marketplace', 'user_token=' + this.session.data['user_token'] + '&filter_category=marketplace' + url, true)
+			'text': this.language.get('text_marketplace'),
+			'value': 'marketplace',
+			'href': await this.url.link('marketplace/marketplace', 'user_token=' + this.session.data['user_token'] + '&filter_category=marketplace' + url, true)
 		});
 
 		data['categories'].push({
-			'text'  : this.language.get('text_language'),
-			'value' : 'language',
-			'href'  : await this.url.link('marketplace/marketplace', 'user_token=' + this.session.data['user_token'] + '&filter_category=language' + url, true)
+			'text': this.language.get('text_language'),
+			'value': 'language',
+			'href': await this.url.link('marketplace/marketplace', 'user_token=' + this.session.data['user_token'] + '&filter_category=language' + url, true)
 		});
 
 		data['categories'].push({
-			'text'  : this.language.get('text_payment'),
-			'value' : 'payment',
-			'href'  : await this.url.link('marketplace/marketplace', 'user_token=' + this.session.data['user_token'] + '&filter_category=payment' + url, true)
+			'text': this.language.get('text_payment'),
+			'value': 'payment',
+			'href': await this.url.link('marketplace/marketplace', 'user_token=' + this.session.data['user_token'] + '&filter_category=payment' + url, true)
 		});
 
 		data['categories'].push({
-			'text'  : this.language.get('text_shipping'),
-			'value' : 'shipping',
-			'href'  : await this.url.link('marketplace/marketplace', 'user_token=' + this.session.data['user_token'] + '&filter_category=shipping' + url, true)
+			'text': this.language.get('text_shipping'),
+			'value': 'shipping',
+			'href': await this.url.link('marketplace/marketplace', 'user_token=' + this.session.data['user_token'] + '&filter_category=shipping' + url, true)
 		});
 
 		data['categories'].push({
-			'text'  : this.language.get('text_module'),
-			'value' : 'module',
-			'href'  : await this.url.link('marketplace/marketplace', 'user_token=' + this.session.data['user_token'] + '&filter_category=module' + url, true)
+			'text': this.language.get('text_module'),
+			'value': 'module',
+			'href': await this.url.link('marketplace/marketplace', 'user_token=' + this.session.data['user_token'] + '&filter_category=module' + url, true)
 		});
 
 		data['categories'].push({
-			'text'  : this.language.get('text_total'),
-			'value' : 'total',
-			'href'  : await this.url.link('marketplace/marketplace', 'user_token=' + this.session.data['user_token'] + '&filter_category=total' + url, true)
+			'text': this.language.get('text_total'),
+			'value': 'total',
+			'href': await this.url.link('marketplace/marketplace', 'user_token=' + this.session.data['user_token'] + '&filter_category=total' + url, true)
 		});
 
 		data['categories'].push({
-			'text'  : this.language.get('text_feed'),
-			'value' : 'feed',
-			'href'  : await this.url.link('marketplace/marketplace', 'user_token=' + this.session.data['user_token'] + '&filter_category=feed' + url, true)
+			'text': this.language.get('text_feed'),
+			'value': 'feed',
+			'href': await this.url.link('marketplace/marketplace', 'user_token=' + this.session.data['user_token'] + '&filter_category=feed' + url, true)
 		});
 
 		data['categories'].push({
-			'text'  : this.language.get('text_report'),
-			'value' : 'report',
-			'href'  : await this.url.link('marketplace/marketplace', 'user_token=' + this.session.data['user_token'] + '&filter_category=report' + url, true)
+			'text': this.language.get('text_report'),
+			'value': 'report',
+			'href': await this.url.link('marketplace/marketplace', 'user_token=' + this.session.data['user_token'] + '&filter_category=report' + url, true)
 		});
 
 		data['categories'].push({
-			'text'  : this.language.get('text_other'),
-			'value' : 'other',
-			'href'  : await this.url.link('marketplace/marketplace', 'user_token=' + this.session.data['user_token'] + '&filter_category=other' + url, true)
+			'text': this.language.get('text_other'),
+			'value': 'other',
+			'href': await this.url.link('marketplace/marketplace', 'user_token=' + this.session.data['user_token'] + '&filter_category=other' + url, true)
 		});
 
 		// Licenses
@@ -367,31 +346,31 @@ module.exports = class ControllerMarketplaceMarketplace extends Controller {
 			url += '&page=' + this.request.get['page'];
 		}
 
-		data['licenses'] = {};
+		data['licenses'] = [];
 
 		data['licenses'].push({
-			'text'  : this.language.get('text_all'),
-			'value' : '',
-			'href'  : await this.url.link('marketplace/marketplace', 'user_token=' + this.session.data['user_token'] + url, true)
+			'text': this.language.get('text_all'),
+			'value': '',
+			'href': await this.url.link('marketplace/marketplace', 'user_token=' + this.session.data['user_token'] + url, true)
 		});
 
 		data['licenses'].push({
-			'text'  : this.language.get('text_free'),
-			'value' : 'free',
-			'href'  : await this.url.link('marketplace/marketplace', 'user_token=' + this.session.data['user_token'] + '&filter_license=free' + url, true)
+			'text': this.language.get('text_free'),
+			'value': 'free',
+			'href': await this.url.link('marketplace/marketplace', 'user_token=' + this.session.data['user_token'] + '&filter_license=free' + url, true)
 		});
 
 		data['licenses'].push({
-			'text'  : this.language.get('text_paid'),
-			'value' : 'paid',
-			'href'  : await this.url.link('marketplace/marketplace', 'user_token=' + this.session.data['user_token'] + '&filter_license=paid' + url, true)
+			'text': this.language.get('text_paid'),
+			'value': 'paid',
+			'href': await this.url.link('marketplace/marketplace', 'user_token=' + this.session.data['user_token'] + '&filter_license=paid' + url, true)
 		});
 
 
 		data['licenses'].push({
-			'text'  : this.language.get('text_purchased'),
-			'value' : 'purchased',
-			'href'  : await this.url.link('marketplace/marketplace', 'user_token=' + this.session.data['user_token'] + '&filter_license=purchased' + url, true)
+			'text': this.language.get('text_purchased'),
+			'value': 'purchased',
+			'href': await this.url.link('marketplace/marketplace', 'user_token=' + this.session.data['user_token'] + '&filter_license=purchased' + url, true)
 		});
 
 		// Sort
@@ -421,37 +400,37 @@ module.exports = class ControllerMarketplaceMarketplace extends Controller {
 			url += '&filter_member=' + this.request.get['filter_member'];
 		}
 
-		data['sorts'] = {};
+		data['sorts'] = [];
 
 		data['sorts'].push({
-			'text'  : this.language.get('text_date_modified'),
-			'value' : 'date_modified',
-			'href'  : await this.url.link('marketplace/marketplace', 'user_token=' + this.session.data['user_token'] + url + '&sort=date_modified')
+			'text': this.language.get('text_date_modified'),
+			'value': 'date_modified',
+			'href': await this.url.link('marketplace/marketplace', 'user_token=' + this.session.data['user_token'] + url + '&sort=date_modified')
 		});
 
 		data['sorts'].push({
-			'text'  : this.language.get('text_date_added'),
-			'value' : 'date_added',
-			'href'  : await this.url.link('marketplace/marketplace', 'user_token=' + this.session.data['user_token'] + url + '&sort=date_added')
+			'text': this.language.get('text_date_added'),
+			'value': 'date_added',
+			'href': await this.url.link('marketplace/marketplace', 'user_token=' + this.session.data['user_token'] + url + '&sort=date_added')
 		});
 
 		data['sorts'].push({
-			'text'  : this.language.get('text_rating'),
-			'value' : 'rating',
-			'href'  : await this.url.link('marketplace/marketplace', 'user_token=' + this.session.data['user_token'] + url + '&sort=rating')
+			'text': this.language.get('text_rating'),
+			'value': 'rating',
+			'href': await this.url.link('marketplace/marketplace', 'user_token=' + this.session.data['user_token'] + url + '&sort=rating')
 		});
 
 
 		data['sorts'].push({
-			'text'  : this.language.get('text_name'),
-			'value' : 'name',
-			'href'  : await this.url.link('marketplace/marketplace', 'user_token=' + this.session.data['user_token'] + url + '&sort=name')
+			'text': this.language.get('text_name'),
+			'value': 'name',
+			'href': await this.url.link('marketplace/marketplace', 'user_token=' + this.session.data['user_token'] + url + '&sort=name')
 		});
 
 		data['sorts'].push({
-			'text'  : this.language.get('text_price'),
-			'value' : 'price',
-			'href'  : await this.url.link('marketplace/marketplace', 'user_token=' + this.session.data['user_token'] + url + '&sort=price')
+			'text': this.language.get('text_price'),
+			'value': 'price',
+			'href': await this.url.link('marketplace/marketplace', 'user_token=' + this.session.data['user_token'] + url + '&sort=price')
 		});
 
 		// Pagination
@@ -485,7 +464,7 @@ module.exports = class ControllerMarketplaceMarketplace extends Controller {
 			url += '&sort=' + this.request.get['sort'];
 		}
 
-		pagination = new Pagination();
+		const pagination = new Pagination();
 		pagination.total = extension_total;
 		pagination.page = page;
 		pagination.limit = 12;
@@ -508,46 +487,37 @@ module.exports = class ControllerMarketplaceMarketplace extends Controller {
 	}
 
 	async info() {
+		const data = {};
+		let extension_id = 0;
 		if ((this.request.get['extension_id'])) {
 			extension_id = this.request.get['extension_id'];
-		} else {
-			extension_id = 0;
 		}
 
-		time = time();
+		let time = new Date().getTime() / 1000;
 
 		// We create a hash from the data in a similar method to how amazon does things.
-		string  = 'marketplace/api/info' + "\n";
-		string += this.config.get('opencart_username') + "\n";
-		string += this.request.server['HTTP_HOST'] + "\n";
+		let string = 'marketplace/api/info' + "\n";
+		string += this.config.get('opencart_username')||'' + "\n";
+		string += this.request.server['host'] + "\n";
 		string += VERSION + "\n";
 		string += extension_id + "\n";
 		string += time + "\n";
 
-		signature = base64_encode(hash_hmac('sha1', string, this.config.get('opencart_secret'), 1));
+		signature = hash_hmac('sha1', string, this.config.get('opencart_secret'), 1).toString('base64');
 
-		url  = '&username=' + encodeURIComponent(this.config.get('opencart_username'));
+		let url = '&username=' + encodeURIComponent(this.config.get('opencart_username')||'');
 		url += '&domain=' + this.request.server['HTTP_HOST'];
 		url += '&version=' + encodeURIComponent(VERSION);
 		url += '&extension_id=' + extension_id;
 		url += '&time=' + time;
-		url += '&signature=' + rawencodeURIComponent(signature);
+		url += '&signature=' + encodeURIComponent(signature);
 
-		curl = curl_init(OPENCART_SERVER + 'index.php?route=marketplace/api/info' + url);
+		const curl = await fetch(OPENCART_SERVER + 'index.php?route=marketplace/api/info' + url).then(response => response.json());
 
-		curl_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0);
-		curl_setopt(curl, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt(curl, CURLOPT_FORBID_REUSE, 1);
-		curl_setopt(curl, CURLOPT_FRESH_CONNECT, 1);
-		curl_setopt(curl, CURLOPT_POST, 1);
 
-		response = curl_exec(curl);
+		const response = curl.data;
 
-		status = curl_getinfo(curl, CURLINFO_HTTP_CODE);
-
-		curl_close(curl);
-
-		response_info = JSON.parse(response, true);
+		const response_info = typeof response == 'string' ? JSON.parse(response) : response;
 
 		if (response_info) {
 			await this.load.language('marketplace/marketplace');
@@ -593,13 +563,13 @@ module.exports = class ControllerMarketplaceMarketplace extends Controller {
 			data['breadcrumbs'] = [];
 
 			data['breadcrumbs'].push({
-				'text' : this.language.get('text_home'),
-				'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+				'text': this.language.get('text_home'),
+				'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 			});
 
 			data['breadcrumbs'].push({
-				'text' : this.language.get('heading_title'),
-				'href' : await this.url.link('marketplace/marketplace', 'user_token=' + this.session.data['user_token'] + url, true)
+				'text': this.language.get('heading_title'),
+				'href': await this.url.link('marketplace/marketplace', 'user_token=' + this.session.data['user_token'] + url, true)
 			});
 
 			this.load.helper('bbcode');
@@ -618,8 +588,8 @@ module.exports = class ControllerMarketplaceMarketplace extends Controller {
 			data['rating_total'] = response_info['rating_total'];
 			data['downloaded'] = response_info['downloaded'];
 			data['sales'] = response_info['sales'];
-			data['date_added'] = date(this.language.get('date_format_short'), strtotime(response_info['date_added']));
-			data['date_modified'] = date(this.language.get('date_format_short'), strtotime(response_info['date_modified']));
+			data['date_added'] = date(this.language.get('date_format_short'), new Date(response_info['date_added']));
+			data['date_modified'] = date(this.language.get('date_format_short'), new Date(response_info['date_modified']));
 
 			data['member_username'] = response_info['member_username'];
 			data['member_image'] = response_info['member_image'];
@@ -628,36 +598,34 @@ module.exports = class ControllerMarketplaceMarketplace extends Controller {
 
 			data['comment_total'] = response_info['comment_total'];
 
-			data['images'] = {};
+			data['images'] = [];
 
 			for (response_info['images'] of result) {
 				data['images'].push({
-					'thumb' : result['thumb'],
-					'popup' : result['popup']
+					'thumb': result['thumb'],
+					'popup': result['popup']
 				});
 			}
 
-			this.load.model('setting/extension',this);
+			this.load.model('setting/extension', this);
 
-			data['downloads'] = {};
+			data['downloads'] = [];
 
 			if (response_info['downloads']) {
-				for (response_info['downloads'] of result) {
-					extension_install_info = await this.model_setting_extension.getExtensionInstallByExtensionDownloadId(result['extension_download_id']);
-
-					if (extension_install_info) {
+				for (let result of response_info['downloads']) {
+					const extension_install_info = await this.model_setting_extension.getExtensionInstallByExtensionDownloadId(result['extension_download_id']);
+					let extension_install_id = 0;
+					if (extension_install_info.extension_install_id) {
 						extension_install_id = extension_install_info['extension_install_id'];
-					} else {
-						extension_install_id = 0;
 					}
 
 					data['downloads'].push({
-						'extension_download_id' : result['extension_download_id'],
-						'extension_install_id'  : extension_install_id,
-						'name'                  : result['name'],
-						'filename'              : result['filename'],
-						'date_added'            : date(this.language.get('date_format_short'), strtotime(result['date_added'])),
-						'status'                : result['status']
+						'extension_download_id': result['extension_download_id'],
+						'extension_install_id': extension_install_id,
+						'name': result['name'],
+						'filename': result['filename'],
+						'date_added': date(this.language.get('date_format_short'), new Date(result['date_added'])),
+						'status': result['status']
 					});
 				}
 			}
@@ -678,19 +646,17 @@ module.exports = class ControllerMarketplaceMarketplace extends Controller {
 	async purchase() {
 		await this.load.language('marketplace/marketplace');
 
-		json = {};
-
+		const json = {};
+		let extension_id = 0;
 		if ((this.request.get['extension_id'])) {
 			extension_id = this.request.get['extension_id'];
-		} else {
-			extension_id = 0;
 		}
 
 		if (!await this.user.hasPermission('modify', 'marketplace/marketplace')) {
 			json['error'] = this.language.get('error_permission');
 		}
 
-		if (!this.config.get('opencart_username') || !this.config.get('opencart_secret')) {
+		if (!this.config.get('opencart_username')||'' || !this.config.get('opencart_secret')) {
 			json['error'] = this.language.get('error_opencart');
 		}
 
@@ -698,40 +664,30 @@ module.exports = class ControllerMarketplaceMarketplace extends Controller {
 			json['error'] = this.language.get('error_pin');
 		}
 
-		if (!json) {
-			time = time();
+		if (!json.error) {
+			let time = new Date().getTime() / 1000;
 
 			// We create a hash from the data in a similar method to how amazon does things.
-			string  = 'marketplace/api/purchase' + "\n";
-			string += this.config.get('opencart_username') + "\n";
-			string += this.request.server['HTTP_HOST'] + "\n";
+			let string = 'marketplace/api/purchase' + "\n";
+			string += this.config.get('opencart_username')||'' + "\n";
+			string += this.request.server['host'] + "\n";
 			string += VERSION + "\n";
 			string += extension_id + "\n";
-		 	string += this.request.post['pin'] + "\n";
+			string += this.request.post['pin'] + "\n";
 			string += time + "\n";
 
-			signature = base64_encode(hash_hmac('sha1', string, this.config.get('opencart_secret'), 1));
+			let signature = hash_hmac('sha1', string, this.config.get('opencart_secret'), 1).toString('base64');
 
-			url  = '&username=' + encodeURIComponent(this.config.get('opencart_username'));
+			url = '&username=' + encodeURIComponent(this.config.get('opencart_username')||'');
 			url += '&domain=' + this.request.server['HTTP_HOST'];
 			url += '&version=' + encodeURIComponent(VERSION);
 			url += '&extension_id=' + extension_id;
 			url += '&time=' + time;
-			url += '&signature=' + rawencodeURIComponent(signature);
+			url += '&signature=' + encodeURIComponent(signature);
 
-			curl = curl_init(OPENCART_SERVER + 'index.php?route=marketplace/api/purchase' + url);
-
-			curl_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0);
-			curl_setopt(curl, CURLOPT_RETURNTRANSFER, 1);
-			curl_setopt(curl, CURLOPT_FORBID_REUSE, 1);
-			curl_setopt(curl, CURLOPT_FRESH_CONNECT, 1);
-			curl_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
-
-			response = curl_exec(curl);
-
-			curl_close(curl);
-
-			response_info = JSON.parse(response, true);
+			const curl = await fetch(OPENCART_SERVER + 'index.php?route=marketplace/api/purchase' + url).then(response => response.json());
+			const response = curl.data;
+			const response_info = typeof response == 'string' ? JSON.parse(response) : response;
 
 			if ((response_info['success'])) {
 				json['success'] = response_info['success'];
@@ -749,18 +705,14 @@ module.exports = class ControllerMarketplaceMarketplace extends Controller {
 	async download() {
 		await this.load.language('marketplace/marketplace');
 
-		json = {};
-
+		const json = {};
+		let extension_id = 0;
 		if ((this.request.get['extension_id'])) {
 			extension_id = this.request.get['extension_id'];
-		} else {
-			extension_id = 0;
 		}
-
+		let extension_download_id = 0;
 		if ((this.request.get['extension_download_id'])) {
 			extension_download_id = this.request.get['extension_download_id'];
-		} else {
-			extension_download_id = 0;
 		}
 
 		if (!await this.user.hasPermission('modify', 'marketplace/marketplace')) {
@@ -768,11 +720,11 @@ module.exports = class ControllerMarketplaceMarketplace extends Controller {
 		}
 
 		// Check if there is a install zip already there
-		files = glob(DIR_UPLOAD + '*.tmp');
+		let files = require('glob').sync(DIR_UPLOAD + '*.tmp');
 
 		for (let file of files) {
-			if (is_file(file) && (filectime(file) < (time() - 5))) {
-				unlink(file);
+			if (is_file(file) && (fs.statSync(file).ctime < (Date.now() - 5000))) {
+				fs.unlinkSync(file);
 			}
 
 			if (is_file(file)) {
@@ -783,41 +735,41 @@ module.exports = class ControllerMarketplaceMarketplace extends Controller {
 		}
 
 		// Check for any install directories
-		directories = glob(DIR_UPLOAD + 'tmp-*');
+		let directories = require('glob').sync(DIR_UPLOAD + 'tmp-*');
 
-		for (directories of directory) {
-			if (is_dir(directory) && (filectime(directory) < (time() - 5))) {
+		for (let directory of directories) {
+			if (is_dir(directory) && (fs.statSync(directory).ctime < (Date.now() - 5000))) {
 				// Get a list of files ready to upload
-				files = {};
+				let files = [];
 
-				path = array(directory);
+				let path = [directory];
 
-				while (count(path) != 0) {
-					next = array_shift(path);
+				while (path.length != 0) {
+					let next = path.shift();
 
 					// We have to use scandir function because glob will not pick up dot files.
-					for (array_diff(scandir(next), array('.', '..')) of file) {
+					for (let file of fs.readdirSync(next).filter(item => item !== '.' && item !== '..')) {
 						file = next + '/' + file;
 
 						if (is_dir(file)) {
-							path.push(file;
+							path.push(file);
 						}
 
-						files.push(file;
+						files.push(file);
 					}
 				}
 
-				rsort(files);
+				files = files.reverse();
 
 				for (let file of files) {
 					if (is_file(file)) {
-						unlink(file);
+						fs.unlinkSync(file);
 					} else if (is_dir(file)) {
-						rmdir(file);
+						fs.rmdirSync(file);
 					}
 				}
 
-				rmdir(directory);
+				fs.rmdirSync(directory);
 			}
 
 			if (is_dir(directory)) {
@@ -828,54 +780,40 @@ module.exports = class ControllerMarketplaceMarketplace extends Controller {
 		}
 
 		if (!json) {
-			time = time();
+			let time = new Date().getTime() / 1000;
 
 			// We create a hash from the data in a similar method to how amazon does things.
-			string  = 'marketplace/api/download' + "\n";
-			string += this.config.get('opencart_username') + "\n";
-			string += this.request.server['HTTP_HOST'] + "\n";
+			let string = 'marketplace/api/download' + "\n";
+			string += this.config.get('opencart_username')||'' + "\n";
+			string += this.request.server['host'] + "\n";
 			string += VERSION + "\n";
 			string += extension_id + "\n";
 			string += extension_download_id + "\n";
 			string += time + "\n";
 
-			signature = base64_encode(hash_hmac('sha1', string, this.config.get('opencart_secret'), 1));
+			signature = hash_hmac('sha1', string, this.config.get('opencart_secret'), 1).toString('base64');
 
-			url  = '&username=' + encodeURIComponent(this.config.get('opencart_username'));
+			let url = '&username=' + encodeURIComponent(this.config.get('opencart_username')||'');
 			url += '&domain=' + this.request.server['HTTP_HOST'];
 			url += '&version=' + encodeURIComponent(VERSION);
 			url += '&extension_id=' + extension_id;
 			url += '&extension_download_id=' + extension_download_id;
 			url += '&time=' + time;
-			url += '&signature=' + rawencodeURIComponent(signature);
+			url += '&signature=' + encodeURIComponent(signature);
 
-			curl = curl_init(OPENCART_SERVER + 'index.php?route=marketplace/api/download&extension_download_id=' + extension_download_id + url);
+			const curl = await fetch(OPENCART_SERVER + 'index.php?route=marketplace/api/download&extension_download_id=' + extension_download_id + url).then(response => response.json());
+			const response = curl.data;
 
-			curl_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0);
-			curl_setopt(curl, CURLOPT_RETURNTRANSFER, 1);
-			curl_setopt(curl, CURLOPT_FORBID_REUSE, 1);
-			curl_setopt(curl, CURLOPT_FRESH_CONNECT, 1);
-			curl_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
-
-			response = curl_exec(curl);
-
-			response_info = JSON.parse(response, true);
-
-			curl_close(curl);
-
+			const response_info = typeof response == 'string' ? JSON.parse(response) : response;
 			if ((response_info['download'])) {
-				if (substr(response_info['filename'], -10) == '.ocmod.zip') {
-					this.session.data['install'] = token(10);
+				if (response_info['filename'].substr(-10) == '.ocmod.zip') {
+					this.session.data['install'] = oc_token(10);
 
-					download = file_get_contents(response_info['download']);
+					let download = fs.readFileSync(response_info['download']);
 
-					handle = fopen(DIR_UPLOAD + this.session.data['install'] + '.tmp', 'w');
+					fs.writeFileSync(DIR_UPLOAD + this.session.data['install'] + '.tmp', download);
 
-					fwrite(handle, download);
-
-					fclose(handle);
-
-					this.load.model('setting/extension',this);
+					this.load.model('setting/extension', this);
 
 					json['extension_install_id'] = await this.model_setting_extension.addExtensionInstall(response_info['extension'], extension_download_id);
 
@@ -899,66 +837,52 @@ module.exports = class ControllerMarketplaceMarketplace extends Controller {
 	async addComment() {
 		await this.load.language('marketplace/marketplace');
 
-		json = {};
-
+		const json = {};
+		let extension_id = 0;
 		if ((this.request.get['extension_id'])) {
 			extension_id = this.request.get['extension_id'];
-		} else {
-			extension_id = 0;
 		}
-
+		let parent_id = 0;
 		if ((this.request.get['parent_id'])) {
 			parent_id = this.request.get['parent_id'];
-		} else {
-			parent_id = 0;
 		}
 
 		if (!await this.user.hasPermission('modify', 'marketplace/marketplace')) {
 			json['error'] = this.language.get('error_permission');
 		}
 
-		if (!this.config.get('opencart_username') || !this.config.get('opencart_secret')) {
+		if (!this.config.get('opencart_username')||'' || !this.config.get('opencart_secret')) {
 			json['error'] = this.language.get('error_opencart');
 		}
-					
-		if (!json) {	
-			time = time();
+
+		if (!json) {
+			let time = new Date().getTime() / 1000;
 
 			// We create a hash from the data in a similar method to how amazon does things.
-			string  = 'marketplace/api/addcomment' + "\n";
-			string += encodeURIComponent(this.config.get('opencart_username')) + "\n";
-			string += this.request.server['HTTP_HOST'] + "\n";
+			let string = 'marketplace/api/addcomment' + "\n";
+			string += encodeURIComponent(this.config.get('opencart_username')||'') + "\n";
+			string += this.request.server['host'] + "\n";
 			string += encodeURIComponent(VERSION) + "\n";
 			string += extension_id + "\n";
 			string += parent_id + "\n";
-			string += encodeURIComponent(base64_encode(this.request.post['comment'])) + "\n";
+			string += encodeURIComponent(atob(this.request.post['comment'])) + "\n";
 			string += time + "\n";
 
-			signature = base64_encode(hash_hmac('sha1', string, this.config.get('opencart_secret'), 1));
+			let signature = hash_hmac('sha1', string, this.config.get('opencart_secret'), 1).toString('base64');
 
-			url  = '&username=' + this.config.get('opencart_username');
+			let url = '&username=' + this.config.get('opencart_username')||'';
 			url += '&domain=' + this.request.server['HTTP_HOST'];
 			url += '&version=' + VERSION;
 			url += '&extension_id=' + extension_id;
 			url += '&parent_id=' + parent_id;
 			url += '&time=' + time;
-			url += '&signature=' + rawencodeURIComponent(signature);
+			url += '&signature=' + encodeURIComponent(signature);
 
-			curl = curl_init(OPENCART_SERVER + 'index.php?route=marketplace/api/addcomment&extension_id=' + extension_id + url);
+			const curl = await fetch(OPENCART_SERVER + 'index.php?route=marketplace/api/addcomment&extension_id=' + extension_id + url, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: { 'comment': this.request.post['comment'] }, redirect: 'follow' }).then(response => response.json());
 
-			curl_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0);
-			curl_setopt(curl, CURLOPT_RETURNTRANSFER, 1);
-			curl_setopt(curl, CURLOPT_FORBID_REUSE, 1);
-			curl_setopt(curl, CURLOPT_FRESH_CONNECT, 1);
-			curl_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
-			curl_setopt(curl, CURLOPT_POST, true);
-			curl_setopt(curl, CURLOPT_POSTFIELDS, array('comment' : this.request.post['comment']));
+			const response = curl.data;
 
-			response = curl_exec(curl);
-
-			curl_close(curl);
-
-			response_info = JSON.parse(response, true);
+			const response_info = typeof response == 'string' ? JSON.parse(response) : response;
 
 			if ((response_info['success'])) {
 				json['success'] = response_info['success'];
@@ -974,66 +898,54 @@ module.exports = class ControllerMarketplaceMarketplace extends Controller {
 	}
 
 	async comment() {
+		const data = {};
 		await this.load.language('marketplace/marketplace');
-
+		let extension_id = 0;
 		if ((this.request.get['extension_id'])) {
 			extension_id = this.request.get['extension_id'];
-		} else {
-			extension_id = 0;
 		}
-
+		let page = 1;
 		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
 		}
 
 		data['button_more'] = this.language.get('button_more');
 		data['button_reply'] = this.language.get('button_reply');
 
-		curl = curl_init(OPENCART_SERVER + 'index.php?route=api/marketplace/comment&extension_id=' + extension_id + '&page=' + page);
+		const curl = await fetch(OPENCART_SERVER + 'index.php?route=api/marketplace/comment&extension_id=' + extension_id + '&page=' + page).then(response => response.json());
 
-		curl_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0);
-		curl_setopt(curl, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt(curl, CURLOPT_FORBID_REUSE, 1);
-		curl_setopt(curl, CURLOPT_FRESH_CONNECT, 1);
-		curl_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
+		const response = curl.data;
 
-		response = curl_exec(curl);
+		const json = typeof response == 'string' ? JSON.parse(response) : response;
 
-		curl_close(curl);
+		data['comments'] = [];
 
-		json = JSON.parse(response, true);
-
-		data['comments'] = {};
-
-		comment_total = json['comment_total'];
+		const comment_total = json['comment_total'];
 
 		if (json['comments']) {
-			results = json['comments'];
+			const results = json['comments'];
 
 			for (let result of results) {
+				let next = '';
 				if (result['reply_total'] > 5) {
 					next = await this.url.link('marketplace/marketplace/reply', 'user_token=' + this.session.data['user_token'] + '&extension_id=' + extension_id + '&parent_id=' + result['extension_comment_id'] + '&page=2');
-				} else {
-					next = '';
 				}
 
 				data['comments'].push({
-					'extension_comment_id' : result['extension_comment_id'],
-					'member'               : result['member'],
-					'image'                : result['image'],
-					'comment'              : result['comment'],
-					'date_added'           : result['date_added'],
-					'reply'                : result['reply'],
-					'add'                  : await this.url.link('marketplace/marketplace/addcomment', 'user_token=' + this.session.data['user_token'] + '&extension_id=' + extension_id + '&parent_id=' + result['extension_comment_id']),
-					'refresh'              : await this.url.link('marketplace/marketplace/reply', 'user_token=' + this.session.data['user_token'] + '&extension_id=' + extension_id + '&parent_id=' + result['extension_comment_id'] + '&page=1'),
-					'next'                 : next
+					'extension_comment_id': result['extension_comment_id'],
+					'member': result['member'],
+					'image': result['image'],
+					'comment': result['comment'],
+					'date_added': result['date_added'],
+					'reply': result['reply'],
+					'add': await this.url.link('marketplace/marketplace/addcomment', 'user_token=' + this.session.data['user_token'] + '&extension_id=' + extension_id + '&parent_id=' + result['extension_comment_id']),
+					'refresh': await this.url.link('marketplace/marketplace/reply', 'user_token=' + this.session.data['user_token'] + '&extension_id=' + extension_id + '&parent_id=' + result['extension_comment_id'] + '&page=1'),
+					'next': next
 				});
 			}
 		}
 
-		pagination = new Pagination();
+		const pagination = new Pagination();
 		pagination.total = comment_total;
 		pagination.page = page;
 		pagination.limit = 20;
@@ -1047,52 +959,40 @@ module.exports = class ControllerMarketplaceMarketplace extends Controller {
 	}
 
 	async reply() {
+		const data = {};
 		await this.load.language('marketplace/marketplace');
-
+		let extension_id = 0;
 		if ((this.request.get['extension_id'])) {
 			extension_id = this.request.get['extension_id'];
-		} else {
-			extension_id = 0;
 		}
-
+		let parent_id = 0;
 		if ((this.request.get['parent_id'])) {
 			parent_id = this.request.get['parent_id'];
-		} else {
-			parent_id = 0;
 		}
-
+		let page = 1;
 		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
-		} else {
-			page = 1;
 		}
 
-		curl = curl_init(OPENCART_SERVER + 'index.php?route=marketplace/api/comment&extension_id=' + extension_id + '&parent_id=' + parent_id + '&page=' + page);
-
-		curl_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0);
-		curl_setopt(curl, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt(curl, CURLOPT_FORBID_REUSE, 1);
-		curl_setopt(curl, CURLOPT_FRESH_CONNECT, 1);
-		curl_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
-
-		response = curl_exec(curl);
+		const curl = await fetch(OPENCART_SERVER + 'index.php?route=marketplace/api/comment&extension_id=' + extension_id + '&parent_id=' + parent_id + '&page=' + page).then(response => response.json());
+		const response = curl.data;
 
 		json = JSON.parse(response, true);
 
-		data['replies'] = {};
+		data['replies'] = [];
 
-		reply_total = json['reply_total'];
+		const reply_total = json['reply_total'];
 
 		if (json['replies']) {
-			results = json['replies'];
+			const results = json['replies'];
 
 			for (let result of results) {
 				data['replies'].push({
-					'extension_comment_id' : result['extension_comment_id'],
-					'member'               : result['member'],
-					'image'                : result['image'],
-					'comment'              : result['comment'],
-					'date_added'           : result['date_added']
+					'extension_comment_id': result['extension_comment_id'],
+					'member': result['member'],
+					'image': result['image'],
+					'comment': result['comment'],
+					'date_added': result['date_added']
 				});
 			}
 		}

@@ -2,6 +2,7 @@ module.exports = class ControllerSettingStore extends Controller {
 	error = {};
 
 	async index() {
+const data = {};
 		await this.load.language('setting/store');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -28,6 +29,7 @@ module.exports = class ControllerSettingStore extends Controller {
 			await this.model_setting_setting.editSetting('config', this.request.post, store_id);
 
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('setting/store', 'user_token=' + this.session.data['user_token'], true));
 		}
@@ -50,6 +52,7 @@ module.exports = class ControllerSettingStore extends Controller {
 			await this.model_setting_setting.editSetting('config', this.request.post, this.request.get['store_id']);
 
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('setting/store', 'user_token=' + this.session.data['user_token'] + '&store_id=' + this.request.get['store_id'], true));
 		}
@@ -68,13 +71,14 @@ module.exports = class ControllerSettingStore extends Controller {
 this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
 			this.load.model('setting/setting',this);
 
-			for (this.request.post['selected'] of store_id) {
+			for (let store_id of this.request.post['selected'] ) {
 				await this.model_setting_store.deleteStore(store_id);
 
 				await this.model_setting_setting.deleteSetting('config', store_id);
 			}
 
 			this.session.data['success'] = this.language.get('text_success');
+await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('setting/store', 'user_token=' + this.session.data['user_token'], true));
 		}
@@ -83,6 +87,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 	}
 
 	async getList() {
+		const data = {};
 		url = '';
 
 		if ((this.request.get['page'])) {
@@ -135,7 +140,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		if ((this.session.data['success'])) {
 			data['success'] = this.session.data['success'];
 
-			delete this.session.data['success']);
+			delete this.session.data['success'];
 		} else {
 			data['success'] = '';
 		}
@@ -237,7 +242,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		if ((this.session.data['success'])) {
 			data['success'] = this.session.data['success'];
 
-			delete this.session.data['success']);
+			delete this.session.data['success'];
 		} else {
 			data['success'] = '';
 		}
@@ -313,7 +318,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 
 		this.load.model('setting/extension',this);
 
-		extensions = await this.model_setting_extension.getInstalled('theme');
+		const extensions = await this.model_setting_extension.getInstalled('theme');
 
 		for (extensions of code) {
 			await this.load.language('extension/theme/' + code, 'extension');
@@ -448,7 +453,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			data['config_country_id'] = this.config.get('config_country_id');
 		}
 
-		this.load.model('localisation/country');
+		this.load.model('localisation/country',this);
 
 		data['countries'] = await this.model_localisation_country.getCountries();
 
@@ -544,7 +549,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			data['config_account_id'] = '';
 		}
 
-		this.load.model('catalog/information');
+		this.load.model('catalog/information',this);
 
 		data['informations'] = await this.model_catalog_information.getInformations();
 
@@ -580,7 +585,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 			data['config_order_status_id'] = '';
 		}
 
-		this.load.model('localisation/order_status');
+		this.load.model('localisation/order_status',this);
 
 		data['order_statuses'] = await this.model_localisation_order_status.getOrderStatuses();
 
@@ -701,7 +706,7 @@ this.request.post['selected'] = Array.isArray(this.request.post['selected'])?thi
 		this.load.model('sale/order',this);
 		this.request.post['selected']  = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']];
 
-		for (this.request.post['selected'] of store_id) {
+		for (let store_id of this.request.post['selected'] ) {
 			if (!store_id) {
 				this.error['warning'] = this.language.get('error_default');
 			}

@@ -6,7 +6,7 @@ module.exports = {
     text_extension: 'Extensions',
     text_success: 'Success: You have modified MaxMind anti-fraud!',
     text_edit: 'Edit MaxMind Anti-Fraud',
-    text_signup: '_blank"><u>sign up here</u></a>.',
+    text_signup: 'MaxMind is a fraud detection service. If you don\'t have a license key you can <a href="http://www.maxmind.com/?rId=opencart" target="_blank"><u>sign up here</u></a>.',
     text_country_match: 'Country Match:',
     text_country_code: 'Country Code:',
     text_high_risk_country: 'High Risk Country:',

@@ -1,6 +1,8 @@
+const sha1 = require("locutus/php/strings/sha1");
+
 module.exports = class ModelUserUser extends Model {
 	async addUser(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "user` SET username = '" + this.db.escape(data['username']) + "', user_group_id = '" + data['user_group_id'] + "', salt = '" + this.db.escape(salt = token(9)) + "', password = '" + this.db.escape(sha1(salt + sha1(salt + sha1(data['password'])))) + "', firstname = '" + this.db.escape(data['firstname']) + "', lastname = '" + this.db.escape(data['lastname']) + "', email = '" + this.db.escape(data['email']) + "', image = '" + this.db.escape(data['image']) + "', status = '" + data['status'] + "', date_added = NOW()");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "user` SET username = '" + this.db.escape(data['username']) + "', user_group_id = '" + data['user_group_id'] + "', salt = '" + this.db.escape(salt = oc_token(9)) + "', password = '" + this.db.escape(sha1(salt + sha1(salt + sha1(data['password'])))) + "', firstname = '" + this.db.escape(data['firstname']) + "', lastname = '" + this.db.escape(data['lastname']) + "', email = '" + this.db.escape(data['email']) + "', image = '" + this.db.escape(data['image']) + "', status = '" + data['status'] + "', date_added = NOW()");
 
 		return this.db.getLastId();
 	}
@@ -9,12 +11,12 @@ module.exports = class ModelUserUser extends Model {
 		await this.db.query("UPDATE `" + DB_PREFIX + "user` SET username = '" + this.db.escape(data['username']) + "', user_group_id = '" + data['user_group_id'] + "', firstname = '" + this.db.escape(data['firstname']) + "', lastname = '" + this.db.escape(data['lastname']) + "', email = '" + this.db.escape(data['email']) + "', image = '" + this.db.escape(data['image']) + "', status = '" + data['status'] + "' WHERE user_id = '" + user_id + "'");
 
 		if (data['password']) {
-			await this.db.query("UPDATE `" + DB_PREFIX + "user` SET salt = '" + this.db.escape(salt = token(9)) + "', password = '" + this.db.escape(sha1(salt + sha1(salt + sha1(data['password'])))) + "' WHERE user_id = '" + user_id + "'");
+			await this.db.query("UPDATE `" + DB_PREFIX + "user` SET salt = '" + this.db.escape(salt = oc_token(9)) + "', password = '" + this.db.escape(sha1(salt + sha1(salt + sha1(data['password'])))) + "' WHERE user_id = '" + user_id + "'");
 		}
 	}
 
 	async editPassword(user_id, password) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "user` SET salt = '" + this.db.escape(salt = token(9)) + "', password = '" + this.db.escape(sha1(salt + sha1(salt + sha1(password)))) + "', code = '' WHERE user_id = '" + user_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "user` SET salt = '" + this.db.escape(salt = oc_token(9)) + "', password = '" + this.db.escape(sha1(salt + sha1(salt + sha1(password)))) + "', code = '' WHERE user_id = '" + user_id + "'");
 	}
 
 	async editCode(email, code) {

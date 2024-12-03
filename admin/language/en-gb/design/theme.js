@@ -9,7 +9,7 @@ module.exports = {
     text_template: 'Choose a template',
     text_default: 'Default',
     text_history: 'Theme History',
-    text_twig: 'alert-link">Twig syntax here</a>.',
+    text_twig: 'The theme editor uses the template language Twig. You can read about <a href="https://twig.symfony.com/doc/" target="_blank" class="alert-link">Twig syntax here</a>.',
 
     // Column
     column_store: 'Store',

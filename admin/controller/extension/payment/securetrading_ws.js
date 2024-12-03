@@ -1,11 +1,16 @@
+const array_combine = require("locutus/php/array/array_combine");
+const str_getcsv = require("locutus/php/strings/str_getcsv");
+const str_pad = require("locutus/php/strings/str_pad");
+
 module.exports = class ControllerExtensionPaymentSecureTradingWs extends Controller {
 	error = {};
 
 	async index() {
-		this.load.model('setting/setting',this);
-		this.load.model('localisation/geo_zone');
-		this.load.model('localisation/order_status');
-		this.load.model('localisation/currency',this);
+		const data = {};
+		this.load.model('setting/setting', this);
+		this.load.model('localisation/geo_zone', this);
+		this.load.model('localisation/order_status', this);
+		this.load.model('localisation/currency', this);
 		await this.load.language('extension/payment/securetrading_ws');
 
 		if ((this.request.server['method'] == 'POST') && await this.validate()) {
@@ -15,6 +20,7 @@ module.exports = class ControllerExtensionPaymentSecureTradingWs extends Control
 			await this.model_setting_setting.editSetting('payment_securetrading_ws', this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
+			await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true));
 		}
@@ -178,58 +184,58 @@ module.exports = class ControllerExtensionPaymentSecureTradingWs extends Control
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_extension'),
-			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true)
+			'text': this.language.get('text_extension'),
+			'href': await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('extension/payment/securetrading_ws', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('extension/payment/securetrading_ws', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['geo_zones'] = await this.model_localisation_geo_zone.getGeoZones();
 		data['order_statuses'] = await this.model_localisation_order_status.getOrderStatuses();
 
-		data['cards'] = array(
-			'AMEX' : 'American Express',
-			'VISA' : 'Visa',
-			'DELTA' : 'Visa Debit',
-			'ELECTRON' : 'Visa Electron',
-			'PURCHASING' : 'Visa Purchasing',
-			'VPAY' : 'V Pay',
-			'MASTERCARD' : 'MasterCard',
-			'MASTERCARDDEBIT' : 'MasterCard Debit',
-			'MAESTRO' : 'Maestro',
-			'PAYPAL' : 'PayPal',
-		});
+		data['cards'] = {
+			'AMEX': 'American Express',
+			'VISA': 'Visa',
+			'DELTA': 'Visa Debit',
+			'ELECTRON': 'Visa Electron',
+			'PURCHASING': 'Visa Purchasing',
+			'VPAY': 'V Pay',
+			'MASTERCARD': 'MasterCard',
+			'MASTERCARDDEBIT': 'MasterCard Debit',
+			'MAESTRO': 'Maestro',
+			'PAYPAL': 'PayPal',
+		};
 
-		data['settlement_statuses'] = array(
-			'0' : this.language.get('text_pending_settlement'),
-			'1' : this.language.get('text_pending_settlement_manually_overriden'),
-			'2' : this.language.get('text_pending_suspended'),
-			'100' : this.language.get('text_pending_settled'),
-		});
+		data['settlement_statuses'] = {
+			'0': this.language.get('text_pending_settlement'),
+			'1': this.language.get('text_pending_settlement_manually_overriden'),
+			'2': this.language.get('text_pending_suspended'),
+			'100': this.language.get('text_pending_settled'),
+		};
 
 		data['action'] = await this.url.link('extension/payment/securetrading_ws', 'user_token=' + this.session.data['user_token'], true);
 
 		data['cancel'] = await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=payment', true);
 
 		data['myst_status'] = (data['securetrading_ws_csv_username']) && (data['securetrading_ws_csv_password']);
-		data['hours'] = {};
+		data['hours'] = [];
 
-		for (i = 0; i < 24; i++) {
-			data['hours'].push(str_pad(i, 2, '0', STR_PAD_LEFT);
+		for (let i = 0; i < 24; i++) {
+			data['hours'].push(str_pad(i, 2, '0', 'STR_PAD_LEFT'));
 		}
 
-		data['minutes'] = {};
+		data['minutes'] = [];
 
-		for (i = 0; i < 60; i++) {
-			data['minutes'].push(str_pad(i, 2, '0', STR_PAD_LEFT);
+		for (let i = 0; i < 60; i++) {
+			data['minutes'].push(str_pad(i, 2, '0', 'STR_PAD_LEFT'));
 		}
 
 		data['currencies'] = await this.model_localisation_currency.getCurrencies();
@@ -244,81 +250,81 @@ module.exports = class ControllerExtensionPaymentSecureTradingWs extends Control
 	}
 
 	async install() {
-		this.load.model('extension/payment/securetrading_ws');
+		this.load.model('extension/payment/securetrading_ws', this);
 		await this.model_extension_payment_securetrading_ws.install();
 	}
 
 	async uninstall() {
-		this.load.model('extension/payment/securetrading_ws');
+		this.load.model('extension/payment/securetrading_ws', this);
 		await this.model_extension_payment_securetrading_ws.uninstall();
 	}
 
 	async downloadTransactions() {
-		this.load.model('extension/payment/securetrading_ws');
+		this.load.model('extension/payment/securetrading_ws', this);
 		await this.load.language('extension/payment/securetrading_ws');
 
-		csv_data = this.request.post;
+		const csv_data = this.request.post;
 		csv_data['detail'] = true;
 
-		response = await this.model_extension_payment_securetrading_ws.getCsv(csv_data);
+		const response = await this.model_extension_payment_securetrading_ws.getCsv(csv_data);
 
 		this.response.addheader('Content-Type: application/octet-stream');
 		this.response.addheader('Content-Disposition: attachment; filename="' + this.language.get('text_transactions') + '.csv"');
 		this.response.addheader('Expires: 0');
 		this.response.addheader('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 		this.response.addheader('Pragma: public');
-		this.response.addheader('Content-Length: ' + strlen(response));
+		this.response.addheader('Content-Length: ' + response.length);
 
 		this.response.setOutput(response);
 	}
 
 	async showTransactions() {
-		this.load.model('extension/payment/securetrading_ws');
+		this.load.model('extension/payment/securetrading_ws', this);
 		await this.load.language('extension/payment/securetrading_ws');
 
-		csv_data = this.request.post;
+		const csv_data = this.request.post;
 		csv_data['detail'] = false;
 
-		response = await this.model_extension_payment_securetrading_ws.getCsv(csv_data);
+		const response = await this.model_extension_payment_securetrading_ws.getCsv(csv_data);
 
 		data['transactions'] = {};
 
-		status_mapping = array(
-			'0' : this.language.get('text_ok'),
-			'70000' : this.language.get('text_denied'),
-		});
+		const status_mapping = {
+			'0': this.language.get('text_ok'),
+			'70000': this.language.get('text_denied'),
+		};
 
-		settle_status_mapping = array(
-			'0' : this.language.get('text_pending_settlement'),
-			'1' : this.language.get('text_manual_settlement'),
-			'2' : this.language.get('text_suspended'),
-			'3' : this.language.get('text_cancelled'),
-			'10' : this.language.get('text_settling'),
-			'100' : this.language.get('text_settled'),
-		});
+		const settle_status_mapping = {
+			'0': this.language.get('text_pending_settlement'),
+			'1': this.language.get('text_manual_settlement'),
+			'2': this.language.get('text_suspended'),
+			'3': this.language.get('text_cancelled'),
+			'10': this.language.get('text_settling'),
+			'100': this.language.get('text_settled'),
+		};
 
 		if (response) {
-			lines = array_filter(explode("\n", response));
+			const lines = response.split("\n").filter(a => a);
 
-			csv = {};
-			keys = str_getcsv(lines[0]);
+			const csv = {};
+			const keys = str_getcsv(lines[0]);
 
-			for (i = 1; i < count(lines); i++) {
-				csv.push(array_combine(keys, str_getcsv(lines[i]));
+			for (let i = 1; i < lines.length; i++) {
+				csv.push(array_combine(keys, str_getcsv(lines[i])));
 			}
 
-			for (csv of row) {
+			for (let row of csv) {
 				data['transactions'].push({
-					'order_id' : row['orderreference'],
-					'order_href' : await this.url.link('sale/order/info', 'user_token=' + this.session.data['user_token'] + '&order_id=' + row['orderreference'], true),
-					'transaction_reference' : row['transactionreference'],
-					'customer' : row['billingfirstname'] + ' ' + row['billinglastname'],
-					'total' : row['mainamount'],
-					'currency' : row['currencyiso3a'],
-					'settle_status' : settle_status_mapping[row['settlestatus']],
-					'status' : status_mapping[row['errorcode']],
-					'type' : row['requesttypedescription'],
-					'payment_type' : row['paymenttypedescription'],
+					'order_id': row['orderreference'],
+					'order_href': await this.url.link('sale/order/info', 'user_token=' + this.session.data['user_token'] + '&order_id=' + row['orderreference'], true),
+					'transaction_reference': row['transactionreference'],
+					'customer': row['billingfirstname'] + ' ' + row['billinglastname'],
+					'total': row['mainamount'],
+					'currency': row['currencyiso3a'],
+					'settle_status': settle_status_mapping[row['settlestatus']],
+					'status': status_mapping[row['errorcode']],
+					'type': row['requesttypedescription'],
+					'payment_type': row['paymenttypedescription'],
 				});
 			}
 		}
@@ -327,11 +333,11 @@ module.exports = class ControllerExtensionPaymentSecureTradingWs extends Control
 	}
 
 	async order() {
+		const data = {};
+		if (Number(this.config.get('payment_securetrading_ws_status'))) {
+			this.load.model('extension/payment/securetrading_ws', this);
 
-		if (this.config.get('payment_securetrading_ws_status')) {
-			this.load.model('extension/payment/securetrading_ws');
-
-			securetrading_ws_order = await this.model_extension_payment_securetrading_ws.getOrder(this.request.get['order_id']);
+			const securetrading_ws_order = await this.model_extension_payment_securetrading_ws.getOrder(this.request.get['order_id']);
 
 			if ((securetrading_ws_order)) {
 				await this.load.language('extension/payment/securetrading_ws');
@@ -346,9 +352,9 @@ module.exports = class ControllerExtensionPaymentSecureTradingWs extends Control
 				data['auto_settle'] = securetrading_ws_order['settle_type'];
 
 				data['order_id'] = this.request.get['order_id'];
-				
+
 				data['user_token'] = this.session.data['user_token'];
-				
+
 				return await this.load.view('extension/payment/securetrading_ws_order', data);
 			}
 		}
@@ -356,19 +362,19 @@ module.exports = class ControllerExtensionPaymentSecureTradingWs extends Control
 
 	async void() {
 		await this.load.language('extension/payment/securetrading_ws');
-		json = {};
+		const json = {};
 
 		if ((this.request.post['order_id']) && this.request.post['order_id'] != '') {
-			this.load.model('extension/payment/securetrading_ws');
+			this.load.model('extension/payment/securetrading_ws', this);
 
-			securetrading_ws_order = await this.model_extension_payment_securetrading_ws.getOrder(this.request.post['order_id']);
+			const securetrading_ws_order = await this.model_extension_payment_securetrading_ws.getOrder(this.request.post['order_id']);
 
-			void_response = await this.model_extension_payment_securetrading_ws.void(this.request.post['order_id']);
+			const void_response = await this.model_extension_payment_securetrading_ws.void(this.request.post['order_id']);
 
-			await this.model_extension_payment_securetrading_ws.logger('Void result:\r\n' + print_r(void_response, 1));
+			await this.model_extension_payment_securetrading_ws.logger('Void result:\r\n' + JSON.stringify(void_response, 1));
 
 			if (void_response !== false) {
-				response_xml = simplexml_load_string(void_response);
+				const response_xml = await praseXmlString(void_response);
 
 				if (response_xml.response['type'] == 'ERROR' || response_xml.response.error.code != '0') {
 					json['msg'] = response_xml.response.error.message;
@@ -378,13 +384,13 @@ module.exports = class ControllerExtensionPaymentSecureTradingWs extends Control
 					await this.model_extension_payment_securetrading_ws.addTransaction(securetrading_ws_order['securetrading_ws_order_id'], 'reversed', 0.00);
 					await this.model_extension_payment_securetrading_ws.updateVoidStatus(securetrading_ws_order['securetrading_ws_order_id'], 1);
 
-					post_data = array(
-						'order_status_id' : this.config.get('payment_securetrading_ws_authorisation_reversed_order_status_id'),
-						'notify' : false,
-						'comment' : '',
-					});
+					const post_data = {
+						'order_status_id': this.config.get('payment_securetrading_ws_authorisation_reversed_order_status_id'),
+						'notify': false,
+						'comment': '',
+					};
 
-					this.load.model('sale/order',this);
+					this.load.model('sale/order', this);
 
 					await this.model_sale_order.addOrderHistory(this.request.post['order_id'], post_data);
 
@@ -406,21 +412,21 @@ module.exports = class ControllerExtensionPaymentSecureTradingWs extends Control
 
 	async release() {
 		await this.load.language('extension/payment/securetrading_ws');
-		json = {};
+		const json = {};
 
-		amount = number_format(this.request.post['amount'], 2);
+		const amount = this.request.post['amount'].toFixed(2);
 
 		if ((this.request.post['order_id']) && this.request.post['order_id'] != '' && amount > 0) {
-			this.load.model('extension/payment/securetrading_ws');
+			this.load.model('extension/payment/securetrading_ws', this);
 
-			securetrading_ws_order = await this.model_extension_payment_securetrading_ws.getOrder(this.request.post['order_id']);
+			const securetrading_ws_order = await this.model_extension_payment_securetrading_ws.getOrder(this.request.post['order_id']);
 
-			release_response = await this.model_extension_payment_securetrading_ws.release(this.request.post['order_id'], amount);
+			const release_response = await this.model_extension_payment_securetrading_ws.release(this.request.post['order_id'], amount);
 
-			await this.model_extension_payment_securetrading_ws.logger('Release result:\r\n' + print_r(release_response, 1));
+			await this.model_extension_payment_securetrading_ws.logger('Release result:\r\n' + JSON.stringify(release_response, 1));
 
 			if (release_response !== false) {
-				response_xml = simplexml_load_string(release_response);
+				const response_xml = await praseXmlString(release_response);
 
 				if (response_xml.response['type'] == 'ERROR' || response_xml.response.error.code != '0') {
 					json['error'] = true;
@@ -428,16 +434,16 @@ module.exports = class ControllerExtensionPaymentSecureTradingWs extends Control
 				} else {
 					await this.model_extension_payment_securetrading_ws.addTransaction(securetrading_ws_order['securetrading_ws_order_id'], 'payment', amount);
 
-					total_released = await this.model_extension_payment_securetrading_ws.getTotalReleased(securetrading_ws_order['securetrading_ws_order_id']);
-
+					const total_released = await this.model_extension_payment_securetrading_ws.getTotalReleased(securetrading_ws_order['securetrading_ws_order_id']);
+					let release_status = 0;
 					if (total_released >= securetrading_ws_order['total'] || securetrading_ws_order['settle_type'] == 100) {
 						await this.model_extension_payment_securetrading_ws.updateReleaseStatus(securetrading_ws_order['securetrading_ws_order_id'], 1);
 						release_status = 1;
 						json['msg'] = this.language.get('text_release_ok_order');
 
-						this.load.model('sale/order',this);
+						this.load.model('sale/order', this);
 
-						history = {};
+						const history = {};
 						history['order_status_id'] = this.config.get('securetrading_ws_order_status_success_settled_id');
 						history['comment'] = '';
 						history['notify'] = '';
@@ -469,31 +475,31 @@ module.exports = class ControllerExtensionPaymentSecureTradingWs extends Control
 
 	async rebate() {
 		await this.load.language('extension/payment/securetrading_ws');
-		json = {};
+		const json = {};
 
 		if ((this.request.post['order_id']) && (this.request.post['order_id'])) {
-			this.load.model('extension/payment/securetrading_ws');
+			this.load.model('extension/payment/securetrading_ws', this);
 
-			securetrading_ws_order = await this.model_extension_payment_securetrading_ws.getOrder(this.request.post['order_id']);
+			const securetrading_ws_order = await this.model_extension_payment_securetrading_ws.getOrder(this.request.post['order_id']);
 
-			amount = number_format(this.request.post['amount'], 2);
+			const amount = this.request.post['amount'].toFixed(2);
 
-			rebate_response = await this.model_extension_payment_securetrading_ws.rebate(this.request.post['order_id'], amount);
+			const rebate_response = await this.model_extension_payment_securetrading_ws.rebate(this.request.post['order_id'], amount);
 
-			await this.model_extension_payment_securetrading_ws.logger('Rebate result:\r\n' + print_r(rebate_response, 1));
+			await this.model_extension_payment_securetrading_ws.logger('Rebate result:\r\n' + JSON.stringify(rebate_response, 1));
 
 			if (rebate_response !== false) {
-				response_xml = simplexml_load_string(rebate_response);
+				const response_xml = await praseXmlString(rebate_response);
 
-				error_code = response_xml.response.error.code;
+				const error_code = response_xml.response.error.code;
 
 				if (error_code == '0') {
 
 					await this.model_extension_payment_securetrading_ws.addTransaction(securetrading_ws_order['securetrading_ws_order_id'], 'rebate', amount * -1);
 
-					total_rebated = await this.model_extension_payment_securetrading_ws.getTotalRebated(securetrading_ws_order['securetrading_ws_order_id']);
-					total_released = await this.model_extension_payment_securetrading_ws.getTotalReleased(securetrading_ws_order['securetrading_ws_order_id']);
-
+					const total_rebated = await this.model_extension_payment_securetrading_ws.getTotalRebated(securetrading_ws_order['securetrading_ws_order_id']);
+					const total_released = await this.model_extension_payment_securetrading_ws.getTotalReleased(securetrading_ws_order['securetrading_ws_order_id']);
+					let rebate_status = 0;
 					if (total_released <= 0 && securetrading_ws_order['release_status'] == 1) {
 						json['status'] = 1;
 						json['message'] = this.language.get('text_refund_issued');
@@ -502,9 +508,9 @@ module.exports = class ControllerExtensionPaymentSecureTradingWs extends Control
 						rebate_status = 1;
 						json['msg'] = this.language.get('text_rebate_ok_order');
 
-						this.load.model('sale/order',this);
+						this.load.model('sale/order', this);
 
-						history = {};
+						const history = {};
 						history['order_status_id'] = this.config.get('payment_securetrading_ws_refunded_order_status_id');
 						history['comment'] = '';
 						history['notify'] = '';
@@ -555,10 +561,10 @@ module.exports = class ControllerExtensionPaymentSecureTradingWs extends Control
 			this.error['password'] = this.language.get('error_password');
 		}
 
-		if (empty(this.request.post['payment_securetrading_ws_cards_accepted'])) {
+		if (!(this.request.post['payment_securetrading_ws_cards_accepted'])) {
 			this.error['cards_accepted'] = this.language.get('error_cards_accepted');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 }

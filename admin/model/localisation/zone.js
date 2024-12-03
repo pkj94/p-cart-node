@@ -3,7 +3,7 @@ module.exports = class ModelLocalisationZone extends Model {
 		await this.db.query("INSERT INTO " + DB_PREFIX + "zone SET status = '" + data['status'] + "', name = '" + this.db.escape(data['name']) + "', code = '" + this.db.escape(data['code']) + "', country_id = '" + data['country_id'] + "'");
 
 		await this.cache.delete('zone');
-		
+
 		return this.db.getLastId();
 	}
 
@@ -32,7 +32,7 @@ module.exports = class ModelLocalisationZone extends Model {
 			'c.name',
 			'z.name',
 			'z.code'
-		});
+		];
 
 		if ((data['sort']) && sort_data.includes(data['sort'])) {
 			sql += " ORDER BY " + data['sort'];
@@ -47,13 +47,13 @@ module.exports = class ModelLocalisationZone extends Model {
 		}
 
 		if ((data['start']) || (data['limit'])) {
-			data['start'] = data['start']||0;
-if (data['start'] < 0) {
+			data['start'] = data['start'] || 0;
+			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
@@ -66,7 +66,7 @@ if (data['limit'] < 1) {
 	}
 
 	async getZonesByCountryId(country_id) {
-		zone_data = await this.cache.get('zone.' + country_id);
+		let zone_data = await this.cache.get('zone.' + country_id);
 
 		if (!zone_data) {
 			const query = await this.db.query("SELECT * FROM " + DB_PREFIX + "zone WHERE country_id = '" + country_id + "' AND status = '1' ORDER BY name");

@@ -245,4 +245,19 @@ global.ValidateIPaddress = (ipaddress) => {
         return (true)
     }
     return (false)
-} 
+}
+global.parseXmlString = async (xmlString) => {
+    const parser = new (require('xml2js')).Parser();
+    try {
+        const result = await parser.parseStringPromise(xmlString);
+        return result;
+    } catch (error) {
+        console.error('Error parsing XML:', error);
+        return null;
+    }
+}
+global.getStackTrace = () => {
+    const error = new Error();
+    const stack = error.stack.split('\n').slice(1).map(line => line.trim());
+    return stack;
+}
