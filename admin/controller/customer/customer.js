@@ -1003,11 +1003,11 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 		const customer_info = await this.model_customer_customer.getCustomerByEmail(this.request.post['email']);
 
 		if (!(this.request.get['customer_id'])) {
-			if (customer_info) {
+			if (customer_info.customer_id) {
 				this.error['warning'] = this.language.get('error_exists');
 			}
 		} else {
-			if (customer_info && (this.request.get['customer_id'] != customer_info['customer_id'])) {
+			if (customer_info.customer_id && (this.request.get['customer_id'] != customer_info['customer_id'])) {
 				this.error['warning'] = this.language.get('error_exists');
 			}
 		}
@@ -1040,7 +1040,6 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 		}
 
 		if ((this.request.post['address'])) {
-			console.log(this.request.post['address'])
 			for (let [key, value] of Object.entries(this.request.post['address'])) {
 				if ((oc_strlen(value['firstname']) < 1) || (oc_strlen(value['firstname']) > 32)) {
 					this.error['address'] = this.error['address'] || {};
@@ -1241,9 +1240,9 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 		let limit = Number(this.config.get('config_limit_admin'));
 
 		data['histories'] = [];
-
+		console.log('history----');
 		const results = await this.model_customer_customer.getHistories(this.request.get['customer_id'], (page - 1) * limit, limit);
-
+		console.log('history----',results);
 		for (let result of results) {
 			data['histories'].push({
 				'comment': result['comment'],
@@ -1504,12 +1503,12 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 		if ((this.request.get['customer_group_id'])) {
 			customer_group_id = this.request.get['customer_group_id'];
 		}
-		const custom_fields = await this.model_customer_custom_field.getCustomFields({ 'filter_customer_group_id': customer_group_id });
 
+		const custom_fields = await this.model_customer_custom_field.getCustomFields({ 'filter_customer_group_id': customer_group_id });
 		for (let custom_field of custom_fields) {
 			json.push({
 				'custom_field_id': custom_field['custom_field_id'],
-				'required': empty(custom_field['required']) || custom_field['required'] == 0 ? false : true
+				'required': !(custom_field['required']) || custom_field['required'] == 0 ? false : true
 			});
 		}
 

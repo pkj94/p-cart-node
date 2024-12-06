@@ -2,7 +2,6 @@ module.exports = class ControllerToolUpload extends Controller {
 	error = {};
 
 	async index() {
-		const data = {};
 		await this.load.language('tool/upload');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -23,10 +22,10 @@ module.exports = class ControllerToolUpload extends Controller {
 			this.request.post['selected'] = Array.isArray(this.request.post['selected']) ? this.request.post['selected'] : [this.request.post['selected']]
 			for (let upload_id of this.request.post['selected']) {
 				// Remove file before deleting DB record.
-				upload_info = await this.model_tool_upload.getUpload(upload_id);
+				const upload_info = await this.model_tool_upload.getUpload(upload_id);
 
 				if (upload_info && is_file(DIR_UPLOAD + upload_info['filename'])) {
-					unlink(DIR_UPLOAD + upload_info['filename']);
+					fs.unlinkSync(DIR_UPLOAD + upload_info['filename']);
 				}
 
 				await this.model_tool_upload.deleteUpload(upload_id);
@@ -35,7 +34,7 @@ module.exports = class ControllerToolUpload extends Controller {
 			this.session.data['success'] = this.language.get('text_success');
 			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['filter_name'])) {
 				url += '&filter_name=' + encodeURIComponent(html_entity_decode(this.request.get['filter_name']));
@@ -65,35 +64,28 @@ module.exports = class ControllerToolUpload extends Controller {
 
 	async getList() {
 		const data = {};
+		let filter_name = '';
 		if ((this.request.get['filter_name'])) {
 			filter_name = this.request.get['filter_name'];
-		} else {
-			filter_name = '';
 		}
-
+		let filter_date_added = '';
 		if ((this.request.get['filter_date_added'])) {
 			filter_date_added = this.request.get['filter_date_added'];
-		} else {
-			filter_date_added = '';
 		}
-
+		let sort = 'date_added';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
-		} else {
-			sort = 'date_added';
 		}
-
+		let order = 'DESC';
 		if ((this.request.get['order'])) {
 			order = this.request.get['order'];
-		} else {
-			order = 'DESC';
 		}
-		page = 1;
+		let page = 1;
 		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['filter_name'])) {
 			url += '&filter_name=' + encodeURIComponent(html_entity_decode(this.request.get['filter_name']));
@@ -129,7 +121,7 @@ module.exports = class ControllerToolUpload extends Controller {
 
 		data['delete'] = await this.url.link('tool/upload/delete', 'user_token=' + this.session.data['user_token'] + url, true);
 
-		data['uploads'] = {};
+		data['uploads'] = [];
 
 		const filter_data = {
 			'filter_name': filter_name,
@@ -138,18 +130,18 @@ module.exports = class ControllerToolUpload extends Controller {
 			'order': order,
 			'start': (page - 1) * Number(this.config.get('config_limit_admin')),
 			'limit': Number(this.config.get('config_limit_admin'))
-		});
+		};
 
-		upload_total = await this.model_tool_upload.getTotalUploads(filter_data);
+		const upload_total = await this.model_tool_upload.getTotalUploads(filter_data);
 
-		results = await this.model_tool_upload.getUploads(filter_data);
+		const results = await this.model_tool_upload.getUploads(filter_data);
 
 		for (let result of results) {
 			data['uploads'].push({
 				'upload_id': result['upload_id'],
 				'name': result['name'],
 				'filename': result['filename'],
-				'date_added': date(this.language.get('date_format_short'), strtotime(result['date_added'])),
+				'date_added': date(this.language.get('date_format_short'), new Date(result['date_added'])),
 				'download': await this.url.link('tool/upload/download', 'user_token=' + this.session.data['user_token'] + '&code=' + result['code'] + url, true)
 			});
 		}
@@ -161,7 +153,7 @@ module.exports = class ControllerToolUpload extends Controller {
 		} else if ((this.session.data['error'])) {
 			data['error_warning'] = this.session.data['error'];
 
-			delete this.session.data['error']);
+			delete this.session.data['error'];
 		} else {
 			data['error_warning'] = '';
 		}
@@ -241,7 +233,7 @@ module.exports = class ControllerToolUpload extends Controller {
 		data['header'] = await this.load.controller('common/header');
 		data['column_left'] = await this.load.controller('common/column_left');
 		data['footer'] = await this.load.controller('common/footer');
-
+		await this.session.save(this.session.data);
 		this.response.setOutput(await this.load.view('tool/upload', data));
 	}
 
@@ -257,14 +249,12 @@ module.exports = class ControllerToolUpload extends Controller {
 		this.load.model('tool/upload', this);
 
 		await this.load.language('tool/upload');
-
+		let code = 0;
 		if ((this.request.get['code'])) {
 			code = this.request.get['code'];
-		} else {
-			code = 0;
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['filter_name'])) {
 			url += '&filter_name=' + encodeURIComponent(html_entity_decode(this.request.get['filter_name']));
@@ -286,29 +276,29 @@ module.exports = class ControllerToolUpload extends Controller {
 			url += '&page=' + this.request.get['page'];
 		}
 
-		upload_info = await this.model_tool_upload.getUploadByCode(code);
+		const upload_info = await this.model_tool_upload.getUploadByCode(code);
 
-		if (upload_info) {
-			file = DIR_UPLOAD + upload_info['filename'];
-			mask = basename(upload_info['name']);
+		if (upload_info.upload_id) {
+			let file = DIR_UPLOAD + upload_info['filename'];
+			let mask = expressPath.basename(upload_info['name']);
 
-			if (file_exists(file) && filesize(file) > 0) {
-				this.response.addheader('Pragma: public');
-				this.response.addheader('Expires: 0');
-				this.response.addheader('Content-Description: File Transfer');
-				this.response.addheader('Content-Type: application/octet-stream');
-				this.response.addheader('Content-Disposition: attachment; filename="' + (mask ? mask : basename(file)) + '"');
-				this.response.addheader('Content-Transfer-Encoding: binary');
+			if (is_file(file) && fs.statSync(file).size > 0) {
+				this.response.addHeader('Pragma: public');
+				this.response.addHeader('Expires: 0');
+				this.response.addHeader('Content-Description: File Transfer');
+				this.response.addHeader('Content-Type: application/octet-stream');
+				this.response.addHeader('Content-Disposition: attachment; filename="' + (mask ? mask : expressPath.basename(file)) + '"');
+				this.response.addHeader('Content-Transfer-Encoding: binary');
 
-				this.response.setOutput(fs.readFileSync(file, FILE_USE_INCLUDE_PATH, null));
+				this.response.setFile(file);
 			} else {
 				this.session.data['error'] = this.language.get('error_file');
-
+				await this.session.save(this.session.data);
 				this.response.setRedirect(await this.url.link('tool/upload', 'user_token=' + this.session.data['user_token'] + url, true));
 			}
 		} else {
 			this.session.data['error'] = this.language.get('error_upload');
-
+			await this.session.save(this.session.data);
 			this.response.setRedirect(await this.url.link('tool/upload', 'user_token=' + this.session.data['user_token'] + url, true));
 		}
 	}
@@ -316,15 +306,15 @@ module.exports = class ControllerToolUpload extends Controller {
 	async upload() {
 		await this.load.language('sale/order');
 
-		json = {};
+		const json = {};
 
 		// Check user has permission
 		if (!await this.user.hasPermission('modify', 'tool/upload')) {
 			json['error'] = this.language.get('error_permission');
 		}
-
-		if (!json) {
-			if ((this.request.files['file']['name']) && is_file(this.request.files['file']['tmp_name'])) {
+		let filename = '';
+		if (!json.error) {
+			if ((this.request.files['file']['name'])) {
 				// Sanitize the filename
 				filename = html_entity_decode(this.request.files['file']['name']);
 
@@ -333,62 +323,66 @@ module.exports = class ControllerToolUpload extends Controller {
 				}
 
 				// Allowed file extension types
-				allowed = {};
+				let allowed = [];
 
-				extension_allowed = preg_replace('~\r?\n~', "\n", this.config.get('config_file_ext_allowed'));
+				const extension_allowed = this.config.get('config_file_ext_allowed').replace(/\r?\n/g, "\n");
 
-				filetypes = explode("\n", extension_allowed);
+				const filetypes = extension_allowed.split("\n");
 
-				for (filetypes of filetype) {
-					allowed.push(trim(filetype);
+				for (let filetype of filetypes) {
+					allowed.push(filetype.trim());
 				}
 
-				if (!in_array(strtolower(substr(strrchr(filename, '.'), 1)), allowed)) {
+				let fileExtension = filename.slice(((filename.lastIndexOf(".") - 1) >>> 0) + 2).toLowerCase(); // Check if the file extension is allowed 
+				if (!allowed.includes(fileExtension)) {
 					json['error'] = this.language.get('error_filetype');
 				}
 
 				// Allowed file mime types
-				allowed = {};
+				allowed = [];
 
-				mime_allowed = preg_replace('~\r?\n~', "\n", this.config.get('config_file_mime_allowed'));
+				const mime_allowed = this.config.get('config_file_mime_allowed').replace(/\r?\n/g, '\n');
 
-				filetypes = explode("\n", mime_allowed);
+				filetypes = mime_allowed.split("\n");
 
-				for (filetypes of filetype) {
-					allowed.push(trim(filetype);
+				for (let filetype of filetypes) {
+					allowed.push(filetype.trim());
 				}
 
-				if (!in_array(this.request.files['file']['type'], allowed)) {
+				if (!allowed.includes(this.request.files['file']['type'])) {
 					json['error'] = this.language.get('error_filetype');
 				}
 
 				// Check to see if any PHP files are trying to be uploaded
-				content = fs.readFileSync(this.request.files['file']['tmp_name']);
+				// content = fs.readFileSync(this.request.files['file']['tmp_name']);
 
-				if (preg_match('/\<\?php/i', content)) {
-					json['error'] = this.language.get('error_filetype');
-				}
+				// if (preg_match('/\<\?php/i', content)) {
+				// 	json['error'] = this.language.get('error_filetype');
+				// }
 
 				// Return any upload error
-				if (this.request.files['file']['error'] != UPLOAD_ERR_OK) {
-					json['error'] = this.language.get('error_upload_' + this.request.files['file']['error']);
-				}
+				// if (this.request.files['file']['error'] != UPLOAD_ERR_OK) {
+				// 	json['error'] = this.language.get('error_upload_' + this.request.files['file']['error']);
+				// }
 			} else {
 				json['error'] = this.language.get('error_upload');
 			}
 		}
 
-		if (!json) {
-			file = filename + '.' + token(32);
+		if (!json.error) {
+			let file = filename + '.' + token(32);
+			try {
+				await uploadFile(this.request.files['file'], DIR_UPLOAD + file);
+				// Hide the uploaded file name so people can not link to it directly.
+				this.load.model('tool/upload', this);
 
-			move_uploaded_file(this.request.files['file']['tmp_name'], DIR_UPLOAD + file);
+				json['code'] = await this.model_tool_upload.addUpload(filename, file);
 
-			// Hide the uploaded file name so people can not link to it directly.
-			this.load.model('tool/upload', this);
+				json['success'] = this.language.get('text_upload');
+			} catch (e) {
+				json['error'] = this.language.get('error_upload_' + this.request.files['file']['error']);
+			}
 
-			json['code'] = await this.model_tool_upload.addUpload(filename, file);
-
-			json['success'] = this.language.get('text_upload');
 		}
 
 		this.response.addHeader('Content-Type: application/json');

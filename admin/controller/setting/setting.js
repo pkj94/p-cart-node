@@ -1,29 +1,30 @@
+var moment = require('moment-timezone');
 module.exports = class ControllerSettingSetting extends Controller {
 	error = {};
 
 	async index() {
-const data = {};
+		const data = {};
 		await this.load.language('setting/setting');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('setting/setting',this);
+		this.load.model('setting/setting', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validate()) {
 			await this.model_setting_setting.editSetting('config', this.request.post);
 
-//			if (this.config.get('config_currency_auto')) {
-//				this.load.model('localisation/currency',this);
-//
-//				await this.model_localisation_currency.refresh();
-//			}
+			//			if (this.config.get('config_currency_auto')) {
+			//				this.load.model('localisation/currency',this);
+			//
+			//				await this.model_localisation_currency.refresh();
+			//			}
 
 			this.session.data['success'] = this.language.get('text_success');
-await this.session.save(this.session.data);
+			await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('setting/store', 'user_token=' + this.session.data['user_token'], true));
 		}
-		
+
 		if ((this.error['warning'])) {
 			data['error_warning'] = this.error['warning'];
 		} else {
@@ -135,18 +136,18 @@ await this.session.save(this.session.data);
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_stores'),
-			'href' : await this.url.link('setting/store', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_stores'),
+			'href': await this.url.link('setting/store', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('setting/setting', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('setting/setting', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		if ((this.session.data['success'])) {
@@ -193,28 +194,28 @@ await this.session.save(this.session.data);
 			data['store_url'] = HTTP_CATALOG;
 		}
 
-		data['themes'] = {};
+		data['themes'] = [];
 
-		this.load.model('setting/extension',this);
+		this.load.model('setting/extension', this);
 
-		const extensions = await this.model_setting_extension.getInstalled('theme');
+		let extensions = await this.model_setting_extension.getInstalled('theme');
 
-		for (extensions of code) {
+		for (let code of extensions) {
 			await this.load.language('extension/theme/' + code, 'extension');
-			
+
 			data['themes'].push({
-				'text'  : this.language.get('extension').get('heading_title'),
-				'value' : code
+				'text': this.language.get('extension').get('heading_title'),
+				'value': code
 			});
 		}
-			
+
 		if ((this.request.post['config_layout_id'])) {
 			data['config_layout_id'] = this.request.post['config_layout_id'];
 		} else {
 			data['config_layout_id'] = this.config.get('config_layout_id');
 		}
 
-		this.load.model('design/layout',this);
+		this.load.model('design/layout', this);
 
 		data['layouts'] = await this.model_design_layout.getLayouts();
 
@@ -253,20 +254,20 @@ await this.session.save(this.session.data);
 		} else {
 			data['config_telephone'] = this.config.get('config_telephone');
 		}
-		
+
 		if ((this.request.post['config_fax'])) {
 			data['config_fax'] = this.request.post['config_fax'];
 		} else {
 			data['config_fax'] = this.config.get('config_fax');
 		}
-		
+
 		if ((this.request.post['config_image'])) {
 			data['config_image'] = this.request.post['config_image'];
 		} else {
 			data['config_image'] = this.config.get('config_image');
 		}
 
-		this.load.model('tool/image',this);
+		this.load.model('tool/image', this);
 
 		if ((this.request.post['config_image']) && is_file(DIR_IMAGE + this.request.post['config_image'])) {
 			data['thumb'] = await this.model_tool_image.resize(this.request.post['config_image'], 100, 100);
@@ -290,7 +291,7 @@ await this.session.save(this.session.data);
 			data['config_comment'] = this.config.get('config_comment');
 		}
 
-		this.load.model('localisation/location');
+		this.load.model('localisation/location', this);
 
 		data['locations'] = await this.model_localisation_location.getLocations();
 
@@ -308,7 +309,7 @@ await this.session.save(this.session.data);
 			data['config_country_id'] = this.config.get('config_country_id');
 		}
 
-		this.load.model('localisation/country',this);
+		this.load.model('localisation/country', this);
 
 		data['countries'] = await this.model_localisation_country.getCountries();
 
@@ -326,22 +327,13 @@ await this.session.save(this.session.data);
 			data['config_timezone'] = 'UTC';
 		}
 		// Set Time Zone
-		data['timezones'] = {};
+		data['timezones'] = [];
 
-		timestamp = time();
-
-		timezones = timezone_identifiers_list();
-
-		for(timezones of timezone) {
-			date_default_timezone_set(timezone);
-			hour = ' (' + date('P', timestamp) + ')';
-			data['timezones'].push({
-				'text'  : timezone + hour,
-				'value' : timezone
-			});
-		}
-
-		date_default_timezone_set(this.config.get('config_timezone'));
+		data['timezones'] = Intl.supportedValuesOf('timeZone').map((a) => ({ value: a, text: a + ' (' + moment().tz(a).format('Z') + ')' }));
+		data['timezones'].push({
+			value: 'UTC',
+			text: 'UTC (+00:00)',
+		});
 
 		if ((this.request.post['config_language'])) {
 			data['config_language'] = this.request.post['config_language'];
@@ -349,7 +341,7 @@ await this.session.save(this.session.data);
 			data['config_language'] = this.config.get('config_language');
 		}
 
-		this.load.model('localisation/language',this);
+		this.load.model('localisation/language', this);
 
 		data['languages'] = await this.model_localisation_language.getLanguages();
 
@@ -377,20 +369,20 @@ await this.session.save(this.session.data);
 			data['config_currency_engine'] = this.config.get('config_currency_engine');
 		}
 
-		this.load.model('localisation/currency',this);
+		this.load.model('localisation/currency', this);
 
 		data['currencies'] = await this.model_localisation_currency.getCurrencies();
 
-		data['currency_engines'] = {};
+		data['currency_engines'] = [];
 
-		extension_codes = await this.model_setting_extension.getInstalled('currency');
+		const extension_codes = await this.model_setting_extension.getInstalled('currency');
 
-		for (extension_codes of extension_code) {
-			if (this.config.get('currency_' + extension_code + '_status')) {
+		for (let extension_code of extension_codes) {
+			if (Number(this.config.get('currency_' + extension_code + '_status'))) {
 				await this.load.language('extension/currency/' + extension_code, 'currency_engine');
 				data['currency_engines'].push({
-					'text'  : this.language.get('currency_engine').get('heading_title'),
-					'value' : extension_code
+					'text': this.language.get('currency_engine').get('heading_title'),
+					'value': extension_code
 				});
 			}
 		}
@@ -401,7 +393,7 @@ await this.session.save(this.session.data);
 			data['config_length_class_id'] = this.config.get('config_length_class_id');
 		}
 
-		this.load.model('localisation/length_class',this);
+		this.load.model('localisation/length_class', this);
 
 		data['length_classes'] = await this.model_localisation_length_class.getLengthClasses();
 
@@ -411,7 +403,7 @@ await this.session.save(this.session.data);
 			data['config_weight_class_id'] = this.config.get('config_weight_class_id');
 		}
 
-		this.load.model('localisation/weight_class',this);
+		this.load.model('localisation/weight_class', this);
 
 		data['weight_classes'] = await this.model_localisation_weight_class.getWeightClasses();
 
@@ -493,7 +485,7 @@ await this.session.save(this.session.data);
 			data['config_customer_group_id'] = this.config.get('config_customer_group_id');
 		}
 
-		this.load.model('customer/customer_group',this);
+		this.load.model('customer/customer_group', this);
 
 		data['customer_groups'] = await this.model_customer_customer_group.getCustomerGroups();
 
@@ -525,7 +517,7 @@ await this.session.save(this.session.data);
 			data['config_account_id'] = this.config.get('config_account_id');
 		}
 
-		this.load.model('catalog/information',this);
+		this.load.model('catalog/information', this);
 
 		data['informations'] = await this.model_catalog_information.getInformations();
 
@@ -583,7 +575,7 @@ await this.session.save(this.session.data);
 			data['config_fraud_status_id'] = this.config.get('config_fraud_status_id');
 		}
 
-		this.load.model('localisation/order_status',this);
+		this.load.model('localisation/order_status', this);
 
 		data['order_statuses'] = await this.model_localisation_order_status.getOrderStatuses();
 
@@ -593,7 +585,7 @@ await this.session.save(this.session.data);
 			data['config_api_id'] = this.config.get('config_api_id');
 		}
 
-		this.load.model('user/api',this);
+		this.load.model('user/api', this);
 
 		data['apis'] = await this.model_user_api.getApis();
 
@@ -663,7 +655,7 @@ await this.session.save(this.session.data);
 			data['config_return_status_id'] = this.config.get('config_return_status_id');
 		}
 
-		this.load.model('localisation/return_status',this);
+		this.load.model('localisation/return_status', this);
 
 		data['return_statuses'] = await this.model_localisation_return_status.getReturnStatuses();
 
@@ -672,58 +664,58 @@ await this.session.save(this.session.data);
 		} else {
 			data['config_captcha'] = this.config.get('config_captcha');
 		}
-		
-		this.load.model('setting/extension',this);
 
-		data['captchas'] = {};
+		this.load.model('setting/extension', this);
+
+		data['captchas'] = [];
 
 		// Get a list of installed captchas
-		const extensions = await this.model_setting_extension.getInstalled('captcha');
+		extensions = await this.model_setting_extension.getInstalled('captcha');
 
-		for (extensions of code) {
+		for (let code of extensions) {
 			await this.load.language('extension/captcha/' + code, 'extension');
 
-			if (this.config.get('captcha_' + code + '_status')) {
+			if (Number(this.config.get('captcha_' + code + '_status'))) {
 				data['captchas'].push({
-					'text'  : this.language.get('extension').get('heading_title'),
-					'value' : code
+					'text': this.language.get('extension').get('heading_title'),
+					'value': code
 				});
 			}
-		}		
+		}
 
 		if ((this.request.post['config_captcha_page'])) {
 			data['config_captcha_page'] = this.request.post['config_captcha_page'];
 		} else if (this.config.has('config_captcha_page')) {
-		   	data['config_captcha_page'] = this.config.get('config_captcha_page');
+			data['config_captcha_page'] = this.config.get('config_captcha_page');
 		} else {
-			data['config_captcha_page'] = {};
+			data['config_captcha_page'] = [];
 		}
 
-		data['captcha_pages'] = {};
+		data['captcha_pages'] = [];
 
 		data['captcha_pages'].push({
-			'text'  : this.language.get('text_register'),
-			'value' : 'register'
-		});
-		
-		data['captcha_pages'].push({
-			'text'  : this.language.get('text_guest'),
-			'value' : 'guest'
-		});
-		
-		data['captcha_pages'].push({
-			'text'  : this.language.get('text_review'),
-			'value' : 'review'
+			'text': this.language.get('text_register'),
+			'value': 'register'
 		});
 
 		data['captcha_pages'].push({
-			'text'  : this.language.get('text_return'),
-			'value' : 'return'
+			'text': this.language.get('text_guest'),
+			'value': 'guest'
 		});
 
 		data['captcha_pages'].push({
-			'text'  : this.language.get('text_contact'),
-			'value' : 'contact'
+			'text': this.language.get('text_review'),
+			'value': 'review'
+		});
+
+		data['captcha_pages'].push({
+			'text': this.language.get('text_return'),
+			'value': 'return'
+		});
+
+		data['captcha_pages'].push({
+			'text': this.language.get('text_contact'),
+			'value': 'contact'
 		});
 
 		if ((this.request.post['config_logo'])) {
@@ -803,31 +795,31 @@ await this.session.save(this.session.data);
 		if ((this.request.post['config_mail_alert'])) {
 			data['config_mail_alert'] = this.request.post['config_mail_alert'];
 		} else if (this.config.has('config_mail_alert')) {
-		   	data['config_mail_alert'] = this.config.get('config_mail_alert');
+			data['config_mail_alert'] = this.config.get('config_mail_alert');
 		} else {
-			data['config_mail_alert'] = {};
+			data['config_mail_alert'] = [];
 		}
 
-		data['mail_alerts'] = {};
+		data['mail_alerts'] = [];
 
 		data['mail_alerts'].push({
-			'text'  : this.language.get('text_mail_account'),
-			'value' : 'account'
+			'text': this.language.get('text_mail_account'),
+			'value': 'account'
 		});
 
 		data['mail_alerts'].push({
-			'text'  : this.language.get('text_mail_affiliate'),
-			'value' : 'affiliate'
+			'text': this.language.get('text_mail_affiliate'),
+			'value': 'affiliate'
 		});
 
 		data['mail_alerts'].push({
-			'text'  : this.language.get('text_mail_order'),
-			'value' : 'order'
+			'text': this.language.get('text_mail_order'),
+			'value': 'order'
 		});
 
 		data['mail_alerts'].push({
-			'text'  : this.language.get('text_mail_review'),
-			'value' : 'review'
+			'text': this.language.get('text_mail_review'),
+			'value': 'review'
 		});
 
 		if ((this.request.post['config_mail_alert_email'])) {
@@ -835,7 +827,7 @@ await this.session.save(this.session.data);
 		} else {
 			data['config_mail_alert_email'] = this.config.get('config_mail_alert_email');
 		}
-		
+
 		if ((this.request.post['config_secure'])) {
 			data['config_secure'] = this.request.post['config_secure'];
 		} else {
@@ -950,7 +942,7 @@ await this.session.save(this.session.data);
 			this.error['address'] = this.language.get('error_address');
 		}
 
-		if ((oc_strlen(this.request.post['config_email']) > 96) || !filter_var(this.request.post['config_email'], FILTER_VALIDATE_EMAIL)) {
+		if ((oc_strlen(this.request.post['config_email']) > 96) || !isEmailValid(this.request.post['config_email'])) {
 			this.error['email'] = this.language.get('error_email');
 		}
 
@@ -985,15 +977,15 @@ await this.session.save(this.session.data);
 		if (!(this.request.post['config_complete_status'])) {
 			this.error['complete_status'] = this.language.get('error_complete_status');
 		}
-		
+
 		if (!this.request.post['config_error_filename']) {
 			this.error['log'] = this.language.get('error_log_required');
-		} else if (preg_match('/\.\.[\/\\\]?/', this.request.post['config_error_filename'])) {
+		} else if (/\.\.[\/\\]?/.test(this.request.post['config_error_filename'])) {
 			this.error['log'] = this.language.get('error_log_invalid');
-		} else if (substr(this.request.post['config_error_filename'], strrpos(this.request.post['config_error_filename'], '.')) != '.log') {
+		} else if (this.request.post['config_error_filename'].substr(this.request.post['config_error_filename'].indexOf('.')) != '.log') {
 			this.error['log'] = this.language.get('error_log_extension');
 		}
-		
+
 		if ((oc_strlen(this.request.post['config_encryption']) < 32) || (oc_strlen(this.request.post['config_encryption']) > 1024)) {
 			this.error['encryption'] = this.language.get('error_encryption');
 		}
@@ -1002,27 +994,25 @@ await this.session.save(this.session.data);
 			this.error['warning'] = this.language.get('error_warning');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
-	
+
 	async theme() {
+		let server = HTTP_CATALOG;
 		if (this.request.server['HTTPS']) {
 			server = HTTPS_CATALOG;
-		} else {
-			server = HTTP_CATALOG;
 		}
-		
+
 		// This is only here for compatibility with old themes.
+		let theme = expressPath.basename(this.request.get['theme']);
 		if (this.request.get['theme'] == 'theme_default') {
 			theme = this.config.get('theme_default_directory');
-		} else {
-			theme = basename(this.request.get['theme']);
 		}
-		
+
 		if (is_file(DIR_CATALOG + 'view/theme/' + theme + '/image/' + theme + '.png')) {
 			this.response.setOutput(server + 'catalog/view/theme/' + theme + '/image/' + theme + '.png');
 		} else {
 			this.response.setOutput(server + 'image/no_image.png');
 		}
-	}	
+	}
 }

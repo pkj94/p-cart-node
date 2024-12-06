@@ -2,7 +2,6 @@ module.exports = class ControllerLocalisationLanguage extends Controller {
 	error = {};
 
 	async index() {
-		const data = {};
 		await this.load.language('localisation/language');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -25,7 +24,7 @@ module.exports = class ControllerLocalisationLanguage extends Controller {
 			this.session.data['success'] = this.language.get('text_success');
 			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -58,7 +57,7 @@ module.exports = class ControllerLocalisationLanguage extends Controller {
 			this.session.data['success'] = this.language.get('text_success');
 			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -94,7 +93,7 @@ module.exports = class ControllerLocalisationLanguage extends Controller {
 			this.session.data['success'] = this.language.get('text_success');
 			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -116,23 +115,20 @@ module.exports = class ControllerLocalisationLanguage extends Controller {
 
 	async getList() {
 		const data = {};
+		let sort = 'name';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
-		} else {
-			sort = 'name';
 		}
-
+		let order = 'ASC';
 		if ((this.request.get['order'])) {
 			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
 		}
-		page = 1;
+		let page = 1;
 		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -161,23 +157,23 @@ module.exports = class ControllerLocalisationLanguage extends Controller {
 		data['add'] = await this.url.link('localisation/language/add', 'user_token=' + this.session.data['user_token'] + url, true);
 		data['delete'] = await this.url.link('localisation/language/delete', 'user_token=' + this.session.data['user_token'] + url, true);
 
-		data['languages'] = {};
+		data['languages'] = [];
 
 		const filter_data = {
 			'sort': sort,
 			'order': order,
 			'start': (page - 1) * Number(this.config.get('config_limit_admin')),
 			'limit': Number(this.config.get('config_limit_admin'))
-		});
+		};
 
-		language_total = await this.model_localisation_language.getTotalLanguages();
+		const language_total = await this.model_localisation_language.getTotalLanguages();
 
-		results = await this.model_localisation_language.getLanguages(filter_data);
+		const results = await this.model_localisation_language.getLanguages(filter_data);
 
 		for (let result of results) {
 			data['languages'].push({
 				'language_id': result['language_id'],
-				'name': result['name'] + ((result['code'] == this.config.get('config_language')) ? this.language.get('text_default') : null),
+				'name': result['name'] + ((result['code'] == this.config.get('config_language')) ? this.language.get('text_default') : ''),
 				'code': result['code'],
 				'sort_order': result['sort_order'],
 				'edit': await this.url.link('localisation/language/edit', 'user_token=' + this.session.data['user_token'] + '&language_id=' + result['language_id'] + url, true)
@@ -251,6 +247,7 @@ module.exports = class ControllerLocalisationLanguage extends Controller {
 	}
 
 	async getForm() {
+		const data = {};
 		data['text_form'] = !(this.request.get['language_id']) ? this.language.get('text_add') : this.language.get('text_edit');
 
 		if ((this.error['warning'])) {
@@ -277,7 +274,7 @@ module.exports = class ControllerLocalisationLanguage extends Controller {
 			data['error_locale'] = '';
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -310,7 +307,7 @@ module.exports = class ControllerLocalisationLanguage extends Controller {
 		}
 
 		data['cancel'] = await this.url.link('localisation/language', 'user_token=' + this.session.data['user_token'] + url, true);
-
+		let language_info;
 		if ((this.request.get['language_id']) && (this.request.server['method'] != 'POST')) {
 			language_info = await this.model_localisation_language.getLanguage(this.request.get['language_id']);
 		}
@@ -331,12 +328,12 @@ module.exports = class ControllerLocalisationLanguage extends Controller {
 			data['code'] = '';
 		}
 
-		data['languages'] = {};
+		data['languages'] = [];
 
-		folders = require('glob').sync(DIR_LANGUAGE + '*', GLOB_ONLYDIR);
+		let folders = require('glob').sync(DIR_LANGUAGE + '*');
 
-		for (folders of folder) {
-			data['languages'].push(basename(folder);
+		for (let folder of folders) {
+			data['languages'].push(expressPath.basename(folder));
 		}
 
 		if ((this.request.post['locale'])) {
@@ -387,14 +384,14 @@ module.exports = class ControllerLocalisationLanguage extends Controller {
 			this.error['locale'] = this.language.get('error_locale');
 		}
 
-		language_info = await this.model_localisation_language.getLanguageByCode(this.request.post['code']);
+		const language_info = await this.model_localisation_language.getLanguageByCode(this.request.post['code']);
 
 		if (!(this.request.get['language_id'])) {
-			if (language_info) {
+			if (language_info.language_id) {
 				this.error['warning'] = this.language.get('error_exists');
 			}
 		} else {
-			if (language_info && (this.request.get['language_id'] != language_info['language_id'])) {
+			if (language_info.language_id && (this.request.get['language_id'] != language_info['language_id'])) {
 				this.error['warning'] = this.language.get('error_exists');
 			}
 		}
@@ -411,7 +408,7 @@ module.exports = class ControllerLocalisationLanguage extends Controller {
 		this.load.model('sale/order', this);
 		this.request.post['selected'] = Array.isArray(this.request.post['selected']) ? this.request.post['selected'] : [this.request.post['selected']];
 
-		for (let language_id of this.request.post['selected'] ) {
+		for (let language_id of this.request.post['selected']) {
 			const language_info = await this.model_localisation_language.getLanguage(language_id);
 
 			if (language_info.language_id) {

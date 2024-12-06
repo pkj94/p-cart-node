@@ -1,41 +1,31 @@
 module.exports = class ControllerCustomerCustomerApproval extends Controller {
 	async index() {
-const data = {};
+		const data = {};
 		await this.load.language('customer/customer_approval');
 
 		this.document.setTitle(this.language.get('heading_title'));
-
+		let filter_name = '';
 		if ((this.request.get['filter_name'])) {
 			filter_name = this.request.get['filter_name'];
-		} else {
-			filter_name = '';
-		}
-
+		} 
+		let filter_email = '';
 		if ((this.request.get['filter_email'])) {
 			filter_email = this.request.get['filter_email'];
-		} else {
-			filter_email = '';
-		}
-
+		} 
+		let filter_customer_group_id = '';
 		if ((this.request.get['filter_customer_group_id'])) {
 			filter_customer_group_id = this.request.get['filter_customer_group_id'];
-		} else {
-			filter_customer_group_id = '';
 		}
-
+		let filter_type = '';
 		if ((this.request.get['filter_type'])) {
 			filter_type = this.request.get['filter_type'];
-		} else {
-			filter_type = '';
-		}
-
+		} 
+		let filter_date_added = '';
 		if ((this.request.get['filter_date_added'])) {
 			filter_date_added = this.request.get['filter_date_added'];
-		} else {
-			filter_date_added = '';
-		}
+		} 
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['filter_name'])) {
 			url += '&filter_name=' + encodeURIComponent(html_entity_decode(this.request.get['filter_name']));
@@ -64,15 +54,15 @@ const data = {};
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('customer/customer_approval', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('customer/customer_approval', 'user_token=' + this.session.data['user_token'], true)
 		});
-		
+
 		data['filter_name'] = filter_name;
 		data['filter_email'] = filter_email;
 		data['filter_customer_group_id'] = filter_customer_group_id;
@@ -81,7 +71,7 @@ const data = {};
 
 		data['user_token'] = this.session.data['user_token'];
 
-		this.load.model('customer/customer_group',this);
+		this.load.model('customer/customer_group', this);
 
 		data['customer_groups'] = await this.model_customer_customer_group.getCustomerGroups();
 
@@ -93,75 +83,66 @@ const data = {};
 	}
 
 	async customer_approval() {
+		const data = {};
 		await this.load.language('customer/customer_approval');
-
+		let filter_name = '';
 		if ((this.request.get['filter_name'])) {
 			filter_name = this.request.get['filter_name'];
-		} else {
-			filter_name = '';
-		}
-
+		} 
+		let filter_email = '';
 		if ((this.request.get['filter_email'])) {
 			filter_email = this.request.get['filter_email'];
-		} else {
-			filter_email = '';
-		}
-
+		} 
+		let filter_customer_group_id = '';
 		if ((this.request.get['filter_customer_group_id'])) {
 			filter_customer_group_id = this.request.get['filter_customer_group_id'];
-		} else {
-			filter_customer_group_id = '';
-		}
-
+		} 
+		let filter_type = '';
 		if ((this.request.get['filter_type'])) {
 			filter_type = this.request.get['filter_type'];
-		} else {
-			filter_type = '';
-		}
-
+		} 
+		let filter_date_added = '';
 		if ((this.request.get['filter_date_added'])) {
 			filter_date_added = this.request.get['filter_date_added'];
-		} else {
-			filter_date_added = '';
 		}
-page = 1;
-if ((this.request.get['page'])) {
+		let page = 1;
+		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
 		}
 
-		data['customer_approvals'] = {};
+		data['customer_approvals'] = [];
 
 		const filter_data = {
-			'filter_name'              : filter_name,
-			'filter_email'             : filter_email,
-			'filter_customer_group_id' : filter_customer_group_id,
-			'filter_type'              : filter_type,
-			'filter_date_added'        : filter_date_added,
-			'start'                    : (page - 1) * Number(this.config.get('config_limit_admin')),
-			'limit'                    : Number(this.config.get('config_limit_admin'))
-		});
+			'filter_name': filter_name,
+			'filter_email': filter_email,
+			'filter_customer_group_id': filter_customer_group_id,
+			'filter_type': filter_type,
+			'filter_date_added': filter_date_added,
+			'start': (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit': Number(this.config.get('config_limit_admin'))
+		};
 
-		this.load.model('customer/customer_approval');
+		this.load.model('customer/customer_approval', this);
 
-		customer_approval_total = await this.model_customer_customer_approval.getTotalCustomerApprovals(filter_data);
+		const customer_approval_total = await this.model_customer_customer_approval.getTotalCustomerApprovals(filter_data);
 
-		results = await this.model_customer_customer_approval.getCustomerApprovals(filter_data);
+		const results = await this.model_customer_customer_approval.getCustomerApprovals(filter_data);
 
 		for (let result of results) {
 			data['customer_approvals'].push({
-				'customer_id'    : result['customer_id'],
-				'name'           : result['name'],
-				'email'          : result['email'],
-				'customer_group' : result['customer_group'],
-				'type'           : this.language.get('text_' + result['type']),
-				'date_added'     : date(this.language.get('date_format_short'), strtotime(result['date_added'])),
-				'approve'        : await this.url.link('customer/customer_approval/approve', 'user_token=' + this.session.data['user_token'] + '&customer_id=' + result['customer_id'] + '&type=' + result['type'], true),
-				'deny'           : await this.url.link('customer/customer_approval/deny', 'user_token=' + this.session.data['user_token'] + '&customer_id=' + result['customer_id'] + '&type=' + result['type'], true),
-				'edit'           : await this.url.link('customer/customer/edit', 'user_token=' + this.session.data['user_token'] + '&customer_id=' + result['customer_id'], true)
+				'customer_id': result['customer_id'],
+				'name': result['name'],
+				'email': result['email'],
+				'customer_group': result['customer_group'],
+				'type': this.language.get('text_' + result['type']),
+				'date_added': date(this.language.get('date_format_short'), new Date(result['date_added'])),
+				'approve': await this.url.link('customer/customer_approval/approve', 'user_token=' + this.session.data['user_token'] + '&customer_id=' + result['customer_id'] + '&type=' + result['type'], true),
+				'deny': await this.url.link('customer/customer_approval/deny', 'user_token=' + this.session.data['user_token'] + '&customer_id=' + result['customer_id'] + '&type=' + result['type'], true),
+				'edit': await this.url.link('customer/customer/edit', 'user_token=' + this.session.data['user_token'] + '&customer_id=' + result['customer_id'], true)
 			});
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['filter_name'])) {
 			url += '&filter_name=' + encodeURIComponent(html_entity_decode(this.request.get['filter_name']));
@@ -199,12 +180,12 @@ if ((this.request.get['page'])) {
 	async approve() {
 		await this.load.language('customer/customer_approval');
 
-		json = {};
+		const json = {};
 
 		if (!await this.user.hasPermission('modify', 'customer/customer_approval')) {
 			json['error'] = this.language.get('error_permission');
 		} else {
-			this.load.model('customer/customer_approval');
+			this.load.model('customer/customer_approval', this);
 
 			if (this.request.get['type'] == 'customer') {
 				await this.model_customer_customer_approval.approveCustomer(this.request.get['customer_id']);
@@ -222,12 +203,12 @@ if ((this.request.get['page'])) {
 	async deny() {
 		await this.load.language('customer/customer_approval');
 
-		json = {};
+		const json = {};
 
 		if (!await this.user.hasPermission('modify', 'customer/customer_approval')) {
 			json['error'] = this.language.get('error_permission');
 		} else {
-			this.load.model('customer/customer_approval');
+			this.load.model('customer/customer_approval', this);
 
 			if (this.request.get['type'] == 'customer') {
 				await this.model_customer_customer_approval.denyCustomer(this.request.get['customer_id']);

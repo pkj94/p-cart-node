@@ -2,7 +2,6 @@ module.exports = class ControllerLocalisationStockStatus extends Controller {
 	error = {};
 
 	async index() {
-		const data = {};
 		await this.load.language('localisation/stock_status');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -25,7 +24,7 @@ module.exports = class ControllerLocalisationStockStatus extends Controller {
 			this.session.data['success'] = this.language.get('text_success');
 			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -58,7 +57,7 @@ module.exports = class ControllerLocalisationStockStatus extends Controller {
 			this.session.data['success'] = this.language.get('text_success');
 			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -94,7 +93,7 @@ module.exports = class ControllerLocalisationStockStatus extends Controller {
 			this.session.data['success'] = this.language.get('text_success');
 			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -116,23 +115,20 @@ module.exports = class ControllerLocalisationStockStatus extends Controller {
 
 	async getList() {
 		const data = {};
+		let sort = 'name';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
-		} else {
-			sort = 'name';
 		}
-
+		let order = 'ASC';
 		if ((this.request.get['order'])) {
 			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
 		}
-		page = 1;
+		let page = 1;
 		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -161,18 +157,18 @@ module.exports = class ControllerLocalisationStockStatus extends Controller {
 		data['add'] = await this.url.link('localisation/stock_status/add', 'user_token=' + this.session.data['user_token'] + url, true);
 		data['delete'] = await this.url.link('localisation/stock_status/delete', 'user_token=' + this.session.data['user_token'] + url, true);
 
-		data['stock_statuses'] = {};
+		data['stock_statuses'] = [];
 
 		const filter_data = {
 			'sort': sort,
 			'order': order,
 			'start': (page - 1) * Number(this.config.get('config_limit_admin')),
 			'limit': Number(this.config.get('config_limit_admin'))
-		});
+		};
 
-		stock_status_total = await this.model_localisation_stock_status.getTotalStockStatuses();
+		const stock_status_total = await this.model_localisation_stock_status.getTotalStockStatuses();
 
-		results = await this.model_localisation_stock_status.getStockStatuses(filter_data);
+		const results = await this.model_localisation_stock_status.getStockStatuses(filter_data);
 
 		for (let result of results) {
 			data['stock_statuses'].push({
@@ -247,6 +243,7 @@ module.exports = class ControllerLocalisationStockStatus extends Controller {
 	}
 
 	async getForm() {
+		const data = {};
 		data['text_form'] = !(this.request.get['stock_status_id']) ? this.language.get('text_add') : this.language.get('text_edit');
 
 		if ((this.error['warning'])) {
@@ -261,7 +258,7 @@ module.exports = class ControllerLocalisationStockStatus extends Controller {
 			data['error_name'] = {};
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -319,8 +316,9 @@ module.exports = class ControllerLocalisationStockStatus extends Controller {
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		for (let [language_id , value] of Object.entries(this.request.post['stock_status'])) {
+		for (let [language_id, value] of Object.entries(this.request.post['stock_status'])) {
 			if ((oc_strlen(value['name']) < 3) || (oc_strlen(value['name']) > 32)) {
+				this.error['name'] = this.error['name'] || {};
 				this.error['name'][language_id] = this.language.get('error_name');
 			}
 		}
@@ -338,7 +336,7 @@ module.exports = class ControllerLocalisationStockStatus extends Controller {
 		this.request.post['selected'] = Array.isArray(this.request.post['selected']) ? this.request.post['selected'] : [this.request.post['selected']];
 
 		for (let stock_status_id of this.request.post['selected']) {
-			product_total = await this.model_catalog_product.getTotalProductsByStockStatusId(stock_status_id);
+			const product_total = await this.model_catalog_product.getTotalProductsByStockStatusId(stock_status_id);
 
 			if (product_total) {
 				this.error['warning'] = sprintf(this.language.get('error_product'), product_total);

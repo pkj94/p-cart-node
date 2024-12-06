@@ -2,12 +2,11 @@ module.exports = class ControllerUserUserPermission extends Controller {
 	error = {};
 
 	async index() {
-const data = {};
 		await this.load.language('user/user_group');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('user/user_group',this);
+		this.load.model('user/user_group', this);
 
 		await this.getList();
 	}
@@ -17,15 +16,15 @@ const data = {};
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('user/user_group',this);
+		this.load.model('user/user_group', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_user_user_group.addUserGroup(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
-await this.session.save(this.session.data);
+			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -50,15 +49,15 @@ await this.session.save(this.session.data);
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('user/user_group',this);
+		this.load.model('user/user_group', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_user_user_group.editUserGroup(this.request.get['user_group_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
-await this.session.save(this.session.data);
+			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -83,18 +82,18 @@ await this.session.save(this.session.data);
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('user/user_group',this);
+		this.load.model('user/user_group', this);
 
 		if ((this.request.post['selected']) && await this.validateDelete()) {
-this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
-			for (let user_group_id of this.request.post['selected'] ) {
+			this.request.post['selected'] = Array.isArray(this.request.post['selected']) ? this.request.post['selected'] : [this.request.post['selected']]
+			for (let user_group_id of this.request.post['selected']) {
 				await this.model_user_user_group.deleteUserGroup(user_group_id);
 			}
 
 			this.session.data['success'] = this.language.get('text_success');
-await this.session.save(this.session.data);
+			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -116,23 +115,20 @@ await this.session.save(this.session.data);
 
 	async getList() {
 		const data = {};
+		let sort = 'name';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
-		} else {
-			sort = 'name';
 		}
-
+		let order = 'ASC';
 		if ((this.request.get['order'])) {
 			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
 		}
-page = 1;
-if ((this.request.get['page'])) {
+		let page = 1;
+		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -149,36 +145,36 @@ if ((this.request.get['page'])) {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('user/user_permission', 'user_token=' + this.session.data['user_token'] + url, true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('user/user_permission', 'user_token=' + this.session.data['user_token'] + url, true)
 		});
 
 		data['add'] = await this.url.link('user/user_permission/add', 'user_token=' + this.session.data['user_token'] + url, true);
 		data['delete'] = await this.url.link('user/user_permission/delete', 'user_token=' + this.session.data['user_token'] + url, true);
 
-		data['user_groups'] = {};
+		data['user_groups'] = [];
 
 		const filter_data = {
-			'sort'  : sort,
-			'order' : order,
-			'start' : (page - 1) * Number(this.config.get('config_limit_admin')),
-			'limit' : Number(this.config.get('config_limit_admin'))
-		});
+			'sort': sort,
+			'order': order,
+			'start': (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit': Number(this.config.get('config_limit_admin'))
+		};
 
-		user_group_total = await this.model_user_user_group.getTotalUserGroups();
+		const user_group_total = await this.model_user_user_group.getTotalUserGroups();
 
-		results = await this.model_user_user_group.getUserGroups(filter_data);
+		const results = await this.model_user_user_group.getUserGroups(filter_data);
 
 		for (let result of results) {
 			data['user_groups'].push({
-				'user_group_id' : result['user_group_id'],
-				'name'          : result['name'],
-				'edit'          : await this.url.link('user/user_permission/edit', 'user_token=' + this.session.data['user_token'] + '&user_group_id=' + result['user_group_id'] + url, true)
+				'user_group_id': result['user_group_id'],
+				'name': result['name'],
+				'edit': await this.url.link('user/user_permission/edit', 'user_token=' + this.session.data['user_token'] + '&user_group_id=' + result['user_group_id'] + url, true)
 			});
 		}
 
@@ -247,6 +243,7 @@ if ((this.request.get['page'])) {
 	}
 
 	async getForm() {
+		const data = {};
 		data['text_form'] = !(this.request.get['user_group_id']) ? this.language.get('text_add') : this.language.get('text_edit');
 
 		if ((this.error['warning'])) {
@@ -261,7 +258,7 @@ if ((this.request.get['page'])) {
 			data['error_name'] = '';
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -278,13 +275,13 @@ if ((this.request.get['page'])) {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('user/user_permission', 'user_token=' + this.session.data['user_token'] + url, true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('user/user_permission', 'user_token=' + this.session.data['user_token'] + url, true)
 		});
 
 		if (!(this.request.get['user_group_id'])) {
@@ -294,7 +291,7 @@ if ((this.request.get['page'])) {
 		}
 
 		data['cancel'] = await this.url.link('user/user_permission', 'user_token=' + this.session.data['user_token'] + url, true);
-
+		let user_group_info = {};
 		if ((this.request.get['user_group_id']) && this.request.server['method'] != 'POST') {
 			user_group_info = await this.model_user_user_group.getUserGroup(this.request.get['user_group_id']);
 		}
@@ -307,70 +304,69 @@ if ((this.request.get['page'])) {
 			data['name'] = '';
 		}
 
-		ignore = array(
+		let ignore = [
 			'common/dashboard',
 			'common/startup',
 			'common/login',
 			'common/logout',
 			'common/forgotten',
-			'common/reset',			
+			'common/reset',
 			'common/footer',
 			'common/header',
 			'error/not_found',
 			'error/permission'
-		});
+		];
 
-		data['permissions'] = {};
+		data['permissions'] = [];
 
-		files = {};
+		let files = [];
 
 		// Make path into an array
-		path = array(DIR_APPLICATION + 'controller/*');
+		let path = [DIR_APPLICATION + 'controller/*'];
 
 		// While the path array is still populated keep looping through
-		while (count(path) != 0) {
-			next = array_shift(path);
+		while (path.length != 0) {
+			let next = path.shift();
 
-			for (require('glob').sync(next) of file) {
+			for (let file of require('glob').sync(next)) {
 				// If directory add to path array
 				if (is_dir(file)) {
-					path.push(file + '/*';
+					path.push(file + '/*');
 				}
 
 				// Add the file to the files to be deleted array
 				if (is_file(file)) {
-					files.push(file;
+					files.push((DIR_OPENCART + file).replaceAll('\\', '/'));
 				}
 			}
 		}
 
 		// Sort the file array
-		sort(files);
-					
+		files = files.sort();
 		for (let file of files) {
-			controller = substr(file, strlen(DIR_APPLICATION + 'controller/'));
+			let controller = file.substr((DIR_APPLICATION + 'controller/').length);
 
-			permission = substr(controller, 0, strrpos(controller, '.'));
+			let permission = controller.substr(0, controller.indexOf('.'));
 
-			if (!in_array(permission, ignore)) {
-				data['permissions'].push(permission;
+			if (!ignore.includes(permission)) {
+				data['permissions'].push(permission);
 			}
 		}
 
-		if ((this.request.post['permission']['access'])) {
+		if ((this.request.post['permission'] && this.request.post['permission']['access'])) {
 			data['access'] = this.request.post['permission']['access'];
-		} else if ((user_group_info['permission']['access'])) {
+		} else if ((user_group_info['permission'] && user_group_info['permission']['access'])) {
 			data['access'] = user_group_info['permission']['access'];
 		} else {
-			data['access'] = {};
+			data['access'] = [];
 		}
 
-		if ((this.request.post['permission']['modify'])) {
+		if ((this.request.post['permission'] && this.request.post['permission']['modify'])) {
 			data['modify'] = this.request.post['permission']['modify'];
-		} else if ((user_group_info['permission']['modify'])) {
+		} else if ((user_group_info['permission'] && user_group_info['permission']['modify'])) {
 			data['modify'] = user_group_info['permission']['modify'];
 		} else {
-			data['modify'] = {};
+			data['modify'] = [];
 		}
 
 		data['header'] = await this.load.controller('common/header');
@@ -389,7 +385,7 @@ if ((this.request.get['page'])) {
 			this.error['name'] = this.language.get('error_name');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 
 	async validateDelete() {
@@ -397,17 +393,17 @@ if ((this.request.get['page'])) {
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		this.load.model('user/user',this);
-		this.request.post['selected']  = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']];
+		this.load.model('user/user', this);
+		this.request.post['selected'] = Array.isArray(this.request.post['selected']) ? this.request.post['selected'] : [this.request.post['selected']];
 
-		for (let user_group_id of this.request.post['selected'] ) {
-			user_total = await this.model_user_user.getTotalUsersByGroupId(user_group_id);
+		for (let user_group_id of this.request.post['selected']) {
+			const user_total = await this.model_user_user.getTotalUsersByGroupId(user_group_id);
 
 			if (user_total) {
 				this.error['warning'] = sprintf(this.language.get('error_user'), user_total);
 			}
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 }

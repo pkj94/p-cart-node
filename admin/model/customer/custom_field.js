@@ -9,7 +9,7 @@ module.exports = class ModelCustomerCustomField extends Model {
 		}
 
 		if ((data['custom_field_customer_group'])) {
-			for (let custom_field_customer_group of data['custom_field_customer_group']) {
+			for (let [cfid, custom_field_customer_group] of Object.entries(data['custom_field_customer_group'])) {
 				if ((custom_field_customer_group['customer_group_id'])) {
 					await this.db.query("INSERT INTO " + DB_PREFIX + "custom_field_customer_group SET custom_field_id = '" + custom_field_id + "', customer_group_id = '" + custom_field_customer_group['customer_group_id'] + "', required = '" + ((custom_field_customer_group['required']) ? 1 : 0) + "'");
 				}
@@ -17,7 +17,7 @@ module.exports = class ModelCustomerCustomField extends Model {
 		}
 
 		if ((data['custom_field_value'])) {
-			for (let custom_field_value of data['custom_field_value']) {
+			for (let [id, custom_field_value] of Object.entries(data['custom_field_value'])) {
 				await this.db.query("INSERT INTO " + DB_PREFIX + "custom_field_value SET custom_field_id = '" + custom_field_id + "', sort_order = '" + custom_field_value['sort_order'] + "'");
 
 				const custom_field_value_id = this.db.getLastId();
@@ -43,7 +43,7 @@ module.exports = class ModelCustomerCustomField extends Model {
 		await this.db.query("DELETE FROM " + DB_PREFIX + "custom_field_customer_group WHERE custom_field_id = '" + custom_field_id + "'");
 
 		if ((data['custom_field_customer_group'])) {
-			for (let custom_field_customer_group of data['custom_field_customer_group']) {
+			for (let [cfid, custom_field_customer_group] of Object.entries(data['custom_field_customer_group'])) {
 				if ((custom_field_customer_group['customer_group_id'])) {
 					await this.db.query("INSERT INTO " + DB_PREFIX + "custom_field_customer_group SET custom_field_id = '" + custom_field_id + "', customer_group_id = '" + custom_field_customer_group['customer_group_id'] + "', required = '" + ((custom_field_customer_group['required']) ? 1 : 0) + "'");
 				}
@@ -54,7 +54,7 @@ module.exports = class ModelCustomerCustomField extends Model {
 		await this.db.query("DELETE FROM " + DB_PREFIX + "custom_field_value_description WHERE custom_field_id = '" + custom_field_id + "'");
 
 		if ((data['custom_field_value'])) {
-			for (let custom_field_value of data['custom_field_value']) {
+			for (let [id, custom_field_value] of Object.entries(data['custom_field_value'])) {
 				if (custom_field_value['custom_field_value_id']) {
 					await this.db.query("INSERT INTO " + DB_PREFIX + "custom_field_value SET custom_field_value_id = '" + custom_field_value['custom_field_value_id'] + "', custom_field_id = '" + custom_field_id + "', sort_order = '" + custom_field_value['sort_order'] + "'");
 				} else {

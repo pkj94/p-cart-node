@@ -2,7 +2,6 @@ module.exports = class ControllerLocalisationCurrency extends Controller {
 	error = {};
 
 	async index() {
-		const data = {};
 		await this.load.language('localisation/currency');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -25,7 +24,7 @@ module.exports = class ControllerLocalisationCurrency extends Controller {
 			this.session.data['success'] = this.language.get('text_success');
 			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -58,7 +57,7 @@ module.exports = class ControllerLocalisationCurrency extends Controller {
 			this.session.data['success'] = this.language.get('text_success');
 			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -94,7 +93,7 @@ module.exports = class ControllerLocalisationCurrency extends Controller {
 			this.session.data['success'] = this.language.get('text_success');
 			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -127,7 +126,7 @@ module.exports = class ControllerLocalisationCurrency extends Controller {
 			this.session.data['success'] = this.language.get('text_success');
 			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -147,23 +146,20 @@ module.exports = class ControllerLocalisationCurrency extends Controller {
 
 	async getList() {
 		const data = {};
+		let sort = 'title';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
-		} else {
-			sort = 'title';
 		}
-
+		let order = 'ASC';
 		if ((this.request.get['order'])) {
 			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
 		}
-		page = 1;
+		let page = 1;
 		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -193,26 +189,26 @@ module.exports = class ControllerLocalisationCurrency extends Controller {
 		data['delete'] = await this.url.link('localisation/currency/delete', 'user_token=' + this.session.data['user_token'] + url, true);
 		data['refresh'] = await this.url.link('localisation/currency/refresh', 'user_token=' + this.session.data['user_token'] + url, true);
 
-		data['currencies'] = {};
+		data['currencies'] = [];
 
 		const filter_data = {
 			'sort': sort,
 			'order': order,
 			'start': (page - 1) * Number(this.config.get('config_limit_admin')),
 			'limit': Number(this.config.get('config_limit_admin'))
-		});
+		};
 
-		currency_total = await this.model_localisation_currency.getTotalCurrencies();
+		const currency_total = await this.model_localisation_currency.getTotalCurrencies();
 
-		results = await this.model_localisation_currency.getCurrencies(filter_data);
+		const results = await this.model_localisation_currency.getCurrencies(filter_data);
 
 		for (let result of results) {
 			data['currencies'].push({
 				'currency_id': result['currency_id'],
-				'title': result['title'] + ((result['code'] == this.config.get('config_currency')) ? this.language.get('text_default') : null),
+				'title': result['title'] + ((result['code'] == this.config.get('config_currency')) ? this.language.get('text_default') : ''),
 				'code': result['code'],
 				'value': result['value'],
-				'date_modified': date(this.language.get('date_format_short'), strtotime(result['date_modified'])),
+				'date_modified': date(this.language.get('date_format_short'), new Date(result['date_modified'])),
 				'edit': await this.url.link('localisation/currency/edit', 'user_token=' + this.session.data['user_token'] + '&currency_id=' + result['currency_id'] + url, true)
 			});
 		}
@@ -287,6 +283,7 @@ module.exports = class ControllerLocalisationCurrency extends Controller {
 	}
 
 	async getForm() {
+		const data = {};
 		data['text_form'] = !(this.request.get['currency_id']) ? this.language.get('text_add') : this.language.get('text_edit');
 
 		if ((this.error['warning'])) {
@@ -307,7 +304,7 @@ module.exports = class ControllerLocalisationCurrency extends Controller {
 			data['error_code'] = '';
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -340,7 +337,7 @@ module.exports = class ControllerLocalisationCurrency extends Controller {
 		}
 
 		data['cancel'] = await this.url.link('localisation/currency', 'user_token=' + this.session.data['user_token'] + url, true);
-
+		let currency_info;
 		if ((this.request.get['currency_id']) && (this.request.server['method'] != 'POST')) {
 			currency_info = await this.model_localisation_currency.getCurrency(this.request.get['currency_id']);
 		}
@@ -441,14 +438,14 @@ module.exports = class ControllerLocalisationCurrency extends Controller {
 					this.error['warning'] = this.language.get('error_default');
 				}
 
-				store_total = await this.model_setting_store.getTotalStoresByCurrency(currency_info['code']);
+				const store_total = await this.model_setting_store.getTotalStoresByCurrency(currency_info['code']);
 
 				if (store_total) {
 					this.error['warning'] = sprintf(this.language.get('error_store'), store_total);
 				}
 			}
 
-			order_total = await this.model_sale_order.getTotalOrdersByCurrencyId(currency_id);
+			const order_total = await this.model_sale_order.getTotalOrdersByCurrencyId(currency_id);
 
 			if (order_total) {
 				this.error['warning'] = sprintf(this.language.get('error_order'), order_total);
@@ -463,11 +460,11 @@ module.exports = class ControllerLocalisationCurrency extends Controller {
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		config_currency_engine = this.config.get('config_currency_engine');
+		const config_currency_engine = this.config.get('config_currency_engine');
 
 		if (!config_currency_engine) {
 			this.error['currency_engine'] = this.language.get('error_currency_engine');
-		} else if (!this.config.get('currency_'.config_currency_engine.'_status')) {
+		} else if (!Number(this.config.get('currency_' + config_currency_engine + '_status'))) {
 			this.error['currency_engine'] = this.language.get('error_currency_engine');
 		}
 

@@ -371,7 +371,10 @@ module.exports = class ControllerSaleOrder extends Controller {
 
 			await this.model_user_api.deleteApiSessionBySessionId(session.getId());
 
-			await this.model_user_api.addApiSession(api_info['api_id'], session.getId(), this.request.server['REMOTE_ADDR']);
+			await this.model_user_api.addApiSession(api_info['api_id'], session.getId(), this.request.server.headers['x-forwarded-for'] || (
+				this.request.server.connection ? (this.request.server.connection.remoteAddress ||
+					this.request.server.socket.remoteAddress ||
+					this.request.server.connection.socket.remoteAddress) : ''));
 
 			session.data['api_id'] = api_info['api_id'];
 			await session.save(session.data);
@@ -705,7 +708,10 @@ module.exports = class ControllerSaleOrder extends Controller {
 
 			await this.model_user_api.deleteApiSessionBySessionId(session.getId());
 
-			await this.model_user_api.addApiSession(api_info['api_id'], session.getId(), this.request.server['REMOTE_ADDR']);
+			await this.model_user_api.addApiSession(api_info['api_id'], session.getId(), this.request.server.headers['x-forwarded-for'] || (
+				this.request.server.connection ? (this.request.server.connection.remoteAddress ||
+					this.request.server.socket.remoteAddress ||
+					this.request.server.connection.socket.remoteAddress) : ''));
 
 			session.data['api_id'] = api_info['api_id'];
 
@@ -737,7 +743,10 @@ module.exports = class ControllerSaleOrder extends Controller {
 
 			this.document.setTitle(this.language.get('heading_title'));
 
-			data['text_ip_add'] = sprintf(this.language.get('text_ip_add'), this.request.server['REMOTE_ADDR']);
+			data['text_ip_add'] = sprintf(this.language.get('text_ip_add'), this.request.server.headers['x-forwarded-for'] || (
+				this.request.server.connection ? (this.request.server.connection.remoteAddress ||
+					this.request.server.socket.remoteAddress ||
+					this.request.server.connection.socket.remoteAddress) : ''));
 			data['text_order'] = sprintf(this.language.get('text_order'), this.request.get['order_id']);
 
 			let url = '';
@@ -1251,7 +1260,10 @@ module.exports = class ControllerSaleOrder extends Controller {
 
 				await this.model_user_api.deleteApiSessionBySessionId(session.getId());
 
-				await this.model_user_api.addApiSession(api_info['api_id'], session.getId(), this.request.server['REMOTE_ADDR']);
+				await this.model_user_api.addApiSession(api_info['api_id'], session.getId(), this.request.server.headers['x-forwarded-for'] || (
+					this.request.server.connection ? (this.request.server.connection.remoteAddress ||
+						this.request.server.socket.remoteAddress ||
+						this.request.server.connection.socket.remoteAddress) : ''));
 
 				session.data['api_id'] = api_info['api_id'];
 

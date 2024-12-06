@@ -2,7 +2,6 @@ module.exports = class ControllerCustomerCustomerGroup extends Controller {
 	error = {};
 
 	async index() {
-		const data = {};
 		await this.load.language('customer/customer_group');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -25,7 +24,7 @@ module.exports = class ControllerCustomerCustomerGroup extends Controller {
 			this.session.data['success'] = this.language.get('text_success');
 			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -58,7 +57,7 @@ module.exports = class ControllerCustomerCustomerGroup extends Controller {
 			this.session.data['success'] = this.language.get('text_success');
 			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -94,7 +93,7 @@ module.exports = class ControllerCustomerCustomerGroup extends Controller {
 			this.session.data['success'] = this.language.get('text_success');
 			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -116,23 +115,20 @@ module.exports = class ControllerCustomerCustomerGroup extends Controller {
 
 	async getList() {
 		const data = {};
+		let sort = 'cgd.name';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
-		} else {
-			sort = 'cgd.name';
 		}
-
+		let order = 'ASC';
 		if ((this.request.get['order'])) {
 			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
 		}
-		page = 1;
+		let page = 1;
 		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -161,18 +157,18 @@ module.exports = class ControllerCustomerCustomerGroup extends Controller {
 		data['add'] = await this.url.link('customer/customer_group/add', 'user_token=' + this.session.data['user_token'] + url, true);
 		data['delete'] = await this.url.link('customer/customer_group/delete', 'user_token=' + this.session.data['user_token'] + url, true);
 
-		data['customer_groups'] = {};
+		data['customer_groups'] = [];
 
 		const filter_data = {
 			'sort': sort,
 			'order': order,
 			'start': (page - 1) * Number(this.config.get('config_limit_admin')),
 			'limit': Number(this.config.get('config_limit_admin'))
-		});
+		};
 
-		customer_group_total = await this.model_customer_customer_group.getTotalCustomerGroups();
+		const customer_group_total = await this.model_customer_customer_group.getTotalCustomerGroups();
 
-		results = await this.model_customer_customer_group.getCustomerGroups(filter_data);
+		const results = await this.model_customer_customer_group.getCustomerGroups(filter_data);
 
 		for (let result of results) {
 			data['customer_groups'].push({
@@ -249,6 +245,7 @@ module.exports = class ControllerCustomerCustomerGroup extends Controller {
 	}
 
 	async getForm() {
+		const data = {};
 		data['text_form'] = !(this.request.get['customer_group_id']) ? this.language.get('text_add') : this.language.get('text_edit');
 
 		if ((this.error['warning'])) {
@@ -263,7 +260,7 @@ module.exports = class ControllerCustomerCustomerGroup extends Controller {
 			data['error_name'] = {};
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -296,7 +293,7 @@ module.exports = class ControllerCustomerCustomerGroup extends Controller {
 		}
 
 		data['cancel'] = await this.url.link('customer/customer_group', 'user_token=' + this.session.data['user_token'] + url, true);
-
+		let customer_group_info;
 		if ((this.request.get['customer_group_id']) && (this.request.server['method'] != 'POST')) {
 			customer_group_info = await this.model_customer_customer_group.getCustomerGroup(this.request.get['customer_group_id']);
 		}
@@ -364,7 +361,7 @@ module.exports = class ControllerCustomerCustomerGroup extends Controller {
 				this.error['warning'] = this.language.get('error_default');
 			}
 
-			store_total = await this.model_setting_store.getTotalStoresByCustomerGroupId(customer_group_id);
+			const store_total = await this.model_setting_store.getTotalStoresByCustomerGroupId(customer_group_id);
 
 			if (store_total) {
 				this.error['warning'] = sprintf(this.language.get('error_store'), store_total);

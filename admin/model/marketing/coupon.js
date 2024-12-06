@@ -2,16 +2,18 @@ module.exports = class ModelMarketingCoupon extends Model {
 	async addCoupon(data) {
 		await this.db.query("INSERT INTO " + DB_PREFIX + "coupon SET name = '" + this.db.escape(data['name']) + "', code = '" + this.db.escape(data['code']) + "', discount = '" + data['discount'] + "', type = '" + this.db.escape(data['type']) + "', total = '" + data['total'] + "', logged = '" + data['logged'] + "', shipping = '" + data['shipping'] + "', date_start = '" + this.db.escape(data['date_start']) + "', date_end = '" + this.db.escape(data['date_end']) + "', uses_total = '" + data['uses_total'] + "', uses_customer = '" + data['uses_customer'] + "', status = '" + data['status'] + "', date_added = NOW()");
 
-		coupon_id = this.db.getLastId();
+		const coupon_id = this.db.getLastId();
 
 		if ((data['coupon_product'])) {
-			for (data['coupon_product'] of product_id) {
+			data['coupon_product'] = Array.isArray(data['coupon_product']) ? data['coupon_product'] : [data['coupon_product']];
+			for (let product_id of data['coupon_product']) {
 				await this.db.query("INSERT INTO " + DB_PREFIX + "coupon_product SET coupon_id = '" + coupon_id + "', product_id = '" + product_id + "'");
 			}
 		}
 
 		if ((data['coupon_category'])) {
-			for (data['coupon_category'] of category_id) {
+			data['coupon_category'] = Array.isArray(data['coupon_category']) ? data['coupon_category'] : [data['coupon_category']];
+			for (let category_id of data['coupon_category']) {
 				await this.db.query("INSERT INTO " + DB_PREFIX + "coupon_category SET coupon_id = '" + coupon_id + "', category_id = '" + category_id + "'");
 			}
 		}
@@ -25,7 +27,8 @@ module.exports = class ModelMarketingCoupon extends Model {
 		await this.db.query("DELETE FROM " + DB_PREFIX + "coupon_product WHERE coupon_id = '" + coupon_id + "'");
 
 		if ((data['coupon_product'])) {
-			for (data['coupon_product'] of product_id) {
+			data['coupon_product'] = Array.isArray(data['coupon_product']) ? data['coupon_product'] : [data['coupon_product']];
+			for (let product_id of data['coupon_product']) {
 				await this.db.query("INSERT INTO " + DB_PREFIX + "coupon_product SET coupon_id = '" + coupon_id + "', product_id = '" + product_id + "'");
 			}
 		}
@@ -33,7 +36,8 @@ module.exports = class ModelMarketingCoupon extends Model {
 		await this.db.query("DELETE FROM " + DB_PREFIX + "coupon_category WHERE coupon_id = '" + coupon_id + "'");
 
 		if ((data['coupon_category'])) {
-			for (data['coupon_category'] of category_id) {
+			data['coupon_category'] = Array.isArray(data['coupon_category']) ? data['coupon_category'] : [data['coupon_category']];
+			for (let category_id of data['coupon_category']) {
 				await this.db.query("INSERT INTO " + DB_PREFIX + "coupon_category SET coupon_id = '" + coupon_id + "', category_id = '" + category_id + "'");
 			}
 		}
@@ -68,7 +72,7 @@ module.exports = class ModelMarketingCoupon extends Model {
 			'date_start',
 			'date_end',
 			'status'
-		});
+		];
 
 		if ((data['sort']) && sort_data.includes(data['sort'])) {
 			sql += " ORDER BY " + data['sort'];
@@ -83,13 +87,13 @@ module.exports = class ModelMarketingCoupon extends Model {
 		}
 
 		if ((data['start']) || (data['limit'])) {
-			data['start'] = data['start']||0;
-if (data['start'] < 0) {
+			data['start'] = data['start'] || 0;
+			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
@@ -102,24 +106,24 @@ if (data['limit'] < 1) {
 	}
 
 	async getCouponProducts(coupon_id) {
-		coupon_product_data = {};
+		const coupon_product_data = [];
 
 		const query = await this.db.query("SELECT * FROM " + DB_PREFIX + "coupon_product WHERE coupon_id = '" + coupon_id + "'");
 
-		for (let result of query.rows ) {
-			coupon_product_data.push(result['product_id'];
+		for (let result of query.rows) {
+			coupon_product_data.push(result['product_id']);
 		}
 
 		return coupon_product_data;
 	}
 
 	async getCouponCategories(coupon_id) {
-		coupon_category_data = {};
+		const coupon_category_data = [];
 
 		const query = await this.db.query("SELECT * FROM " + DB_PREFIX + "coupon_category WHERE coupon_id = '" + coupon_id + "'");
 
-		for (let result of query.rows ) {
-			coupon_category_data.push(result['category_id'];
+		for (let result of query.rows) {
+			coupon_category_data.push(result['category_id']);
 		}
 
 		return coupon_category_data;

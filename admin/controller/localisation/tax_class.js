@@ -2,12 +2,11 @@ module.exports = class ControllerLocalisationTaxClass extends Controller {
 	error = {};
 
 	async index() {
-const data = {};
 		await this.load.language('localisation/tax_class');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('localisation/tax_class',this);
+		this.load.model('localisation/tax_class', this);
 
 		await this.getList();
 	}
@@ -17,15 +16,15 @@ const data = {};
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('localisation/tax_class',this);
+		this.load.model('localisation/tax_class', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_localisation_tax_class.addTaxClass(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
-await this.session.save(this.session.data);
+			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -50,15 +49,15 @@ await this.session.save(this.session.data);
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('localisation/tax_class',this);
+		this.load.model('localisation/tax_class', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_localisation_tax_class.editTaxClass(this.request.get['tax_class_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
-await this.session.save(this.session.data);
+			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -83,18 +82,18 @@ await this.session.save(this.session.data);
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('localisation/tax_class',this);
+		this.load.model('localisation/tax_class', this);
 
 		if ((this.request.post['selected']) && await this.validateDelete()) {
-this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
-			for (let tax_class_id of this.request.post['selected'] ) {
+			this.request.post['selected'] = Array.isArray(this.request.post['selected']) ? this.request.post['selected'] : [this.request.post['selected']]
+			for (let tax_class_id of this.request.post['selected']) {
 				await this.model_localisation_tax_class.deleteTaxClass(tax_class_id);
 			}
 
 			this.session.data['success'] = this.language.get('text_success');
-await this.session.save(this.session.data);
+			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -116,23 +115,21 @@ await this.session.save(this.session.data);
 
 	async getList() {
 		const data = {};
+		let sort = 'title';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
-		} else {
-			sort = 'title';
-		}
+		} 
 
+		let order = 'ASC';
 		if ((this.request.get['order'])) {
 			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
 		}
-page = 1;
-if ((this.request.get['page'])) {
+		let page = 1;
+		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -149,36 +146,36 @@ if ((this.request.get['page'])) {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('localisation/tax_class', 'user_token=' + this.session.data['user_token'] + url, true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('localisation/tax_class', 'user_token=' + this.session.data['user_token'] + url, true)
 		});
 
 		data['add'] = await this.url.link('localisation/tax_class/add', 'user_token=' + this.session.data['user_token'] + url, true);
 		data['delete'] = await this.url.link('localisation/tax_class/delete', 'user_token=' + this.session.data['user_token'] + url, true);
 
-		data['tax_classes'] = {};
+		data['tax_classes'] = [];
 
 		const filter_data = {
-			'sort'  : sort,
-			'order' : order,
-			'start' : (page - 1) * Number(this.config.get('config_limit_admin')),
-			'limit' : Number(this.config.get('config_limit_admin'))
-		});
+			'sort': sort,
+			'order': order,
+			'start': (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit': Number(this.config.get('config_limit_admin'))
+		};
 
-		tax_class_total = await this.model_localisation_tax_class.getTotalTaxClasses();
+		const tax_class_total = await this.model_localisation_tax_class.getTotalTaxClasses();
 
-		results = await this.model_localisation_tax_class.getTaxClasses(filter_data);
+		const results = await this.model_localisation_tax_class.getTaxClasses(filter_data);
 
 		for (let result of results) {
 			data['tax_classes'].push({
-				'tax_class_id' : result['tax_class_id'],
-				'title'        : result['title'],
-				'edit'         : await this.url.link('localisation/tax_class/edit', 'user_token=' + this.session.data['user_token'] + '&tax_class_id=' + result['tax_class_id'] + url, true)
+				'tax_class_id': result['tax_class_id'],
+				'title': result['title'],
+				'edit': await this.url.link('localisation/tax_class/edit', 'user_token=' + this.session.data['user_token'] + '&tax_class_id=' + result['tax_class_id'] + url, true)
 			});
 		}
 
@@ -247,6 +244,7 @@ if ((this.request.get['page'])) {
 	}
 
 	async getForm() {
+		const data = {};
 		data['text_form'] = !(this.request.get['tax_class_id']) ? this.language.get('text_add') : this.language.get('text_edit');
 
 		if ((this.error['warning'])) {
@@ -267,7 +265,7 @@ if ((this.request.get['page'])) {
 			data['error_description'] = '';
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -284,13 +282,13 @@ if ((this.request.get['page'])) {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('localisation/tax_class', 'user_token=' + this.session.data['user_token'] + url, true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('localisation/tax_class', 'user_token=' + this.session.data['user_token'] + url, true)
 		});
 
 		if (!(this.request.get['tax_class_id'])) {
@@ -300,7 +298,7 @@ if ((this.request.get['page'])) {
 		}
 
 		data['cancel'] = await this.url.link('localisation/tax_class', 'user_token=' + this.session.data['user_token'] + url, true);
-
+		let tax_class_info;
 		if ((this.request.get['tax_class_id']) && (this.request.server['method'] != 'POST')) {
 			tax_class_info = await this.model_localisation_tax_class.getTaxClass(this.request.get['tax_class_id']);
 		}
@@ -321,7 +319,7 @@ if ((this.request.get['page'])) {
 			data['description'] = '';
 		}
 
-		this.load.model('localisation/tax_rate');
+		this.load.model('localisation/tax_rate', this);
 
 		data['tax_rates'] = await this.model_localisation_tax_rate.getTaxRates();
 
@@ -353,7 +351,7 @@ if ((this.request.get['page'])) {
 			this.error['description'] = this.language.get('error_description');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 
 	async validateDelete() {
@@ -361,10 +359,10 @@ if ((this.request.get['page'])) {
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		this.load.model('catalog/product',this);
-		this.request.post['selected']  = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']];
+		this.load.model('catalog/product', this);
+		this.request.post['selected'] = Array.isArray(this.request.post['selected']) ? this.request.post['selected'] : [this.request.post['selected']];
 
-		for (let tax_class_id of this.request.post['selected'] ) {
+		for (let tax_class_id of this.request.post['selected']) {
 			const product_total = await this.model_catalog_product.getTotalProductsByTaxClassId(tax_class_id);
 
 			if (product_total) {
@@ -372,6 +370,6 @@ if ((this.request.get['page'])) {
 			}
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 }

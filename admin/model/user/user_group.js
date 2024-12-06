@@ -20,7 +20,7 @@ module.exports = class ModelUserUserGroup extends Model {
 
 		const user_group = {
 			'name': query.row['name'],
-			'permission': JSON.parse(query.row['permission'], true)
+			'permission': query.row['permission'] ? JSON.parse(query.row['permission']) : {}
 		};
 
 		return user_group;

@@ -43,5 +43,5 @@ module.exports = {
     error_from_name: 'Your Name must be between 1 and 64 characters!',
     error_email: 'E-Mail Address does not appear to be valid!',
     error_amount: 'Amount must be greater than or equal to 1!',
-    error_order: "%s\" > order</a> !",
+    error_order: "Warning: This voucher cannot be deleted as it is part of an <a href=\"%s\">order</a>!",
 }

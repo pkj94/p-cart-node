@@ -2,7 +2,6 @@ module.exports = class ControllerLocalisationReturnAction extends Controller {
 	error = {};
 
 	async index() {
-		const data = {};
 		await this.load.language('localisation/return_action');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -25,7 +24,7 @@ module.exports = class ControllerLocalisationReturnAction extends Controller {
 			this.session.data['success'] = this.language.get('text_success');
 			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -58,7 +57,7 @@ module.exports = class ControllerLocalisationReturnAction extends Controller {
 			this.session.data['success'] = this.language.get('text_success');
 			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -94,7 +93,7 @@ module.exports = class ControllerLocalisationReturnAction extends Controller {
 			this.session.data['success'] = this.language.get('text_success');
 			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -116,23 +115,21 @@ module.exports = class ControllerLocalisationReturnAction extends Controller {
 
 	async getList() {
 		const data = {};
+		let sort = 'name';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
-		} else {
-			sort = 'name';
 		}
 
+		let order = 'ASC';
 		if ((this.request.get['order'])) {
 			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
 		}
-		page = 1;
+		let page = 1;
 		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -161,18 +158,18 @@ module.exports = class ControllerLocalisationReturnAction extends Controller {
 		data['add'] = await this.url.link('localisation/return_action/add', 'user_token=' + this.session.data['user_token'] + url, true);
 		data['delete'] = await this.url.link('localisation/return_action/delete', 'user_token=' + this.session.data['user_token'] + url, true);
 
-		data['return_actions'] = {};
+		data['return_actions'] = [];
 
 		const filter_data = {
 			'sort': sort,
 			'order': order,
 			'start': (page - 1) * Number(this.config.get('config_limit_admin')),
 			'limit': Number(this.config.get('config_limit_admin'))
-		});
+		};
 
-		return_action_total = await this.model_localisation_return_action.getTotalReturnActions();
+		const return_action_total = await this.model_localisation_return_action.getTotalReturnActions();
 
-		results = await this.model_localisation_return_action.getReturnActions(filter_data);
+		const results = await this.model_localisation_return_action.getReturnActions(filter_data);
 
 		for (let result of results) {
 			data['return_actions'].push({
@@ -247,6 +244,7 @@ module.exports = class ControllerLocalisationReturnAction extends Controller {
 	}
 
 	async getForm() {
+		const data = {};
 		data['text_form'] = !(this.request.get['return_action_id']) ? this.language.get('text_add') : this.language.get('text_edit');
 
 		if ((this.error['warning'])) {
@@ -261,7 +259,7 @@ module.exports = class ControllerLocalisationReturnAction extends Controller {
 			data['error_name'] = {};
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -321,6 +319,7 @@ module.exports = class ControllerLocalisationReturnAction extends Controller {
 
 		for (let [language_id, value] of Object.entries(this.request.post['return_action'])) {
 			if ((oc_strlen(value['name']) < 3) || (oc_strlen(value['name']) > 64)) {
+				this.error['name'] = this.error['name'] || {};
 				this.error['name'][language_id] = this.language.get('error_name');
 			}
 		}
@@ -337,7 +336,7 @@ module.exports = class ControllerLocalisationReturnAction extends Controller {
 		this.request.post['selected'] = Array.isArray(this.request.post['selected']) ? this.request.post['selected'] : [this.request.post['selected']];
 
 		for (let return_action_id of this.request.post['selected']) {
-			return_total = await this.model_sale_return.getTotalReturnsByReturnActionId(return_action_id);
+			const return_total = await this.model_sale_return.getTotalReturnsByReturnActionId(return_action_id);
 
 			if (return_total) {
 				this.error['warning'] = sprintf(this.language.get('error_return'), return_total);

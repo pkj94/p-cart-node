@@ -2,12 +2,11 @@ module.exports = class ControllerLocalisationTaxRate extends Controller {
 	error = {};
 
 	async index() {
-const data = {};
 		await this.load.language('localisation/tax_rate');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('localisation/tax_rate');
+		this.load.model('localisation/tax_rate', this);
 
 		await this.getList();
 	}
@@ -17,15 +16,15 @@ const data = {};
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('localisation/tax_rate');
+		this.load.model('localisation/tax_rate', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_localisation_tax_rate.addTaxRate(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
-await this.session.save(this.session.data);
+			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -50,15 +49,15 @@ await this.session.save(this.session.data);
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('localisation/tax_rate');
+		this.load.model('localisation/tax_rate', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_localisation_tax_rate.editTaxRate(this.request.get['tax_rate_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
-await this.session.save(this.session.data);
+			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -83,18 +82,18 @@ await this.session.save(this.session.data);
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('localisation/tax_rate');
+		this.load.model('localisation/tax_rate', this);
 
 		if ((this.request.post['selected']) && await this.validateDelete()) {
-this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
-			for (let tax_rate_id of this.request.post['selected'] ) {
+			this.request.post['selected'] = Array.isArray(this.request.post['selected']) ? this.request.post['selected'] : [this.request.post['selected']]
+			for (let tax_rate_id of this.request.post['selected']) {
 				await this.model_localisation_tax_rate.deleteTaxRate(tax_rate_id);
 			}
 
 			this.session.data['success'] = this.language.get('text_success');
-await this.session.save(this.session.data);
+			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -116,23 +115,21 @@ await this.session.save(this.session.data);
 
 	async getList() {
 		const data = {};
+		let sort = 'tr.name';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
-		} else {
-			sort = 'tr.name';
 		}
 
+		let order = 'ASC';
 		if ((this.request.get['order'])) {
 			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
 		}
-page = 1;
-if ((this.request.get['page'])) {
+		let page = 1;
+		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -149,41 +146,41 @@ if ((this.request.get['page'])) {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('localisation/tax_rate', 'user_token=' + this.session.data['user_token'] + url, true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('localisation/tax_rate', 'user_token=' + this.session.data['user_token'] + url, true)
 		});
 
 		data['add'] = await this.url.link('localisation/tax_rate/add', 'user_token=' + this.session.data['user_token'] + url, true);
 		data['delete'] = await this.url.link('localisation/tax_rate/delete', 'user_token=' + this.session.data['user_token'] + url, true);
 
-		data['tax_rates'] = {};
+		data['tax_rates'] = [];
 
 		const filter_data = {
-			'sort'  : sort,
-			'order' : order,
-			'start' : (page - 1) * Number(this.config.get('config_limit_admin')),
-			'limit' : Number(this.config.get('config_limit_admin'))
-		});
+			'sort': sort,
+			'order': order,
+			'start': (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit': Number(this.config.get('config_limit_admin'))
+		};
 
-		tax_rate_total = await this.model_localisation_tax_rate.getTotalTaxRates();
+		const tax_rate_total = await this.model_localisation_tax_rate.getTotalTaxRates();
 
-		results = await this.model_localisation_tax_rate.getTaxRates(filter_data);
+		const results = await this.model_localisation_tax_rate.getTaxRates(filter_data);
 
 		for (let result of results) {
 			data['tax_rates'].push({
-				'tax_rate_id'   : result['tax_rate_id'],
-				'name'          : result['name'],
-				'rate'          : result['rate'],
-				'type'          : (result['type'] == 'F' ? this.language.get('text_amount') : this.language.get('text_percent')),
-				'geo_zone'      : result['geo_zone'],
-				'date_added'    : date(this.language.get('date_format_short'), strtotime(result['date_added'])),
-				'date_modified' : date(this.language.get('date_format_short'), strtotime(result['date_modified'])),
-				'edit'          : await this.url.link('localisation/tax_rate/edit', 'user_token=' + this.session.data['user_token'] + '&tax_rate_id=' + result['tax_rate_id'] + url, true)
+				'tax_rate_id': result['tax_rate_id'],
+				'name': result['name'],
+				'rate': result['rate'],
+				'type': (result['type'] == 'F' ? this.language.get('text_amount') : this.language.get('text_percent')),
+				'geo_zone': result['geo_zone'],
+				'date_added': date(this.language.get('date_format_short'), new Date(result['date_added'])),
+				'date_modified': date(this.language.get('date_format_short'), new Date(result['date_modified'])),
+				'edit': await this.url.link('localisation/tax_rate/edit', 'user_token=' + this.session.data['user_token'] + '&tax_rate_id=' + result['tax_rate_id'] + url, true)
 			});
 		}
 
@@ -257,6 +254,7 @@ if ((this.request.get['page'])) {
 	}
 
 	async getForm() {
+		const data = {};
 		data['text_form'] = !(this.request.get['tax_rate_id']) ? this.language.get('text_add') : this.language.get('text_edit');
 
 		if ((this.error['warning'])) {
@@ -277,7 +275,7 @@ if ((this.request.get['page'])) {
 			data['error_rate'] = '';
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -294,13 +292,13 @@ if ((this.request.get['page'])) {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('localisation/tax_rate', 'user_token=' + this.session.data['user_token'] + url, true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('localisation/tax_rate', 'user_token=' + this.session.data['user_token'] + url, true)
 		});
 
 		if (!(this.request.get['tax_rate_id'])) {
@@ -310,7 +308,7 @@ if ((this.request.get['page'])) {
 		}
 
 		data['cancel'] = await this.url.link('localisation/tax_rate', 'user_token=' + this.session.data['user_token'] + url, true);
-
+		let tax_rate_info;
 		if ((this.request.get['tax_rate_id']) && (this.request.server['method'] != 'POST')) {
 			tax_rate_info = await this.model_localisation_tax_rate.getTaxRate(this.request.get['tax_rate_id']);
 		}
@@ -344,10 +342,10 @@ if ((this.request.get['page'])) {
 		} else if ((this.request.get['tax_rate_id'])) {
 			data['tax_rate_customer_group'] = await this.model_localisation_tax_rate.getTaxRateCustomerGroups(this.request.get['tax_rate_id']);
 		} else {
-			data['tax_rate_customer_group'] = array(this.config.get('config_customer_group_id'));
+			data['tax_rate_customer_group'] = [this.config.get('config_customer_group_id')];
 		}
 
-		this.load.model('customer/customer_group',this);
+		this.load.model('customer/customer_group', this);
 
 		data['customer_groups'] = await this.model_customer_customer_group.getCustomerGroups();
 
@@ -359,7 +357,7 @@ if ((this.request.get['page'])) {
 			data['geo_zone_id'] = '';
 		}
 
-		this.load.model('localisation/geo_zone',this);
+		this.load.model('localisation/geo_zone', this);
 
 		data['geo_zones'] = await this.model_localisation_geo_zone.getGeoZones();
 
@@ -383,7 +381,7 @@ if ((this.request.get['page'])) {
 			this.error['rate'] = this.language.get('error_rate');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 
 	async validateDelete() {
@@ -391,17 +389,17 @@ if ((this.request.get['page'])) {
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		this.load.model('localisation/tax_class',this);
-		this.request.post['selected']  = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']];
+		this.load.model('localisation/tax_class', this);
+		this.request.post['selected'] = Array.isArray(this.request.post['selected']) ? this.request.post['selected'] : [this.request.post['selected']];
 
-		for (let tax_rate_id of this.request.post['selected'] ) {
-			tax_rule_total = await this.model_localisation_tax_class.getTotalTaxRulesByTaxRateId(tax_rate_id);
+		for (let tax_rate_id of this.request.post['selected']) {
+			const tax_rule_total = await this.model_localisation_tax_class.getTotalTaxRulesByTaxRateId(tax_rate_id);
 
 			if (tax_rule_total) {
 				this.error['warning'] = sprintf(this.language.get('error_tax_rule'), tax_rule_total);
 			}
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 }

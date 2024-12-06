@@ -5,7 +5,7 @@ module.exports = class ModelLocalisationGeoZone extends Model {
 		const geo_zone_id = this.db.getLastId();
 
 		if ((data['zone_to_geo_zone'])) {
-			for (data['zone_to_geo_zone'] of value) {
+			for (let [id, value] of Object.entries(data['zone_to_geo_zone'])) {
 				await this.db.query("DELETE FROM " + DB_PREFIX + "zone_to_geo_zone WHERE geo_zone_id = '" + geo_zone_id + "' AND country_id = '" + value['country_id'] + "' AND zone_id = '" + value['zone_id'] + "'");
 
 				await this.db.query("INSERT INTO " + DB_PREFIX + "zone_to_geo_zone SET country_id = '" + value['country_id'] + "', zone_id = '" + value['zone_id'] + "', geo_zone_id = '" + geo_zone_id + "', date_added = NOW()");
@@ -23,7 +23,7 @@ module.exports = class ModelLocalisationGeoZone extends Model {
 		await this.db.query("DELETE FROM " + DB_PREFIX + "zone_to_geo_zone WHERE geo_zone_id = '" + geo_zone_id + "'");
 
 		if ((data['zone_to_geo_zone'])) {
-			for (data['zone_to_geo_zone'] of value) {
+			for (let [id, value] of Object.entries(data['zone_to_geo_zone'])) {
 				await this.db.query("DELETE FROM " + DB_PREFIX + "zone_to_geo_zone WHERE geo_zone_id = '" + geo_zone_id + "' AND country_id = '" + value['country_id'] + "' AND zone_id = '" + value['zone_id'] + "'");
 
 				await this.db.query("INSERT INTO " + DB_PREFIX + "zone_to_geo_zone SET country_id = '" + value['country_id'] + "', zone_id = '" + value['zone_id'] + "', geo_zone_id = '" + geo_zone_id + "', date_added = NOW()");
@@ -130,6 +130,7 @@ module.exports = class ModelLocalisationGeoZone extends Model {
 	}
 
 	async getZonesByGeoZones(geo_zone_ids = []) {
+		console.log(geo_zone_ids)
 		if (!geo_zone_ids.length) {
 			return {};
 		}
@@ -142,7 +143,7 @@ module.exports = class ModelLocalisationGeoZone extends Model {
 		const query = await this.db.query(sql);
 		const results = {};
 		for (let row of query.rows) {
-			country_id = row['country_id'];
+			let country_id = row['country_id'];
 			if (!(results[country_id])) {
 				results[country_id] = {};
 			}

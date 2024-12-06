@@ -2,7 +2,6 @@ module.exports = class ControllerLocalisationReturnReason extends Controller {
 	error = {};
 
 	async index() {
-		const data = {};
 		await this.load.language('localisation/return_reason');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -25,7 +24,7 @@ module.exports = class ControllerLocalisationReturnReason extends Controller {
 			this.session.data['success'] = this.language.get('text_success');
 			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -58,7 +57,7 @@ module.exports = class ControllerLocalisationReturnReason extends Controller {
 			this.session.data['success'] = this.language.get('text_success');
 			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -94,7 +93,7 @@ module.exports = class ControllerLocalisationReturnReason extends Controller {
 			this.session.data['success'] = this.language.get('text_success');
 			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -116,23 +115,21 @@ module.exports = class ControllerLocalisationReturnReason extends Controller {
 
 	async getList() {
 		const data = {};
+		let sort = 'name';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
-		} else {
-			sort = 'name';
 		}
 
+		let order = 'ASC';
 		if ((this.request.get['order'])) {
 			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
 		}
-		page = 1;
+		let page = 1;
 		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -161,18 +158,18 @@ module.exports = class ControllerLocalisationReturnReason extends Controller {
 		data['add'] = await this.url.link('localisation/return_reason/add', 'user_token=' + this.session.data['user_token'] + url, true);
 		data['delete'] = await this.url.link('localisation/return_reason/delete', 'user_token=' + this.session.data['user_token'] + url, true);
 
-		data['return_reasons'] = {};
+		data['return_reasons'] = [];
 
 		const filter_data = {
 			'sort': sort,
 			'order': order,
 			'start': (page - 1) * Number(this.config.get('config_limit_admin')),
 			'limit': Number(this.config.get('config_limit_admin'))
-		});
+		};
 
-		return_reason_total = await this.model_localisation_return_reason.getTotalReturnReasons();
+		const return_reason_total = await this.model_localisation_return_reason.getTotalReturnReasons();
 
-		results = await this.model_localisation_return_reason.getReturnReasons(filter_data);
+		const results = await this.model_localisation_return_reason.getReturnReasons(filter_data);
 
 		for (let result of results) {
 			data['return_reasons'].push({
@@ -247,6 +244,7 @@ module.exports = class ControllerLocalisationReturnReason extends Controller {
 	}
 
 	async getForm() {
+		const data = {};
 		data['text_form'] = !(this.request.get['return_reason_id']) ? this.language.get('text_add') : this.language.get('text_edit');
 
 		if ((this.error['warning'])) {
@@ -261,7 +259,7 @@ module.exports = class ControllerLocalisationReturnReason extends Controller {
 			data['error_name'] = {};
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -321,6 +319,7 @@ module.exports = class ControllerLocalisationReturnReason extends Controller {
 
 		for (let [language_id, value] of Object.entries(this.request.post['return_reason'])) {
 			if ((oc_strlen(value['name']) < 3) || (oc_strlen(value['name']) > 128)) {
+				this.error['name'] = this.error['name'] || {};
 				this.error['name'][language_id] = this.language.get('error_name');
 			}
 		}

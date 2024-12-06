@@ -2,7 +2,8 @@ const sha1 = require("locutus/php/strings/sha1");
 
 module.exports = class ModelUserUser extends Model {
 	async addUser(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "user` SET username = '" + this.db.escape(data['username']) + "', user_group_id = '" + data['user_group_id'] + "', salt = '" + this.db.escape(salt = oc_token(9)) + "', password = '" + this.db.escape(sha1(salt + sha1(salt + sha1(data['password'])))) + "', firstname = '" + this.db.escape(data['firstname']) + "', lastname = '" + this.db.escape(data['lastname']) + "', email = '" + this.db.escape(data['email']) + "', image = '" + this.db.escape(data['image']) + "', status = '" + data['status'] + "', date_added = NOW()");
+		let salt = oc_token(9);
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "user` SET username = '" + this.db.escape(data['username']) + "', user_group_id = '" + data['user_group_id'] + "', salt = '" + this.db.escape(salt) + "', password = '" + this.db.escape(sha1(salt + sha1(salt + sha1(data['password'])))) + "', firstname = '" + this.db.escape(data['firstname']) + "', lastname = '" + this.db.escape(data['lastname']) + "', email = '" + this.db.escape(data['email']) + "', image = '" + this.db.escape(data['image']) + "', status = '" + data['status'] + "', date_added = NOW()");
 
 		return this.db.getLastId();
 	}
@@ -11,12 +12,14 @@ module.exports = class ModelUserUser extends Model {
 		await this.db.query("UPDATE `" + DB_PREFIX + "user` SET username = '" + this.db.escape(data['username']) + "', user_group_id = '" + data['user_group_id'] + "', firstname = '" + this.db.escape(data['firstname']) + "', lastname = '" + this.db.escape(data['lastname']) + "', email = '" + this.db.escape(data['email']) + "', image = '" + this.db.escape(data['image']) + "', status = '" + data['status'] + "' WHERE user_id = '" + user_id + "'");
 
 		if (data['password']) {
-			await this.db.query("UPDATE `" + DB_PREFIX + "user` SET salt = '" + this.db.escape(salt = oc_token(9)) + "', password = '" + this.db.escape(sha1(salt + sha1(salt + sha1(data['password'])))) + "' WHERE user_id = '" + user_id + "'");
+			let salt = oc_token(9);
+			await this.db.query("UPDATE `" + DB_PREFIX + "user` SET salt = '" + this.db.escape(salt) + "', password = '" + this.db.escape(sha1(salt + sha1(salt + sha1(data['password'])))) + "' WHERE user_id = '" + user_id + "'");
 		}
 	}
 
 	async editPassword(user_id, password) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "user` SET salt = '" + this.db.escape(salt = oc_token(9)) + "', password = '" + this.db.escape(sha1(salt + sha1(salt + sha1(password)))) + "', code = '' WHERE user_id = '" + user_id + "'");
+		let salt = oc_token(9)
+		await this.db.query("UPDATE `" + DB_PREFIX + "user` SET salt = '" + this.db.escape(salt) + "', password = '" + this.db.escape(sha1(salt + sha1(salt + sha1(password)))) + "', code = '' WHERE user_id = '" + user_id + "'");
 	}
 
 	async editCode(email, code) {
@@ -113,7 +116,10 @@ module.exports = class ModelUserUser extends Model {
 		const query = await this.db.query("SELECT * FROM " + DB_PREFIX + "customer_login WHERE email = '" + this.db.escape(oc_strtolower(username)) + "'");
 
 		if (!query.num_rows) {
-			await this.db.query("INSERT INTO " + DB_PREFIX + "customer_login SET email = '" + this.db.escape(oc_strtolower(username)) + "', ip = '" + this.db.escape(this.request.server['REMOTE_ADDR']) + "', total = 1, date_added = '" + this.db.escape(date('Y-m-d H:i:s')) + "', date_modified = '" + this.db.escape(date('Y-m-d H:i:s')) + "'");
+			await this.db.query("INSERT INTO " + DB_PREFIX + "customer_login SET email = '" + this.db.escape(oc_strtolower(username)) + "', ip = '" + this.db.escape(this.request.server.headers['x-forwarded-for'] || (
+				this.request.server.connection ? (this.request.server.connection.remoteAddress ||
+					this.request.server.socket.remoteAddress ||
+					this.request.server.connection.socket.remoteAddress) : '')) + "', total = 1, date_added = '" + this.db.escape(date('Y-m-d H:i:s')) + "', date_modified = '" + this.db.escape(date('Y-m-d H:i:s')) + "'");
 		} else {
 			await this.db.query("UPDATE " + DB_PREFIX + "customer_login SET total = (total + 1), date_modified = '" + this.db.escape(date('Y-m-d H:i:s')) + "' WHERE customer_login_id = '" + query.row['customer_login_id'] + "'");
 		}

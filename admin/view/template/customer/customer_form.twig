@@ -1201,14 +1201,14 @@
 
     $('#history').load(this.href);
   });
-
+ setTimeout(()=>{
   $('#history').load('?route=customer/customer/history&user_token={{ user_token }}&customer_id={{ customer_id }}');
-
+ },500);
   $('#button-history').on('click', function(e) {
     e.preventDefault();
 
     $.ajax({
-      url: '?route=customer/customer/addhistory&user_token={{ user_token }}&customer_id={{ customer_id }}',
+      url: '?route=customer/customer/addHistory&user_token={{ user_token }}&customer_id={{ customer_id }}',
       type: 'post',
       dataType: 'json',
       data: 'comment=' + encodeURIComponent($('#tab-history textarea[name=\'comment\']').val()),
@@ -1245,14 +1245,15 @@
 
     $('#transaction').load(this.href);
   });
-
+ setTimeout(()=>{
   $('#transaction').load('?route=customer/customer/transaction&user_token={{ user_token }}&customer_id={{ customer_id }}');
+  },800);
 
   $('#button-transaction').on('click', function(e) {
     e.preventDefault();
 
     $.ajax({
-      url: '?route=customer/customer/addtransaction&user_token={{ user_token }}&customer_id={{ customer_id }}',
+      url: '?route=customer/customer/addTransaction&user_token={{ user_token }}&customer_id={{ customer_id }}',
       type: 'post',
       dataType: 'json',
       data: 'description=' + encodeURIComponent($('#tab-transaction input[name=\'description\']').val()) + '&amount=' + encodeURIComponent($('#tab-transaction input[name=\'amount\']').val()),
@@ -1290,14 +1291,15 @@
 
     $('#reward').load(this.href);
   });
-
+ setTimeout(()=>{
   $('#reward').load('?route=customer/customer/reward&user_token={{ user_token }}&customer_id={{ customer_id }}');
+  },1000);
 
   $('#button-reward').on('click', function(e) {
     e.preventDefault();
 
     $.ajax({
-      url: '?route=customer/customer/addreward&user_token={{ user_token }}&customer_id={{ customer_id }}',
+      url: '?route=customer/customer/addReward&user_token={{ user_token }}&customer_id={{ customer_id }}',
       type: 'post',
       dataType: 'json',
       data: 'description=' + encodeURIComponent($('#tab-reward input[name=\'description\']').val()) + '&points=' + encodeURIComponent($('#tab-reward input[name=\'points\']').val()),
@@ -1336,7 +1338,7 @@
   });
   setTimeout(()=>{
     $('#ip').load('?route=customer/customer/ip&user_token={{ user_token }}&customer_id={{ customer_id }}');
-  },500)
+  },1200);
   $('#content').delegate('button[id^=\'button-custom-field\'], button[id^=\'button-address\']', 'click', function() {
     var node = this;
 

@@ -1,6 +1,9 @@
+const sha1 = require("locutus/php/strings/sha1");
+
 module.exports = class ModelCustomerCustomer extends Model {
 	async addCustomer(data) {
-		await this.db.query("INSERT INTO " + DB_PREFIX + "customer SET customer_group_id = '" + data['customer_group_id'] + "', firstname = '" + this.db.escape(data['firstname']) + "', lastname = '" + this.db.escape(data['lastname']) + "', email = '" + this.db.escape(data['email']) + "', telephone = '" + this.db.escape(data['telephone']) + "', custom_field = '" + this.db.escape((data['custom_field']) ? JSON.stringify(data['custom_field']) : JSON.stringify({})) + "', newsletter = '" + data['newsletter'] + "', salt = '" + this.db.escape(salt = oc_token(9)) + "', password = '" + this.db.escape(sha1(salt + sha1(salt + sha1(data['password'])))) + "', status = '" + data['status'] + "', safe = '" + data['safe'] + "', date_added = NOW()");
+		let salt = oc_token(9)
+		await this.db.query("INSERT INTO " + DB_PREFIX + "customer SET customer_group_id = '" + data['customer_group_id'] + "', firstname = '" + this.db.escape(data['firstname']) + "', lastname = '" + this.db.escape(data['lastname']) + "', email = '" + this.db.escape(data['email']) + "', telephone = '" + this.db.escape(data['telephone']) + "', custom_field = '" + this.db.escape((data['custom_field']) ? JSON.stringify(data['custom_field']) : JSON.stringify({})) + "', newsletter = '" + data['newsletter'] + "', salt = '" + this.db.escape(salt) + "', password = '" + this.db.escape(sha1(salt + sha1(salt + sha1(data['password'])))) + "', status = '" + data['status'] + "', safe = '" + data['safe'] + "', date_added = NOW()");
 
 		const customer_id = this.db.getLastId();
 
@@ -17,7 +20,7 @@ module.exports = class ModelCustomerCustomer extends Model {
 		}
 
 		if (data['affiliate']) {
-			await this.db.query("INSERT INTO " + DB_PREFIX + "customer_affiliate SET customer_id = '" + customer_id + "', company = '" + this.db.escape(data['company']) + "', website = '" + this.db.escape(data['website']) + "', tracking = '" + this.db.escape(data['tracking']) + "', commission = '" + data['commission'] + "', tax = '" + this.db.escape(data['tax']) + "', payment = '" + this.db.escape(data['payment']) + "', cheque = '" + this.db.escape(data['cheque']) + "', paypal = '" + this.db.escape(data['paypal']) + "', bank_name = '" + this.db.escape(data['bank_name']) + "', bank_branch_number = '" + this.db.escape(data['bank_branch_number']) + "', bank_swift_code = '" + this.db.escape(data['bank_swift_code']) + "', bank_account_name = '" + this.db.escape(data['bank_account_name']) + "', bank_account_number = '" + this.db.escape(data['bank_account_number']) + "', custom_field = '" + this.db.escape((data['custom_field']['affiliate']) ? JSON.stringify(data['custom_field']['affiliate']) : JSON.stringify({})) + "', status = '" + data['affiliate'] + "', date_added = NOW()");
+			await this.db.query("INSERT INTO " + DB_PREFIX + "customer_affiliate SET customer_id = '" + customer_id + "', company = '" + this.db.escape(data['company']) + "', website = '" + this.db.escape(data['website']) + "', tracking = '" + this.db.escape(data['tracking']) + "', commission = '" + data['commission'] + "', tax = '" + this.db.escape(data['tax']) + "', payment = '" + this.db.escape(data['payment']) + "', cheque = '" + this.db.escape(data['cheque']) + "', paypal = '" + this.db.escape(data['paypal']) + "', bank_name = '" + this.db.escape(data['bank_name']) + "', bank_branch_number = '" + this.db.escape(data['bank_branch_number']) + "', bank_swift_code = '" + this.db.escape(data['bank_swift_code']) + "', bank_account_name = '" + this.db.escape(data['bank_account_name']) + "', bank_account_number = '" + this.db.escape(data['bank_account_number']) + "', custom_field = '" + this.db.escape((data['custom_field'] && data['custom_field']['affiliate']) ? JSON.stringify(data['custom_field']['affiliate']) : JSON.stringify({})) + "', status = '" + data['affiliate'] + "', date_added = NOW()");
 		}
 
 		return customer_id;
@@ -45,7 +48,7 @@ module.exports = class ModelCustomerCustomer extends Model {
 		}
 
 		if (data['affiliate']) {
-			await this.db.query("REPLACE INTO " + DB_PREFIX + "customer_affiliate SET customer_id = '" + customer_id + "', company = '" + this.db.escape(data['company']) + "', website = '" + this.db.escape(data['website']) + "', tracking = '" + this.db.escape(data['tracking']) + "', commission = '" + data['commission'] + "', tax = '" + this.db.escape(data['tax']) + "', payment = '" + this.db.escape(data['payment']) + "', cheque = '" + this.db.escape(data['cheque']) + "', paypal = '" + this.db.escape(data['paypal']) + "', bank_name = '" + this.db.escape(data['bank_name']) + "', bank_branch_number = '" + this.db.escape(data['bank_branch_number']) + "', bank_swift_code = '" + this.db.escape(data['bank_swift_code']) + "', bank_account_name = '" + this.db.escape(data['bank_account_name']) + "', bank_account_number = '" + this.db.escape(data['bank_account_number']) + "', custom_field = '" + this.db.escape((data['custom_field']['affiliate']) ? JSON.stringify(data['custom_field']['affiliate']) : JSON.stringify({})) + "', status = '" + data['affiliate'] + "', date_added = NOW()");
+			await this.db.query("REPLACE INTO " + DB_PREFIX + "customer_affiliate SET customer_id = '" + customer_id + "', company = '" + this.db.escape(data['company']) + "', website = '" + this.db.escape(data['website']) + "', tracking = '" + this.db.escape(data['tracking']) + "', commission = '" + data['commission'] + "', tax = '" + this.db.escape(data['tax']) + "', payment = '" + this.db.escape(data['payment']) + "', cheque = '" + this.db.escape(data['cheque']) + "', paypal = '" + this.db.escape(data['paypal']) + "', bank_name = '" + this.db.escape(data['bank_name']) + "', bank_branch_number = '" + this.db.escape(data['bank_branch_number']) + "', bank_swift_code = '" + this.db.escape(data['bank_swift_code']) + "', bank_account_name = '" + this.db.escape(data['bank_account_name']) + "', bank_account_number = '" + this.db.escape(data['bank_account_number']) + "', custom_field = '" + this.db.escape((data['custom_field'] && data['custom_field']['affiliate']) ? JSON.stringify(data['custom_field']['affiliate']) : JSON.stringify({})) + "', status = '" + data['affiliate'] + "', date_added = NOW()");
 		}
 	}
 
@@ -224,7 +227,7 @@ module.exports = class ModelCustomerCustomer extends Model {
 
 		const query = await this.db.query("SELECT address_id FROM " + DB_PREFIX + "address WHERE customer_id = '" + customer_id + "'");
 
-		for (let result of query.rows ) {
+		for (let result of query.rows) {
 			const address_info = await this.getAddress(result['address_id']);
 
 			if (address_info) {

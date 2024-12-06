@@ -1,13 +1,14 @@
+const uniqid = require("locutus/php/misc/uniqid");
+
 module.exports = class ControllerMarketingMarketing extends Controller {
 	error = {};
 
 	async index() {
-const data = {};
 		await this.load.language('marketing/marketing');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('marketing/marketing');
+		this.load.model('marketing/marketing', this);
 
 		await this.getList();
 	}
@@ -17,15 +18,15 @@ const data = {};
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('marketing/marketing');
+		this.load.model('marketing/marketing', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_marketing_marketing.addMarketing(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
-await this.session.save(this.session.data);
+			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['filter_name'])) {
 				url += '&filter_name=' + encodeURIComponent(html_entity_decode(this.request.get['filter_name']));
@@ -62,15 +63,15 @@ await this.session.save(this.session.data);
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('marketing/marketing');
+		this.load.model('marketing/marketing', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_marketing_marketing.editMarketing(this.request.get['marketing_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
-await this.session.save(this.session.data);
+			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['filter_name'])) {
 				url += '&filter_name=' + encodeURIComponent(html_entity_decode(this.request.get['filter_name']));
@@ -107,18 +108,18 @@ await this.session.save(this.session.data);
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('marketing/marketing');
+		this.load.model('marketing/marketing', this);
 
 		if ((this.request.post['selected']) && await this.validateDelete()) {
-this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
-			for (let marketing_id of this.request.post['selected'] ) {
+			this.request.post['selected'] = Array.isArray(this.request.post['selected']) ? this.request.post['selected'] : [this.request.post['selected']]
+			for (let marketing_id of this.request.post['selected']) {
 				await this.model_marketing_marketing.deleteMarketing(marketing_id);
 			}
 
 			this.session.data['success'] = this.language.get('text_success');
-await this.session.save(this.session.data);
+			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['filter_name'])) {
 				url += '&filter_name=' + encodeURIComponent(html_entity_decode(this.request.get['filter_name']));
@@ -152,41 +153,32 @@ await this.session.save(this.session.data);
 
 	async getList() {
 		const data = {};
+		let filter_name = '';
 		if ((this.request.get['filter_name'])) {
 			filter_name = this.request.get['filter_name'];
-		} else {
-			filter_name = '';
 		}
-
+		let filter_code = '';
 		if ((this.request.get['filter_code'])) {
 			filter_code = this.request.get['filter_code'];
-		} else {
-			filter_code = '';
 		}
-
+		let filter_date_added = '';
 		if ((this.request.get['filter_date_added'])) {
 			filter_date_added = this.request.get['filter_date_added'];
-		} else {
-			filter_date_added = '';
 		}
-
+		let sort = 'm.name';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
-		} else {
-			sort = 'm.name';
 		}
-
+		let order = 'ASC';
 		if ((this.request.get['order'])) {
 			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
 		}
-page = 1;
-if ((this.request.get['page'])) {
+		let page = 1;
+		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['filter_name'])) {
 			url += '&filter_name=' + encodeURIComponent(html_entity_decode(this.request.get['filter_name']));
@@ -219,43 +211,43 @@ if ((this.request.get['page'])) {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('marketing/marketing', 'user_token=' + this.session.data['user_token'] + url, true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('marketing/marketing', 'user_token=' + this.session.data['user_token'] + url, true)
 		});
 
 		data['add'] = await this.url.link('marketing/marketing/add', 'user_token=' + this.session.data['user_token'] + url, true);
 		data['delete'] = await this.url.link('marketing/marketing/delete', 'user_token=' + this.session.data['user_token'] + url, true);
 
-		data['marketings'] = {};
+		data['marketings'] = [];
 
 		const filter_data = {
-			'filter_name'       : filter_name,
-			'filter_code'       : filter_code,
-			'filter_date_added' : filter_date_added,
-			'sort'              : sort,
-			'order'             : order,
-			'start'             : (page - 1) * Number(this.config.get('config_limit_admin')),
-			'limit'             : Number(this.config.get('config_limit_admin'))
-		});
+			'filter_name': filter_name,
+			'filter_code': filter_code,
+			'filter_date_added': filter_date_added,
+			'sort': sort,
+			'order': order,
+			'start': (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit': Number(this.config.get('config_limit_admin'))
+		};
 
-		marketing_total = await this.model_marketing_marketing.getTotalMarketings(filter_data);
+		const marketing_total = await this.model_marketing_marketing.getTotalMarketings(filter_data);
 
-		results = await this.model_marketing_marketing.getMarketings(filter_data);
+		const results = await this.model_marketing_marketing.getMarketings(filter_data);
 
 		for (let result of results) {
 			data['marketings'].push({
-				'marketing_id' : result['marketing_id'],
-				'name'         : result['name'],
-				'code'         : result['code'],
-				'clicks'       : result['clicks'],
-				'orders'       : result['orders'],
-				'date_added'   : date(this.language.get('date_format_short'), strtotime(result['date_added'])),
-				'edit'         : await this.url.link('marketing/marketing/edit', 'user_token=' + this.session.data['user_token'] + '&marketing_id=' + result['marketing_id'] + url, true)
+				'marketing_id': result['marketing_id'],
+				'name': result['name'],
+				'code': result['code'],
+				'clicks': result['clicks'],
+				'orders': result['orders'],
+				'date_added': date(this.language.get('date_format_short'), new Date(result['date_added'])),
+				'edit': await this.url.link('marketing/marketing/edit', 'user_token=' + this.session.data['user_token'] + '&marketing_id=' + result['marketing_id'] + url, true)
 			});
 		}
 
@@ -356,6 +348,7 @@ if ((this.request.get['page'])) {
 	}
 
 	async getForm() {
+		const data = {};
 		data['text_form'] = !(this.request.get['marketing_id']) ? this.language.get('text_add') : this.language.get('text_edit');
 
 		if ((this.error['warning'])) {
@@ -376,7 +369,7 @@ if ((this.request.get['page'])) {
 			data['error_code'] = '';
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['filter_name'])) {
 			url += '&filter_name=' + encodeURIComponent(html_entity_decode(this.request.get['filter_name']));
@@ -405,13 +398,13 @@ if ((this.request.get['page'])) {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('marketing/marketing', 'user_token=' + this.session.data['user_token'] + url, true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('marketing/marketing', 'user_token=' + this.session.data['user_token'] + url, true)
 		});
 
 		if (!(this.request.get['marketing_id'])) {
@@ -421,7 +414,7 @@ if ((this.request.get['page'])) {
 		}
 
 		data['cancel'] = await this.url.link('marketing/marketing', 'user_token=' + this.session.data['user_token'] + url, true);
-
+		let marketing_info;
 		if ((this.request.get['marketing_id']) && (this.request.server['method'] != 'POST')) {
 			marketing_info = await this.model_marketing_marketing.getMarketing(this.request.get['marketing_id']);
 		}
@@ -474,19 +467,19 @@ if ((this.request.get['page'])) {
 			this.error['code'] = this.language.get('error_code');
 		}
 
-		marketing_info = await this.model_marketing_marketing.getMarketingByCode(this.request.post['code']);
+		const marketing_info = await this.model_marketing_marketing.getMarketingByCode(this.request.post['code']);
 
 		if (!(this.request.get['marketing_id'])) {
-			if (marketing_info) {
+			if (marketing_info.marketing_id) {
 				this.error['code'] = this.language.get('error_exists');
 			}
 		} else {
-			if (marketing_info && (this.request.get['marketing_id'] != marketing_info['marketing_id'])) {
+			if (marketing_info.marketing_id && (this.request.get['marketing_id'] != marketing_info['marketing_id'])) {
 				this.error['code'] = this.language.get('error_exists');
 			}
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 
 	async validateDelete() {
@@ -494,6 +487,6 @@ if ((this.request.get['page'])) {
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 }

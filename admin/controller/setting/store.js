@@ -2,14 +2,13 @@ module.exports = class ControllerSettingStore extends Controller {
 	error = {};
 
 	async index() {
-const data = {};
 		await this.load.language('setting/store');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('setting/store',this);
+		this.load.model('setting/store', this);
 
-		this.load.model('setting/setting',this);
+		this.load.model('setting/setting', this);
 
 		await this.getList();
 	}
@@ -19,17 +18,17 @@ const data = {};
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('setting/store',this);
+		this.load.model('setting/store', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			store_id = await this.model_setting_store.addStore(this.request.post);
 
-			this.load.model('setting/setting',this);
+			this.load.model('setting/setting', this);
 
 			await this.model_setting_setting.editSetting('config', this.request.post, store_id);
 
 			this.session.data['success'] = this.language.get('text_success');
-await this.session.save(this.session.data);
+			await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('setting/store', 'user_token=' + this.session.data['user_token'], true));
 		}
@@ -42,17 +41,17 @@ await this.session.save(this.session.data);
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('setting/store',this);
+		this.load.model('setting/store', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_setting_store.editStore(this.request.get['store_id'], this.request.post);
 
-			this.load.model('setting/setting',this);
+			this.load.model('setting/setting', this);
 
 			await this.model_setting_setting.editSetting('config', this.request.post, this.request.get['store_id']);
 
 			this.session.data['success'] = this.language.get('text_success');
-await this.session.save(this.session.data);
+			await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('setting/store', 'user_token=' + this.session.data['user_token'] + '&store_id=' + this.request.get['store_id'], true));
 		}
@@ -65,20 +64,20 @@ await this.session.save(this.session.data);
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('setting/store',this);
+		this.load.model('setting/store', this);
 
 		if ((this.request.post['selected']) && await this.validateDelete()) {
-this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
-			this.load.model('setting/setting',this);
+			this.request.post['selected'] = Array.isArray(this.request.post['selected']) ? this.request.post['selected'] : [this.request.post['selected']]
+			this.load.model('setting/setting', this);
 
-			for (let store_id of this.request.post['selected'] ) {
+			for (let store_id of this.request.post['selected']) {
 				await this.model_setting_store.deleteStore(store_id);
 
 				await this.model_setting_setting.deleteSetting('config', store_id);
 			}
 
 			this.session.data['success'] = this.language.get('text_success');
-await this.session.save(this.session.data);
+			await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('setting/store', 'user_token=' + this.session.data['user_token'], true));
 		}
@@ -88,7 +87,7 @@ await this.session.save(this.session.data);
 
 	async getList() {
 		const data = {};
-		url = '';
+		let url = '';
 
 		if ((this.request.get['page'])) {
 			url += '&page=' + this.request.get['page'];
@@ -97,37 +96,37 @@ await this.session.save(this.session.data);
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('setting/store', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('setting/store', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['add'] = await this.url.link('setting/store/add', 'user_token=' + this.session.data['user_token'], true);
 		data['delete'] = await this.url.link('setting/store/delete', 'user_token=' + this.session.data['user_token'], true);
 
-		data['stores'] = {};
+		data['stores'] = [];
 
 		data['stores'].push({
-			'store_id' : 0,
-			'name'     : this.config.get('config_name') + this.language.get('text_default'),
-			'url'      : this.config.get('config_secure') ? HTTPS_CATALOG : HTTP_CATALOG,
-			'edit'     : await this.url.link('setting/setting', 'user_token=' + this.session.data['user_token'], true)
+			'store_id': 0,
+			'name': this.config.get('config_name') + this.language.get('text_default'),
+			'url': this.config.get('config_secure') ? HTTPS_CATALOG : HTTP_CATALOG,
+			'edit': await this.url.link('setting/setting', 'user_token=' + this.session.data['user_token'], true)
 		});
 
-		store_total = await this.model_setting_store.getTotalStores();
+		const store_total = await this.model_setting_store.getTotalStores();
 
-		results = await this.model_setting_store.getStores();
+		const results = await this.model_setting_store.getStores();
 
 		for (let result of results) {
 			data['stores'].push({
-				'store_id' : result['store_id'],
-				'name'     : result['name'],
-				'url'      : result['url'],
-				'edit'     : await this.url.link('setting/store/edit', 'user_token=' + this.session.data['user_token'] + '&store_id=' + result['store_id'], true)
+				'store_id': result['store_id'],
+				'name': result['name'],
+				'url': result['url'],
+				'edit': await this.url.link('setting/store/edit', 'user_token=' + this.session.data['user_token'] + '&store_id=' + result['store_id'], true)
 			});
 		}
 
@@ -159,6 +158,7 @@ await this.session.save(this.session.data);
 	}
 
 	async getForm() {
+		const data = {};
 		data['text_form'] = !(this.request.get['store_id']) ? this.language.get('text_add') : this.language.get('text_edit');
 
 		if ((this.error['warning'])) {
@@ -218,24 +218,24 @@ await this.session.save(this.session.data);
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('setting/store', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('setting/store', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		if (!(this.request.get['store_id'])) {
 			data['breadcrumbs'].push({
-				'text' : this.language.get('text_settings'),
-				'href' : await this.url.link('setting/store/add', 'user_token=' + this.session.data['user_token'], true)
+				'text': this.language.get('text_settings'),
+				'href': await this.url.link('setting/store/add', 'user_token=' + this.session.data['user_token'], true)
 			});
 		} else {
 			data['breadcrumbs'].push({
-				'text' : this.language.get('text_settings'),
-				'href' : await this.url.link('setting/store/edit', 'user_token=' + this.session.data['user_token'] + '&store_id=' + this.request.get['store_id'], true)
+				'text': this.language.get('text_settings'),
+				'href': await this.url.link('setting/store/edit', 'user_token=' + this.session.data['user_token'] + '&store_id=' + this.request.get['store_id'], true)
 			});
 		}
 
@@ -254,9 +254,9 @@ await this.session.save(this.session.data);
 		}
 
 		data['cancel'] = await this.url.link('setting/store', 'user_token=' + this.session.data['user_token'], true);
-
+		let store_info = {};
 		if ((this.request.get['store_id']) && (this.request.server['method'] != 'POST')) {
-			this.load.model('setting/setting',this);
+			this.load.model('setting/setting', this);
 
 			store_info = await this.model_setting_setting.getSetting('config', this.request.get['store_id']);
 		}
@@ -311,21 +311,21 @@ await this.session.save(this.session.data);
 			data['config_theme'] = '';
 		}
 
-		data['themes'] = {};
+		data['themes'] = [];
 
 		// Create a new language container so we don't pollute the current one
-		language = new Language(this.config.get('config_language'));
+		const language = new Language(this.config.get('config_language'));
 
-		this.load.model('setting/extension',this);
+		this.load.model('setting/extension', this);
 
 		const extensions = await this.model_setting_extension.getInstalled('theme');
 
-		for (extensions of code) {
+		for (let code of extensions) {
 			await this.load.language('extension/theme/' + code, 'extension');
 
 			data['themes'].push({
-				'text'  : this.language.get('extension').get('heading_title'),
-				'value' : code
+				'text': this.language.get('extension').get('heading_title'),
+				'value': code
 			});
 		}
 
@@ -337,7 +337,7 @@ await this.session.save(this.session.data);
 			data['config_layout_id'] = '';
 		}
 
-		this.load.model('design/layout',this);
+		this.load.model('design/layout', this);
 
 		data['layouts'] = await this.model_design_layout.getLayouts();
 
@@ -405,7 +405,7 @@ await this.session.save(this.session.data);
 			data['config_image'] = '';
 		}
 
-		this.load.model('tool/image',this);
+		this.load.model('tool/image', this);
 
 		if ((this.request.post['config_image']) && is_file(DIR_IMAGE + this.request.post['config_image'])) {
 			data['thumb'] = await this.model_tool_image.resize(this.request.post['config_image'], 100, 100);
@@ -433,7 +433,7 @@ await this.session.save(this.session.data);
 			data['config_comment'] = '';
 		}
 
-		this.load.model('localisation/location');
+		this.load.model('localisation/location', this);
 
 		data['locations'] = await this.model_localisation_location.getLocations();
 
@@ -442,7 +442,7 @@ await this.session.save(this.session.data);
 		} else if ((store_info['config_location'])) {
 			data['config_location'] = store_info['config_location'];
 		} else {
-			data['config_location'] = {};
+			data['config_location'] = [];
 		}
 
 		if ((this.request.post['config_country_id'])) {
@@ -453,7 +453,7 @@ await this.session.save(this.session.data);
 			data['config_country_id'] = this.config.get('config_country_id');
 		}
 
-		this.load.model('localisation/country',this);
+		this.load.model('localisation/country', this);
 
 		data['countries'] = await this.model_localisation_country.getCountries();
 
@@ -473,7 +473,7 @@ await this.session.save(this.session.data);
 			data['config_language'] = this.config.get('config_language');
 		}
 
-		this.load.model('localisation/language',this);
+		this.load.model('localisation/language', this);
 
 		data['languages'] = await this.model_localisation_language.getLanguages();
 
@@ -485,7 +485,7 @@ await this.session.save(this.session.data);
 			data['config_currency'] = this.config.get('config_currency');
 		}
 
-		this.load.model('localisation/currency',this);
+		this.load.model('localisation/currency', this);
 
 		data['currencies'] = await this.model_localisation_currency.getCurrencies();
 
@@ -521,7 +521,7 @@ await this.session.save(this.session.data);
 			data['config_customer_group_id'] = '';
 		}
 
-		this.load.model('customer/customer_group',this);
+		this.load.model('customer/customer_group', this);
 
 		data['customer_groups'] = await this.model_customer_customer_group.getCustomerGroups();
 
@@ -530,7 +530,7 @@ await this.session.save(this.session.data);
 		} else if ((store_info['config_customer_group_display'])) {
 			data['config_customer_group_display'] = store_info['config_customer_group_display'];
 		} else {
-			data['config_customer_group_display'] = {};
+			data['config_customer_group_display'] = [];
 		}
 
 		if ((this.request.post['config_customer_price'])) {
@@ -549,7 +549,7 @@ await this.session.save(this.session.data);
 			data['config_account_id'] = '';
 		}
 
-		this.load.model('catalog/information',this);
+		this.load.model('catalog/information', this);
 
 		data['informations'] = await this.model_catalog_information.getInformations();
 
@@ -585,7 +585,7 @@ await this.session.save(this.session.data);
 			data['config_order_status_id'] = '';
 		}
 
-		this.load.model('localisation/order_status',this);
+		this.load.model('localisation/order_status', this);
 
 		data['order_statuses'] = await this.model_localisation_order_status.getOrderStatuses();
 
@@ -695,7 +695,7 @@ await this.session.save(this.session.data);
 			this.error['warning'] = this.language.get('error_warning');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 
 	async validateDelete() {
@@ -703,21 +703,21 @@ await this.session.save(this.session.data);
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		this.load.model('sale/order',this);
-		this.request.post['selected']  = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']];
+		this.load.model('sale/order', this);
+		this.request.post['selected'] = Array.isArray(this.request.post['selected']) ? this.request.post['selected'] : [this.request.post['selected']];
 
-		for (let store_id of this.request.post['selected'] ) {
+		for (let store_id of this.request.post['selected']) {
 			if (!store_id) {
 				this.error['warning'] = this.language.get('error_default');
 			}
 
-			store_total = await this.model_sale_order.getTotalOrdersByStoreId(store_id);
+			const store_total = await this.model_sale_order.getTotalOrdersByStoreId(store_id);
 
 			if (store_total) {
 				this.error['warning'] = sprintf(this.language.get('error_store'), store_total);
 			}
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 }

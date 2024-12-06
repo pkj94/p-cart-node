@@ -66,9 +66,18 @@ app.use('/install/view/javascript', express.static('install/view/javascript'));
 app.use('/install/view/image', express.static('install/view/image'));
 app.use('/install/language', express.static('install/language'));
 
-app.use('/catalog/view/stylesheet', express.static('catalog/view/stylesheet'));
+app.use('/catalog/view/theme/:theme/stylesheet', (req, res, next) => {
+    const theme = req.params.theme;
+    const stylePath = expressPath.join(__dirname, 'catalog', 'view', 'theme', theme, 'stylesheet');
+    express.static(stylePath)(req, res, next);
+});
+app.use('/catalog/view/theme/*/stylesheet', express.static('catalog/view/theme/*/stylesheet'));
 app.use('/catalog/view/javascript', express.static('catalog/view/javascript'));
-app.use('/catalog/view/image', express.static('catalog/view/image'));
+app.use('/catalog/view/theme/:theme/image', (req, res, next) => {
+    const theme = req.params.theme;
+    const imagePath = expressPath.join(__dirname, 'catalog', 'view', 'theme', theme, 'image');
+    express.static(imagePath)(req, res, next);
+});
 app.use('/catalog/language', express.static('catalog/language'));
 app.use('/extension', express.static('extension'));
 app.use('/favicon.ico', express.static('./favicon.ico'));

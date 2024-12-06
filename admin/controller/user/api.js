@@ -2,7 +2,6 @@ module.exports = class ControllerUserApi extends Controller {
 	error = {};
 
 	async index() {
-		const data = {};
 		await this.load.language('user/api');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -25,7 +24,7 @@ module.exports = class ControllerUserApi extends Controller {
 			this.session.data['success'] = this.language.get('text_success');
 			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -58,7 +57,7 @@ module.exports = class ControllerUserApi extends Controller {
 			this.session.data['success'] = this.language.get('text_success');
 			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -94,7 +93,7 @@ module.exports = class ControllerUserApi extends Controller {
 			this.session.data['success'] = this.language.get('text_success');
 			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -116,23 +115,20 @@ module.exports = class ControllerUserApi extends Controller {
 
 	async getList() {
 		const data = {};
+		let sort = 'username';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
-		} else {
-			sort = 'username';
 		}
-
+		let order = 'ASC';
 		if ((this.request.get['order'])) {
 			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
 		}
-		page = 1;
+		let page = 1;
 		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -161,26 +157,26 @@ module.exports = class ControllerUserApi extends Controller {
 		data['add'] = await this.url.link('user/api/add', 'user_token=' + this.session.data['user_token'] + url, true);
 		data['delete'] = await this.url.link('user/api/delete', 'user_token=' + this.session.data['user_token'] + url, true);
 
-		data['apis'] = {};
+		data['apis'] = [];
 
 		const filter_data = {
 			'sort': sort,
 			'order': order,
 			'start': (page - 1) * Number(this.config.get('config_limit_admin')),
 			'limit': Number(this.config.get('config_limit_admin'))
-		});
+		};
 
-		user_total = await this.model_user_api.getTotalApis();
+		const user_total = await this.model_user_api.getTotalApis();
 
-		results = await this.model_user_api.getApis(filter_data);
+		const results = await this.model_user_api.getApis(filter_data);
 
 		for (let result of results) {
 			data['apis'].push({
 				'api_id': result['api_id'],
 				'username': result['username'],
 				'status': (result['status'] ? this.language.get('text_enabled') : this.language.get('text_disabled')),
-				'date_added': date(this.language.get('date_format_short'), strtotime(result['date_added'])),
-				'date_modified': date(this.language.get('date_format_short'), strtotime(result['date_modified'])),
+				'date_added': date(this.language.get('date_format_short'), new Date(result['date_added'])),
+				'date_modified': date(this.language.get('date_format_short'), new Date(result['date_modified'])),
 				'edit': await this.url.link('user/api/edit', 'user_token=' + this.session.data['user_token'] + '&api_id=' + result['api_id'] + url, true)
 			});
 		}
@@ -253,8 +249,12 @@ module.exports = class ControllerUserApi extends Controller {
 	}
 
 	async getForm() {
+		const data = {}
 		data['text_form'] = !(this.request.get['api_id']) ? this.language.get('text_add') : this.language.get('text_edit');
-		data['text_ip'] = sprintf(this.language.get('text_ip'), this.request.server['REMOTE_ADDR']);
+		data['text_ip'] = sprintf(this.language.get('text_ip'), this.request.server.headers['x-forwarded-for'] || (
+			this.request.server.connection ? (this.request.server.connection.remoteAddress ||
+				this.request.server.socket.remoteAddress ||
+				this.request.server.connection.socket.remoteAddress) : ''));
 
 		data['user_token'] = this.session.data['user_token'];
 
@@ -276,7 +276,7 @@ module.exports = class ControllerUserApi extends Controller {
 			data['error_key'] = '';
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -309,7 +309,7 @@ module.exports = class ControllerUserApi extends Controller {
 		}
 
 		data['cancel'] = await this.url.link('user/api', 'user_token=' + this.session.data['user_token'] + url, true);
-
+		let api_info;
 		if ((this.request.get['api_id']) && (this.request.server['method'] != 'POST')) {
 			api_info = await this.model_user_api.getApi(this.request.get['api_id']);
 		}
@@ -348,10 +348,10 @@ module.exports = class ControllerUserApi extends Controller {
 		}
 
 		// Session
-		data['api_sessions'] = {};
+		data['api_sessions'] = [];
 
 		if ((this.request.get['api_id'])) {
-			results = await this.model_user_api.getApiSessions(this.request.get['api_id']);
+			const results = await this.model_user_api.getApiSessions(this.request.get['api_id']);
 
 			for (let result of results) {
 				data['api_sessions'].push({
@@ -376,7 +376,7 @@ module.exports = class ControllerUserApi extends Controller {
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		if ((oc_strlen(trim(this.request.post['username'])) < 3) || (oc_strlen(trim(this.request.post['username'])) > 64)) {
+		if ((oc_strlen(trim(this.request.post['username'])) < 3) || (oc_strlen(this.request.post['username'].trim()) > 64)) {
 			this.error['username'] = this.language.get('error_username');
 		}
 
@@ -402,7 +402,7 @@ module.exports = class ControllerUserApi extends Controller {
 	async deleteSession() {
 		await this.load.language('user/api');
 
-		json = {};
+		const json = {};
 
 		if (!await this.user.hasPermission('modify', 'user/api')) {
 			json['error'] = this.language.get('error_permission');

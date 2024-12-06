@@ -2,12 +2,11 @@ module.exports = class ControllerUserUser extends Controller {
 	error = {};
 
 	async index() {
-const data = {};
 		await this.load.language('user/user');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('user/user',this);
+		this.load.model('user/user', this);
 
 		await this.getList();
 	}
@@ -17,15 +16,15 @@ const data = {};
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('user/user',this);
+		this.load.model('user/user', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_user_user.addUser(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
-await this.session.save(this.session.data);
+			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -50,15 +49,15 @@ await this.session.save(this.session.data);
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('user/user',this);
+		this.load.model('user/user', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_user_user.editUser(this.request.get['user_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
-await this.session.save(this.session.data);
+			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -83,18 +82,18 @@ await this.session.save(this.session.data);
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('user/user',this);
+		this.load.model('user/user', this);
 
 		if ((this.request.post['selected']) && await this.validateDelete()) {
-this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
-			for (let user_id of this.request.post['selected'] ) {
+			this.request.post['selected'] = Array.isArray(this.request.post['selected']) ? this.request.post['selected'] : [this.request.post['selected']]
+			for (let user_id of this.request.post['selected']) {
 				await this.model_user_user.deleteUser(user_id);
 			}
 
 			this.session.data['success'] = this.language.get('text_success');
-await this.session.save(this.session.data);
+			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -116,23 +115,20 @@ await this.session.save(this.session.data);
 
 	async getList() {
 		const data = {};
+		let sort = 'username';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
-		} else {
-			sort = 'username';
 		}
-
+		let order = 'ASC';
 		if ((this.request.get['order'])) {
 			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
 		}
-page = 1;
-if ((this.request.get['page'])) {
+		let page = 1;
+		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -149,38 +145,38 @@ if ((this.request.get['page'])) {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('user/user', 'user_token=' + this.session.data['user_token'] + url, true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('user/user', 'user_token=' + this.session.data['user_token'] + url, true)
 		});
 
 		data['add'] = await this.url.link('user/user/add', 'user_token=' + this.session.data['user_token'] + url, true);
 		data['delete'] = await this.url.link('user/user/delete', 'user_token=' + this.session.data['user_token'] + url, true);
 
-		data['users'] = {};
+		data['users'] = [];
 
 		const filter_data = {
-			'sort'  : sort,
-			'order' : order,
-			'start' : (page - 1) * Number(this.config.get('config_limit_admin')),
-			'limit' : Number(this.config.get('config_limit_admin'))
-		});
+			'sort': sort,
+			'order': order,
+			'start': (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit': Number(this.config.get('config_limit_admin'))
+		};
 
-		user_total = await this.model_user_user.getTotalUsers();
+		const user_total = await this.model_user_user.getTotalUsers();
 
-		results = await this.model_user_user.getUsers(filter_data);
+		const results = await this.model_user_user.getUsers(filter_data);
 
 		for (let result of results) {
 			data['users'].push({
-				'user_id'    : result['user_id'],
-				'username'   : result['username'],
-				'status'     : (result['status'] ? this.language.get('text_enabled') : this.language.get('text_disabled')),
-				'date_added' : date(this.language.get('date_format_short'), strtotime(result['date_added'])),
-				'edit'       : await this.url.link('user/user/edit', 'user_token=' + this.session.data['user_token'] + '&user_id=' + result['user_id'] + url, true)
+				'user_id': result['user_id'],
+				'username': result['username'],
+				'status': (result['status'] ? this.language.get('text_enabled') : this.language.get('text_disabled')),
+				'date_added': date(this.language.get('date_format_short'), new Date(result['date_added'])),
+				'edit': await this.url.link('user/user/edit', 'user_token=' + this.session.data['user_token'] + '&user_id=' + result['user_id'] + url, true)
 			});
 		}
 
@@ -251,6 +247,7 @@ if ((this.request.get['page'])) {
 	}
 
 	async getForm() {
+		const data = {};
 		data['text_form'] = !(this.request.get['user_id']) ? this.language.get('text_add') : this.language.get('text_edit');
 
 		if ((this.error['warning'])) {
@@ -295,7 +292,7 @@ if ((this.request.get['page'])) {
 			data['error_email'] = '';
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -312,13 +309,13 @@ if ((this.request.get['page'])) {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('user/user', 'user_token=' + this.session.data['user_token'] + url, true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('user/user', 'user_token=' + this.session.data['user_token'] + url, true)
 		});
 
 		if (!(this.request.get['user_id'])) {
@@ -328,7 +325,7 @@ if ((this.request.get['page'])) {
 		}
 
 		data['cancel'] = await this.url.link('user/user', 'user_token=' + this.session.data['user_token'] + url, true);
-
+		let user_info;
 		if ((this.request.get['user_id']) && (this.request.server['method'] != 'POST')) {
 			user_info = await this.model_user_user.getUser(this.request.get['user_id']);
 		}
@@ -349,7 +346,7 @@ if ((this.request.get['page'])) {
 			data['user_group_id'] = '';
 		}
 
-		this.load.model('user/user_group',this);
+		this.load.model('user/user_group', this);
 
 		data['user_groups'] = await this.model_user_user_group.getUserGroups();
 
@@ -397,7 +394,7 @@ if ((this.request.get['page'])) {
 			data['image'] = '';
 		}
 
-		this.load.model('tool/image',this);
+		this.load.model('tool/image', this);
 
 		if ((this.request.post['image']) && is_file(DIR_IMAGE + this.request.post['image'])) {
 			data['thumb'] = await this.model_tool_image.resize(this.request.post['image'], 100, 100);
@@ -406,7 +403,7 @@ if ((this.request.get['page'])) {
 		} else {
 			data['thumb'] = await this.model_tool_image.resize('no_image.png', 100, 100);
 		}
-		
+
 		data['placeholder'] = await this.model_tool_image.resize('no_image.png', 100, 100);
 
 		if ((this.request.post['status'])) {
@@ -433,14 +430,14 @@ if ((this.request.get['page'])) {
 			this.error['username'] = this.language.get('error_username');
 		}
 
-		user_info = await this.model_user_user.getUserByUsername(this.request.post['username']);
+		let user_info = await this.model_user_user.getUserByUsername(this.request.post['username']);
 
 		if (!(this.request.get['user_id'])) {
-			if (user_info) {
+			if (user_info.user_id) {
 				this.error['warning'] = this.language.get('error_exists_username');
 			}
 		} else {
-			if (user_info && (this.request.get['user_id'] != user_info['user_id'])) {
+			if (user_info.user_id && (this.request.get['user_id'] != user_info['user_id'])) {
 				this.error['warning'] = this.language.get('error_exists_username');
 			}
 		}
@@ -453,18 +450,18 @@ if ((this.request.get['page'])) {
 			this.error['lastname'] = this.language.get('error_lastname');
 		}
 
-		if ((oc_strlen(this.request.post['email']) > 96) || !filter_var(this.request.post['email'], FILTER_VALIDATE_EMAIL)) {
+		if ((oc_strlen(this.request.post['email']) > 96) || !isEmailValid(this.request.post['email'])) {
 			this.error['email'] = this.language.get('error_email');
 		}
 
 		user_info = await this.model_user_user.getUserByEmail(this.request.post['email']);
 
 		if (!(this.request.get['user_id'])) {
-			if (user_info) {
+			if (user_info.user_id) {
 				this.error['warning'] = this.language.get('error_exists_email');
 			}
 		} else {
-			if (user_info && (this.request.get['user_id'] != user_info['user_id'])) {
+			if (user_info.user_id && (this.request.get['user_id'] != user_info['user_id'])) {
 				this.error['warning'] = this.language.get('error_exists_email');
 			}
 		}
@@ -479,27 +476,27 @@ if ((this.request.get['page'])) {
 			}
 		}
 
-		total_users = await this.model_user_user.getTotalUsers();
+		const total_users = await this.model_user_user.getTotalUsers();
 
 		if (total_users <= 1 && (this.request.post['status']) && this.request.post['status'] == 0) {
 			this.error['warning'] = this.language.get('error_single_user');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 
 	async validateDelete() {
 		if (!await this.user.hasPermission('modify', 'user/user')) {
 			this.error['warning'] = this.language.get('error_permission');
 		}
-		this.request.post['selected']  = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']];
+		this.request.post['selected'] = Array.isArray(this.request.post['selected']) ? this.request.post['selected'] : [this.request.post['selected']];
 
-		for (let user_id of this.request.post['selected'] ) {
+		for (let user_id of this.request.post['selected']) {
 			if (await this.user.getId() == user_id) {
 				this.error['warning'] = this.language.get('error_account');
 			}
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 }

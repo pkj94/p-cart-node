@@ -2,7 +2,6 @@ module.exports = class ControllerCustomerCustomField extends Controller {
 	error = {};
 
 	async index() {
-		const data = {};
 		await this.load.language('customer/custom_field');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -25,7 +24,7 @@ module.exports = class ControllerCustomerCustomField extends Controller {
 			this.session.data['success'] = this.language.get('text_success');
 			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -58,7 +57,7 @@ module.exports = class ControllerCustomerCustomField extends Controller {
 			this.session.data['success'] = this.language.get('text_success');
 			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -94,7 +93,7 @@ module.exports = class ControllerCustomerCustomField extends Controller {
 			this.session.data['success'] = this.language.get('text_success');
 			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -116,23 +115,20 @@ module.exports = class ControllerCustomerCustomField extends Controller {
 
 	async getList() {
 		const data = {};
+		let sort = 'cfd.name';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
-		} else {
-			sort = 'cfd.name';
 		}
-
+		let order = 'ASC';
 		if ((this.request.get['order'])) {
 			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
 		}
-		page = 1;
+		let page = 1;
 		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -161,21 +157,21 @@ module.exports = class ControllerCustomerCustomField extends Controller {
 		data['add'] = await this.url.link('customer/custom_field/add', 'user_token=' + this.session.data['user_token'] + url, true);
 		data['delete'] = await this.url.link('customer/custom_field/delete', 'user_token=' + this.session.data['user_token'] + url, true);
 
-		data['custom_fields'] = {};
+		data['custom_fields'] = [];
 
 		const filter_data = {
 			'sort': sort,
 			'order': order,
 			'start': (page - 1) * Number(this.config.get('config_limit_admin')),
 			'limit': Number(this.config.get('config_limit_admin'))
-		});
+		};
 
-		custom_field_total = await this.model_customer_custom_field.getTotalCustomFields();
+		const custom_field_total = await this.model_customer_custom_field.getTotalCustomFields();
 
-		results = await this.model_customer_custom_field.getCustomFields(filter_data);
+		const results = await this.model_customer_custom_field.getCustomFields(filter_data);
 
 		for (let result of results) {
-			type = '';
+			let type = '';
 
 			switch (result['type']) {
 				case 'select':
@@ -290,6 +286,7 @@ module.exports = class ControllerCustomerCustomField extends Controller {
 	}
 
 	async getForm() {
+		const data = {};
 		data['text_form'] = !(this.request.get['custom_field_id']) ? this.language.get('text_add') : this.language.get('text_edit');
 
 		if ((this.error['warning'])) {
@@ -310,7 +307,7 @@ module.exports = class ControllerCustomerCustomField extends Controller {
 			data['error_custom_field_value'] = {};
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -343,7 +340,7 @@ module.exports = class ControllerCustomerCustomField extends Controller {
 		}
 
 		data['cancel'] = await this.url.link('customer/custom_field', 'user_token=' + this.session.data['user_token'] + url, true);
-
+		let custom_field_info;
 		if ((this.request.get['custom_field_id']) && (this.request.server['method'] != 'POST')) {
 			custom_field_info = await this.model_customer_custom_field.getCustomField(this.request.get['custom_field_id']);
 		}
@@ -409,44 +406,43 @@ module.exports = class ControllerCustomerCustomField extends Controller {
 		} else {
 			data['sort_order'] = '';
 		}
-
+		let custom_field_values = [];
 		if ((this.request.post['custom_field_value'])) {
 			custom_field_values = this.request.post['custom_field_value'];
 		} else if ((this.request.get['custom_field_id'])) {
 			custom_field_values = await this.model_customer_custom_field.getCustomFieldValueDescriptions(this.request.get['custom_field_id']);
 		} else {
-			custom_field_values = {};
+			custom_field_values = [];
 		}
 
-		data['custom_field_values'] = {};
-
-		for (custom_field_values of custom_field_value) {
+		data['custom_field_values'] = [];
+		for (let [custom_field_id, custom_field_value] of Object.entries(custom_field_values)) {
 			data['custom_field_values'].push({
 				'custom_field_value_id': custom_field_value['custom_field_value_id'],
 				'custom_field_value_description': custom_field_value['custom_field_value_description'],
 				'sort_order': custom_field_value['sort_order']
 			});
 		}
-
+		let custom_field_customer_groups = [];
 		if ((this.request.post['custom_field_customer_group'])) {
 			custom_field_customer_groups = this.request.post['custom_field_customer_group'];
 		} else if ((this.request.get['custom_field_id'])) {
 			custom_field_customer_groups = await this.model_customer_custom_field.getCustomFieldCustomerGroups(this.request.get['custom_field_id']);
 		} else {
-			custom_field_customer_groups = {};
+			custom_field_customer_groups = [];
 		}
 
-		data['custom_field_customer_group'] = {};
+		data['custom_field_customer_group'] = [];
 
-		for (custom_field_customer_groups of custom_field_customer_group) {
-			data['custom_field_customer_group'].push(custom_field_customer_group['customer_group_id'];
+		for (let [id, custom_field_customer_group] of Object.entries(custom_field_customer_groups)) {
+			data['custom_field_customer_group'].push(custom_field_customer_group['customer_group_id']);
 		}
 
-		data['custom_field_required'] = {};
+		data['custom_field_required'] = [];
 
-		for (custom_field_customer_groups of custom_field_customer_group) {
+		for (let [id, custom_field_customer_group] of Object.entries(custom_field_customer_groups)) {
 			if (custom_field_customer_group['required']) {
-				data['custom_field_required'].push(custom_field_customer_group['customer_group_id'];
+				data['custom_field_required'].push(custom_field_customer_group['customer_group_id']);
 			}
 		}
 
@@ -468,6 +464,7 @@ module.exports = class ControllerCustomerCustomField extends Controller {
 
 		for (let [language_id, value] of Object.entries(this.request.post['custom_field_description'])) {
 			if ((oc_strlen(value['name']) < 1) || (oc_strlen(value['name']) > 128)) {
+				this.error['name'] = this.error['name'] || {};
 				this.error['name'][language_id] = this.language.get('error_name');
 			}
 		}
@@ -481,6 +478,8 @@ module.exports = class ControllerCustomerCustomField extends Controller {
 				for (let [custom_field_value_id, custom_field_value] of Object.entries(this.request.post['custom_field_value'])) {
 					for (let [language_id, custom_field_value_description] of Object.entries(custom_field_value['custom_field_value_description'])) {
 						if ((oc_strlen(custom_field_value_description['name']) < 1) || (oc_strlen(custom_field_value_description['name']) > 128)) {
+							this.error['custom_field_value'] = this.error['custom_field_value'] || {};
+							this.error['custom_field_value'][custom_field_value_id] = this.error['custom_field_value'][custom_field_value_id] || {};
 							this.error['custom_field_value'][custom_field_value_id][language_id] = this.language.get('error_custom_value');
 						}
 					}

@@ -13,9 +13,11 @@ module.exports = class ControllerCommonDeveloper extends Controller {
 		let eval1 = false;
 
 		eval1 = 'eval = true;';
-
-		eval(eval1);
-
+		try {
+			eval(eval1);
+		} catch (e) {
+			console.error("Error evaluating expression:", e);
+		}
 		if (eval1 === true) {
 			data['eval'] = true;
 		} else {
@@ -59,7 +61,7 @@ module.exports = class ControllerCommonDeveloper extends Controller {
 			let directories = require('glob').sync(DIR_CACHE + '/template/*');
 
 			if (directories) {
-				for (directories of directory) {
+				for (let directory of directories) {
 					let files = require('glob').sync(directory + '/*');
 
 					for (let file of files) {
@@ -99,7 +101,7 @@ module.exports = class ControllerCommonDeveloper extends Controller {
 			let files = require('glob').sync(DIR_CATALOG + 'view/theme/*/stylesheet/sass/_bootstrap.scss');
 
 			for (let file of files) {
-				file = substr(file, 0, -21) + '/bootstrap.css';
+				file = file.substr(0, -21) + '/bootstrap.css';
 
 				if (is_file(file)) {
 					fs.unlinkSync(file);

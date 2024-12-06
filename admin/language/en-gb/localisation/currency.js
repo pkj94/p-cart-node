@@ -7,7 +7,7 @@ module.exports = {
     text_list: 'Currency List',
     text_add: 'Add Currency',
     text_edit: 'Edit Currency',
-    text_iso: 'alert-link" > here</a>.',
+    text_iso: 'You can find a full list of ISO currency codes and settings <a href="http://www.xe.com/iso4217.php" target="_blank" class="alert-link">here</a>.',
 
     // Column
     column_title: 'Currency Title',

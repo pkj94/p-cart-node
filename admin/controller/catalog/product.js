@@ -260,11 +260,10 @@ await this.session.save(this.session.data);
 			sort = this.request.get['sort'];
 		}
 		let order = 'ASC';
-		if ((this.request.get['order'])) {
+		let order = 'ASC';
+if ((this.request.get['order'])) {
 			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
-		}
+		} 
 		let page = 1;page = 1;
 if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);

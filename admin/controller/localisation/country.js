@@ -173,7 +173,7 @@ module.exports = class ControllerLocalisationCountry extends Controller {
 		for (let result of results) {
 			data['countries'].push({
 				'country_id': result['country_id'],
-				'name': result['name'] + ((result['country_id'] == this.config.get('config_country_id')) ? this.language.get('text_default') : null),
+				'name': result['name'] + ((result['country_id'] == this.config.get('config_country_id')) ? this.language.get('text_default') : ''),
 				'iso_code_2': result['iso_code_2'],
 				'iso_code_3': result['iso_code_3'],
 				'edit': await this.url.link('localisation/country/edit', 'user_token=' + this.session.data['user_token'] + '&country_id=' + result['country_id'] + url, true)

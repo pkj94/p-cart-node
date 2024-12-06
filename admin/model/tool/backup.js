@@ -1,13 +1,12 @@
 module.exports = class ModelToolBackup extends Model {
 	async getTables() {
-		table_data = {};
+		const table_data = [];
 
 		const query = await this.db.query("SHOW TABLES FROM `" + DB_DATABASE + "`");
-
-		for (let result of query.rows ) {
-			table = reset(result);
-			if (table && oc_substr(table, 0, strlen(DB_PREFIX)) == DB_PREFIX) {
-				table_data.push(table;
+		for (let result of query.rows) {
+			let table = Object.values(result).length > 0 ? Object.values(result)[0] : undefined;
+			if (table && oc_substr(table, 0, (DB_PREFIX).length) == DB_PREFIX) {
+				table_data.push(table);
 			}
 		}
 
@@ -15,11 +14,12 @@ module.exports = class ModelToolBackup extends Model {
 	}
 
 	async backup(tables) {
-		output = '';
+		let output = '';
 
-		for (tables of table) {
+		for (let table of tables) {
+			let status = false;
 			if (DB_PREFIX) {
-				if (strpos(table, DB_PREFIX) === false) {
+				if (table.indexOf(DB_PREFIX) === -1) {
 					status = false;
 				} else {
 					status = true;
@@ -33,25 +33,35 @@ module.exports = class ModelToolBackup extends Model {
 
 				const query = await this.db.query("SELECT * FROM `" + table + "`");
 
-				for (let result of query.rows ) {
-					fields = '';
+				for (let result of query.rows) {
+					let fields = '';
 
-					for (array_keys(result) of value) {
+					for (let value of Object.keys(result)) {
 						fields += '`' + value + '`, ';
 					}
 
-					values = '';
-
-					for (array_values(result) of value) {
+					let values = '';
+					for (let value of Object.values(result)) {
 						if (value !== null) {
-							value = str_replace(array('\\', "\x00", "\n", "\r", "\x1a", '\'', '"'), array('\\\\', '\0', '\n', '\r', '\Z', '\\\'', '\"'), value);
+							let fr = {
+								'\\': '\\\\',
+								"\x00": '\0',
+								"\n": '\n',
+								"\r": '\r',
+								"\x1a": '\Z',
+								'\'': '\\\'',
+								'"': '\"'
+							}
+							for (let [k, v] of Object.entries(fr)) {
+								value = value.toString().replaceAll(k, v);
+							}
 							values += '\'' + value + '\', ';
 						} else {
 							values += 'NULL, ';
 						}
 					}
 
-					output += 'INSERT INTO `' + table + '` (' + preg_replace('/, /', '', fields) + ') VALUES (' + preg_replace('/, /', '', values) + ');' + "\n";
+					output += 'INSERT INTO `' + table + '` (' + fields.replace(/, $/, '') + ') VALUES (' + values.replace(/, $/, '') + ');' + "\n";
 				}
 
 				output += "\n\n";

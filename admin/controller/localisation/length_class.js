@@ -2,7 +2,6 @@ module.exports = class ControllerLocalisationLengthClass extends Controller {
 	error = {};
 
 	async index() {
-		const data = {};
 		await this.load.language('localisation/length_class');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -25,7 +24,7 @@ module.exports = class ControllerLocalisationLengthClass extends Controller {
 			this.session.data['success'] = this.language.get('text_success');
 			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -58,7 +57,7 @@ module.exports = class ControllerLocalisationLengthClass extends Controller {
 			this.session.data['success'] = this.language.get('text_success');
 			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -94,7 +93,7 @@ module.exports = class ControllerLocalisationLengthClass extends Controller {
 			this.session.data['success'] = this.language.get('text_success');
 			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -116,23 +115,21 @@ module.exports = class ControllerLocalisationLengthClass extends Controller {
 
 	async getList() {
 		const data = {};
+		let sort = 'title';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
-		} else {
-			sort = 'title';
 		}
 
+		let order = 'ASC';
 		if ((this.request.get['order'])) {
 			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
 		}
-		page = 1;
+		let page = 1;
 		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -161,23 +158,23 @@ module.exports = class ControllerLocalisationLengthClass extends Controller {
 		data['add'] = await this.url.link('localisation/length_class/add', 'user_token=' + this.session.data['user_token'] + url, true);
 		data['delete'] = await this.url.link('localisation/length_class/delete', 'user_token=' + this.session.data['user_token'] + url, true);
 
-		data['length_classes'] = {};
+		data['length_classes'] = [];
 
 		const filter_data = {
 			'sort': sort,
 			'order': order,
 			'start': (page - 1) * Number(this.config.get('config_limit_admin')),
 			'limit': Number(this.config.get('config_limit_admin'))
-		});
+		};
 
-		length_class_total = await this.model_localisation_length_class.getTotalLengthClasses();
+		const length_class_total = await this.model_localisation_length_class.getTotalLengthClasses();
 
-		results = await this.model_localisation_length_class.getLengthClasses(filter_data);
+		const results = await this.model_localisation_length_class.getLengthClasses(filter_data);
 
 		for (let result of results) {
 			data['length_classes'].push({
 				'length_class_id': result['length_class_id'],
-				'title': result['title'] + ((result['length_class_id'] == this.config.get('config_length_class_id')) ? this.language.get('text_default') : null),
+				'title': result['title'] + ((result['length_class_id'] == this.config.get('config_length_class_id')) ? this.language.get('text_default') : ''),
 				'unit': result['unit'],
 				'value': result['value'],
 				'edit': await this.url.link('localisation/length_class/edit', 'user_token=' + this.session.data['user_token'] + '&length_class_id=' + result['length_class_id'] + url, true)
@@ -251,6 +248,7 @@ module.exports = class ControllerLocalisationLengthClass extends Controller {
 	}
 
 	async getForm() {
+		const data = {};
 		data['text_form'] = !(this.request.get['length_class_id']) ? this.language.get('text_add') : this.language.get('text_edit');
 
 		if ((this.error['warning'])) {
@@ -271,7 +269,7 @@ module.exports = class ControllerLocalisationLengthClass extends Controller {
 			data['error_unit'] = {};
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -304,7 +302,7 @@ module.exports = class ControllerLocalisationLengthClass extends Controller {
 		}
 
 		data['cancel'] = await this.url.link('localisation/length_class', 'user_token=' + this.session.data['user_token'] + url, true);
-
+		let length_class_info;
 		if ((this.request.get['length_class_id']) && (this.request.server['method'] != 'POST')) {
 			length_class_info = await this.model_localisation_length_class.getLengthClass(this.request.get['length_class_id']);
 		}
@@ -343,10 +341,12 @@ module.exports = class ControllerLocalisationLengthClass extends Controller {
 
 		for (let [language_id, value] of Object.entries(this.request.post['length_class_description'])) {
 			if ((oc_strlen(value['title']) < 3) || (oc_strlen(value['title']) > 32)) {
+				this.error['title'] = this.error['title'] || {};
 				this.error['title'][language_id] = this.language.get('error_title');
 			}
 
 			if (!value['unit'] || (oc_strlen(value['unit']) > 4)) {
+				this.error['unit'] = this.error['unit'] || {};
 				this.error['unit'][language_id] = this.language.get('error_unit');
 			}
 		}
@@ -367,7 +367,7 @@ module.exports = class ControllerLocalisationLengthClass extends Controller {
 				this.error['warning'] = this.language.get('error_default');
 			}
 
-			product_total = await this.model_catalog_product.getTotalProductsByLengthClassId(length_class_id);
+			const product_total = await this.model_catalog_product.getTotalProductsByLengthClassId(length_class_id);
 
 			if (product_total) {
 				this.error['warning'] = sprintf(this.language.get('error_product'), product_total);

@@ -2,12 +2,11 @@ module.exports = class ControllerLocalisationZone extends Controller {
 	error = {};
 
 	async index() {
-const data = {};
 		await this.load.language('localisation/zone');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('localisation/zone',this);
+		this.load.model('localisation/zone', this);
 
 		await this.getList();
 	}
@@ -17,15 +16,15 @@ const data = {};
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('localisation/zone',this);
+		this.load.model('localisation/zone', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_localisation_zone.addZone(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
-await this.session.save(this.session.data);
+			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -50,15 +49,15 @@ await this.session.save(this.session.data);
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('localisation/zone',this);
+		this.load.model('localisation/zone', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_localisation_zone.editZone(this.request.get['zone_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
-await this.session.save(this.session.data);
+			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -83,18 +82,18 @@ await this.session.save(this.session.data);
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('localisation/zone',this);
+		this.load.model('localisation/zone', this);
 
 		if ((this.request.post['selected']) && await this.validateDelete()) {
-this.request.post['selected'] = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']]
-			for (let zone_id of this.request.post['selected'] ) {
+			this.request.post['selected'] = Array.isArray(this.request.post['selected']) ? this.request.post['selected'] : [this.request.post['selected']]
+			for (let zone_id of this.request.post['selected']) {
 				await this.model_localisation_zone.deleteZone(zone_id);
 			}
 
 			this.session.data['success'] = this.language.get('text_success');
-await this.session.save(this.session.data);
+			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -116,23 +115,21 @@ await this.session.save(this.session.data);
 
 	async getList() {
 		const data = {};
+		let sort = 'c.name';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
-		} else {
-			sort = 'c.name';
-		}
+		} 
 
+		let order = 'ASC';
 		if ((this.request.get['order'])) {
 			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
 		}
-page = 1;
-if ((this.request.get['page'])) {
+		let page = 1;
+		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -149,38 +146,38 @@ if ((this.request.get['page'])) {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('localisation/zone', 'user_token=' + this.session.data['user_token'] + url, true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('localisation/zone', 'user_token=' + this.session.data['user_token'] + url, true)
 		});
 
 		data['add'] = await this.url.link('localisation/zone/add', 'user_token=' + this.session.data['user_token'] + url, true);
 		data['delete'] = await this.url.link('localisation/zone/delete', 'user_token=' + this.session.data['user_token'] + url, true);
 
-		data['zones'] = {};
+		data['zones'] = [];
 
 		const filter_data = {
-			'sort'  : sort,
-			'order' : order,
-			'start' : (page - 1) * Number(this.config.get('config_limit_admin')),
-			'limit' : Number(this.config.get('config_limit_admin'))
-		});
+			'sort': sort,
+			'order': order,
+			'start': (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit': Number(this.config.get('config_limit_admin'))
+		};
 
-		zone_total = await this.model_localisation_zone.getTotalZones();
+		const zone_total = await this.model_localisation_zone.getTotalZones();
 
-		results = await this.model_localisation_zone.getZones(filter_data);
+		const results = await this.model_localisation_zone.getZones(filter_data);
 
 		for (let result of results) {
 			data['zones'].push({
-				'zone_id' : result['zone_id'],
-				'country' : result['country'],
-				'name'    : result['name'] + ((result['zone_id'] == this.config.get('config_zone_id')) ? this.language.get('text_default') : null),
-				'code'    : result['code'],
-				'edit'    : await this.url.link('localisation/zone/edit', 'user_token=' + this.session.data['user_token'] + '&zone_id=' + result['zone_id'] + url, true)
+				'zone_id': result['zone_id'],
+				'country': result['country'],
+				'name': result['name'] + ((result['zone_id'] == this.config.get('config_zone_id')) ? this.language.get('text_default') : ''),
+				'code': result['code'],
+				'edit': await this.url.link('localisation/zone/edit', 'user_token=' + this.session.data['user_token'] + '&zone_id=' + result['zone_id'] + url, true)
 			});
 		}
 
@@ -251,6 +248,7 @@ if ((this.request.get['page'])) {
 	}
 
 	async getForm() {
+		const data = {};
 		data['text_form'] = !(this.request.get['zone_id']) ? this.language.get('text_add') : this.language.get('text_edit');
 
 		if ((this.error['warning'])) {
@@ -265,7 +263,7 @@ if ((this.request.get['page'])) {
 			data['error_name'] = '';
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -282,13 +280,13 @@ if ((this.request.get['page'])) {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('localisation/zone', 'user_token=' + this.session.data['user_token'] + url, true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('localisation/zone', 'user_token=' + this.session.data['user_token'] + url, true)
 		});
 
 		if (!(this.request.get['zone_id'])) {
@@ -298,7 +296,7 @@ if ((this.request.get['page'])) {
 		}
 
 		data['cancel'] = await this.url.link('localisation/zone', 'user_token=' + this.session.data['user_token'] + url, true);
-
+		let zone_info;
 		if ((this.request.get['zone_id']) && (this.request.server['method'] != 'POST')) {
 			zone_info = await this.model_localisation_zone.getZone(this.request.get['zone_id']);
 		}
@@ -335,7 +333,7 @@ if ((this.request.get['page'])) {
 			data['country_id'] = '';
 		}
 
-		this.load.model('localisation/country',this);
+		this.load.model('localisation/country', this);
 
 		data['countries'] = await this.model_localisation_country.getCountries();
 
@@ -355,7 +353,7 @@ if ((this.request.get['page'])) {
 			this.error['name'] = this.language.get('error_name');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 
 	async validateDelete() {
@@ -363,35 +361,35 @@ if ((this.request.get['page'])) {
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		this.load.model('setting/store',this);
-		this.load.model('customer/customer',this);
-		this.load.model('localisation/geo_zone',this);
-		this.request.post['selected']  = Array.isArray(this.request.post['selected'])?this.request.post['selected']:[this.request.post['selected']];
+		this.load.model('setting/store', this);
+		this.load.model('customer/customer', this);
+		this.load.model('localisation/geo_zone', this);
+		this.request.post['selected'] = Array.isArray(this.request.post['selected']) ? this.request.post['selected'] : [this.request.post['selected']];
 
-		for (let zone_id of this.request.post['selected'] ) {
+		for (let zone_id of this.request.post['selected']) {
 			if (this.config.get('config_zone_id') == zone_id) {
 				this.error['warning'] = this.language.get('error_default');
 			}
 
-			store_total = await this.model_setting_store.getTotalStoresByZoneId(zone_id);
+			const store_total = await this.model_setting_store.getTotalStoresByZoneId(zone_id);
 
 			if (store_total) {
 				this.error['warning'] = sprintf(this.language.get('error_store'), store_total);
 			}
 
-			address_total = await this.model_customer_customer.getTotalAddressesByZoneId(zone_id);
+			const address_total = await this.model_customer_customer.getTotalAddressesByZoneId(zone_id);
 
 			if (address_total) {
 				this.error['warning'] = sprintf(this.language.get('error_address'), address_total);
 			}
 
-			zone_to_geo_zone_total = await this.model_localisation_geo_zone.getTotalZoneToGeoZoneByZoneId(zone_id);
+			const zone_to_geo_zone_total = await this.model_localisation_geo_zone.getTotalZoneToGeoZoneByZoneId(zone_id);
 
 			if (zone_to_geo_zone_total) {
 				this.error['warning'] = sprintf(this.language.get('error_zone_to_geo_zone'), zone_to_geo_zone_total);
 			}
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 }

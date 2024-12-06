@@ -21,7 +21,7 @@ module.exports = class ModelSettingSetting extends Model {
 		for (let [key, value] of Object.entries(data)) {
 			if (key.substr(0, code.length) == code) {
 				if (!Array.isArray(value)) {
-					await this.db.query("INSERT INTO " + DB_PREFIX + "setting SET store_id = '" + store_id + "', `code` = '" + this.db.escape(code) + "', `key` = '" + this.db.escape(key) + "', `value` = '" + this.db.escape(value) + "'");
+					await this.db.query("INSERT INTO " + DB_PREFIX + "setting SET store_id = '" + store_id + "', `code` = '" + this.db.escape(code) + "', `key` = '" + this.db.escape(key) + "', `value` = " + this.db.escapeDb(value));
 				} else {
 					await this.db.query("INSERT INTO " + DB_PREFIX + "setting SET store_id = '" + store_id + "', `code` = '" + this.db.escape(code) + "', `key` = '" + this.db.escape(key) + "', `value` = '" + this.db.escape(JSON.stringify(value, true)) + "', serialized = '1'");
 				}

@@ -278,7 +278,10 @@ module.exports = class ControllerExtensionPaymentSquareup extends Controller {
 
             await this.model_user_api.deleteApiSessionBySessionId(session.getId());
 
-            await this.model_user_api.addApiSession(api_info['api_id'], session.getId(), this.request.server['REMOTE_ADDR']);
+            await this.model_user_api.addApiSession(api_info['api_id'], session.getId(), this.request.server.headers['x-forwarded-for'] || (
+                this.request.server.connection ? (this.request.server.connection.remoteAddress ||
+                    this.request.server.socket.remoteAddress ||
+                    this.request.server.connection.socket.remoteAddress) : ''));
 
             this.session.data['api_id'] = api_info['api_id'];
 
@@ -437,7 +440,10 @@ module.exports = class ControllerExtensionPaymentSquareup extends Controller {
 
             await this.model_user_api.deleteApiSessionBySessionId(session.getId());
 
-            await this.model_user_api.addApiSession(api_info['api_id'], session.getId(), this.request.server['REMOTE_ADDR']);
+            await this.model_user_api.addApiSession(api_info['api_id'], session.getId(), this.request.server.headers['x-forwarded-for'] || (
+                this.request.server.connection ? (this.request.server.connection.remoteAddress ||
+                    this.request.server.socket.remoteAddress ||
+                    this.request.server.connection.socket.remoteAddress) : ''));
 
             session.data['api_id'] = api_info['api_id'];
 
@@ -805,7 +811,10 @@ module.exports = class ControllerExtensionPaymentSquareup extends Controller {
 
             await this.model_user_api.deleteApiSessionBySessionId(session.getId());
 
-            await this.model_user_api.addApiSession(api_info['api_id'], session.getId(), this.request.server['REMOTE_ADDR']);
+            await this.model_user_api.addApiSession(api_info['api_id'], session.getId(), this.request.server.headers['x-forwarded-for'] || (
+                this.request.server.connection ? (this.request.server.connection.remoteAddress ||
+                    this.request.server.socket.remoteAddress ||
+                    this.request.server.connection.socket.remoteAddress) : ''));
 
             session.data['api_id'] = api_info['api_id'];
 
@@ -879,7 +888,10 @@ module.exports = class ControllerExtensionPaymentSquareup extends Controller {
 
             await this.model_user_api.deleteApiSessionBySessionId(session.getId());
 
-            await this.model_user_api.addApiSession(api_info['api_id'], session.getId(), this.request.server['REMOTE_ADDR']);
+            await this.model_user_api.addApiSession(api_info['api_id'], session.getId(), this.request.server.headers['x-forwarded-for'] || (
+                this.request.server.connection ? (this.request.server.connection.remoteAddress ||
+                    this.request.server.socket.remoteAddress ||
+                    this.request.server.connection.socket.remoteAddress) : ''));
 
             session.data['api_id'] = api_info['api_id'];
 

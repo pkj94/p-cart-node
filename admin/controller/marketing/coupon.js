@@ -1,13 +1,14 @@
+const strtotime = require("locutus/php/datetime/strtotime");
+
 module.exports = class ControllerMarketingCoupon extends Controller {
 	error = {};
 
 	async index() {
-		const data = {};
 		await this.load.language('marketing/coupon');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('marketing/coupon');
+		this.load.model('marketing/coupon', this);
 
 		await this.getList();
 	}
@@ -17,7 +18,7 @@ module.exports = class ControllerMarketingCoupon extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('marketing/coupon');
+		this.load.model('marketing/coupon', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_marketing_coupon.addCoupon(this.request.post);
@@ -25,7 +26,7 @@ module.exports = class ControllerMarketingCoupon extends Controller {
 			this.session.data['success'] = this.language.get('text_success');
 			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -50,7 +51,7 @@ module.exports = class ControllerMarketingCoupon extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('marketing/coupon');
+		this.load.model('marketing/coupon', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validateForm()) {
 			await this.model_marketing_coupon.editCoupon(this.request.get['coupon_id'], this.request.post);
@@ -58,7 +59,7 @@ module.exports = class ControllerMarketingCoupon extends Controller {
 			this.session.data['success'] = this.language.get('text_success');
 			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -83,7 +84,7 @@ module.exports = class ControllerMarketingCoupon extends Controller {
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('marketing/coupon');
+		this.load.model('marketing/coupon', this);
 
 		if ((this.request.post['selected']) && await this.validateDelete()) {
 			this.request.post['selected'] = Array.isArray(this.request.post['selected']) ? this.request.post['selected'] : [this.request.post['selected']]
@@ -94,7 +95,7 @@ module.exports = class ControllerMarketingCoupon extends Controller {
 			this.session.data['success'] = this.language.get('text_success');
 			await this.session.save(this.session.data);
 
-			url = '';
+			let url = '';
 
 			if ((this.request.get['sort'])) {
 				url += '&sort=' + this.request.get['sort'];
@@ -116,23 +117,20 @@ module.exports = class ControllerMarketingCoupon extends Controller {
 
 	async getList() {
 		const data = {};
+		let sort = 'name';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];
-		} else {
-			sort = 'name';
 		}
-
+		let order = 'ASC';
 		if ((this.request.get['order'])) {
 			order = this.request.get['order'];
-		} else {
-			order = 'ASC';
 		}
-		page = 1;
+		let page = 1;
 		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['sort'])) {
 			url += '&sort=' + this.request.get['sort'];
@@ -161,18 +159,18 @@ module.exports = class ControllerMarketingCoupon extends Controller {
 		data['add'] = await this.url.link('marketing/coupon/add', 'user_token=' + this.session.data['user_token'] + url, true);
 		data['delete'] = await this.url.link('marketing/coupon/delete', 'user_token=' + this.session.data['user_token'] + url, true);
 
-		data['coupons'] = {};
+		data['coupons'] = [];
 
 		const filter_data = {
 			'sort': sort,
 			'order': order,
 			'start': (page - 1) * Number(this.config.get('config_limit_admin')),
 			'limit': Number(this.config.get('config_limit_admin'))
-		});
+		};
 
-		coupon_total = await this.model_marketing_coupon.getTotalCoupons();
+		const coupon_total = await this.model_marketing_coupon.getTotalCoupons();
 
-		results = await this.model_marketing_coupon.getCoupons(filter_data);
+		const results = await this.model_marketing_coupon.getCoupons(filter_data);
 
 		for (let result of results) {
 			data['coupons'].push({
@@ -180,8 +178,8 @@ module.exports = class ControllerMarketingCoupon extends Controller {
 				'name': result['name'],
 				'code': result['code'],
 				'discount': result['discount'],
-				'date_start': date(this.language.get('date_format_short'), strtotime(result['date_start'])),
-				'date_end': date(this.language.get('date_format_short'), strtotime(result['date_end'])),
+				'date_start': date(this.language.get('date_format_short'), new Date(result['date_start'])),
+				'date_end': date(this.language.get('date_format_short'), new Date(result['date_end'])),
 				'status': (result['status'] ? this.language.get('text_enabled') : this.language.get('text_disabled')),
 				'edit': await this.url.link('marketing/coupon/edit', 'user_token=' + this.session.data['user_token'] + '&coupon_id=' + result['coupon_id'] + url, true)
 			});
@@ -257,6 +255,7 @@ module.exports = class ControllerMarketingCoupon extends Controller {
 	}
 
 	async getForm() {
+		const data = {};
 		data['text_form'] = !(this.request.get['coupon_id']) ? this.language.get('text_add') : this.language.get('text_edit');
 
 		data['user_token'] = this.session.data['user_token'];
@@ -297,7 +296,7 @@ module.exports = class ControllerMarketingCoupon extends Controller {
 			data['error_date_end'] = '';
 		}
 
-		url = '';
+		let url = '';
 
 		if ((this.request.get['page'])) {
 			url += '&page=' + this.request.get['page'];
@@ -330,7 +329,7 @@ module.exports = class ControllerMarketingCoupon extends Controller {
 		}
 
 		data['cancel'] = await this.url.link('marketing/coupon', 'user_token=' + this.session.data['user_token'] + url, true);
-
+		let coupon_info;
 		if ((this.request.get['coupon_id']) && (!this.request.server['method'] != 'POST')) {
 			coupon_info = await this.model_marketing_coupon.getCoupon(this.request.get['coupon_id']);
 		}
@@ -390,46 +389,44 @@ module.exports = class ControllerMarketingCoupon extends Controller {
 		} else {
 			data['total'] = '';
 		}
-
+		let products = [];
 		if ((this.request.post['coupon_product'])) {
 			products = this.request.post['coupon_product'];
 		} else if ((this.request.get['coupon_id'])) {
 			products = await this.model_marketing_coupon.getCouponProducts(this.request.get['coupon_id']);
 		} else {
-			products = {};
+			products = [];
 		}
 
 		this.load.model('catalog/product', this);
 
-		data['coupon_product'] = {};
+		data['coupon_product'] = [];
 
 		for (let product_id of products) {
-			product_info = await this.model_catalog_product.getProduct(product_id);
+			const product_info = await this.model_catalog_product.getProduct(product_id);
 
-			if (product_info) {
+			if (product_info.product_id) {
 				data['coupon_product'].push({
 					'product_id': product_info['product_id'],
 					'name': product_info['name']
 				});
 			}
 		}
-
+		let categories = [];
 		if ((this.request.post['coupon_category'])) {
 			categories = this.request.post['coupon_category'];
 		} else if ((this.request.get['coupon_id'])) {
 			categories = await this.model_marketing_coupon.getCouponCategories(this.request.get['coupon_id']);
 		} else {
-			categories = {};
+			categories = [];
 		}
-
 		this.load.model('catalog/category', this);
 
-		data['coupon_category'] = {};
+		data['coupon_category'] = [];
 
-		for (categories of category_id) {
-			category_info = await this.model_catalog_category.getCategory(category_id);
-
-			if (category_info) {
+		for (let category_id of categories) {
+			const category_info = await this.model_catalog_category.getCategory(category_id);
+			if (category_info.category_id) {
 				data['coupon_category'].push({
 					'category_id': category_info['category_id'],
 					'name': (category_info['path'] ? category_info['path'] + ' &gt; ' : '') + category_info['name']
@@ -440,15 +437,15 @@ module.exports = class ControllerMarketingCoupon extends Controller {
 		if ((this.request.post['date_start'])) {
 			data['date_start'] = this.request.post['date_start'];
 		} else if ((coupon_info)) {
-			data['date_start'] = (coupon_info['date_start'] != '0000-00-00' ? coupon_info['date_start'] : '');
+			data['date_start'] = (coupon_info['date_start'] != '0000-00-00' ? date('Y-m-d', new Date(coupon_info['date_start'])) : '');
 		} else {
-			data['date_start'] = date('Y-m-d', time());
+			data['date_start'] = date('Y-m-d', new Date());
 		}
 
 		if ((this.request.post['date_end'])) {
 			data['date_end'] = this.request.post['date_end'];
 		} else if ((coupon_info)) {
-			data['date_end'] = (coupon_info['date_end'] != '0000-00-00' ? coupon_info['date_end'] : '');
+			data['date_end'] = (coupon_info['date_end'] != '0000-00-00' ? date('Y-m-d', new Date(coupon_info['date_end'])) : '');
 		} else {
 			data['date_end'] = date('Y-m-d', strtotime('+1 month'));
 		}
@@ -497,9 +494,9 @@ module.exports = class ControllerMarketingCoupon extends Controller {
 			this.error['code'] = this.language.get('error_code');
 		}
 
-		coupon_info = await this.model_marketing_coupon.getCouponByCode(this.request.post['code']);
+		const coupon_info = await this.model_marketing_coupon.getCouponByCode(this.request.post['code']);
 
-		if (coupon_info) {
+		if (coupon_info.coupon_id) {
 			if (!(this.request.get['coupon_id'])) {
 				this.error['warning'] = this.language.get('error_exists');
 			} else if (coupon_info['coupon_id'] != this.request.get['coupon_id']) {
@@ -519,28 +516,29 @@ module.exports = class ControllerMarketingCoupon extends Controller {
 	}
 
 	async history() {
+		const data = {};
 		await this.load.language('marketing/coupon');
 
-		this.load.model('marketing/coupon');
-		page = 1;
+		this.load.model('marketing/coupon', this);
+		let page = 1;
 		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
 		}
 
-		data['histories'] = {};
+		data['histories'] = [];
 
-		results = await this.model_marketing_coupon.getCouponHistories(this.request.get['coupon_id'], (page - 1) * 10, 10);
+		const results = await this.model_marketing_coupon.getCouponHistories(this.request.get['coupon_id'], (page - 1) * 10, 10);
 
 		for (let result of results) {
 			data['histories'].push({
 				'order_id': result['order_id'],
 				'customer': result['customer'],
 				'amount': result['amount'],
-				'date_added': date(this.language.get('date_format_short'), strtotime(result['date_added']))
+				'date_added': date(this.language.get('date_format_short'), new Date(result['date_added']))
 			});
 		}
 
-		history_total = await this.model_marketing_coupon.getTotalCouponHistories(this.request.get['coupon_id']);
+		const history_total = await this.model_marketing_coupon.getTotalCouponHistories(this.request.get['coupon_id']);
 
 		const pagination = new Pagination();
 		pagination.total = history_total;
