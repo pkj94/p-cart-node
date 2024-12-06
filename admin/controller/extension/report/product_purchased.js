@@ -85,11 +85,9 @@ module.exports = class ControllerExtensionReportProductPurchased extends Control
 		if ((this.request.get['filter_date_end'])) {
 			filter_date_end = this.request.get['filter_date_end'];
 		}
-
+		let filter_order_status_id = 0;
 		if ((this.request.get['filter_order_status_id'])) {
 			filter_order_status_id = this.request.get['filter_order_status_id'];
-		} else {
-			filter_order_status_id = 0;
 		}
 		let page = 1;
 		if ((this.request.get['page'])) {

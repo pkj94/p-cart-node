@@ -3,13 +3,13 @@ module.exports = class ModelExtensionReportProduct extends Model {
 		let sql = "SELECT pd.name, p.model, p.viewed FROM " + DB_PREFIX + "product p LEFT JOIN " + DB_PREFIX + "product_description pd ON (p.product_id = pd.product_id) WHERE pd.language_id = '" + this.config.get('config_language_id') + "' AND p.viewed > 0 ORDER BY p.viewed DESC";
 
 		if ((data['start']) || (data['limit'])) {
-			data['start'] = data['start']||0;
-if (data['start'] < 0) {
+			data['start'] = data['start'] || 0;
+			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
@@ -57,13 +57,13 @@ if (data['limit'] < 1) {
 		sql += " GROUP BY op.product_id ORDER BY total DESC";
 
 		if ((data['start']) || (data['limit'])) {
-			data['start'] = data['start']||0;
-if (data['start'] < 0) {
+			data['start'] = data['start'] || 0;
+			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 

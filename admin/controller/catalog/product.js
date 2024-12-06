@@ -4,7 +4,6 @@ module.exports = class ControllerCatalogProduct extends Controller {
 	error = {};
 
 	async index() {
-const data = {};
 		await this.load.language('catalog/product');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -25,7 +24,7 @@ const data = {};
 			await this.model_catalog_product.addProduct(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
-await this.session.save(this.session.data);
+			await this.session.save(this.session.data);
 
 			let url = '';
 
@@ -62,9 +61,8 @@ await this.session.save(this.session.data);
 			}
 			await this.session.save(this.session.data);
 			this.response.setRedirect(await this.url.link('catalog/product', 'user_token=' + this.session.data['user_token'] + url, true));
-		}
-
-		await this.getForm();
+		} else
+			await this.getForm();
 	}
 
 	async edit() {
@@ -78,7 +76,7 @@ await this.session.save(this.session.data);
 			await this.model_catalog_product.editProduct(this.request.get['product_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
-await this.session.save(this.session.data);
+			await this.session.save(this.session.data);
 
 			let url = '';
 
@@ -134,7 +132,7 @@ await this.session.save(this.session.data);
 			}
 
 			this.session.data['success'] = this.language.get('text_success');
-await this.session.save(this.session.data);
+			await this.session.save(this.session.data);
 
 			let url = '';
 
@@ -191,7 +189,7 @@ await this.session.save(this.session.data);
 			}
 
 			this.session.data['success'] = this.language.get('text_success');
-await this.session.save(this.session.data);
+			await this.session.save(this.session.data);
 
 			let url = '';
 
@@ -234,7 +232,7 @@ await this.session.save(this.session.data);
 	}
 
 	async getList() {
-				const data = {};
+		const data = {};
 		let filter_name = '';
 		if ((this.request.get['filter_name'])) {
 			filter_name = this.request.get['filter_name'];
@@ -260,12 +258,11 @@ await this.session.save(this.session.data);
 			sort = this.request.get['sort'];
 		}
 		let order = 'ASC';
-		let order = 'ASC';
-if ((this.request.get['order'])) {
+		if ((this.request.get['order'])) {
 			order = this.request.get['order'];
-		} 
-		let page = 1;page = 1;
-if ((this.request.get['page'])) {
+		}
+		let page = 1; page = 1;
+		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
 		}
 

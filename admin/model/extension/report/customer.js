@@ -1,100 +1,103 @@
+const mktime = require("locutus/php/datetime/mktime");
+const strtotime = require("locutus/php/datetime/strtotime");
+
 module.exports = class ModelExtensionReportCustomer extends Model {
 	async getTotalCustomersByDay() {
-		customer_data = {};
+		const customer_data = {};
 
 		for (let i = 0; i < 24; i++) {
-			customer_data[i] = array(
-				'hour'  : i,
-				'total' : 0
-			});
+			customer_data[i] = {
+				'hour': i,
+				'total': 0
+			};
 		}
 
 		const query = await this.db.query("SELECT COUNT(*) AS total, HOUR(date_added) AS hour FROM `" + DB_PREFIX + "customer` WHERE DATE(date_added) = DATE(NOW()) GROUP BY HOUR(date_added) ORDER BY date_added ASC");
 
-		for (let result of query.rows ) {
-			customer_data[result['hour']] = array(
-				'hour'  : result['hour'],
-				'total' : result['total']
-			});
+		for (let result of query.rows) {
+			customer_data[result['hour']] = {
+				'hour': result['hour'],
+				'total': result['total']
+			};
 		}
 
 		return customer_data;
 	}
 
 	async getTotalCustomersByWeek() {
-		customer_data = {};
+		const customer_data = {};
 
-		date_start = strtotime('-' + date('w') + ' days');
+		let date_start = strtotime('-' + date('w') + ' days');
 
 		for (let i = 0; i < 7; i++) {
-			date = date('Y-m-d', date_start + (i * 86400));
+			let date1 = date('Y-m-d', date_start + (i * 86400000));
 
-			customer_data[date('w', strtotime(date))] = array(
-				'day'   : date('D', strtotime(date)),
-				'total' : 0
-			});
+			customer_data[date('w', new Date(date1))] = {
+				'day': date('D', new Date(date1)),
+				'total': 0
+			};
 		}
 
 		const query = await this.db.query("SELECT COUNT(*) AS total, date_added FROM `" + DB_PREFIX + "customer` WHERE DATE(date_added) >= DATE('" + this.db.escape(date('Y-m-d', date_start)) + "') GROUP BY DAYNAME(date_added)");
 
-		for (let result of query.rows ) {
-			customer_data[date('w', strtotime(result['date_added']))] = array(
-				'day'   : date('D', strtotime(result['date_added'])),
-				'total' : result['total']
-			});
+		for (let result of query.rows) {
+			customer_data[date('w', new Date(result['date_added']))] = {
+				'day': date('D', new Date(result['date_added'])),
+				'total': result['total']
+			};
 		}
 
 		return customer_data;
 	}
 
 	async getTotalCustomersByMonth() {
-		customer_data = {};
+		const customer_data = {};
 
 		for (let i = 1; i <= date('t'); i++) {
-			date = date('Y') + '-' + date('m') + '-' + i;
+			let date1 = date('Y') + '-' + date('m') + '-' + i;
 
-			customer_data[date('j', strtotime(date))] = array(
-				'day'   : date('d', strtotime(date)),
-				'total' : 0
-			});
+			customer_data[date('j', new Date(date))] = {
+				'day': date('d', new Date(date)),
+				'total': 0
+			};
 		}
 
 		const query = await this.db.query("SELECT COUNT(*) AS total, date_added FROM `" + DB_PREFIX + "customer` WHERE DATE(date_added) >= DATE('" + this.db.escape(date('Y') + '-' + date('m') + '-1') + "') GROUP BY DATE(date_added)");
 
-		for (let result of query.rows ) {
-			customer_data[date('j', strtotime(result['date_added']))] = array(
-				'day'   : date('d', strtotime(result['date_added'])),
-				'total' : result['total']
-			});
+		for (let result of query.rows) {
+			customer_data[date('j', new Date(result['date_added']))] = {
+				'day': date('d', new Date(result['date_added'])),
+				'total': result['total']
+			};
 		}
 
 		return customer_data;
 	}
 
 	async getTotalCustomersByYear() {
-		customer_data = {};
+		const customer_data = {};
 
 		for (let i = 1; i <= 12; i++) {
-			customer_data[i] = array(
-				'month' : date('M', mktime(0, 0, 0, i)),
-				'total' : 0
-			});
+			customer_data[i] = {
+				'month': date('M', mktime(0, 0, 0, i)),
+				'total': 0
+			};
 		}
 
 		const query = await this.db.query("SELECT COUNT(*) AS total, date_added FROM `" + DB_PREFIX + "customer` WHERE YEAR(date_added) = YEAR(NOW()) GROUP BY MONTH(date_added)");
 
-		for (let result of query.rows ) {
-			customer_data[date('n', strtotime(result['date_added']))] = array(
-				'month' : date('M', strtotime(result['date_added'])),
-				'total' : result['total']
-			});
+		for (let result of query.rows) {
+			customer_data[date('n', new Date(result['date_added']))] = {
+				'month': date('M', new Date(result['date_added'])),
+				'total': result['total']
+			};
 		}
 
 		return customer_data;
 	}
 
 	async getOrders(data = {}) {
-		let sql = "SELECT c.customer_id, CONCAT(c.firstname, ' ', c.lastname) AS customer, c.email, cgd.name AS customer_group, c.status, o.order_id, SUM(op.quantity) of products, o.total AS total FROM `" + DB_PREFIX + "order` o LEFT JOIN `" + DB_PREFIX + "order_product` op ON (o.order_id = op.order_id) LEFT JOIN `" + DB_PREFIX + "customer` c ON (o.customer_id = c.customer_id) LEFT JOIN `" + DB_PREFIX + "customer_group_description` cgd ON (c.customer_group_id = cgd.customer_group_id) WHERE o.customer_id > 0 AND cgd.language_id = '" + this.config.get('config_language_id') + "'";
+		let sql = "SELECT c.customer_id, CONCAT(c.firstname, ' ', c.lastname) AS customer, c.email, cgd.name AS customer_group, c.status, o.order_id, SUM(op.quantity) AS products, o.total AS total FROM `" + DB_PREFIX + "order` o LEFT JOIN `" + DB_PREFIX + "order_product` op ON (o.order_id = op.order_id) LEFT JOIN `" + DB_PREFIX + "customer` c ON (o.customer_id = c.customer_id) LEFT JOIN `" + DB_PREFIX + "customer_group_description` cgd ON (c.customer_group_id = cgd.customer_group_id) WHERE o.customer_id > 0 AND cgd.language_id = '" + this.config.get('config_language_id') + "'";
 
 		if ((data['filter_date_start'])) {
 			sql += " AND DATE(o.date_added) >= DATE('" + this.db.escape(data['filter_date_start']) + "')";
@@ -116,16 +119,16 @@ module.exports = class ModelExtensionReportCustomer extends Model {
 
 		sql += " GROUP BY o.order_id";
 
-		let sql = "SELECT t.customer_id, t.customer, t.email, t.customer_group, t.status, COUNT(DISTINCT t.order_id) AS orders, SUM(t.products) AS products, SUM(t.total) AS total FROM (" + sql + ") AS t GROUP BY t.customer_id ORDER BY total DESC";
+		sql = "SELECT t.customer_id, t.customer, t.email, t.customer_group, t.status, COUNT(DISTINCT t.order_id) AS orders, SUM(t.products) AS products, SUM(t.total) AS total FROM (" + sql + ") AS t GROUP BY t.customer_id ORDER BY total DESC";
 
 		if ((data['start']) || (data['limit'])) {
-			data['start'] = data['start']||0;
-if (data['start'] < 0) {
+			data['start'] = data['start'] || 0;
+			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
@@ -181,13 +184,13 @@ if (data['limit'] < 1) {
 		sql += " GROUP BY cr.customer_id ORDER BY points DESC";
 
 		if ((data['start']) || (data['limit'])) {
-			data['start'] = data['start']||0;
-if (data['start'] < 0) {
+			data['start'] = data['start'] || 0;
+			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
@@ -205,15 +208,15 @@ if (data['limit'] < 1) {
 		let implode = [];
 
 		if ((data['filter_date_start'])) {
-			implode.push("DATE(cr.date_added) >= DATE('" + this.db.escape(data['filter_date_start']) + "')";
+			implode.push("DATE(cr.date_added) >= DATE('" + this.db.escape(data['filter_date_start']) + "')");
 		}
 
 		if ((data['filter_date_end'])) {
-			implode.push("DATE(cr.date_added) <= DATE('" + this.db.escape(data['filter_date_end']) + "')";
+			implode.push("DATE(cr.date_added) <= DATE('" + this.db.escape(data['filter_date_end']) + "')");
 		}
 
 		if ((data['filter_customer'])) {
-			implode.push("CONCAT(c.firstname, ' ', c.lastname) LIKE '" + this.db.escape(data['filter_customer']) + "'";
+			implode.push("CONCAT(c.firstname, ' ', c.lastname) LIKE '" + this.db.escape(data['filter_customer']) + "'");
 		}
 
 		if (implode.length) {
@@ -231,19 +234,19 @@ if (data['limit'] < 1) {
 		let implode = [];
 
 		if ((data['filter_date_start'])) {
-			implode.push("DATE(ca.date_added) >= DATE('" + this.db.escape(data['filter_date_start']) + "')";
+			implode.push("DATE(ca.date_added) >= DATE('" + this.db.escape(data['filter_date_start']) + "')");
 		}
 
 		if ((data['filter_date_end'])) {
-			implode.push("DATE(ca.date_added) <= DATE('" + this.db.escape(data['filter_date_end']) + "')";
+			implode.push("DATE(ca.date_added) <= DATE('" + this.db.escape(data['filter_date_end']) + "')");
 		}
 
 		if ((data['filter_customer'])) {
-			implode.push("CONCAT(c.firstname, ' ', c.lastname) LIKE '" + this.db.escape(data['filter_customer']) + "'";
+			implode.push("CONCAT(c.firstname, ' ', c.lastname) LIKE '" + this.db.escape(data['filter_customer']) + "'");
 		}
 
 		if ((data['filter_ip'])) {
-			implode.push("ca.ip LIKE '" + this.db.escape(data['filter_ip']) + "'";
+			implode.push("ca.ip LIKE '" + this.db.escape(data['filter_ip']) + "'");
 		}
 
 		if (implode.length) {
@@ -253,13 +256,13 @@ if (data['limit'] < 1) {
 		sql += " ORDER BY ca.date_added DESC";
 
 		if ((data['start']) || (data['limit'])) {
-			data['start'] = data['start']||0;
-if (data['start'] < 0) {
+			data['start'] = data['start'] || 0;
+			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
@@ -277,19 +280,19 @@ if (data['limit'] < 1) {
 		let implode = [];
 
 		if ((data['filter_date_start'])) {
-			implode.push("DATE(ca.date_added) >= DATE('" + this.db.escape(data['filter_date_start']) + "')";
+			implode.push("DATE(ca.date_added) >= DATE('" + this.db.escape(data['filter_date_start']) + "')");
 		}
 
 		if ((data['filter_date_end'])) {
-			implode.push("DATE(ca.date_added) <= DATE('" + this.db.escape(data['filter_date_end']) + "')";
+			implode.push("DATE(ca.date_added) <= DATE('" + this.db.escape(data['filter_date_end']) + "')");
 		}
 
 		if ((data['filter_customer'])) {
-			implode.push("CONCAT(c.firstname, ' ', c.lastname) LIKE '" + this.db.escape(data['filter_customer']) + "'";
+			implode.push("CONCAT(c.firstname, ' ', c.lastname) LIKE '" + this.db.escape(data['filter_customer']) + "'");
 		}
 
 		if ((data['filter_ip'])) {
-			implode.push("ca.ip LIKE '" + this.db.escape(data['filter_ip']) + "'";
+			implode.push("ca.ip LIKE '" + this.db.escape(data['filter_ip']) + "'");
 		}
 
 		if (implode.length) {
@@ -307,23 +310,23 @@ if (data['limit'] < 1) {
 		let implode = [];
 
 		if ((data['filter_date_start'])) {
-			implode.push("DATE(cs.date_added) >= DATE('" + this.db.escape(data['filter_date_start']) + "')";
+			implode.push("DATE(cs.date_added) >= DATE('" + this.db.escape(data['filter_date_start']) + "')");
 		}
 
 		if ((data['filter_date_end'])) {
-			implode.push("DATE(cs.date_added) <= DATE('" + this.db.escape(data['filter_date_end']) + "')";
+			implode.push("DATE(cs.date_added) <= DATE('" + this.db.escape(data['filter_date_end']) + "')");
 		}
 
 		if ((data['filter_keyword'])) {
-			implode.push("cs.keyword LIKE '" + this.db.escape(data['filter_keyword']) + "%'";
+			implode.push("cs.keyword LIKE '" + this.db.escape(data['filter_keyword']) + "%'");
 		}
 
 		if ((data['filter_customer'])) {
-			implode.push("CONCAT(c.firstname, ' ', c.lastname) LIKE '" + this.db.escape(data['filter_customer']) + "'";
+			implode.push("CONCAT(c.firstname, ' ', c.lastname) LIKE '" + this.db.escape(data['filter_customer']) + "'");
 		}
 
 		if ((data['filter_ip'])) {
-			implode.push("cs.ip LIKE '" + this.db.escape(data['filter_ip']) + "'";
+			implode.push("cs.ip LIKE '" + this.db.escape(data['filter_ip']) + "'");
 		}
 
 		if (implode.length) {
@@ -333,13 +336,13 @@ if (data['limit'] < 1) {
 		sql += " ORDER BY cs.date_added DESC";
 
 		if ((data['start']) || (data['limit'])) {
-			data['start'] = data['start']||0;
-if (data['start'] < 0) {
+			data['start'] = data['start'] || 0;
+			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
@@ -357,23 +360,23 @@ if (data['limit'] < 1) {
 		let implode = [];
 
 		if ((data['filter_date_start'])) {
-			implode.push("DATE(cs.date_added) >= DATE('" + this.db.escape(data['filter_date_start']) + "')";
+			implode.push("DATE(cs.date_added) >= DATE('" + this.db.escape(data['filter_date_start']) + "')");
 		}
 
 		if ((data['filter_date_end'])) {
-			implode.push("DATE(cs.date_added) <= DATE('" + this.db.escape(data['filter_date_end']) + "')";
+			implode.push("DATE(cs.date_added) <= DATE('" + this.db.escape(data['filter_date_end']) + "')");
 		}
 
 		if ((data['filter_keyword'])) {
-			implode.push("cs.keyword LIKE '" + this.db.escape(data['filter_keyword']) + "%'";
+			implode.push("cs.keyword LIKE '" + this.db.escape(data['filter_keyword']) + "%'");
 		}
 
 		if ((data['filter_customer'])) {
-			implode.push("CONCAT(c.firstname, ' ', c.lastname) LIKE '" + this.db.escape(data['filter_customer']) + "'";
+			implode.push("CONCAT(c.firstname, ' ', c.lastname) LIKE '" + this.db.escape(data['filter_customer']) + "'");
 		}
 
 		if ((data['filter_ip'])) {
-			implode.push("cs.ip LIKE '" + this.db.escape(data['filter_ip']) + "'";
+			implode.push("cs.ip LIKE '" + this.db.escape(data['filter_ip']) + "'");
 		}
 
 		if (implode.length) {

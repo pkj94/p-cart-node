@@ -167,7 +167,7 @@ module.exports = {
     help_return_status: 'Set the default return status when a return request is submitted.',
     help_captcha: 'Captcha to use for registration, login, contact and reviews.',
     help_icon: 'The icon should be a PNG that is 16px x 16px.',
-    help_mail_engine: 'Only choose \'Mail\' unless your host has disabled the php mail function.',
+    help_mail_engine: 'Only choose \'Mail\' unless your host has disabled the nodemailer function.',
     help_mail_parameter: 'When using \'Mail\', additional mail parameters can be added here (e.g. -f email@storeaddress.com).',
     help_mail_smtp_hostname: 'Add \'tls://\' or \'ssl://\' prefix if security connection is required. (e.g. tls://smtp.gmail.com, ssl://smtp.gmail.com).',
     help_mail_smtp_password: 'For gmail you might need to setup a application specific password here: https://security.google.com/settings/security/apppasswords.',

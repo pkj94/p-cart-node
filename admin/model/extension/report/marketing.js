@@ -35,13 +35,13 @@ module.exports = class ModelExtensionReportMarketing extends Model {
 		sql += " GROUP BY o2.marketing_id) AS `total` FROM `" + DB_PREFIX + "marketing` m ORDER BY m.date_added ASC";
 
 		if ((data['start']) || (data['limit'])) {
-			data['start'] = data['start']||0;
-if (data['start'] < 0) {
+			data['start'] = data['start'] || 0;
+			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 

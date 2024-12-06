@@ -18,50 +18,51 @@ module.exports = class ControllerExtensionFeedGoogleBase extends Controller {
 			await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=feed', true));
-		}
-
-		if ((this.error['warning'])) {
-			data['error_warning'] = this.error['warning'];
 		} else {
-			data['error_warning'] = '';
+
+			if ((this.error['warning'])) {
+				data['error_warning'] = this.error['warning'];
+			} else {
+				data['error_warning'] = '';
+			}
+
+			data['breadcrumbs'] = [];
+
+			data['breadcrumbs'].push({
+				'text': this.language.get('text_home'),
+				'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			});
+
+			data['breadcrumbs'].push({
+				'text': this.language.get('text_extension'),
+				'href': await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=feed', true)
+			});
+
+			data['breadcrumbs'].push({
+				'text': this.language.get('heading_title'),
+				'href': await this.url.link('extension/feed/google_base', 'user_token=' + this.session.data['user_token'], true)
+			});
+
+			data['action'] = await this.url.link('extension/feed/google_base', 'user_token=' + this.session.data['user_token'], true);
+
+			data['cancel'] = await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=feed', true);
+
+			data['user_token'] = this.session.data['user_token'];
+
+			data['data_feed'] = HTTP_CATALOG + 'index.js?route=extension/feed/google_base';
+
+			if ((this.request.post['feed_google_base_status'])) {
+				data['feed_google_base_status'] = this.request.post['feed_google_base_status'];
+			} else {
+				data['feed_google_base_status'] = this.config.get('feed_google_base_status');
+			}
+
+			data['header'] = await this.load.controller('common/header');
+			data['column_left'] = await this.load.controller('common/column_left');
+			data['footer'] = await this.load.controller('common/footer');
+
+			this.response.setOutput(await this.load.view('extension/feed/google_base', data));
 		}
-
-		data['breadcrumbs'] = [];
-
-		data['breadcrumbs'].push({
-			'text': this.language.get('text_home'),
-			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		});
-
-		data['breadcrumbs'].push({
-			'text': this.language.get('text_extension'),
-			'href': await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=feed', true)
-		});
-
-		data['breadcrumbs'].push({
-			'text': this.language.get('heading_title'),
-			'href': await this.url.link('extension/feed/google_base', 'user_token=' + this.session.data['user_token'], true)
-		});
-
-		data['action'] = await this.url.link('extension/feed/google_base', 'user_token=' + this.session.data['user_token'], true);
-
-		data['cancel'] = await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=feed', true);
-
-		data['user_token'] = this.session.data['user_token'];
-
-		data['data_feed'] = HTTP_CATALOG + 'index.js?route=extension/feed/google_base';
-
-		if ((this.request.post['feed_google_base_status'])) {
-			data['feed_google_base_status'] = this.request.post['feed_google_base_status'];
-		} else {
-			data['feed_google_base_status'] = this.config.get('feed_google_base_status');
-		}
-
-		data['header'] = await this.load.controller('common/header');
-		data['column_left'] = await this.load.controller('common/column_left');
-		data['footer'] = await this.load.controller('common/footer');
-
-		this.response.setOutput(await this.load.view('extension/feed/google_base', data));
 	}
 
 	async validate() {

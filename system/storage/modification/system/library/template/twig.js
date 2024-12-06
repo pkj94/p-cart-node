@@ -12,7 +12,13 @@ module.exports = class TwigTemplate {
     render(filename, code = '') {
         if (!code) {
             const file = DIR_TEMPLATE + `${filename}.twig`;
-            if (is_file(file)) {
+            
+        if (DIR_CATALOG && is_file(DIR_MODIFICATION + 'admin/view/template/' + filename + '.twig')) {	
+                code = fs.readFileSync(DIR_MODIFICATION + 'admin/view/template/' + filename + '.twig','utf-8');
+            } else if (is_file(DIR_MODIFICATION + 'catalog/view/theme/' + filename + '.twig')) {
+                code = fs.readFileSync(DIR_MODIFICATION + 'catalog/view/theme/' + filename + '.twig','utf-8');
+            } else if (is_file(file)) {
+      
                 code = fs.readFileSync(file, 'utf-8');
             } else {
                 throw new Error(`Error: Could not load template ${file}!`);

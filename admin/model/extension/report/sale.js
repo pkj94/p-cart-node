@@ -154,11 +154,9 @@ module.exports = class ModelExtensionReportSale extends Model {
 		if ((data['filter_date_end'])) {
 			sql += " AND DATE(o.date_added) <= DATE('" + this.db.escape(data['filter_date_end']) + "')";
 		}
-
+		let group = 'week';
 		if ((data['filter_group'])) {
 			group = data['filter_group'];
-		} else {
-			group = 'week';
 		}
 
 		switch (group) {
@@ -199,25 +197,24 @@ module.exports = class ModelExtensionReportSale extends Model {
 	}
 
 	async getTotalOrders(data = {}) {
+		let group = 'week';
 		if ((data['filter_group'])) {
 			group = data['filter_group'];
-		} else {
-			group = 'week';
 		}
-
+		let sql = '';
 		switch (group) {
 			case 'day':
-				let sql = "SELECT COUNT(DISTINCT YEAR(date_added), MONTH(date_added), DAY(date_added)) AS total FROM `" + DB_PREFIX + "order`";
+				sql = "SELECT COUNT(DISTINCT YEAR(date_added), MONTH(date_added), DAY(date_added)) AS total FROM `" + DB_PREFIX + "order`";
 				break;
 			default:
 			case 'week':
-				let sql = "SELECT COUNT(DISTINCT YEAR(date_added), WEEK(date_added)) AS total FROM `" + DB_PREFIX + "order`";
+				sql = "SELECT COUNT(DISTINCT YEAR(date_added), WEEK(date_added)) AS total FROM `" + DB_PREFIX + "order`";
 				break;
 			case 'month':
-				let sql = "SELECT COUNT(DISTINCT YEAR(date_added), MONTH(date_added)) AS total FROM `" + DB_PREFIX + "order`";
+				sql = "SELECT COUNT(DISTINCT YEAR(date_added), MONTH(date_added)) AS total FROM `" + DB_PREFIX + "order`";
 				break;
 			case 'year':
-				let sql = "SELECT COUNT(DISTINCT YEAR(date_added)) AS total FROM `" + DB_PREFIX + "order`";
+				sql = "SELECT COUNT(DISTINCT YEAR(date_added)) AS total FROM `" + DB_PREFIX + "order`";
 				break;
 		}
 
@@ -256,11 +253,9 @@ module.exports = class ModelExtensionReportSale extends Model {
 		if ((data['filter_date_end'])) {
 			sql += " AND DATE(o.date_added) <= DATE('" + this.db.escape(data['filter_date_end']) + "')";
 		}
-
+		let group = 'week';
 		if ((data['filter_group'])) {
 			group = data['filter_group'];
-		} else {
-			group = 'week';
 		}
 
 		switch (group) {
@@ -299,25 +294,24 @@ module.exports = class ModelExtensionReportSale extends Model {
 	}
 
 	async getTotalTaxes(data = {}) {
+		let group = 'week';
 		if ((data['filter_group'])) {
 			group = data['filter_group'];
-		} else {
-			group = 'week';
 		}
-
+		let sql = '';
 		switch (group) {
 			case 'day':
-				let sql = "SELECT COUNT(DISTINCT YEAR(o.date_added), MONTH(o.date_added), DAY(o.date_added), ot.title) AS total FROM `" + DB_PREFIX + "order` o";
+				sql = "SELECT COUNT(DISTINCT YEAR(o.date_added), MONTH(o.date_added), DAY(o.date_added), ot.title) AS total FROM `" + DB_PREFIX + "order` o";
 				break;
 			default:
 			case 'week':
-				let sql = "SELECT COUNT(DISTINCT YEAR(o.date_added), WEEK(o.date_added), ot.title) AS total FROM `" + DB_PREFIX + "order` o";
+				sql = "SELECT COUNT(DISTINCT YEAR(o.date_added), WEEK(o.date_added), ot.title) AS total FROM `" + DB_PREFIX + "order` o";
 				break;
 			case 'month':
-				let sql = "SELECT COUNT(DISTINCT YEAR(o.date_added), MONTH(o.date_added), ot.title) AS total FROM `" + DB_PREFIX + "order` o";
+				sql = "SELECT COUNT(DISTINCT YEAR(o.date_added), MONTH(o.date_added), ot.title) AS total FROM `" + DB_PREFIX + "order` o";
 				break;
 			case 'year':
-				let sql = "SELECT COUNT(DISTINCT YEAR(o.date_added), ot.title) AS total FROM `" + DB_PREFIX + "order` o";
+				sql = "SELECT COUNT(DISTINCT YEAR(o.date_added), ot.title) AS total FROM `" + DB_PREFIX + "order` o";
 				break;
 		}
 
@@ -358,11 +352,9 @@ module.exports = class ModelExtensionReportSale extends Model {
 		if ((data['filter_date_end'])) {
 			sql += " AND DATE(o.date_added) <= DATE('" + this.db.escape(data['filter_date_end']) + "')";
 		}
-
+		let group = 'week';
 		if ((data['filter_group'])) {
 			group = data['filter_group'];
-		} else {
-			group = 'week';
 		}
 
 		switch (group) {
@@ -401,25 +393,24 @@ module.exports = class ModelExtensionReportSale extends Model {
 	}
 
 	async getTotalShipping(data = {}) {
+		let group = 'week';
 		if ((data['filter_group'])) {
 			group = data['filter_group'];
-		} else {
-			group = 'week';
 		}
-
+		let sql = '';
 		switch (group) {
 			case 'day':
-				let sql = "SELECT COUNT(DISTINCT YEAR(o.date_added), MONTH(o.date_added), DAY(o.date_added), ot.title) AS total FROM `" + DB_PREFIX + "order` o";
+				sql = "SELECT COUNT(DISTINCT YEAR(o.date_added), MONTH(o.date_added), DAY(o.date_added), ot.title) AS total FROM `" + DB_PREFIX + "order` o";
 				break;
 			default:
 			case 'week':
-				let sql = "SELECT COUNT(DISTINCT YEAR(o.date_added), WEEK(o.date_added), ot.title) AS total FROM `" + DB_PREFIX + "order` o";
+				sql = "SELECT COUNT(DISTINCT YEAR(o.date_added), WEEK(o.date_added), ot.title) AS total FROM `" + DB_PREFIX + "order` o";
 				break;
 			case 'month':
-				let sql = "SELECT COUNT(DISTINCT YEAR(o.date_added), MONTH(o.date_added), ot.title) AS total FROM `" + DB_PREFIX + "order` o";
+				sql = "SELECT COUNT(DISTINCT YEAR(o.date_added), MONTH(o.date_added), ot.title) AS total FROM `" + DB_PREFIX + "order` o";
 				break;
 			case 'year':
-				let sql = "SELECT COUNT(DISTINCT YEAR(o.date_added), ot.title) AS total FROM `" + DB_PREFIX + "order` o";
+				sql = "SELECT COUNT(DISTINCT YEAR(o.date_added), ot.title) AS total FROM `" + DB_PREFIX + "order` o";
 				break;
 		}
 

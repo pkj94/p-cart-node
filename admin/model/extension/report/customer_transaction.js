@@ -17,13 +17,13 @@ module.exports = class ModelExtensionReportCustomerTransaction extends Model {
 		sql += " GROUP BY ct.customer_id ORDER BY total DESC";
 
 		if ((data['start']) || (data['limit'])) {
-			data['start'] = data['start']||0;
-if (data['start'] < 0) {
+			data['start'] = data['start'] || 0;
+			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
@@ -41,15 +41,15 @@ if (data['limit'] < 1) {
 		let implode = [];
 
 		if ((data['filter_date_start'])) {
-			implode.push("DATE(ct.date_added) >= DATE('" + this.db.escape(data['filter_date_start']) + "')";
+			implode.push("DATE(ct.date_added) >= DATE('" + this.db.escape(data['filter_date_start']) + "')");
 		}
 
 		if ((data['filter_date_end'])) {
-			implode.push("DATE(ct.date_added) <= DATE('" + this.db.escape(data['filter_date_end']) + "')";
+			implode.push("DATE(ct.date_added) <= DATE('" + this.db.escape(data['filter_date_end']) + "')");
 		}
 
 		if ((data['filter_customer'])) {
-			implode.push("CONCAT(c.firstname, ' ', c.lastname) LIKE '" + this.db.escape(data['filter_customer']) + "'";
+			implode.push("CONCAT(c.firstname, ' ', c.lastname) LIKE '" + this.db.escape(data['filter_customer']) + "'");
 		}
 
 		if (implode.length) {

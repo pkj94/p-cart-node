@@ -5,27 +5,27 @@
   <version>1.1</version>
   <author>OpenCart Ltd</author>
   <link>http://www.opencart.com</link>
-  <file path="system/{engine,library}/{action,loader,config,language}*.php|system/library/template/template.php">
+  <file path="system/{engine,library}/{action,loader,config,language}*.js|system/library/template/template.js">
     <operation>
       <search regex="true">
-        <![CDATA[~(require|include)(_once)?\(([^)]+)~]]>
+        <![CDATA[require(file)]]>
       </search>
       <add position="replace">
-        <![CDATA[$1$2(modification($3)]]>
+        <![CDATA[require(modification(file))]]>
       </add>
     </operation>
   </file>
-  <file path="system/library/template/twig.php">
+  <file path="system/library/template/twig.js">
     <operation>
       <search>
-        <![CDATA[if (is_file($file)) {]]>
+        <![CDATA[if (is_file(file)) {]]>
       </search>
       <add position="replace">
-        <![CDATA[if (defined('DIR_CATALOG') && is_file(DIR_MODIFICATION . 'admin/view/template/' . $filename . '.twig')) {	
-                $code = file_get_contents(DIR_MODIFICATION . 'admin/view/template/' . $filename . '.twig');
-            } elseif (is_file(DIR_MODIFICATION . 'catalog/view/theme/' . $filename . '.twig')) {
-                $code = file_get_contents(DIR_MODIFICATION . 'catalog/view/theme/' . $filename . '.twig');
-            } elseif (is_file($file)) {]]>
+        <![CDATA[if (DIR_CATALOG && is_file(DIR_MODIFICATION + 'admin/view/template/' + filename + '.twig')) {	
+                code = fs.readFileSync(DIR_MODIFICATION + 'admin/view/template/' + filename + '.twig','utf-8');
+            } else if (is_file(DIR_MODIFICATION + 'catalog/view/theme/' + filename + '.twig')) {
+                code = fs.readFileSync(DIR_MODIFICATION + 'catalog/view/theme/' + filename + '.twig','utf-8');
+            } else if (is_file(file)) {]]>
       </add>
     </operation>
   </file> 

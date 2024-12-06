@@ -13,66 +13,67 @@ module.exports = class ControllerExtensionCurrencyEcb extends Controller {
 		if ((this.request.server['method'] == 'POST') && await this.validate()) {
 			await this.model_setting_setting.editSetting('currency_ecb', this.request.post);
 			this.session.data['success'] = this.language.get('text_success');
-await this.session.save(this.session.data);
+			await this.session.save(this.session.data);
 			this.response.setRedirect(await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=currency', true));
-		}
-
-		if ((this.error['warning'])) {
-			data['error_warning'] = this.error['warning'];
 		} else {
-			data['error_warning'] = '';
+
+			if ((this.error['warning'])) {
+				data['error_warning'] = this.error['warning'];
+			} else {
+				data['error_warning'] = '';
+			}
+
+			if ((this.error['ip'])) {
+				data['error_ip'] = this.error['ip'];
+			} else {
+				data['error_ip'] = '';
+			}
+
+			data['breadcrumbs'] = [];
+
+			data['breadcrumbs'].push({
+				'text': this.language.get('text_home'),
+				'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			});
+
+			data['breadcrumbs'].push({
+				'text': this.language.get('text_extension'),
+				'href': await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=currency', true)
+			});
+
+			data['breadcrumbs'].push({
+				'text': this.language.get('heading_title'),
+				'href': await this.url.link('extension/currency/ecb', 'user_token=' + this.session.data['user_token'], true)
+			});
+
+			data['action'] = await this.url.link('extension/currency/ecb', 'user_token=' + this.session.data['user_token'], true);
+			data['cancel'] = await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=currency', true);
+			data['refresh'] = await this.url.link('localisation/currency', 'user_token=' + this.session.data['user_token'], true);
+
+			data['text_edit'] = this.language.get('text_edit');
+			data['text_edit'] = str_replace('%1', await this.url.link('localisation/currency', 'user_token=' + this.session.data['user_token'], true), data['text_edit']);
+			data['text_edit'] = str_replace('%2', await this.url.link('setting/store', 'user_token=' + this.session.data['user_token'], true), data['text_edit']);
+
+			data['currency_ecb_cron'] = 'curl -s &quot;' + HTTPS_CATALOG + '?route=extension/currency/ecb/refresh&quot;';
+
+			if ((this.request.post['currency_ecb_ip'])) {
+				data['currency_ecb_ip'] = this.request.post['currency_ecb_ip'];
+			} else {
+				data['currency_ecb_ip'] = this.config.get('currency_ecb_ip');
+			}
+
+			if ((this.request.post['currency_ecb_status'])) {
+				data['currency_ecb_status'] = this.request.post['currency_ecb_status'];
+			} else {
+				data['currency_ecb_status'] = this.config.get('currency_ecb_status');
+			}
+
+			data['header'] = await this.load.controller('common/header');
+			data['column_left'] = await this.load.controller('common/column_left');
+			data['footer'] = await this.load.controller('common/footer');
+
+			this.response.setOutput(await this.load.view('extension/currency/ecb', data));
 		}
-
-		if ((this.error['ip'])) {
-			data['error_ip'] = this.error['ip'];
-		} else {
-			data['error_ip'] = '';
-		}
-
-		data['breadcrumbs'] = [];
-
-		data['breadcrumbs'].push({
-			'text': this.language.get('text_home'),
-			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		});
-
-		data['breadcrumbs'].push({
-			'text': this.language.get('text_extension'),
-			'href': await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=currency', true)
-		});
-
-		data['breadcrumbs'].push({
-			'text': this.language.get('heading_title'),
-			'href': await this.url.link('extension/currency/ecb', 'user_token=' + this.session.data['user_token'], true)
-		});
-
-		data['action'] = await this.url.link('extension/currency/ecb', 'user_token=' + this.session.data['user_token'], true);
-		data['cancel'] = await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=currency', true);
-		data['refresh'] = await this.url.link('localisation/currency', 'user_token=' + this.session.data['user_token'], true);
-
-		data['text_edit'] = this.language.get('text_edit');
-		data['text_edit'] = str_replace('%1', await this.url.link('localisation/currency', 'user_token=' + this.session.data['user_token'], true), data['text_edit']);
-		data['text_edit'] = str_replace('%2', await this.url.link('setting/store', 'user_token=' + this.session.data['user_token'], true), data['text_edit']);
-
-		data['currency_ecb_cron'] = 'curl -s &quot;' + HTTPS_CATALOG + '?route=extension/currency/ecb/refresh&quot;';
-
-		if ((this.request.post['currency_ecb_ip'])) {
-			data['currency_ecb_ip'] = this.request.post['currency_ecb_ip'];
-		} else {
-			data['currency_ecb_ip'] = this.config.get('currency_ecb_ip');
-		}
-
-		if ((this.request.post['currency_ecb_status'])) {
-			data['currency_ecb_status'] = this.request.post['currency_ecb_status'];
-		} else {
-			data['currency_ecb_status'] = this.config.get('currency_ecb_status');
-		}
-
-		data['header'] = await this.load.controller('common/header');
-		data['column_left'] = await this.load.controller('common/column_left');
-		data['footer'] = await this.load.controller('common/footer');
-
-		this.response.setOutput(await this.load.view('extension/currency/ecb', data));
 	}
 
 

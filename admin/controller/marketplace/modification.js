@@ -26,7 +26,7 @@ module.exports = class ControllerMarketplaceModification extends Controller {
 		this.load.model('setting/modification', this);
 
 		if ((this.request.post['selected']) && await this.validate()) {
-			for (let modification_id of this.request.post['selected'] ) {
+			for (let modification_id of this.request.post['selected']) {
 				await this.model_setting_modification.deleteModification(modification_id);
 			}
 
@@ -104,7 +104,7 @@ module.exports = class ControllerMarketplaceModification extends Controller {
 
 						// If directory use the remove directory function
 					} else if (is_dir(file)) {
-						fs.rmdirSync(file);
+						fs.rmdirSync(file, { recursive: true, force: true });
 					}
 				}
 			}
@@ -113,7 +113,7 @@ module.exports = class ControllerMarketplaceModification extends Controller {
 			let xmls = [];
 
 			// Load the default modification XML
-			xmls.push(fs.readFileSync(DIR_SYSTEM + 'modification.xml').toString());
+			xmls.push(fs.readFileSync(DIR_SYSTEM + 'modification.xml', 'utf-8'));
 
 			// This is purly for developers so they can run mods directly and have them run without upload after each change.
 			files = require('glob').sync(DIR_SYSTEM + '*.ocmod.xml');
@@ -136,22 +136,21 @@ module.exports = class ControllerMarketplaceModification extends Controller {
 			let modification = {};
 
 			let original = {};
-
-			xmls.forEach(xmlString => {
+			for (let xmlString of xmls) {
 				if (!xmlString) return;
 
-				const dom = new DOMParser().parseFromString(xmlString, 'text/xml');
+				const dom = new DOMParser().parseFromString(xmlString, 'application/xml');
 				log.push('MOD: ' + dom.getElementsByTagName('name')[0].textContent);
 
 				let recovery = modification ? { ...modification } : {};
-
 				const files = dom.getElementsByTagName('modification')[0].getElementsByTagName('file');
 
-				Array.from(files).forEach(file => {
-					const operations = file.getElementsByTagName('operation');
-					const paths = file.getAttribute('path').replace(/\\/g, '/').split('|');
+				for (let file1 of Array.from(files)) {
+					const operations = file1.getElementsByTagName('operation');
 
-					paths.forEach(filePath => {
+					const paths = file1.getAttribute('path').replace(/\\/g, '/').split('|');
+
+					for (let filePath of paths) {
 						let fullPath = '';
 
 						if (filePath.startsWith('catalog')) {
@@ -165,9 +164,9 @@ module.exports = class ControllerMarketplaceModification extends Controller {
 						if (fullPath) {
 							const matchedFiles = require('glob').sync(fullPath);
 
-							matchedFiles.forEach(file => {
+							for (let file of matchedFiles) {
 								let key = '';
-
+								file = file.replaceAll('\\', '/');
 								if (file.startsWith(DIR_CATALOG)) {
 									key = 'catalog/' + file.substr(DIR_CATALOG.length);
 								} else if (file.startsWith(DIR_APPLICATION)) {
@@ -177,7 +176,7 @@ module.exports = class ControllerMarketplaceModification extends Controller {
 								}
 
 								if (!modification[key]) {
-									const content = fs.readFileSync(file, 'utf8');
+									const content = fs.readFileSync(file, 'utf-8');
 									modification[key] = content.replace(/\r?\n/g, "\n");
 									original[key] = content.replace(/\r?\n/g, "\n");
 
@@ -186,7 +185,7 @@ module.exports = class ControllerMarketplaceModification extends Controller {
 									log.push('\nFILE: (sub modification) ' + key);
 								}
 
-								Array.from(operations).forEach(operation => {
+								for (let operation of Array.from(operations)) {
 									const error = operation.getAttribute('error');
 									const ignoreif = operation.getElementsByTagName('ignoreif')[0];
 
@@ -222,16 +221,18 @@ module.exports = class ControllerMarketplaceModification extends Controller {
 									for (let lineId = 0; lineId < lines.length; lineId++) {
 										const line = lines[lineId];
 										let match = false;
-
-										if (line.includes(searchString)) {
-											if (indexes.length === 0 || indexes.includes(i)) {
+										// console.log('match-----------------', line, "|", searchString, "|", line.indexOf(searchString), file);
+										if (line.indexOf(searchString) != -1) {
+											if (indexes.length === 0 || indexes.indexOf(i) != -1) {
 												match = true;
 											}
 											i++;
 										}
+										// console.log('match-----------------', match, lines.length);
 
 										if (match) {
 											let newLines;
+
 											switch (position) {
 												case 'before':
 													newLines = addString.split('\n');
@@ -246,7 +247,12 @@ module.exports = class ControllerMarketplaceModification extends Controller {
 												default:
 												case 'replace':
 													newLines = addString.split('\n');
-													lines.splice(lineId, offset + 1, str.replace(searchString, addString));
+													if (offset < 0) {
+														lines.splice(lineId + offset, Math.abs(offset) + 1, lines[lineId].replaceAll(searchString, addString));
+														lineId -= offset;
+													} else {
+														lines.splice(lineId, offset + 1, lines[lineId].replaceAll(searchString, addString));
+													}
 													break;
 											}
 
@@ -268,14 +274,14 @@ module.exports = class ControllerMarketplaceModification extends Controller {
 											log.push('NOT FOUND - OPERATIONS ABORTED!');
 										}
 									}
-								});
-							});
+								}
+							}
 						}
-					});
-				});
+					}
+				}
 
 				log.push('----------------------------------------------------------------');
-			});
+			}
 
 
 			// Log
@@ -322,7 +328,9 @@ module.exports = class ControllerMarketplaceModification extends Controller {
 			if ((this.request.get['page'])) {
 				url += '&page=' + this.request.get['page'];
 			}
-
+			setTimeout(() => {
+				global.APP();
+			}, 200)
 			this.response.setRedirect(await this.url.link((data['redirect']) ? data['redirect'] : 'marketplace/modification', 'user_token=' + this.session.data['user_token'] + url, true));
 		}
 

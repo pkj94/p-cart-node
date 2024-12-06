@@ -2,7 +2,7 @@ module.exports = class ControllerCatalogCategory extends Controller {
 	error = {};
 
 	async index() {
-const data = {};
+		const data = {};
 		await this.load.language('catalog/category');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -23,7 +23,7 @@ const data = {};
 			await this.model_catalog_category.addCategory(this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
-await this.session.save(this.session.data);
+			await this.session.save(this.session.data);
 
 			let url = '';
 
@@ -40,9 +40,8 @@ await this.session.save(this.session.data);
 			}
 			await this.session.save(this.session.data);
 			this.response.setRedirect(await this.url.link('catalog/category', 'user_token=' + this.session.data['user_token'] + url, true));
-		}
-
-		await this.getForm();
+		} else
+			await this.getForm();
 	}
 
 	async edit() {
@@ -56,7 +55,7 @@ await this.session.save(this.session.data);
 			await this.model_catalog_category.editCategory(this.request.get['category_id'], this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
-await this.session.save(this.session.data);
+			await this.session.save(this.session.data);
 
 			let url = '';
 
@@ -73,9 +72,8 @@ await this.session.save(this.session.data);
 			}
 			await this.session.save(this.session.data);
 			this.response.setRedirect(await this.url.link('catalog/category', 'user_token=' + this.session.data['user_token'] + url, true));
-		}
-
-		await this.getForm();
+		} else
+			await this.getForm();
 	}
 
 	async delete() {
@@ -92,7 +90,7 @@ await this.session.save(this.session.data);
 			}
 
 			this.session.data['success'] = this.language.get('text_success');
-await this.session.save(this.session.data);
+			await this.session.save(this.session.data);
 
 			let url = '';
 
@@ -109,9 +107,8 @@ await this.session.save(this.session.data);
 			}
 			await this.session.save(this.session.data);
 			this.response.setRedirect(await this.url.link('catalog/category', 'user_token=' + this.session.data['user_token'] + url, true));
-		}
-
-		await this.getList();
+		} else
+			await this.getList();
 	}
 
 	async repair() {
@@ -125,7 +122,7 @@ await this.session.save(this.session.data);
 			await this.model_catalog_category.repairCategories();
 
 			this.session.data['success'] = this.language.get('text_success');
-await this.session.save(this.session.data);
+			await this.session.save(this.session.data);
 
 			let url = '';
 
@@ -142,13 +139,12 @@ await this.session.save(this.session.data);
 			}
 			await this.session.save(this.session.data);
 			this.response.setRedirect(await this.url.link('catalog/category', 'user_token=' + this.session.data['user_token'] + url, true));
-		}
-
-		await this.getList();
+		} else
+			await this.getList();
 	}
 
 	async getList() {
-				const data = {};
+		const data = {};
 		let sort = 'name';
 		if ((this.request.get['sort'])) {
 			sort = this.request.get['sort'];

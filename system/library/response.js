@@ -20,6 +20,7 @@ module.exports = class Response {
   setRedirect(url, status = 302) {
     // console.log(url)
     this.redirect = (url.replace(/&amp;/g, '&').replace(/\n|\r/g, ''));
+    // this.response.redirect(this.redirect);
   }
   setCompression(level) {
     this.level = level;

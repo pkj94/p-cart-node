@@ -2,60 +2,61 @@ module.exports = class ControllerExtensionCaptchaBasic extends Controller {
 	error = {};
 
 	async index() {
-const data = {};
+		const data = {};
 		await this.load.language('extension/captcha/basic');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
-		this.load.model('setting/setting',this);
+		this.load.model('setting/setting', this);
 
 		if ((this.request.server['method'] == 'POST') && await this.validate()) {
 			await this.model_setting_setting.editSetting('captcha_basic', this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
-await this.session.save(this.session.data);
+			await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=captcha', true));
-		}
-		
-		if ((this.error['warning'])) {
-			data['error_warning'] = this.error['warning'];
 		} else {
-			data['error_warning'] = '';
+
+			if ((this.error['warning'])) {
+				data['error_warning'] = this.error['warning'];
+			} else {
+				data['error_warning'] = '';
+			}
+
+			data['breadcrumbs'] = [];
+
+			data['breadcrumbs'].push({
+				'text': this.language.get('text_home'),
+				'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			});
+
+			data['breadcrumbs'].push({
+				'text': this.language.get('text_extension'),
+				'href': await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=captcha', true)
+			});
+
+			data['breadcrumbs'].push({
+				'text': this.language.get('heading_title'),
+				'href': await this.url.link('extension/captcha/basic', 'user_token=' + this.session.data['user_token'], true)
+			});
+
+			data['action'] = await this.url.link('extension/captcha/basic', 'user_token=' + this.session.data['user_token'], true);
+
+			data['cancel'] = await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=captcha', true);
+
+			if ((this.request.post['captcha_basic_status'])) {
+				data['captcha_basic_status'] = this.request.post['captcha_basic_status'];
+			} else {
+				data['captcha_basic_status'] = this.config.get('captcha_basic_status');
+			}
+
+			data['header'] = await this.load.controller('common/header');
+			data['column_left'] = await this.load.controller('common/column_left');
+			data['footer'] = await this.load.controller('common/footer');
+
+			this.response.setOutput(await this.load.view('extension/captcha/basic', data));
 		}
-
-		data['breadcrumbs'] = [];
-
-		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		});
-
-		data['breadcrumbs'].push({
-			'text' : this.language.get('text_extension'),
-			'href' : await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=captcha', true)
-		});
-
-		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('extension/captcha/basic', 'user_token=' + this.session.data['user_token'], true)
-		});
-
-		data['action'] = await this.url.link('extension/captcha/basic', 'user_token=' + this.session.data['user_token'], true);
-
-		data['cancel'] = await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=captcha', true);
-
-		if ((this.request.post['captcha_basic_status'])) {
-			data['captcha_basic_status'] = this.request.post['captcha_basic_status'];
-		} else {
-			data['captcha_basic_status'] = this.config.get('captcha_basic_status');
-		}
-
-		data['header'] = await this.load.controller('common/header');
-		data['column_left'] = await this.load.controller('common/column_left');
-		data['footer'] = await this.load.controller('common/footer');
-
-		this.response.setOutput(await this.load.view('extension/captcha/basic', data));
 	}
 
 	async validate() {
@@ -63,6 +64,6 @@ await this.session.save(this.session.data);
 			this.error['warning'] = this.language.get('error_permission');
 		}
 
-		return Object.keys(this.error).length?false:true
+		return Object.keys(this.error).length ? false : true
 	}
 }

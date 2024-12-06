@@ -16,58 +16,59 @@ module.exports = class ControllerExtensionFraudIp extends Controller {
 			await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=fraud', true));
-		}
-
-		data['user_token'] = this.session.data['user_token'];
-
-		if ((this.error['warning'])) {
-			data['error_warning'] = this.error['warning'];
 		} else {
-			data['error_warning'] = '';
+
+			data['user_token'] = this.session.data['user_token'];
+
+			if ((this.error['warning'])) {
+				data['error_warning'] = this.error['warning'];
+			} else {
+				data['error_warning'] = '';
+			}
+
+			data['breadcrumbs'] = [];
+
+			data['breadcrumbs'].push({
+				'text': this.language.get('text_home'),
+				'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			});
+
+			data['breadcrumbs'].push({
+				'text': this.language.get('text_extension'),
+				'href': await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=fraud', true)
+			});
+
+			data['breadcrumbs'].push({
+				'text': this.language.get('heading_title'),
+				'href': await this.url.link('extension/fraud/ip', 'user_token=' + this.session.data['user_token'], true)
+			});
+
+			data['action'] = await this.url.link('extension/fraud/ip', 'user_token=' + this.session.data['user_token'], true);
+
+			data['cancel'] = await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=fraud', true);
+
+			if ((this.request.post['fraud_ip_order_status_id'])) {
+				data['fraud_ip_order_status_id'] = this.request.post['fraud_ip_order_status_id'];
+			} else {
+				data['fraud_ip_order_status_id'] = this.config.get('fraud_ip_order_status_id');
+			}
+
+			this.load.model('localisation/order_status', this);
+
+			data['order_statuses'] = await this.model_localisation_order_status.getOrderStatuses();
+
+			if ((this.request.post['fraud_ip_status'])) {
+				data['fraud_ip_status'] = this.request.post['fraud_ip_status'];
+			} else {
+				data['fraud_ip_status'] = this.config.get('fraud_ip_status');
+			}
+
+			data['header'] = await this.load.controller('common/header');
+			data['column_left'] = await this.load.controller('common/column_left');
+			data['footer'] = await this.load.controller('common/footer');
+
+			this.response.setOutput(await this.load.view('extension/fraud/ip', data));
 		}
-
-		data['breadcrumbs'] = [];
-
-		data['breadcrumbs'].push({
-			'text': this.language.get('text_home'),
-			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		});
-
-		data['breadcrumbs'].push({
-			'text': this.language.get('text_extension'),
-			'href': await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=fraud', true)
-		});
-
-		data['breadcrumbs'].push({
-			'text': this.language.get('heading_title'),
-			'href': await this.url.link('extension/fraud/ip', 'user_token=' + this.session.data['user_token'], true)
-		});
-
-		data['action'] = await this.url.link('extension/fraud/ip', 'user_token=' + this.session.data['user_token'], true);
-
-		data['cancel'] = await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=fraud', true);
-
-		if ((this.request.post['fraud_ip_order_status_id'])) {
-			data['fraud_ip_order_status_id'] = this.request.post['fraud_ip_order_status_id'];
-		} else {
-			data['fraud_ip_order_status_id'] = this.config.get('fraud_ip_order_status_id');
-		}
-
-		this.load.model('localisation/order_status', this);
-
-		data['order_statuses'] = await this.model_localisation_order_status.getOrderStatuses();
-
-		if ((this.request.post['fraud_ip_status'])) {
-			data['fraud_ip_status'] = this.request.post['fraud_ip_status'];
-		} else {
-			data['fraud_ip_status'] = this.config.get('fraud_ip_status');
-		}
-
-		data['header'] = await this.load.controller('common/header');
-		data['column_left'] = await this.load.controller('common/column_left');
-		data['footer'] = await this.load.controller('common/footer');
-
-		this.response.setOutput(await this.load.view('extension/fraud/ip', data));
 	}
 
 	async install() {

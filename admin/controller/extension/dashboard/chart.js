@@ -15,67 +15,68 @@ module.exports = class ControllerExtensionDashboardChart extends Controller {
 			await this.model_setting_setting.editSetting('dashboard_chart', this.request.post);
 
 			this.session.data['success'] = this.language.get('text_success');
-await this.session.save(this.session.data);
+			await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=dashboard', true));
-		}
-
-		if ((this.error['warning'])) {
-			data['error_warning'] = this.error['warning'];
 		} else {
-			data['error_warning'] = '';
+
+			if ((this.error['warning'])) {
+				data['error_warning'] = this.error['warning'];
+			} else {
+				data['error_warning'] = '';
+			}
+
+			data['breadcrumbs'] = [];
+
+			data['breadcrumbs'].push({
+				'text': this.language.get('text_home'),
+				'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			});
+
+			data['breadcrumbs'].push({
+				'text': this.language.get('text_extension'),
+				'href': await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=dashboard', true)
+			});
+
+			data['breadcrumbs'].push({
+				'text': this.language.get('heading_title'),
+				'href': await this.url.link('extension/dashboard/chart', 'user_token=' + this.session.data['user_token'], true)
+			});
+
+			data['action'] = await this.url.link('extension/dashboard/chart', 'user_token=' + this.session.data['user_token'], true);
+
+			data['cancel'] = await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=dashboard', true);
+
+			if ((this.request.post['dashboard_chart_width'])) {
+				data['dashboard_chart_width'] = this.request.post['dashboard_chart_width'];
+			} else {
+				data['dashboard_chart_width'] = this.config.get('dashboard_chart_width');
+			}
+
+			data['columns'] = [];
+
+			for (let i = 3; i <= 12; i++) {
+				data['columns'].push(i);
+			}
+
+			if ((this.request.post['dashboard_chart_status'])) {
+				data['dashboard_chart_status'] = this.request.post['dashboard_chart_status'];
+			} else {
+				data['dashboard_chart_status'] = this.config.get('dashboard_chart_status');
+			}
+
+			if ((this.request.post['dashboard_chart_sort_order'])) {
+				data['dashboard_chart_sort_order'] = this.request.post['dashboard_chart_sort_order'];
+			} else {
+				data['dashboard_chart_sort_order'] = this.config.get('dashboard_chart_sort_order');
+			}
+
+			data['header'] = await this.load.controller('common/header');
+			data['column_left'] = await this.load.controller('common/column_left');
+			data['footer'] = await this.load.controller('common/footer');
+
+			this.response.setOutput(await this.load.view('extension/dashboard/chart_form', data));
 		}
-
-		data['breadcrumbs'] = [];
-
-		data['breadcrumbs'].push({
-			'text': this.language.get('text_home'),
-			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		});
-
-		data['breadcrumbs'].push({
-			'text': this.language.get('text_extension'),
-			'href': await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=dashboard', true)
-		});
-
-		data['breadcrumbs'].push({
-			'text': this.language.get('heading_title'),
-			'href': await this.url.link('extension/dashboard/chart', 'user_token=' + this.session.data['user_token'], true)
-		});
-
-		data['action'] = await this.url.link('extension/dashboard/chart', 'user_token=' + this.session.data['user_token'], true);
-
-		data['cancel'] = await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=dashboard', true);
-
-		if ((this.request.post['dashboard_chart_width'])) {
-			data['dashboard_chart_width'] = this.request.post['dashboard_chart_width'];
-		} else {
-			data['dashboard_chart_width'] = this.config.get('dashboard_chart_width');
-		}
-
-		data['columns'] = [];
-
-		for (let i = 3; i <= 12; i++) {
-			data['columns'].push(i);
-		}
-
-		if ((this.request.post['dashboard_chart_status'])) {
-			data['dashboard_chart_status'] = this.request.post['dashboard_chart_status'];
-		} else {
-			data['dashboard_chart_status'] = this.config.get('dashboard_chart_status');
-		}
-
-		if ((this.request.post['dashboard_chart_sort_order'])) {
-			data['dashboard_chart_sort_order'] = this.request.post['dashboard_chart_sort_order'];
-		} else {
-			data['dashboard_chart_sort_order'] = this.config.get('dashboard_chart_sort_order');
-		}
-
-		data['header'] = await this.load.controller('common/header');
-		data['column_left'] = await this.load.controller('common/column_left');
-		data['footer'] = await this.load.controller('common/footer');
-
-		this.response.setOutput(await this.load.view('extension/dashboard/chart_form', data));
 	}
 
 	async validate() {
@@ -100,7 +101,7 @@ await this.session.save(this.session.data);
 
 		const json = {};
 
-		this.load.model('extension/dashboard/chart',this);
+		this.load.model('extension/dashboard/chart', this);
 
 		json['order'] = {};
 		json['customer'] = {};

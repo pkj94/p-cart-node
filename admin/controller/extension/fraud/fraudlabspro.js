@@ -16,98 +16,99 @@ module.exports = class ControllerExtensionFraudFraudLabsPro extends Controller {
 			await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=fraud', true));
-		}
-
-		if ((this.error['warning'])) {
-			data['error_warning'] = this.error['warning'];
 		} else {
-			data['error_warning'] = '';
+
+			if ((this.error['warning'])) {
+				data['error_warning'] = this.error['warning'];
+			} else {
+				data['error_warning'] = '';
+			}
+
+			if ((this.error['key'])) {
+				data['error_key'] = this.error['key'];
+			} else {
+				data['error_key'] = '';
+			}
+
+			data['breadcrumbs'] = [];
+
+			data['breadcrumbs'].push({
+				'text': this.language.get('text_home'),
+				'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			});
+
+			data['breadcrumbs'].push({
+				'text': this.language.get('text_extension'),
+				'href': await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=fraud', true)
+			});
+
+			data['breadcrumbs'].push({
+				'text': this.language.get('heading_title'),
+				'href': await this.url.link('extension/fraud/fraudlabspro', 'user_token=' + this.session.data['user_token'], true)
+			});
+
+			data['action'] = await this.url.link('extension/fraud/fraudlabspro', 'user_token=' + this.session.data['user_token'], true);
+
+			data['cancel'] = await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=fraud', true);
+
+			if ((this.request.post['fraud_fraudlabspro_key'])) {
+				data['fraud_fraudlabspro_key'] = this.request.post['fraud_fraudlabspro_key'];
+			} else {
+				data['fraud_fraudlabspro_key'] = this.config.get('fraud_fraudlabspro_key');
+			}
+
+			if ((this.request.post['fraud_fraudlabspro_score'])) {
+				data['fraud_fraudlabspro_score'] = this.request.post['fraud_fraudlabspro_score'];
+			} else {
+				data['fraud_fraudlabspro_score'] = this.config.get('fraud_fraudlabspro_score');
+			}
+
+			if ((this.request.post['fraud_fraudlabspro_order_status_id'])) {
+				data['fraud_fraudlabspro_order_status_id'] = this.request.post['fraud_fraudlabspro_order_status_id'];
+			} else {
+				data['fraud_fraudlabspro_order_status_id'] = this.config.get('fraud_fraudlabspro_order_status_id');
+			}
+
+			if ((this.request.post['fraud_fraudlabspro_review_status_id'])) {
+				data['fraud_fraudlabspro_review_status_id'] = this.request.post['fraud_fraudlabspro_review_status_id'];
+			} else {
+				data['fraud_fraudlabspro_review_status_id'] = this.config.get('fraud_fraudlabspro_review_status_id');
+			}
+
+			if ((this.request.post['fraud_fraudlabspro_approve_status_id'])) {
+				data['fraud_fraudlabspro_approve_status_id'] = this.request.post['fraud_fraudlabspro_approve_status_id'];
+			} else {
+				data['fraud_fraudlabspro_approve_status_id'] = this.config.get('fraud_fraudlabspro_approve_status_id');
+			}
+
+			if ((this.request.post['fraud_fraudlabspro_reject_status_id'])) {
+				data['fraud_fraudlabspro_reject_status_id'] = this.request.post['fraud_fraudlabspro_reject_status_id'];
+			} else {
+				data['fraud_fraudlabspro_reject_status_id'] = this.config.get('fraud_fraudlabspro_reject_status_id');
+			}
+
+			if ((this.request.post['fraud_fraudlabspro_simulate_ip'])) {
+				data['fraud_fraudlabspro_simulate_ip'] = this.request.post['fraud_fraudlabspro_simulate_ip'];
+			} else {
+				data['fraud_fraudlabspro_simulate_ip'] = this.config.get('fraud_fraudlabspro_simulate_ip');
+			}
+
+			this.load.model('localisation/order_status', this);
+
+			data['order_statuses'] = await this.model_localisation_order_status.getOrderStatuses();
+
+			if ((this.request.post['fraud_fraudlabspro_status'])) {
+				data['fraud_fraudlabspro_status'] = this.request.post['fraud_fraudlabspro_status'];
+			} else {
+				data['fraud_fraudlabspro_status'] = this.config.get('fraud_fraudlabspro_status');
+			}
+
+			data['header'] = await this.load.controller('common/header');
+			data['column_left'] = await this.load.controller('common/column_left');
+			data['footer'] = await this.load.controller('common/footer');
+
+			this.response.setOutput(await this.load.view('extension/fraud/fraudlabspro', data));
 		}
-
-		if ((this.error['key'])) {
-			data['error_key'] = this.error['key'];
-		} else {
-			data['error_key'] = '';
-		}
-
-		data['breadcrumbs'] = [];
-
-		data['breadcrumbs'].push({
-			'text': this.language.get('text_home'),
-			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		});
-
-		data['breadcrumbs'].push({
-			'text': this.language.get('text_extension'),
-			'href': await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=fraud', true)
-		});
-
-		data['breadcrumbs'].push({
-			'text': this.language.get('heading_title'),
-			'href': await this.url.link('extension/fraud/fraudlabspro', 'user_token=' + this.session.data['user_token'], true)
-		});
-
-		data['action'] = await this.url.link('extension/fraud/fraudlabspro', 'user_token=' + this.session.data['user_token'], true);
-
-		data['cancel'] = await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=fraud', true);
-
-		if ((this.request.post['fraud_fraudlabspro_key'])) {
-			data['fraud_fraudlabspro_key'] = this.request.post['fraud_fraudlabspro_key'];
-		} else {
-			data['fraud_fraudlabspro_key'] = this.config.get('fraud_fraudlabspro_key');
-		}
-
-		if ((this.request.post['fraud_fraudlabspro_score'])) {
-			data['fraud_fraudlabspro_score'] = this.request.post['fraud_fraudlabspro_score'];
-		} else {
-			data['fraud_fraudlabspro_score'] = this.config.get('fraud_fraudlabspro_score');
-		}
-
-		if ((this.request.post['fraud_fraudlabspro_order_status_id'])) {
-			data['fraud_fraudlabspro_order_status_id'] = this.request.post['fraud_fraudlabspro_order_status_id'];
-		} else {
-			data['fraud_fraudlabspro_order_status_id'] = this.config.get('fraud_fraudlabspro_order_status_id');
-		}
-
-		if ((this.request.post['fraud_fraudlabspro_review_status_id'])) {
-			data['fraud_fraudlabspro_review_status_id'] = this.request.post['fraud_fraudlabspro_review_status_id'];
-		} else {
-			data['fraud_fraudlabspro_review_status_id'] = this.config.get('fraud_fraudlabspro_review_status_id');
-		}
-
-		if ((this.request.post['fraud_fraudlabspro_approve_status_id'])) {
-			data['fraud_fraudlabspro_approve_status_id'] = this.request.post['fraud_fraudlabspro_approve_status_id'];
-		} else {
-			data['fraud_fraudlabspro_approve_status_id'] = this.config.get('fraud_fraudlabspro_approve_status_id');
-		}
-
-		if ((this.request.post['fraud_fraudlabspro_reject_status_id'])) {
-			data['fraud_fraudlabspro_reject_status_id'] = this.request.post['fraud_fraudlabspro_reject_status_id'];
-		} else {
-			data['fraud_fraudlabspro_reject_status_id'] = this.config.get('fraud_fraudlabspro_reject_status_id');
-		}
-
-		if ((this.request.post['fraud_fraudlabspro_simulate_ip'])) {
-			data['fraud_fraudlabspro_simulate_ip'] = this.request.post['fraud_fraudlabspro_simulate_ip'];
-		} else {
-			data['fraud_fraudlabspro_simulate_ip'] = this.config.get('fraud_fraudlabspro_simulate_ip');
-		}
-
-		this.load.model('localisation/order_status',this);
-
-		data['order_statuses'] = await this.model_localisation_order_status.getOrderStatuses();
-
-		if ((this.request.post['fraud_fraudlabspro_status'])) {
-			data['fraud_fraudlabspro_status'] = this.request.post['fraud_fraudlabspro_status'];
-		} else {
-			data['fraud_fraudlabspro_status'] = this.config.get('fraud_fraudlabspro_status');
-		}
-
-		data['header'] = await this.load.controller('common/header');
-		data['column_left'] = await this.load.controller('common/column_left');
-		data['footer'] = await this.load.controller('common/footer');
-
-		this.response.setOutput(await this.load.view('extension/fraud/fraudlabspro', data));
 	}
 
 	async install() {

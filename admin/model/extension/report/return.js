@@ -15,14 +15,12 @@ module.exports = class ModelExtensionReportReturn extends Model {
 		if ((data['filter_date_end'])) {
 			sql += " AND DATE(r.date_added) <= DATE('" + this.db.escape(data['filter_date_end']) + "')";
 		}
-
+		let group = 'week';
 		if ((data['filter_group'])) {
 			group = data['filter_group'];
-		} else {
-			group = 'week';
-		}
+		} 
 
-		switch(group) {
+		switch (group) {
 			case 'day':
 				sql += " GROUP BY YEAR(r.date_added), MONTH(r.date_added), DAY(r.date_added)";
 				break;
@@ -39,13 +37,13 @@ module.exports = class ModelExtensionReportReturn extends Model {
 		}
 
 		if ((data['start']) || (data['limit'])) {
-			data['start'] = data['start']||0;
-if (data['start'] < 0) {
+			data['start'] = data['start'] || 0;
+			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
 
-			data['limit'] = data['limit']||20;
-if (data['limit'] < 1) {
+			data['limit'] = data['limit'] || 20;
+			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
@@ -58,25 +56,24 @@ if (data['limit'] < 1) {
 	}
 
 	async getTotalReturns(data = {}) {
+		let group = 'week';
 		if ((data['filter_group'])) {
 			group = data['filter_group'];
-		} else {
-			group = 'week';
 		}
-
-		switch(group) {
+		let sql = '';
+		switch (group) {
 			case 'day':
-				let sql = "SELECT COUNT(DISTINCT YEAR(date_added), MONTH(date_added), DAY(date_added)) AS total FROM `" + DB_PREFIX + "return`";
+				sql = "SELECT COUNT(DISTINCT YEAR(date_added), MONTH(date_added), DAY(date_added)) AS total FROM `" + DB_PREFIX + "return`";
 				break;
 			default:
 			case 'week':
-				let sql = "SELECT COUNT(DISTINCT YEAR(date_added), WEEK(date_added)) AS total FROM `" + DB_PREFIX + "return`";
+				sql = "SELECT COUNT(DISTINCT YEAR(date_added), WEEK(date_added)) AS total FROM `" + DB_PREFIX + "return`";
 				break;
 			case 'month':
-				let sql = "SELECT COUNT(DISTINCT YEAR(date_added), MONTH(date_added)) AS total FROM `" + DB_PREFIX + "return`";
+				sql = "SELECT COUNT(DISTINCT YEAR(date_added), MONTH(date_added)) AS total FROM `" + DB_PREFIX + "return`";
 				break;
 			case 'year':
-				let sql = "SELECT COUNT(DISTINCT YEAR(date_added)) AS total FROM `" + DB_PREFIX + "return`";
+				sql = "SELECT COUNT(DISTINCT YEAR(date_added)) AS total FROM `" + DB_PREFIX + "return`";
 				break;
 		}
 

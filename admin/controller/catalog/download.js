@@ -42,9 +42,8 @@ module.exports = class ControllerCatalogDownload extends Controller {
 			}
 			await this.session.save(this.session.data);
 			this.response.setRedirect(await this.url.link('catalog/download', 'user_token=' + this.session.data['user_token'] + url, true));
-		}
-
-		await this.getForm();
+		} else
+			await this.getForm();
 	}
 
 	async edit() {
@@ -75,9 +74,8 @@ module.exports = class ControllerCatalogDownload extends Controller {
 			}
 			await this.session.save(this.session.data);
 			this.response.setRedirect(await this.url.link('catalog/download', 'user_token=' + this.session.data['user_token'] + url, true));
-		}
-
-		await this.getForm();
+		} else
+			await this.getForm();
 	}
 
 	async delete() {
@@ -111,9 +109,8 @@ module.exports = class ControllerCatalogDownload extends Controller {
 			}
 			await this.session.save(this.session.data);
 			this.response.setRedirect(await this.url.link('catalog/download', 'user_token=' + this.session.data['user_token'] + url, true));
-		}
-
-		await this.getList();
+		} else
+			await this.getList();
 	}
 
 	async getList() {

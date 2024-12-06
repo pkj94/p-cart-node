@@ -16,52 +16,53 @@ module.exports = class ControllerExtensionReportCustomerTransaction extends Cont
 			await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=report', true));
-		}
-
-		if ((this.error['warning'])) {
-			data['error_warning'] = this.error['warning'];
 		} else {
-			data['error_warning'] = '';
+
+			if ((this.error['warning'])) {
+				data['error_warning'] = this.error['warning'];
+			} else {
+				data['error_warning'] = '';
+			}
+
+			data['breadcrumbs'] = [];
+
+			data['breadcrumbs'].push({
+				'text': this.language.get('text_home'),
+				'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			});
+
+			data['breadcrumbs'].push({
+				'text': this.language.get('text_extension'),
+				'href': await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=report', true)
+			});
+
+			data['breadcrumbs'].push({
+				'text': this.language.get('heading_title'),
+				'href': await this.url.link('extension/report/customer_transaction', 'user_token=' + this.session.data['user_token'], true)
+			});
+
+			data['action'] = await this.url.link('extension/report/customer_transaction', 'user_token=' + this.session.data['user_token'], true);
+
+			data['cancel'] = await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=report', true);
+
+			if ((this.request.post['report_customer_transaction_status'])) {
+				data['report_customer_transaction_status'] = this.request.post['report_customer_transaction_status'];
+			} else {
+				data['report_customer_transaction_status'] = this.config.get('report_customer_transaction_status');
+			}
+
+			if ((this.request.post['report_customer_transaction_sort_order'])) {
+				data['report_customer_transaction_sort_order'] = this.request.post['report_customer_transaction_sort_order'];
+			} else {
+				data['report_customer_transaction_sort_order'] = this.config.get('report_customer_transaction_sort_order');
+			}
+
+			data['header'] = await this.load.controller('common/header');
+			data['column_left'] = await this.load.controller('common/column_left');
+			data['footer'] = await this.load.controller('common/footer');
+
+			this.response.setOutput(await this.load.view('extension/report/customer_transaction_form', data));
 		}
-
-		data['breadcrumbs'] = [];
-
-		data['breadcrumbs'].push({
-			'text': this.language.get('text_home'),
-			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
-		});
-
-		data['breadcrumbs'].push({
-			'text': this.language.get('text_extension'),
-			'href': await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=report', true)
-		});
-
-		data['breadcrumbs'].push({
-			'text': this.language.get('heading_title'),
-			'href': await this.url.link('extension/report/customer_transaction', 'user_token=' + this.session.data['user_token'], true)
-		});
-
-		data['action'] = await this.url.link('extension/report/customer_transaction', 'user_token=' + this.session.data['user_token'], true);
-
-		data['cancel'] = await this.url.link('marketplace/extension', 'user_token=' + this.session.data['user_token'] + '&type=report', true);
-
-		if ((this.request.post['report_customer_transaction_status'])) {
-			data['report_customer_transaction_status'] = this.request.post['report_customer_transaction_status'];
-		} else {
-			data['report_customer_transaction_status'] = this.config.get('report_customer_transaction_status');
-		}
-
-		if ((this.request.post['report_customer_transaction_sort_order'])) {
-			data['report_customer_transaction_sort_order'] = this.request.post['report_customer_transaction_sort_order'];
-		} else {
-			data['report_customer_transaction_sort_order'] = this.config.get('report_customer_transaction_sort_order');
-		}
-
-		data['header'] = await this.load.controller('common/header');
-		data['column_left'] = await this.load.controller('common/column_left');
-		data['footer'] = await this.load.controller('common/footer');
-
-		this.response.setOutput(await this.load.view('extension/report/customer_transaction_form', data));
 	}
 
 	async validate() {
@@ -90,7 +91,7 @@ module.exports = class ControllerExtensionReportCustomerTransaction extends Cont
 		if ((this.request.get['filter_customer'])) {
 			filter_customer = this.request.get['filter_customer'];
 		}
-		page = 1;
+		let page = 1;
 		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
 		}

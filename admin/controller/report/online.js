@@ -1,27 +1,23 @@
 module.exports = class ControllerReportOnline extends Controller {
 	async index() {
-const data = {};
+		const data = {};
 		await this.load.language('report/online');
 
 		this.document.setTitle(this.language.get('heading_title'));
-
+		let filter_ip = '';
 		if ((this.request.get['filter_ip'])) {
 			filter_ip = this.request.get['filter_ip'];
-		} else {
-			filter_ip = '';
 		}
-
+		let filter_customer = '';
 		if ((this.request.get['filter_customer'])) {
 			filter_customer = this.request.get['filter_customer'];
-		} else {
-			filter_customer = '';
 		}
-page = 1;
-if ((this.request.get['page'])) {
+		let page = 1;
+		if ((this.request.get['page'])) {
 			page = Number(this.request.get['page']);
 		}
-		
-		url = '';
+
+		let url = '';
 
 		if ((this.request.get['filter_customer'])) {
 			url += '&filter_customer=' + encodeURIComponent(html_entity_decode(this.request.get['filter_customer']));
@@ -34,54 +30,52 @@ if ((this.request.get['page'])) {
 		if ((this.request.get['page'])) {
 			url += '&page=' + this.request.get['page'];
 		}
-			
+
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/dashboard', 'user_token=' + this.session.data['user_token'], true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('heading_title'),
-			'href' : await this.url.link('report/online', 'user_token=' + this.session.data['user_token'], true)
+			'text': this.language.get('heading_title'),
+			'href': await this.url.link('report/online', 'user_token=' + this.session.data['user_token'], true)
 		});
-		
+
 		data['refresh'] = await this.url.link('report/online', 'user_token=' + this.session.data['user_token'] + url, true);
 
-		this.load.model('report/online');
-		this.load.model('customer/customer',this);		
+		this.load.model('report/online', this);
+		this.load.model('customer/customer', this);
 
 		data['customers'] = [];
 
 		const filter_data = {
-			'filter_ip'       : filter_ip,
-			'filter_customer' : filter_customer,
-			'start'           : (page - 1) * Number(this.config.get('config_limit_admin')),
-			'limit'           : Number(this.config.get('config_limit_admin'))
-		});
+			'filter_ip': filter_ip,
+			'filter_customer': filter_customer,
+			'start': (page - 1) * Number(this.config.get('config_limit_admin')),
+			'limit': Number(this.config.get('config_limit_admin'))
+		};
 
 		const customer_total = await this.model_report_online.getTotalOnline(filter_data);
 
-		results = await this.model_report_online.getOnline(filter_data);
+		const results = await this.model_report_online.getOnline(filter_data);
 
 		for (let result of results) {
-			customer_info = await this.model_customer_customer.getCustomer(result['customer_id']);
-
-			if (customer_info) {
+			const customer_info = await this.model_customer_customer.getCustomer(result['customer_id']);
+			let customer = this.language.get('text_guest');
+			if (customer_info.customer_id) {
 				customer = customer_info['firstname'] + ' ' + customer_info['lastname'];
-			} else {
-				customer = this.language.get('text_guest');
-			}
+			} 
 
 			data['customers'].push({
-				'customer_id' : result['customer_id'],
-				'ip'          : result['ip'],
-				'customer'    : customer,
-				'url'         : result['url'],
-				'referer'     : result['referer'],
-				'date_added'  : date(this.language.get('datetime_format'), strtotime(result['date_added'])),
-				'edit'        : await this.url.link('customer/customer/edit', 'user_token=' + this.session.data['user_token'] + '&customer_id=' + result['customer_id'], true)
+				'customer_id': result['customer_id'],
+				'ip': result['ip'],
+				'customer': customer,
+				'url': result['url'],
+				'referer': result['referer'],
+				'date_added': date(this.language.get('datetime_format'), strtotime(result['date_added'])),
+				'edit': await this.url.link('customer/customer/edit', 'user_token=' + this.session.data['user_token'] + '&customer_id=' + result['customer_id'], true)
 			});
 		}
 
@@ -109,11 +103,11 @@ if ((this.request.get['page'])) {
 
 		data['filter_customer'] = filter_customer;
 		data['filter_ip'] = filter_ip;
-		
+
 		data['header'] = await this.load.controller('common/header');
 		data['column_left'] = await this.load.controller('common/column_left');
 		data['footer'] = await this.load.controller('common/footer');
-		
+
 		this.response.setOutput(await this.load.view('report/online', data));
 	}
 }

@@ -1,8 +1,4 @@
-const realpath = require("locutus/php/filesystem/realpath");
-const explode = require("locutus/php/strings/explode");
 const rtrim = require("locutus/php/strings/rtrim");
-const str_replace = require("locutus/php/strings/str_replace");
-const substr = require("locutus/php/strings/substr");
 
 module.exports = class ControllerCommonSecurity extends Controller {
 	async index() {
@@ -19,7 +15,7 @@ module.exports = class ControllerCommonSecurity extends Controller {
 
 		data['paths'] = [];
 
-		let parts = explode('/', str_replace('\\', '/', rtrim(DIR_SYSTEM, '/')));
+		let parts = rtrim(DIR_SYSTEM, '/').replaceAll('\\', '/').split('/');
 
 		for (let part of parts) {
 			path += part + '/';
@@ -28,8 +24,10 @@ module.exports = class ControllerCommonSecurity extends Controller {
 		}
 
 		data['paths'] = data['paths'].reverse();
-
-		data['document_root'] = str_replace('\\', '/', realpath(__dirname + '..') + '/');
+		const documentRoot = expressPath.resolve(DIR_OPENCART, '..'); // Adjust __dirname to your context 
+		let document_root = documentRoot.replace(/\\/g, '/');
+		if (!document_root.endsWith('/')) { document_root += '/'; }
+		data['document_root'] = document_root;
 
 		return await this.load.view('common/security', data);
 	}
@@ -41,24 +39,20 @@ module.exports = class ControllerCommonSecurity extends Controller {
 		let path = '';
 		if (this.request.post['path']) {
 			path = this.request.post['path'];
-		} else {
-			path = '';
 		}
 		let directory = '';
 		if (this.request.post['directory']) {
 			directory = this.request.post['directory'];
-		} else {
-			directory = '';
 		}
 
 		if (!await this.user.hasPermission('modify', 'common/security')) {
 			json['error'] = this.language.get('error_permission');
 		} else {
 			if (DIR_STORAGE != DIR_SYSTEM + 'storage/') {
-				data['error'] = this.language.get('error_path');
+				json['error'] = this.language.get('error_path');
 			}
 
-			if (!path || str_replace('\\', '/', realpath(path)) + '/' != str_replace('\\', '/', substr(DIR_SYSTEM, 0, path.length))) {
+			if (!path || fs.realpathSync(path).replaceAll('\\', '/') + '/' != DIR_SYSTEM.substr(0, path.length).replaceAll('\\', '/')) {
 				json['error'] = this.language.get('error_path');
 			}
 
@@ -69,12 +63,11 @@ module.exports = class ControllerCommonSecurity extends Controller {
 			if (is_dir(path + directory)) {
 				json['error'] = this.language.get('error_exists');
 			}
-
-			if (!fs.existsSync(realpath(DIR_APPLICATION + '/../') + '/config.js') || !fs.existsSync(DIR_APPLICATION + 'config.js')) {
+			if (!fs.existsSync(fs.realpathSync(DIR_APPLICATION + '/../') + '/config.json') || !fs.existsSync(DIR_APPLICATION + 'config.json')) {
 				json['error'] = this.language.get('error_writable');
 			}
 
-			if (!json) {
+			if (!json.error) {
 				let files = [];
 
 				// Make path into an array
@@ -84,14 +77,14 @@ module.exports = class ControllerCommonSecurity extends Controller {
 				while (source.length != 0) {
 					let next = source.shift();
 
-					for (require('glob').sync(next) of file) {
+					for (let file of require('glob').sync(next)) {
 						// If directory add to path array
 						if (is_dir(file)) {
 							source.push(file + '/*');
 						}
 
 						// Add the file to the files to be deleted array
-						files.push(file);
+						files.push((DIR_OPENCART + file).replaceAll('\\', '/'));
 					}
 				}
 
@@ -102,8 +95,7 @@ module.exports = class ControllerCommonSecurity extends Controller {
 
 				// Copy the 
 				for (let file of files) {
-					let destination = path + directory + substr(file, (DIR_SYSTEM + 'storage/').length);
-
+					let destination = path + '/' + directory + '/' + file.substr((DIR_SYSTEM + 'storage/').length);
 					if (is_dir(file) && !is_dir(destination)) {
 						fs.mkdirSync(destination);
 					}
@@ -116,7 +108,7 @@ module.exports = class ControllerCommonSecurity extends Controller {
 				// Modify the config files
 				files = [
 					DIR_APPLICATION + 'config.json',
-					realpath(DIR_APPLICATION + '/../') + '/config.json'
+					fs.realpathSync(DIR_APPLICATION + '/../') + '/config.json'
 				];
 
 				for (let file of files) {
