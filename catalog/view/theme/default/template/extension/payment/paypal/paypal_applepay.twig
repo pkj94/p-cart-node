@@ -28,7 +28,7 @@ $(document).on('click', '.paypal-applepay-button-confirm', function(event) {
 	
 	$('body').append('<div id="paypal_modal" class="modal fade"></div>');
 	
-	$('#paypal_modal').load('index.php?route=extension/payment/paypal_applepay/modal #paypal_modal >', function() {		
+	$('#paypal_modal').load('?route=extension/payment/paypal_applepay/modal #paypal_modal >', function() {		
 		$('.paypal-applepay-button-confirm').button('reset');
 		
 		$('#paypal_modal').modal('show');

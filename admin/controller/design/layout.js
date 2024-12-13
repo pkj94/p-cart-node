@@ -42,9 +42,8 @@ module.exports = class ControllerDesignLayout extends Controller {
 			}
 
 			this.response.setRedirect(await this.url.link('design/layout', 'user_token=' + this.session.data['user_token'] + url, true));
-		}
-
-		await this.getForm();
+		} else
+			await this.getForm();
 	}
 
 	async edit() {
@@ -75,9 +74,8 @@ module.exports = class ControllerDesignLayout extends Controller {
 			}
 
 			this.response.setRedirect(await this.url.link('design/layout', 'user_token=' + this.session.data['user_token'] + url, true));
-		}
-
-		await this.getForm();
+		} else
+			await this.getForm();
 	}
 
 	async delete() {

@@ -1,13 +1,9 @@
-module.exports = class Logout extends Controller {
-	/**
-	 * @return void
-	 */
+module.exports = class ControllerAccountLogout extends Controller {
 	async index() {
 		const data = {};
 		if (await this.customer.isLogged()) {
 			await this.customer.logout();
 
-			delete this.session.data['customer'];
 			delete this.session.data['shipping_address'];
 			delete this.session.data['shipping_method'];
 			delete this.session.data['shipping_methods'];
@@ -20,9 +16,8 @@ module.exports = class Logout extends Controller {
 			delete this.session.data['reward'];
 			delete this.session.data['voucher'];
 			delete this.session.data['vouchers'];
-			delete this.session.data['customer_token'];
-
-			this.response.setRedirect(await this.url.link('account/logout', 'language=' + this.config.get('config_language')));
+			await this.session.save(this.session.data);
+			this.response.setRedirect(await this.url.link('account/logout', '', true));
 		}
 
 		await this.load.language('account/logout');
@@ -33,20 +28,20 @@ module.exports = class Logout extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': await this.url.link('common/home', 'language=' + this.config.get('config_language'))
+			'href': await this.url.link('common/home')
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_account'),
-			'href': await this.url.link('account/account', 'language=' + this.config.get('config_language'))
+			'href': await this.url.link('account/account', '', true)
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_logout'),
-			'href': await this.url.link('account/logout', 'language=' + this.config.get('config_language'))
+			'href': await this.url.link('account/logout', '', true)
 		});
 
-		data['continue'] = await this.url.link('common/home', 'language=' + this.config.get('config_language'));
+		data['continue'] = await this.url.link('common/home');
 
 		data['column_left'] = await this.load.controller('common/column_left');
 		data['column_right'] = await this.load.controller('common/column_right');

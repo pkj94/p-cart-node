@@ -50,7 +50,7 @@ var PayPalAPI = (function () {
 				
 		$.ajax({
 			method: 'post',
-			url: 'index.php?route=extension/payment/paypal/getData',
+			url: '?route=extension/payment/paypal/getData',
 			data: paypal_data,
 			dataType: 'json',
 			async: false,
@@ -207,7 +207,7 @@ var PayPalAPI = (function () {
 				
 						$.ajax({
 							method: 'post',
-							url: 'index.php?route=extension/payment/paypal/createOrder',
+							url: '?route=extension/payment/paypal/createOrder',
 							data: {'page_code': paypal_data['page_code'], 'payment_type': 'button', 'product': product_data},
 							dataType: 'json',
 							async: false,
@@ -226,7 +226,7 @@ var PayPalAPI = (function () {
 					onApprove: function(data) {				
 						$.ajax({
 							method: 'post',
-							url: 'index.php?route=extension/payment/paypal/approveOrder',
+							url: '?route=extension/payment/paypal/approveOrder',
 							data: {'page_code': paypal_data['page_code'], 'payment_type': 'button', 'paypal_order_id': data.orderID},
 							dataType: 'json',
 							async: false,
@@ -309,7 +309,7 @@ var PayPalAPI = (function () {
 									
 				$.ajax({
 					method: 'post',
-					url: 'index.php?route=extension/payment/paypal/createOrder',
+					url: '?route=extension/payment/paypal/createOrder',
 					data: {'page_code': paypal_data['page_code'], 'payment_type': 'card', 'index': card_token_index},
 					dataType: 'json',
 					beforeSend: function() {
@@ -339,7 +339,7 @@ var PayPalAPI = (function () {
 								
 				$.ajax({
 					method: 'post',
-					url: 'index.php?route=extension/payment/paypal/deleteCustomerToken',
+					url: '?route=extension/payment/paypal/deleteCustomerToken',
 					data: {'index': card_token_index},
 					dataType: 'json',
 					beforeSend: function() {
@@ -390,7 +390,7 @@ var PayPalAPI = (function () {
 					
 						$.ajax({
 							method: 'post',
-							url: 'index.php?route=extension/payment/paypal/createOrder',
+							url: '?route=extension/payment/paypal/createOrder',
 							data: {'page_code': paypal_data['page_code'], 'payment_type': 'card', 'card_save': card_save},
 							dataType: 'json',
 							async: false,
@@ -413,7 +413,7 @@ var PayPalAPI = (function () {
 								
 						$.ajax({
 							method: 'post',
-							url: 'index.php?route=extension/payment/paypal/approveOrder',
+							url: '?route=extension/payment/paypal/approveOrder',
 							data: {'page_code': paypal_data['page_code'], 'payment_type': 'card', 'card_save': card_save, 'card_type': card_type, 'card_nice_type': card_nice_type, 'paypal_order_id': data.orderID},
 							dataType: 'json',
 							async: false,
@@ -576,7 +576,7 @@ var PayPalAPI = (function () {
 							
 							$.ajax({
 								method: 'post',
-								url: 'index.php?route=extension/payment/paypal/createOrder',
+								url: '?route=extension/payment/paypal/createOrder',
 								data: {'page_code': paypal_data['page_code'], 'payment_type': 'googlepay_button', 'product': product_data},
 								dataType: 'json',
 								async: false,
@@ -601,7 +601,7 @@ var PayPalAPI = (function () {
 								PayPalSDK.Googlepay().initiatePayerAction({orderId: paypal_order_id}).then(async () => {
 									$.ajax({
 										method: 'post',
-										url: 'index.php?route=extension/payment/paypal/approveOrder',
+										url: '?route=extension/payment/paypal/approveOrder',
 										data: {'page_code': paypal_data['page_code'], 'payment_type': 'googlepay_button', 'paypal_order_id': paypal_order_id},
 										dataType: 'json',
 										async: false,
@@ -624,7 +624,7 @@ var PayPalAPI = (function () {
 								
 								$.ajax({
 									method: 'post',
-									url: 'index.php?route=extension/payment/paypal/approveOrder',
+									url: '?route=extension/payment/paypal/approveOrder',
 									data: {'page_code': paypal_data['page_code'], 'payment_type': 'googlepay_button', 'paypal_order_id': paypal_order_id},
 									dataType: 'json',
 									async: false,
@@ -857,7 +857,7 @@ var PayPalAPI = (function () {
 						
 					$.ajax({
 						method: 'post',
-						url: 'index.php?route=extension/payment/paypal/createOrder',
+						url: '?route=extension/payment/paypal/createOrder',
 						data: {'page_code': paypal_data['page_code'], 'payment_type': 'applepay_button', 'product': product_data},
 						dataType: 'json',
 						async: false,
@@ -880,7 +880,7 @@ var PayPalAPI = (function () {
 				
 					$.ajax({
 						method: 'post',
-						url: 'index.php?route=extension/payment/paypal/approveOrder',
+						url: '?route=extension/payment/paypal/approveOrder',
 						data: {'page_code': paypal_data['page_code'], 'payment_type': 'applepay_button', 'paypal_order_id': paypal_order_id},
 						dataType: 'json',
 						async: false,

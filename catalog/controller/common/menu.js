@@ -1,7 +1,4 @@
-module.exports = class Menu extends Controller {
-	/**
-	 * @return string
-	 */
+module.exports = class ControllerCommonMenu extends Controller {
 	async index() {
 		const data = {};
 		await this.load.language('common/menu');
@@ -18,19 +15,19 @@ module.exports = class Menu extends Controller {
 		for (let category of categories) {
 			if (category['top']) {
 				// Level 2
-				let children_data = [];
+				const children_data = [];
 
 				const children = await this.model_catalog_category.getCategories(category['category_id']);
 
 				for (let child of children) {
-					let filter_data = {
+					const filter_data = {
 						'filter_category_id': child['category_id'],
 						'filter_sub_category': true
 					};
 
 					children_data.push({
 						'name': child['name'] + (this.config.get('config_product_count') ? ' (' + await this.model_catalog_product.getTotalProducts(filter_data) + ')' : ''),
-						'href': await this.url.link('product/category', 'language=' + this.config.get('config_language') + '&path=' + category['category_id'] + '_' + child['category_id'])
+						'href': await this.url.link('product/category', 'path=' + category['category_id'] + '_' + child['category_id'])
 					});
 				}
 
@@ -39,7 +36,7 @@ module.exports = class Menu extends Controller {
 					'name': category['name'],
 					'children': children_data,
 					'column': category['column'] ? category['column'] : 1,
-					'href': await this.url.link('product/category', 'language=' + this.config.get('config_language') + '&path=' + category['category_id'])
+					'href': await this.url.link('product/category', 'path=' + category['category_id'])
 				});
 			}
 		}

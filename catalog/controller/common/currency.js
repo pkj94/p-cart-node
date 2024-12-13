@@ -1,29 +1,18 @@
-module.exports = class Currency extends Controller {
-	/**
-	 * @return string
-	 */
+module.exports = class ControllerCommonCurrency extends Controller {
 	async index() {
 		const data = {};
 		await this.load.language('common/currency');
 
-		data['action'] = await this.url.link('common/currency.save', 'language=' + this.config.get('config_language'));
+		data['action'] = await this.url.link('common/currency/currency', '', this.request.server['HTTPS']);
 
 		data['code'] = this.session.data['currency'];
 
-		let url_data = this.request.get;
-		let route = this.config.get('action_default');
-		if ((url_data['route'])) {
-			route = url_data['route'];
-		}
-
-		delete url_data['route'];
-		delete url_data['_route_'];
+		this.load.model('localisation/currency', this);
 
 		data['currencies'] = [];
 
-		this.load.model('localisation/currency', this);
-
 		const results = await this.model_localisation_currency.getCurrencies();
+
 		for (let [code, result] of Object.entries(results)) {
 			if (result['status']) {
 				data['currencies'].push({
@@ -35,40 +24,41 @@ module.exports = class Currency extends Controller {
 			}
 		}
 
-		let url = '';
+		if (!(this.request.get['route'])) {
+			data['redirect'] = await this.url.link('common/home');
+		} else {
+			const url_data = this.request.get;
 
-		if (url_data) {
-			url += '&' + decodeURIComponent(http_build_query(url_data, '', '&'));
+			delete url_data['_route_'];
+
+			let route = url_data['route'];
+
+			delete url_data['route'];
+
+			let url = '';
+
+			if (url_data) {
+				url = '&' + decodeURIComponent(http_build_query(url_data, '', '&'));
+			}
+
+			data['redirect'] = await this.url.link(route, url, this.request.server['HTTPS']);
 		}
 
-		data['redirect'] = await this.url.link(route, url);
 		return await this.load.view('common/currency', data);
 	}
 
-	/**
-	 * @return void
-	 */
-	async save() {
+	async currency() {
 		if ((this.request.post['code'])) {
 			this.session.data['currency'] = this.request.post['code'];
 
 			delete this.session.data['shipping_method'];
 			delete this.session.data['shipping_methods'];
 		}
-		let expire = new Date();
-		expire.setTime(expire.getTime() + (30 * 24 * 60 * 60 * 1000));
-		let option = {
-			'expires': expire,
-			'path': '/',
-			'SameSite': 'Lax'
-		};
 
-		this.response.response.cookie('currency', this.session.data['currency'], option);
-		await this.session.save(this.session.data);
-		if ((this.request.post['redirect']) && this.request.post['redirect'].substring(0, this.config.get('config_url').length) == this.config.get('config_url')) {
-			this.response.setRedirect(this.request.post['redirect'].replaceAll('&amp;', '&'));
+		if ((this.request.post['redirect']) && (this.request.post['redirect'].indexOf(this.config.get('config_url')) === 0 || this.request.post['redirect'].indexOf(this.config.get('config_ssl')) === 0)) {
+			this.response.setRedirect(this.request.post['redirect']);
 		} else {
-			this.response.setRedirect(await this.url.link(this.config.get('action_default')));
+			this.response.setRedirect(await this.url.link('common/home'));
 		}
 	}
 }

@@ -16,6 +16,7 @@ module.exports = class MySQLiDBLibrary {
             await this.connect();
         });
         this.insertId = 0;
+        this.affectedRows = 0;
     }
     connect() {
         return new Promise((resolve, reject) => {
@@ -37,7 +38,7 @@ module.exports = class MySQLiDBLibrary {
             try {
                 // console.log(sql)
                 this.connection.query(sql, (error, results) => {
-                    // console.log(sql,error, results)
+                    // console.log(sql, error, results)
                     if (error) {
                         reject(new Error(`Error: ${error.message}\nSQL: ${sql}`));
                     } else {
@@ -51,7 +52,9 @@ module.exports = class MySQLiDBLibrary {
                         } else {
                             if (results.insertId)
                                 this.insertId = results.insertId;
-                            resolve(results.insertId || true);
+                            if (results.affectedRows)
+                                this.affectedRows = results.affectedRows;
+                            resolve(results.affectedRows || true);
                         }
                     }
                 });
@@ -71,7 +74,7 @@ module.exports = class MySQLiDBLibrary {
     }
 
     countAffected() {
-        return this.connection.affectedRows;
+        return this.affectedRows;
     }
 
     getLastId() {

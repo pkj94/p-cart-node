@@ -2120,4 +2120,10 @@ module.exports = class ControllerExtensionAdvertiseGoogle extends Controller {
                 this.setting.set(key, value);
             }
     }
+    async loadLibrary(store_id) {
+        const Googleshopping = new (require(DIR_SYSTEM + 'library/googleshopping/googleshopping'))(this.registry, this.store_id);
+        await Googleshopping.init();
+        this.registry.set('googleshopping', Googleshopping);
+        this.googleshopping = Googleshopping;
+    }
 }

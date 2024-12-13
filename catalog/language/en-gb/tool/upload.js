@@ -4,6 +4,6 @@ module.exports = {
 
     // Error
     error_filename: 'Filename must be between 3 and 64 characters!',
-    error_file_type: 'Invalid file type!',
+    error_filetype: 'Invalid file type!',
     error_upload: 'Upload required!',
 }

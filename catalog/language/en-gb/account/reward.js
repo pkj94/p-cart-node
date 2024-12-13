@@ -11,5 +11,5 @@ module.exports = {
     text_account: 'Account',
     text_reward: 'Reward Points',
     text_total: 'Your total number of reward points is:',
-    text_no_results: 'You do not have any reward points!',
+    text_empty: 'You do not have any reward points!',
 }

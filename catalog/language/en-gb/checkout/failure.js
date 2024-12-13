@@ -8,7 +8,7 @@ module.exports = {
   text_failure: 'Failed Payment',
   text_message: `<p>There was a problem processing your payment and the order did not complete.</p>
 
-    < p > Possible reasons are:</p>
+<p>Possible reasons are:</p>
 <ul>
   <li>Insufficient funds</li>
   <li>Verification failed</li>

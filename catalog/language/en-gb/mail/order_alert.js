@@ -5,7 +5,7 @@ module.exports = {
     text_order_id: 'Order ID:',
     text_date_added: 'Date Added:',
     text_order_status: 'Order Status:',
-    text_product: 'Products:',
-    text_total: 'Totals:',
+    text_product: 'Products',
+    text_total: 'Totals',
     text_comment: 'The comments for your order are:',
 }

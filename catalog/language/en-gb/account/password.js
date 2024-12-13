@@ -12,7 +12,6 @@ module.exports = {
     entry_confirm: 'Password Confirm',
 
     // Error
-    error_token: 'Warning: Password token invalid!',
     error_password: 'Password must be between 4 and 20 characters!',
     error_confirm: 'Password confirmation does not match password!',
 }

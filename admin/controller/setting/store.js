@@ -31,9 +31,8 @@ module.exports = class ControllerSettingStore extends Controller {
 			await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('setting/store', 'user_token=' + this.session.data['user_token'], true));
-		}
-
-		await this.getForm();
+		} else
+			await this.getForm();
 	}
 
 	async edit() {
@@ -54,9 +53,8 @@ module.exports = class ControllerSettingStore extends Controller {
 			await this.session.save(this.session.data);
 
 			this.response.setRedirect(await this.url.link('setting/store', 'user_token=' + this.session.data['user_token'] + '&store_id=' + this.request.get['store_id'], true));
-		}
-
-		await this.getForm();
+		} else
+			await this.getForm();
 	}
 
 	async delete() {

@@ -1,25 +1,27 @@
-
-const expressPath = require('path');
 const sass = require('sass');
-module.exports = class Sass extends Controller {
-	/**
-	 * @return void
-	 * @throws \ScssPhp\ScssPhp\Exception\SassException
-	 */
+
+module.exports = class ControllerStartupSass extends Controller {
 	async index() {
-		let files = require('glob').sync(DIR_APPLICATION + 'view/stylesheet/*.scss');
+const data = {};
+		const files = require('glob').sync(DIR_APPLICATION + 'view/theme/' + this.config.get('config_theme') + '/stylesheet/*.scss');
+
 		if (files.length) {
 			for (let file of files) {
 				// Get the filename
-				let filename = expressPath.basename(file, '.scss');
+				const filename = expressPath.basename(file, '.scss');
 
-				let stylesheet = DIR_APPLICATION + 'view/stylesheet/' + filename + '.css';
-				if (!fs.existsSync(stylesheet) || !this.config.get('developer_sass')) {
-					const result = await sass.compileAsync(`${file}`);
-					fs.writeFileSync(stylesheet, result.css);
+				const stylesheet = DIR_APPLICATION + 'view/theme/' + this.config.get('config_theme') + '/stylesheet/' + filename + '.css';
+
+				if (!is_file(stylesheet) || !Number(this.config.get('developer_sass'))) {
+					try {
+						const result = sass.compile(file, { verbose: true });
+
+						fs.writeFileSync(stylesheet, result.css, { flag: 'w' });
+					} catch (error) {
+						console.error('Error compiling SCSS:', error);
+					}
 				}
 			}
 		}
-		return true;
 	}
 }

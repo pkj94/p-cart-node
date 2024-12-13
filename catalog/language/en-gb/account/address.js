@@ -10,7 +10,8 @@ module.exports = {
     text_add: 'Your address has been successfully added',
     text_edit: 'Your address has been successfully updated',
     text_delete: 'Your address has been successfully deleted',
-    text_no_results: 'You have no addresses in your account.',
+    text_empty: 'You have no addresses in your account.',
+    text_confirm: 'Are you sure?',
 
     // Entry
     entry_firstname: 'First Name',
@@ -25,10 +26,8 @@ module.exports = {
     entry_default: 'Default Address',
 
     // Error
-    error_token: 'Warning: Address token invalid!',
-    error_subscription: 'Warning: Address is still being used by %s active subscriptions!',
-    error_default: 'Warning: Default address required!',
     error_delete: 'Warning: You must have at least one address!',
+    error_default: 'Warning: You can not delete your default address!',
     error_firstname: 'First Name must be between 1 and 32 characters!',
     error_lastname: 'Last Name must be between 1 and 32 characters!',
     error_address_1: 'Address must be between 3 and 128 characters!',
@@ -37,5 +36,4 @@ module.exports = {
     error_country: 'Please select a country!',
     error_zone: 'Please select a region / state!',
     error_custom_field: '%s required!',
-    error_regex: '%s is not a valid input!',
 }

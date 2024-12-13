@@ -1,15 +1,11 @@
-module.exports = class Maintenance extends Controller {
-	/**
-	 * @return object|Action|null
-	 */
+module.exports = class ControllerStartupMaintenance extends Controller {
 	async index() {
+const data = {};
 		if (Number(this.config.get('config_maintenance'))) {
 			// Route
 			let route = this.config.get('action_default');
-			if ((this.request.get['route'])) {
+			if ((this.request.get['route']) && this.request.get['route'] != 'startup/router') {
 				route = this.request.get['route'];
-			} else {
-				route = this.config.get('action_default');
 			}
 
 			let ignore = [
@@ -17,14 +13,12 @@ module.exports = class Maintenance extends Controller {
 				'common/currency/currency'
 			];
 
-			// Show site if logged in as admin
-			const user = new (require(DIR_SYSTEM + 'library/cart/user'))(this.registry);
-
-			if (route.substring(0, 3) != 'api' && !ignore.includes(route) && !await user.isLogged()) {
-				return new global['\Opencart\System\Engine\Action']('common/maintenance');
+			// Show site if logged in of admin
+			this.user = new CartUser(this.registry);
+			await await this.user.init();
+			if ((route.substr(0, 17) != 'extension/payment' && route.substr(0, 3) != 'api') && !ignore.includes(route) && !await this.user.isLogged()) {
+				return new Action('common/maintenance');
 			}
 		}
-
-		return null;
 	}
 }

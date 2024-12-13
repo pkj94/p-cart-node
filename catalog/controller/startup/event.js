@@ -1,25 +1,13 @@
-module.exports = class Event extends Controller {
-	/**
-	 * @return void
-	 */
+module.exports = class ControllerStartupEvent extends Controller {
 	async index() {
+const data = {};
 		// Add events from the DB
 		this.load.model('setting/event', this);
 
 		const results = await this.model_setting_event.getEvents();
 
 		for (let result of results) {
-			const parts = result.trigger.split('/');
-
-			if (parts[0] == 'catalog') {
-				parts.shift();
-				this.event.register(parts.join('/'), new global['\Opencart\System\Engine\Action'](result.action), result.sort_order);
-			}
-
-			if (parts[0] == 'system') {
-				this.event.register(result.trigger, new global['\Opencart\System\Engine\Action'](result.action), result.sort_order);
-			}
+			this.event.register(result['trigger'].substr(result['trigger'].indexOf('/') + 1), new Action(result['action']), result['sort_order']);
 		}
-		return true;
 	}
 }

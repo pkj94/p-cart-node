@@ -40,9 +40,9 @@ module.exports = class Loader {
             const className = `Model${route.replace(/[^a-zA-Z0-9]/g, '')}`;
             if (fs.existsSync(file)) {
                 // console.log('model file', file);
-                const ModelClass = 
-        require(modification(file))
-      ;
+                const ModelClass =
+                    require(modification(file))
+                    ;
                 // console.log('model file', ModelClass);
                 const proxy = new ProxyLocal();
                 // Mimicking the dynamic method assignment
@@ -62,19 +62,23 @@ module.exports = class Loader {
     async view(route, data = {}) {
         route = this.sanitizeRoute(route);
         const trigger = route;
-
         let output;
         let code = '';
+        // if (route.indexOf('home') != -1)
+        //     console.log('1-----', route)
 
         let result = await this.registry.get('event').trigger(`view/${trigger}/before`, [route, data, code]);
+
         if (result && !(result instanceof Error)) {
             output = result;
         } else {
+            // if (route.indexOf('home') != -1)
+            //     console.log('2-----', route)
+
             const template = new Template(this.registry.get('config').get('template_engine'));
             for (const key in data) {
                 template.set(key, data[key]);
             }
-
             output = await template.render(this.registry.get('config').get('template_directory') + route, code);
         }
 
@@ -93,8 +97,8 @@ module.exports = class Loader {
         // console.log('sq----', expressPath.basename(route), file, fs.existsSync(file))
 
         const LibraryClass = new (
-        require(modification(file))
-      )(this.registry);
+            require(modification(file))
+        )(this.registry);
 
         this.registry.set(expressPath.basename(route), LibraryClass);
         $this[expressPath.basename(route)] = LibraryClass;
@@ -104,9 +108,9 @@ module.exports = class Loader {
         const file = expressPath.join(__dirname, 'helper', `${route}.js`); // Adjust the path as needed
 
         if (require.resolve(file)) {
-            
-        require(modification(file))
-      ;
+
+            require(modification(file))
+                ;
         } else {
             throw new Error(`Error: Could not load helper ${route}!`);
         }

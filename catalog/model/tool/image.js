@@ -1,21 +1,9 @@
-
-const sharp = require('sharp');
+const sharp = require("sharp");
 const ico = require("sharp-ico");
-const expressPath = require('path');
-module.exports = class ImageTool extends Model {
-	constructor(registry) {
-		super(registry)
-	}
-	/**
-	 * @param filename
-	 * @param    width
-	 * @param    height
-	 *
-	 * @return string
-	 * @throws \Exception
-	 */
+
+module.exports = class ModelToolImage extends Model {
 	async resize(filename, width_new, height_new) {
-		if (!fs.existsSync(DIR_IMAGE + filename) || fs.realpathSync(DIR_IMAGE + filename).substring(0, DIR_IMAGE.length).replaceAll('\\', '/') != DIR_IMAGE) {
+		if (!fs.existsSync(DIR_IMAGE + filename) || fs.realpathSync(DIR_IMAGE + filename).substr(0, DIR_IMAGE.length).replaceAll('\\', '/') != DIR_IMAGE) {
 			return '';
 		}
 
@@ -26,7 +14,8 @@ module.exports = class ImageTool extends Model {
 
 		if (!fs.existsSync(DIR_IMAGE + image_new) || (fs.statSync(DIR_IMAGE + image_old).mtime > fs.statSync(DIR_IMAGE + image_new).mtime)) {
 			let width = 0, height = 0, image_type = '';
-			if (image_old.indexOf('.ico') >= 0) {
+			// console.log(image_old)
+			if (image_old.split('.').pop() == 'ico') {
 				const image = await ico.sharpsFromIco(DIR_IMAGE + image_old).forEach(async (icon, index) => {
 					const metadata = await icon.metadata();
 					width = metadata.width;
@@ -61,7 +50,7 @@ module.exports = class ImageTool extends Model {
 			}
 
 			if (width != width_new || height != height_new) {
-				let image = new global['\Opencart\System\Library\Image'](DIR_IMAGE + image_old);
+				let image = new Image(DIR_IMAGE + image_old);
 				await image.load();
 				await image.resize(width_new, height_new);
 				await image.save(DIR_IMAGE + image_new);
@@ -70,6 +59,10 @@ module.exports = class ImageTool extends Model {
 			}
 		}
 
-		return this.config.get('config_url')  + 'image/' + image_new;
+		if (this.request.server['HTTPS']) {
+			return this.config.get('config_ssl') + 'image/' + image_new;
+		} else {
+			return this.config.get('config_url') + 'image/' + image_new;
+		}
 	}
 }

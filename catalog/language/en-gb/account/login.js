@@ -17,7 +17,6 @@ module.exports = {
     entry_password: 'Password',
 
     // Error
-    error_token: 'Warning: Invalid token session. Please login again!',
     error_login: 'Warning: No match for E-Mail Address and/or Password.',
     error_attempts: 'Warning: Your account has exceeded allowed number of login attempts. Please try again in 1 hour.',
     error_approved: 'Warning: Your account requires approval before you can login.',

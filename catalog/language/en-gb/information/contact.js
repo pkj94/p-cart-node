@@ -3,11 +3,12 @@ module.exports = {
     heading_title: 'Contact Us',
 
     // Text
-    text_location: 'Our Locations',
+    text_location: 'Our Location',
     text_store: 'Our Stores',
     text_contact: 'Contact Form',
     text_address: 'Address',
     text_telephone: 'Telephone',
+    text_fax: 'Fax',
     text_open: 'Opening Times',
     text_comment: 'Comments',
     text_message: '<p>Your enquiry has been successfully sent to the store owner!</p>',

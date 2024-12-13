@@ -40,7 +40,7 @@ module.exports = class Action {
       )(registry);
 
             if (typeof controller[this.method] === 'function') {
-                return controller[this.method](...args);
+                return await controller[this.method](...args);
             } else {
                 console.log(`Error: Could not call ${this.route}/${this.method}!`)
                 // throw new Error(`Error: Could not call ${this.route}/${this.method}!`);

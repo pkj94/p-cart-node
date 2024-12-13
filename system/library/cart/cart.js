@@ -13,12 +13,12 @@ module.exports = class Cart {
         // Remove all the expired carts with no customer ID
         await this.db.query("DELETE FROM " + DB_PREFIX + "cart WHERE (api_id > '0' OR customer_id = '0') AND date_added < DATE_SUB(NOW(), INTERVAL 1 HOUR)");
 
-        if (this.customer.getId()) {
+        if (await this.customer.getId()) {
             // We want to change the session ID on all the old items in the customers cart
             await this.db.query("UPDATE " + DB_PREFIX + "cart SET session_id = '" + this.db.escape(this.session.getId()) + "' WHERE api_id = '0' AND customer_id = '" + await this.customer.getId() + "'");
 
             // Once the customer is logged in we want to update the customers cart
-            cart_query = await this.db.query("SELECT * FROM " + DB_PREFIX + "cart WHERE api_id = '0' AND customer_id = '0' AND session_id = '" + this.db.escape(this.session.getId()) + "'");
+            const cart_query = await this.db.query("SELECT * FROM " + DB_PREFIX + "cart WHERE api_id = '0' AND customer_id = '0' AND session_id = '" + this.db.escape(this.session.getId()) + "'");
 
             for (let cart of cart_query.rows) {
                 await this.db.query("DELETE FROM " + DB_PREFIX + "cart WHERE cart_id = '" + cart['cart_id'] + "'");
@@ -29,6 +29,7 @@ module.exports = class Cart {
         }
     }
     async getProducts() {
+        await this.init()
         let product_data = [];
 
         const cart_query = await this.db.query("SELECT * FROM " + DB_PREFIX + "cart WHERE api_id = '" + ((this.session.data['api_id']) ? this.session.data['api_id'] : 0) + "' AND customer_id = '" + await this.customer.getId() + "' AND session_id = '" + this.db.escape(this.session.getId()) + "'");
@@ -209,7 +210,7 @@ module.exports = class Cart {
                 }
 
                 // Stock
-                let stock = false;
+                let stock = true;
                 if (!product_query.row['quantity'] || (product_query.row['quantity'] < cart['quantity'])) {
                     stock = false;
                 }
@@ -268,8 +269,8 @@ module.exports = class Cart {
         return product_data;
     }
 
-    async add(product_id, quantity = 1, option = array(), recurring_id = 0) {
-        query = await this.db.query("SELECT COUNT(*) AS total FROM " + DB_PREFIX + "cart WHERE api_id = '" + ((this.session.data['api_id']) ? this.session.data['api_id'] : 0) + "' AND customer_id = '" + await this.customer.getId() + "' AND session_id = '" + this.db.escape(this.session.getId()) + "' AND product_id = '" + product_id + "' AND recurring_id = '" + recurring_id + "' AND `option` = '" + this.db.escape(JSON.stringify(option)) + "'");
+    async add(product_id, quantity = 1, option = {}, recurring_id = 0) {
+        const query = await this.db.query("SELECT COUNT(*) AS total FROM " + DB_PREFIX + "cart WHERE api_id = '" + ((this.session.data['api_id']) ? this.session.data['api_id'] : 0) + "' AND customer_id = '" + await this.customer.getId() + "' AND session_id = '" + this.db.escape(this.session.getId()) + "' AND product_id = '" + product_id + "' AND recurring_id = '" + recurring_id + "' AND `option` = '" + this.db.escape(JSON.stringify(option)) + "'");
 
         if (!query.row['total']) {
             await this.db.query("INSERT INTO " + DB_PREFIX + "cart SET api_id = '" + ((this.session.data['api_id']) ? this.session.data['api_id'] : 0) + "', customer_id = '" + await this.customer.getId() + "', session_id = '" + this.db.escape(this.session.getId()) + "', product_id = '" + product_id + "', recurring_id = '" + recurring_id + "', `option` = '" + this.db.escape(JSON.stringify(option)) + "', quantity = '" + quantity + "', date_added = NOW()");
@@ -279,6 +280,7 @@ module.exports = class Cart {
     }
 
     async update(cart_id, quantity) {
+        console.log("UPDATE " + DB_PREFIX + "cart SET quantity = '" + quantity + "' WHERE cart_id = '" + cart_id + "' AND api_id = '" + (this.session.data['api_id'] ? this.session.data['api_id'] : 0) + "' AND customer_id = '" + await this.customer.getId() + "' AND session_id = '" + this.db.escape(this.session.getId()) + "'");
         await this.db.query("UPDATE " + DB_PREFIX + "cart SET quantity = '" + quantity + "' WHERE cart_id = '" + cart_id + "' AND api_id = '" + (this.session.data['api_id'] ? this.session.data['api_id'] : 0) + "' AND customer_id = '" + await this.customer.getId() + "' AND session_id = '" + this.db.escape(this.session.getId()) + "'");
     }
 
@@ -329,7 +331,7 @@ module.exports = class Cart {
 
         for (let product of await this.getProducts()) {
             if (product['tax_class_id']) {
-                tax_rates = await this.tax.getRates(product['price'], product['tax_class_id']);
+                const tax_rates = await this.tax.getRates(product['price'], product['tax_class_id']);
 
                 for (let tax_rate of tax_rates) {
                     if (!tax_data[tax_rate['tax_rate_id']]) {

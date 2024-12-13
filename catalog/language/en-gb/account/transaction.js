@@ -11,5 +11,5 @@ module.exports = {
     text_account: 'Account',
     text_transaction: 'Your Transactions',
     text_total: 'Your current balance is:',
-    text_no_results: 'You do not have any transactions!',
+    text_empty: 'You do not have any transactions!',
 }

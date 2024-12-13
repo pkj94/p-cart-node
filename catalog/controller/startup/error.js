@@ -1,69 +1,43 @@
-module.exports = class Error extends Controller {
-	constructor(registry) {
-		super(registry)
-	}
-
+module.exports = class ControllerStartupError extends Controller {
 	async index() {
-		this.registry.set('log', new global['\Opencart\System\Library\Log'](this.config.get('config_error_filename') || this.config.get('error_filename')));
+		this.registry.set('log', new Log(this.config.get('config_error_filename') ? this.config.get('config_error_filename') : this.config.get('error_filename')));
 
-		process.on('uncaughtException', this.exception.bind(this));
-		process.on('unhandledRejection', this.exception.bind(this));
-		process.on('warning', (warning) => {
-			this.error('Warning', warning.message, warning.fileName, warning.lineNumber);
-		});
-		return true;
+		process.on('uncaughtException', this.handler);
+		process.on('unhandledRejection', this.handler);
 	}
 
-	error(code, message, file, line) {
-		let errorType;
+	async handler(code, message, file, line) {
+		// error suppressed with @
+		if (!(error_reporting() & code)) {
+			return false;
+		}
 
 		switch (code) {
-			case 'Notice':
-			case 'UserNotice':
-				errorType = 'Notice';
+			case E_NOTICE:
+			case E_USER_NOTICE:
+				error = 'Notice';
 				break;
-			case 'Warning':
-			case 'UserWarning':
-				errorType = 'Warning';
+			case E_WARNING:
+			case E_USER_WARNING:
+				error = 'Warning';
 				break;
-			case 'Error':
-			case 'UserError':
-				errorType = 'Fatal Error';
+			case E_ERROR:
+			case E_USER_ERROR:
+				error = 'Fatal Error';
 				break;
 			default:
-				errorType = 'Unknown';
+				error = 'Unknown';
 				break;
-		}
-
-		if (this.config.get('config_error_log')) {
-			const logMessage = `Node.js ${errorType}: ${message}\nFile: ${file}\nLine: ${line}\n`;
-			this.registry.get('log').write(logMessage);
 		}
 
 		if (this.config.get('config_error_display')) {
-			console.error(`${errorType}: ${message} in ${file} on line ${line}`);
-		} else {
-			// Redirect to error page
-			console.error('Redirecting to error page');
+			new Error('<b>' + error + '</b>: ' + message + ' in <b>' + file + '</b> on line <b>' + line + '</b>');
+		}
+
+		if (this.config.get('config_error_log')) {
+			this.log.write('JS ' + error + ':  ' + message + ' in ' + file + ' on line ' + line);
 		}
 
 		return true;
 	}
-
-	exception(error) {
-		console.log(error)
-		if (this.config.get('config_error_log')) {
-			const logMessage = `${error.code}: ${error.message}\nFile: ${error.fileName}\nLine: ${error.lineNumber}\n`;
-			this.registry.get('log').write(logMessage);
-		}
-
-		if (this.config.get('config_error_display')) {
-			console.error(`${error.message} in ${error.fileName} on line ${error.lineNumber}`);
-		} else {
-			// Redirect to error page
-			console.error('Redirecting to error page');
-			// this.response.setRedirect(this.config.get('error_page'));
-		}
-	}
-}
-
+} 

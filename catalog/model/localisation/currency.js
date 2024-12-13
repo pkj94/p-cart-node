@@ -1,49 +1,17 @@
-module.exports = class Currency extends Model {
-	/**
-	 * @param string code
-	 * @param  value
-	 *
-	 * @return void
-	 */
-	async editValueByCode(code, value) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "currency` SET `value` = '" + value + "', `date_modified` = NOW() WHERE `code` = " + this.db.escape(code));
-
-		await this.cache.delete('currency');
-	}
-
-	/**
-	 * @param currency_id
-	 *
-	 * @return array
-	 */
-	async getCurrency(currency_id) {
-		const query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "currency` WHERE `currency_id` = " + this.db.escape(currency_id));
-
-		return query.row;
-	}
-
-	/**
-	 * @param string currency
-	 *
-	 * @return array
-	 */
+module.exports = class ModelLocalisationCurrency extends Model {
 	async getCurrencyByCode(currency) {
-		const query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "currency` WHERE `code` = " + this.db.escape(currency) + " AND `status` = '1'");
+		const query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "currency` WHERE `code` = '" + this.db.escape(currency) + "'");
 
 		return query.row;
 	}
 
-	/**
-	 * @return array
-	 */
 	async getCurrencies() {
-		const sql = "SELECT * FROM `" + DB_PREFIX + "currency` WHERE `status` = '1' ORDER BY `title` ASC";
+		let currency_data = await this.cache.get('currency');
 
-		let currency_data = await this.cache.get('currency.' + md5(sql));
-		if (!currency_data || (currency_data && !Object.keys(currency_data).length)) {
+		if (!currency_data) {
 			currency_data = {};
 
-			const query = await this.db.query(sql);
+			const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "currency` WHERE `status` = '1' ORDER BY `title` ASC");
 
 			for (let result of query.rows) {
 				currency_data[result['code']] = {
@@ -58,7 +26,8 @@ module.exports = class Currency extends Model {
 					'date_modified': result['date_modified']
 				};
 			}
-			await this.cache.set('currency.' + md5(sql), currency_data);
+
+			await this.cache.set('currency', currency_data);
 		}
 
 		return currency_data;

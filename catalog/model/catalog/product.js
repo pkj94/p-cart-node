@@ -1,142 +1,160 @@
-module.exports = class Product extends Model {
-	constructor(registry) {
-		super(registry);
-		this.statement = {};
-		this.statement['discount'] = "(SELECT `pd2`.`price` FROM `" + DB_PREFIX + "product_discount` `pd2` WHERE `pd2`.`product_id` = `p`.`product_id` AND `pd2`.`customer_group_id` = '" + this.config.get('config_customer_group_id') + "'AND `pd2`.`quantity` = '1' AND ((`pd2`.`date_start` = '0000-00-00' OR `pd2`.`date_start` < NOW()) AND (`pd2`.`date_end` = '0000-00-00' OR `pd2`.`date_end` > NOW())) ORDER BY `pd2`.`priority` ASC, `pd2`.`price` ASC LIMIT 1) AS `discount`";
-		this.statement['special'] = "(SELECT `ps`.`price` FROM `" + DB_PREFIX + "product_special` `ps` WHERE `ps`.`product_id` = `p`.`product_id` AND `ps`.`customer_group_id` = '" + this.config.get('config_customer_group_id') + "' AND ((`ps`.`date_start` = '0000-00-00' OR `ps`.`date_start` < NOW()) AND (`ps`.`date_end` = '0000-00-00' OR `ps`.`date_end` > NOW())) ORDER BY `ps`.`priority` ASC, `ps`.`price` ASC LIMIT 1) AS `special`";
-		this.statement['reward'] = "(SELECT `pr`.`points` FROM `" + DB_PREFIX + "product_reward` `pr` WHERE `pr`.`product_id` = `p`.`product_id` AND `pr`.`customer_group_id` = '" + this.config.get('config_customer_group_id') + "') AS `reward`";
-		this.statement['review'] = "(SELECT COUNT(*) FROM `" + DB_PREFIX + "review` `r` WHERE `r`.`product_id` = `p`.`product_id` AND `r`.`status` = '1' GROUP BY `r`.`product_id`) AS `reviews`";
+module.exports = class ModelCatalogProduct extends Model {
+	async updateViewed(product_id) {
+		await this.db.query("UPDATE " + DB_PREFIX + "product SET viewed = (viewed + 1) WHERE product_id = '" + product_id + "'");
 	}
 
-	/**
-	 * @param product_id
-	 *
-	 * @return array
-	 */
 	async getProduct(product_id) {
-		const query = await this.db.query("SELECT DISTINCT *, pd.`name`, `p`.`image`, " + this.statement['discount'] + ", " + this.statement['special'] + ", " + this.statement['reward'] + ", " + this.statement['review'] + " FROM `" + DB_PREFIX + "product_to_store` `p2s` LEFT JOIN `" + DB_PREFIX + "product` `p` ON (`p`.`product_id` = `p2s`.`product_id` AND `p`.`status` = '1' AND `p`.`date_available` <= NOW()) LEFT JOIN `" + DB_PREFIX + "product_description` `pd` ON (`p`.`product_id` = `pd`.`product_id`) WHERE `p2s`.`store_id` = '" + this.config.get('config_store_id') + "' AND `p2s`.`product_id` = '" + product_id + "' AND `pd`.`language_id` = '" + this.config.get('config_language_id') + "'");
+		const query = await this.db.query("SELECT DISTINCT *, pd.name AS name, p.image, m.name AS manufacturer, (SELECT price FROM " + DB_PREFIX + "product_discount pd2 WHERE pd2.product_id = p.product_id AND pd2.customer_group_id = '" + this.config.get('config_customer_group_id') + "' AND pd2.quantity = '1' AND ((pd2.date_start = '0000-00-00' OR pd2.date_start < NOW()) AND (pd2.date_end = '0000-00-00' OR pd2.date_end > NOW())) ORDER BY pd2.priority ASC, pd2.price ASC LIMIT 1) AS discount, (SELECT price FROM " + DB_PREFIX + "product_special ps WHERE ps.product_id = p.product_id AND ps.customer_group_id = '" + this.config.get('config_customer_group_id') + "' AND ((ps.date_start = '0000-00-00' OR ps.date_start < NOW()) AND (ps.date_end = '0000-00-00' OR ps.date_end > NOW())) ORDER BY ps.priority ASC, ps.price ASC LIMIT 1) AS special, (SELECT points FROM " + DB_PREFIX + "product_reward pr WHERE pr.product_id = p.product_id AND pr.customer_group_id = '" + this.config.get('config_customer_group_id') + "') AS reward, (SELECT ss.name FROM " + DB_PREFIX + "stock_status ss WHERE ss.stock_status_id = p.stock_status_id AND ss.language_id = '" + this.config.get('config_language_id') + "') AS stock_status, (SELECT wcd.unit FROM " + DB_PREFIX + "weight_class_description wcd WHERE p.weight_class_id = wcd.weight_class_id AND wcd.language_id = '" + this.config.get('config_language_id') + "') AS weight_class, (SELECT lcd.unit FROM " + DB_PREFIX + "length_class_description lcd WHERE p.length_class_id = lcd.length_class_id AND lcd.language_id = '" + this.config.get('config_language_id') + "') AS length_class, (SELECT AVG(rating) AS total FROM " + DB_PREFIX + "review r1 WHERE r1.product_id = p.product_id AND r1.status = '1' GROUP BY r1.product_id) AS rating, (SELECT COUNT(*) AS total FROM " + DB_PREFIX + "review r2 WHERE r2.product_id = p.product_id AND r2.status = '1' GROUP BY r2.product_id) AS reviews, p.sort_order FROM " + DB_PREFIX + "product p LEFT JOIN " + DB_PREFIX + "product_description pd ON (p.product_id = pd.product_id) LEFT JOIN " + DB_PREFIX + "product_to_store p2s ON (p.product_id = p2s.product_id) LEFT JOIN " + DB_PREFIX + "manufacturer m ON (p.manufacturer_id = m.manufacturer_id) WHERE p.product_id = '" + product_id + "' AND pd.language_id = '" + this.config.get('config_language_id') + "' AND p.status = '1' AND p.date_available <= NOW() AND p2s.store_id = '" + this.config.get('config_store_id') + "'");
 
 		if (query.num_rows) {
-			let product_data = query.row;
-			product_data['variant'] = query.row['variant'] ? JSON.parse(query.row['variant']) : {};
-			product_data['override'] = query.row['override'] ? JSON.parse(query.row['override']) : {};
-			product_data['price'] = (query.row['discount'] ? query.row['discount'] : query.row['price']);
-			product_data['rating'] = query.row['rating'];
-			product_data['reviews'] = query.row['reviews'] ? query.row['reviews'] : 0;
-
-			return product_data;
+			return {
+				'product_id': query.row['product_id'],
+				'name': query.row['name'],
+				'description': query.row['description'],
+				'meta_title': query.row['meta_title'],
+				'meta_description': query.row['meta_description'],
+				'meta_keyword': query.row['meta_keyword'],
+				'tag': query.row['tag'],
+				'model': query.row['model'],
+				'sku': query.row['sku'],
+				'upc': query.row['upc'],
+				'ean': query.row['ean'],
+				'jan': query.row['jan'],
+				'isbn': query.row['isbn'],
+				'mpn': query.row['mpn'],
+				'location': query.row['location'],
+				'quantity': query.row['quantity'],
+				'stock_status': query.row['stock_status'],
+				'image': query.row['image'],
+				'manufacturer_id': query.row['manufacturer_id'],
+				'manufacturer': query.row['manufacturer'],
+				'price': (query.row['discount'] ? query.row['discount'] : query.row['price']),
+				'special': query.row['special'],
+				'reward': query.row['reward'],
+				'points': query.row['points'],
+				'tax_class_id': query.row['tax_class_id'],
+				'date_available': query.row['date_available'],
+				'weight': query.row['weight'],
+				'weight_class_id': query.row['weight_class_id'],
+				'length': query.row['length'],
+				'width': query.row['width'],
+				'height': query.row['height'],
+				'length_class_id': query.row['length_class_id'],
+				'subtract': query.row['subtract'],
+				'rating': Math.round((query.row['rating'] === null) ? 0 : query.row['rating']),
+				'reviews': query.row['reviews'] ? query.row['reviews'] : 0,
+				'minimum': query.row['minimum'],
+				'sort_order': query.row['sort_order'],
+				'status': query.row['status'],
+				'date_added': query.row['date_added'],
+				'date_modified': query.row['date_modified'],
+				'viewed': query.row['viewed']
+			};
 		} else {
-			return [];
+			return false;
 		}
 	}
 
-	/**
-	 * @param data
-	 *
-	 * @return array
-	 */
 	async getProducts(data = {}) {
-		let sql = "SELECT DISTINCT *, pd.`name`, `p`.`image`, " + this.statement['discount'] + ", " + this.statement['special'] + ", " + this.statement['reward'] + ", " + this.statement['review'];
+		let sql = "SELECT p.product_id, (SELECT AVG(rating) AS total FROM " + DB_PREFIX + "review r1 WHERE r1.product_id = p.product_id AND r1.status = '1' GROUP BY r1.product_id) AS rating, (SELECT price FROM " + DB_PREFIX + "product_discount pd2 WHERE pd2.product_id = p.product_id AND pd2.customer_group_id = '" + this.config.get('config_customer_group_id') + "' AND pd2.quantity = '1' AND ((pd2.date_start = '0000-00-00' OR pd2.date_start < NOW()) AND (pd2.date_end = '0000-00-00' OR pd2.date_end > NOW())) ORDER BY pd2.priority ASC, pd2.price ASC LIMIT 1) AS discount, (SELECT price FROM " + DB_PREFIX + "product_special ps WHERE ps.product_id = p.product_id AND ps.customer_group_id = '" + this.config.get('config_customer_group_id') + "' AND ((ps.date_start = '0000-00-00' OR ps.date_start < NOW()) AND (ps.date_end = '0000-00-00' OR ps.date_end > NOW())) ORDER BY ps.priority ASC, ps.price ASC LIMIT 1) AS special";
 
 		if ((data['filter_category_id'])) {
-			sql += " FROM `" + DB_PREFIX + "category_to_store` `c2s`";
-
 			if ((data['filter_sub_category'])) {
-				sql += " LEFT JOIN `" + DB_PREFIX + "category_path` `cp` ON (`cp`.`category_id` = `c2s`.`category_id` AND `c2s`.`store_id` = '" + this.config.get('config_store_id') + "') LEFT JOIN `" + DB_PREFIX + "product_to_category` `p2c` ON (`p2c`.`category_id` = `cp`.`category_id`)";
+				sql += " FROM " + DB_PREFIX + "category_path cp LEFT JOIN " + DB_PREFIX + "product_to_category p2c ON (cp.category_id = p2c.category_id)";
 			} else {
-				sql += " LEFT JOIN `" + DB_PREFIX + "product_to_category` `p2c` ON (`p2c`.`category_id` = `c2s`.`category_id` AND `c2s`.`store_id` = '" + this.config.get('config_store_id') + "')";
+				sql += " FROM " + DB_PREFIX + "product_to_category p2c";
 			}
 
-			sql += " LEFT JOIN `" + DB_PREFIX + "product_to_store` `p2s` ON (`p2s`.`product_id` = `p2c`.`product_id` AND `p2s`.`store_id` = '" + this.config.get('config_store_id') + "')";
-
 			if ((data['filter_filter'])) {
-				sql += " LEFT JOIN `" + DB_PREFIX + "product_filter` `pf` ON (`pf`.`product_id` = `p2s`.`product_id`) LEFT JOIN `" + DB_PREFIX + "product` `p` ON (`p`.`product_id` = `pf`.`product_id` AND `p`.`status` = '1' AND `p`.`date_available` <= NOW())";
+				sql += " LEFT JOIN " + DB_PREFIX + "product_filter pf ON (p2c.product_id = pf.product_id) LEFT JOIN " + DB_PREFIX + "product p ON (pf.product_id = p.product_id)";
 			} else {
-				sql += " LEFT JOIN `" + DB_PREFIX + "product` `p` ON (`p`.`product_id` = `p2s`.`product_id` AND `p`.`status` = '1' AND `p`.`date_available` <= NOW())";
+				sql += " LEFT JOIN " + DB_PREFIX + "product p ON (p2c.product_id = p.product_id)";
 			}
 		} else {
-			sql += " FROM `" + DB_PREFIX + "product_to_store` `p2s` LEFT JOIN `" + DB_PREFIX + "product` `p` ON (`p`.`product_id` = `p2s`.`product_id` AND `p`.`status` = '1' AND `p2s`.`store_id` = '" + this.config.get('config_store_id') + "' AND `p`.`date_available` <= NOW())";
+			sql += " FROM " + DB_PREFIX + "product p";
 		}
 
-		sql += " LEFT JOIN `" + DB_PREFIX + "product_description` `pd` ON (`p`.`product_id` = `pd`.`product_id`) WHERE `pd`.`language_id` = '" + this.config.get('config_language_id') + "'";
+		sql += " LEFT JOIN " + DB_PREFIX + "product_description pd ON (p.product_id = pd.product_id) LEFT JOIN " + DB_PREFIX + "product_to_store p2s ON (p.product_id = p2s.product_id) WHERE pd.language_id = '" + this.config.get('config_language_id') + "' AND p.status = '1' AND p.date_available <= NOW() AND p2s.store_id = '" + this.config.get('config_store_id') + "'";
 
 		if ((data['filter_category_id'])) {
 			if ((data['filter_sub_category'])) {
-				sql += " AND `cp`.`path_id` = '" + data['filter_category_id'] + "'";
+				sql += " AND cp.path_id = '" + data['filter_category_id'] + "'";
 			} else {
-				sql += " AND `p2c`.`category_id` = '" + data['filter_category_id'] + "'";
+				sql += " AND p2c.category_id = '" + data['filter_category_id'] + "'";
 			}
 
 			if ((data['filter_filter'])) {
-				let implode = [];
+				const implode = [];
 
-				let filters = data['filter_filter'].split(',');
+				const filters = data['filter_filter'].split(',');
 
 				for (let filter_id of filters) {
 					implode.push(filter_id);
 				}
 
-				sql += " AND `pf`.`filter_id` IN (" + implode.join(',') + ")";
+				sql += " AND pf.filter_id IN (" + implode.join(',') + ")";
 			}
 		}
 
-		if ((data['filter_search']) || (data['filter_tag'])) {
+		if ((data['filter_name']) || (data['filter_tag'])) {
 			sql += " AND (";
 
-			if ((data['filter_search'])) {
-				let implode = [];
+			if ((data['filter_name'])) {
+				const implode = [];
 
-				let words = data['filter_search'].trim().replace(/\s+/g, ' ').split(' ');
+				words = explode(' ', trim(preg_replace('/\s+/', ' ', data['filter_name'])));
 
 				for (let word of words) {
-					implode.push("`pd`.`name` LIKE " + this.db.escape('%' + word + '%'));
+					implode.push("pd.name LIKE '%" + this.db.escape(word) + "%'");
 				}
 
-				if (implode) {
-					sql += " (" + implode.join(" OR ") + ")";
+				if (implode.length) {
+					sql += " " + implode.join(' AND ') + "";
 				}
 
 				if ((data['filter_description'])) {
-					sql += " OR `pd`.`description` LIKE " + this.db.escape('%' + data['filter_search'] + '%');
+					sql += " OR pd.description LIKE '%" + this.db.escape(data['filter_name']) + "%'";
 				}
 			}
 
-			if ((data['filter_search']) && (data['filter_tag'])) {
+			if ((data['filter_name']) && (data['filter_tag'])) {
 				sql += " OR ";
 			}
 
-			if ((data['filter_tag'])) {
-				let implode = [];
+			if (data['filter_tag']) {
+				const implode = [];
 
-				let words = data['filter_tag'].trim().replace(/\s+/g, ' ').split(' ');
+				const words = data['filter_tag'].replace(/\s+/g, ' ').trim().split(' ');
 
 				for (let word of words) {
-					implode.push("`pd`.`tag` LIKE " + this.db.escape('%' + word + '%'));
+					implode.push("pd.tag LIKE '%" + this.db.escape(word) + "%'");
 				}
 
-				if (implode) {
-					sql += " (" + implode.join(" OR ") + ")";
+				if (implode.length) {
+					sql += " " + implode.join(' AND ') + "";
 				}
 			}
 
-			if ((data['filter_search'])) {
-				sql += " OR LCASE(`p`.`model`) = " + this.db.escape(oc_strtolower(data['filter_search']));
-				sql += " OR LCASE(`p`.`sku`) = " + this.db.escape(oc_strtolower(data['filter_search']));
-				sql += " OR LCASE(`p`.`upc`) = " + this.db.escape(oc_strtolower(data['filter_search']));
-				sql += " OR LCASE(`p`.`ean`) = " + this.db.escape(oc_strtolower(data['filter_search']));
-				sql += " OR LCASE(`p`.`jan`) = " + this.db.escape(oc_strtolower(data['filter_search']));
-				sql += " OR LCASE(`p`.`isbn`) = " + this.db.escape(oc_strtolower(data['filter_search']));
-				sql += " OR LCASE(`p`.`mpn`) = " + this.db.escape(oc_strtolower(data['filter_search']));
+			if ((data['filter_name'])) {
+				sql += " OR LCASE(p.model) = '" + this.db.escape(utf8_strtolower(data['filter_name'])) + "'";
+				sql += " OR LCASE(p.sku) = '" + this.db.escape(utf8_strtolower(data['filter_name'])) + "'";
+				sql += " OR LCASE(p.upc) = '" + this.db.escape(utf8_strtolower(data['filter_name'])) + "'";
+				sql += " OR LCASE(p.ean) = '" + this.db.escape(utf8_strtolower(data['filter_name'])) + "'";
+				sql += " OR LCASE(p.jan) = '" + this.db.escape(utf8_strtolower(data['filter_name'])) + "'";
+				sql += " OR LCASE(p.isbn) = '" + this.db.escape(utf8_strtolower(data['filter_name'])) + "'";
+				sql += " OR LCASE(p.mpn) = '" + this.db.escape(utf8_strtolower(data['filter_name'])) + "'";
 			}
 
 			sql += ")";
 		}
 
 		if ((data['filter_manufacturer_id'])) {
-			sql += " AND `p`.`manufacturer_id` = '" + data['filter_manufacturer_id'] + "'";
+			sql += " AND p.manufacturer_id = '" + data['filter_manufacturer_id'] + "'";
 		}
 
-		let sort_data = [
+		sql += " GROUP BY p.product_id";
+
+		const sort_data = [
 			'pd.name',
 			'p.model',
 			'p.quantity',
@@ -150,26 +168,25 @@ module.exports = class Product extends Model {
 			if (data['sort'] == 'pd.name' || data['sort'] == 'p.model') {
 				sql += " ORDER BY LCASE(" + data['sort'] + ")";
 			} else if (data['sort'] == 'p.price') {
-				sql += " ORDER BY (CASE WHEN `special` IS NOT NULL THEN `special` WHEN `discount` IS NOT NULL THEN `discount` ELSE p.`price` END)";
+				sql += " ORDER BY (CASE WHEN special IS NOT NULL THEN special WHEN discount IS NOT NULL THEN discount ELSE p.price END)";
 			} else {
 				sql += " ORDER BY " + data['sort'];
 			}
 		} else {
-			sql += " ORDER BY p.`sort_order`";
+			sql += " ORDER BY p.sort_order";
 		}
 
 		if ((data['order']) && (data['order'] == 'DESC')) {
-			sql += " DESC, LCASE(`pd`.`name`) DESC";
+			sql += " DESC, LCASE(pd.name) DESC";
 		} else {
-			sql += " ASC, LCASE(`pd`.`name`) ASC";
+			sql += " ASC, LCASE(pd.name) ASC";
 		}
 
 		if ((data['start']) || (data['limit'])) {
-			data['start'] = data['start'] || 0;
 			if (data['start'] < 0) {
 				data['start'] = 0;
 			}
-			data['limit'] = data['limit'] || 20;
+
 			if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
@@ -177,44 +194,128 @@ module.exports = class Product extends Model {
 			sql += " LIMIT " + data['start'] + "," + data['limit'];
 		}
 
-		let product_data = await this.cache.get('product.' + md5(sql));
+		const product_data = {};
 
-		if (!product_data) {
-			const query = await this.db.query(sql);
+		const query = await this.db.query(sql);
 
-			product_data = query.rows;
-
-			await this.cache.set('product.' + md5(sql), product_data);
+		for (let result of query.rows) {
+			product_data[result['product_id']] = await this.getProduct(result['product_id']);
 		}
 
 		return product_data;
 	}
 
-	/**
-	 * @param product_id
-	 *
-	 * @return array
-	 */
-	async getCategories(product_id) {
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_to_category` WHERE `product_id` = '" + product_id + "'");
+	async getProductSpecials(data = {}) {
+		let sql = "SELECT DISTINCT ps.product_id, (SELECT AVG(rating) FROM " + DB_PREFIX + "review r1 WHERE r1.product_id = ps.product_id AND r1.status = '1' GROUP BY r1.product_id) AS rating FROM " + DB_PREFIX + "product_special ps LEFT JOIN " + DB_PREFIX + "product p ON (ps.product_id = p.product_id) LEFT JOIN " + DB_PREFIX + "product_description pd ON (p.product_id = pd.product_id) LEFT JOIN " + DB_PREFIX + "product_to_store p2s ON (p.product_id = p2s.product_id) WHERE p.status = '1' AND p.date_available <= NOW() AND p2s.store_id = '" + this.config.get('config_store_id') + "' AND ps.customer_group_id = '" + this.config.get('config_customer_group_id') + "' AND ((ps.date_start = '0000-00-00' OR ps.date_start < NOW()) AND (ps.date_end = '0000-00-00' OR ps.date_end > NOW())) GROUP BY ps.product_id";
 
-		return query.rows;
+		const sort_data = [
+			'pd.name',
+			'p.model',
+			'ps.price',
+			'rating',
+			'p.sort_order'
+		];
+
+		if ((data['sort']) && sort_data.includes(data['sort'])) {
+			if (data['sort'] == 'pd.name' || data['sort'] == 'p.model') {
+				sql += " ORDER BY LCASE(" + data['sort'] + ")";
+			} else {
+				sql += " ORDER BY " + data['sort'];
+			}
+		} else {
+			sql += " ORDER BY p.sort_order";
+		}
+
+		if ((data['order']) && (data['order'] == 'DESC')) {
+			sql += " DESC, LCASE(pd.name) DESC";
+		} else {
+			sql += " ASC, LCASE(pd.name) ASC";
+		}
+
+		if ((data['start']) || (data['limit'])) {
+			if (data['start'] < 0) {
+				data['start'] = 0;
+			}
+
+			if (data['limit'] < 1) {
+				data['limit'] = 20;
+			}
+
+			sql += " LIMIT " + data['start'] + "," + data['limit'];
+		}
+
+		const product_data = {};
+
+		const query = await this.db.query(sql);
+
+		for (let result of query.rows) {
+			product_data[result['product_id']] = await this.getProduct(result['product_id']);
+		}
+
+		return product_data;
 	}
 
-	/**
-	 * @param product_id
-	 *
-	 * @return array
-	 */
-	async getAttributes(product_id) {
-		let product_attribute_group_data = [];
+	async getLatestProducts(limit) {
+		let product_data = await this.cache.get('product.latest.' + this.config.get('config_language_id') + '.' + this.config.get('config_store_id') + '.' + this.config.get('config_customer_group_id') + '.' + limit);
 
-		const product_attribute_group_query = await this.db.query("SELECT ag.`attribute_group_id`, agd.`name` FROM `" + DB_PREFIX + "product_attribute` pa LEFT JOIN `" + DB_PREFIX + "attribute` a ON (pa.`attribute_id` = a.`attribute_id`) LEFT JOIN `" + DB_PREFIX + "attribute_group` ag ON (a.`attribute_group_id` = ag.`attribute_group_id`) LEFT JOIN `" + DB_PREFIX + "attribute_group_description` agd ON (ag.`attribute_group_id` = agd.`attribute_group_id`) WHERE pa.`product_id` = '" + product_id + "' AND agd.`language_id` = '" + this.config.get('config_language_id') + "' GROUP BY ag.`attribute_group_id` ORDER BY ag.`sort_order`, agd.`name`");
+		if (!product_data) {
+			product_data = {};
+			const query = await this.db.query("SELECT p.product_id FROM " + DB_PREFIX + "product p LEFT JOIN " + DB_PREFIX + "product_to_store p2s ON (p.product_id = p2s.product_id) WHERE p.status = '1' AND p.date_available <= NOW() AND p2s.store_id = '" + this.config.get('config_store_id') + "' ORDER BY p.date_added DESC LIMIT " + limit);
+
+			for (let result of query.rows) {
+				product_data[result['product_id']] = await this.getProduct(result['product_id']);
+			}
+
+			await this.cache.set('product.latest.' + this.config.get('config_language_id') + '.' + this.config.get('config_store_id') + '.' + this.config.get('config_customer_group_id') + '.' + limit, product_data);
+		}
+
+		return product_data;
+	}
+
+	async getPopularProducts(limit) {
+		let product_data = await this.cache.get('product.popular.' + this.config.get('config_language_id') + '.' + this.config.get('config_store_id') + '.' + this.config.get('config_customer_group_id') + '.' + limit);
+
+		if (!product_data) {
+			product_data = {};
+			const query = await this.db.query("SELECT p.product_id FROM " + DB_PREFIX + "product p LEFT JOIN " + DB_PREFIX + "product_to_store p2s ON (p.product_id = p2s.product_id) WHERE p.status = '1' AND p.date_available <= NOW() AND p2s.store_id = '" + this.config.get('config_store_id') + "' ORDER BY p.viewed DESC, p.date_added DESC LIMIT " + limit);
+
+			for (let result of query.rows) {
+				product_data[result['product_id']] = await this.getProduct(result['product_id']);
+			}
+
+			await this.cache.set('product.popular.' + this.config.get('config_language_id') + '.' + this.config.get('config_store_id') + '.' + this.config.get('config_customer_group_id') + '.' + limit, product_data);
+		}
+
+		return product_data;
+	}
+
+	async getBestSellerProducts(limit) {
+		let product_data = await this.cache.get('product.bestseller.' + this.config.get('config_language_id') + '.' + this.config.get('config_store_id') + '.' + this.config.get('config_customer_group_id') + '.' + limit);
+
+		if (!product_data) {
+			product_data = {};
+
+			const query = await this.db.query("SELECT op.product_id, SUM(op.quantity) AS total FROM " + DB_PREFIX + "order_product op LEFT JOIN `" + DB_PREFIX + "order` o ON (op.order_id = o.order_id) LEFT JOIN `" + DB_PREFIX + "product` p ON (op.product_id = p.product_id) LEFT JOIN " + DB_PREFIX + "product_to_store p2s ON (p.product_id = p2s.product_id) WHERE o.order_status_id > '0' AND p.status = '1' AND p.date_available <= NOW() AND p2s.store_id = '" + this.config.get('config_store_id') + "' GROUP BY op.product_id ORDER BY total DESC LIMIT " + limit);
+
+			for (let result of query.rows) {
+				product_data[result['product_id']] = await this.getProduct(result['product_id']);
+			}
+
+			await this.cache.set('product.bestseller.' + this.config.get('config_language_id') + '.' + this.config.get('config_store_id') + '.' + this.config.get('config_customer_group_id') + '.' + limit, product_data);
+		}
+
+		return product_data;
+	}
+
+	async getProductAttributes(product_id) {
+		const product_attribute_group_data = [];
+
+		const product_attribute_group_query = await this.db.query("SELECT ag.attribute_group_id, agd.name FROM " + DB_PREFIX + "product_attribute pa LEFT JOIN " + DB_PREFIX + "attribute a ON (pa.attribute_id = a.attribute_id) LEFT JOIN " + DB_PREFIX + "attribute_group ag ON (a.attribute_group_id = ag.attribute_group_id) LEFT JOIN " + DB_PREFIX + "attribute_group_description agd ON (ag.attribute_group_id = agd.attribute_group_id) WHERE pa.product_id = '" + product_id + "' AND agd.language_id = '" + this.config.get('config_language_id') + "' GROUP BY ag.attribute_group_id ORDER BY ag.sort_order, agd.name");
 
 		for (let product_attribute_group of product_attribute_group_query.rows) {
-			let product_attribute_data = [];
+			const product_attribute_data = [];
 
-			const product_attribute_query = await this.db.query("SELECT a.`attribute_id`, ad.`name`, pa.`text` FROM `" + DB_PREFIX + "product_attribute` pa LEFT JOIN `" + DB_PREFIX + "attribute` a ON (pa.`attribute_id` = a.`attribute_id`) LEFT JOIN `" + DB_PREFIX + "attribute_description` ad ON (a.`attribute_id` = ad.`attribute_id`) WHERE pa.`product_id` = '" + product_id + "' AND a.`attribute_group_id` = '" + product_attribute_group['attribute_group_id'] + "' AND ad.`language_id` = '" + this.config.get('config_language_id') + "' AND pa.`language_id` = '" + this.config.get('config_language_id') + "' ORDER BY a.`sort_order`, ad.`name`");
+			const product_attribute_query = await this.db.query("SELECT a.attribute_id, ad.name, pa.text FROM " + DB_PREFIX + "product_attribute pa LEFT JOIN " + DB_PREFIX + "attribute a ON (pa.attribute_id = a.attribute_id) LEFT JOIN " + DB_PREFIX + "attribute_description ad ON (a.attribute_id = ad.attribute_id) WHERE pa.product_id = '" + product_id + "' AND a.attribute_group_id = '" + product_attribute_group['attribute_group_id'] + "' AND ad.language_id = '" + this.config.get('config_language_id') + "' AND pa.language_id = '" + this.config.get('config_language_id') + "' ORDER BY a.sort_order, ad.name");
 
 			for (let product_attribute of product_attribute_query.rows) {
 				product_attribute_data.push({
@@ -234,20 +335,15 @@ module.exports = class Product extends Model {
 		return product_attribute_group_data;
 	}
 
-	/**
-	 * @param product_id
-	 *
-	 * @return array
-	 */
-	async getOptions(product_id) {
-		let product_option_data = [];
+	async getProductOptions(product_id) {
+		const product_option_data = [];
 
-		const product_option_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_option` `po` LEFT JOIN `" + DB_PREFIX + "option` o ON (po.`option_id` = o.`option_id`) LEFT JOIN `" + DB_PREFIX + "option_description` od ON (o.`option_id` = od.`option_id`) WHERE po.`product_id` = '" + product_id + "' AND od.`language_id` = '" + this.config.get('config_language_id') + "' ORDER BY o.`sort_order`");
+		const product_option_query = await this.db.query("SELECT * FROM " + DB_PREFIX + "product_option po LEFT JOIN `" + DB_PREFIX + "option` o ON (po.option_id = o.option_id) LEFT JOIN " + DB_PREFIX + "option_description od ON (o.option_id = od.option_id) WHERE po.product_id = '" + product_id + "' AND od.language_id = '" + this.config.get('config_language_id') + "' ORDER BY o.sort_order");
 
 		for (let product_option of product_option_query.rows) {
-			let product_option_value_data = [];
+			const product_option_value_data = [];
 
-			const product_option_value_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_option_value` pov LEFT JOIN `" + DB_PREFIX + "option_value` ov ON (pov.`option_value_id` = ov.`option_value_id`) LEFT JOIN `" + DB_PREFIX + "option_value_description` ovd ON (ov.`option_value_id` = ovd.`option_value_id`) WHERE pov.`product_id` = '" + product_id + "' AND pov.`product_option_id` = '" + product_option['product_option_id'] + "' AND ovd.`language_id` = '" + this.config.get('config_language_id') + "' ORDER BY ov.`sort_order`");
+			const product_option_value_query = await this.db.query("SELECT * FROM " + DB_PREFIX + "product_option_value pov LEFT JOIN " + DB_PREFIX + "option_value ov ON (pov.option_value_id = ov.option_value_id) LEFT JOIN " + DB_PREFIX + "option_value_description ovd ON (ov.option_value_id = ovd.option_value_id) WHERE pov.product_id = '" + product_id + "' AND pov.product_option_id = '" + product_option['product_option_id'] + "' AND ovd.language_id = '" + this.config.get('config_language_id') + "' ORDER BY ov.sort_order");
 
 			for (let product_option_value of product_option_value_query.rows) {
 				product_option_value_data.push({
@@ -278,58 +374,32 @@ module.exports = class Product extends Model {
 		return product_option_data;
 	}
 
-	/**
-	 * @param product_id
-	 *
-	 * @return array
-	 */
-	async getDiscounts(product_id) {
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_discount` WHERE `product_id` = '" + product_id + "' AND `customer_group_id` = '" + this.config.get('config_customer_group_id') + "' AND `quantity` > 1 AND ((`date_start` = '0000-00-00' OR `date_start` < NOW()) AND (`date_end` = '0000-00-00' OR `date_end` > NOW())) ORDER BY `quantity` ASC, `priority` ASC, `price` ASC");
+	async getProductDiscounts(product_id) {
+		const query = await this.db.query("SELECT * FROM " + DB_PREFIX + "product_discount WHERE product_id = '" + product_id + "' AND customer_group_id = '" + this.config.get('config_customer_group_id') + "' AND quantity > 1 AND ((date_start = '0000-00-00' OR date_start < NOW()) AND (date_end = '0000-00-00' OR date_end > NOW())) ORDER BY quantity ASC, priority ASC, price ASC");
 
 		return query.rows;
 	}
 
-	/**
-	 * @param product_id
-	 *
-	 * @return array
-	 */
-	async getImages(product_id) {
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_image` WHERE `product_id` = '" + product_id + "' ORDER BY `sort_order` ASC");
+	async getProductImages(product_id) {
+		const query = await this.db.query("SELECT * FROM " + DB_PREFIX + "product_image WHERE product_id = '" + product_id + "' ORDER BY sort_order ASC");
 
 		return query.rows;
 	}
 
-	/**
-	 * @param product_id
-	 * @param subscription_plan_id
-	 *
-	 * @return array
-	 */
-	async getSubscription(product_id, subscription_plan_id) {
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_subscription` ps LEFT JOIN `" + DB_PREFIX + "subscription_plan` sp ON (ps.`subscription_plan_id` = sp.`subscription_plan_id`) WHERE ps.`product_id` = '" + product_id + "' AND ps.`subscription_plan_id` = '" + subscription_plan_id + "' AND ps.`customer_group_id` = '" + this.config.get('config_customer_group_id') + "' AND sp.`status` = '1'");
+	async getProductRelated(product_id) {
+		const product_data = {};
 
-		return query.row;
+		const query = await this.db.query("SELECT * FROM " + DB_PREFIX + "product_related pr LEFT JOIN " + DB_PREFIX + "product p ON (pr.related_id = p.product_id) LEFT JOIN " + DB_PREFIX + "product_to_store p2s ON (p.product_id = p2s.product_id) WHERE pr.product_id = '" + product_id + "' AND p.status = '1' AND p.date_available <= NOW() AND p2s.store_id = '" + this.config.get('config_store_id') + "'");
+
+		for (let result of query.rows) {
+			product_data[result['related_id']] = await this.getProduct(result['related_id']);
+		}
+
+		return product_data;
 	}
 
-	/**
-	 * @param product_id
-	 *
-	 * @return array
-	 */
-	async getSubscriptions(product_id) {
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_subscription` ps LEFT JOIN `" + DB_PREFIX + "subscription_plan` sp ON (ps.`subscription_plan_id` = sp.`subscription_plan_id`) LEFT JOIN `" + DB_PREFIX + "subscription_plan_description` spd ON (sp.`subscription_plan_id` = spd.`subscription_plan_id`) WHERE ps.`product_id` = '" + product_id + "' AND ps.`customer_group_id` = '" + this.config.get('config_customer_group_id') + "' AND spd.`language_id` = '" + this.config.get('config_language_id') + "' AND sp.`status` = '1' ORDER BY sp.`sort_order` ASC");
-
-		return query.rows;
-	}
-
-	/**
-	 * @param product_id
-	 *
-	 * @return int
-	 */
-	async getLayoutId(product_id) {
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_to_layout` WHERE `product_id` = '" + product_id + "' AND `store_id` = '" + this.config.get('config_store_id') + "'");
+	async getProductLayoutId(product_id) {
+		const query = await this.db.query("SELECT * FROM " + DB_PREFIX + "product_to_layout WHERE product_id = '" + product_id + "' AND store_id = '" + this.config.get('config_store_id') + "'");
 
 		if (query.num_rows) {
 			return query.row['layout_id'];
@@ -338,132 +408,107 @@ module.exports = class Product extends Model {
 		}
 	}
 
-	/**
-	 * @param product_id
-	 *
-	 * @return array
-	 */
-	async getRelated(product_id) {
-		const sql = "SELECT DISTINCT *, `pd`.`name` AS name, `p`.`image`, " + this.statement['discount'] + ", " + this.statement['special'] + ", " + this.statement['reward'] + ", " + this.statement['review'] + " FROM `" + DB_PREFIX + "product_related` `pr` LEFT JOIN `" + DB_PREFIX + "product_to_store` `p2s` ON (`p2s`.`product_id` = `pr`.`product_id` AND `p2s`.`store_id` = '" + this.config.get('config_store_id') + "') LEFT JOIN `" + DB_PREFIX + "product` `p` ON (`p`.`product_id` = `pr`.`related_id` AND `p`.`status` = '1' AND `p`.`date_available` <= NOW()) LEFT JOIN `" + DB_PREFIX + "product_description` `pd` ON (`p`.`product_id` = `pd`.`product_id`) WHERE `pr`.`product_id` = '" + product_id + "' AND `pd`.`language_id` = '" + this.config.get('config_language_id') + "'";
+	async getCategories(product_id) {
+		const query = await this.db.query("SELECT * FROM " + DB_PREFIX + "product_to_category WHERE product_id = '" + product_id + "'");
 
-		let product_data = await this.cache.get('product.' + md5(sql));
-
-		if (!product_data) {
-			const query = await this.db.query(sql);
-
-			product_data = query.rows;
-
-			await this.cache.set('product.' + md5(sql), product_data);
-		}
-
-
-		return product_data;
+		return query.rows;
 	}
 
-	/**
-	 * @param data
-	 *
-	 * @return int
-	 */
 	async getTotalProducts(data = {}) {
-		let sql = "SELECT COUNT(DISTINCT `p`.`product_id`) AS total";
+		let sql = "SELECT COUNT(DISTINCT p.product_id) AS total";
 
 		if ((data['filter_category_id'])) {
-			sql += " FROM `" + DB_PREFIX + "category_to_store` `c2s`";
-
 			if ((data['filter_sub_category'])) {
-				sql += " LEFT JOIN `" + DB_PREFIX + "category_path` `cp` ON (`cp`.`category_id` = `c2s`.`category_id` AND `c2s`.`store_id` = '" + this.config.get('config_store_id') + "') LEFT JOIN `" + DB_PREFIX + "product_to_category` `p2c` ON (`p2c`.`category_id` = `cp`.`category_id`)";
+				sql += " FROM " + DB_PREFIX + "category_path cp LEFT JOIN " + DB_PREFIX + "product_to_category p2c ON (cp.category_id = p2c.category_id)";
 			} else {
-				sql += " LEFT JOIN `" + DB_PREFIX + "product_to_category` `p2c` ON (`p2c`.`category_id` = `c2s`.`category_id`)";
+				sql += " FROM " + DB_PREFIX + "product_to_category p2c";
 			}
 
-			sql += " LEFT JOIN `" + DB_PREFIX + "product_to_store` `p2s` ON (`p2s`.`product_id` = `p2c`.`product_id`)";
-
 			if ((data['filter_filter'])) {
-				sql += " LEFT JOIN `" + DB_PREFIX + "product_filter` `pf` ON (`pf`.`product_id` = `p2s`.`product_id`) LEFT JOIN `" + DB_PREFIX + "product` `p` ON (`p`.`product_id` = `pf`.`product_id` AND `p`.`status` = '1' AND `p`.`date_available` <= NOW())";
+				sql += " LEFT JOIN " + DB_PREFIX + "product_filter pf ON (p2c.product_id = pf.product_id) LEFT JOIN " + DB_PREFIX + "product p ON (pf.product_id = p.product_id)";
 			} else {
-				sql += " LEFT JOIN `" + DB_PREFIX + "product` `p` ON (`p`.`product_id` = `p2s`.`product_id` AND `p`.`status` = '1' AND `p`.`date_available` <= NOW() AND `p2s`.`store_id` = '" + this.config.get('config_store_id') + "')";
+				sql += " LEFT JOIN " + DB_PREFIX + "product p ON (p2c.product_id = p.product_id)";
 			}
 		} else {
-			sql += " FROM `" + DB_PREFIX + "product` `p`";
+			sql += " FROM " + DB_PREFIX + "product p";
 		}
 
-		sql += " LEFT JOIN `" + DB_PREFIX + "product_description` `pd` ON (`p`.`product_id` = `pd`.`product_id`) WHERE `pd`.`language_id` = '" + this.config.get('config_language_id') + "'";
+		sql += " LEFT JOIN " + DB_PREFIX + "product_description pd ON (p.product_id = pd.product_id) LEFT JOIN " + DB_PREFIX + "product_to_store p2s ON (p.product_id = p2s.product_id) WHERE pd.language_id = '" + this.config.get('config_language_id') + "' AND p.status = '1' AND p.date_available <= NOW() AND p2s.store_id = '" + this.config.get('config_store_id') + "'";
 
 		if ((data['filter_category_id'])) {
 			if ((data['filter_sub_category'])) {
-				sql += " AND `cp`.`path_id` = '" + data['filter_category_id'] + "'";
+				sql += " AND cp.path_id = '" + data['filter_category_id'] + "'";
 			} else {
-				sql += " AND `p2c`.`category_id` = '" + data['filter_category_id'] + "'";
+				sql += " AND p2c.category_id = '" + data['filter_category_id'] + "'";
 			}
 
 			if ((data['filter_filter'])) {
-				let implode = [];
+				const implode = [];
 
-				filters = explode(',', data['filter_filter']);
+				const filters = data['filter_filter'].split(',');
 
 				for (let filter_id of filters) {
 					implode.push(filter_id);
 				}
 
-				sql += " AND `pf`.`filter_id` IN (" + implode.join(',') + ")";
+				sql += " AND pf.filter_id IN (" + implode.join(',') + ")";
 			}
 		}
 
-		if ((data['filter_search']) || (data['filter_tag'])) {
+		if ((data['filter_name']) || (data['filter_tag'])) {
 			sql += " AND (";
 
-			if ((data['filter_search'])) {
-				let implode = [];
+			if ((data['filter_name'])) {
+				const implode = [];
 
-				let words = data['filter_search'].trim().replace(/\s+/g, ' ').split(' ');
+				const words = data['filter_name'].replace(/\s+/g, ' ').trim().split(' ');
 
 				for (let word of words) {
-					implode.push("`pd`.`name` LIKE " + this.db.escape('%' + word + '%'));
+					implode.push("pd.name LIKE '%" + this.db.escape(word) + "%'");
 				}
 
-				if (implode) {
-					sql += " (" + implode.join(" OR ") + ")";
+				if (implode.length) {
+					sql += " " + implode.join(' AND ') + "";
 				}
 
 				if ((data['filter_description'])) {
-					sql += " OR `pd`.`description` LIKE " + this.db.escape('%' + data['filter_search'] + '%');
+					sql += " OR pd.description LIKE '%" + this.db.escape(data['filter_name']) + "%'";
 				}
 			}
 
-			if ((data['filter_search']) && (data['filter_tag'])) {
+			if ((data['filter_name']) && (data['filter_tag'])) {
 				sql += " OR ";
 			}
 
 			if ((data['filter_tag'])) {
-				let implode = [];
+				const implode = [];
 
-				let words = data['filter_tag'].trim().replace(/\s+/g, ' ').split(' ');
+				const words = data['filter_tag'].replace(/\s+/g, ' ').trim().split(' ');
 
 				for (let word of words) {
-					implode.push("`pd`.`tag` LIKE " + this.db.escape('%' + word + '%'));
+					implode.push("pd.tag LIKE '%" + this.db.escape(word) + "%'");
 				}
 
-				if (implode) {
-					sql += " (" + implode.join(" OR ") + ")";
+				if (implode.length) {
+					sql += " " + implode.join(' AND ') + "";
 				}
 			}
 
-			if ((data['filter_search'])) {
-				sql += " OR LCASE(`p`.`model`) = " + this.db.escape(oc_strtolower(data['filter_search']));
-				sql += " OR LCASE(`p`.`sku`) = " + this.db.escape(oc_strtolower(data['filter_search']));
-				sql += " OR LCASE(`p`.`upc`) = " + this.db.escape(oc_strtolower(data['filter_search']));
-				sql += " OR LCASE(`p`.`ean`) = " + this.db.escape(oc_strtolower(data['filter_search']));
-				sql += " OR LCASE(`p`.`jan`) = " + this.db.escape(oc_strtolower(data['filter_search']));
-				sql += " OR LCASE(`p`.`isbn`) = " + this.db.escape(oc_strtolower(data['filter_search']));
-				sql += " OR LCASE(`p`.`mpn`) = " + this.db.escape(oc_strtolower(data['filter_search']));
+			if ((data['filter_name'])) {
+				sql += " OR LCASE(p.model) = '" + this.db.escape(utf8_strtolower(data['filter_name'])) + "'";
+				sql += " OR LCASE(p.sku) = '" + this.db.escape(utf8_strtolower(data['filter_name'])) + "'";
+				sql += " OR LCASE(p.upc) = '" + this.db.escape(utf8_strtolower(data['filter_name'])) + "'";
+				sql += " OR LCASE(p.ean) = '" + this.db.escape(utf8_strtolower(data['filter_name'])) + "'";
+				sql += " OR LCASE(p.jan) = '" + this.db.escape(utf8_strtolower(data['filter_name'])) + "'";
+				sql += " OR LCASE(p.isbn) = '" + this.db.escape(utf8_strtolower(data['filter_name'])) + "'";
+				sql += " OR LCASE(p.mpn) = '" + this.db.escape(utf8_strtolower(data['filter_name'])) + "'";
 			}
 
 			sql += ")";
 		}
 
 		if ((data['filter_manufacturer_id'])) {
-			sql += " AND `p`.`manufacturer_id` = '" + data['filter_manufacturer_id'] + "'";
+			sql += " AND p.manufacturer_id = '" + data['filter_manufacturer_id'] + "'";
 		}
 
 		const query = await this.db.query(sql);
@@ -471,71 +516,20 @@ module.exports = class Product extends Model {
 		return query.row['total'];
 	}
 
-	/**
-	 * @param data
-	 *
-	 * @return array
-	 */
-	async getSpecials(data = {}) {
-		let sql = "SELECT DISTINCT *, `pd`.`name`, `p`.`image`, `p`.`price`, " + this.statement['discount'] + ", " + this.statement['special'] + ", " + this.statement['reward'] + ", " + this.statement['review'] + " FROM `" + DB_PREFIX + "product_special` `ps2` LEFT JOIN `" + DB_PREFIX + "product_to_store` `p2s` ON (`ps2`.`product_id` = `p2s`.`product_id` AND `p2s`.`store_id` = '" + this.config.get('config_store_id') + "' AND `ps2`.`customer_group_id` = '" + this.config.get('config_customer_group_id') + "' AND ((`ps2`.`date_start` = '0000-00-00' OR `ps2`.`date_start` < NOW()) AND (`ps2`.`date_end` = '0000-00-00' OR `ps2`.`date_end` > NOW()))) LEFT JOIN `" + DB_PREFIX + "product` `p` ON (`p`.`product_id` = `p2s`.`product_id` AND `p`.`status` = '1' AND `p`.`date_available` <= NOW()) LEFT JOIN `" + DB_PREFIX + "product_description` `pd` ON (`pd`.`product_id` = `p`.`product_id`) WHERE `pd`.`language_id` = '" + this.config.get('config_language_id') + "' GROUP BY `ps2`.`product_id`";
+	async getProfile(product_id, recurring_id) {
+		const query = await this.db.query("SELECT * FROM " + DB_PREFIX + "recurring r JOIN " + DB_PREFIX + "product_recurring pr ON (pr.recurring_id = r.recurring_id AND pr.product_id = '" + product_id + "') WHERE pr.recurring_id = '" + recurring_id + "' AND status = '1' AND pr.customer_group_id = '" + this.config.get('config_customer_group_id') + "'");
 
-		let sort_data = [
-			'pd.name',
-			'p.model',
-			'p.price',
-			'rating',
-			'p.sort_order'
-		];
-
-		if ((data['sort']) && sort_data.includes(data['sort'])) {
-			if (data['sort'] == 'pd.name' || data['sort'] == 'p.model') {
-				sql += " ORDER BY LCASE(" + data['sort'] + ")";
-			} else if (data['sort'] == 'p.price') {
-				sql += " ORDER BY (CASE WHEN `special` IS NOT NULL THEN `special` WHEN `discount` IS NOT NULL THEN `discount` ELSE p.`price` END)";
-			} else {
-				sql += " ORDER BY " + data['sort'];
-			}
-		} else {
-			sql += " ORDER BY p.`sort_order`";
-		}
-
-		if ((data['order']) && (data['order'] == 'DESC')) {
-			sql += " DESC, LCASE(`pd`.`name`) DESC";
-		} else {
-			sql += " ASC, LCASE(`pd`.`name`) ASC";
-		}
-
-		if ((data['start']) || (data['limit'])) {
-			data['start'] = data['start'] || 0;
-			if (data['start'] < 0) {
-				data['start'] = 0;
-			}
-			data['limit'] = data['limit'] || 20;
-			if (data['limit'] < 1) {
-				data['limit'] = 20;
-			}
-
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
-		}
-
-		let product_data = await this.cache.get('product.' + md5(sql));
-
-		if (!product_data) {
-			const query = await this.db.query(sql);
-
-			product_data = query.rows;
-
-			await this.cache.set('product.' + md5(sql), product_data);
-		}
-
-		return product_data;
+		return query.row;
 	}
 
-	/**
-	 * @return int
-	 */
-	async getTotalSpecials() {
-		const query = await this.db.query("SELECT COUNT(DISTINCT `ps`.`product_id`) AS `total` FROM `" + DB_PREFIX + "product_special` `ps` LEFT JOIN `" + DB_PREFIX + "product_to_store` `p2s` ON (`p2s`.`product_id` = `ps`.`product_id` AND `p2s`.`store_id` = '" + this.config.get('config_store_id') + "' AND `ps`.`customer_group_id` = '" + this.config.get('config_customer_group_id') + "' AND ((`ps`.`date_start` = '0000-00-00' OR `ps`.`date_start` < NOW()) AND (`ps`.`date_end` = '0000-00-00' OR `ps`.`date_end` > NOW()))) LEFT JOIN `" + DB_PREFIX + "product` `p` ON (`p2s`.`product_id` = `p`.`product_id` AND `p`.`status` = '1' AND `p`.`date_available` <= NOW())");
+	async getProfiles(product_id) {
+		const query = await this.db.query("SELECT rd.* FROM " + DB_PREFIX + "product_recurring pr JOIN " + DB_PREFIX + "recurring_description rd ON (rd.language_id = " + this.config.get('config_language_id') + " AND rd.recurring_id = pr.recurring_id) JOIN " + DB_PREFIX + "recurring r ON r.recurring_id = rd.recurring_id WHERE pr.product_id = " + product_id + " AND status = '1' AND pr.customer_group_id = '" + this.config.get('config_customer_group_id') + "' ORDER BY sort_order ASC");
+
+		return query.rows;
+	}
+
+	async getTotalProductSpecials() {
+		const query = await this.db.query("SELECT COUNT(DISTINCT ps.product_id) AS total FROM " + DB_PREFIX + "product_special ps LEFT JOIN " + DB_PREFIX + "product p ON (ps.product_id = p.product_id) LEFT JOIN " + DB_PREFIX + "product_to_store p2s ON (p.product_id = p2s.product_id) WHERE p.status = '1' AND p.date_available <= NOW() AND p2s.store_id = '" + this.config.get('config_store_id') + "' AND ps.customer_group_id = '" + this.config.get('config_customer_group_id') + "' AND ((ps.date_start = '0000-00-00' OR ps.date_start < NOW()) AND (ps.date_end = '0000-00-00' OR ps.date_end > NOW()))");
 
 		if ((query.row['total'])) {
 			return query.row['total'];
@@ -544,14 +538,15 @@ module.exports = class Product extends Model {
 		}
 	}
 
-	/**
-	 * @param    product_id
-	 * @param string ip
-	 * @param string country
-	 *
-	 * @return void
-	 */
-	async addReport(product_id, ip, country = '') {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "product_report` SET `product_id` = '" + product_id + "', `store_id` = '" + this.config.get('config_store_id') + "', `ip` = " + this.db.escape(ip) + ", `country` = " + this.db.escape(country) + ", `date_added` = NOW()");
+	async checkProductCategory(product_id, category_ids) {
+
+		const implode = [];
+
+		for (let category_id of category_ids) {
+			implode.push(category_id);
+		}
+
+		const query = await this.db.query("SELECT * FROM " + DB_PREFIX + "product_to_category WHERE product_id = '" + product_id + "' AND category_id IN(" + implode.join(',') + ")");
+		return query.row;
 	}
 }

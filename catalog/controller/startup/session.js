@@ -1,64 +1,39 @@
-module.exports = class Session extends Controller {
-	/**
-	 * @return void
-	 * @throws \Exception
-	 */
+const setcookie = require("locutus/php/network/setcookie");
+
+module.exports = class ControllerStartupSession extends Controller {
 	async index() {
-		let session = new global.Session(this.request.server.session);
-		session.start(this.request.server.sessionID)
-		this.registry.set('session', session);
-
-		if ((this.request.get['route']) && substr(this.request.get['route'], 0, 4) == 'api/' && (this.request.get['api_token'])) {
-			this.load.model('setting/api', this);
-
-			await this.model_setting_api.cleanSessions();
+const data = {};
+		if ((this.request.get['api_token']) && (this.request.get['route']) && this.request.get['route'].substr(0, 4) == 'api/') {
+			await this.db.query("DELETE FROM `" + DB_PREFIX + "api_session` WHERE TIMESTAMPADD(HOUR, 1, date_modified) < NOW()");
 
 			// Make sure the IP is allowed
-			const api_info = await this.model_setting_api.getApiByToken(this.request.get['api_token']);
+			const api_query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "api` `a` LEFT JOIN `" + DB_PREFIX + "api_session` `as` ON (a.api_id = as.api_id) LEFT JOIN " + DB_PREFIX + "api_ip `ai` ON (a.api_id = ai.api_id) WHERE a+status = '1' AND `as`.`session_id` = '" + this.db.escape(this.request.get['api_token']) + "' AND ai.ip = '" + this.db.escape(this.request.server.headers['x-forwarded-for'] || (
+				this.request.server.connection ? (this.request.server.connection.remoteAddress ||
+					this.request.server.socket.remoteAddress ||
+					this.request.server.connection.socket.remoteAddress) : '')) + "'");
 
-			if (api_info.api_id) {
-				// this.session.start(this.request.get['api_token']);
+			if (api_query.num_rows) {
+				// await this.session.start(this.request.get['api_token']);
 
-				await this.model_setting_api.updateSession(api_info['api_session_id']);
+				// keep the session alive
+				await this.db.query("UPDATE `" + DB_PREFIX + "api_session` SET `date_modified` = NOW() WHERE `api_session_id` = '" + api_query.row['api_session_id'] + "'");
+			}
+		} else {
+			let session_id = '';
+			if ((this.request.cookie[this.config.get('session_name')])) {
+				session_id = this.request.cookie[this.config.get('session_name')];
 			}
 
-			return;
+			// await this.session.start(session_id);
+			let options = {
+				'expires': new Date(new Date().getTime() + (parseInt(this.config.get('config_session_expire') || 1) * 1000)),
+				'path': this.config.get('session_path')||'/',
+				'secure': this.request.server['protocol'].toLowerCase() == 'https' ? true : false,
+				'httponly': false,
+				'SameSite': this.config.get('session_samesite')||''
+			};
+			// console.log(options)
+			this.response.response.cookie(this.config.get('session_name'), this.session.getId(), options);
 		}
-
-		/*
-		We are adding the session cookie outside of the session class as I believe
-		PHP messed up in a big way handling sessions+ Why in the hell is it so hard to
-		have more than one concurrent session using cookies!
-
-		Is it not better to have multiple cookies when accessing parts of the system
-		that requires different cookie sessions for security reasons+
-		*/
-
-		// Update the session lifetime
-		if (this.config.get('config_session_expire')) {
-			this.config.set('session_expire', this.config.get('config_session_expire'));
-		}
-
-		// Update the session SameSite
-		this.config.set('session_samesite', this.config.get('config_session_samesite'));
-		let session_id = '';
-		if ((this.request.cookie[this.config.get('session_name')])) {
-			session_id = this.request.cookie[this.config.get('session_name')];
-		}
-
-		// session.start(session_id);
-
-		let option = {
-			'expires': new Date(new Date().getTime() + (Number(this.config.get('config_session_expire')) * 1000)),
-			'path': this.config.get('session_path'),
-			'secure': this.request.server['protocol'].toLowerCase() == 'https' ? true : false,
-			'httponly': false,
-			'SameSite': this.config.get('session_samesite')
-		};
-		// console.log(option)
-
-		this.response.addHeader('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
-		this.response.response.cookie(this.config.get('session_name'), session.getId(), option);
-		return true;
 	}
 }

@@ -1,49 +1,20 @@
-module.exports = class Debug extends Controller {
-	/**
-	 * @param string route
-	 * @param  args
-	 *
-	 * @return void
-	 */
-	async index(route, args) {
-		//echo route;
-	}
-
-	/**
-	 * @param string route
-	 * @param  args
-	 *
-	 * @return void
-	 */
-	async before(route, args) {
-		// add the route you want to test
-		/*
-		if (route == 'common/home') {
-			this.session.data['debug'][route] = microtime(true);
+module.exports = class ControllerEventDebug extends Controller {
+	async before(&route, &args) {
+		if (route == 'common/home') { // add the route you want to test
+			this.session.data['debug'][route] = micronew Date();		
 		}
-		*/
 	}
-
-	/**
-	 * @param string route
-	 * @param  args
-	 * @param mixed  output
-	 *
-	 * @return void
-	 */
-	async after(route, args, output) {
-		// add the route you want to test
-		/*
-		if (route == 'common/home') {
+	
+	async after(route, &args, &output) {
+		if (route == 'common/home') { // add the route you want to test
 			if ((this.session.data['debug'][route])) {
-				log_data = {
+				log_data = array(
 					'route' : route,
-					'time'  : microtime(true) - this.session.data['debug'][route]
-				};
+					'time'  : micronew Date() - this.session.data['debug'][route]
+				});
 				
 				this.log.write(log_data);
 			}
 		}
-		*/
-	}
+	}	
 }

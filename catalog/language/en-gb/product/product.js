@@ -15,13 +15,16 @@ module.exports = {
     text_reviews: '%s reviews',
     text_write: 'Write a review',
     text_login: 'Please <a href="%s">login</a> or <a href="%s">register</a> to review',
+    text_no_reviews: 'There are no reviews for this product.',
+    text_note: '<span class="text-danger">Note:</span> HTML is not translated!',
+    text_success: 'Thank you for your review. It has been submitted to the webmaster for approval.',
     text_related: 'Related Products',
     text_tags: 'Tags:',
     text_error: 'Product not found!',
-    text_subscription: 'Subscription',
-    text_subscription_trial: '%s every %d %s(s) for %d payment(s) then ',
-    text_subscription_duration: '%s every %d %s(s) for %d payment(s)',
-    text_subscription_cancel: '%s every %d %s(s) until canceled',
+    text_payment_recurring: 'Payment Profile',
+    text_trial_description: '%s every %d %s(s) for %d payment(s) then',
+    text_payment_description: '%s every %d %s(s) for %d payment(s)',
+    text_payment_cancel: '%s every %d %s(s) until canceled',
     text_day: 'day',
     text_week: 'week',
     text_semi_month: 'half-month',
@@ -30,10 +33,20 @@ module.exports = {
 
     // Entry
     entry_qty: 'Qty',
+    entry_name: 'Your Name',
+    entry_review: 'Your Review',
     entry_rating: 'Rating',
+    entry_good: 'Good',
+    entry_bad: 'Bad',
 
     // Tabs
     tab_description: 'Description',
     tab_attribute: 'Specification',
     tab_review: 'Reviews (%s)',
+
+    // Error
+    error_name: 'Warning: Review Name must be between 3 and 25 characters!',
+    error_text: 'Warning: Review Text must be between 25 and 1000 characters!',
+    error_rating: 'Warning: Please select a review rating!',
+    error_product: "Wanring: Product required to add the review!",
 }

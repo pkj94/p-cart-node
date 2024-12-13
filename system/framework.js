@@ -8,6 +8,8 @@ module.exports = class Framework {
         const config = new Config();
         // Load the default config
         await config.load('default');
+        // console.log(application_config)
+
         await config.load(application_config);
         // console.log('config--', config)
 
@@ -124,6 +126,7 @@ module.exports = class Framework {
 
         // Dispatch
         await route.dispatch(new Action(config.get('action_router')), new Action(config.get('action_error')));
+        // console.log('outout')
 
         // await registry.get('cache').cleanUp()
         return response.output();

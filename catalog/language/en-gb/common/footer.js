@@ -1,13 +1,11 @@
 module.exports = {
     // Text
     text_information: 'Information',
-    text_blog: 'Blog',
     text_service: 'Customer Service',
     text_extra: 'Extras',
     text_contact: 'Contact Us',
     text_return: 'Returns',
     text_sitemap: 'Site Map',
-    text_gdpr: 'GDPR',
     text_manufacturer: 'Brands',
     text_voucher: 'Gift Certificates',
     text_affiliate: 'Affiliate',
@@ -16,5 +14,5 @@ module.exports = {
     text_order: 'Order History',
     text_wishlist: 'Wish List',
     text_newsletter: 'Newsletter',
-    text_powered: 'Powered By <a href="https://www.opencart.com">OpenCart</a><br/> %s &copy; %s',
+    text_powered: 'Powered By <a href="http://www.opencart.com">OpenCart</a><br /> %s &copy, %s',
 }

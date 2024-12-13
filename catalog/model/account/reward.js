@@ -1,22 +1,17 @@
-module.exports =class Reward extends Model {
-	/**
-	 * @param data
-	 *
-	 * @return array
-	 */
+module.exports = class ModelAccountReward extends Model {
 	async getRewards(data = {}) {
-		let sql = "SELECT * FROM `" + DB_PREFIX + "customer_reward` WHERE `customer_id` = '" + await this.customer.getId() + "'";
+		let sql = "SELECT * FROM `" + DB_PREFIX + "customer_reward` WHERE customer_id = '" + await this.customer.getId() + "'";
 
-		let sort_data = [
+		const sort_data = [
 			'points',
 			'description',
 			'date_added'
 		];
 
 		if ((data['sort']) && sort_data.includes(data['sort'])) {
-			sql += " ORDER BY `" + data['sort'] + "`";
+			sql += " ORDER BY " + data['sort'];
 		} else {
-			sql += " ORDER BY `date_added`";
+			sql += " ORDER BY date_added";
 		}
 
 		if ((data['order']) && (data['order'] == 'DESC')) {
@@ -42,20 +37,14 @@ module.exports =class Reward extends Model {
 		return query.rows;
 	}
 
-	/**
-	 * @return int
-	 */
 	async getTotalRewards() {
-		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "customer_reward` WHERE `customer_id` = '" + await this.customer.getId() + "'");
+		const query = await this.db.query("SELECT COUNT(*) AS total FROM `" + DB_PREFIX + "customer_reward` WHERE customer_id = '" + await this.customer.getId() + "'");
 
 		return query.row['total'];
 	}
 
-	/**
-	 * @return int
-	 */
 	async getTotalPoints() {
-		const query = await this.db.query("SELECT SUM(`points`) AS `total` FROM `" + DB_PREFIX + "customer_reward` WHERE `customer_id` = '" + await this.customer.getId() + "' GROUP BY `customer_id`");
+		const query = await this.db.query("SELECT SUM(points) AS total FROM `" + DB_PREFIX + "customer_reward` WHERE customer_id = '" + await this.customer.getId() + "' GROUP BY customer_id");
 
 		if (query.num_rows) {
 			return query.row['total'];

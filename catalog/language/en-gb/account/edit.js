@@ -15,12 +15,10 @@ module.exports = {
     entry_telephone: 'Telephone',
 
     // Error
-    error_token: 'Warning: Edit token invalid!',
     error_exists: 'Warning: E-Mail address is already registered!',
     error_firstname: 'First Name must be between 1 and 32 characters!',
     error_lastname: 'Last Name must be between 1 and 32 characters!',
     error_email: 'E-Mail Address does not appear to be valid!',
     error_telephone: 'Telephone must be between 3 and 32 characters!',
     error_custom_field: '%s required!',
-    error_regex: '%s is not a valid input!',
 }

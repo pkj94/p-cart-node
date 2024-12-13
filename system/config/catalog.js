@@ -16,7 +16,7 @@ module.exports = {
 	db_port: DB_PORT,
 
 	// Session
-	session_autostart: false,
+	session_autostart: true,
 	session_engine: 'db',
 	session_name: 'PCSESSID',
 

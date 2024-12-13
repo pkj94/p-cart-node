@@ -1,9 +1,6 @@
-module.exports=class Search extends Controller {
-	/**
-	 * @return string
-	 */
+module.exports = class ControllerCommonSearch extends Controller {
 	async index() {
-const data ={};
+const data = {};
 		await this.load.language('common/search');
 
 		data['text_search'] = this.language.get('text_search');
@@ -13,8 +10,6 @@ const data ={};
 		} else {
 			data['search'] = '';
 		}
-
-		data['language'] = this.config.get('config_language');
 
 		return await this.load.view('common/search', data);
 	}

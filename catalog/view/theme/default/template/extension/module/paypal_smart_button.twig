@@ -49,7 +49,7 @@ function setupPayPalSmartButton() {
 					
 				$.ajax({
 					method: 'post',
-					url: 'index.php?route=extension/module/paypal_smart_button/createOrder',
+					url: '?route=extension/module/paypal_smart_button/createOrder',
 					data: $('#product input[type=\'text\'], #product input[type=\'hidden\'], #product input[type=\'radio\']:checked, #product input[type=\'checkbox\']:checked, #product select, #product textarea'),
 					dataType: 'json',
 					async: false,
@@ -70,7 +70,7 @@ function setupPayPalSmartButton() {
 				// Call your server to save the transaction
 				$.ajax({
 					method: 'post',
-					url: 'index.php?route=extension/module/paypal_smart_button/approveOrder',
+					url: '?route=extension/module/paypal_smart_button/approveOrder',
 					data: {'order_id': data.orderID},
 					dataType: 'json',
 					async: false,

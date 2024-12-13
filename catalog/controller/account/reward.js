@@ -1,18 +1,13 @@
-const sprintf = require("locutus/php/strings/sprintf");
-
-module.exports = class Reward extends Controller {
-	/**
-	 * @return void
-	 */
+module.exports = class ControllerAccountReward extends Controller {
 	async index() {
 		const data = {};
-		await this.load.language('account/reward');
-
-		if (!await this.customer.isLogged() || (!(this.request.get['customer_token']) || !(this.session.data['customer_token']) || (this.request.get['customer_token'] != this.session.data['customer_token']))) {
-			this.session.data['redirect'] = await this.url.link('account/reward', 'language=' + this.config.get('config_language'));
-
-			this.response.setRedirect(await this.url.link('account/login', 'language=' + this.config.get('config_language')));
+		if (!await this.customer.isLogged()) {
+			this.session.data['redirect'] = await this.url.link('account/reward', '', true);
+			await this.session.save(this.session.data);
+			this.response.setRedirect(await this.url.link('account/login', '', true));
 		}
+
+		await this.load.language('account/reward');
 
 		this.document.setTitle(this.language.get('heading_title'));
 
@@ -20,34 +15,34 @@ module.exports = class Reward extends Controller {
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_home'),
-			'href': await this.url.link('common/home', 'language=' + this.config.get('config_language'))
+			'href': await this.url.link('common/home')
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_account'),
-			'href': await this.url.link('account/account', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'])
+			'href': await this.url.link('account/account', '', true)
 		});
 
 		data['breadcrumbs'].push({
 			'text': this.language.get('text_reward'),
-			'href': await this.url.link('account/reward', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'])
+			'href': await this.url.link('account/reward', '', true)
 		});
 
-		this.load.model('account/reward',this);
+		this.load.model('account/reward', this);
 
 		let page = 1;
 		if ((this.request.get['page'])) {
-			page = Number(this.request.get['page']);
+			page = this.request.get['page'];
 		}
 
-		let limit = 10;
+		const limit = 10;
 
 		data['rewards'] = [];
 
-		let filter_data = {
+		const filter_data = {
 			'sort': 'date_added',
 			'order': 'DESC',
-			'start': (page - 1) * limit,
+			'start': (Number(page) - 1) * limit,
 			'limit': limit
 		};
 
@@ -61,22 +56,23 @@ module.exports = class Reward extends Controller {
 				'points': result['points'],
 				'description': result['description'],
 				'date_added': date(this.language.get('date_format_short'), new Date(result['date_added'])),
-				'href': await this.url.link('account/order.info', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'] + '&order_id=' + result['order_id'])
+				'href': await this.url.link('account/order/info', 'order_id=' + result['order_id'], true)
 			});
 		}
 
-		data['pagination'] = await this.load.controller('common/pagination', {
-			'total': reward_total,
-			'page': page,
-			'limit': limit,
-			'url': await this.url.link('account/reward', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token'] + '&page={page}')
-		});
+		const pagination = new Pagination();
+		pagination.total = reward_total;
+		pagination.page = page;
+		pagination.limit = limit;
+		pagination.url = await this.url.link('account/reward', 'page={page}', true);
 
-		data['results'] = sprintf(this.language.get('text_pagination'), (reward_total) ? ((page - 1) * limit) + 1 : 0, (((page - 1) * limit) > (reward_total - limit)) ? reward_total : (((page - 1) * limit) + limit), reward_total, Math.ceil(reward_total / limit));
+		data['pagination'] = pagination.render();
+
+		data['results'] = sprintf(this.language.get('text_pagination'), (reward_total) ? ((Number(page) - 1) * limit) + 1 : 0, (((Number(page) - 1) * limit) > (reward_total - limit)) ? reward_total : (((Number(page) - 1) * limit) + limit), reward_total, Math.ceil(reward_total / limit));
 
 		data['total'] = await this.customer.getRewardPoints();
 
-		data['continue'] = await this.url.link('account/account', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token']);
+		data['continue'] = await this.url.link('account/account', '', true);
 
 		data['column_left'] = await this.load.controller('common/column_left');
 		data['column_right'] = await this.load.controller('common/column_right');

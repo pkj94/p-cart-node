@@ -55,9 +55,8 @@ module.exports = class ControllerDesignSeoUrl extends Controller {
 			}
 
 			this.response.setRedirect(await this.url.link('design/seo_url', 'user_token=' + this.session.data['user_token'] + url, true));
-		}
-
-		await this.getForm();
+		} else
+			await this.getForm();
 	}
 
 	async edit() {
@@ -104,9 +103,8 @@ module.exports = class ControllerDesignSeoUrl extends Controller {
 			}
 
 			this.response.setRedirect(await this.url.link('design/seo_url', 'user_token=' + this.session.data['user_token'] + url, true));
-		}
-
-		await this.getForm();
+		} else
+			await this.getForm();
 	}
 
 	async delete() {

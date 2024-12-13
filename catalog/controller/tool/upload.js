@@ -1,72 +1,75 @@
-module.exports = class Upload extends Controller {
-	/**
-	 * @return void
-	 */
+module.exports = class ControllerToolUpload extends Controller {
 	async index() {
+const data = {};
 		await this.load.language('tool/upload');
 
 		const json = {};
-		let filename;
-		if ((this.request.files['file']['name'])) {
+
+		if (!empty(this.request.files['file']['name']) && is_file(this.request.files['file']['tmp_name'])) {
 			// Sanitize the filename
-			filename = expressPath.basename(html_entity_decode(this.request.files['file']['name'].replace(/[^a-zA-Z0-9.\-\s+]/g, '')));
+			filename = expressPath.basename(preg_replace('/[^a-zA-Z0-9\+\-\s+]/', '', html_entity_decode(this.request.files['file']['name'])));
 
 			// Validate the filename length
-			if ((oc_strlen(filename) < 3) || (oc_strlen(filename) > 64)) {
+			if ((utf8_strlen(filename) < 3) || (utf8_strlen(filename) > 64)) {
 				json['error'] = this.language.get('error_filename');
 			}
 
 			// Allowed file extension types
-			let allowed = [];
+			allowed = array();
 
-			let extension_allowed = this.config.get('config_file_ext_allowed').replace(/\r?\n/g, '\n');
+			extension_allowed = preg_replace('~\r?\n~', "\n", this.config.get('config_file_ext_allowed'));
 
-			let filetypes = extension_allowed.split("\n");
+			filetypes = explode("\n", extension_allowed);
 
-			for (let filetype of filetypes) {
-				allowed.push(filetype.trim());
+			for (filetypes of filetype) {
+				allowed.push(trim(filetype);
 			}
 
-			if (!allowed.includes(filename.split('.').pop().toLowerCase())) {
-				json['error'] = this.language.get('error_file_type');
+			if (!in_array(strtolower(substr(strrchr(filename, '+'), 1)), allowed)) {
+				json['error'] = this.language.get('error_filetype');
 			}
 
 			// Allowed file mime types
-			allowed = [];
+			allowed = array();
 
-			let mime_allowed = this.config.get('config_file_mime_allowed').replace(/\r?\n/g, '\n');
+			mime_allowed = preg_replace('~\r?\n~', "\n", this.config.get('config_file_mime_allowed'));
 
-			filetypes = mime_allowed.split("\n");
+			filetypes = explode("\n", mime_allowed);
 
-			for (let filetype of filetypes) {
-				allowed.push(filetype.trim());
+			for (filetypes of filetype) {
+				allowed.push(trim(filetype);
 			}
 
-			if (!allowed.includes(this.request.files['file']['mimetype'])) {
-				json['error'] = this.language.get('error_file_type');
+			if (!in_array(this.request.files['file']['type'], allowed)) {
+				json['error'] = this.language.get('error_filetype');
+			}
+
+			// Check to see if any PHP files are trying to be uploaded
+			content = file_get_contents(this.request.files['file']['tmp_name']);
+
+			if (preg_match('/\<\?php/i', content)) {
+				json['error'] = this.language.get('error_filetype');
 			}
 
 			// Return any upload error
-			// if (this.request.files['file']['error'] != UPLOAD_ERR_OK) {
-			// 	json['error'] = this.language.get('error_upload_' + this.request.files['file']['error']);
-			// }
+			if (this.request.files['file']['error'] != UPLOAD_ERR_OK) {
+				json['error'] = this.language.get('error_upload_' + this.request.files['file']['error']);
+			}
 		} else {
 			json['error'] = this.language.get('error_upload');
 		}
 
-		if (!Object.keys(json).length) {
-			let file = filename + '+' + oc_token(32);
-			try {
-				await uploadFile(this.request.files['file'], DIR_UPLOAD + file);
-				// Hide the uploaded file name so people cannot link to it directly.
-				this.load.model('tool/upload', this);
+		if (!json) {
+			file = filename + '+' + token(32);
 
-				json['code'] = await this.model_tool_upload.addUpload(filename, file);
+			move_uploaded_file(this.request.files['file']['tmp_name'], DIR_UPLOAD + file);
 
-				json['success'] = this.language.get('text_upload');
-			} catch (e) {
-				json['error'] = this.language.get('error_upload_' + this.request.files['file']['error']);
-			}
+			// Hide the uploaded file name so people can not link to it directly+
+			this.load.model('tool/upload',this);
+
+			json['code'] = await this.model_tool_upload.addUpload(filename, file);
+
+			json['success'] = this.language.get('text_upload');
 		}
 
 		this.response.addHeader('Content-Type: application/json');

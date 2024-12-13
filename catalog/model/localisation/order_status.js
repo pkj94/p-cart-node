@@ -1,31 +1,21 @@
-module.exports =class OrderStatus extends Model {
-	/**
-	 * @param order_status_id
-	 *
-	 * @return array
-	 */
+module.exports = class ModelLocalisationOrderStatus extends Model {
 	async getOrderStatus(order_status_id) {
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "order_status` WHERE `order_status_id` = '" + order_status_id + "' AND `language_id` = '" + this.config.get('config_language_id') + "'");
+		const query = await this.db.query("SELECT * FROM " + DB_PREFIX + "order_status WHERE order_status_id = '" + order_status_id + "' AND language_id = '" + this.config.get('config_language_id') + "'");
 
 		return query.row;
 	}
 
-	/**
-	 * @return array
-	 */
 	async getOrderStatuses() {
-		const sql = "SELECT `order_status_id`, `name` FROM `" + DB_PREFIX + "order_status` WHERE `language_id` = '" + this.config.get('config_language_id') + "' ORDER BY `name`";
-
-		order_status_data = await this.cache.get('order_status+' + md5(sql));
+		let order_status_data = await this.cache.get('order_status.' + this.config.get('config_language_id'));
 
 		if (!order_status_data) {
-			const query = await this.db.query(sql);
+			const query = await this.db.query("SELECT order_status_id, name FROM " + DB_PREFIX + "order_status WHERE language_id = '" + this.config.get('config_language_id') + "' ORDER BY name");
 
 			order_status_data = query.rows;
 
-			await this.cache.set('order_status+' + md5(sql), order_status_data);
+			await this.cache.set('order_status.' + this.config.get('config_language_id'), order_status_data);
 		}
-		
+
 		return order_status_data;
 	}
 }

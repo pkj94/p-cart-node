@@ -1,0 +1,5 @@
+module.exports = {
+    // Text
+    text_title: 'Free Shipping',
+    text_description: 'Free Shipping',
+}

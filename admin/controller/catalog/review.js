@@ -56,9 +56,8 @@ await this.session.save(this.session.data);
 			}
 			await this.session.save(this.session.data);
 			this.response.setRedirect(await this.url.link('catalog/review', 'user_token=' + this.session.data['user_token'] + url, true));
-		}
-
-		await this.getForm();
+		} else
+			await this.getForm();
 	}
 
 	async edit() {
@@ -105,9 +104,8 @@ await this.session.save(this.session.data);
 			}
 			await this.session.save(this.session.data);
 			this.response.setRedirect(await this.url.link('catalog/review', 'user_token=' + this.session.data['user_token'] + url, true));
-		}
-
-		await this.getForm();
+		} else
+			await this.getForm();
 	}
 
 	async delete() {

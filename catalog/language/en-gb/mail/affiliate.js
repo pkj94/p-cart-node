@@ -15,7 +15,4 @@ module.exports = {
     text_company: 'Company:',
     text_email: 'E-Mail:',
     text_telephone: 'Telephone:',
-
-    // Button
-    button_login: 'Login',
 }

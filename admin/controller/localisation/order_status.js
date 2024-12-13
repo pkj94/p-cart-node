@@ -39,9 +39,8 @@ module.exports = class ControllerLocalisationOrderStatus extends Controller {
 			}
 
 			this.response.setRedirect(await this.url.link('localisation/order_status', 'user_token=' + this.session.data['user_token'] + url, true));
-		}
-
-		await this.getForm();
+		} else
+			await this.getForm();
 	}
 
 	async edit() {
@@ -72,9 +71,8 @@ module.exports = class ControllerLocalisationOrderStatus extends Controller {
 			}
 
 			this.response.setRedirect(await this.url.link('localisation/order_status', 'user_token=' + this.session.data['user_token'] + url, true));
-		}
-
-		await this.getForm();
+		} else
+			await this.getForm();
 	}
 
 	async delete() {

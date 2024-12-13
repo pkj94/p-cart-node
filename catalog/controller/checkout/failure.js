@@ -1,11 +1,6 @@
-const sprintf = require("locutus/php/strings/sprintf");
-
-module.exports = class Failure extends Controller {
-	/**
-	 * @return void
-	 */
+module.exports = class ControllerCheckoutFailure extends Controller {
 	async index() {
-		const data = {};
+const data = {};
 		await this.load.language('checkout/failure');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -13,28 +8,28 @@ module.exports = class Failure extends Controller {
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text': this.language.get('text_home'),
-			'href': await this.url.link('common/home', 'language=' + this.config.get('config_language'))
+			'text' : this.language.get('text_home'),
+			'href' : await this.url.link('common/home')
 		});
 
 		data['breadcrumbs'].push({
-			'text': this.language.get('text_basket'),
-			'href': await this.url.link('checkout/cart', 'language=' + this.config.get('config_language'))
+			'text' : this.language.get('text_basket'),
+			'href' : await this.url.link('checkout/cart')
 		});
 
 		data['breadcrumbs'].push({
-			'text': this.language.get('text_checkout'),
-			'href': await this.url.link('checkout/checkout', 'language=' + this.config.get('config_language'))
+			'text' : this.language.get('text_checkout'),
+			'href' : await this.url.link('checkout/checkout', '', true)
 		});
 
 		data['breadcrumbs'].push({
-			'text': this.language.get('text_failure'),
-			'href': await this.url.link('checkout/failure', 'language=' + this.config.get('config_language'))
+			'text' : this.language.get('text_failure'),
+			'href' : await this.url.link('checkout/failure')
 		});
 
-		data['text_message'] = sprintf(this.language.get('text_message'), await this.url.link('information/contact', 'language=' + this.config.get('config_language')));
+		data['text_message'] = sprintf(this.language.get('text_message'), await this.url.link('information/contact'));
 
-		data['continue'] = await this.url.link('common/home', 'language=' + this.config.get('config_language'));
+		data['continue'] = await this.url.link('common/home');
 
 		data['column_left'] = await this.load.controller('common/column_left');
 		data['column_right'] = await this.load.controller('common/column_right');

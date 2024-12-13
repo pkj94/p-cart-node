@@ -19,8 +19,5 @@ module.exports = {
     text_compare: 'Product Compare (%s)',
     text_success: 'Success: You have added <a href="%s">%s</a> to your <a href="%s">product comparison</a>!',
     text_remove: 'Success: You have modified your product comparison!',
-    text_no_results: 'You have not chosen any products to compare.',
-
-    // Error
-    error_product: 'Warning: Product could not be found!',
+    text_empty: 'You have not chosen any products to compare.',
 }

@@ -225,14 +225,14 @@ $('input[name=\'shipping_method\']').change(function() {
 $(document).on('click', '.button-payment-address', function(event) {
 	$('#payment_address').remove();
 	$('body').append('<div id="payment_address" class="modal fade"></div>');
-	$('#payment_address').load('index.php?route=extension/module/paypal_smart_button/paymentAddress #payment_address >', onLoadPaymentAddress);
+	$('#payment_address').load('?route=extension/module/paypal_smart_button/paymentAddress #payment_address >', onLoadPaymentAddress);
 	$('#payment_address').modal('show');
 });
 
 $(document).on('click', '.button-shipping-address', function(event) {
 	$('#shipping_address').remove();
 	$('body').append('<div id="shipping_address" class="modal fade"></div>');
-	$('#shipping_address').load('index.php?route=extension/module/paypal_smart_button/shippingAddress #shipping_address >', onLoadShippingAddress);
+	$('#shipping_address').load('?route=extension/module/paypal_smart_button/shippingAddress #shipping_address >', onLoadShippingAddress);
 	$('#shipping_address').modal('show');
 });
 
@@ -286,7 +286,7 @@ function onLoadPaymentAddress() {
 
 	$('#payment_address select[name=\'country_id\']').on('change', function() {
 		$.ajax({
-			url: 'index.php?route=checkout/checkout/country&country_id=' + this.value,
+			url: '?route=checkout/checkout/country&country_id=' + this.value,
 			dataType: 'json',
 			beforeSend: function() {
 				$('#payment_address select[name=\'country_id\']').prop('disabled', true);
@@ -361,7 +361,7 @@ function onLoadPaymentAddress() {
 				clearInterval(timer);
 
 				$.ajax({
-					url: 'index.php?route=tool/upload',
+					url: '?route=tool/upload',
 					type: 'post',
 					dataType: 'json',
 					data: new FormData($('#form_upload')[0]),
@@ -398,7 +398,7 @@ function onLoadPaymentAddress() {
 	$('#payment_address .button-confirm').on('click', function(event) {
 		$.ajax({
 			type: 'post',
-			url: 'index.php?route=extension/module/paypal_smart_button/confirmPaymentAddress',
+			url: '?route=extension/module/paypal_smart_button/confirmPaymentAddress',
 			data: $('#payment_address [name]'),
 			dataType: 'json',
 			success: function(json) {
@@ -452,7 +452,7 @@ function onLoadShippingAddress() {
 	
 	$('#shipping_address select[name=\'country_id\']').on('change', function() {
 		$.ajax({
-			url: 'index.php?route=checkout/checkout/country&country_id=' + this.value,
+			url: '?route=checkout/checkout/country&country_id=' + this.value,
 			dataType: 'json',
 			beforeSend: function() {
 				$('#shipping_address select[name=\'country_id\']').prop('disabled', true);
@@ -527,7 +527,7 @@ function onLoadShippingAddress() {
 				clearInterval(timer);
 
 				$.ajax({
-					url: 'index.php?route=tool/upload',
+					url: '?route=tool/upload',
 					type: 'post',
 					dataType: 'json',
 					data: new FormData($('#form_upload')[0]),
@@ -564,7 +564,7 @@ function onLoadShippingAddress() {
 	$('#shipping_address .button-confirm').on('click', function(event) {
 		$.ajax({
 			type: 'post',
-			url: 'index.php?route=extension/module/paypal_smart_button/confirmShippingAddress',
+			url: '?route=extension/module/paypal_smart_button/confirmShippingAddress',
 			data: $('#shipping_address [name]'),
 			dataType: 'json',
 			success: function(json) {

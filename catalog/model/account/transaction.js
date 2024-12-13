@@ -1,28 +1,23 @@
-module.exports =class Transaction extends Model {
-	/**
-	 * @param data
-	 *
-	 * @return array
-	 */
+module.exports = class ModelAccountTransaction extends Model {
 	async getTransactions(data = {}) {
-		let sql = "SELECT * FROM `" + DB_PREFIX + "customer_transaction` WHERE `customer_id` = '" + await this.customer.getId() + "'";
+		let sql = "SELECT * FROM `" + DB_PREFIX + "customer_transaction` WHERE customer_id = '" + await this.customer.getId() + "'";
 
-		let sort_data = [
+		const sort_data = [
 			'amount',
 			'description',
 			'date_added'
 		];
 
 		if ((data['sort']) && sort_data.includes(data['sort'])) {
-			sql += " ORDER BY `" + data['sort'] + "`";
+			sql+= " ORDER BY " + data['sort'];
 		} else {
-			sql += " ORDER BY `date_added`";
+			sql+= " ORDER BY date_added";
 		}
 
 		if ((data['order']) && (data['order'] == 'DESC')) {
-			sql += " DESC";
+			sql+= " DESC";
 		} else {
-			sql += " ASC";
+			sql+= " ASC";
 		}
 
 		if ((data['start']) || (data['limit'])) {
@@ -34,7 +29,7 @@ module.exports =class Transaction extends Model {
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql+= " LIMIT " + data['start'] + "," + data['limit'];
 		}
 
 		const query = await this.db.query(sql);
@@ -42,20 +37,14 @@ module.exports =class Transaction extends Model {
 		return query.rows;
 	}
 
-	/**
-	 * @return int
-	 */
 	async getTotalTransactions() {
-		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "customer_transaction` WHERE `customer_id` = '" + await this.customer.getId() + "'");
+		const query = await this.db.query("SELECT COUNT(*) AS total FROM `" + DB_PREFIX + "customer_transaction` WHERE customer_id = '" + await this.customer.getId() + "'");
 
 		return query.row['total'];
 	}
 
-	/**
-	 * @return int
-	 */
 	async getTotalAmount() {
-		const query = await this.db.query("SELECT SUM(`amount`) AS `total` FROM `" + DB_PREFIX + "customer_transaction` WHERE `customer_id` = '" + await this.customer.getId() + "' GROUP BY `customer_id`");
+		const query = await this.db.query("SELECT SUM(amount) AS total FROM `" + DB_PREFIX + "customer_transaction` WHERE customer_id = '" + await this.customer.getId() + "' GROUP BY customer_id");
 
 		if (query.num_rows) {
 			return query.row['total'];
