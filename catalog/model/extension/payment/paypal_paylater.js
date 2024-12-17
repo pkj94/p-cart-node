@@ -1,7 +1,7 @@
 module.exports = class ModelExtensionPaymentPayPalPayLater extends Model {
 	
 	async getMethod(address, total) {
-		method_data = array();
+		let method_data = {};
 		
 		this.load.model('extension/payment/paypal');
 		
@@ -37,7 +37,7 @@ module.exports = class ModelExtensionPaymentPayPalPayLater extends Model {
 					message = '';
 				}
 			
-				method_data = array(
+				method_data = {
 					'code'        'paypal_paylater',
 					'title'       this.language.get('text_paypal_paylater_title') + message,
 					'terms'       '',

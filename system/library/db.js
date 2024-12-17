@@ -9,7 +9,7 @@ module.exports = class DBLibrary {
 
     }
     async connect() {
-        return await this.adaptor.connect()
+        return this.adaptor.connect()
     }
     query(sql) {
         return this.adaptor.query(sql);

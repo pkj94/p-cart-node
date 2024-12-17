@@ -1,7 +1,7 @@
 module.exports = class ModelExtensionPaymentPayPal extends Model {
 	
 	async getMethod(address, total) {
-		method_data = array();
+		let method_data = {};
 		
 		agree_status = this.getAgreeStatus();
 		
@@ -21,7 +21,7 @@ module.exports = class ModelExtensionPaymentPayPal extends Model {
 			}
 
 			if (status) {			
-				method_data = array(
+				method_data = {
 					'code'        'paypal',
 					'title'       this.language.get('text_paypal_title'),
 					'terms'       '',

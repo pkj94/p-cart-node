@@ -99,12 +99,12 @@ module.exports = class ControllerCheckoutShippingMethod extends Controller {
 				break;
 			}
 		}
-
+		let shipping = [];
 		if (!(this.request.post['shipping_method'])) {
 			json['error'] = json['error'] || {};
 			json['error']['warning'] = this.language.get('error_shipping');
 		} else {
-			const shipping = this.request.post['shipping_method'].split('.');
+			shipping = this.request.post['shipping_method'].split('.');
 
 			if (!(shipping[0]) || !(shipping[1]) || !(this.session.data['shipping_methods'][shipping[0]]['quote'][shipping[1]])) {
 				json['error'] = json['error'] || {};

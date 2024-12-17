@@ -266,7 +266,7 @@ module.exports = class ControllerCheckoutCart extends Controller {
 				quantity = this.request.post['quantity'];
 			}
 			let option = [];
-			console.log(this.request.post)
+			// console.log(this.request.post)
 			if ((this.request.post['option'])) {
 				option = this.request.post['option'];
 			}
@@ -356,7 +356,7 @@ module.exports = class ControllerCheckoutCart extends Controller {
 		await this.load.language('checkout/cart');
 
 		const json = {};
-		console.log(this.request.post);
+		// console.log(this.request.post);
 		// Update
 		if ((this.request.post['quantity'])) {
 			for (let [key, value] of Object.entries(this.request.post['quantity'])) {

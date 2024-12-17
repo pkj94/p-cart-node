@@ -22,10 +22,10 @@ class ModelExtensionPaymentWechatPay extends Model {
 			status = false;
 		}
 
-		method_data = array();
+		let method_data = {};
 
 		if (status) {
-			method_data = array(
+			method_data = {
 				'code'        'wechat_pay',
 				'title'       this.language.get('text_title'),
 				'terms'       '',

@@ -1,27 +1,11 @@
-const array_key_exists = require("locutus/php/array/array_key_exists");
-const setcookie = require("locutus/php/network/setcookie");
-const rtrim = require("locutus/php/strings/rtrim");
-
 module.exports = class ControllerStartupStartup extends Controller {
-
-	async __(key) {
-		// To make sure that calls to  also support dynamic properties from the registry
-		// See https://www.php+net/manual/en/language+oop5+overloading.js#object+
-		if (this.registry) {
-			if (this.registry.get(key) !== null) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 	async index() {
-const data = {};
 		// Store
 		let query = {};
 		if (this.request.server.protocol == 'https') {
 			query = await this.db.query("SELECT * FROM " + DB_PREFIX + "store WHERE REPLACE(`ssl`, 'www.', '') = '" + this.db.escape('https://' + this.request.server.hostname.replace('www.', '') + expressPath.dirname(DIR_OPENCART).replace(/[\/\\.]+$/, '') + '/') + "'");
 		} else {
+			// console.log(this)
 			query = await this.db.query("SELECT * FROM " + DB_PREFIX + "store WHERE REPLACE(`url`, 'www.', '') = '" + this.db.escape('http://' + this.request.server.hostname.replace('www.', '') + expressPath.dirname(DIR_OPENCART).replace(/[\/\\.]+$/, '') + '/') + "'");
 		}
 
@@ -53,7 +37,7 @@ const data = {};
 		if (this.config.get('config_timezone')) {
 			process.tz = (this.config.get('config_timezone'));
 
-			// Sync PHP and DB time zones+
+			// Sync JS and DB time zones+
 			await this.db.query("SET time_zone = '" + this.db.escape(date('P')) + "'");
 		}
 
@@ -74,12 +58,12 @@ const data = {};
 			code = this.session.data['language'];
 		}
 
-		if ((this.request.cookie['language']) && !array_key_exists(code, languages)) {
+		if ((this.request.cookie['language']) && !Object.keys(languages).filter(a => a == code).length) {
 			code = this.request.cookie['language'];
 		}
 
 		// Language Detection
-		if ((this.request.server['HTTP_ACCEPT_LANGUAGE']) && !array_key_exists(code, languages)) {
+		if ((this.request.server['HTTP_ACCEPT_LANGUAGE']) && !Object.keys(languages).filter(a => a == code).length) {
 			let detect = '';
 
 			let browser_languages = this.request.server['HTTP_ACCEPT_LANGUAGE'].split(',');
@@ -101,7 +85,7 @@ const data = {};
 			if (!detect) {
 				// Try using language folder to detect the language
 				for (browser_languages of browser_language) {
-					if (array_key_exists(browser_language.toLowerCase(), languages)) {
+					if (Object.keys(languages).filter(a => a == browser_language.toLowerCase()).length) {
 						detect = browser_language.toLowerCase();
 
 						break;
@@ -112,7 +96,7 @@ const data = {};
 			code = detect ? detect : '';
 		}
 
-		if (!array_key_exists(code, languages)) {
+		if (!Object.keys(languages).filter(a => a == code).length) {
 			code = this.config.get('config_language');
 		}
 
@@ -121,7 +105,7 @@ const data = {};
 		}
 
 		if (!(this.request.cookie['language']) || this.request.cookie['language'] != code) {
-			setcookie('language', code, new Date() + 60 * 60 * 24 * 30, '/');
+			this.response.response.cookie('language', code, new Date(new Date().getTime() + 60 * 60 * 24 * 30), '/');
 		}
 
 		// Overwrite the default language object
@@ -144,7 +128,7 @@ const data = {};
 			this.config.set('config_customer_group_id', this.session.data['customer']['customer_group_id']);
 		} else if (await this.customer.isLogged()) {
 			// Logged in customers
-			this.config.set('config_customer_group_id',await  this.customer.getGroupId());
+			this.config.set('config_customer_group_id', await this.customer.getGroupId());
 		} else if ((this.session.data['guest']) && (this.session.data['guest']['customer_group_id'])) {
 			this.config.set('config_customer_group_id', this.session.data['guest']['customer_group_id']);
 		} else {
@@ -153,7 +137,7 @@ const data = {};
 
 		// Tracking Code
 		if ((this.request.get['tracking'])) {
-			setcookie('tracking', this.request.get['tracking'], new Date() + 3600 * 24 * 1000, '/');
+			this.response.response.cookie('tracking', this.request.get['tracking'], new Date(new Date().getTime() + 3600 * 24 * 1000), '/');
 
 			await this.db.query("UPDATE `" + DB_PREFIX + "marketing` SET clicks = (clicks + 1) WHERE code = '" + this.db.escape(this.request.get['tracking']) + "'");
 		}
@@ -169,11 +153,11 @@ const data = {};
 			code = this.session.data['currency'];
 		}
 
-		if ((this.request.cookie['currency']) && !array_key_exists(code, currencies)) {
+		if ((this.request.cookie['currency']) && !Object.keys(currencies).filter(a => a == code).length) {
 			code = this.request.cookie['currency'];
 		}
 
-		if (!array_key_exists(code, currencies)) {
+		if (!Object.keys(currencies).filter(a => a == code).length) {
 			code = this.config.get('config_currency');
 		}
 
@@ -182,7 +166,7 @@ const data = {};
 		}
 
 		if (!(this.request.cookie['currency']) || this.request.cookie['currency'] != code) {
-			setcookie('currency', code, new Date().getTime() + 1000 * 60 * 60 * 24 * 30, '/');
+			this.response.response.cookie('currency', code, new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 30), '/');
 		}
 		const currency = new CartCurrency(this.registry);
 		await currency.init();
@@ -192,7 +176,7 @@ const data = {};
 		const tax = new CartTax(this.registry);
 		this.registry.set('tax', tax);
 
-		// NODE v16+ validation compatibility+
+		// NODE v16+ validation compatibility.
 		if ((this.session.data['shipping_address'] && this.session.data['shipping_address']['country_id']) && (this.session.data['shipping_address'] && this.session.data['shipping_address']['zone_id'])) {
 			await this.tax.setShippingAddress(this.session.data['shipping_address']['country_id'], this.session.data['shipping_address']['zone_id']);
 		} else if (this.config.get('config_tax_default') == 'shipping') {

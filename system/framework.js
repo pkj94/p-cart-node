@@ -14,16 +14,16 @@ module.exports = class Framework {
         // console.log('config--', config)
 
         // Set the default application
-        registry.set('config', config);
+        global.registry.set('config', config);
         // Set the default time zone
         const dateTimezone = config.get('date_timezone');
         Intl.DateTimeFormat().resolvedOptions().timeZone = dateTimezone;
         // Logging
         const log = new Log(config.get('error_filename'));
-        registry.set('log', log);
+        global.registry.set('log', log);
         // Event
         const event = new global.Event(registry);
-        registry.set('event', event);
+        global.registry.set('event', event);
         // Event Register
         if (config.has('action_event')) {
             const actionEvents = config.get('action_event');
@@ -37,10 +37,10 @@ module.exports = class Framework {
         }
         // Loader
         const loader = new Loader(registry);
-        registry.set('load', loader);
+        global.registry.set('load', loader);
         // Request
         const request = new global.Request(req);
-        registry.set('request', request);
+        global.registry.set('request', request);
 
         // Response
         const response = new global.Response(res, req);
@@ -50,54 +50,61 @@ module.exports = class Framework {
         response.addHeader('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
         response.addHeader('Pragma: no-cache');
         response.setCompression(config.get('config_compression'));
-        registry.set('response', response);
+        global.registry.set('response', response);
         // Database
+        console.log("config.get('db_autostart')----", config.get('db_autostart'))
         if (config.get('db_autostart')) {
+            // console.log('db=--=1')
             let db = new Db(config.get('db_engine'), config.get('db_hostname'), config.get('db_username'), config.get('db_password'), config.get('db_database'), config.get('db_port'), config.get('db_debug'));
-            await db.connect();
+            // console.log('db=--=2')
+            // try {
+            //     await db.connect();
+            // } catch (e) {
+            //     console.log('db connection error', e)
+            // }
             // console.log('db=--=', db)
-            registry.set('db', db);
+            global.registry.set('db', db);
             // Set time zone
-            const query = db.query("SELECT * FROM " + DB_PREFIX + "setting WHERE `key` = 'config_timezone' AND store_id = '0'");
+            const query = await db.query("SELECT * FROM " + DB_PREFIX + "setting WHERE `key` = 'config_timezone' AND store_id = '0'");
 
             if (query.num_rows) {
                 process.env.TZ = query.row['value'];
             }
 
-            // Sync PHP and DB time zones
-            db.query("SET time_zone = '" + db.escape(date('P')) + "'");
+            // Sync JS and DB time zones
+            await db.query("SET time_zone = '" + db.escape(date('P')) + "'");
         }
         // Session
         if (config.get('session_autostart')) {
             let session = new global.Session(req.session);
             session.start(req.sessionID)
-            registry.set('session', session);
+            global.registry.set('session', session);
 
         }
         // Cache
         const cache = new global.Cache(config.get('cache_engine'), config.get('cache_expire'));
-        registry.set('cache', cache);
+        global.registry.set('cache', cache);
         // Url
         if (config.get('url_autostart')) {
-            registry.set('url', new Url(config.get('site_url'), config.get('site_ssl')));
+            global.registry.set('url', new Url(config.get('site_url'), config.get('site_ssl')));
         }
         // Language
         const language = new Language(config.get('language_directory'));
-        registry.set('language', language);
+        global.registry.set('language', language);
 
         // Document
-        registry.set('document', new Document());
+        global.registry.set('document', new Document());
         // Config Autoload
         if (config.has('config_autoload')) {
             for (let value of config.get('config_autoload')) {
-                loader.config(value);
+                await loader.config(value);
             }
         }
 
         // Language Autoload
         if (config.has('language_autoload')) {
             for (let value of config.get('language_autoload')) {
-                loader.language(value);
+                await loader.language(value);
             }
         }
 
@@ -111,7 +118,7 @@ module.exports = class Framework {
         // Model Autoload
         if (config.has('model_autoload')) {
             for (let value of config.get('model_autoload')) {
-                loader.model(value);
+                await loader.model(value);
             }
         }
         // Route

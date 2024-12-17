@@ -33,7 +33,7 @@ const data = {};
 				'SameSite': this.config.get('session_samesite')||''
 			};
 			// console.log(options)
-			this.response.response.cookie(this.config.get('session_name'), this.session.getId(), options);
+			this.response.response.cookie(this.config.get('session_name'), this.request.server.sessionID, options);
 		}
 	}
 }

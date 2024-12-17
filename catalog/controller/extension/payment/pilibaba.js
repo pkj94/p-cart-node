@@ -258,7 +258,7 @@ const data = {};
 					}
 
 					// Marketing
-					this.load.model('checkout/marketing');
+					this.load.model('checkout/marketing',this);
 
 					marketing_info = await this.model_checkout_marketing.getMarketingByCode(this.request.cookie['tracking']);
 

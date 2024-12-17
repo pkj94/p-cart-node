@@ -12,8 +12,8 @@ module.exports = class MySQLiDBLibrary {
             charset: 'utf8mb4',
             debug: debug
         }).on('error', async (err, result) => {
-            console.log('error occurred. Reconneting...'.purple);
-            await this.connect();
+            console.log('error occurred. Reconneting...', result);
+            // await this.connect();
         });
         this.insertId = 0;
         this.affectedRows = 0;
@@ -22,9 +22,10 @@ module.exports = class MySQLiDBLibrary {
         return new Promise((resolve, reject) => {
             this.connection.connect(async (err) => {
                 if (err) {
-                    console.log(err)
+                    console.log('err----', err)
                     reject(new Error(this.error + err.message));
                 } else {
+                    console.log('connect');
                     await this.query("SET SESSION sql_mode = 'NO_ZERO_IN_DATE,NO_ENGINE_SUBSTITUTION'");
                     await this.query("SET FOREIGN_KEY_CHECKS = 0");
                     await this.query(`SET time_zone = '${date('P')}'`);
@@ -61,7 +62,7 @@ module.exports = class MySQLiDBLibrary {
             } catch (e) {
                 console.log('e------', e)
                 await this.connect();
-                resolve(this.query(sql))
+                resolve(await this.query(sql))
             }
         });
     }

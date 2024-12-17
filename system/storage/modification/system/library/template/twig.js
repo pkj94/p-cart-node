@@ -12,6 +12,9 @@ module.exports = class TwigTemplate {
     render(filename, code = '') {
         if (!code) {
             const file = DIR_TEMPLATE + `${filename}.twig`;
+            // if (file.indexOf('home') != -1)
+            //     console.log(file)
+
             
         if (DIR_CATALOG && is_file(DIR_MODIFICATION + 'admin/view/template/' + filename + '.twig')) {	
                 code = fs.readFileSync(DIR_MODIFICATION + 'admin/view/template/' + filename + '.twig','utf-8');

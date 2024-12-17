@@ -1,60 +1,59 @@
+const strip_tags = require("locutus/php/strings/strip_tags");
+
 module.exports = class ControllerCheckoutPaymentMethod extends Controller {
 	async index() {
-const data = {};
+		const data = {};
 		await this.load.language('checkout/checkout');
-
+		console.log(this.session.data)
 		if ((this.session.data['payment_address'])) {
 			// Totals
-			totals = array();
-			taxes = await this.cart.getTaxes();
-			total = 0;
+			let totals = [];
+			let taxes = await this.cart.getTaxes();
+			let total = 0;
 
-			// Because __call can not keep var references so we put them into an array+
-			total_data = array(
-				'totals' : &totals,
-				'taxes'  : &taxes,
-				'total'  : &total
-			});
-			
-			this.load.model('setting/extension',this);
+			// Because __call can not keep var references so we put them into an array.
+			let total_data = {
+				'totals': totals,
+				'taxes': taxes,
+				'total': total
+			};
 
-			sort_order = array();
-
-			const results = await this.model_setting_extension.getExtensions('total');
-
-			for (results of key : value) {
-				sort_order[key] = this.config.get('total_' + value['code'] + '_sort_order');
-			}
-
-			array_multisort(sort_order, SORT_ASC, results);
+			this.load.model('setting/extension', this);
+			let results = await this.model_setting_extension.getExtensions('total');
+			// console.log(results)
+			results = results.sort((a,b) => this.config.get('total_' + a['code'] + '_sort_order') - this.config.get('total_' + b['code'] + '_sort_order'));
 
 			for (let result of results) {
 				if (Number(this.config.get('total_' + result['code'] + '_status'))) {
-					this.load.model('extension/total/' + result['code'],this);
-					
-					// We have to put the totals in an array so that they pass by reference+
-					this.{'model_extension_total_' + result['code']}.getTotal(total_data);
+					this.load.model('extension/total/' + result['code'], this);
+
+					// We have to put the totals in an array so that they pass by reference.
+					// console.log('model_extension_total_' + result['code'])
+					total_data = await this['model_extension_total_' + result['code']].getTotal(total_data);
+					totals = total_data.totals;
+					total = total_data.total;
+					taxes = total_data.taxes;
 				}
 			}
 
 			// Payment Methods
-			method_data = array();
+			let method_data = {};
 
-			this.load.model('setting/extension',this);
+			this.load.model('setting/extension', this);
 
-			const results = await this.model_setting_extension.getExtensions('payment');
+			results = await this.model_setting_extension.getExtensions('payment');
 
-			recurring = await this.cart.hasRecurringProducts();
+			let recurring = await this.cart.hasRecurringProducts();
 
 			for (let result of results) {
 				if (this.config.get('payment_' + result['code'] + '_status')) {
-					this.load.model('extension/payment/' + result['code']);
-
-					method = this.{'model_extension_payment_' + result['code']}.getMethod(this.session.data['payment_address'], total);
+					this.load.model('extension/payment/' + result['code'], this);
+					console.log('model_extension_payment_' + result['code'])
+					let method = await this['model_extension_payment_' + result['code']].getMethod(this.session.data['payment_address'], total);
 
 					if (method) {
 						if (recurring) {
-							if (property_exists(this.{'model_extension_payment_' + result['code']}, 'recurringPayments') && this.{'model_extension_payment_' + result['code']}.recurringPayments()) {
+							if (typeof this['model_extension_payment_' + result['code']].recurringPayments && await this['model_extension_payment_' + result['code']].recurringPayments()) {
 								method_data[result['code']] = method;
 							}
 						} else {
@@ -63,19 +62,12 @@ const data = {};
 					}
 				}
 			}
-
-			sort_order = array();
-
-			for (method_data of key : value) {
-				sort_order[key] = value['sort_order'];
-			}
-
-			array_multisort(sort_order, SORT_ASC, method_data);
+			method_data = method_data.sort((a, b) => a.sort_order - b.sort_order);
 
 			this.session.data['payment_methods'] = method_data;
 		}
 
-		if (empty(this.session.data['payment_methods'])) {
+		if (!(this.session.data['payment_methods'])) {
 			data['error_warning'] = sprintf(this.language.get('error_no_payment'), await this.url.link('information/contact'));
 		} else {
 			data['error_warning'] = '';
@@ -84,10 +76,10 @@ const data = {};
 		if ((this.session.data['payment_methods'])) {
 			data['payment_methods'] = this.session.data['payment_methods'];
 		} else {
-			data['payment_methods'] = array();
+			data['payment_methods'] = [];
 		}
 
-		if ((this.session.data['payment_method']['code'])) {
+		if ((this.session.data['payment_method'] && this.session.data['payment_method']['code'])) {
 			data['code'] = this.session.data['payment_method']['code'];
 		} else {
 			data['code'] = '';
@@ -102,11 +94,11 @@ const data = {};
 		data['scripts'] = this.document.getScripts();
 
 		if (this.config.get('config_checkout_id')) {
-			this.load.model('catalog/information',this);
+			this.load.model('catalog/information', this);
 
-			information_info = await this.model_catalog_information.getInformation(this.config.get('config_checkout_id'));
+			const information_info = await this.model_catalog_information.getInformation(this.config.get('config_checkout_id'));
 
-			if (information_info) {
+			if (information_info.information_id) {
 				data['text_agree'] = sprintf(this.language.get('text_agree'), await this.url.link('information/information/agree', 'information_id=' + this.config.get('config_checkout_id'), true), information_info['title']);
 			} else {
 				data['text_agree'] = '';
@@ -135,17 +127,17 @@ const data = {};
 		}
 
 		// Validate cart has products and has stock+
-		if ((!await this.cart.hasProducts() && empty(this.session.data['vouchers'])) || (!await this.cart.hasStock() && !Number(this.config.get('config_stock_checkout')))) {
+		if ((!await this.cart.hasProducts() && !(this.session.data['vouchers'])) || (!await this.cart.hasStock() && !Number(this.config.get('config_stock_checkout')))) {
 			json['redirect'] = await this.url.link('checkout/cart');
 		}
 
 		// Validate minimum quantity requirements+
-		products = await this.cart.getProducts();
+		const products = await this.cart.getProducts();
 
 		for (let product of products) {
-			product_total = 0;
+			let product_total = 0;
 
-			for (let product of products_2) {
+			for (let product_2 of products) {
 				if (product_2['product_id'] == product['product_id']) {
 					product_total += product_2['quantity'];
 				}
@@ -159,27 +151,30 @@ const data = {};
 		}
 
 		if (!(this.request.post['payment_method'])) {
+			json['error'] = json['error'] || {};
 			json['error']['warning'] = this.language.get('error_payment');
 		} else if (!(this.session.data['payment_methods'][this.request.post['payment_method']])) {
+			json['error'] = json['error'] || {};
 			json['error']['warning'] = this.language.get('error_payment');
 		}
 
 		if (this.config.get('config_checkout_id')) {
-			this.load.model('catalog/information',this);
+			this.load.model('catalog/information', this);
 
-			information_info = await this.model_catalog_information.getInformation(this.config.get('config_checkout_id'));
+			const information_info = await this.model_catalog_information.getInformation(this.config.get('config_checkout_id'));
 
-			if (information_info && !(this.request.post['agree'])) {
+			if (information_info.information_id && !(this.request.post['agree'])) {
+				json['error'] = json['error'] || {};
 				json['error']['warning'] = sprintf(this.language.get('error_agree'), information_info['title']);
 			}
 		}
 
-		if (!json) {
+		if (!Object.keys(json).length) {
 			this.session.data['payment_method'] = this.session.data['payment_methods'][this.request.post['payment_method']];
 
 			this.session.data['comment'] = strip_tags(this.request.post['comment']);
 		}
-
+		await this.session.save(this.session.data);
 		this.response.addHeader('Content-Type: application/json');
 		this.response.setOutput(json);
 	}

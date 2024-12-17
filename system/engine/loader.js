@@ -32,7 +32,7 @@ module.exports = class Loader {
         }
     }
 
-    async model(route, $this) {
+    async model(route, $this = false) {
         // Sanitize the call 
         route = route.replace(/[^a-zA-Z0-9_\/]/g, '');
         if (!this.registry.has(`model_${route.replace(/\//g, '_')}`)) {
@@ -50,7 +50,8 @@ module.exports = class Loader {
                     }
                 });
                 this.registry.set(`model_${route.replace(/\//g, '_')}`, proxy);
-                $this[`model_${route.replace(/\//g, '_')}`] = proxy;
+                if ($this)
+                    $this[`model_${route.replace(/\//g, '_')}`] = proxy;
             } else {
                 throw new Error(`Error: Could not load model ${route}!`);
             }
@@ -84,7 +85,7 @@ module.exports = class Loader {
         return output;
     }
 
-    async library(route, $this) {
+    library(route, $this = false) {
         route = this.sanitizeRoute(route);
 
         const file = expressPath.join(DIR_SYSTEM, 'library', `${route}.js`); // Adjust the path as needed
@@ -93,7 +94,8 @@ module.exports = class Loader {
         const LibraryClass = new (require(file))(this.registry);
 
         this.registry.set(expressPath.basename(route), LibraryClass);
-        $this[expressPath.basename(route)] = LibraryClass;
+        if ($this)
+            $this[expressPath.basename(route)] = LibraryClass;
     }
 
     async helper(route) {

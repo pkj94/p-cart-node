@@ -35,7 +35,7 @@ module.exports = class Action {
         // Initialize the class
         if (fs.existsSync(file)) {
             // console.log('file----', file, this)
-            const controller = new (require(file))(registry);
+            const controller = new (require(file))(global.registry);
 
             if (typeof controller[this.method] === 'function') {
                 return await controller[this.method](...args);

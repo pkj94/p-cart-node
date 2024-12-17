@@ -25,7 +25,6 @@ module.exports = class Session {
         this.session_id = id;
     }
     async destroy() {
-
         this.data = {};
         this.session = {};
         this.session.save((err) => {

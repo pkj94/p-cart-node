@@ -1,8 +1,8 @@
 module.exports = class ModelExtensionPaymentEway extends Model {
 	async getMethod(address, total) {
 		await this.load.language('extension/payment/eway');
-
-		if (this.config.get('payment_eway_status')) {
+		let status = false;
+		if (Number(this.config.get('payment_eway_status'))) {
 			const query = await this.db.query("SELECT * FROM " + DB_PREFIX + "zone_to_geo_zone WHERE geo_zone_id = '" + this.config.get('payment_eway_standard_geo_zone_id') + "' AND country_id = '" + address['country_id'] + "' AND (zone_id = '" + address['zone_id'] + "' OR zone_id = '0')");
 			if (!this.config.get('payment_eway_standard_geo_zone_id')) {
 				status = true;
@@ -15,23 +15,22 @@ module.exports = class ModelExtensionPaymentEway extends Model {
 			status = false;
 		}
 
-		method_data = array();
+		let method_data = {};
 
 		if (status) {
-			method_data = array(
-				'code'  'eway',
-				'title'  this.language.get('text_title'),
-				'terms'       '',
-				'sort_order'  this.config.get('payment_eway_sort_order')
-			});
+			method_data = {
+				'code': 'eway',
+				'title': this.language.get('text_title'),
+				'terms': '',
+				'sort_order': this.config.get('payment_eway_sort_order')
+			};
 		}
 
 		return method_data;
 	}
 
 	async addOrder(order_data) {
-
-		cap = '';
+		let cap = '';
 		if (this.config.get('payment_eway_transaction_method') == 'payment') {
 			cap = ",`capture_status` = '1'";
 		}
@@ -50,19 +49,19 @@ module.exports = class ModelExtensionPaymentEway extends Model {
 
 		const query = await this.db.query("SELECT * FROM " + DB_PREFIX + "eway_card WHERE customer_id = '" + customer_id + "'");
 
-		card_data = array();
+		const card_data = [];
 
-		this.load.model('account/address',this);
+		this.load.model('account/address', this);
 
-		for (query.rows as row) {
+		for (let row of query.rows) {
 
-			card_data.push(array(
-				'card_id'  row['card_id'],
-				'customer_id'  row['customer_id'],
-				'token'  row['token'],
-				'digits'  '**** ' + row['digits'],
-				'expiry'  row['expiry'],
-				'type'  row['type'],
+			card_data.push({
+				'card_id': row['card_id'],
+				'customer_id': row['customer_id'],
+				'token': row['token'],
+				'digits': '**** ' + row['digits'],
+				'expiry': row['expiry'],
+				'type': row['type'],
 			});
 		}
 		return card_data;
@@ -94,87 +93,89 @@ module.exports = class ModelExtensionPaymentEway extends Model {
 	}
 
 	async getAccessCode(request) {
-		if (this.config.get('payment_eway_test')) {
+		let url = '';
+		if (Number(this.config.get('payment_eway_test'))) {
 			url = 'https://api.sandbox.ewaypayments.com/AccessCodes';
 		} else {
 			url = 'https://api.ewaypayments.com/AccessCodes';
 		}
 
-		response = this.sendCurl(url, request);
-		response = JSON.parse(response);
+		const response = await this.sendCurl(url, request);
+		// response = JSON.parse(response);
 
 		return response;
 	}
 
 	async getSharedAccessCode(request) {
-		if (this.config.get('payment_eway_test')) {
+		let url = '';
+		if (Number(this.config.get('payment_eway_test'))) {
 			url = 'https://api.sandbox.ewaypayments.com/AccessCodesShared';
 		} else {
 			url = 'https://api.ewaypayments.com/AccessCodesShared';
 		}
 
-		response = this.sendCurl(url, request);
-		response = JSON.parse(response);
+		const response = await this.sendCurl(url, request);
+		// response = JSON.parse(response);
 
 		return response;
 	}
 
 	async getAccessCodeResult(access_code) {
-		if (this.config.get('payment_eway_test')) {
+		let url = '';
+		if (Number(this.config.get('payment_eway_test'))) {
 			url = 'https://api.sandbox.ewaypayments.com/AccessCode/' + access_code;
 		} else {
 			url = 'https://api.ewaypayments.com/AccessCode/' + access_code;
 		}
 
-		response = this.sendCurl(url, '', false);
-		response = JSON.parse(response);
+		const response = await this.sendCurl(url, '', false);
+		// response = JSON.parse(response);
 
 		return response;
 	}
 
-	async sendCurl(url, data, is_post=true) {
-		ch = curl_init(url);
 
-		eway_username = html_entity_decode(this.config.get('payment_eway_username'));
-		eway_password = html_entity_decode(this.config.get('payment_eway_password'));
+	async sendCurl(url, data, is_post = true) {
+		const eway_username = this.config.payment_eway_username;
+		const eway_password = this.config.payment_eway_password;
+		const auth = Buffer.from(`${eway_username}:${eway_password}`).toString('base64');
 
-		curl_setopt(ch, CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
-		curl_setopt(ch, CURLOPT_USERPWD, eway_username + ":" + eway_password);
-		if (is_post) {
-		curl_setopt(ch, CURLOPT_POST, 1);
-			curl_setopt(ch, CURLOPT_POSTFIELDS, JSON.stringify(data));
-		} else {
-			curl_setopt(ch, CURLOPT_CUSTOMREQUEST, 'GET');
-		}
-		curl_setopt(ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt(ch, CURLOPT_TIMEOUT, 60);
-		curl_setopt(ch, CURLOPT_SSL_VERIFYPEER, 1);
-		curl_setopt(ch, CURLOPT_FORBID_REUSE, 1);
-		curl_setopt(ch, CURLOPT_FRESH_CONNECT, 1);
+		const headers = {
+			'Content-Type': 'application/json',
+			'Authorization': `Basic ${auth}`
+		};
 
-		response = curl_exec(ch);
+		const options = {
+			method: is_post ? 'POST' : 'GET',
+			url: url,
+			headers: headers,
+			timeout: 60000,
+			httpsAgent: new (require('https').Agent)({
+				rejectUnauthorized: true
+			}),
+			data: is_post ? data : null
+		};
 
-		if (curl_errno(ch) != CURLE_OK) {
-			response = new stdClass();
-			response.Errors = "POST Error: " + curl_error(ch) + " URL: url";
-			this.log.write(array('error'  curl_error(ch), 'errno'  curl_errno(ch)), 'cURL failed');
-			response = JSON.stringify(response);
-		} else {
-			info = curl_getinfo(ch);
-			if (info['http_code'] != 200) {
-				response = new stdClass();
-				if (info['http_code'] == 401 || info['http_code'] == 404 || info['http_code'] == 403) {
-					response.Errors = "Please check the API Key and Password";
-				} else {
-					response.Errors = 'Error connecting to eWAY: ' + info['http_code'];
+		try {
+			const response = await require('axios')(options);
+			if (response.status !== 200) {
+				let errorResponse = {
+					Errors: 'Error connecting to eWAY: ' + response.status
+				};
+				if (response.status === 401 || response.status === 403 || response.status === 404) {
+					errorResponse.Errors = "Please check the API Key and Password";
 				}
-				response = JSON.stringify(response);
+				throw errorResponse;
 			}
+			return response.data;
+		} catch (error) {
+			let errorResponse = {
+				Errors: `POST Error: ${error.message} URL: ${url}`
+			};
+			console.error('cURL failed', { error: error.message, errno: error.code });
+			throw errorResponse;
 		}
-
-		curl_close(ch);
-
-		return response;
 	}
+
 
 }

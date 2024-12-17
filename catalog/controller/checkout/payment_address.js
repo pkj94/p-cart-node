@@ -97,7 +97,7 @@ module.exports = class ControllerCheckoutPaymentAddress extends Controller {
 					json['error']['warning'] = this.language.get('error_address');
 				}
 
-				if (!json) {
+				if (!Object.keys(json).length) {
 					this.session.data['payment_address'] = await this.model_account_address.getAddress(this.request.post['address_id']);
 
 					delete this.session.data['payment_method'];

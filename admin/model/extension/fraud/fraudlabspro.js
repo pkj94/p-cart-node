@@ -97,7 +97,7 @@ module.exports = class ModelExtensionFraudFraudLabsPro extends Model {
 			try {
 				const response = await require("axios").post(requestUrl, JSON.stringify(data), {
 					headers: {
-						'User-Agent': userAgent,
+						'User-Agent': useragent.parse(this.request.server.headers['user-agent'], this.request.server.query.jsuseragent).source,
 						'Content-Type': 'application/x-www-form-urlencoded',
 						'Cookie': `${sessionCookie}`
 					},

@@ -1,9 +1,11 @@
+const getdate = require("locutus/php/datetime/getdate");
+
 module.exports = class ModelExtensionPaymentCardConnect extends Model {
 	async getMethod(address, total) {
 		await this.load.language('extension/payment/cardconnect');
 
 		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "zone_to_geo_zone` WHERE `geo_zone_id` = '" + this.config.get('cardconnect_geo_zone') + "' AND `country_id` = '" + address['country_id'] + "' AND (`zone_id` = '" + address['zone_id'] + "' OR `zone_id` = '0')");
-
+		let status = false;
 		if (this.config.get('cardconnect_total') > 0 && this.config.get('cardconnect_total') > total) {
 			status = false;
 		} else if (!this.config.get('cardconnect_geo_zone')) {
@@ -14,53 +16,53 @@ module.exports = class ModelExtensionPaymentCardConnect extends Model {
 			status = false;
 		}
 
-		method_data = array();
+		let method_data = {};
 
 		if (status) {
-			method_data = array(
-				'code'			 'cardconnect',
-				'title'			 this.language.get('text_title'),
-				'terms'			 '',
-				'sort_order'	 this.config.get('cardconnect_sort_order')
-			});
+			method_data = {
+				'code': 'cardconnect',
+				'title': this.language.get('text_title'),
+				'terms': '',
+				'sort_order': this.config.get('cardconnect_sort_order')
+			};
 		}
 
 		return method_data;
 	}
 
 	async getCardTypes() {
-		cards = array();
+		const cards = [];
 
-		cards.push(array(
-			'text'   'Visa',
-			'value'  'VISA'
+		cards.push({
+			'text': 'Visa',
+			'value': 'VISA'
 		});
 
-		cards.push(array(
-			'text'   'MasterCard',
-			'value'  'MASTERCARD'
+		cards.push({
+			'text': 'MasterCard',
+			'value': 'MASTERCARD'
 		});
 
-		cards.push(array(
-			'text'   'Discover Card',
-			'value'  'DISCOVER'
+		cards.push({
+			'text': 'Discover Card',
+			'value': 'DISCOVER'
 		});
 
-		cards.push(array(
-			'text'   'American Express',
-			'value'  'AMEX'
+		cards.push({
+			'text': 'American Express',
+			'value': 'AMEX'
 		});
 
 		return cards;
 	}
 
 	async getMonths() {
-		months = array();
+		const months = [];
 
 		for (i = 1; i <= 12; i++) {
-			months.push(array(
-				'text'   sprintf('%02d', i),
-				'value'  sprintf('%02d', i)
+			months.push({
+				'text': sprintf('%02d', i),
+				'value': sprintf('%02d', i)
 			});
 		}
 
@@ -68,14 +70,14 @@ module.exports = class ModelExtensionPaymentCardConnect extends Model {
 	}
 
 	async getYears() {
-		years = array();
+		const years = [];
 
-		today = getdate();
+		const today = getdate();
 
-		for (i = today['year']; i < today['year'] + 11; i++) {
-			years.push(array(
-				'text'   sprintf('%02d', i % 100),
-				'value'  sprintf('%02d', i % 100)
+		for (let i = today['year']; i < today['year'] + 11; i++) {
+			years.push({
+				'text': sprintf('%02d', i % 100),
+				'value': sprintf('%02d', i % 100)
 			});
 		}
 
@@ -117,37 +119,29 @@ module.exports = class ModelExtensionPaymentCardConnect extends Model {
 	}
 
 	async getSettlementStatuses(merchant_id, date) {
-		this.log('Getting settlement statuses from CardConnect');
-
-		url = 'https://' + this.config.get('cardconnect_site') + '.cardconnect.com:' + ((this.config.get('cardconnect_environment') == 'live') ? 8443 : 6443) + '/cardconnect/rest/settlestat?merchid=' + merchant_id + '&date=' + date;
-
-		header = array();
-
-		header.push('Content-type: application/json';
-		header.push('Authorization: Basic ' + base64_encode(this.config.get('cardconnect_api_username') + ':' + this.config.get('cardconnect_api_password'));
-
-		await this.model_extension_payment_cardconnect.log('Header: ' + print_r(header, true));
-
-		await this.model_extension_payment_cardconnect.log('URL: ' + url);
-
-		ch = curl_init();
-		curl_setopt(ch, CURLOPT_URL, url);
-		curl_setopt(ch, CURLOPT_HTTPHEADER, header);
-		curl_setopt(ch, CURLOPT_CUSTOMREQUEST, 'GET');
-		curl_setopt(ch, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt(ch, CURLOPT_TIMEOUT, 30);
-		curl_setopt(ch, CURLOPT_SSL_VERIFYPEER, false);
-		response_data = curl_exec(ch);
-		if (curl_errno(ch)) {
-			await this.model_extension_payment_cardconnect.log('cURL error: ' + curl_errno(ch));
+		await this.log('Getting settlement statuses from CardConnect');
+		const url = `${this.getCurlUrl()}?merchid=${merchant_id}&date=${date}`; const headers = {
+			'Content-Type': 'application/json',
+			'Authorization': 'Basic ' + Buffer.from(`${this.config.cardconnect_api_username}:${this.config.cardconnect_api_password}`).toString('base64')
+		};
+		await this.model_extension_payment_cardconnect.log('Header:', headers);
+		await this.model_extension_payment_cardconnect.log('URL:', url);
+		try {
+			const response = await require('axios').get(url, {
+				headers,
+				timeout: 30000,
+				httpsAgent: new (require('https').Agent)({ rejectUnauthorized: false })
+			});
+			await this.log('SUCCESS', response.data);
+			const responseData = response.data; // Handle any errors in the response 
+			if (responseData.Error) {
+				throw new Error(responseData.Error.Message);
+			}
+			return responseData;
+		} catch (error) {
+			this.model_extension_payment_cardconnect.log('ERROR', { message: error.message, stack: error.stack });
+			throw new Error(this.config.error_process_order);
 		}
-		curl_close(ch);
-
-		response_data = JSON.parse(response_data, true);
-
-		this.log('Response: ' + print_r(response_data, true));
-
-		return response_data;
 	}
 
 	async updateTransactionStatusByRetref(retref, status) {
@@ -162,9 +156,9 @@ module.exports = class ModelExtensionPaymentCardConnect extends Model {
 
 	async log(data) {
 		if (this.config.get('cardconnect_logging')) {
-			log = new Log('cardconnect.log');
+			const log = new Log('cardconnect.log');
 
-			log.write(data);
+			await log.write(data);
 		}
 	}
 }

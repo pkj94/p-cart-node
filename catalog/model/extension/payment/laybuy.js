@@ -96,10 +96,10 @@ module.exports = class ModelExtensionPaymentLaybuy extends Model {
 			}
 		}
 
-		method_data = array();
+		let method_data = {};
 
 		if (status) {
-			method_data = array(
+			method_data = {
 				'code'			 'laybuy',
 				'title'			 this.language.get('text_title'),
 				'terms'			 '',

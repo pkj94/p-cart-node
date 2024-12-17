@@ -14,10 +14,10 @@ module.exports = class ModelExtensionPaymentSagePayDirect extends Model {
 			status = false;
 		}
 
-		method_data = array();
+		let method_data = {};
 
 		if (status) {
-			method_data = array(
+			method_data = {
 				'code'  'sagepay_direct',
 				'title'  this.language.get('text_title'),
 				'terms'  '',
