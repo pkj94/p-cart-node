@@ -545,9 +545,9 @@
 
 	  $('#history').load(this.href);
   });
-
+setTimeout(()=>{
   $('#history').load('?route=sale/order/history&user_token={{ user_token }}&order_id={{ order_id }}');
-
+},500);
   $('#button-history').on('click', function() {
 	  $.ajax({
 		  url: '{{ catalog }}?route=api/order/history&api_token={{ api_token }}&store_id={{ store_id }}&order_id={{ order_id }}',

@@ -10,20 +10,20 @@ const data = {};
 		} else {
 			this.load.model('localisation/currency',this);
 
-			currency_info = await this.model_localisation_currency.getCurrencyByCode(this.request.post['currency']);
+			const currency_info = await this.model_localisation_currency.getCurrencyByCode(this.request.post['currency']);
 
-			if (currency_info) {
+			if (currency_info.currency_id) {
 				this.session.data['currency'] = this.request.post['currency'];
 
-				delete this.session.data['shipping_method']);
-				delete this.session.data['shipping_methods']);
+				delete this.session.data['shipping_method'];
+				delete this.session.data['shipping_methods'];
 
 				json['success'] = this.language.get('text_success');
 			} else {
 				json['error'] = this.language.get('error_currency');
 			}
 		}
-
+		await this.session.save(this.session.data);
 		this.response.addHeader('Content-Type: application/json');
 		this.response.setOutput(json);
 	}

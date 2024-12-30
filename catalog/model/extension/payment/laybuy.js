@@ -1,3 +1,6 @@
+const array_change_key_case = require("locutus/php/array/array_change_key_case");
+const array_diff = require("locutus/php/array/array_diff");
+
 module.exports = class ModelExtensionPaymentLaybuy extends Model {
 	async addTransaction(data, status) {
 		this.log('Report: ' + print_r(data, true), '1');
@@ -18,14 +21,14 @@ module.exports = class ModelExtensionPaymentLaybuy extends Model {
 	}
 
 	async getInitialPayments() {
-		minimum = this.config.get('payment_laybuy_min_deposit') ? this.config.get('payment_laybuy_min_deposit') : 20;
+		let minimum = this.config.get('payment_laybuy_min_deposit') ? this.config.get('payment_laybuy_min_deposit') : 20;
 
-		maximum = this.config.get('payment_laybuy_max_deposit') ? this.config.get('payment_laybuy_max_deposit') : 50;
+		let maximum = this.config.get('payment_laybuy_max_deposit') ? this.config.get('payment_laybuy_max_deposit') : 50;
 
-		initial_payments = array();
+		let initial_payments = [];
 
 		for (i = minimum; i <= maximum; i += 10) {
-			initial_payments.push(i;
+			initial_payments.push(i);
 		}
 
 		return initial_payments;
@@ -35,7 +38,7 @@ module.exports = class ModelExtensionPaymentLaybuy extends Model {
 		await this.load.language('extension/payment/laybuy');
 
 		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "zone_to_geo_zone` WHERE `geo_zone_id` = '" + this.config.get('payment_laybuy_geo_zone_id') + "' AND `country_id` = '" + address['country_id'] + "' AND (`zone_id` = '" + address['zone_id'] + "' OR `zone_id` = '0')");
-
+		let status = false;
 		if (this.config.get('payment_laybuy_total') > 0 && this.config.get('payment_laybuy_total') > total) {
 			status = false;
 		} else if (!this.config.get('payment_laybuy_geo_zone_id')) {
@@ -51,11 +54,11 @@ module.exports = class ModelExtensionPaymentLaybuy extends Model {
 			if ((this.session.data['guest']) && in_array(0, this.config.get('payment_laybuy_customer_group'))) {
 				status = true;
 			} else if (await this.customer.isLogged() && this.session.data['customer_id']) {
-				this.load.model('account/customer',this);
+				this.load.model('account/customer', this);
 
-				customer = await this.model_account_customer.getCustomer(this.session.data['customer_id']);
+				const customer = await this.model_account_customer.getCustomer(this.session.data['customer_id']);
 
-				if (in_array(customer['customer_group_id'], this.config.get('payment_laybuy_customer_group'))) {
+				if (this.config.get('payment_laybuy_customer_group').includes(customer['customer_group_id'])) {
 					this.session.data['customer_group_id'] = customer['customer_group_id'];
 
 					status = true;
@@ -69,14 +72,14 @@ module.exports = class ModelExtensionPaymentLaybuy extends Model {
 
 		/* Condition for categories and products */
 		if (status && this.config.get('payment_laybuy_category')) {
-			allowed_categories = this.config.get('payment_laybuy_category');
+			constallowed_categories = this.config.get('payment_laybuy_category');
 
-			xproducts = explode(',', this.config.get('payment_laybuy_xproducts'));
+			const xproducts = this.config.get('payment_laybuy_xproducts').split(',');
 
-			cart_products = await this.cart.getProducts();
+			const cart_products = await this.cart.getProducts();
 
-			for (cart_products as cart_product) {
-				product = array();
+			for (let cart_product of cart_products) {
+				let product = [];
 
 				if (xproducts && in_array(cart_product['product_id'], xproducts)) {
 					status = false;
@@ -86,9 +89,9 @@ module.exports = class ModelExtensionPaymentLaybuy extends Model {
 
 					product = product.row;
 
-					product = explode(',', product['categories']);
+					product = product['categories'].split(',');
 
-					if (product && count(array_diff(product, allowed_categories)) > 0) {
+					if (product && array_diff(product, allowed_categories).length > 0) {
 						status = false;
 						break;
 					}
@@ -96,15 +99,15 @@ module.exports = class ModelExtensionPaymentLaybuy extends Model {
 			}
 		}
 
-		let method_data = {};
+		let method_data = null;
 
 		if (status) {
 			method_data = {
-				'code'			 'laybuy',
-				'title'			 this.language.get('text_title'),
-				'terms'			 '',
-				'sort_order'	 this.config.get('payment_laybuy_sort_order')
-			});
+				'code': 'laybuy',
+				'title': this.language.get('text_title'),
+				'terms': '',
+				'sort_order': this.config.get('payment_laybuy_sort_order')
+			};
 		}
 
 		return method_data;
@@ -113,7 +116,7 @@ module.exports = class ModelExtensionPaymentLaybuy extends Model {
 	async getMonths() {
 		await this.load.language('extension/payment/laybuy');
 
-		max_months = this.config.get('payment_laybuy_max_months');
+		let max_months = this.config.get('payment_laybuy_max_months');
 
 		if (!max_months) {
 			max_months = 3;
@@ -123,12 +126,12 @@ module.exports = class ModelExtensionPaymentLaybuy extends Model {
 			max_months = 1;
 		}
 
-		months = array();
+		let months = [];
 
 		for (i = 1; i <= max_months; i++) {
-			months.push(array(
-				'value'  i,
-				'label'  i + ' ' + ((i > 1) ? this.language.get('text_months') : this.language.get('text_month'))
+			months.push({
+				'value': i,
+				'label': i + ' ' + ((i > 1) ? this.language.get('text_months') : this.language.get('text_month'))
 			});
 		}
 
@@ -160,27 +163,27 @@ module.exports = class ModelExtensionPaymentLaybuy extends Model {
 	}
 
 	async log(data, step = 6) {
-		if (this.config.get('payment_laybuy_logging')) {
-			backtrace = debug_backtrace();
+		if (Number(this.config.get('payment_laybuy_logging'))) {
+			const stack = new Error().stack.split('\n')[6].trim();
+			const log = new Log('laybuy.log');
+			const origin = stack[step] ? stack[step].trim().replace(/^at\s/, '') : 'Unknown';
 
-			log = new Log('laybuy.log');
-
-			log.write('(' + backtrace[step]['class'] + '::' + backtrace[step]['function'] + ') - ' + data);
+			log.write(`(${origin}) - ${data}`);
 		}
 	}
 
 	async prepareTransactionReport(post_data) {
-		this.load.model('checkout/order',this);
+		this.load.model('checkout/order', this);
 
 		await this.load.language('extension/payment/laybuy');
 
-		data = array_change_key_case(post_data, CASE_LOWER);
+		const data = array_change_key_case(post_data, 'CASE_LOWER');
 
 		data['order_id'] = data['custom'];
 
-		order_info = await this.model_checkout_order.getOrder(data['order_id']);
+		const order_info = await this.model_checkout_order.getOrder(data['order_id']);
 
-		date_added = date(this.language.get('date_format_short'), strtotime(order_info['date_added']));
+		date_added = date(this.language.get('date_format_short'), new Date(order_info['date_added']));
 
 		data['store_id'] = order_info['store_id'];
 
@@ -192,26 +195,26 @@ module.exports = class ModelExtensionPaymentLaybuy extends Model {
 
 		months = data['months'];
 
-		report_content = array();
+		const report_content = [];
 
-		report_content.push(array(
-			'instalment'	 0,
-			'amount'		 this.currency.format(data['downpayment_amount'], data['currency']),
-			'date'			 date_added,
-			'pp_trans_id'	 data['dp_paypal_txn_id'],
-			'status'		 'Completed'
+		report_content.push({
+			'instalment': 0,
+			'amount': this.currency.format(data['downpayment_amount'], data['currency']),
+			'date': date_added,
+			'pp_trans_id': data['dp_paypal_txn_id'],
+			'status': 'Completed'
 		});
 
 		for (month = 1; month <= months; month++) {
-			date = date("Y-m-d h:i:s", strtotime(data['first_payment_due'] + " +" + (month -1) + " month"));
-			date = date(this.language.get('date_format_short'), strtotime(date));
+			let date1 = date("Y-m-d h:i:s", strtotime(data['first_payment_due'] + " +" + (month - 1) + " month"));
+			date1 = date(this.language.get('date_format_short'), new Date(date1));
 
-			report_content.push(array(
-			'instalment'	 month,
-			'amount'		 this.currency.format(data['payment_amounts'], data['currency']),
-			'date'			 date,
-			'pp_trans_id'	 '',
-			'status'		 'Pending'
+			report_content.push({
+				'instalment': month,
+				'amount': this.currency.format(data['payment_amounts'], data['currency']),
+				'date': date,
+				'pp_trans_id': '',
+				'status': 'Pending'
 			});
 		}
 

@@ -1,7 +1,7 @@
 module.exports = class ControllerCheckoutConfirm extends Controller {
 	async index() {
-const data = {};
-		redirect = '';
+		const data = {};
+		let redirect = '';
 
 		if (await this.cart.hasShipping()) {
 			// Validate if shipping address has been set+
@@ -14,9 +14,9 @@ const data = {};
 				redirect = await this.url.link('checkout/checkout', '', true);
 			}
 		} else {
-			delete this.session.data['shipping_address']);
-			delete this.session.data['shipping_method']);
-			delete this.session.data['shipping_methods']);
+			delete this.session.data['shipping_address'];
+			delete this.session.data['shipping_method'];
+			delete this.session.data['shipping_methods'];
 		}
 
 		// Validate if payment address has been set+
@@ -35,12 +35,12 @@ const data = {};
 		}
 
 		// Validate minimum quantity requirements+
-		products = await this.cart.getProducts();
+		const products = await this.cart.getProducts();
 
 		for (let product of products) {
-			product_total = 0;
+			let product_total = 0;
 
-			for (let product of products_2) {
+			for (let product_2 of products) {
 				if (product_2['product_id'] == product['product_id']) {
 					product_total += product_2['quantity'];
 				}
@@ -54,48 +54,38 @@ const data = {};
 		}
 
 		if (!redirect) {
-			order_data = array();
+			const order_data = {};
 
-			totals = array();
-			taxes = await this.cart.getTaxes();
-			total = 0;
+			let totals = [];
+			let taxes = await this.cart.getTaxes();
+			let total = 0;
 
-			// Because __call can not keep var references so we put them into an array+
-			total_data = array(
-				'totals' : &totals,
-				'taxes'  : &taxes,
-				'total'  : &total
-			});
+			// Because __call can not keep var references so we put them into an array.
+			let total_data = {
+				'totals': totals,
+				'taxes': taxes,
+				'total': total
+			};
 
-			this.load.model('setting/extension',this);
+			this.load.model('setting/extension', this);
 
-			sort_order = array();
 
-			const results = await this.model_setting_extension.getExtensions('total');
+			let results = await this.model_setting_extension.getExtensions('total');
+			results = results.sort((a, b) => Number(this.config.get('total_' + a['code'] + '_sort_order')) - Number(this.config.get('total_' + b['code'] + '_sort_order')));
 
-			for (results of key : value) {
-				sort_order[key] = this.config.get('total_' + value['code'] + '_sort_order');
-			}
-
-			array_multisort(sort_order, SORT_ASC, results);
 
 			for (let result of results) {
 				if (Number(this.config.get('total_' + result['code'] + '_status'))) {
-					this.load.model('extension/total/' + result['code'],this);
+					this.load.model('extension/total/' + result['code'], this);
 
-					// We have to put the totals in an array so that they pass by reference+
-					this.{'model_extension_total_' + result['code']}.getTotal(total_data);
+					// We have to put the totals in an array so that they pass by reference.
+					total_data = await this['model_extension_total_' + result['code']].getTotal(total_data);
+					totals = total_data.totals;
+					total = total_data.total;
+					taxes = total_data.taxes;
 				}
 			}
-
-			sort_order = array();
-
-			for (totals of key : value) {
-				sort_order[key] = value['sort_order'];
-			}
-
-			array_multisort(sort_order, SORT_ASC, totals);
-
+			totals = totals.sort((a, b) => a.sort_order - b.sort_order);
 			order_data['totals'] = totals;
 
 			await this.load.language('checkout/checkout');
@@ -107,17 +97,17 @@ const data = {};
 			if (order_data['store_id']) {
 				order_data['store_url'] = this.config.get('config_url');
 			} else {
-				if (this.request.server['HTTPS']) {
+				if (this.request.server.protocol == 'https') {
 					order_data['store_url'] = HTTPS_SERVER;
 				} else {
 					order_data['store_url'] = HTTP_SERVER;
 				}
 			}
-			
-			this.load.model('account/customer',this);
+
+			this.load.model('account/customer', this);
 
 			if (await this.customer.isLogged()) {
-				customer_info = await this.model_account_customer.getCustomer(await this.customer.getId());
+				const customer_info = await this.model_account_customer.getCustomer(await this.customer.getId());
 
 				order_data['customer_id'] = await this.customer.getId();
 				order_data['customer_group_id'] = customer_info['customer_group_id'];
@@ -125,7 +115,7 @@ const data = {};
 				order_data['lastname'] = customer_info['lastname'];
 				order_data['email'] = customer_info['email'];
 				order_data['telephone'] = customer_info['telephone'];
-				order_data['custom_field'] = JSON.parse(customer_info['custom_field'], true);
+				order_data['custom_field'] = customer_info['custom_field'] ? JSON.parse(customer_info['custom_field']) : {};
 			} else if ((this.session.data['guest'])) {
 				order_data['customer_id'] = 0;
 				order_data['customer_group_id'] = this.session.data['guest']['customer_group_id'];
@@ -148,7 +138,7 @@ const data = {};
 			order_data['payment_country'] = this.session.data['payment_address']['country'];
 			order_data['payment_country_id'] = this.session.data['payment_address']['country_id'];
 			order_data['payment_address_format'] = this.session.data['payment_address']['address_format'];
-			order_data['payment_custom_field'] = ((this.session.data['payment_address']['custom_field']) ? this.session.data['payment_address']['custom_field'] : array());
+			order_data['payment_custom_field'] = ((this.session.data['payment_address']['custom_field']) ? this.session.data['payment_address']['custom_field'] : {});
 
 			if ((this.session.data['payment_method']['title'])) {
 				order_data['payment_method'] = this.session.data['payment_method']['title'];
@@ -209,50 +199,50 @@ const data = {};
 			order_data['products'] = [];
 
 			for (let product of await this.cart.getProducts()) {
-				option_data = array();
+				const option_data = [];
 
 				for (let option of product['option']) {
-					option_data.push(array(
-						'product_option_id'       : option['product_option_id'],
-						'product_option_value_id' : option['product_option_value_id'],
-						'option_id'               : option['option_id'],
-						'option_value_id'         : option['option_value_id'],
-						'name'                    : option['name'],
-						'value'                   : option['value'],
-						'type'                    : option['type']
+					option_data.push({
+						'product_option_id': option['product_option_id'],
+						'product_option_value_id': option['product_option_value_id'],
+						'option_id': option['option_id'],
+						'option_value_id': option['option_value_id'],
+						'name': option['name'],
+						'value': option['value'],
+						'type': option['type']
 					});
 				}
 
 				order_data['products'].push({
-					'product_id' : product['product_id'],
-					'name'       : product['name'],
-					'model'      : product['model'],
-					'option'     : option_data,
-					'download'   : product['download'],
-					'quantity'   : product['quantity'],
-					'subtract'   : product['subtract'],
-					'price'      : product['price'],
-					'total'      : product['total'],
-					'tax'        : this.tax.getTax(product['price'], product['tax_class_id']),
-					'reward'     : product['reward']
+					'product_id': product['product_id'],
+					'name': product['name'],
+					'model': product['model'],
+					'option': option_data,
+					'download': product['download'],
+					'quantity': product['quantity'],
+					'subtract': product['subtract'],
+					'price': product['price'],
+					'total': product['total'],
+					'tax': this.tax.getTax(product['price'], product['tax_class_id']),
+					'reward': product['reward']
 				});
 			}
 
 			// Gift Voucher
 			order_data['vouchers'] = [];
 
-			if (!empty(this.session.data['vouchers'])) {
-				for (this.session.data['vouchers'] of voucher) {
-					order_data['vouchers'].push(array(
-						'description'      : voucher['description'],
-						'code'             : token(10),
-						'to_name'          : voucher['to_name'],
-						'to_email'         : voucher['to_email'],
-						'from_name'        : voucher['from_name'],
-						'from_email'       : voucher['from_email'],
-						'voucher_theme_id' : voucher['voucher_theme_id'],
-						'message'          : voucher['message'],
-						'amount'           : voucher['amount']
+			if ((this.session.data['vouchers'])) {
+				for (let voucher of this.session.data['vouchers']) {
+					order_data['vouchers'].push({
+						'description': voucher['description'],
+						'code': oc_token(10),
+						'to_name': voucher['to_name'],
+						'to_email': voucher['to_email'],
+						'from_name': voucher['from_name'],
+						'from_email': voucher['from_email'],
+						'voucher_theme_id': voucher['voucher_theme_id'],
+						'message': voucher['message'],
+						'amount': voucher['amount']
 					});
 				}
 			}
@@ -263,12 +253,12 @@ const data = {};
 			if ((this.request.cookie['tracking'])) {
 				order_data['tracking'] = this.request.cookie['tracking'];
 
-				subtotal = await this.cart.getSubTotal();
+				const subtotal = await this.cart.getSubTotal();
 
 				// Affiliate
-				affiliate_info = await this.model_account_customer.getAffiliateByTracking(this.request.cookie['tracking']);
+				const affiliate_info = await this.model_account_customer.getAffiliateByTracking(this.request.cookie['tracking']);
 
-				if (affiliate_info) {
+				if (affiliate_info.customer_id) {
 					order_data['affiliate_id'] = affiliate_info['customer_id'];
 					order_data['commission'] = (subtotal / 100) * affiliate_info['commission'];
 				} else {
@@ -277,11 +267,11 @@ const data = {};
 				}
 
 				// Marketing
-				this.load.model('checkout/marketing',this);
+				this.load.model('checkout/marketing', this);
 
-				marketing_info = await this.model_checkout_marketing.getMarketingByCode(this.request.cookie['tracking']);
+				const marketing_info = await this.model_checkout_marketing.getMarketingByCode(this.request.cookie['tracking']);
 
-				if (marketing_info) {
+				if (marketing_info.marketing_id) {
 					order_data['marketing_id'] = marketing_info['marketing_id'];
 				} else {
 					order_data['marketing_id'] = 0;
@@ -298,70 +288,77 @@ const data = {};
 			order_data['currency_code'] = this.session.data['currency'];
 			order_data['currency_value'] = this.currency.getValue(this.session.data['currency']);
 			order_data['ip'] = this.request.server.headers['x-forwarded-for'] || (
-                this.request.server.connection ? (this.request.server.connection.remoteAddress ||
-                    this.request.server.socket.remoteAddress ||
-                    this.request.server.connection.socket.remoteAddress) : '');
+				this.request.server.connection ? (this.request.server.connection.remoteAddress ||
+					this.request.server.socket.remoteAddress ||
+					this.request.server.connection.socket.remoteAddress) : '');
 
-			if (!empty(this.request.server['HTTP_X_FORWARDED_FOR'])) {
+			if ((this.request.server['HTTP_X_FORWARDED_FOR'])) {
 				order_data['forwarded_ip'] = this.request.server['HTTP_X_FORWARDED_FOR'];
-			} else if (!empty(this.request.server['HTTP_CLIENT_IP'])) {
-				order_data['forwarded_ip'] = this.request.server['HTTP_CLIENT_IP'];
+			} else if (this.request.server.headers['x-forwarded-for'] || (
+				this.request.server.connection ? (this.request.server.connection.remoteAddress ||
+					this.request.server.socket.remoteAddress ||
+					this.request.server.connection.socket.remoteAddress) : '')) {
+				order_data['forwarded_ip'] = this.request.server.headers['x-forwarded-for'] || (
+					this.request.server.connection ? (this.request.server.connection.remoteAddress ||
+						this.request.server.socket.remoteAddress ||
+						this.request.server.connection.socket.remoteAddress) : '');
 			} else {
 				order_data['forwarded_ip'] = '';
 			}
 
-			if ((this.request.server['HTTP_USER_AGENT'])) {
-				order_data['user_agent'] = this.request.server['HTTP_USER_AGENT'];
+			if (useragent.parse(this.request.server.headers['user-agent'], this.request.server.query.jsuseragent).source) {
+				order_data['user_agent'] = useragent.parse(this.request.server.headers['user-agent'], this.request.server.query.jsuseragent).source;
 			} else {
 				order_data['user_agent'] = '';
 			}
 
-			if ((this.request.server['HTTP_ACCEPT_LANGUAGE'])) {
-				order_data['accept_language'] = this.request.server['HTTP_ACCEPT_LANGUAGE'];
+			if (this.request.server.headers['accept-language']) {
+				order_data['accept_language'] = this.request.server.headers['accept-language'];
 			} else {
 				order_data['accept_language'] = '';
 			}
 
-			this.load.model('checkout/order',this);
+			this.load.model('checkout/order', this);
 
 			this.session.data['order_id'] = await this.model_checkout_order.addOrder(order_data);
 
-			this.load.model('tool/upload',this);
+			this.load.model('tool/upload', this);
 
 			data['products'] = [];
 
 			for (let product of await this.cart.getProducts()) {
-				option_data = array();
+				const option_data = [];
 
 				for (let option of product['option']) {
+					let value = '';
 					if (option['type'] != 'file') {
 						value = option['value'];
 					} else {
-						upload_info = await this.model_tool_upload.getUploadByCode(option['value']);
+						const upload_info = await this.model_tool_upload.getUploadByCode(option['value']);
 
-						if (upload_info) {
+						if (upload_info.upload_id) {
 							value = upload_info['name'];
 						} else {
 							value = '';
 						}
 					}
 
-					option_data.push(array(
-						'name'  : option['name'],
-						'value' : (utf8_strlen(value) > 20 ? utf8_substr(value, 0, 20) + '..' : value)
+					option_data.push({
+						'name': option['name'],
+						'value': (utf8_strlen(value) > 20 ? utf8_substr(value, 0, 20) + '..' : value)
 					});
 				}
 
-				recurring = '';
+				let recurring = '';
 
 				if (product['recurring']) {
-					frequencies = array(
-						'day'        : this.language.get('text_day'),
-						'week'       : this.language.get('text_week'),
-						'semi_month' : this.language.get('text_semi_month'),
-						'month'      : this.language.get('text_month'),
-						'year'       : this.language.get('text_year'),
-					});
+					const frequencies = {
+						'day': this.language.get('text_day'),
+						'week': this.language.get('text_week'),
+						'semi_month': this.language.get('text_semi_month'),
+						'month': this.language.get('text_month'),
+						'year': this.language.get('text_year'),
+					};
 
 					if (product['recurring']['trial']) {
 						recurring = sprintf(this.language.get('text_trial_description'), this.currency.format(this.tax.calculate(product['recurring']['trial_price'] * product['quantity'], product['tax_class_id'], this.config.get('config_tax')), this.session.data['currency']), product['recurring']['trial_cycle'], frequencies[product['recurring']['trial_frequency']], product['recurring']['trial_duration']) + ' ';
@@ -375,38 +372,38 @@ const data = {};
 				}
 
 				data['products'].push({
-					'cart_id'    : product['cart_id'],
-					'product_id' : product['product_id'],
-					'name'       : product['name'],
-					'model'      : product['model'],
-					'option'     : option_data,
-					'recurring'  : recurring,
-					'quantity'   : product['quantity'],
-					'subtract'   : product['subtract'],
-					'price'      : this.currency.format(this.tax.calculate(product['price'], product['tax_class_id'], this.config.get('config_tax')), this.session.data['currency']),
-					'total'      : this.currency.format(this.tax.calculate(product['price'], product['tax_class_id'], this.config.get('config_tax')) * product['quantity'], this.session.data['currency']),
-					'href'       : await this.url.link('product/product', 'product_id=' + product['product_id'])
+					'cart_id': product['cart_id'],
+					'product_id': product['product_id'],
+					'name': product['name'],
+					'model': product['model'],
+					'option': option_data,
+					'recurring': recurring,
+					'quantity': product['quantity'],
+					'subtract': product['subtract'],
+					'price': this.currency.format(this.tax.calculate(product['price'], product['tax_class_id'], this.config.get('config_tax')), this.session.data['currency']),
+					'total': this.currency.format(this.tax.calculate(product['price'], product['tax_class_id'], this.config.get('config_tax')) * product['quantity'], this.session.data['currency']),
+					'href': await this.url.link('product/product', 'product_id=' + product['product_id'])
 				});
 			}
 
 			// Gift Voucher
 			data['vouchers'] = [];
 
-			if (!empty(this.session.data['vouchers'])) {
+			if ((this.session.data['vouchers'])) {
 				for (this.session.data['vouchers'] of voucher) {
-					data['vouchers'].push(array(
-						'description' : voucher['description'],
-						'amount'      : this.currency.format(voucher['amount'], this.session.data['currency'])
+					data['vouchers'].push({
+						'description': voucher['description'],
+						'amount': this.currency.format(voucher['amount'], this.session.data['currency'])
 					});
 				}
 			}
 
 			data['totals'] = [];
 
-			for (order_data['totals'] of total) {
-				data['totals'].push(array(
-					'title' : total['title'],
-					'text'  : this.currency.format(total['value'], this.session.data['currency'])
+			for (let total of order_data['totals']) {
+				data['totals'].push({
+					'title': total['title'],
+					'text': this.currency.format(total['value'], this.session.data['currency'])
 				});
 			}
 
@@ -414,7 +411,7 @@ const data = {};
 		} else {
 			data['redirect'] = redirect;
 		}
-
+		await this.session.save(this.session.data);
 		this.response.setOutput(await this.load.view('checkout/confirm', data));
 	}
 }

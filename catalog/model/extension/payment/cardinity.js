@@ -2,7 +2,7 @@ module.exports = class CardinityClient {
 	constructor(config, dbConfig, logger) {
 		this.config = config;
 		this.db = mysql.createConnection(dbConfig);
-		this.logger = logger;
+		await this.logger = logger;
 	}
 
 	async addOrder(data) {
@@ -68,7 +68,7 @@ module.exports = class CardinityClient {
 		if (!(this.getSupportedCurrencies()).includes(this.session.data['currency'])) {
 			status = false;
 		}
-		let method_data = {};
+		let method_data = null;
 		if (status) {
 			method_data = {
 				'code': 'cardinity',

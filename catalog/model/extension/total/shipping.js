@@ -15,12 +15,12 @@ module.exports = class ModelExtensionTotalShipping extends Model {
 					if (!(total['taxes'][tax_rate['tax_rate_id']])) {
 						total['taxes'][tax_rate['tax_rate_id']] = tax_rate['amount'];
 					} else {
-						total['taxes'][tax_rate['tax_rate_id']] += tax_rate['amount'];
+						total['taxes'][tax_rate['tax_rate_id']] = Number(total['taxes'][tax_rate['tax_rate_id']] || 0) + tax_rate['amount'];
 					}
 				}
 			}
 
-			total['total'] += this.session.data['shipping_method']['cost'];
+			total['total'] = Number(total['total'] || 0) + Number(this.session.data['shipping_method']['cost']);
 		}
 		return total;
 	}

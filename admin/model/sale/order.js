@@ -45,7 +45,7 @@ module.exports = class ModelSaleOrder extends Model {
 
 			const order_product_query = await this.db.query("SELECT * FROM " + DB_PREFIX + "order_product WHERE order_id = '" + order_id + "'");
 
-			for (order_product_query.rows of product) {
+			for (let product of order_product_query.rows) {
 				reward += product['reward'];
 			}
 

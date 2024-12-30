@@ -1,11 +1,16 @@
+const array_replace_recursive = require("locutus/php/array/array_replace_recursive");
+const strftime = require("locutus/php/datetime/strftime");
+const mt_rand = require("locutus/php/math/mt_rand");
+const trim = require("locutus/php/strings/trim");
+
 module.exports = class ModelExtensionPaymentOpayo extends Model {
-	
+
 	async getMethod(address, total) {
 		await this.load.language('extension/payment/opayo');
 
 		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "zone_to_geo_zone` WHERE `geo_zone_id` = '" + this.config.get('payment_opayo_geo_zone_id') + "' AND `country_id` = '" + address['country_id'] + "' AND (`zone_id` = '" + address['zone_id'] + "' OR `zone_id` = '0')");
-
-		if (this.config.get('payment_opayo_total') > 0 && this.config.get('payment_opayo_total') > total) {
+		let status = false;
+		if (Number(this.config.get('payment_opayo_total')) > 0 && Number(this.config.get('payment_opayo_total')) > total) {
 			status = false;
 		} else if (!this.config.get('payment_opayo_geo_zone_id')) {
 			status = true;
@@ -15,42 +20,42 @@ module.exports = class ModelExtensionPaymentOpayo extends Model {
 			status = false;
 		}
 
-		let method_data = {};
+		let method_data = null;
 
 		if (status) {
 			method_data = {
-				'code'  'opayo',
-				'title'  this.language.get('text_title'),
-				'terms'  '',
-				'sort_order'  this.config.get('payment_opayo_sort_order')
-			});
+				'code': 'opayo',
+				'title': this.language.get('text_title'),
+				'terms': '',
+				'sort_order': this.config.get('payment_opayo_sort_order')
+			};
 		}
 
 		return method_data;
 	}
-	
+
 	async getCards(customer_id) {
 		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "opayo_card` WHERE `customer_id` = '" + customer_id + "' ORDER BY `card_id`");
 
-		card_data = array();
+		const card_data = [];
 
-		for (query.rows as row) {
-			card_data.push(array(
-				'card_id'  row['card_id'],
-				'customer_id'  row['customer_id'],
-				'token'  row['token'],
-				'digits'  '**** ' + row['digits'],
-				'expiry'  row['expiry'],
-				'type'  row['type'],
+		for (let row of query.rows) {
+			card_data.push({
+				'card_id': row['card_id'],
+				'customer_id': row['customer_id'],
+				'token': row['token'],
+				'digits': '**** ' + row['digits'],
+				'expiry': row['expiry'],
+				'type': row['type'],
 			});
 		}
-		
+
 		return card_data;
 	}
 
-	async addCard(card_data) {		
+	async addCard(card_data) {
 		await this.db.query("INSERT INTO `" + DB_PREFIX + "opayo_card` SET `customer_id` = '" + this.db.escape(card_data['customer_id']) + "', `digits` = '" + this.db.escape(card_data['Last4Digits']) + "', `expiry` = '" + this.db.escape(card_data['ExpiryDate']) + "', `type` = '" + this.db.escape(card_data['CardType']) + "', `token` = '" + this.db.escape(card_data['Token']) + "'");
-		
+
 		return this.db.getLastId();
 	}
 
@@ -82,9 +87,9 @@ module.exports = class ModelExtensionPaymentOpayo extends Model {
 		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "opayo_order` WHERE `order_id` = '" + order_id + "' LIMIT 1");
 
 		if (query.num_rows) {
-			order = query.row;
-			
-			order['transactions'] = this.getOrderTransactions(order['opayo_order_id']);
+			const order = query.row;
+
+			order['transactions'] = await this.getOrderTransactions(order['opayo_order_id']);
 
 			return order;
 		} else {
@@ -117,9 +122,9 @@ module.exports = class ModelExtensionPaymentOpayo extends Model {
 	}
 
 	async recurringPayment(item, vendor_tx_code) {
-		this.load.model('checkout/recurring');
-		this.load.model('extension/payment/opayo');
-		
+		this.load.model('checkout/recurring', this);
+		this.load.model('extension/payment/opayo', this);
+		let price = '', trial_text = '';
 		if (item['recurring']['trial'] == 1) {
 			price = item['recurring']['trial_price'];
 			trial_amt = this.currency.format(this.tax.calculate(item['recurring']['trial_price'], item['tax_class_id'], this.config.get('config_tax')), this.session.data['currency'], false, false) * item['quantity'] + ' ' + this.session.data['currency'];
@@ -128,143 +133,148 @@ module.exports = class ModelExtensionPaymentOpayo extends Model {
 			price = item['recurring']['price'];
 			trial_text = '';
 		}
-			
-		recurring_amt = this.currency.format(this.tax.calculate(item['recurring']['price'], item['tax_class_id'], this.config.get('config_tax')), this.session.data['currency'], false, false) * item['quantity'] + ' ' + this.session.data['currency'];
-		recurring_description = trial_text + sprintf(this.language.get('text_recurring'), recurring_amt, item['recurring']['cycle'], item['recurring']['frequency']);
+
+		let recurring_amt = this.currency.format(this.tax.calculate(item['recurring']['price'], item['tax_class_id'], this.config.get('config_tax')), this.session.data['currency'], false, false) * item['quantity'] + ' ' + this.session.data['currency'];
+		let recurring_description = trial_text + sprintf(this.language.get('text_recurring'), recurring_amt, item['recurring']['cycle'], item['recurring']['frequency']);
 
 		if (item['recurring']['duration'] > 0) {
 			recurring_description += sprintf(this.language.get('text_length'), item['recurring']['duration']);
 		}
-		
-		order_recurring_id = this.addRecurring(this.session.data['order_id'], recurring_description, item, vendor_tx_code);
-			
-		this.editRecurringStatus(order_recurring_id, 1);
-		
-		order_info = await this.model_checkout_order.getOrder(this.session.data['order_id']);
 
-		opayo_order_info = this.getOrder(this.session.data['order_id']);
+		const order_recurring_id = await this.addRecurring(this.session.data['order_id'], recurring_description, item, vendor_tx_code);
 
-		next_payment = new DateTime('now');
-		trial_end = new DateTime('now');
-		subscription_end = new DateTime('now');
+		await this.editRecurringStatus(order_recurring_id, 1);
+
+		const order_info = await this.model_checkout_order.getOrder(this.session.data['order_id']);
+
+		const opayo_order_info = await this.getOrder(this.session.data['order_id']);
+
+		let next_payment = new Date();
+		let trial_end = new Date();
+		let subscription_end = new Date();
 
 		if ((item['recurring']['trial'] == 1) && (item['recurring']['trial_duration'] != 0)) {
-			next_payment = this.calculateSchedule(item['recurring']['trial_frequency'], next_payment, item['recurring']['trial_cycle']);
-			trial_end = this.calculateSchedule(item['recurring']['trial_frequency'], trial_end, item['recurring']['trial_cycle'] * item['recurring']['trial_duration']);
+			next_payment = await this.calculateSchedule(item['recurring']['trial_frequency'], next_payment, item['recurring']['trial_cycle']);
+			trial_end = await this.calculateSchedule(item['recurring']['trial_frequency'], trial_end, item['recurring']['trial_cycle'] * item['recurring']['trial_duration']);
 		} else if (item['recurring']['trial'] == 1) {
-			next_payment = this.calculateSchedule(item['recurring']['trial_frequency'], next_payment, item['recurring']['trial_cycle']);
-			trial_end = new DateTime('0000-00-00');
+			next_payment = await this.calculateSchedule(item['recurring']['trial_frequency'], next_payment, item['recurring']['trial_cycle']);
+			trial_end = new Date('0000-00-00');
 		}
-			
-		if (date_format(trial_end, 'Y-m-d H:i:s') > date_format(subscription_end, 'Y-m-d H:i:s') && item['recurring']['duration'] != 0) {
-			subscription_end = new DateTime(date_format(trial_end, 'Y-m-d H:i:s'));
-			subscription_end = this.calculateSchedule(item['recurring']['frequency'], subscription_end, item['recurring']['cycle'] * item['recurring']['duration']);
-		} else if (date_format(trial_end, 'Y-m-d H:i:s') == date_format(subscription_end, 'Y-m-d H:i:s') && item['recurring']['duration'] != 0) {
-			next_payment = this.calculateSchedule(item['recurring']['frequency'], next_payment, item['recurring']['cycle']);
-			subscription_end = this.calculateSchedule(item['recurring']['frequency'], subscription_end, item['recurring']['cycle'] * item['recurring']['duration']);
-		} else if (date_format(trial_end, 'Y-m-d H:i:s') > date_format(subscription_end, 'Y-m-d H:i:s') && item['recurring']['duration'] == 0) {
-			subscription_end = new DateTime('0000-00-00');
-		} else if (date_format(trial_end, 'Y-m-d H:i:s') == date_format(subscription_end, 'Y-m-d H:i:s') && item['recurring']['duration'] == 0) {
-			next_payment = this.calculateSchedule(item['recurring']['frequency'], next_payment, item['recurring']['cycle']);
-			subscription_end = new DateTime('0000-00-00');
-		}
-			
-		if (date_format(trial_end, 'Y-m-d H:i:s') >= date_format(subscription_end, 'Y-m-d H:i:s')) {
-			recurring_expiry = date_format(trial_end, 'Y-m-d');
-		} else {
-			recurring_expiry = date_format(subscription_end, 'Y-m-d');
-		}
-			
-		recurring_frequency = date_diff(new DateTime('now'), new DateTime(date_format(next_payment, 'Y-m-d H:i:s'))).days;
-			
-		response_data = this.setPaymentData(order_info, opayo_order_info, price, order_recurring_id, item['recurring']['name'], recurring_expiry, recurring_frequency);
 
-		this.addRecurringOrder(this.session.data['order_id'], response_data, order_recurring_id, date_format(trial_end, 'Y-m-d H:i:s'), date_format(subscription_end, 'Y-m-d H:i:s'));
+		if (new Date(date('Y-m-d H:i:s', trial_end)) > new Date(date('Y-m-d H:i:s', subscription_end)) && item['recurring']['duration'] != 0) {
+			subscription_end = new Date(date('Y-m-d H:i:s', trial_end));
+			subscription_end = await this.calculateSchedule(item['recurring']['frequency'], subscription_end, item['recurring']['cycle'] * item['recurring']['duration']);
+		} else if (new Date(date('Y-m-d H:i:s', trial_end)) == new Date(date('Y-m-d H:i:s', subscription_end)) && item['recurring']['duration'] != 0) {
+			next_payment = await this.calculateSchedule(item['recurring']['frequency'], next_payment, item['recurring']['cycle']);
+			subscription_end = await this.calculateSchedule(item['recurring']['frequency'], subscription_end, item['recurring']['cycle'] * item['recurring']['duration']);
+		} else if (new Date(date('Y-m-d H:i:s', trial_end)) > new Date('Y-m-d H:i:s', date(subscription_end)) && item['recurring']['duration'] == 0) {
+			subscription_end = new Date('0000-00-00');
+		} else if (new Date(date('Y-m-d H:i:s', trial_end)) == new Date(date('Y-m-d H:i:s', subscription_end)) && item['recurring']['duration'] == 0) {
+			next_payment = await this.calculateSchedule(item['recurring']['frequency'], next_payment, item['recurring']['cycle']);
+			subscription_end = new Date('0000-00-00');
+		}
+		let recurring_expiry = '';
+		if (new Date(date('Y-m-d H:i:s', trial_end)) >= new Date(date('Y-m-d H:i:s', subscription_end))) {
+			recurring_expiry = new Date(date('Y-m-d', trial_end));
+		} else {
+			recurring_expiry = new Date(date('Y-m-d', subscription_end));
+		}
+
+		const recurring_frequency = this.calculateRecurringFrequency(next_payment);
+
+		const response_data = await this.setPaymentData(order_info, opayo_order_info, price, order_recurring_id, item['recurring']['name'], recurring_expiry, recurring_frequency);
+
+		await this.addRecurringOrder(this.session.data['order_id'], response_data, order_recurring_id, new Date(date('Y-m-d H:i:s', trial_end)), new Date(date('Y-m-d H:i:s', subscription_end)));
 
 		if (response_data['Status'] == 'OK') {
-			this.updateRecurringOrder(order_recurring_id, date_format(next_payment, 'Y-m-d H:i:s'));
+			await this.updateRecurringOrder(order_recurring_id, new Date(date('Y-m-d H:i:s', next_payment)));
 
-			this.addRecurringTransaction(order_recurring_id, response_data, 1);
+			await this.addRecurringTransaction(order_recurring_id, response_data, 1);
 		} else {
-			this.addRecurringTransaction(order_recurring_id, response_data, 4);
+			await this.addRecurringTransaction(order_recurring_id, response_data, 4);
 		}
 	}
-	
+	calculateRecurringFrequency(nextPayment) {
+		const now = new Date();
+		const nextPaymentDate = new Date(nextPayment);
+		const timeDiff = Math.abs(nextPaymentDate.getTime() - now.getTime()); const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+		return daysDiff;
+	}
 	async cronPayment() {
-		this.load.model('checkout/order',this);
-		
-		recurrings = this.getProfiles();
-		cron_data = array();
-		i = 0;
-		
-		for (recurrings as recurring) {
+		this.load.model('checkout/order', this);
+
+		const recurrings = await this.getProfiles();
+		const cron_data = [];
+		let i = 0;
+
+		for (let recurring of recurrings) {
 			if (recurring['status'] == 1) {
-				recurring_order = this.getRecurringOrder(recurring['order_recurring_id']);
+				const recurring_order = await this.getRecurringOrder(recurring['order_recurring_id']);
 
 				if (recurring_order) {
-					today = new DateTime('now');
-					unlimited = new DateTime('0000-00-00');
-					next_payment = new DateTime(recurring_order['next_payment']);
-					trial_end = new DateTime(recurring_order['trial_end']);
-					subscription_end = new DateTime(recurring_order['subscription_end']);
+					let today = new Date();
+					let unlimited = new Date('0000-00-00');
+					let next_payment = new Date(recurring_order['next_payment']);
+					let trial_end = new Date(recurring_order['trial_end']);
+					let subscription_end = new Date(recurring_order['subscription_end']);
 
-					order_info = await this.model_checkout_order.getOrder(recurring['order_id']);
-						
-					if ((date_format(today, 'Y-m-d H:i:s') > date_format(next_payment, 'Y-m-d H:i:s')) && (date_format(trial_end, 'Y-m-d H:i:s') > date_format(today, 'Y-m-d H:i:s') || date_format(trial_end, 'Y-m-d H:i:s') == date_format(unlimited, 'Y-m-d H:i:s'))) {
+					const order_info = await this.model_checkout_order.getOrder(recurring['order_id']);
+					let price = '', frequency = '', cycle = '';
+					if ((new Date('Y-m-d H:i:s', date(today)) > new Date(date('Y-m-d H:i:s', next_payment))) && (new Date(date('Y-m-d H:i:s', trial_end)) > new Date(date('Y-m-d H:i:s', today)) || new Date(date('Y-m-d H:i:s', trial_end)) == new Date(date('Y-m-d H:i:s', unlimited)))) {
 						price = this.currency.format(recurring['trial_price'], order_info['currency_code'], false, false);
 						frequency = recurring['trial_frequency'];
 						cycle = recurring['trial_cycle'];
-						next_payment = this.calculateSchedule(frequency, next_payment, cycle);
-					} else if ((date_format(today, 'Y-m-d H:i:s') > date_format(next_payment, 'Y-m-d H:i:s')) && (date_format(subscription_end, 'Y-m-d H:i:s') > date_format(today, 'Y-m-d H:i:s') || date_format(subscription_end, 'Y-m-d H:i:s') == date_format(unlimited, 'Y-m-d H:i:s'))) {
+						next_payment = await this.calculateSchedule(frequency, next_payment, cycle);
+					} else if ((new Date(date('Y-m-d H:i:s', today)) > new Date(date('Y-m-d H:i:s', next_payment))) && (new Date(date('Y-m-d H:i:s', subscription_end)) > new Date(date('Y-m-d H:i:s', today)) || new Date(date('Y-m-d H:i:s', subscription_end)) == new Date(date('Y-m-d H:i:s', unlimited)))) {
 						price = this.currency.format(recurring['recurring_price'], order_info['currency_code'], false, false);
 						frequency = recurring['recurring_frequency'];
 						cycle = recurring['recurring_cycle'];
-						next_payment = this.calculateSchedule(frequency, next_payment, cycle);
+						next_payment = await this.calculateSchedule(frequency, next_payment, cycle);
 					} else {
 						continue;
 					}
 
-					opayo_order_info = this.getOrder(recurring['order_id']);
-			
-					if (date_format(trial_end, 'Y-m-d H:i:s') >= date_format(subscription_end, 'Y-m-d H:i:s')) {
-						recurring_expiry = date_format(trial_end, 'Y-m-d');
+					const opayo_order_info = await this.getOrder(recurring['order_id']);
+					let recurring_expiry = '';
+					if (new Date(date('Y-m-d H:i:s', trial_end)) >= new Date(date('Y-m-d H:i:s', subscription_end))) {
+						recurring_expiry = new Date(date('Y-m-d', trial_end));
 					} else {
-						recurring_expiry = date_format(subscription_end, 'Y-m-d');
+						recurring_expiry = new Date(date('Y-m-d', subscription_end));
 					}
-			
-					recurring_frequency = date_diff(new DateTime('now'), new DateTime(date_format(next_payment, 'Y-m-d H:i:s'))).days;
 
-					response_data = this.setPaymentData(order_info, opayo_order_info, price, recurring['order_recurring_id'], recurring['recurring_name'], recurring_expiry, recurring_frequency, i);
+					const recurring_frequency = this.calculateRecurringFrequency(next_payment);
 
-					cron_data.push(response_data;
+					const response_data = await this.setPaymentData(order_info, opayo_order_info, price, recurring['order_recurring_id'], recurring['recurring_name'], recurring_expiry, recurring_frequency, i);
+
+					cron_data.push(response_data);
 
 					if (response_data['RepeatResponseData_' + i++]['Status'] == 'OK') {
-						this.addRecurringTransaction(recurring['order_recurring_id'], response_data, 1);
-								
-						this.updateRecurringOrder(recurring['order_recurring_id'], date_format(next_payment, 'Y-m-d H:i:s'));
+						await this.addRecurringTransaction(recurring['order_recurring_id'], response_data, 1);
+
+						await this.updateRecurringOrder(recurring['order_recurring_id'], new Date(date('Y-m-d H:i:s', next_payment)));
 					} else {
-						this.addRecurringTransaction(recurring['order_recurring_id'], response_data, 4);
+						await this.addRecurringTransaction(recurring['order_recurring_id'], response_data, 4);
 					}
 				}
 			}
 		}
-			
-		log = new Log('opayo_recurring_orders.log');
-		
-		log.write(print_r(cron_data, true));
-		
+
+		const log = new Log('opayo_recurring_orders.log');
+
+		log.write(JSON.stringify(cron_data, true));
+
 		return cron_data;
 	}
 
 	async setPaymentData(order_info, opayo_order_info, price, order_recurring_id, recurring_name, recurring_expiry, recurring_frequency, i = null) {
 		// Setting
-		_config = new Config();
-		_config.load('opayo');
-			
-		config_setting = _config.get('payze_opayo');
-		
-		setting = array_replace_recursive(config_setting, this.config.get('payment_opayo_setting'));
-		
+		const _config = new Config();
+		await _config.load('opayo');
+
+		const config_setting = _config.get('payze_opayo');
+
+		const setting = { ...config_setting, ...this.config.get('payment_opayo_setting') };
+		let url = '';
 		if (setting['general']['environment'] == 'live') {
 			url = 'https://live.opayo.eu.elavon.com/gateway/service/repeat.vsp';
 			payment_data['VPSProtocol'] = '4.00';
@@ -278,7 +288,7 @@ module.exports = class ModelExtensionPaymentOpayo extends Model {
 		payment_data['VendorTxCode'] = order_recurring_id + 'RSD' + strftime("%Y%m%d%H%M%S") + mt_rand(1, 999);
 		payment_data['Amount'] = this.currency.format(price, this.session.data['currency'], false, false);
 		payment_data['Currency'] = this.session.data['currency'];
-		payment_data['Description'] = substr(recurring_name, 0, 100);
+		payment_data['Description'] = recurring_name.substr(0, 100);
 		payment_data['RelatedVPSTxId'] = trim(opayo_order_info['VPSTxId'], '{}');
 		payment_data['RelatedVendorTxCode'] = opayo_order_info['VendorTxCode'];
 		payment_data['RelatedSecurityKey'] = opayo_order_info['SecurityKey'];
@@ -290,24 +300,24 @@ module.exports = class ModelExtensionPaymentOpayo extends Model {
 		payment_data['RecurringFrequency'] = recurring_frequency;
 
 		if ((order_info['shipping_lastname'])) {
-			payment_data['DeliverySurname'] = substr(order_info['shipping_lastname'], 0, 20);
-			payment_data['DeliveryFirstnames'] = substr(order_info['shipping_firstname'], 0, 20);
-			payment_data['DeliveryAddress1'] = substr(order_info['shipping_address_1'], 0, 100);
+			payment_data['DeliverySurname'] = order_info['shipping_lastname'].substr(0, 20);
+			payment_data['DeliveryFirstnames'] = order_info['shipping_firstname'].substr(0, 20);
+			payment_data['DeliveryAddress1'] = order_info['shipping_address_1'].substr(0, 100);
 
 			if (order_info['shipping_address_2']) {
 				payment_data['DeliveryAddress2'] = order_info['shipping_address_2'];
 			}
 
-			payment_data['DeliveryCity'] = substr(order_info['shipping_city'], 0, 40);
-			payment_data['DeliveryPostCode'] = substr(order_info['shipping_postcode'], 0, 10);
+			payment_data['DeliveryCity'] = order_info['shipping_city'].substr(0, 40);
+			payment_data['DeliveryPostCode'] = order_info['shipping_postcode'].substr(0, 10);
 			payment_data['DeliveryCountry'] = order_info['shipping_iso_code_2'];
 
 			if (order_info['shipping_iso_code_2'] == 'US') {
 				payment_data['DeliveryState'] = order_info['shipping_zone_code'];
 			}
 
-			payment_data['CustomerName'] = substr(order_info['firstname'] + ' ' + order_info['lastname'], 0, 100);
-			payment_data['DeliveryPhone'] = substr(order_info['telephone'], 0, 20);
+			payment_data['CustomerName'] = (order_info['firstname'] + ' ' + order_info['lastname']).substr(0, 100);
+			payment_data['DeliveryPhone'] = order_info['telephone'].substr(0, 20);
 		} else {
 			payment_data['DeliveryFirstnames'] = order_info['payment_firstname'];
 			payment_data['DeliverySurname'] = order_info['payment_lastname'];
@@ -327,9 +337,9 @@ module.exports = class ModelExtensionPaymentOpayo extends Model {
 
 			payment_data['DeliveryPhone'] = order_info['telephone'];
 		}
-		
-		response_data = this.sendCurl(url, payment_data, i);
-				
+
+		response_data = await this.sendCurl(url, payment_data, i);
+
 		response_data['VendorTxCode'] = payment_data['VendorTxCode'];
 		response_data['Amount'] = payment_data['Amount'];
 		response_data['Currency'] = payment_data['Currency'];
@@ -337,46 +347,47 @@ module.exports = class ModelExtensionPaymentOpayo extends Model {
 		return response_data;
 	}
 
-	async calculateSchedule(frequency, next_payment, cycle) {
-		if (frequency == 'semi_month') {
-			day = date_format(next_payment, 'd');
-			value = 15 - day;
-			is_even = false;
-
-			if (cycle % 2 == 0) {
-				is_even = true;
-			}
-
-			odd = (cycle + 1) / 2;
-			plus_even = (cycle / 2) + 1;
-			minus_even = cycle / 2;
-
-			if (day == 1) {
-				odd = odd - 1;
-				plus_even = plus_even - 1;
+	async calculateSchedule(frequency, nextPayment, cycle) {
+		nextPayment = new Date(nextPayment);
+		if (frequency === 'semi_month') {
+			let day = nextPayment.getDate();
+			let value = 15 - day;
+			let isEven = (cycle % 2 === 0);
+			let odd = Math.floor((cycle + 1) / 2);
+			let plusEven = Math.floor(cycle / 2) + 1;
+			let minusEven = Math.floor(cycle / 2);
+			if (day === 1) {
+				odd -= 1;
+				plusEven -= 1;
 				day = 16;
 			}
-
-			if (day <= 15 && is_even) {
-				next_payment.modify('+' + value + ' day');
-				next_payment.modify('+' + minus_even + ' month');
+			if (day <= 15 && isEven) {
+				nextPayment.setDate(nextPayment.getDate() + value);
+				nextPayment.setMonth(nextPayment.getMonth() + minusEven);
 			} else if (day <= 15) {
-				next_payment.modify('first day of this month');
-				next_payment.modify('+' + odd + ' month');
-			} else if (day > 15 && is_even) {
-				next_payment.modify('first day of this month');
-				next_payment.modify('+' + plus_even + ' month');
+				nextPayment.setDate(1);
+				nextPayment.setMonth(nextPayment.getMonth() + odd);
+			} else if (day > 15 && isEven) {
+				nextPayment.setDate(1);
+				nextPayment.setMonth(nextPayment.getMonth() + plusEven);
 			} else if (day > 15) {
-				next_payment.modify('+' + value + ' day');
-				next_payment.modify('+' + odd + ' month');
+				nextPayment.setDate(nextPayment.getDate() + value);
+				nextPayment.setMonth(nextPayment.getMonth() + odd);
 			}
 		} else {
-			next_payment.modify('+' + cycle + ' ' + frequency);
+			if (frequency === 'daily') {
+				nextPayment.setDate(nextPayment.getDate() + cycle);
+			} else if (frequency === 'weekly') {
+				nextPayment.setDate(nextPayment.getDate() + cycle * 7);
+			} else if (frequency === 'monthly') {
+				nextPayment.setMonth(nextPayment.getMonth() + cycle);
+			} else if (frequency === 'yearly') {
+				nextPayment.setFullYear(nextPayment.getFullYear() + cycle);
+			}
 		}
-		
-		return next_payment;
+		return nextPayment;
 	}
-	
+
 	async addRecurringOrder(order_id, response_data, order_recurring_id, trial_end, subscription_end) {
 		await this.db.query("INSERT INTO `" + DB_PREFIX + "opayo_order_recurring` SET `order_id` = '" + order_id + "', `order_recurring_id` = '" + order_recurring_id + "', `VPSTxId` = '" + this.db.escape(response_data['VPSTxId']) + "', `VendorTxCode` = '" + this.db.escape(response_data['VendorTxCode']) + "', `SecurityKey` = '" + this.db.escape(response_data['SecurityKey']) + "', `TxAuthNo` = '" + this.db.escape(response_data['TxAuthNo']) + "', `date_added` = now(), `date_modified` = now(), `next_payment` = now(), `trial_end` = '" + trial_end + "', `subscription_end` = '" + subscription_end + "', `currency_code` = '" + this.db.escape(response_data['Currency']) + "', `total` = '" + this.currency.format(response_data['Amount'], response_data['Currency'], false, false) + "'");
 	}
@@ -386,16 +397,16 @@ module.exports = class ModelExtensionPaymentOpayo extends Model {
 	}
 
 	async getRecurringOrder(order_recurring_id) {
-		qry = await this.db.query("SELECT * FROM `" + DB_PREFIX + "opayo_order_recurring` WHERE `order_recurring_id` = '" + order_recurring_id + "'");
+		const qry = await this.db.query("SELECT * FROM `" + DB_PREFIX + "opayo_order_recurring` WHERE `order_recurring_id` = '" + order_recurring_id + "'");
 		return qry.row;
 	}
-	
+
 	async addRecurring(order_id, description, data, reference) {
-		order_recurring_id = await this.model_checkout_recurring.addRecurring(order_id, description, data);
+		const order_recurring_id = await this.model_checkout_recurring.addRecurring(order_id, description, data);
 		await this.model_checkout_recurring.editReference(order_recurring_id, reference);
 		return order_recurring_id;
 	}
-	
+
 	async editRecurringStatus(order_recurring_id, status) {
 		await this.db.query("UPDATE `" + DB_PREFIX + "order_recurring` SET `status` = '" + status + "' WHERE `order_recurring_id` = '" + order_recurring_id + "'");
 	}
@@ -407,18 +418,18 @@ module.exports = class ModelExtensionPaymentOpayo extends Model {
 	async getProfiles() {
 		const query = await this.db.query("SELECT `or`.`order_recurring_id` FROM `" + DB_PREFIX + "order_recurring` `or` JOIN `" + DB_PREFIX + "order` `o` USING(`order_id`) WHERE o.payment_code = 'opayo' AND `or`.`status` = '1'");
 
-		order_recurring = array();
+		const order_recurring = [];
 
-		for (query.rows as recurring) {
-			order_recurring.push(this.getProfile(recurring['order_recurring_id']);
+		for (let recurring of query.rows) {
+			order_recurring.push(await this.getProfile(recurring['order_recurring_id']));
 		}
-			
+
 		return order_recurring;
 	}
 
 	async getProfile(order_recurring_id) {
 		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "order_recurring` WHERE `order_recurring_id` = '" + order_recurring_id + "'");
-		
+
 		return query.row;
 	}
 
@@ -427,54 +438,49 @@ module.exports = class ModelExtensionPaymentOpayo extends Model {
 		await this.db.query("INSERT INTO `" + DB_PREFIX + "setting` (`store_id`, `code`, `key`, `value`, `serialized`) VALUES (0, 'opayo', 'payment_opayo_last_cron_run', NOW(), 0)");
 	}
 
-	async sendCurl(string url, array payment_data, i = null) {
-		curl = curl_init(url);
-
-		curl_setopt(curl, CURLOPT_PORT, 443);
-		curl_setopt(curl, CURLOPT_HEADER, 0);
-		curl_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0);
-		curl_setopt(curl, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt(curl, CURLOPT_FOLLOWLOCATION, false);
-		curl_setopt(curl, CURLOPT_FORBID_REUSE, 1);
-		curl_setopt(curl, CURLOPT_FRESH_CONNECT, 1);
-		curl_setopt(curl, CURLOPT_POST, 1);
-		curl_setopt(curl, CURLOPT_POSTFIELDS, http_build_query(payment_data));
-
-		response = curl_exec(curl);
-
-		curl_close(curl);
-
-		response_info = explode(chr(10), response);
-
-		for (response_info as string) {
-			if (strpos(string, '=') === false) {
-				continue;
-			}
-			
-			parts = explode('=', string, 2);
-			
-			if (i !== null) {
-				data['RepeatResponseData_' + i][trim(parts[0])] = trim(parts[1]);
-			} else {
-				data[trim(parts[0])] = trim(parts[1]);
-			}
+	async sendCurl(url, payment_data, i = null) {
+		try {
+			const response = await require('axios').post(url, querystring.stringify(payment_data), {
+				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+				timeout: 60000, // Set appropriate timeout 
+				httpsAgent: new (require('https').Agent)({
+					rejectUnauthorized: false // Equivalent to CURLOPT_SSL_VERIFYPEER = 0 
+				})
+			});
+			const response_info = response.data.split('\n');
+			let data = {};
+			response_info.forEach(string => {
+				if (!string.includes('='))
+					return;
+				const [key, value] = string.split('=', 2).map(part => part.trim());
+				if (i !== null) {
+					if (!data[`RepeatResponseData_${i}`])
+						data[`RepeatResponseData_${i}`] = {};
+					data[`RepeatResponseData_${i}`][key] = value;
+				} else {
+					data[key] = value;
+				}
+			});
+			return data;
+		} catch (error) {
+			console.error('Error during HTTP request:', error.message);
+			// throw error;
+			return data;
 		}
-		
-		return data;
 	}
 
 	async log(title, data) {
-		_config = new Config();
-		_config.load('opayo');
-		
-		config_setting = _config.get('opayo_setting');
-		
-		setting = array_replace_recursive(config_setting, this.config.get('payment_opayo_setting'));
-		
+		const _config = new Config();
+		await _config.load('opayo');
+
+		const config_setting = _config.get('opayo_setting');
+
+		const setting = { ...config_setting, ...this.config.get('payment_opayo_setting') };
+
 		if (setting['general']['debug']) {
-			log = new Log('opayo.log');
-			
-			log.write(title + ': ' + print_r(data, true));
+			const log = new Log('opayo.log');
+
+			log.write(title + ': ' + JSON.stringify(data, true));
 		}
 	}
 

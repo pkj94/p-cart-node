@@ -317,7 +317,7 @@ module.exports = class ControllerCheckoutCart extends Controller {
 				let total = 0;
 
 				// Because __call can not keep var references so we put them into an array. 			
-				const total_data = {
+				let total_data = {
 					'totals': totals,
 					'taxes': taxes,
 					'total': total
@@ -336,7 +336,10 @@ module.exports = class ControllerCheckoutCart extends Controller {
 							this.load.model('extension/total/' + result['code'], this);
 
 							// We have to put the totals in an array so that they pass by reference.
-							await this['model_extension_total_' + result['code']].getTotal(total_data);
+							total_data = await this['model_extension_total_' + result['code']].getTotal(total_data);
+							total = total_data.total;
+							totals = total_data.totals;
+							taxes = total_data.taxes;
 						}
 					}
 					totals = totals.sort((a, b) => a.sort_order - b.sort_order);

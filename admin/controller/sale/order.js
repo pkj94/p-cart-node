@@ -216,8 +216,8 @@ module.exports = class ControllerSaleOrder extends Controller {
 				'customer': result['customer'],
 				'order_status': result['order_status'] ? result['order_status'] : this.language.get('text_missing'),
 				'total': this.currency.format(result['total'], result['currency_code'], result['currency_value']),
-				'date_added': date(this.language.get('date_format_short'), strtotime(result['date_added'])),
-				'date_modified': date(this.language.get('date_format_short'), strtotime(result['date_modified'])),
+				'date_added': date(this.language.get('date_format_short'), new Date(result['date_added'])),
+				'date_modified': date(this.language.get('date_format_short'), new Date(result['date_modified'])),
 				'shipping_code': result['shipping_code'],
 				'view': await this.url.link('sale/order/info', 'user_token=' + this.session.data['user_token'] + '&order_id=' + result['order_id'] + url, true),
 				'edit': await this.url.link('sale/order/edit', 'user_token=' + this.session.data['user_token'] + '&order_id=' + result['order_id'] + url, true)
@@ -542,7 +542,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 			data['order_status_id'] = order_info['order_status_id'];
 			data['comment'] = order_info['comment'];
 			data['affiliate_id'] = order_info['affiliate_id'];
-			data['affiliate'] = order_info['affiliate_firstname'] + ' ' + order_info['affiliate_lastname'];
+			data['affiliate'] = order_info['affiliate_firstname']?(order_info['affiliate_firstname'] + ' ' + order_info['affiliate_lastname']):'';
 			data['currency_code'] = order_info['currency_code'];
 		} else {
 			data['order_id'] = 0;
@@ -1291,7 +1291,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 		return Object.keys(this.error).length ? false : true
 	}
 
-	async createInvoiceNo() {
+	async createinvoiceno() {
 		await this.load.language('sale/order');
 
 		const json = {};
@@ -1319,7 +1319,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 		this.response.setOutput(json);
 	}
 
-	async addReward() {
+	async addreward() {
 		await this.load.language('sale/order');
 
 		const json = {};
@@ -1353,7 +1353,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 		this.response.setOutput(json);
 	}
 
-	async removeReward() {
+	async removereward() {
 		await this.load.language('sale/order');
 
 		const json = {};
@@ -1383,7 +1383,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 		this.response.setOutput(json);
 	}
 
-	async addCommission() {
+	async addcommission() {
 		await this.load.language('sale/order');
 
 		const json = {};
@@ -1417,7 +1417,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 		this.response.setOutput(json);
 	}
 
-	async removeCommission() {
+	async removecommission() {
 		await this.load.language('sale/order');
 
 		const json = {};
@@ -1466,7 +1466,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 				'notify': result['notify'] ? this.language.get('text_yes') : this.language.get('text_no'),
 				'status': result['status'],
 				'comment': nl2br(result['comment']),
-				'date_added': date(this.language.get('date_format_short'), strtotime(result['date_added']))
+				'date_added': date(this.language.get('date_format_short'), new Date(result['date_added']))
 			});
 		}
 

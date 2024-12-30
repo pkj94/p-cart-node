@@ -273,12 +273,12 @@ const data = {};
 		if (!(this.request.post['exp_month']) || !(this.request.post['exp_year'])) {
 			error['expiry_date'] = true;
 		} else {
-			expiry = new DateTime();
+			expiry = new Date();
 			expiry.setDate(this.request.post['exp_year'], this.request.post['exp_month'], '1');
 			expiry.modify('+1 month');
 			expiry.modify('-1 day');
 
-			now = new DateTime();
+			now = new Date();
 
 			if (expiry < now) {
 				error['expiry_date'] = true;

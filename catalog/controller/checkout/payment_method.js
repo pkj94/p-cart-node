@@ -4,7 +4,7 @@ module.exports = class ControllerCheckoutPaymentMethod extends Controller {
 	async index() {
 		const data = {};
 		await this.load.language('checkout/checkout');
-		console.log(this.session.data)
+		// console.log(this.session.data)
 		if ((this.session.data['payment_address'])) {
 			// Totals
 			let totals = [];
@@ -21,7 +21,7 @@ module.exports = class ControllerCheckoutPaymentMethod extends Controller {
 			this.load.model('setting/extension', this);
 			let results = await this.model_setting_extension.getExtensions('total');
 			// console.log(results)
-			results = results.sort((a,b) => this.config.get('total_' + a['code'] + '_sort_order') - this.config.get('total_' + b['code'] + '_sort_order'));
+			results = results.sort((a, b) => this.config.get('total_' + a['code'] + '_sort_order') - this.config.get('total_' + b['code'] + '_sort_order'));
 
 			for (let result of results) {
 				if (Number(this.config.get('total_' + result['code'] + '_status'))) {
@@ -46,11 +46,11 @@ module.exports = class ControllerCheckoutPaymentMethod extends Controller {
 			let recurring = await this.cart.hasRecurringProducts();
 
 			for (let result of results) {
-				if (this.config.get('payment_' + result['code'] + '_status')) {
+				if (Number(this.config.get('payment_' + result['code'] + '_status'))) {
 					this.load.model('extension/payment/' + result['code'], this);
-					console.log('model_extension_payment_' + result['code'])
+					// console.log('model_extension_payment_' + result['code'])
 					let method = await this['model_extension_payment_' + result['code']].getMethod(this.session.data['payment_address'], total);
-
+					// console.log(method, recurring, 'model_extension_payment_' + result['code'])
 					if (method) {
 						if (recurring) {
 							if (typeof this['model_extension_payment_' + result['code']].recurringPayments && await this['model_extension_payment_' + result['code']].recurringPayments()) {
@@ -62,8 +62,11 @@ module.exports = class ControllerCheckoutPaymentMethod extends Controller {
 					}
 				}
 			}
-			method_data = method_data.sort((a, b) => a.sort_order - b.sort_order);
-
+			// console.log(method_data)
+			method_data = Object.entries(method_data)
+				.sort(([, a], [, b]) => a.sort_order - b.sort_order)
+				.reduce((r, [k, v]) => ({ ...r, [k]: v }), {});
+			// console.log(method_data)
 			this.session.data['payment_methods'] = method_data;
 		}
 

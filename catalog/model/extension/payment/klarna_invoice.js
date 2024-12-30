@@ -2,9 +2,9 @@ module.exports = class ModelExtensionPaymentKlarnaInvoice extends Model {
 	async getMethod(address, total) {
 		await this.load.language('extension/payment/klarna_invoice');
 
-		status = true;
+		let status = true;
 
-		klarna_invoice = this.config.get('payment_klarna_invoice');
+		const klarna_invoice = this.config.get('payment_klarna_invoice');
 
 		if (!(klarna_invoice[address['iso_code_3']])) {
 			status = false;
@@ -26,37 +26,37 @@ module.exports = class ModelExtensionPaymentKlarnaInvoice extends Model {
 			}
 
 			// Maps countries to currencies
-			country_to_currency = array(
-				'NOR'  'NOK',
-				'SWE'  'SEK',
-				'FIN'  'EUR',
-				'DNK'  'DKK',
-				'DEU'  'EUR',
-				'NLD'  'EUR',
-			});
+			const country_to_currency = {
+				'NOR': 'NOK',
+				'SWE': 'SEK',
+				'FIN': 'EUR',
+				'DNK': 'DKK',
+				'DEU': 'EUR',
+				'NLD': 'EUR',
+			};
 
 			if (!(country_to_currency[address['iso_code_3']]) || !this.currency.has(country_to_currency[address['iso_code_3']])) {
 				status = false;
 			}
 		}
 
-		method = array();
+		let method = {};
 
 		if (status) {
-			klarna_fee = this.config.get('total_klarna_fee');
-
+			let klarna_fee = this.config.get('total_klarna_fee');
+			let terms = '';
 			if (klarna_fee[address['iso_code_3']]['status'] && this.cart.getSubTotal() < klarna_fee[address['iso_code_3']]['total']) {
 				terms = sprintf(this.language.get('text_terms_fee'), this.currency.format(this.tax.calculate(klarna_fee[address['iso_code_3']]['fee'], klarna_fee[address['iso_code_3']]['tax_class_id']), this.session.data['currency'], ''), klarna_invoice[address['iso_code_3']]['merchant'], strtolower(address['iso_code_2']), this.currency.format(this.tax.calculate(klarna_fee[address['iso_code_3']]['fee'], klarna_fee[address['iso_code_3']]['tax_class_id']), country_to_currency[address['iso_code_3']], '', false));
 			} else {
 				terms = sprintf(this.language.get('text_terms_no_fee'), klarna_invoice[address['iso_code_3']]['merchant'], strtolower(address['iso_code_2']));
 			}
 
-			method = array(
-				'code'        'klarna_invoice',
-				'title'       this.language.get('text_title'),
-				'terms'       terms,
-				'sort_order'  klarna_invoice[address['iso_code_3']]['sort_order']
-			});
+			method = {
+				'code': 'klarna_invoice',
+				'title': this.language.get('text_title'),
+				'terms': terms,
+				'sort_order': klarna_invoice[address['iso_code_3']]['sort_order']
+			};
 		}
 
 		return method;

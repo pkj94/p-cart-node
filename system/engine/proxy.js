@@ -5,7 +5,7 @@ module.exports = class ProxyLocal {
                 if (key in target) {
                     return target[key];
                 } else {
-                    throw new Error(`Undefined property: Proxy::${key}`);
+                    // throw new Error(`Undefined property: Proxy::${key}`);
                 }
             },
             set: (target, key, value) => {
@@ -16,7 +16,7 @@ module.exports = class ProxyLocal {
                 if (typeof target[key] === 'function') {
                     return target[key](...args);
                 } else {
-                    throw new Error(`Undefined property: Proxy::${key}`);
+                    // throw new Error(`Undefined property: Proxy::${key}`);
                 }
             }
         });

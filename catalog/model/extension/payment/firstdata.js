@@ -1,10 +1,13 @@
+const bin2hex = require("locutus/php/strings/bin2hex");
+const sha1 = require("locutus/php/strings/sha1");
+
 module.exports = class ModelExtensionPaymentFirstdata extends Model {
 	async getMethod(address, total) {
 		await this.load.language('extension/payment/firstdata');
 
 		const query = await this.db.query("SELECT * FROM " + DB_PREFIX + "zone_to_geo_zone WHERE geo_zone_id = '" + this.config.get('payment_firstdata_geo_zone_id') + "' AND country_id = '" + address['country_id'] + "' AND (zone_id = '" + address['zone_id'] + "' OR zone_id = '0')");
-
-		if (this.config.get('payment_firstdata_total') > 0 && this.config.get('payment_firstdata_total') > total) {
+		let status = false;
+		if (Number(this.config.get('payment_firstdata_total')) > 0 && Number(this.config.get('payment_firstdata_total')) > total) {
 			status = false;
 		} else if (!this.config.get('payment_firstdata_geo_zone_id')) {
 			status = true;
@@ -14,25 +17,24 @@ module.exports = class ModelExtensionPaymentFirstdata extends Model {
 			status = false;
 		}
 
-		let method_data = {};
+		let method_data = null;
 
 		if (status) {
 			method_data = {
-				'code'        'firstdata',
-				'title'       this.language.get('text_title'),
-				'terms'       '',
-				'sort_order'  this.config.get('payment_firstdata_sort_order')
-			});
+				'code': 'firstdata',
+				'title': this.language.get('text_title'),
+				'terms': '',
+				'sort_order': this.config.get('payment_firstdata_sort_order')
+			};
 		}
 
 		return method_data;
 	}
 
 	async addOrder(order_info, order_ref, transaction_date) {
-		if (this.config.get('payment_firstdata_auto_settle') == 1) {
+		let settle_status = 0;
+		if (Number(this.config.get('payment_firstdata_auto_settle')) == 1) {
 			settle_status = 1;
-		} else {
-			settle_status = 0;
 		}
 
 		await this.db.query("INSERT INTO `" + DB_PREFIX + "firstdata_order` SET `order_id` = '" + order_info['order_id'] + "', `order_ref` = '" + this.db.escape(order_ref) + "', `tdate` = '" + this.db.escape(transaction_date) + "', `date_added` = now(), `date_modified` = now(), `capture_status` = '" + settle_status + "', `currency_code` = '" + this.db.escape(order_info['currency_code']) + "', `total` = '" + this.currency.format(order_info['total'], order_info['currency_code'], order_info['currency_value'], false) + "'");
@@ -41,16 +43,15 @@ module.exports = class ModelExtensionPaymentFirstdata extends Model {
 	}
 
 	async getOrder(order_id) {
-		order = await this.db.query("SELECT * FROM `" + DB_PREFIX + "firstdata_order` WHERE `order_id` = '" + order_id + "' LIMIT 1");
+		const order = await this.db.query("SELECT * FROM `" + DB_PREFIX + "firstdata_order` WHERE `order_id` = '" + order_id + "' LIMIT 1");
 
 		return order.row;
 	}
 
 	async addTransaction(fd_order_id, type, order_info = array()) {
-		if ((order_info)) {
+		let amount = 0.00;
+		if ((order_info.order_id)) {
 			amount = this.currency.format(order_info['total'], order_info['currency_code'], order_info['currency_value'], false);
-		} else {
-			amount = 0.00;
 		}
 
 		await this.db.query("INSERT INTO `" + DB_PREFIX + "firstdata_order_transaction` SET `firstdata_order_id` = '" + fd_order_id + "', `date_added` = now(), `type` = '" + this.db.escape(type) + "', `amount` = '" + amount + "'");
@@ -62,19 +63,19 @@ module.exports = class ModelExtensionPaymentFirstdata extends Model {
 
 	async logger(message) {
 		if (this.config.get('payment_firstdata_debug') == 1) {
-			log = new Log('firstdata.log');
+			const log = new Log('firstdata.log');
 			log.write(message);
 		}
 	}
 
 	async mapCurrency(code) {
-		currency = array(
-			'GBP'  826,
-			'USD'  840,
-			'EUR'  978,
-		});
+		const currency = {
+			'GBP': 826,
+			'USD': 840,
+			'EUR': 978,
+		};
 
-		if (array_key_exists(code, currency)) {
+		if (currency[code]) {
 			return currency[code];
 		} else {
 			return false;
@@ -82,7 +83,7 @@ module.exports = class ModelExtensionPaymentFirstdata extends Model {
 	}
 
 	async getStoredCards() {
-		customer_id = await this.customer.getId();
+		const customer_id = await this.customer.getId();
 
 		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "firstdata_card` WHERE `customer_id` = '" + customer_id + "'");
 
@@ -90,7 +91,7 @@ module.exports = class ModelExtensionPaymentFirstdata extends Model {
 	}
 
 	async storeCard(token, customer_id, month, year, digits) {
-		existing_card = await this.db.query("SELECT * FROM `" + DB_PREFIX + "firstdata_card` WHERE `token` = '" + this.db.escape(token) + "' AND `customer_id` = '" + customer_id + "' LIMIT 1");
+		const existing_card = await this.db.query("SELECT * FROM `" + DB_PREFIX + "firstdata_card` WHERE `token` = '" + this.db.escape(token) + "' AND `customer_id` = '" + customer_id + "' LIMIT 1");
 
 		if (existing_card.num_rows > 0) {
 			await this.db.query("UPDATE `" + DB_PREFIX + "firstdata_card` SET `expire_month` = '" + this.db.escape(month) + "', `expire_year` = '" + this.db.escape(year) + "', `digits` = '" + this.db.escape(digits) + "'");
@@ -100,9 +101,9 @@ module.exports = class ModelExtensionPaymentFirstdata extends Model {
 	}
 
 	async responseHash(total, currency, txn_date, approval_code) {
-		tmp = total + this.config.get('payment_firstdata_secret') + currency + txn_date + this.config.get('payment_firstdata_merchant_id') + approval_code;
+		const tmp = total + this.config.get('payment_firstdata_secret') + currency + txn_date + this.config.get('payment_firstdata_merchant_id') + approval_code;
 
-		ascii = bin2hex(tmp);
+		const ascii = bin2hex(tmp);
 
 		return sha1(ascii);
 	}

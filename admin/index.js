@@ -69,10 +69,10 @@ module.exports = function () {
         });
     };
     // loadAdminControllers();
-    app.use('/admin/view/stylesheet', express.static('D:/Development/NODE/p-cart-node/admin/' + 'view/stylesheet'));
-    app.use('/admin/view/javascript', express.static('D:/Development/NODE/p-cart-node/admin/' + 'view/javascript'));
-    app.use('/admin/view/image', express.static('D:/Development/NODE/p-cart-node/admin/' + 'view/image'));
-    app.use('/admin/language', express.static('D:/Development/NODE/p-cart-node/admin/' + '/language'));
+    app.use('/admin/view/stylesheet', express.static(__dirname + '/view/stylesheet'));
+    app.use('/admin/view/javascript', express.static(__dirname + '/view/javascript'));
+    app.use('/admin/view/image', express.static(__dirname + '/view/image'));
+    app.use('/admin/language', express.static(__dirname + '/language'));
 
     app.all('/admin', loadAdminControllers);
 }

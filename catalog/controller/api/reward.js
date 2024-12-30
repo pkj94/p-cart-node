@@ -1,19 +1,18 @@
 module.exports = class ControllerApiReward extends Controller {
 	async index() {
-const data = {};
 		await this.load.language('api/reward');
 
 		// Delete past reward in case there is an error
-		delete this.session.data['reward']);
+		delete this.session.data['reward'];
 
 		const json = {};
 
 		if (!(this.session.data['api_id'])) {
 			json['error'] = this.language.get('error_permission');
 		} else {
-			points = await this.customer.getRewardPoints();
+			let points = await this.customer.getRewardPoints();
 
-			points_total = 0;
+			let points_total = 0;
 
 			for (let product of await this.cart.getProducts()) {
 				if (product['points']) {
@@ -21,7 +20,7 @@ const data = {};
 				}
 			}
 
-			if (empty(this.request.post['reward'])) {
+			if (!(this.request.post['reward'])) {
 				json['error'] = this.language.get('error_reward');
 			}
 
@@ -33,13 +32,13 @@ const data = {};
 				json['error'] = sprintf(this.language.get('error_maximum'), points_total);
 			}
 
-			if (!json) {
+			if (!Object.keys(json).length) {
 				this.session.data['reward'] = abs(this.request.post['reward']);
 
 				json['success'] = this.language.get('text_success');
 			}
 		}
-
+		await this.session.save(this.session.data);
 		this.response.addHeader('Content-Type: application/json');
 		this.response.setOutput(json);
 	}

@@ -217,7 +217,7 @@ module.exports = class ModelCustomerCustomer extends Model {
 				'iso_code_2': iso_code_2,
 				'iso_code_3': iso_code_3,
 				'address_format': address_format,
-				'custom_field': JSON.parse(address_query.row['custom_field'])
+				'custom_field': address_query.row['custom_field'] ? JSON.parse(address_query.row['custom_field']) : {}
 			};
 		}
 	}

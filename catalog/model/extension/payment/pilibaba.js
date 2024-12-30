@@ -1,22 +1,24 @@
+const strtoupper = require("locutus/php/strings/strtoupper");
+
 module.exports = class ModelExtensionPaymentPilibaba extends Model {
 	async getMethod(address, total) {
 		await this.load.language('extension/payment/pilibaba');
 
-		status = true;
+		let status = true;
 
 		if (!(this.session.data['shipping_method']['code']) || this.session.data['shipping_method']['code'] != 'pilibaba.pilibaba') {
 			status = false;
 		}
 
-		let method_data = {};
+		let method_data = null;
 
 		if (status) {
 			method_data = {
-				'code'			 'pilibaba',
-				'title'			 this.language.get('text_title'),
-				'terms'			 '',
-				'sort_order'	 this.config.get('payment_pilibaba_sort_order')
-			});
+				'code': 'pilibaba',
+				'title': this.language.get('text_title'),
+				'terms': '',
+				'sort_order': this.config.get('payment_pilibaba_sort_order')
+			};
 		}
 
 		return method_data;
@@ -37,8 +39,8 @@ module.exports = class ModelExtensionPaymentPilibaba extends Model {
 	}
 
 	async getConsumerInfo(order_id) {
-		sign_msg = strtoupper(md5(this.config.get('payment_pilibaba_merchant_number') + order_id + 'MD5' + this.config.get('payment_pilibaba_secret_key')));
-
+		const sign_msg = strtoupper(md5(this.config.get('payment_pilibaba_merchant_number') + order_id + 'MD5' + this.config.get('payment_pilibaba_secret_key')));
+		let url = '';
 		if (this.config.get('payment_pilibaba_environment') == 'live') {
 			url = 'https://www.pilibaba.com/pilipay/consumerInfo';
 		} else {
@@ -47,39 +49,31 @@ module.exports = class ModelExtensionPaymentPilibaba extends Model {
 
 		url += '?merchantNo=' + this.config.get('payment_pilibaba_merchant_number') + '&orderNo=' + order_id + '&signType=' + 'MD5' + '&signMsg=' + sign_msg;
 
-		this.log('URL: ' + url);
-
-		ch = curl_init();
-		curl_setopt(ch, CURLOPT_URL, url);
-		curl_setopt(ch, CURLOPT_CUSTOMREQUEST, 'GET');
-		curl_setopt(ch, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt(ch, CURLOPT_HEADER, false);
-		curl_setopt(ch, CURLOPT_TIMEOUT, 30);
-		curl_setopt(ch, CURLOPT_SSL_VERIFYPEER, false);
-		response = curl_exec(ch);
-		if (curl_errno(ch)) {
-			this.log('cURL error: ' + curl_errno(ch));
+		await this.log('URL: ' + url);
+		try {
+			const response = await require('axios').get(url, {
+				timeout: 30000
+			});
+			await this.log('Response: ' + JSON.stringify(response, true));
+			return response.data;
+		} catch (e) {
+			return {};
 		}
-		curl_close(ch);
-
-		this.log('Response: ' + print_r(response, true));
-
-		return JSON.parse(response, true);
 	}
 
 	async updateOrderInfo(data, order_id) {
-		parts = explode(' ', data['name']);
+		let parts = data['name'].split(' ');
 
-		data['lastname'] = array_pop(parts);
+		data['lastname'] = parts.pop();
 
-		data['firstname'] = implode(' ', parts);
+		data['firstname'] = parts.join(' ');
 
 		await this.db.query("UPDATE `" + DB_PREFIX + "order` SET `firstname` = '" + this.db.escape(data['firstname']) + "', `lastname` = '" + this.db.escape(data['lastname']) + "', `email` = '" + this.db.escape(data['email']) + "', `telephone` = '" + this.db.escape(data['mobile']) + "', `payment_firstname` = '" + this.db.escape(data['firstname']) + "', `payment_lastname` = '" + this.db.escape(data['lastname']) + "', `payment_address_1` = '" + this.db.escape(data['address']) + "', `payment_city` = '" + this.db.escape(data['city']) + "', `payment_postcode` = '" + this.db.escape(data['zipcode']) + "', `payment_country` = '" + this.db.escape(data['country']) + "', `payment_zone` = '" + this.db.escape(data['district']) + "', `shipping_firstname` = '" + this.db.escape(data['firstname']) + "', `shipping_lastname` = '" + this.db.escape(data['lastname']) + "', `shipping_address_1` = '" + this.db.escape(data['address']) + "', `shipping_city` = '" + this.db.escape(data['city']) + "', `shipping_postcode` = '" + this.db.escape(data['zipcode']) + "', `shipping_country` = '" + this.db.escape(data['country']) + "', `shipping_zone` = '" + this.db.escape(data['district']) + "', `date_modified` = NOW() WHERE `order_id` = '" + order_id + "'");
 	}
 
 	async log(data) {
-		if (this.config.get('payment_pilibaba_logging')) {
-			log = new Log('pilibaba.log');
+		if (Number(this.config.get('payment_pilibaba_logging'))) {
+			const log = new Log('pilibaba.log');
 
 			log.write(data);
 		}

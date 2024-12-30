@@ -1323,7 +1323,7 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 		this.response.setOutput(await this.load.view('customer/customer_transaction', data));
 	}
 
-	async addTransaction() {
+	async addtransaction() {
 		await this.load.language('customer/customer');
 
 		const json = {};
@@ -1383,7 +1383,7 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 		this.response.setOutput(await this.load.view('customer/customer_reward', data));
 	}
 
-	async addReward() {
+	async addreward() {
 		await this.load.language('customer/customer');
 
 		const json = {};

@@ -1,23 +1,23 @@
 module.exports = class ControllerCheckoutSuccess extends Controller {
 	async index() {
-const data = {};
+		const data = {};
 		await this.load.language('checkout/success');
 
 		if ((this.session.data['order_id'])) {
-			this.cart.clear();
+			await this.cart.clear();
 
-			delete this.session.data['shipping_method']);
-			delete this.session.data['shipping_methods']);
-			delete this.session.data['payment_method']);
-			delete this.session.data['payment_methods']);
-			delete this.session.data['guest']);
-			delete this.session.data['comment']);
-			delete this.session.data['order_id']);
-			delete this.session.data['coupon']);
-			delete this.session.data['reward']);
-			delete this.session.data['voucher']);
-			delete this.session.data['vouchers']);
-			delete this.session.data['totals']);
+			delete this.session.data['shipping_method'];
+			delete this.session.data['shipping_methods'];
+			delete this.session.data['payment_method'];
+			delete this.session.data['payment_methods'];
+			delete this.session.data['guest'];
+			delete this.session.data['comment'];
+			delete this.session.data['order_id'];
+			delete this.session.data['coupon'];
+			delete this.session.data['reward'];
+			delete this.session.data['voucher'];
+			delete this.session.data['vouchers'];
+			delete this.session.data['totals'];
 		}
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -25,23 +25,23 @@ const data = {};
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/home')
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/home')
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_basket'),
-			'href' : await this.url.link('checkout/cart')
+			'text': this.language.get('text_basket'),
+			'href': await this.url.link('checkout/cart')
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_checkout'),
-			'href' : await this.url.link('checkout/checkout', '', true)
+			'text': this.language.get('text_checkout'),
+			'href': await this.url.link('checkout/checkout', '', true)
 		});
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_success'),
-			'href' : await this.url.link('checkout/success')
+			'text': this.language.get('text_success'),
+			'href': await this.url.link('checkout/success')
 		});
 
 		if (await this.customer.isLogged()) {
@@ -58,7 +58,7 @@ const data = {};
 		data['content_bottom'] = await this.load.controller('common/content_bottom');
 		data['footer'] = await this.load.controller('common/footer');
 		data['header'] = await this.load.controller('common/header');
-
+		await this.session.save(this.session.data);
 		this.response.setOutput(await this.load.view('common/success', data));
 	}
 }

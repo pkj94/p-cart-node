@@ -52,7 +52,7 @@ module.exports = class Framework {
         response.setCompression(config.get('config_compression'));
         global.registry.set('response', response);
         // Database
-        console.log("config.get('db_autostart')----", config.get('db_autostart'))
+        // console.log("config.get('db_autostart')----", config.get('db_autostart'))
         if (config.get('db_autostart')) {
             // console.log('db=--=1')
             let db = new Db(config.get('db_engine'), config.get('db_hostname'), config.get('db_username'), config.get('db_password'), config.get('db_database'), config.get('db_port'), config.get('db_debug'));
@@ -102,6 +102,7 @@ module.exports = class Framework {
         }
 
         // Language Autoload
+        // console.log(req.url)
         if (config.has('language_autoload')) {
             for (let value of config.get('language_autoload')) {
                 await loader.language(value);

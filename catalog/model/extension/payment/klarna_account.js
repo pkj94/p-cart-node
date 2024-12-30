@@ -1,10 +1,12 @@
+const array_multisort = require("locutus/php/array/array_multisort");
+
 module.exports = class ModelExtensionPaymentKlarnaAccount extends Model {
 	async getMethod(address, total) {
 		await this.load.language('extension/payment/klarna_account');
 
-		status = true;
+		let status = true;
 
-		klarna_account = this.config.get('payment_klarna_account');
+		const klarna_account = this.config.get('payment_klarna_account');
 
 		if (!(klarna_account[address['iso_code_3']])) {
 			status = false;
@@ -26,14 +28,14 @@ module.exports = class ModelExtensionPaymentKlarnaAccount extends Model {
 			}
 
 			// Maps countries to currencies
-			country_to_currency = array(
-				'NOR'  'NOK',
-				'SWE'  'SEK',
-				'FIN'  'EUR',
-				'DNK'  'DKK',
-				'DEU'  'EUR',
-				'NLD'  'EUR'
-			});
+			const country_to_currency = {
+				'NOR': 'NOK',
+				'SWE': 'SEK',
+				'FIN': 'EUR',
+				'DNK': 'DKK',
+				'DEU': 'EUR',
+				'NLD': 'EUR'
+			};
 
 			if (!(country_to_currency[address['iso_code_3']]) || !this.currency.has(country_to_currency[address['iso_code_3']])) {
 				status = false;
@@ -44,25 +46,25 @@ module.exports = class ModelExtensionPaymentKlarnaAccount extends Model {
 			}
 		}
 
-		payment_option = array();
+		const payment_option = {};
 
 		if (status) {
 			total = this.currency.format(total, country_to_currency[address['iso_code_3']], '', false);
 
-			pclasses = this.config.get('klarna_account_pclasses');
+			const pclasses = this.config.get('klarna_account_pclasses');
 
 			if ((pclasses[address['iso_code_3']])) {
 				pclasses = pclasses[address['iso_code_3']];
 			} else {
-				pclasses = array();
+				pclasses = {};
 			}
-
-			for (pclasses as pclass) {
+			let monthly_cost = '', monthly_fee = '';
+			for (let pclass of pclasses) {
 				// 0 - Campaign
 				// 1 - Account
 				// 2 - Special
 				// 3 - Fixed
-				if (!in_array(pclass['type'], array(0, 1, 3))) {
+				if (![0, 1, 3].includes(pclass['type'])) {
 					continue;
 				}
 
@@ -76,20 +78,20 @@ module.exports = class ModelExtensionPaymentKlarnaAccount extends Model {
 					if (pclass['type'] == 3) {
 						continue;
 					} else {
-						sum = total;
+						let sum = total;
 
-						lowest_payment = this.getLowestPaymentAccount(address['iso_code_3']);
+						let lowest_payment = await this.getLowestPaymentAccount(address['iso_code_3']);
 						monthly_cost = 0;
 
 						monthly_fee = pclass['invoicefee'];
-						start_fee = pclass['startfee'];
+						let start_fee = pclass['startfee'];
 
 						sum += start_fee;
 
-						base = (pclass['type'] == 1);
+						let base = (pclass['type'] == 1);
 
-						minimum_payment = (pclass['type'] === 1) ? this.getLowestPaymentAccount(address['iso_code_3']) : 0;
-
+						let minimum_payment = (pclass['type'] === 1) ? await this.getLowestPaymentAccount(address['iso_code_3']) : 0;
+						let payment = 0;
 						if (pclass['months'] == 0) {
 							payment = sum;
 						} else if (pclass['interestrate'] == 0) {
@@ -102,34 +104,34 @@ module.exports = class ModelExtensionPaymentKlarnaAccount extends Model {
 
 						payment += monthly_fee;
 
-						balance = sum;
-						pay_data = array();
+						let balance = sum;
+						const pay_data = [];
 
-						months = pclass['months'];
+						let months = pclass['months'];
 
 						while ((months != 0) && (balance > 0.01)) {
-							interest = balance * pclass['interestrate'] / (100.0 * 12);
-							new_balance = balance + interest + monthly_fee;
+							let interest = balance * pclass['interestrate'] / (100.0 * 12);
+							let new_balance = balance + interest + monthly_fee;
 
 							if (minimum_payment >= new_balance || payment >= new_balance) {
-								pay_data.push(new_balance;
+								pay_data.push(new_balance);
 								break;
 							}
 
-							new_payment = max(payment, minimum_payment);
+							let new_payment = Math.max(payment, minimum_payment);
 
 							if (base) {
-								new_payment = max(new_payment, balance / 24.0 + monthly_fee + interest);
+								new_payment = Math.max(new_payment, balance / 24.0 + monthly_fee + interest);
 							}
 
 							balance = new_balance - new_payment;
 
-							pay_data.push(new_payment;
+							pay_data.push(new_payment);
 
 							months -= 1;
 						}
 
-						monthly_cost = round((pay_data[0]) ? (pay_data[0]) : 0, 2);
+						monthly_cost = Math.round((pay_data[0]) ? (pay_data[0]) : 0, 2);
 
 						if (monthly_cost < 0.01) {
 							continue;
@@ -155,33 +157,34 @@ module.exports = class ModelExtensionPaymentKlarnaAccount extends Model {
 			status = false;
 		}
 
-		sort_order = array();
+		const sort_order = {};
 
-		for (payment_option as key  value) {
+		for (let [key, value] of Object.entries(payment_option)) {
 			sort_order[key] = value['monthly_cost'];
 		}
 
-		array_multisort(sort_order, SORT_ASC, payment_option);
+		payment_option = array_multisort(sort_order, SORT_ASC, payment_option);
 
 		if (address['company']) {
 			status = false;
 		}
 
-		method = array();
+		let method = {};
 
 		if (status) {
-			method = array(
-				'code'        'klarna_account',
-				'title'       sprintf(this.language.get('text_title'), this.currency.format(this.currency.convert(payment_option[0]['monthly_cost'], country_to_currency[address['iso_code_3']], this.session.data['currency']), 1, 1)),
-				'terms'       sprintf(this.language.get('text_terms'), klarna_account[address['iso_code_3']]['merchant'], strtolower(address['iso_code_2'])),
-				'sort_order'  klarna_account[address['iso_code_3']]['sort_order'],
-			});
+			method = {
+				'code': 'klarna_account',
+				'title': sprintf(this.language.get('text_title'), this.currency.format(this.currency.convert(payment_option[0]['monthly_cost'], country_to_currency[address['iso_code_3']], this.session.data['currency']), 1, 1)),
+				'terms': sprintf(this.language.get('text_terms'), klarna_account[address['iso_code_3']]['merchant'], strtolower(address['iso_code_2'])),
+				'sort_order': klarna_account[address['iso_code_3']]['sort_order'],
+			};
 		}
 
 		return method;
 	}
 
 	async getLowestPaymentAccount(country) {
+		let amount = null;
 		switch (country) {
 			case 'SWE':
 				amount = 50.0;

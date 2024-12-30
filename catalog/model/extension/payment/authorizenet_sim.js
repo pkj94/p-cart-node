@@ -14,7 +14,7 @@ module.exports = class ModelExtensionPaymentAuthorizeNetSim extends Model {
 			status = false;
 		}
 
-		let method_data = {};
+		let method_data = null;
 
 		if (status) {
 			method_data = {

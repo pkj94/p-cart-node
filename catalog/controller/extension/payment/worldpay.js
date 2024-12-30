@@ -18,7 +18,7 @@ const data = {};
 		data['existing_cards'] = array();
 
 		if (await this.customer.isLogged() && data['payment_worldpay_card']) {
-			this.load.model('extension/payment/worldpay');
+			this.load.model('extension/payment/worldpay',this );
 			data['existing_cards'] = await this.model_extension_payment_worldpay.getCards(await this.customer.getId());
 		}
 
@@ -35,7 +35,7 @@ const data = {};
 		await this.load.language('extension/payment/worldpay');
 		this.load.model('checkout/order',this);
 		this.load.model('localisation/country',this);
-		this.load.model('extension/payment/worldpay');
+		this.load.model('extension/payment/worldpay',this );
 
 		if(!(this.session.data['order_id'])) {
 			return false;
@@ -120,7 +120,7 @@ const data = {};
 
 	async deleteCard() {
 		await this.load.language('extension/payment/worldpay');
-		this.load.model('extension/payment/worldpay');
+		this.load.model('extension/payment/worldpay',this );
 
 		if ((this.request.post['token'])) {
 			if (await this.model_extension_payment_worldpay.deleteCard(this.request.post['token'])) {
@@ -142,7 +142,7 @@ const data = {};
 
 	async webhook() {
 		if ((this.request.get['token']) && hash_equals(this.config.get('payment_worldpay_secret_token'), this.request.get['token'])) {
-			this.load.model('extension/payment/worldpay');
+			this.load.model('extension/payment/worldpay',this );
 			message = JSON.parse(file_get_contents('php://input'), true);
 
 			if ((message['orderCode'])) {
@@ -192,7 +192,7 @@ const data = {};
 
 	async cron() {
 		if (this.request.get['token'] == this.config.get('payment_worldpay_secret_token')) {
-			this.load.model('extension/payment/worldpay');
+			this.load.model('extension/payment/worldpay',this );
 
 			orders = await this.model_extension_payment_worldpay.cronPayment();
 

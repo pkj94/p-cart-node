@@ -979,9 +979,9 @@ $('select[name=\'currency\']').on('change', function() {
 		}
 	});
 });
-
+setTimeout(()=>{
 $('select[name=\'currency\']').trigger('change');
-
+},500);
 // Customer
 $('input[name=\'customer\']').autocomplete({
 	'source': function(request, response) {

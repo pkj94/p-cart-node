@@ -3,8 +3,8 @@ module.exports = class ModelExtensionPaymentGlobalpayRemote extends Model {
 		await this.load.language('extension/payment/globalpay_remote');
 
 		const query = await this.db.query("SELECT * FROM " + DB_PREFIX + "zone_to_geo_zone WHERE geo_zone_id = '" + this.config.get('payment_globalpay_geo_zone_id') + "' AND country_id = '" + address['country_id'] + "' AND (zone_id = '" + address['zone_id'] + "' OR zone_id = '0')");
-
-		if (this.config.get('payment_globalpay_remote_total') > 0 && this.config.get('payment_globalpay_remote_total') > total) {
+		let status = false;
+		if (Number(this.config.get('payment_globalpay_remote_total')) > 0 && Number(this.config.get('payment_globalpay_remote_total')) > total) {
 			status = false;
 		} else if (!this.config.get('payment_globalpay_remote_geo_zone_id')) {
 			status = true;
@@ -14,15 +14,15 @@ module.exports = class ModelExtensionPaymentGlobalpayRemote extends Model {
 			status = false;
 		}
 
-		let method_data = {};
+		let method_data = null;
 
 		if (status) {
 			method_data = {
-				'code'        'globalpay_remote',
-				'title'       this.language.get('text_title'),
-				'terms'       '',
-				'sort_order'  this.config.get('payment_globalpay_remote_sort_order')
-			});
+				'code': 'globalpay_remote',
+				'title': this.language.get('text_title'),
+				'terms': '',
+				'sort_order': this.config.get('payment_globalpay_remote_sort_order')
+			};
 		}
 
 		return method_data;
@@ -40,22 +40,22 @@ module.exports = class ModelExtensionPaymentGlobalpayRemote extends Model {
 
 		xml = '';
 		xml += '<request type="3ds-verifyenrolled" timestamp="' + timestamp + '">';
-			xml += '<merchantid>' + merchant_id + '</merchantid>';
-			xml += '<account>' + account + '</account>';
-			xml += '<orderid>' + order_ref + '</orderid>';
-			xml += '<amount currency="' + currency + '">' + amount + '</amount>';
-			xml += '<card>';
-				xml += '<number>' + this.request.post['cc_number'] + '</number>';
-				xml += '<expdate>' + this.request.post['cc_expire_date_month'] + this.request.post['cc_expire_date_year'] + '</expdate>';
-				xml += '<type>' + this.request.post['cc_type'] + '</type>';
-				xml += '<chname>' + this.request.post['cc_name'] + '</chname>';
-			xml += '</card>';
-			xml += '<sha1hash>' + hash + '</sha1hash>';
+		xml += '<merchantid>' + merchant_id + '</merchantid>';
+		xml += '<account>' + account + '</account>';
+		xml += '<orderid>' + order_ref + '</orderid>';
+		xml += '<amount currency="' + currency + '">' + amount + '</amount>';
+		xml += '<card>';
+		xml += '<number>' + this.request.post['cc_number'] + '</number>';
+		xml += '<expdate>' + this.request.post['cc_expire_date_month'] + this.request.post['cc_expire_date_year'] + '</expdate>';
+		xml += '<type>' + this.request.post['cc_type'] + '</type>';
+		xml += '<chname>' + this.request.post['cc_name'] + '</chname>';
+		xml += '</card>';
+		xml += '<sha1hash>' + hash + '</sha1hash>';
 		xml += '</request>';
 
-		this.logger('checkEnrollment call');
-		this.logger(simplexml_load_string(xml));
-		this.logger(xml);
+		await this.logger('checkEnrollment call');
+		await this.logger(simplexml_load_string(xml));
+		await this.logger(xml);
 
 		ch = curl_init();
 		curl_setopt(ch, CURLOPT_URL, "https://remote.globaliris.com/realmpi");
@@ -64,17 +64,17 @@ module.exports = class ModelExtensionPaymentGlobalpayRemote extends Model {
 		curl_setopt(ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt(ch, CURLOPT_POSTFIELDS, xml);
 		curl_setopt(ch, CURLOPT_SSL_VERIFYPEER, false);
-		response = curl_exec (ch);
-		curl_close (ch);
+		response = curl_exec(ch);
+		curl_close(ch);
 
-		this.logger('checkEnrollment xml response');
-		this.logger(response);
+		await this.logger('checkEnrollment xml response');
+		await this.logger(response);
 
 		return simplexml_load_string(response);
 	}
 
 	async enrollmentSignature(account, amount, currency, order_ref, card_number, card_expire, card_type, card_name, pares) {
-		this.load.model('checkout/order',this);
+		this.load.model('checkout/order', this);
 
 		timestamp = date("YmdHis");
 		merchant_id = this.config.get('payment_globalpay_remote_merchant_id');
@@ -87,23 +87,23 @@ module.exports = class ModelExtensionPaymentGlobalpayRemote extends Model {
 
 		xml = '';
 		xml += '<request type="3ds-verifysig" timestamp="' + timestamp + '">';
-			xml += '<merchantid>' + merchant_id + '</merchantid>';
-			xml += '<account>' + account + '</account>';
-			xml += '<orderid>' + order_ref + '</orderid>';
-			xml += '<amount currency="' + currency + '">' + amount + '</amount>';
-			xml += '<card>';
-				xml += '<number>' + card_number + '</number>';
-				xml += '<expdate>' + card_expire + '</expdate>';
-				xml += '<type>' + card_type + '</type>';
-				xml += '<chname>' + card_name + '</chname>';
-			xml += '</card>';
-			xml += '<pares>' + pares + '</pares>';
-			xml += '<sha1hash>' + hash + '</sha1hash>';
+		xml += '<merchantid>' + merchant_id + '</merchantid>';
+		xml += '<account>' + account + '</account>';
+		xml += '<orderid>' + order_ref + '</orderid>';
+		xml += '<amount currency="' + currency + '">' + amount + '</amount>';
+		xml += '<card>';
+		xml += '<number>' + card_number + '</number>';
+		xml += '<expdate>' + card_expire + '</expdate>';
+		xml += '<type>' + card_type + '</type>';
+		xml += '<chname>' + card_name + '</chname>';
+		xml += '</card>';
+		xml += '<pares>' + pares + '</pares>';
+		xml += '<sha1hash>' + hash + '</sha1hash>';
 		xml += '</request>';
 
-		this.logger('enrollmentSignature call');
-		this.logger(simplexml_load_string(xml));
-		this.logger(xml);
+		await this.logger('enrollmentSignature call');
+		await this.logger(simplexml_load_string(xml));
+		await this.logger(xml);
 
 		ch = curl_init();
 		curl_setopt(ch, CURLOPT_URL, "https://remote.globaliris.com/realmpi");
@@ -112,17 +112,17 @@ module.exports = class ModelExtensionPaymentGlobalpayRemote extends Model {
 		curl_setopt(ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt(ch, CURLOPT_POSTFIELDS, xml);
 		curl_setopt(ch, CURLOPT_SSL_VERIFYPEER, false);
-		response = curl_exec (ch);
-		curl_close (ch);
+		response = curl_exec(ch);
+		curl_close(ch);
 
-		this.logger('enrollmentSignature xml response');
-		this.logger(response);
+		await this.logger('enrollmentSignature xml response');
+		await this.logger(response);
 
 		return simplexml_load_string(response);
 	}
 
 	async capturePayment(account, amount, currency, order_id, order_ref, card_number, expire, name, type, cvv, issue, eci_ref, eci = '', cavv = '', xid = '') {
-		this.load.model('checkout/order',this);
+		this.load.model('checkout/order', this);
 
 		timestamp = date("YmdHis");
 		merchant_id = this.config.get('payment_globalpay_remote_merchant_id');
@@ -137,87 +137,87 @@ module.exports = class ModelExtensionPaymentGlobalpayRemote extends Model {
 
 		xml = '';
 		xml += '<request type="auth" timestamp="' + timestamp + '">';
-			xml += '<merchantid>' + merchant_id + '</merchantid>';
-			xml += '<account>' + account + '</account>';
-			xml += '<orderid>' + order_ref + '</orderid>';
-			xml += '<amount currency="' + currency + '">' + amount + '</amount>';
-			xml += '<comments>';
-				xml += '<comment id="1">OpenCart</comment>';
-			xml += '</comments>';
-			xml += '<card>';
-				xml += '<number>' + card_number + '</number>';
-				xml += '<expdate>' + expire + '</expdate>';
-				xml += '<type>' + type + '</type>';
-				xml += '<chname>' + name + '</chname>';
-				xml += '<cvn>';
-					xml += '<number>' + cvv + '</number>';
-					xml += '<presind>2</presind>';
-				xml += '</cvn>';
-				if ((issue)) {
-					xml += '<issueno>' + issue + '</issueno>';
+		xml += '<merchantid>' + merchant_id + '</merchantid>';
+		xml += '<account>' + account + '</account>';
+		xml += '<orderid>' + order_ref + '</orderid>';
+		xml += '<amount currency="' + currency + '">' + amount + '</amount>';
+		xml += '<comments>';
+		xml += '<comment id="1">OpenCart</comment>';
+		xml += '</comments>';
+		xml += '<card>';
+		xml += '<number>' + card_number + '</number>';
+		xml += '<expdate>' + expire + '</expdate>';
+		xml += '<type>' + type + '</type>';
+		xml += '<chname>' + name + '</chname>';
+		xml += '<cvn>';
+		xml += '<number>' + cvv + '</number>';
+		xml += '<presind>2</presind>';
+		xml += '</cvn>';
+		if ((issue)) {
+			xml += '<issueno>' + issue + '</issueno>';
+		}
+		xml += '</card>';
+
+		if (this.config.get('payment_globalpay_remote_auto_settle') == 0) {
+			xml += '<autosettle flag="0" />';
+		} else if (this.config.get('payment_globalpay_remote_auto_settle') == 1) {
+			xml += '<autosettle flag="1" />';
+		} else if (this.config.get('payment_globalpay_remote_auto_settle') == 2) {
+			xml += '<autosettle flag="MULTI" />';
+		}
+
+		if (eci != '' || cavv != '' || xid != '') {
+			xml += '<mpi>';
+			if (eci != '') {
+				xml += '<eci>' + eci + '</eci>';
+			}
+			if (cavv != '') {
+				xml += '<cavv>' + cavv + '</cavv>';
+			}
+			if (xid != '') {
+				xml += '<xid>' + xid + '</xid>';
+			}
+			xml += '</mpi>';
+		}
+
+		xml += '<sha1hash>' + hash + '</sha1hash>';
+
+		if (this.config.get('payment_globalpay_remote_tss_check') == 1) {
+			xml += '<tssinfo>';
+			xml += '<custipaddress>' + order_info['ip'] + '</custipaddress>';
+
+			if (await this.customer.getId() > 0) {
+				xml += '<custnum>' + await this.customer.getId() + '</custnum>';
+			}
+
+			if (((order_info['payment_iso_code_2']) && (order_info['payment_iso_code_2'])) || ((order_info['payment_postcode']) && (order_info['payment_postcode']))) {
+				xml += '<address type="billing">';
+				if (((order_info['payment_postcode']) && (order_info['payment_postcode']))) {
+					xml += '<code>' + filter_var(order_info['payment_postcode'], FILTER_SANITIZE_NUMBER_INT) + '|' + filter_var(order_info['payment_address_1'], FILTER_SANITIZE_NUMBER_INT) + '</code>';
 				}
-			xml += '</card>';
-
-			if (this.config.get('payment_globalpay_remote_auto_settle') == 0) {
-				xml += '<autosettle flag="0" />';
-			} else if (this.config.get('payment_globalpay_remote_auto_settle') == 1) {
-				xml += '<autosettle flag="1" />';
-			} else if (this.config.get('payment_globalpay_remote_auto_settle') == 2) {
-				xml += '<autosettle flag="MULTI" />';
+				if (((order_info['payment_iso_code_2']) && (order_info['payment_iso_code_2']))) {
+					xml += '<country>' + order_info['payment_iso_code_2'] + '</country>';
+				}
+				xml += '</address>';
 			}
-
-			if (eci != '' || cavv != '' || xid != '') {
-				xml += '<mpi>';
-					if (eci != '') {
-						xml += '<eci>' + eci + '</eci>';
-					}
-					if (cavv != '') {
-						xml += '<cavv>' + cavv + '</cavv>';
-					}
-					if (xid != '') {
-						xml += '<xid>' + xid + '</xid>';
-					}
-				xml += '</mpi>';
+			if (((order_info['shipping_iso_code_2']) && (order_info['shipping_iso_code_2'])) || ((order_info['shipping_postcode']) && (order_info['shipping_postcode']))) {
+				xml += '<address type="shipping">';
+				if (((order_info['shipping_postcode']) && (order_info['shipping_postcode']))) {
+					xml += '<code>' + filter_var(order_info['shipping_postcode'], FILTER_SANITIZE_NUMBER_INT) + '|' + filter_var(order_info['shipping_address_1'], FILTER_SANITIZE_NUMBER_INT) + '</code>';
+				}
+				if (((order_info['shipping_iso_code_2']) && (order_info['shipping_iso_code_2']))) {
+					xml += '<country>' + order_info['shipping_iso_code_2'] + '</country>';
+				}
+				xml += '</address>';
 			}
-
-			xml += '<sha1hash>' + hash + '</sha1hash>';
-
-			if (this.config.get('payment_globalpay_remote_tss_check') == 1) {
-				xml += '<tssinfo>';
-					xml += '<custipaddress>' + order_info['ip'] + '</custipaddress>';
-
-					if (await this.customer.getId() > 0) {
-						xml += '<custnum>' + await this.customer.getId() + '</custnum>';
-					}
-
-					if (((order_info['payment_iso_code_2']) && (order_info['payment_iso_code_2'])) || ((order_info['payment_postcode']) && (order_info['payment_postcode']))) {
-						xml += '<address type="billing">';
-						if (((order_info['payment_postcode']) && (order_info['payment_postcode']))) {
-							xml += '<code>' + filter_var(order_info['payment_postcode'], FILTER_SANITIZE_NUMBER_INT) + '|' + filter_var(order_info['payment_address_1'], FILTER_SANITIZE_NUMBER_INT) + '</code>';
-						}
-						if (((order_info['payment_iso_code_2']) && (order_info['payment_iso_code_2']))) {
-							xml += '<country>' + order_info['payment_iso_code_2'] + '</country>';
-						}
-						xml += '</address>';
-					}
-					if (((order_info['shipping_iso_code_2']) && (order_info['shipping_iso_code_2'])) || ((order_info['shipping_postcode']) && (order_info['shipping_postcode']))) {
-						xml += '<address type="shipping">';
-						if (((order_info['shipping_postcode']) && (order_info['shipping_postcode']))) {
-							xml += '<code>' + filter_var(order_info['shipping_postcode'], FILTER_SANITIZE_NUMBER_INT) + '|' + filter_var(order_info['shipping_address_1'], FILTER_SANITIZE_NUMBER_INT) + '</code>';
-						}
-						if (((order_info['shipping_iso_code_2']) && (order_info['shipping_iso_code_2']))) {
-							xml += '<country>' + order_info['shipping_iso_code_2'] + '</country>';
-						}
-						xml += '</address>';
-					}
-				xml += '</tssinfo>';
-			}
+			xml += '</tssinfo>';
+		}
 
 		xml += '</request>';
 
-		this.logger('capturePayment call');
-		this.logger(simplexml_load_string(xml));
-		this.logger(xml);
+		await this.logger('capturePayment call');
+		await this.logger(simplexml_load_string(xml));
+		await this.logger(xml);
 
 		ch = curl_init();
 		curl_setopt(ch, CURLOPT_URL, "https://remote.globaliris.com/realauth");
@@ -226,11 +226,11 @@ module.exports = class ModelExtensionPaymentGlobalpayRemote extends Model {
 		curl_setopt(ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt(ch, CURLOPT_POSTFIELDS, xml);
 		curl_setopt(ch, CURLOPT_SSL_VERIFYPEER, false);
-		response = curl_exec (ch);
-		curl_close (ch);
+		response = curl_exec(ch);
+		curl_close(ch);
 
-		this.logger('capturePayment xml response');
-		this.logger(response);
+		await this.logger('capturePayment xml response');
+		await this.logger(response);
 
 		response = simplexml_load_string(response);
 

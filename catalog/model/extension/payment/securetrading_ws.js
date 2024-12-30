@@ -3,7 +3,7 @@ module.exports = class ModelExtensionPaymentSecureTradingWs extends Model {
 		await this.load.language('extension/payment/securetrading_ws');
 
 		const query = await this.db.query("SELECT * FROM " + DB_PREFIX + "zone_to_geo_zone WHERE geo_zone_id = '" + this.config.get('payment_securetrading_ws_geo_zone_id') + "' AND country_id = '" + address['country_id'] + "' AND (zone_id = '" + address['zone_id'] + "' OR zone_id = '0')");
-
+		let status = false;
 		if (this.config.get('payment_securetrading_ws_total') > total) {
 			status = false;
 		} else if (!this.config.get('payment_securetrading_ws_geo_zone_id')) {
@@ -14,56 +14,53 @@ module.exports = class ModelExtensionPaymentSecureTradingWs extends Model {
 			status = false;
 		}
 
-		let method_data = {};
+		let method_data = null;
 
 		if (status) {
 			method_data = {
-				'code'        'securetrading_ws',
-				'title'       this.language.get('text_title'),
-				'terms'       '',
-				'sort_order'  this.config.get('payment_securetrading_ws_sort_order')
-			});
+				'code': 'securetrading_ws',
+				'title': this.language.get('text_title'),
+				'terms': '',
+				'sort_order': this.config.get('payment_securetrading_ws_sort_order')
+			};
 		}
 
 		return method_data;
 	}
 
+
 	async call(data) {
-		ch = curl_init();
+		const url = 'https://webservices.securetrading.net/xml/';
+		const auth = Buffer.from(`${this.config.payment_securetrading_ws_username}:${this.config.payment_securetrading_ws_password}`).toString('base64');
 
-		defaults = array(
-			CURLOPT_POST  1,
-			CURLOPT_HEADER  0,
-			CURLOPT_SSL_VERIFYPEER  0,
-			CURLOPT_URL  'https://webservices.securetrading.net/xml/',
-			CURLOPT_FRESH_CONNECT  1,
-			CURLOPT_RETURNTRANSFER  1,
-			CURLOPT_FORBID_REUSE  1,
-			CURLOPT_TIMEOUT  15,
-			CURLOPT_HTTPHEADER  array(
-				'User-Agent: OpenCart - Secure Trading WS',
-				'Content-Length: ' + strlen(data),
-				'Authorization: Basic ' + base64_encode(this.config.get('payment_securetrading_ws_username') + ':' + this.config.get('payment_securetrading_ws_password')),
-			),
-			CURLOPT_POSTFIELDS  data,
-		});
+		try {
+			const response = await require('axios').post(url, data, {
+				headers: {
+					'User-Agent': 'OpenCart - Secure Trading WS',
+					'Content-Length': data.length,
+					'Authorization': `Basic ${auth}`,
+					'Content-Type': 'application/x-www-form-urlencoded'
+				},
+				httpsAgent: new (require('https').Agent)({
+					rejectUnauthorized: false // Equivalent to CURLOPT_SSL_VERIFYPEER = 0
+				}),
+				timeout: 15000 // Equivalent to CURLOPT_TIMEOUT = 15
+			});
 
-		curl_setopt_array(ch, defaults);
-
-		response = curl_exec(ch);
-
-		if (response === false) {
-			this.log.write('Secure Trading WS CURL Error: (' + curl_errno(ch) + ') ' + curl_error(ch));
+			return response.data;
+		} catch (error) {
+			console.error(`Secure Trading WS HTTP Error: ${error.message}`);
+			if (error.response) {
+				console.error('HTTP Response:', error.response.data);
+			}
+			return null;
 		}
-
-		curl_close(ch);
-
-		return response;
 	}
+
 
 	async format(number, currency, value = '', format = false) {
 
-		decimal_place = this.currency.getDecimalPlace(currency);
+		const decimal_place = this.currency.getDecimalPlace(currency);
 
 		if (!value) {
 			value = this.currency.getValue(currency);
@@ -71,7 +68,7 @@ module.exports = class ModelExtensionPaymentSecureTradingWs extends Model {
 
 		amount = value ? number * value : number;
 
-		amount = number_format(amount, decimal_place);
+		amount = Number(amount).toFixed(decimal_place);
 
 		if (!format) {
 			return amount;
@@ -79,7 +76,7 @@ module.exports = class ModelExtensionPaymentSecureTradingWs extends Model {
 	}
 
 	async getOrder(order_id) {
-		qry = await this.db.query("SELECT * FROM `" + DB_PREFIX + "securetrading_ws_order` WHERE `order_id` = '" + order_id + "' LIMIT 1");
+		const qry = await this.db.query("SELECT * FROM `" + DB_PREFIX + "securetrading_ws_order` WHERE `order_id` = '" + order_id + "' LIMIT 1");
 
 		return qry.row;
 	}
@@ -101,29 +98,29 @@ module.exports = class ModelExtensionPaymentSecureTradingWs extends Model {
 	}
 
 	async getOrderId(md) {
-		row = await this.db.query("SELECT order_id FROM " + DB_PREFIX + "securetrading_ws_order WHERE md = '" + this.db.escape(md) + "' LIMIT 1").row;
+		const query = await this.db.query("SELECT order_id FROM " + DB_PREFIX + "securetrading_ws_order WHERE md = '" + this.db.escape(md) + "' LIMIT 1").row;
 
-		if ((row['order_id']) && (row['order_id'])) {
-			return row['order_id'];
+		if ((query.row['order_id']) && (query.row['order_id'])) {
+			return query.row['order_id'];
 		} else {
 			return false;
 		}
 	}
 
 	async confirmOrder(order_id, order_status_id, comment = '', notify = false) {
-		this.load.model('checkout/order',this);
+		this.load.model('checkout/order', this);
 
 		await this.db.query("UPDATE `" + DB_PREFIX + "order` SET order_status_id = 0 WHERE order_id = " + order_id);
 
 		await this.model_checkout_order.addOrderHistory(order_id, order_status_id, comment, notify);
 
-		order_info = await this.model_checkout_order.getOrder(order_id);
+		const order_info = await this.model_checkout_order.getOrder(order_id);
 
-		securetrading_ws_order = this.getOrder(order_info['order_id']);
+		const securetrading_ws_order = await this.getOrder(order_info['order_id']);
 
-		amount = this.currency.format(order_info['total'], order_info['currency_code'], false, false);
-
-		switch(this.config.get('payment_securetrading_ws_settle_status')){
+		let amount = this.currency.format(order_info['total'], order_info['currency_code'], false, false);
+		let trans_type = '';
+		switch (Number(this.config.get('payment_securetrading_ws_settle_status'))) {
 			case 0:
 				trans_type = 'auth';
 				break;
@@ -136,7 +133,7 @@ module.exports = class ModelExtensionPaymentSecureTradingWs extends Model {
 			case 100:
 				trans_type = 'payment';
 				break;
-			default :
+			default:
 				trans_type = '';
 		}
 
@@ -146,15 +143,15 @@ module.exports = class ModelExtensionPaymentSecureTradingWs extends Model {
 	}
 
 	async updateOrder(order_id, order_status_id, comment = '', notify = false) {
-		this.load.model('checkout/order',this);
+		this.load.model('checkout/order', this);
 
-		await this.db.query("UPDATE `" + DB_PREFIX + "order` SET order_status_id = " + order_status_id + " WHERE order_id = "  + order_id);
+		await this.db.query("UPDATE `" + DB_PREFIX + "order` SET order_status_id = " + order_status_id + " WHERE order_id = " + order_id);
 
 		await this.model_checkout_order.addOrderHistory(order_id, order_status_id, comment, notify);
 	}
 
 	async logger(message) {
-		log = new Log('secure.log');
+		const log = new Log('secure.log');
 		log.write(message);
 	}
 }

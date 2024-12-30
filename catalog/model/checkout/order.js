@@ -115,7 +115,7 @@ module.exports = class ModelCheckoutOrder extends Model {
 	}
 
 	async getOrder(order_id) {
-		order_query = await this.db.query("SELECT *, (SELECT os.name FROM `" + DB_PREFIX + "order_status` os WHERE os.order_status_id = o.order_status_id AND os.language_id = o.language_id) AS order_status FROM `" + DB_PREFIX + "order` o WHERE o.order_id = '" + order_id + "'");
+		const order_query = await this.db.query("SELECT *, (SELECT os.name FROM `" + DB_PREFIX + "order_status` os WHERE os.order_status_id = o.order_status_id AND os.language_id = o.language_id) AS order_status FROM `" + DB_PREFIX + "order` o WHERE o.order_id = '" + order_id + "'");
 
 		if (order_query.num_rows) {
 			let country_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "country` WHERE country_id = '" + order_query.row['payment_country_id'] + "'");
@@ -291,10 +291,10 @@ module.exports = class ModelCheckoutOrder extends Model {
 
 				for (let order_total of order_totals) {
 					this.load.model('extension/total/' + order_total['code'], this);
-
+					console.log('model_extension_total_' + order_total['code'])
 					if (typeof this['model_extension_total_' + order_total['code']].confirm != 'undefined') {
 						// Confirm coupon, vouchers and reward points
-						const fraud_status_id = this['model_extension_total_' + order_total['code']].confirm(order_info, order_total);
+						const fraud_status_id = await this['model_extension_total_' + order_total['code']].confirm(order_info, order_total);
 
 						// If the balance on the coupon, vouchers and reward points is not enough to cover the transaction or has already been used then the fraud order status is returned.
 						if (fraud_status_id) {
