@@ -657,7 +657,7 @@ module.exports = class ControllerSaleVoucher extends Controller {
 							mail.smtp_password = html_entity_decode(this.config.get('config_mail_smtp_password'));
 							mail.smtp_port = this.config.get('config_mail_smtp_port');
 							mail.smtp_timeout = this.config.get('config_mail_smtp_timeout');
-							console.log(mail)
+							// console.log(mail)
 							mail.setTo(voucher_info['to_email']);
 							mail.setFrom(this.config.get('config_email'));
 							mail.setSender(html_entity_decode(this.config.get('config_name')));

@@ -95,7 +95,7 @@ const data = {};
                 await this.model_extension_credit_card_squareup.deleteCard(squareup_token_id);
                 
                 this.session.data['success'] = this.language.get('text_success_card_delete');
-            } catch (\Squareup\Exception e) {
+            } catch ( e) {
                 this.session.data['error'] = e.getMessage();
             }
         }

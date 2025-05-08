@@ -108,7 +108,7 @@ global.ProxyLocal = require(modification(DIR_SYSTEM + 'engine/proxy.js'));
 
 
 global.start = (application_config, req, res, next) => {
-    console.log(application_config,req.url)
+    // console.log(application_config,req.url)
     const framework = require(DIR_SYSTEM + 'framework');
     return new framework().init(application_config, req, res, next);
 }

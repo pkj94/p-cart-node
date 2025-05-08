@@ -130,7 +130,7 @@ module.exports = class ModelLocalisationGeoZone extends Model {
 	}
 
 	async getZonesByGeoZones(geo_zone_ids = []) {
-		console.log(geo_zone_ids)
+		// console.log(geo_zone_ids)
 		if (!geo_zone_ids.length) {
 			return {};
 		}

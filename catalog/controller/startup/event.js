@@ -1,6 +1,6 @@
 module.exports = class ControllerStartupEvent extends Controller {
 	async index() {
-const data = {};
+		const data = {};
 		// Add events from the DB
 		this.load.model('setting/event', this);
 

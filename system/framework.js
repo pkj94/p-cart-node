@@ -133,6 +133,7 @@ module.exports = class Framework {
         }
 
         // Dispatch
+        console.log(config.get('action_router'), new Action(config.get('action_router')),req.url)
         await route.dispatch(new Action(config.get('action_router')), new Action(config.get('action_error')));
         // console.log('outout')
 

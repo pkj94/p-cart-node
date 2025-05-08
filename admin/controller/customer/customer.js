@@ -1238,9 +1238,9 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 		let limit = Number(this.config.get('config_limit_admin'));
 
 		data['histories'] = [];
-		console.log('history----');
+		// console.log('history----');
 		const results = await this.model_customer_customer.getHistories(this.request.get['customer_id'], (page - 1) * limit, limit);
-		console.log('history----',results);
+		// console.log('history----',results);
 		for (let result of results) {
 			data['histories'].push({
 				'comment': result['comment'],
@@ -1509,7 +1509,7 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 				'required': !(custom_field['required']) || custom_field['required'] == 0 ? false : true
 			});
 		}
-
+		console.log('json----------------',json)
 		this.response.addHeader('Content-Type: application/json');
 		this.response.setOutput(json);
 	}

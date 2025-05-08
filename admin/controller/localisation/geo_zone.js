@@ -333,7 +333,7 @@ module.exports = class ControllerLocalisationGeoZone extends Controller {
 		}
 
 		let geo_zone_ids = [];
-		console.log(data['zone_to_geo_zones']);
+		// console.log(data['zone_to_geo_zones']);
 		for (let [id, zone_to_geo_zone] of Object.entries(data['zone_to_geo_zones'])) {
 			if (zone_to_geo_zone['geo_zone_id'] && !geo_zone_ids.includes(zone_to_geo_zone['geo_zone_id'])) {
 				geo_zone_ids.push(zone_to_geo_zone['geo_zone_id']);

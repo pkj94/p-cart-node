@@ -2,7 +2,7 @@ module.exports = class ControllerAccountReset extends Controller {
 	error = {};
 
 	async index() {
-const data = {};
+		const data = {};
 		if (await this.customer.isLogged()) {
 			this.response.setRedirect(await this.url.link('account/account', '', true));
 		}
@@ -13,7 +13,7 @@ const data = {};
 			code = '';
 		}
 
-		this.load.model('account/customer',this);
+		this.load.model('account/customer', this);
 
 		customer_info = await this.model_account_customer.getCustomerByCode(code);
 
@@ -33,18 +33,18 @@ const data = {};
 			data['breadcrumbs'] = [];
 
 			data['breadcrumbs'].push({
-				'text' : this.language.get('text_home'),
-				'href' : await this.url.link('common/home')
+				'text': this.language.get('text_home'),
+				'href': await this.url.link('common/home')
 			});
 
 			data['breadcrumbs'].push({
-				'text' : this.language.get('text_account'),
-				'href' : await this.url.link('account/account', '', true)
+				'text': this.language.get('text_account'),
+				'href': await this.url.link('account/account', '', true)
 			});
 
 			data['breadcrumbs'].push({
-				'text' : this.language.get('heading_title'),
-				'href' : await this.url.link('account/reset', '', true)
+				'text': this.language.get('heading_title'),
+				'href': await this.url.link('account/reset', '', true)
 			});
 
 			if ((this.error['password'])) {

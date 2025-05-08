@@ -29,6 +29,7 @@
     "express": "^4.19.2",
     "express-fileupload": "^1.5.1",
     "express-http-proxy": "^2.0.0",
+    "express-rate-limit": "^7.5.0",
     "express-session": "^1.18.0",
     "glob": "^11.0.0",
     "html-entities": "^2.5.2",

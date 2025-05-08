@@ -11,13 +11,15 @@ module.exports = class Router {
 
     async dispatch(action, error) {
         this.error = error;
-
+        console.log(action,this.registry.get('request').get,this.preActions)
         for (let preAction of this.preActions) {
             const result = await this.execute(preAction);
             if (result instanceof Action) {
                 action = result;
                 break;
             }
+            
+
         }
 
         while (action instanceof Action) {

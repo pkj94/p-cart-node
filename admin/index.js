@@ -10,8 +10,8 @@ module.exports = function () {
             return res.redirect('/install');
         // console.log(typeof DIR_APPLICATION == 'undefined')
         require(DIR_SYSTEM + 'startup.js')
-
-        start('admin', req, res, next).then(output => {
+        try {
+            const output = await start('admin', req, res, next);
             if (registry.get('response').end) {
                 registry.get('response').headers.forEach(header => {
                     res.header((header.split(':')[0] || '').trim(), (header.split(':')[1] || '').trim());
@@ -32,7 +32,7 @@ module.exports = function () {
                 });
                 res.status(200).send(output);
             }
-        }).catch(error => {
+        } catch (error) {
             // Error Handler
             console.log('error------', error, JSON.stringify(error));
             let errorType;
@@ -61,12 +61,12 @@ module.exports = function () {
             if (registry.get('config').get('error_display')) {
                 res.status(200).send('<b>' + errorType + '</b>: ' + error.toString());
             } else {
-                console.log(registry.get('config').get('error_page'))
+                // console.log(registry.get('config').get('error_page'))
                 res.redirect(registry.get('config').get('error_page'));
             }
 
             res.status(200).send(registry.get('response').outputData);
-        });
+        };
     };
     // loadAdminControllers();
     app.use('/admin/view/stylesheet', express.static(__dirname + '/view/stylesheet'));

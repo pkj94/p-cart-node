@@ -55,7 +55,7 @@ app.get('/ping', (req, res) => {
     res.send("pong!");
 });
 
-app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
 app.use(bodyParser.json());
 
 app.use(compression());
@@ -81,7 +81,13 @@ app.use('/catalog/view/theme/:theme/image', (req, res, next) => {
 app.use('/catalog/language', express.static('catalog/language'));
 app.use('/extension', express.static('extension'));
 app.use('/favicon.ico', express.static('./favicon.ico'));
-app.use(morgan('dev'));
+app.use(morgan('combined'));
+// const rateLimit = require('express-rate-limit');
+// const limiter = rateLimit({
+//     windowMs: 1 * 60 * 1000, // 1 minute
+//     max: 100 // Limit each IP to 100 requests per minute
+// });
+// app.use(limiter);
 const parseFormData = (formData) => {
     const data = {};
 

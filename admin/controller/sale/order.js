@@ -366,7 +366,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 
 		if (api_info.api_id && await this.user.hasPermission('modify', 'sale/order')) {
 			const session = new Session(this.request.server.session);
-			console.log(session)
+			// console.log(session)
 			await session.start();
 
 			await this.model_user_api.deleteApiSessionBySessionId(session.getId());
@@ -1802,7 +1802,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 
 						const options = await this.model_sale_order.getOrderOptions(order_id, product['order_product_id']);
 
-						for (options of option) {
+						for (let option of options) {
 							let value = '';
 							if (option['type'] != 'file') {
 								value = option['value'];

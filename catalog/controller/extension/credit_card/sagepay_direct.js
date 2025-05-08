@@ -35,7 +35,7 @@ const data = {};
 
 		if ((this.session.data['error_warning'])) {
 			data['error_warning'] = this.session.data['error_warning'];
-			delete this.session.data['error_warning']);
+			delete this.session.data['error_warning'];
 		} else {
 			data['error_warning'] = '';
 		}

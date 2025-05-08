@@ -1084,9 +1084,9 @@ $('select[name=\'customer_group_id\']').on('change', function() {
 		}
 	});
 });
-
+setTimeout(()=>{
 $('select[name=\'customer_group_id\']').trigger('change');
-
+},100);
 $('#button-customer').on('click', function() {
 	$.ajax({
 		url: '{{ catalog }}?route=api/customer&api_token={{ api_token }}&store_id=' + $('select[name=\'store_id\'] option:selected').val(),
@@ -1659,8 +1659,9 @@ $('#tab-payment select[name=\'country_id\']').on('change', function() {
 		}
 	});
 });
-
-$('#tab-payment select[name=\'country_id\']').trigger('change');
+setTimeout(()=>{
+	$('#tab-payment select[name=\'country_id\']').trigger('change');
+},100);
 
 $('#button-payment-address').on('click', function() {
 	$.ajax({
@@ -1843,9 +1844,9 @@ $('#tab-shipping select[name=\'country_id\']').on('change', function() {
 		}
 	});
 });
-
+setTimeout(()=>{
 $('#tab-shipping select[name=\'country_id\']').trigger('change');
-
+},100);
 $('#button-shipping-address').on('click', function() {
 	$.ajax({
 		url: '{{ catalog }}?route=api/shipping/address&api_token={{ api_token }}&store_id=' + $('select[name=\'store_id\'] option:selected').val(),
