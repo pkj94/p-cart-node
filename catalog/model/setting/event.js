@@ -1,4 +1,4 @@
-module.exports =class Event extends global['\Opencart\System\Engine\Model'] {
+module.exports =class Event extends global['OpencartSystemEngineModel'] {
 	/**
 	 * @return array
 	 */

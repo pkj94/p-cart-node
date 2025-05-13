@@ -1,4 +1,4 @@
-module.exports = class ForgottenController extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class ForgottenController extends global['OpencartSystemEngineController'] {
 	/**
 	 *
 	 * admin/model/user/user/editCode/after
@@ -57,7 +57,7 @@ module.exports = class ForgottenController extends global['\Opencart\System\Engi
 					'smtp_timeout': this.config.get('config_mail_smtp_timeout')
 				};
 
-				const mail = new global['\Opencart\System\Library\Mail'](this.config.get('config_mail_engine'), mail_option);
+				const mail = new global['OpencartSystemLibraryMail'](this.config.get('config_mail_engine'), mail_option);
 				mail.setTo(email);
 				mail.setFrom(this.config.get('config_email'));
 				mail.setSender(store_name);

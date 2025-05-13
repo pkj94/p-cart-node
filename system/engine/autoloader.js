@@ -4,7 +4,7 @@ const expressPath = require('path');
 module.exports = class Autoloader {
     constructor() {
         this.paths = {};
-        this.register('Opencart\System\Engine', __dirname.replace(/\\/g, '/'));
+        this.register('OpencartSystemEngine', __dirname.replace(/\\/g, '/'));
     }
 
     async register(namespace, directory, psr4 = false) {
@@ -28,8 +28,8 @@ module.exports = class Autoloader {
                         namespace = (namespace + filePath.replace('.js', '').replace(fs.realpathSync(selectedNamespace[1].directory), '').split('\\').map(a => ucfirst(a)).join('')).replace(/\\/g, '');
                         namespace = namespace.split('_').map(a => ucfirst(a)).join('');//.replace('OpencartExtensionOpencart','OpencartExtension')
                         // if (namespace.includes('DashboardActivity'))
-                        // console.log('namespace1---', namespace, filePath, selectedNamespace[0])
-                        if (selectedNamespace[0] == 'OpencartExtension' || selectedNamespace[0] == 'OpencartInstall' || selectedNamespace[0] == 'OpencartSystemEngine')
+                        // console.log('namespace1---', namespace, filePath, selectedNamespace[0], selectedNamespace[0], selectedNamespace[0] == 'OpencartExtension' || selectedNamespace[0] == 'OpencartInstall' || selectedNamespace[0] == 'OpencartSystemEngine')
+                        if (selectedNamespace[0] == 'OpencartExtension')
                             require(filePath.replace('.js', ''));
                         else
                             global[namespace] = require(filePath.replace('.js', ''));

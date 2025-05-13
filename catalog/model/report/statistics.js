@@ -1,4 +1,4 @@
-module.exports = class Statistics extends global['\Opencart\System\Engine\Model'] {
+module.exports = class Statistics extends global['OpencartSystemEngineModel'] {
 	/**
 	 * @return array
 	 */

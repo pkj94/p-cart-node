@@ -1,4 +1,4 @@
-module.exports = class CustomFieldModel extends global['\Opencart\System\Engine\Model'] {
+module.exports = class CustomFieldModel extends global['OpencartSystemEngineModel'] {
 	constructor(registry) {
 		super(registry)
 	}

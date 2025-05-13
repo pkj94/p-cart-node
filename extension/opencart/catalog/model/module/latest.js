@@ -1,4 +1,4 @@
-global['\Opencart\Catalog\Model\Extension\Opencart\Module\Latest'] = class Latest extends global['\Opencart\System\Engine\Model'] {
+global['OpencartCatalogModelExtensionOpencartModuleLatest'] = class Latest extends global['OpencartSystemEngineModel'] {
 	/**
 	 * @param int limit
 	 *

@@ -2,7 +2,7 @@ const rtrim = require("locutus/php/strings/rtrim");
 const sprintf = require("locutus/php/strings/sprintf");
 const trim = require("locutus/php/strings/trim");
 
-module.exports = class Theme extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class Theme extends global['OpencartSystemEngineController'] {
 	/**
 	 * @return void
 	 */

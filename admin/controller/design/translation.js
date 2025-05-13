@@ -3,7 +3,7 @@ const strlen = require("locutus/php/strings/strlen");
 const substr = require("locutus/php/strings/substr");
 
 const expressPath = require('path');
-module.exports = class TranslationController extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class TranslationController extends global['OpencartSystemEngineController'] {
 	/**
 	 * @return void
 	 */

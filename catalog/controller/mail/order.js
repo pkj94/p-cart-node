@@ -2,7 +2,7 @@ const nl2br = require("locutus/php/strings/nl2br");
 const sprintf = require("locutus/php/strings/sprintf");
 const strip_tags = require("locutus/php/strings/strip_tags");
 
-module.exports = class Order extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class Order extends global['OpencartSystemEngineController'] {
 	/**
 	 * @param string route
 	 * @param  args
@@ -339,7 +339,7 @@ module.exports = class Order extends global['\Opencart\System\Engine\Controller'
 				'smtp_timeout': this.config.get('config_mail_smtp_timeout')
 			};
 
-			const mail = new global['\Opencart\System\Library\Mail'](this.config.get('config_mail_engine'), mail_option);
+			const mail = new global['OpencartSystemLibraryMail'](this.config.get('config_mail_engine'), mail_option);
 			mail.setTo(order_info['email']);
 			mail.setFrom(from);
 			mail.setSender(store_name);
@@ -435,7 +435,7 @@ module.exports = class Order extends global['\Opencart\System\Engine\Controller'
 				'smtp_timeout': this.config.get('config_mail_smtp_timeout')
 			};
 
-			const mail = new global['\Opencart\System\Library\Mail'](this.config.get('config_mail_engine'), mail_option);
+			const mail = new global['OpencartSystemLibraryMail'](this.config.get('config_mail_engine'), mail_option);
 			mail.setTo(order_info['email']);
 			mail.setFrom(from);
 			mail.setSender(store_name);
@@ -597,7 +597,7 @@ module.exports = class Order extends global['\Opencart\System\Engine\Controller'
 					'smtp_timeout': this.config.get('config_mail_smtp_timeout')
 				};
 
-				const mail = new global['\Opencart\System\Library\Mail'](this.config.get('config_mail_engine'), mail_option);
+				const mail = new global['OpencartSystemLibraryMail'](this.config.get('config_mail_engine'), mail_option);
 				mail.setTo(this.config.get('config_email'));
 				mail.setFrom(this.config.get('config_email'));
 				mail.setSender(html_entity_decode(order_info['store_name']));

@@ -3,6 +3,7 @@ const mysql = require('mysql');
 module.exports = class MySQLiDBLibrary {
     constructor(hostname, username, password, database, port = '3306', debug = false) {
         this.error = `Error: Could not make a database link using ${username}@${hostname}! Message: `;
+        console.log(hostname, username, password, database, port, debug);
         this.connection = mysql.createConnection({
             host: hostname,
             user: username,

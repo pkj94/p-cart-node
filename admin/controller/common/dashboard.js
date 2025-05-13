@@ -1,5 +1,5 @@
 const array_multisort = require('locutus/php/array/array_multisort')
-module.exports = class DashboardController extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class DashboardController extends global['OpencartSystemEngineController'] {
     constructor(registry) {
         super(registry)
     }

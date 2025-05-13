@@ -1,7 +1,7 @@
 
 const expressPath = require('path');
 var moment = require('moment-timezone');
-module.exports = class SettingController extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class SettingController extends global['OpencartSystemEngineController'] {
 	/**
 	 * @return void
 	 */

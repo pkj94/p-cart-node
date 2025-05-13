@@ -1,4 +1,4 @@
-module.exports = class SubscriptionController extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class SubscriptionController extends global['OpencartSystemEngineController'] {
     // admin/controller/sale/subscription/addHistory/after
     /**
      * @param string route
@@ -126,7 +126,7 @@ module.exports = class SubscriptionController extends global['\Opencart\System\E
                                     data['text_subscription_status'] = this.language.get('mail_text_subscription_status');
 
                                     if (this.config.get('config_mail_engine')) {
-                                        mail = new global['\Opencart\System\Library\Mail'](this.config.get('config_mail_engine'));
+                                        mail = new global['OpencartSystemLibraryMail'](this.config.get('config_mail_engine'));
                                         mail.parameter = this.config.get('config_mail_parameter');
                                         mail.smtp_hostname = this.config.get('config_mail_smtp_hostname');
                                         mail.smtp_username = this.config.get('config_mail_smtp_username');
@@ -252,7 +252,7 @@ module.exports = class SubscriptionController extends global['\Opencart\System\E
                                 data['date_added'] = date(this.language.get('date_format_short'), subscription['date_added']);
 
                                 if (this.config.get('config_mail_engine')) {
-                                    mail = new global['\Opencart\System\Library\Mail'](this.config.get('config_mail_engine'));
+                                    mail = new global['OpencartSystemLibraryMail'](this.config.get('config_mail_engine'));
                                     mail.parameter = this.config.get('config_mail_parameter');
                                     mail.smtp_hostname = this.config.get('config_mail_smtp_hostname');
                                     mail.smtp_username = this.config.get('config_mail_smtp_username');

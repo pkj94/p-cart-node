@@ -1,4 +1,4 @@
-module.exports = class ForgottenController extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class ForgottenController extends global['OpencartSystemEngineController'] {
 	/**
 	 * @return void
 	 */

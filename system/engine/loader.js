@@ -1,5 +1,5 @@
 
-global['\Opencart\System\Engine\Loader'] = class Loader {
+module.exports = class Loader {
     constructor(registry) {
         this.registry = registry;
     }
@@ -13,14 +13,14 @@ global['\Opencart\System\Engine\Loader'] = class Loader {
     async controller(route, ...args) {
         route = route.replace(/[^a-zA-Z0-9_/.]/g, '').replace(/\|/g, '.');
         let output = '';
-        let action = new global['\Opencart\System\Engine\Action'](route);
+        let action = new global['OpencartSystemEngineAction'](route);
         // console.log('---',action)
         while (action) {
             route = action.getId();
 
             // Trigger the pre events
             let result = await this.registry.get('event').trigger('controller/' + route + '/before', [route, args]);
-            if (result && result instanceof global['\Opencart\System\Engine\Action']) {
+            if (result && result instanceof global['OpencartSystemEngineAction']) {
                 action = result;
             }
 
@@ -33,7 +33,7 @@ global['\Opencart\System\Engine\Loader'] = class Loader {
             action = null;
 
             // If an action object is returned, continue looping
-            if (result && result instanceof global['\Opencart\System\Engine\Action']) {
+            if (result && result instanceof global['OpencartSystemEngineAction']) {
                 action = result;
             }
 
@@ -44,7 +44,7 @@ global['\Opencart\System\Engine\Loader'] = class Loader {
 
             // Trigger the post events
             result = await this.registry.get('event').trigger('controller/' + route + '/after', [route, args, output]);
-            if (result instanceof global['\Opencart\System\Engine\Action']) {
+            if (result instanceof global['OpencartSystemEngineAction']) {
                 action = result;
             }
         }

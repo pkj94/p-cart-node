@@ -1,4 +1,4 @@
-global['\Opencart\Install\Controller\Error\NotFound'] = class NotFound extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class NotFound extends global['OpencartSystemEngineController'] {
     constructor(registry) {
         super(registry);
     }

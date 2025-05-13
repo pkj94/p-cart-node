@@ -1,4 +1,4 @@
-global['\Opencart\Install\Controller\Common\Footer'] = class Footer extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class Footer extends global['OpencartSystemEngineController'] {
     constructor(registry) {
         super(registry)
     }

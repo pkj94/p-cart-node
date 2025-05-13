@@ -1,9 +1,9 @@
 /**
  * Class Online
  *
- * @package Opencart\Admin\Controller\Extension\Opencart\Dashboard
+ * @package OpencartAdminControllerExtension\Opencart\Dashboard
  */
-global['\Opencart\Admin\Controller\Extension\Opencart\Dashboard\Online'] = class Online extends global['\Opencart\System\Engine\Controller'] {
+global['OpencartAdminControllerExtensionOpencartDashboardOnline'] = class Online extends global['OpencartSystemEngineController'] {
 	constructor(registry) {
 		super(registry)
 	}

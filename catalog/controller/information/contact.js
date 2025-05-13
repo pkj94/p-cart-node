@@ -1,6 +1,6 @@
 const nl2br = require("locutus/php/strings/nl2br");
 
-module.exports = class Contact extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class Contact extends global['OpencartSystemEngineController'] {
 	/**
 	 * @return void
 	 */
@@ -147,7 +147,7 @@ module.exports = class Contact extends global['\Opencart\System\Engine\Controlle
 					'smtp_timeout': this.config.get('config_mail_smtp_timeout')
 				};
 
-				const mail = new global['\Opencart\System\Library\Mail'](this.config.get('config_mail_engine'), mail_option);
+				const mail = new global['OpencartSystemLibraryMail'](this.config.get('config_mail_engine'), mail_option);
 				mail.setTo(this.config.get('config_email'));
 				// Less spam and fix bug when using SMTP like sendgrid+
 				mail.setFrom(this.config.get('config_email'));

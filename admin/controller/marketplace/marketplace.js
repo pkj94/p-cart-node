@@ -1,6 +1,6 @@
 const timeFun = require("locutus/php/datetime/time");
 const expressPath = require('path');
-module.exports = class MarketplaceMarketplaceController extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class MarketplaceMarketplaceController extends global['OpencartSystemEngineController'] {
 	/**
 	 * @return void
 	 */
@@ -652,7 +652,7 @@ module.exports = class MarketplaceMarketplaceController extends global['\Opencar
 
 			return null;
 		} else {
-			return new global['\Opencart\System\Engine\Action']('error/not_found');
+			return new global['OpencartSystemEngineAction']('error/not_found');
 		}
 	}
 

@@ -1,4 +1,4 @@
-global['\Opencart\System\Engine\Action'] = class Action {
+module.exports = class Action {
     constructor(route) {
         this.route = route.replace(/[^a-zA-Z0-9_|/\\.]/g, '').replace(/\|/g, '.').split('/').map(a => ucfirst(a)).join('/');
         const pos = this.route.lastIndexOf('.');
@@ -27,7 +27,7 @@ global['\Opencart\System\Engine\Action'] = class Action {
         let controller, namespace;
         try {
             namespace = `Opencart${application}${this.class}`;
-            // console.log(namespace, this.method)
+            // console.log(global[namespace], namespace, this.method)
             if (global[namespace]) {
                 controller = new global[namespace](registry);
                 if (typeof controller[this.method] === 'function') {

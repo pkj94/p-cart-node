@@ -1,6 +1,6 @@
 
 const expressPath = require('path');
-module.exports = class ExtensionController extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class ExtensionController extends global['OpencartSystemEngineController'] {
 	/**
 	 * @return void
 	 */

@@ -1,5 +1,5 @@
 
-global['\Opencart\Admin\Controller\Extension\Opencart\Dashboard\Map'] = class Map extends global['\Opencart\System\Engine\Controller'] {
+global['OpencartAdminControllerExtensionOpencartDashboardMap'] = class Map extends global['OpencartSystemEngineController'] {
 	constructor(registry) {
 		super(registry)
 	}

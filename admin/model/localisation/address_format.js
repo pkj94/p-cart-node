@@ -1,4 +1,4 @@
-module.exports = class AddressFormatLocalisationModel extends global['\Opencart\System\Engine\Model'] {
+module.exports = class AddressFormatLocalisationModel extends global['OpencartSystemEngineModel'] {
 	constructor(registry) {
 		super(registry);
 	}

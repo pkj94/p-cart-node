@@ -1,4 +1,4 @@
-global['\Opencart\Install\Controller\Install\Step4'] = class Step4 extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class Step4 extends global['OpencartSystemEngineController'] {
     constructor(registry) {
         super(registry);
     }
@@ -30,7 +30,7 @@ global['\Opencart\Install\Controller\Install\Step4'] = class Step4 extends globa
             footer: await this.load.controller('common/footer'),
             header: await this.load.controller('common/header')
         };
-       
+
         this.response.setOutput(await this.load.view('install/step_4', data));
     }
 }

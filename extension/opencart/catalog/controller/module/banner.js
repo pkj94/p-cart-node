@@ -1,5 +1,5 @@
 
-global['\Opencart\Catalog\Controller\Extension\Opencart\Module\Banner'] = class Banner extends global['\Opencart\System\Engine\Controller'] {
+global['OpencartCatalogControllerExtensionOpencartModuleBanner'] = class Banner extends global['OpencartSystemEngineController'] {
 	constructor(registry) {
 		super(registry)
 	}

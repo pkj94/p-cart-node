@@ -1,6 +1,6 @@
 module.exports = class TemplateLibrary {
     constructor(adaptor) {
-        let className = 'Opencart\System\Library\Template' + ucfirst(adaptor);
+        let className = 'OpencartSystemLibrary\Template' + ucfirst(adaptor);
 
         if (global[className]) {
             this.adaptor = new global[className]();

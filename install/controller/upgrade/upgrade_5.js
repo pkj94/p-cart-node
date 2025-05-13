@@ -1,4 +1,4 @@
-global['\Opencart\Install\Controller\Upgrade\Upgrade5'] = class Upgrade5 extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class Upgrade5 extends global['OpencartSystemEngineController'] {
 	/**
 	 * @return void
 	 */
@@ -13,223 +13,223 @@ global['\Opencart\Install\Controller\Upgrade\Upgrade5'] = class Upgrade5 extends
 			events = [];
 
 			events.push({
-				'code'    : 'activity_customer_add',
-				'trigger' : 'catalog/model/account/customer/addCustomer/after',
-				'action'  : 'event/activity+addCustomer'
+				'code': 'activity_customer_add',
+				'trigger': 'catalog/model/account/customer/addCustomer/after',
+				'action': 'event/activity+addCustomer'
 			});
 
 			events.push({
-				'code'    : 'activity_customer_edit',
-				'trigger' : 'catalog/model/account/customer/editCustomer/after',
-				'action'  : 'event/activity+editCustomer'
+				'code': 'activity_customer_edit',
+				'trigger': 'catalog/model/account/customer/editCustomer/after',
+				'action': 'event/activity+editCustomer'
 			});
 
 			events.push({
-				'code'    : 'activity_customer_password',
-				'trigger' : 'catalog/model/account/customer/editPassword/after',
-				'action'  : 'event/activity+editPassword'
+				'code': 'activity_customer_password',
+				'trigger': 'catalog/model/account/customer/editPassword/after',
+				'action': 'event/activity+editPassword'
 			});
 
 			events.push({
-				'code'    : 'activity_customer_forgotten',
-				'trigger' : 'catalog/model/account/customer/editCode/after',
-				'action'  : 'event/activity+forgotten'
+				'code': 'activity_customer_forgotten',
+				'trigger': 'catalog/model/account/customer/editCode/after',
+				'action': 'event/activity+forgotten'
 			});
 
 			events.push({
-				'code'    : 'activity_transaction',
-				'trigger' : 'catalog/model/account/customer/addTransaction/after',
-				'action'  : 'event/activity+addTransaction'
+				'code': 'activity_transaction',
+				'trigger': 'catalog/model/account/customer/addTransaction/after',
+				'action': 'event/activity+addTransaction'
 			});
 
 			events.push({
-				'code'    : 'activity_customer_login',
-				'trigger' : 'catalog/model/account/customer/deleteLoginAttempts/after',
-				'action'  : 'event/activity+login'
+				'code': 'activity_customer_login',
+				'trigger': 'catalog/model/account/customer/deleteLoginAttempts/after',
+				'action': 'event/activity+login'
 			});
 
 			events.push({
-				'code'    : 'activity_address_add',
-				'trigger' : 'catalog/model/account/address/addAddress/after',
-				'action'  : 'event/activity+addAddress'
+				'code': 'activity_address_add',
+				'trigger': 'catalog/model/account/address/addAddress/after',
+				'action': 'event/activity+addAddress'
 			});
 
 			events.push({
-				'code' : 'activity_address_edit',
-				'trigger' : 'catalog/model/account/address/editAddress/after',
-				'action' : 'event/activity+editAddress'
+				'code': 'activity_address_edit',
+				'trigger': 'catalog/model/account/address/editAddress/after',
+				'action': 'event/activity+editAddress'
 			});
 
 			events.push({
-				'code'    : 'activity_address_delete',
-				'trigger' : 'catalog/model/account/address/deleteAddress/after',
-				'action'  : 'event/activity+deleteAddress'
+				'code': 'activity_address_delete',
+				'trigger': 'catalog/model/account/address/deleteAddress/after',
+				'action': 'event/activity+deleteAddress'
 			});
 
 			events.push({
-				'code'    : 'activity_affiliate_add',
-				'trigger' : 'catalog/model/account/customer/addAffiliate/after',
-				'action'  : 'event/activity+addAffiliate'
+				'code': 'activity_affiliate_add',
+				'trigger': 'catalog/model/account/customer/addAffiliate/after',
+				'action': 'event/activity+addAffiliate'
 			});
 
 			events.push({
-				'code'    : 'activity_affiliate_edit',
-				'trigger' : 'catalog/model/account/customer/editAffiliate/after',
-				'action'  : 'event/activity+editAffiliate'
+				'code': 'activity_affiliate_edit',
+				'trigger': 'catalog/model/account/customer/editAffiliate/after',
+				'action': 'event/activity+editAffiliate'
 			});
 
 			events.push({
-				'code'    : 'activity_order_add',
-				'trigger' : 'catalog/model/checkout/order/addHistory/before',
-				'action'  : 'event/activity+addHistory'
+				'code': 'activity_order_add',
+				'trigger': 'catalog/model/checkout/order/addHistory/before',
+				'action': 'event/activity+addHistory'
 			});
 
 			events.push({
-				'code'    : 'activity_return_add',
-				'trigger' : 'catalog/model/account/returns/addReturn/after',
-				'action'  : 'event/activity+addReturn'
+				'code': 'activity_return_add',
+				'trigger': 'catalog/model/account/returns/addReturn/after',
+				'action': 'event/activity+addReturn'
 			});
 
 			events.push({
-				'code'    : 'mail_transaction',
-				'trigger' : 'catalog/model/account/customer/addTransaction/after',
-				'action'  : 'mail/transaction'
+				'code': 'mail_transaction',
+				'trigger': 'catalog/model/account/customer/addTransaction/after',
+				'action': 'mail/transaction'
 			});
 
 			events.push({
-				'code'    : 'mail_forgotten',
-				'trigger' : 'catalog/model/account/customer/editCode/after',
-				'action'  : 'mail/forgotten'
+				'code': 'mail_forgotten',
+				'trigger': 'catalog/model/account/customer/editCode/after',
+				'action': 'mail/forgotten'
 			});
 
 			events.push({
-				'code'    : 'mail_customer_add',
-				'trigger' : 'catalog/model/account/customer/addCustomer/after',
-				'action'  : 'mail/register'
+				'code': 'mail_customer_add',
+				'trigger': 'catalog/model/account/customer/addCustomer/after',
+				'action': 'mail/register'
 			});
 
 			events.push({
-				'code'    : 'mail_customer_alert',
-				'trigger' : 'catalog/model/account/customer/addCustomer/after',
-				'action'  : 'mail/register+alert'
+				'code': 'mail_customer_alert',
+				'trigger': 'catalog/model/account/customer/addCustomer/after',
+				'action': 'mail/register+alert'
 			});
 
 			events.push({
-				'code'    : 'mail_affiliate_add',
-				'trigger' : 'catalog/model/account/customer/addAffiliate/after',
-				'action'  : 'mail/affiliate'
+				'code': 'mail_affiliate_add',
+				'trigger': 'catalog/model/account/customer/addAffiliate/after',
+				'action': 'mail/affiliate'
 			});
 
 			events.push({
-				'code'    : 'mail_affiliate_alert',
-				'trigger' : 'catalog/model/account/customer/addAffiliate/after',
-				'action'  : 'mail/affiliate+alert'
+				'code': 'mail_affiliate_alert',
+				'trigger': 'catalog/model/account/customer/addAffiliate/after',
+				'action': 'mail/affiliate+alert'
 			});
 
 			events.push({
-				'code'    : 'mail_voucher',
-				'trigger' : 'catalog/model/checkout/order/addHistory/after',
-				'action'  : 'account/voucher+send'
+				'code': 'mail_voucher',
+				'trigger': 'catalog/model/checkout/order/addHistory/after',
+				'action': 'account/voucher+send'
 			});
 
 			events.push({
-				'code'    : 'mail_order_add',
-				'trigger' : 'catalog/model/checkout/order/addHistory/before',
-				'action'  : 'mail/order'
+				'code': 'mail_order_add',
+				'trigger': 'catalog/model/checkout/order/addHistory/before',
+				'action': 'mail/order'
 			});
 
 			events.push({
-				'code'    : 'mail_order_alert',
-				'trigger' : 'catalog/model/checkout/order/addHistory/before',
-				'action'  : 'mail/order+alert'
+				'code': 'mail_order_alert',
+				'trigger': 'catalog/model/checkout/order/addHistory/before',
+				'action': 'mail/order+alert'
 			});
 
 			events.push({
-				'code'    : 'statistics_review_add',
-				'trigger' : 'catalog/model/catalog/review/addReview/after',
-				'action'  : 'event/statistics+addReview'
+				'code': 'statistics_review_add',
+				'trigger': 'catalog/model/catalog/review/addReview/after',
+				'action': 'event/statistics+addReview'
 			});
 
 			events.push({
-				'code'    : 'statistics_return_add',
-				'trigger' : 'catalog/model/account/returns/addReturn/after',
-				'action'  : 'event/statistics+addReturn'
+				'code': 'statistics_return_add',
+				'trigger': 'catalog/model/account/returns/addReturn/after',
+				'action': 'event/statistics+addReturn'
 			});
 
 			events.push({
-				'code'    : 'statistics_order_history',
-				'trigger' : 'catalog/model/checkout/order/addHistory/after',
-				'action'  : 'event/statistics+addHistory'
+				'code': 'statistics_order_history',
+				'trigger': 'catalog/model/checkout/order/addHistory/after',
+				'action': 'event/statistics+addHistory'
 			});
 
 			events.push({
-				'code'    : 'admin_mail_affiliate_approve',
-				'trigger' : 'admin/model/customer/customer_approval/approveAffiliate/after',
-				'action'  : 'mail/affiliate+approve'
+				'code': 'admin_mail_affiliate_approve',
+				'trigger': 'admin/model/customer/customer_approval/approveAffiliate/after',
+				'action': 'mail/affiliate+approve'
 			});
 
 			events.push({
-				'code'    : 'admin_mail_affiliate_deny',
-				'trigger' : 'admin/model/customer/customer_approval/denyAffiliate/after',
-				'action'  : 'mail/affiliate+deny'
+				'code': 'admin_mail_affiliate_deny',
+				'trigger': 'admin/model/customer/customer_approval/denyAffiliate/after',
+				'action': 'mail/affiliate+deny'
 			});
 
 			events.push({
-				'code'    : 'admin_mail_customer_approve',
-				'trigger' : 'admin/model/customer/customer_approval/approveCustomer/after',
-				'action'  : 'mail/customer+approve'
+				'code': 'admin_mail_customer_approve',
+				'trigger': 'admin/model/customer/customer_approval/approveCustomer/after',
+				'action': 'mail/customer+approve'
 			});
 
 			events.push({
-				'code'    : 'admin_mail_customer_deny',
-				'trigger' : 'admin/model/customer/customer_approval/denyCustomer/after',
-				'action'  : 'mail/customer+deny'
+				'code': 'admin_mail_customer_deny',
+				'trigger': 'admin/model/customer/customer_approval/denyCustomer/after',
+				'action': 'mail/customer+deny'
 			});
 
 			events.push({
-				'code'    : 'admin_mail_reward',
-				'trigger' : 'admin/model/customer/customer/addReward/after',
-				'action'  : 'mail/reward'
+				'code': 'admin_mail_reward',
+				'trigger': 'admin/model/customer/customer/addReward/after',
+				'action': 'mail/reward'
 			});
 
 			events.push({
-				'code'    : 'admin_mail_transaction',
-				'trigger' : 'admin/model/customer/customer/addTransaction/after',
-				'action'  : 'mail/transaction'
+				'code': 'admin_mail_transaction',
+				'trigger': 'admin/model/customer/customer/addTransaction/after',
+				'action': 'mail/transaction'
 			});
 
 			events.push({
-				'code'    : 'admin_mail_return',
-				'trigger' : 'admin/model/sale/return/addReturn/after',
-				'action'  : 'mail/returns'
+				'code': 'admin_mail_return',
+				'trigger': 'admin/model/sale/return/addReturn/after',
+				'action': 'mail/returns'
 			});
 
 			events.push({
-				'code'    : 'admin_mail_forgotten',
-				'trigger' : 'admin/model/user/user/editCode/after',
-				'action'  : 'mail/forgotten'
+				'code': 'admin_mail_forgotten',
+				'trigger': 'admin/model/user/user/editCode/after',
+				'action': 'mail/forgotten'
 			});
 
 			events.push({
-				'code'    : 'admin_currency_add',
-				'trigger' : 'admin/model/currency/addCurrency/after',
-				'action'  : 'event/currency'
+				'code': 'admin_currency_add',
+				'trigger': 'admin/model/currency/addCurrency/after',
+				'action': 'event/currency'
 			});
 
 			events.push({
-				'code'    : 'admin_currency_edit',
-				'trigger' : 'admin/model/currency/editCurrency/after',
-				'action'  : 'event/currency'
+				'code': 'admin_currency_edit',
+				'trigger': 'admin/model/currency/editCurrency/after',
+				'action': 'event/currency'
 			});
 
 			events.push({
-				'code'    : 'admin_setting',
-				'trigger' : 'admin/model/setting/setting/editSetting/after',
-				'action'  : 'event/currency'
+				'code': 'admin_setting',
+				'trigger': 'admin/model/setting/setting/editSetting/after',
+				'action': 'event/currency'
 			});
 
 			for (events of event) {
-				query = this.db.query("SELECT * FROM `" + DB_PREFIX + "event` WHERE `code` = " + this.db.escape(event['code']) );
+				query = this.db.query("SELECT * FROM `" + DB_PREFIX + "event` WHERE `code` = " + this.db.escape(event['code']));
 
 				if (!query.num_rows) {
 					this.db.query("INSERT INTO `" + DB_PREFIX + "event` SET `code` = " + this.db.escape(event['code']) + ", `trigger` = " + this.db.escape(event['trigger']) + ", `action` = " + this.db.escape(event['action']) + ", `status` = '1', `sort_order` = '0'");
@@ -248,10 +248,10 @@ global['\Opencart\Install\Controller\Upgrade\Upgrade5'] = class Upgrade5 extends
 
 			// Event - Remove admin promotion from OC 3+x, since it is no longer required to have in OC v4+x releases+
 			this.db.query("DELETE FROM `" + DB_PREFIX + "event` WHERE `action` = 'extension/extension/promotion+getList'");
-			
+
 			// Rename subscription to mail_subscription
-            this.db.query("UPDATE `" + DB_PREFIX + "event` SET `code` = 'mail_subscription' WHERE `code` = 'subscription'");
-		} catch ( exception) {
+			this.db.query("UPDATE `" + DB_PREFIX + "event` SET `code` = 'mail_subscription' WHERE `code` = 'subscription'");
+		} catch (exception) {
 			json['error'] = sprintf(this.language.get('error_exception'), exception.getCode(), exception.getMessage(), exception.getFile(), exception.getLine());
 		}
 

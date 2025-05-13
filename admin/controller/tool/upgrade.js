@@ -1,6 +1,6 @@
 const nl2br = require("locutus/php/strings/nl2br");
 
-module.exports = class UpgradeController extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class UpgradeController extends global['OpencartSystemEngineController'] {
 	/**
 	 * @return void
 	 */

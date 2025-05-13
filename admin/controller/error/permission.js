@@ -1,4 +1,4 @@
-module.exports = class PermissionErrorController extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class PermissionErrorController extends global['OpencartSystemEngineController'] {
 	/**
 	 * @return void
 	 */

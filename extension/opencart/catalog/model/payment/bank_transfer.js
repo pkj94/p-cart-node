@@ -1,4 +1,4 @@
-global['\Opencart\Catalog\Model\Extension\Opencart\Payment\BankTransfer'] = class BankTransfer extends global['\Opencart\System\Engine\Model'] {
+global['OpencartCatalogModelExtensionOpencartPaymentBankTransfer'] = class BankTransfer extends global['OpencartSystemEngineModel'] {
 	/**
 	 * @param address
 	 *

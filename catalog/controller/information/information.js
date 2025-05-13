@@ -1,4 +1,4 @@
-module.exports = class Information extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class Information extends global['OpencartSystemEngineController'] {
 	/**
 	 * @return void
 	 */
@@ -45,7 +45,7 @@ module.exports = class Information extends global['\Opencart\System\Engine\Contr
 
 			this.response.setOutput(await this.load.view('information/information', data));
 		} else {
-			return new global['\Opencart\System\Engine\Action']('error/not_found');
+			return new global['OpencartSystemEngineAction']('error/not_found');
 		}
 
 		return null;

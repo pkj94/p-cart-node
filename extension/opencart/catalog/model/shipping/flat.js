@@ -1,4 +1,4 @@
-global['\Opencart\Catalog\Model\Extension\Opencart\Shipping\Flat'] = class Flat extends global['\Opencart\System\Engine\Model'] {
+global['OpencartCatalogModelExtensionOpencartShippingFlat'] = class Flat extends global['OpencartSystemEngineModel'] {
 	/**
 	 * @param address
 	 *

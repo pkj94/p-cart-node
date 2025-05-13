@@ -1,4 +1,3 @@
-const path = require('path');
 const Framework = require('../system/framework');
 module.exports = function (registry) {
     const loadInstall = async (req, res, next) => {
@@ -10,7 +9,7 @@ module.exports = function (registry) {
         global.HTTP_OPENCART = `${protocol}${req.get('host') + req.route.path.replace(/\/+$/, '').replace(/install\/?$/, '')}`;
         // console.log('HTTP_OPENCART', HTTP_OPENCART)
         // DIR
-        global.DIR_OPENCART = path.join(__dirname, '..', '/').replace(/\\/g, '/');
+        global.DIR_OPENCART = expressPath.join(__dirname, '..', '/').replace(/\\/g, '/');
         global.DIR_APPLICATION = DIR_OPENCART + 'install/';
         global.DIR_SYSTEM = DIR_OPENCART + 'system/';
         global.DIR_EXTENSION = DIR_OPENCART + 'extension/';
@@ -24,11 +23,11 @@ module.exports = function (registry) {
         global.DIR_LOGS = DIR_SYSTEM + 'storage/logs/';
         global.DIR_SESSION = DIR_SYSTEM + 'storage/session/';
         global.DIR_UPLOAD = DIR_SYSTEM + 'storage/upload/';
-        // console.log("=================", HTTP_SERVER, HTTP_OPENCART);
-        app.use('/install/view/stylesheet', express.static(DIR_APPLICATION + 'view/stylesheet'));
-        app.use('/install/view/javascript', express.static(DIR_APPLICATION + 'view/javascript'));
-        app.use('/install/view/image', express.static(DIR_APPLICATION + 'view/image'));
-        app.use('/install/language', express.static(DIR_APPLICATION + '/language'));
+        console.log("=================", HTTP_SERVER, HTTP_OPENCART, DIR_APPLICATION);
+        // app.use('/install/view/stylesheet', express.static(DIR_APPLICATION + 'view/stylesheet'));
+        // app.use('/install/view/javascript', express.static(DIR_APPLICATION + 'view/javascript'));
+        // app.use('/install/view/image', express.static(DIR_APPLICATION + 'view/image'));
+        // app.use('/install/language', express.static(DIR_APPLICATION + '/language'));
 
 
         new Framework(registry).init(req, res, next).then(output => {

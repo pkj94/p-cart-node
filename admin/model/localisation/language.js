@@ -1,5 +1,5 @@
 const crypto = require('crypto');
-module.exports = class LanguageLocalisationModel extends global['\Opencart\System\Engine\Model'] {
+module.exports = class LanguageLocalisationModel extends global['OpencartSystemEngineModel'] {
     constructor(registry) {
         super(registry);
     }

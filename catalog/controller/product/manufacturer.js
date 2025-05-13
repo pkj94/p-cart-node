@@ -2,7 +2,7 @@ const sprintf = require("locutus/php/strings/sprintf");
 const strip_tags = require("locutus/php/strings/strip_tags");
 const is_numeric = require("locutus/php/var/is_numeric");
 
-module.exports = class Manufacturer extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class Manufacturer extends global['OpencartSystemEngineController'] {
 	/**
 	 * @return void
 	 */
@@ -332,7 +332,7 @@ module.exports = class Manufacturer extends global['\Opencart\System\Engine\Cont
 
 			this.response.setOutput(await this.load.view('product/manufacturer_info', data));
 		} else {
-			return new global['\Opencart\System\Engine\Action']('error/not_found');
+			return new global['OpencartSystemEngineAction']('error/not_found');
 		}
 
 		return null;

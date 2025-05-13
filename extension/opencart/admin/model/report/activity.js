@@ -1,4 +1,4 @@
-global['Opencart\Admin\Model\Extension\Opencart\Report\Activity'] = class Activity extends global['\Opencart\System\Engine\Model']  {
+global['OpencartAdminModelExtensionOpencartReportActivity'] = class Activity extends global['OpencartSystemEngineModel']  {
 	/**
 	 * @return array
 	 */

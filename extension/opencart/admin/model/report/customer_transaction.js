@@ -1,4 +1,4 @@
-global['Opencart\Admin\Model\Extension\Opencart\Report\CustomerTransaction'] = class CustomerTransaction extends global['\Opencart\System\Engine\Model']  {
+global['OpencartAdminModelExtensionOpencartReportCustomerTransaction'] = class CustomerTransaction extends global['OpencartSystemEngineModel']  {
 	/**
 	 * @param data
 	 *

@@ -1,4 +1,4 @@
-global['\Opencart\Install\Controller\Upgrade\Upgrade3'] = class Upgrade3 extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class Upgrade3 extends global['OpencartSystemEngineController'] {
 	/**
 	 * @return void
 	 */
@@ -32,7 +32,7 @@ global['\Opencart\Install\Controller\Upgrade\Upgrade3'] = class Upgrade3 extends
 					sql = "CREATE TABLE `" + DB_PREFIX + table['name'] + "` (" + "\n";
 
 					for (let field of table['field']) {
-						sql += "  `" + field['name'] + "` " + field['type'] + (!empty(field['not_null']) ? " NOT NULL" : "") + (isset(field['default']) ? " DEFAULT " + this.db.escape(field['default'])  : "") + (!empty(field['auto_increment']) ? " AUTO_INCREMENT" : "") + ",\n";
+						sql += "  `" + field['name'] + "` " + field['type'] + (!empty(field['not_null']) ? " NOT NULL" : "") + (isset(field['default']) ? " DEFAULT " + this.db.escape(field['default']) : "") + (!empty(field['auto_increment']) ? " AUTO_INCREMENT" : "") + ",\n";
 					}
 
 					if (isset(table['primary'])) {
@@ -177,7 +177,7 @@ global['\Opencart\Install\Controller\Upgrade\Upgrade3'] = class Upgrade3 extends
 				}
 			}
 			*/
-		} catch ( exception) {
+		} catch (exception) {
 			json['error'] = sprintf(this.language.get('error_exception'), exception.getCode(), exception.getMessage(), exception.getFile(), exception.getLine());
 		}
 

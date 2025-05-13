@@ -1,7 +1,7 @@
 const sprintf = require("locutus/php/strings/sprintf");
 const trim = require("locutus/php/strings/trim");
 
-module.exports = class ArticleController extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class ArticleController extends global['OpencartSystemEngineController'] {
 	/**
 	 * @return void
 	 */

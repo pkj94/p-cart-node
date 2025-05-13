@@ -1,4 +1,4 @@
-module.exports = class OrderSaleModel extends global['\Opencart\System\Engine\Model'] {
+module.exports = class OrderSaleModel extends global['OpencartSystemEngineModel'] {
 	/**
 	 * @param order_id
 	 *

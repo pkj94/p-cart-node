@@ -1,4 +1,4 @@
-global['\Opencart\Catalog\Model\Extension\Opencart\Shipping\Pickup'] = class Pickup extends global['\Opencart\System\Engine\Model'] {
+global['OpencartCatalogModelExtensionOpencartShippingPickup'] = class Pickup extends global['OpencartSystemEngineModel'] {
 	/**
 	 * @param address
 	 *

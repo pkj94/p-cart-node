@@ -1,4 +1,4 @@
-global['\Opencart\Install\Controller\Upgrade\Upgrade4'] = class Upgrade4 extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class Upgrade4 extends global['OpencartSystemEngineController'] {
 	/**
 	 * @return void
 	 */
@@ -37,7 +37,7 @@ global['\Opencart\Install\Controller\Upgrade\Upgrade4'] = class Upgrade4 extends
 				if (!setting['serialized']) {
 					settings[setting['key']] = setting['value'];
 				} else {
-					settings[setting['key']] = JSON+parse(setting['value'], true);
+					settings[setting['key']] = JSON + parse(setting['value'], true);
 				}
 			}
 
@@ -45,275 +45,275 @@ global['\Opencart\Install\Controller\Upgrade\Upgrade4'] = class Upgrade4 extends
 			missing = [];
 
 			missing.push({
-				'key'        : 'config_meta_title',
-				'value'      : settings['config_name'],
-				'code'       : 'config',
-				'serialized' : 0
+				'key': 'config_meta_title',
+				'value': settings['config_name'],
+				'code': 'config',
+				'serialized': 0
 			});
 
 			// Add config_theme if missing and still using config_template
 			if (isset(settings['config_template'])) {
 				missing.push({
-					'key'        : 'config_theme',
-					'value'      : 'basic',
-					'code'       : 'config',
-					'serialized' : 0
+					'key': 'config_theme',
+					'value': 'basic',
+					'code': 'config',
+					'serialized': 0
 				});
 			}
 
 			missing.push({
-				'key'        : 'config_product_description_length',
-				'value'      : 100,
-				'code'       : 'config',
-				'serialized' : 0
+				'key': 'config_product_description_length',
+				'value': 100,
+				'code': 'config',
+				'serialized': 0
 			});
 
 			missing.push({
-				'key'        : 'config_pagination',
-				'value'      : 10,
-				'code'       : 'config',
-				'serialized' : 0
+				'key': 'config_pagination',
+				'value': 10,
+				'code': 'config',
+				'serialized': 0
 			});
 
 			if (isset(settings['config_admin_language'])) {
 				missing.push({
-					'key'        : 'config_language_admin',
-					'value'      : settings['config_admin_language'],
-					'code'       : 'config',
-					'serialized' : 0
+					'key': 'config_language_admin',
+					'value': settings['config_admin_language'],
+					'code': 'config',
+					'serialized': 0
 				});
 			}
 
 			if (isset(settings['config_limit_admin'])) {
 				missing.push({
-					'key'        : 'config_pagination_admin',
-					'value'      : settings['config_limit_admin'],
-					'code'       : 'config',
-					'serialized' : 0
+					'key': 'config_pagination_admin',
+					'value': settings['config_limit_admin'],
+					'code': 'config',
+					'serialized': 0
 				});
 			}
 
 			missing.push({
-				'key'        : 'config_encryption',
-				'value'      : hash('sha512', oc_token(32)),
-				'code'       : 'config',
-				'serialized' : 0
+				'key': 'config_encryption',
+				'value': hash('sha512', oc_token(32)),
+				'code': 'config',
+				'serialized': 0
 			});
 
 			missing.push({
-				'key'        : 'config_voucher_min',
-				'value'      : 1,
-				'code'       : 'config',
-				'serialized' : 0
+				'key': 'config_voucher_min',
+				'value': 1,
+				'code': 'config',
+				'serialized': 0
 			});
 
 			missing.push({
-				'key'        : 'config_voucher_max',
-				'value'      : 1000,
-				'code'       : 'config',
-				'serialized' : 0
+				'key': 'config_voucher_max',
+				'value': 1000,
+				'code': 'config',
+				'serialized': 0
 			});
 
 			missing.push({
-				'key'        : 'config_fraud_status_id',
-				'value'      : 8,
-				'code'       : 'config',
-				'serialized' : 0
+				'key': 'config_fraud_status_id',
+				'value': 8,
+				'code': 'config',
+				'serialized': 0
 			});
 
 			missing.push({
-				'key'        : 'config_api_id',
-				'value'      : 1,
-				'code'       : 'config',
-				'serialized' : 0
+				'key': 'config_api_id',
+				'value': 1,
+				'code': 'config',
+				'serialized': 0
 			});
 
 			if (isset(settings['config_smtp_host'])) {
 				missing.push({
-					'key'        : 'config_mail_smtp_hostname',
-					'value'      : settings['config_smtp_host'],
-					'code'       : 'config',
-					'serialized' : 0
+					'key': 'config_mail_smtp_hostname',
+					'value': settings['config_smtp_host'],
+					'code': 'config',
+					'serialized': 0
 				});
 			}
 
 			if (isset(settings['config_smtp_username'])) {
 				missing.push({
-					'key'        : 'config_mail_smtp_username',
-					'value'      : settings['config_smtp_username'],
-					'code'       : 'config',
-					'serialized' : 0
+					'key': 'config_mail_smtp_username',
+					'value': settings['config_smtp_username'],
+					'code': 'config',
+					'serialized': 0
 				});
 			}
 
 			if (isset(settings['config_smtp_password'])) {
 				missing.push({
-					'key'        : 'config_mail_smtp_password',
-					'value'      : settings['config_smtp_password'],
-					'code'       : 'config',
-					'serialized' : 0
+					'key': 'config_mail_smtp_password',
+					'value': settings['config_smtp_password'],
+					'code': 'config',
+					'serialized': 0
 				});
 			}
 
 			if (isset(settings['config_smtp_port'])) {
 				missing.push({
-					'key'        : 'config_mail_smtp_port',
-					'value'      : settings['config_smtp_port'],
-					'code'       : 'config',
-					'serialized' : 0
+					'key': 'config_mail_smtp_port',
+					'value': settings['config_smtp_port'],
+					'code': 'config',
+					'serialized': 0
 				});
 			}
 
 			if (isset(settings['config_smtp_timeout'])) {
 				missing.push({
-					'key'        : 'config_mail_smtp_timeout',
-					'value'      : settings['config_smtp_timeout'],
-					'code'       : 'config',
-					'serialized' : 0
+					'key': 'config_mail_smtp_timeout',
+					'value': settings['config_smtp_timeout'],
+					'code': 'config',
+					'serialized': 0
 				});
 			}
 
 			if (isset(settings['config_smtp_timeout'])) {
 				missing.push({
-					'key'        : 'config_mail_smtp_timeout',
-					'value'      : settings['config_smtp_timeout'],
-					'code'       : 'config',
-					'serialized' : 0
+					'key': 'config_mail_smtp_timeout',
+					'value': settings['config_smtp_timeout'],
+					'code': 'config',
+					'serialized': 0
 				});
 			}
 
 			missing.push({
-				'key'        : 'config_article_description_length',
-				'value'      : 100,
-				'code'       : 'config',
-				'serialized' : 0
+				'key': 'config_article_description_length',
+				'value': 100,
+				'code': 'config',
+				'serialized': 0
 			});
 
 			missing.push({
-				'key'        : 'config_image_blog_width',
-				'value'      : 90,
-				'code'       : 'config',
-				'serialized' : 0
+				'key': 'config_image_blog_width',
+				'value': 90,
+				'code': 'config',
+				'serialized': 0
 			});
 
 			missing.push({
-				'key'        : 'config_image_blog_height',
-				'value'      : 90,
-				'code'       : 'config',
-				'serialized' : 0
+				'key': 'config_image_blog_height',
+				'value': 90,
+				'code': 'config',
+				'serialized': 0
 			});
 
 			missing.push({
-				'key'        : 'config_session_expire',
-				'value'      : 3600000000,
-				'code'       : 'config',
-				'serialized' : 0
+				'key': 'config_session_expire',
+				'value': 3600000000,
+				'code': 'config',
+				'serialized': 0
 			});
 
 			missing.push({
-				'key'        : 'config_cookie_id',
-				'value'      : 0,
-				'code'       : 'config',
-				'serialized' : 0
+				'key': 'config_cookie_id',
+				'value': 0,
+				'code': 'config',
+				'serialized': 0
 			});
 
 			missing.push({
-				'key'        : 'config_gdpr_id',
-				'value'      : 0,
-				'code'       : 'config',
-				'serialized' : 0
+				'key': 'config_gdpr_id',
+				'value': 0,
+				'code': 'config',
+				'serialized': 0
 			});
 
 			missing.push({
-				'key'        : 'config_gdpr_limit',
-				'value'      : 180,
-				'code'       : 'config',
-				'serialized' : 0
+				'key': 'config_gdpr_limit',
+				'value': 180,
+				'code': 'config',
+				'serialized': 0
 			});
 
 			missing.push({
-				'key'        : 'config_affiliate_status',
-				'value'      : 1,
-				'code'       : 'config',
-				'serialized' : 0
+				'key': 'config_affiliate_status',
+				'value': 1,
+				'code': 'config',
+				'serialized': 0
 			});
 
 			missing.push({
-				'key'        : 'config_affiliate_expire',
-				'value'      : 3600000000,
-				'code'       : 'config',
-				'serialized' : 0
+				'key': 'config_affiliate_expire',
+				'value': 3600000000,
+				'code': 'config',
+				'serialized': 0
 			});
 
 			// Subscriptions
 			missing.push({
-				'key'        : 'config_subscription_status_id',
-				'value'      : 1,
-				'code'       : 'config',
-				'serialized' : 0
+				'key': 'config_subscription_status_id',
+				'value': 1,
+				'code': 'config',
+				'serialized': 0
 			});
 
 			missing.push({
-				'key'        : 'config_subscription_active_status_id',
-				'value'      : 2,
-				'code'       : 'config',
-				'serialized' : 0
+				'key': 'config_subscription_active_status_id',
+				'value': 2,
+				'code': 'config',
+				'serialized': 0
 			});
 
 			missing.push({
-				'key'        : 'config_subscription_expired_status_id',
-				'value'      : 6,
-				'code'       : 'config',
-				'serialized' : 0
+				'key': 'config_subscription_expired_status_id',
+				'value': 6,
+				'code': 'config',
+				'serialized': 0
 			});
 
 			missing.push({
-				'key'        : 'config_subscription_canceled_status_id',
-				'value'      : 4,
-				'code'       : 'config',
-				'serialized' : 0
+				'key': 'config_subscription_canceled_status_id',
+				'value': 4,
+				'code': 'config',
+				'serialized': 0
 			});
 
 			missing.push({
-				'key'        : 'config_subscription_failed_status_id',
-				'value'      : 3,
-				'code'       : 'config',
-				'serialized' : 0
+				'key': 'config_subscription_failed_status_id',
+				'value': 3,
+				'code': 'config',
+				'serialized': 0
 			});
 
 
 			missing.push({
-				'key'        : 'config_subscription_denied_status_id',
-				'value'      : 5,
-				'code'       : 'config',
-				'serialized' : 0
+				'key': 'config_subscription_denied_status_id',
+				'value': 5,
+				'code': 'config',
+				'serialized': 0
 			});
 
 			missing.push({
-				'key'        : 'config_fraud_status_id',
-				'value'      : 8,
-				'code'       : 'config',
-				'serialized' : 0
+				'key': 'config_fraud_status_id',
+				'value': 8,
+				'code': 'config',
+				'serialized': 0
 			});
 
 			// Serialized
 			missing.push({
-				'key'        : 'config_complete_status',
-				'value'      : [5],
-				'code'       : 'config',
-				'serialized' : 1
+				'key': 'config_complete_status',
+				'value': [5],
+				'code': 'config',
+				'serialized': 1
 			});
 
 			missing.push({
-				'key'        : 'config_processing_status',
-				'value'      : [2],
-				'code'       : 'config',
-				'serialized' : 1
+				'key': 'config_processing_status',
+				'value': [2],
+				'code': 'config',
+				'serialized': 1
 			});
 
 			// Add missing keys and serialized values
 			for (missing of setting) {
-				query = this.db.query("SELECT setting_id FROM `" + DB_PREFIX + "setting` WHERE `store_id` = '0' AND `key` = " + this.db.escape(setting['key']) );
+				query = this.db.query("SELECT setting_id FROM `" + DB_PREFIX + "setting` WHERE `store_id` = '0' AND `key` = " + this.db.escape(setting['key']));
 
 				if (!query.num_rows && !isset(settings[setting['key']])) {
 					if (!setting['serialized']) {
@@ -359,7 +359,7 @@ global['\Opencart\Install\Controller\Upgrade\Upgrade4'] = class Upgrade4 extends
 			];
 
 			for (remove of key) {
-				this.db.query("DELETE FROM `" + DB_PREFIX + "setting` WHERE `key` = " + this.db.escape(key) );
+				this.db.query("DELETE FROM `" + DB_PREFIX + "setting` WHERE `key` = " + this.db.escape(key));
 			}
 
 			// List of default extension to add the opencart extension code to+
@@ -425,7 +425,7 @@ global['\Opencart\Install\Controller\Upgrade\Upgrade4'] = class Upgrade4 extends
 			this.db.query("UPDATE `" + DB_PREFIX + "product_description` SET `description` = REPLACE(description, 'data/', 'catalog/')");
 			this.db.query("UPDATE `" + DB_PREFIX + "category_description` SET `description` = REPLACE(description, 'data/', 'catalog/')");
 			this.db.query("UPDATE `" + DB_PREFIX + "information_description` SET `description` = REPLACE(description, 'data/', 'catalog/')");
-		} catch ( exception) {
+		} catch (exception) {
 			json['error'] = sprintf(this.language.get('error_exception'), exception.getCode(), exception.getMessage(), exception.getFile(), exception.getLine());
 		}
 

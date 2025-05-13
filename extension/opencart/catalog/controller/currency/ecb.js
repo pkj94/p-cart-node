@@ -1,6 +1,6 @@
 
 
-global['\Opencart\Catalog\Controller\Extension\Opencart\Currency\Ecb'] = class ECB extends global['\Opencart\System\Engine\Controller'] {
+global['OpencartCatalogControllerExtensionOpencartCurrencyEcb'] = class ECB extends global['OpencartSystemEngineController'] {
 	constructor(registry) {
 		super(registry)
 	}

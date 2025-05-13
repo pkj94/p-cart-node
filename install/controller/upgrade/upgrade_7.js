@@ -1,4 +1,4 @@
-global['\Opencart\Install\Controller\Upgrade\Upgrade7'] = class Upgrade7 extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class Upgrade7 extends global['OpencartSystemEngineController'] {
 	/**
 	 * @return void
 	 */
@@ -64,46 +64,46 @@ global['\Opencart\Install\Controller\Upgrade\Upgrade7'] = class Upgrade7 extends
 
 			// product_option
 			remove.push({
-				'table' : 'product_option',
-				'field' : 'option_value'
+				'table': 'product_option',
+				'field': 'option_value'
 			});
 
 			// custom_field
 			remove.push({
-				'table' : 'custom_field',
-				'field' : 'required'
+				'table': 'custom_field',
+				'field': 'required'
 			});
 
 			remove.push({
-				'table' : 'custom_field',
-				'field' : 'position'
+				'table': 'custom_field',
+				'field': 'position'
 			});
 
 			// download
 			remove.push({
-				'table' : 'custom_field',
-				'field' : 'required'
+				'table': 'custom_field',
+				'field': 'required'
 			});
 
 			remove.push({
-				'table' : 'download',
-				'field' : 'remaining'
+				'table': 'download',
+				'field': 'remaining'
 			});
 
 			remove.push({
-				'table' : 'custom_field',
-				'field' : 'required'
+				'table': 'custom_field',
+				'field': 'required'
 			});
 
 			remove.push({
-				'table' : 'banner_image_description',
-				'field' : 'title'
+				'table': 'banner_image_description',
+				'field': 'title'
 			});
 
 			// Drop date_added field from extension_path
 			remove.push({
-				'table' : 'extension_path',
-				'field' : 'date_added'
+				'table': 'extension_path',
+				'field': 'date_added'
 			});
 
 			for (remove of result) {
@@ -130,7 +130,7 @@ global['\Opencart\Install\Controller\Upgrade\Upgrade7'] = class Upgrade7 extends
 
 			// Sort the categories to take advantage of the nested set model
 			this.repairCategories(0);
-		} catch ( exception) {
+		} catch (exception) {
 			json['error'] = sprintf(this.language.get('error_exception'), exception.getCode(), exception.getMessage(), exception.getFile(), exception.getLine());
 		}
 

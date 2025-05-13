@@ -1,6 +1,6 @@
 const proxy = Proxy;
-global['\Opencart\System\Engine\Model'] = class Model {
-    constructor(registry={}) {
+module.exports = class Model {
+    constructor(registry = {}) {
         this.registry = registry;
         return new proxy(this, {
             get: (target, key) => {

@@ -1,4 +1,4 @@
-global['\Opencart\Catalog\Model\Extension\Opencart\Shipping\Weight'] = class Weight extends global['\Opencart\System\Engine\Model'] {
+global['OpencartCatalogModelExtensionOpencartShippingWeight'] = class Weight extends global['OpencartSystemEngineModel'] {
 	/**
 	 * @param address
 	 *

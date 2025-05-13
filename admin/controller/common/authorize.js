@@ -1,4 +1,4 @@
-module.exports = class AuthorizeCommontController extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class AuthorizeCommontController extends global['OpencartSystemEngineController'] {
 	/**
 	 * @return void
 	 */

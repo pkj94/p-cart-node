@@ -1,5 +1,5 @@
 
-module.exports = class PromotionController extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class PromotionController extends global['OpencartSystemEngineController'] {
 	/**
 	 * @return string
 	 */

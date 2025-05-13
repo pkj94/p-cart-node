@@ -1,7 +1,7 @@
 {
 	"APPLICATION": "Admin",
-	"HTTP_SERVER": "http://localhost:8080/admin/",
-	"HTTP_CATALOG": "http://localhost:8080/",
+	"HTTP_SERVER": "http://localhost:8000/admin/",
+	"HTTP_CATALOG": "http://localhost:8000/",
 	"DIR_OPENCART": "D:/Development/NODE/p-cart-node/",
 	"DIR_APPLICATION": "D:/Development/NODE/p-cart-node/admin/",
 	"DIR_EXTENSION": "D:/Development/NODE/p-cart-node/extension/",
@@ -21,10 +21,10 @@
 	"DB_HOSTNAME": "localhost",
 	"DB_USERNAME": "root",
 	"DB_PASSWORD": "",
-	"DB_DATABASE": "p-cart-node",
+	"DB_DATABASE": "pcart_4.0.2.3",
 	"DB_PORT": "3306",
 	"DB_PREFIX": "pc_",
-	"DB_DEBUG": false,
+	"DB_DEBUG": true,
 	"SERVER_PORT": 8080,
 	"OPENCART_SERVER": "https://www.opencart.com/"
 }

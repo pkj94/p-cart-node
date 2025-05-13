@@ -1,6 +1,6 @@
 const sprintf = require("locutus/php/strings/sprintf");
 
-module.exports = class Affiliate extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class Affiliate extends global['OpencartSystemEngineController'] {
 	/**
 	 * @param string route
 	 * @param  args
@@ -48,7 +48,7 @@ module.exports = class Affiliate extends global['\Opencart\System\Engine\Control
 				'smtp_timeout': this.config.get('config_mail_smtp_timeout')
 			};
 
-			const mail = new global['\Opencart\System\Library\Mail'](this.config.get('config_mail_engine'), mail_option);
+			const mail = new global['OpencartSystemLibraryMail'](this.config.get('config_mail_engine'), mail_option);
 
 			if (await this.customer.isLogged()) {
 				mail.setTo(await this.customer.getEmail());
@@ -124,7 +124,7 @@ module.exports = class Affiliate extends global['\Opencart\System\Engine\Control
 					'smtp_timeout': this.config.get('config_mail_smtp_timeout')
 				};
 
-				const mail = new global['\Opencart\System\Library\Mail'](this.config.get('config_mail_engine'), mail_option);
+				const mail = new global['OpencartSystemLibraryMail'](this.config.get('config_mail_engine'), mail_option);
 				mail.setTo(this.config.get('config_email'));
 				mail.setFrom(this.config.get('config_email'));
 				mail.setSender(store_name);

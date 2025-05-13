@@ -1,3 +1,4 @@
+const { OpencartSystemEngineAutoloader } = require("./startup");
 
 // Helper
 module.exports = class Framework {
@@ -5,6 +6,10 @@ module.exports = class Framework {
         this.registry = registry;
     }
     async init(req, res, next) {
+        const autoloader = new OpencartSystemEngineAutoloader();
+        autoloader.register('Opencart' + APPLICATION, DIR_APPLICATION);
+        autoloader.register('OpencartExtension', DIR_EXTENSION);
+        autoloader.register('OpencartSystem', DIR_SYSTEM);
         const config = this.registry.get('config');
         config.addPath(DIR_CONFIG);
         // Load the default config
@@ -18,10 +23,11 @@ module.exports = class Framework {
         const dateTimezone = config.get('date_timezone');
         Intl.DateTimeFormat().resolvedOptions().timeZone = dateTimezone;
         // Logging
-        const log = new global['\Opencart\System\Library\Log'](config.get('error_filename'));
+        // console.log(global)
+        const log = new global['OpencartSystemLibraryLog'](config.get('error_filename'));
         this.registry.set('log', log);
         // Event
-        const event = new global['\Opencart\System\Engine\Event'](this.registry);
+        const event = new global['OpencartSystemEngineEvent'](this.registry);
         this.registry.set('event', event);
         // Event Register
         if (config.has('action_event')) {
@@ -30,15 +36,15 @@ module.exports = class Framework {
                 const value = actionEvents[key];
                 for (let priority in value) {
                     const action = value[priority];
-                    await event.register(key, new global['\Opencart\System\Engine\Action'](action), priority);
+                    await event.register(key, new global['OpencartSystemEngineAction'](action), priority);
                 }
             }
         }
         // Loader
-        const loader = new global['\Opencart\System\Engine\Loader'](this.registry);
+        const loader = new global['OpencartSystemEngineLoader'](this.registry);
         this.registry.set('load', loader);
         // Request
-        const request = new global['\Opencart\System\Library\Request'](req);
+        const request = new global['OpencartSystemLibraryRequest'](req);
         this.registry.set('request', request);
         // Compatibility
         if (request.get['route']) {
@@ -48,7 +54,7 @@ module.exports = class Framework {
             request.get['_route_'] = req.params[0];
         }
         // Response
-        const response = new global['\Opencart\System\Library\Response'](res, req);
+        const response = new global['OpencartSystemLibraryResponse'](res, req);
         // this.registry.set('response', response);
         for (let header of config.get('response_header') || []) {
             response.addHeader(header);
@@ -64,47 +70,47 @@ module.exports = class Framework {
         this.registry.set('response', response);
         // Database
         if (config.get('db_autostart')) {
-            let db = new global['\Opencart\System\Library\Db'](config.get('db_engine'), config.get('db_hostname'), config.get('db_username'), config.get('db_password'), config.get('db_database'), config.get('db_port'), config.get('db_debug'));
+            let db = new global['OpencartSystemLibraryDb'](config.get('db_engine'), config.get('db_hostname'), config.get('db_username'), config.get('db_password'), config.get('db_database'), config.get('db_port'), config.get('db_debug'));
             await db.connect();
             // console.log('db=--=', db)
             this.registry.set('db', db);
         }
         // Session
         if (config.get('session_autostart')) {
-            let session = new global['\Opencart\System\Library\Session'](req.session);
+            let session = new global['OpencartSystemLibrarySession'](req.session);
             session.start(req.sessionID)
             this.registry.set('session', session);
 
         }
         // Cache
-        const cache = new global['\Opencart\System\Library\Cache'](config.get('cache_engine'), config.get('cache_expire'));
+        const cache = new global['OpencartSystemLibraryCache'](config.get('cache_engine'), config.get('cache_expire'));
         this.registry.set('cache', cache);
         // Template
-        const template = new global['\Opencart\System\Library\Template'](config.get('template_engine'));
+        const template = new global['OpencartSystemLibraryTemplate'](config.get('template_engine'));
         this.registry.set('template', template);
         // console.log('config template', config.get('template_engine'))
         template.addPath(DIR_TEMPLATE);
         // Language
-        const language = new global['\Opencart\System\Library\Language'](config.get('language_code'));
+        const language = new global['OpencartSystemLibraryLanguage'](config.get('language_code'));
         language.addPath(DIR_LANGUAGE);
         await language.load('default');
         this.registry.set('language', language);
         // Url
         // console.log("config.get('site_url')==================",config.get('site_url'))
-        this.registry.set('url', new global['\Opencart\System\Library\Url'](config.get('site_url')));
+        this.registry.set('url', new global['OpencartSystemLibraryUrl'](config.get('site_url')));
         // Document
-        this.registry.set('document', new global['\Opencart\System\Library\Document']());
+        this.registry.set('document', new global['OpencartSystemLibraryDocument']());
         // Action error object to execute if any other actions cannot be executed.
         let action = '';
         let args = [];
         let output = '';
-        let error = new global['\Opencart\System\Engine\Action'](config.get('action_error'));
+        let error = new global['OpencartSystemEngineAction'](config.get('action_error'));
         // Pre Actions
         // console.log('framework', config.get('action_pre_action'))
         for (let pre_action of config.get('action_pre_action')) {
-            let preActionInstance = new global['\Opencart\System\Engine\Action'](pre_action);
+            let preActionInstance = new global['OpencartSystemEngineAction'](pre_action);
             let result = await preActionInstance.execute(this.registry);
-            if (result instanceof global['\Opencart\System\Engine\Action']) {
+            if (result instanceof global['OpencartSystemEngineAction']) {
                 action = result;
                 break;
             }
@@ -119,9 +125,9 @@ module.exports = class Framework {
         // console.log('framework', action)
         if (!action) {
             if (request.get.route) {
-                action = new global['\Opencart\System\Engine\Action'](request.get.route);
+                action = new global['OpencartSystemEngineAction'](request.get.route);
             } else {
-                action = new global['\Opencart\System\Engine\Action'](config.get('action_default'));
+                action = new global['OpencartSystemEngineAction'](config.get('action_default'));
             }
         }
         // Dispatch
@@ -131,13 +137,13 @@ module.exports = class Framework {
             // Keep the original trigger.
             let trigger = route;
             let result = await event.trigger(`controller/${trigger}/before`, [route, args]);
-            if (result instanceof global['\Opencart\System\Engine\Action']) {
+            if (result instanceof global['OpencartSystemEngineAction']) {
                 action = result;
             }
             // Execute the action.
             result = await action.execute(this.registry, args);
             action = '';
-            if (result instanceof global['\Opencart\System\Engine\Action']) {
+            if (result instanceof global['OpencartSystemEngineAction']) {
                 action = result;
             }
             // If action cannot be executed, we return the action error object.
@@ -151,7 +157,7 @@ module.exports = class Framework {
                 output = result;
             }
             result = await event.trigger(`controller/${trigger}/after`, [route, args, output]);
-            if (result instanceof global['\Opencart\System\Engine\Action']) {
+            if (result instanceof global['OpencartSystemEngineAction']) {
                 action = result;
             }
         }

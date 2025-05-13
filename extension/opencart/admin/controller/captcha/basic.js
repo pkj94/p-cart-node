@@ -1,4 +1,4 @@
-global['\Opencart\Admin\Controller\Extension\Opencart\Captcha\Basic'] = class Basic extends global['\Opencart\System\Engine\Controller'] {
+global['OpencartAdminControllerExtensionOpencartCaptchaBasic'] = class Basic extends global['OpencartSystemEngineController'] {
     async index() {
         await this.load.language('extension/opencart/captcha/basic');
 

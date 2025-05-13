@@ -1,6 +1,6 @@
 const sprintf = require("locutus/php/strings/sprintf");
 
-module.exports = class Transaction extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class Transaction extends global['OpencartSystemEngineController'] {
 	// catalog/model/account/customer/addTransaction/after
 	/**
 	 * @param string route
@@ -68,7 +68,7 @@ module.exports = class Transaction extends global['\Opencart\System\Engine\Contr
 					'smtp_timeout': this.config.get('config_mail_smtp_timeout')
 				};
 
-				const mail = new global['\Opencart\System\Library\Mail'](this.config.get('config_mail_engine'), mail_option);
+				const mail = new global['OpencartSystemLibraryMail'](this.config.get('config_mail_engine'), mail_option);
 				mail.setTo(customer_info['email']);
 				mail.setFrom(this.config.get('config_email'));
 				mail.setSender(store_name);

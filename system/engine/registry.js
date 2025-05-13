@@ -1,5 +1,5 @@
 const proxy = Proxy;
-global['\Opencart\System\Engine\Registry'] = class Registry {
+module.exports = class Registry {
     data = {};
     constructor() {
         return new proxy(this, {

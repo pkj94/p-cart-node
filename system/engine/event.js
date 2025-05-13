@@ -1,4 +1,4 @@
-global['\Opencart\System\Engine\Event'] = class Event {
+module.exports = class Event {
     constructor(registry) {
         this.registry = registry;
         this.data = [];
@@ -16,7 +16,7 @@ global['\Opencart\System\Engine\Event'] = class Event {
             //     console.log('1---', event, trigger, pattern, pattern.test(event), action)
 
             if (pattern.test(event)) {
-                const result = await action.execute(this.registry, args);           
+                const result = await action.execute(this.registry, args);
                 if (result && result !== null && !(result instanceof Error)) {
                     return result;
                 }

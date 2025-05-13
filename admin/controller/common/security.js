@@ -2,7 +2,7 @@ const html_entity_decode = require("locutus/php/strings/html_entity_decode");
 const rtrim = require("locutus/php/strings/rtrim");
 const trim = require("locutus/php/strings/trim");
 
-module.exports = class Security extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class Security extends global['OpencartSystemEngineController'] {
     /**
      * @return string
      */

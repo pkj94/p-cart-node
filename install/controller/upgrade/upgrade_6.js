@@ -1,4 +1,4 @@
-global['\Opencart\Install\Controller\Upgrade\Upgrade6'] = class Upgrade6 extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class Upgrade6 extends global['OpencartSystemEngineController'] {
 	/**
 	 * @return void
 	 */
@@ -70,7 +70,7 @@ global['\Opencart\Install\Controller\Upgrade\Upgrade6'] = class Upgrade6 extends
 					this.db.query("UPDATE `" + DB_PREFIX + "user_group` SET `permission` = " + this.db.escape(JSON.stringify((result['permission']))) + " WHERE `user_group_id` = '" + result['user_group_id'] + "'");
 				}
 			}
-		} catch ( exception) {
+		} catch (exception) {
 			json['error'] = sprintf(this.language.get('error_exception'), exception.getCode(), exception.getMessage(), exception.getFile(), exception.getLine());
 		}
 

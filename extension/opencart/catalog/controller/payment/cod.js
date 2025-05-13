@@ -1,4 +1,4 @@
-global['\Opencart\Catalog\Controller\Extension\Opencart\Payment\Cod'] = class Cod extends global['\Opencart\System\Engine\Controller'] {
+global['OpencartCatalogControllerExtensionOpencartPaymentCod'] = class Cod extends global['OpencartSystemEngineController'] {
 	constructor(registry) {
 		super(registry)
 	}

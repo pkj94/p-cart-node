@@ -1,4 +1,4 @@
-module.exports = class TopicModel extends global['\Opencart\System\Engine\Model'] {
+module.exports = class TopicModel extends global['OpencartSystemEngineModel'] {
 	constructor(registry) {
 		super(registry)
 	}

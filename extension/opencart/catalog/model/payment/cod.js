@@ -1,4 +1,4 @@
-global['\Opencart\Catalog\Model\Extension\Opencart\Payment\Cod'] = class COD extends global['\Opencart\System\Engine\Model'] {
+global['OpencartCatalogModelExtensionOpencartPaymentCod'] = class COD extends global['OpencartSystemEngineModel'] {
 	/**
 	 * @param address
 	 *

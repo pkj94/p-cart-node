@@ -1,4 +1,4 @@
-global['\Opencart\Catalog\Model\Extension\Opencart\Total\SubTotal'] = class SubTotal extends global['\Opencart\System\Engine\Model'] {
+global['OpencartCatalogModelExtensionOpencartTotalSubTotal'] = class SubTotal extends global['OpencartSystemEngineModel'] {
 	/**
 	 * @param totals
 	 * @param taxes

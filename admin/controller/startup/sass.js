@@ -1,7 +1,7 @@
 
 const sass = require('sass');
 
-module.exports = class SassController extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class SassController extends global['OpencartSystemEngineController'] {
 	constructor(registry) {
 		super(registry)
 	}

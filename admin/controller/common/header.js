@@ -1,5 +1,5 @@
 
-module.exports = class HeaderController extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class HeaderController extends global['OpencartSystemEngineController'] {
     constructor(registry) {
         super(registry)
     }

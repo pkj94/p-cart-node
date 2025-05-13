@@ -1,4 +1,4 @@
-module.exports = class CurrencyController extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class CurrencyController extends global['OpencartSystemEngineController'] {
     constructor(registry) {
         super(registry)
     }

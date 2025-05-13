@@ -1,5 +1,5 @@
 
-global['\Opencart\Install\Controller\Common\Language'] = class Language extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class Language extends global['OpencartSystemEngineController'] {
     constructor(registry) {
         super(registry);
     }
@@ -15,7 +15,7 @@ global['\Opencart\Install\Controller\Common\Language'] = class Language extends 
             .filter(dirent => dirent.isDirectory())
             .map(dirent => dirent.name);
         for (const code of languages) {
-            const language = new global['\Opencart\System\Library\Language'](code);
+            const language = new global['OpencartSystemLibraryLanguage'](code);
             language.addPath(DIR_LANGUAGE);
             await language.load(code);
             data.languages.push({

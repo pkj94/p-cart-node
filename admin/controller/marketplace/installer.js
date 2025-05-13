@@ -4,7 +4,7 @@ const AdmZip = require('adm-zip');
 const sprintf = require('locutus/php/strings/sprintf');
 
 
-module.exports = class InstallerMarketplaceController extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class InstallerMarketplaceController extends global['OpencartSystemEngineController'] {
 	/**
 	 * @return void
 	 */

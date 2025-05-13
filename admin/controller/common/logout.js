@@ -1,4 +1,4 @@
-module.exports = class LogoutController extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class LogoutController extends global['OpencartSystemEngineController'] {
 	/**
 	 * @return void
 	 */

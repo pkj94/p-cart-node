@@ -1,5 +1,5 @@
 
-module.exports = class ExtensionController extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class ExtensionController extends global['OpencartSystemEngineController'] {
 	constructor(registry) {
 		super(registry)
 	}
@@ -14,11 +14,11 @@ module.exports = class ExtensionController extends global['\Opencart\System\Engi
 
 			// Register controllers, models and system extension folders
 			if (fs.existsSync(`${DIR_EXTENSION}${result.code}/admin/controller/`))
-				await this.autoloader.register(`Opencart\Admin\Controller\Extension${extension}`, `${DIR_EXTENSION}${result.code}/admin/controller/`);
+				await this.autoloader.register(`OpencartAdminControllerExtension${extension}`, `${DIR_EXTENSION}${result.code}/admin/controller/`);
 			if (fs.existsSync(`${DIR_EXTENSION}${result.code}/admin/model/`))
-				await this.autoloader.register(`Opencart\Admin\Model\Extension${extension}`, `${DIR_EXTENSION}${result.code}/admin/model/`);
+				await this.autoloader.register(`OpencartAdminModelExtension${extension}`, `${DIR_EXTENSION}${result.code}/admin/model/`);
 			if (fs.existsSync(`${DIR_EXTENSION}${result.code}/system/library/`))
-				await this.autoloader.register(`Opencart\System\Library\Extension${extension}`, `${DIR_EXTENSION}${result.code}/system/library/`);
+				await this.autoloader.register(`OpencartSystemLibraryExtension${extension}`, `${DIR_EXTENSION}${result.code}/system/library/`);
 
 			// Template directory
 			if (fs.existsSync(`${DIR_EXTENSION}${result.code}/admin/view/template/`))

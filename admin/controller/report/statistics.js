@@ -1,4 +1,4 @@
-module.exports = class StatisticsController extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class StatisticsController extends global['OpencartSystemEngineController'] {
 	/**
 	 * @return void
 	 */

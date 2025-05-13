@@ -1,9 +1,9 @@
 /**
  * Class Banner
  *
- * @package Opencart\Admin\Controller\Extension\Opencart\Module
+ * @package OpencartAdminControllerExtension\Opencart\Module
  */
-global['\Opencart\Admin\Controller\Extension\Opencart\Module\Banner'] = class Banner extends global['\Opencart\System\Engine\Controller'] {
+global['OpencartAdminControllerExtensionOpencartModuleBanner'] = class Banner extends global['OpencartSystemEngineController'] {
 	/**
 	 * @return void
 	 */

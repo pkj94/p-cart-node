@@ -1,6 +1,6 @@
 const expressPath = require('path');
 const fs= require('fs');
-module.exports = class ThemeController extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class ThemeController extends global['OpencartSystemEngineController'] {
 	/**
 	 * @return void
 	 */
@@ -124,9 +124,9 @@ module.exports = class ThemeController extends global['\Opencart\System\Engine\C
 			// Register controllers, models and system extension folders
 			let namespace = str_replace(['_', '/'], ['', '\\'], ucfirst(extension, '_/'));
 
-this.autoloader.register('Opencart\Admin\Controller\Extension\\' +namespace, DIR_EXTENSION + extension + '/admin/controller/');
-			this.autoloader.register('Opencart\Admin\Model\Extension\\' + namespace, DIR_EXTENSION + extension + '/admin/model/');
-			this.autoloader.register('Opencart\System\Extension\\' + namespace, DIR_EXTENSION + extension + '/system/');
+this.autoloader.register('OpencartAdminControllerExtension' +namespace, DIR_EXTENSION + extension + '/admin/controller/');
+			this.autoloader.register('OpencartAdminModelExtension' + namespace, DIR_EXTENSION + extension + '/admin/model/');
+			this.autoloader.register('OpencartSystemExtension' + namespace, DIR_EXTENSION + extension + '/system/');
 
 			// Template directory
 			if (fs.existsSync(`${DIR_EXTENSION}${extension}/admin/view/template/`))

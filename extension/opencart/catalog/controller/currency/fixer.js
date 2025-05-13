@@ -1,6 +1,6 @@
 
 
-global['\Opencart\Catalog\Controller\Extension\Opencart\Currency\Fixer'] = class Fixer extends global['\Opencart\System\Engine\Controller'] {
+global['OpencartCatalogControllerExtensionOpencartCurrencyFixer'] = class Fixer extends global['OpencartSystemEngineController'] {
 	constructor(registry) {
 		super(registry)
 	}

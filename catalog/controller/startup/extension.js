@@ -2,7 +2,7 @@ const str_replace = require("locutus/php/strings/str_replace");
 const ucwords = require("locutus/php/strings/ucwords");
 
 
-module.exports = class Extension extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class Extension extends global['OpencartSystemEngineController'] {
 	/**
 	 * @return void
 	 */
@@ -27,7 +27,7 @@ module.exports = class Extension extends global['\Opencart\System\Engine\Control
 					})
 				});
 
-			// this.autoloader.register(`Opencart\Admin\Controller\Extension\\${extension}`, `${DIR_EXTENSION}${result.extension}/catalog/controller/`);
+			// this.autoloader.register(`OpencartAdminControllerExtension${extension}`, `${DIR_EXTENSION}${result.extension}/catalog/controller/`);
 			if (fs.existsSync(`${DIR_EXTENSION}${result.extension}/catalog/model/`))
 				fs.readdirSync(`${DIR_EXTENSION}${result.extension}/catalog/model/`).forEach((folder) => {
 					fs.readdirSync(`${DIR_EXTENSION}${result.extension}/catalog/model/${folder}`).forEach((model) => {
@@ -35,13 +35,13 @@ module.exports = class Extension extends global['\Opencart\System\Engine\Control
 						global[name] = require(DIR_EXTENSION + result.extension + '/catalog/model/' + folder + '/' + model)
 					})
 				});
-			// this.autoloader.register(`Opencart\Admin\Model\Extension\\${extension}`, `${DIR_EXTENSION}${result.extension}/catalog/model/`);
+			// this.autoloader.register(`OpencartAdminModelExtension${extension}`, `${DIR_EXTENSION}${result.extension}/catalog/model/`);
 			if (fs.existsSync(`${DIR_EXTENSION}${result.extension}/system/library/`))
 				fs.readdirSync(`${DIR_EXTENSION}${result.extension}/system/library/`).forEach((library) => {
 					let name = ucfirst(library).replace('.js', '') + 'Library';
 					global[name] = require(DIR_EXTENSION + result.extension + '/system/library/' + '/' + library);
 				});
-			// this.autoloader.register(`Opencart\System\Library\Extension\\${extension}`, `${DIR_EXTENSION}${result.extension}/system/library/`);
+			// this.autoloader.register(`OpencartSystemLibraryExtension\\${extension}`, `${DIR_EXTENSION}${result.extension}/system/library/`);
 
 			// Template directory
 			if (fs.existsSync(`${DIR_EXTENSION}${result.extension}/catalog/view/template/`))

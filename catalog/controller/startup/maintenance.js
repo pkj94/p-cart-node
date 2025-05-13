@@ -1,4 +1,4 @@
-module.exports = class Maintenance extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class Maintenance extends global['OpencartSystemEngineController'] {
 	/**
 	 * @return object|Action|null
 	 */
@@ -21,7 +21,7 @@ module.exports = class Maintenance extends global['\Opencart\System\Engine\Contr
 			const user = new (require(DIR_SYSTEM + 'library/cart/user'))(this.registry);
 
 			if (route.substring(0, 3) != 'api' && !ignore.includes(route) && !await user.isLogged()) {
-				return new global['\Opencart\System\Engine\Action']('common/maintenance');
+				return new global['OpencartSystemEngineAction']('common/maintenance');
 			}
 		}
 

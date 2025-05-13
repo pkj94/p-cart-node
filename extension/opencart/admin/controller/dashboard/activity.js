@@ -1,6 +1,6 @@
 const strtotime = require("locutus/php/datetime/strtotime");
 
-global['\Opencart\Admin\Controller\Extension\Opencart\Dashboard\Activity'] = class Activity extends global['\Opencart\System\Engine\Controller'] {
+global['OpencartAdminControllerExtensionOpencartDashboardActivity'] = class Activity extends global['OpencartSystemEngineController'] {
 	constructor(registry) {
 		super(registry)
 	}

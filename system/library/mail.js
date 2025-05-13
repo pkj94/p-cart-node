@@ -1,6 +1,6 @@
 module.exports = class Mail {
     constructor(adaptor = 'mail', option = {}) {
-        let className = 'Opencart\System\Library\Mail' + ucfirst(adaptor);
+        let className = 'OpencartSystemLibrary\Mail' + ucfirst(adaptor);
 
         if (global[className]) {
             this.option = option;

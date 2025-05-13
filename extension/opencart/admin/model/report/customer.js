@@ -1,7 +1,7 @@
 const mktime = require("locutus/php/datetime/mktime");
 const strtotime = require("locutus/php/datetime/strtotime");
 
-global['Opencart\Admin\Model\Extension\Opencart\Report\Customer'] = class Customer extends global['\Opencart\System\Engine\Model']  {
+global['OpencartAdminModelExtensionOpencartReportCustomer'] = class Customer extends global['OpencartSystemEngineModel']  {
 	/**
 	 * @return array
 	 */

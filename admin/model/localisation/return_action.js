@@ -1,4 +1,4 @@
-module.exports = class ReturnActionLocalisationModel extends global['\Opencart\System\Engine\Model'] {
+module.exports = class ReturnActionLocalisationModel extends global['OpencartSystemEngineModel'] {
 	constructor(registry) {
 		super(registry);
 	}

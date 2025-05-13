@@ -1,6 +1,6 @@
 const nl2br = require("locutus/php/strings/nl2br");
 
-global['\Opencart\Catalog\Controller\Extension\Opencart\Payment\Cheque'] = class Cheque extends global['\Opencart\System\Engine\Controller'] {
+global['OpencartCatalogControllerExtensionOpencartPaymentCheque'] = class Cheque extends global['OpencartSystemEngineController'] {
 	constructor(registry) {
 		super(registry)
 	}

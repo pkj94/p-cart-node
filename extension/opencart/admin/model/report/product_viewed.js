@@ -1,4 +1,4 @@
-global['Opencart\Admin\Model\Extension\Opencart\Report\ProductViewed'] = class ProductViewed extends global['\Opencart\System\Engine\Model']  {
+global['OpencartAdminModelExtensionOpencartReportProductViewed'] = class ProductViewed extends global['OpencartSystemEngineModel']  {
 	/**
 	 * @return void
 	 */

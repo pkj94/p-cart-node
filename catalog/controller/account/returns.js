@@ -1,6 +1,6 @@
 const sprintf = require("locutus/php/strings/sprintf");
 
-module.exports = class Returns extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class Returns extends global['OpencartSystemEngineController'] {
 	/**
 	 * @return void
 	 */
@@ -176,7 +176,7 @@ module.exports = class Returns extends global['\Opencart\System\Engine\Controlle
 
 			this.response.setOutput(await this.load.view('account/returns_info', data));
 		} else {
-			return new global['\Opencart\System\Engine\Action']('error/not_found');
+			return new global['OpencartSystemEngineAction']('error/not_found');
 		}
 
 		return null;

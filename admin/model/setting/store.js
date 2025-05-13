@@ -1,4 +1,4 @@
-module.exports = class StoreSettingModel extends global['\Opencart\System\Engine\Model'] {
+module.exports = class StoreSettingModel extends global['OpencartSystemEngineModel'] {
 	constructor(registry) {
 		super(registry)
 	}
@@ -102,7 +102,7 @@ module.exports = class StoreSettingModel extends global['\Opencart\System\Engine
 	 * @param language
 	 * @param session_id
 	 *
-	 * @return \Opencart\System\Engine\Registry
+	 * @return OpencartSystemEngineRegistry
 	 * @throws \Exception
 	 */
 	async createStoreInstance(store_id = 0, language = '', session_id = '') {
@@ -110,11 +110,11 @@ module.exports = class StoreSettingModel extends global['\Opencart\System\Engine
 		// this.autoloader.register('Opencart\Catalog', DIR_CATALOG);
 
 		// Registry
-		const registry = new global['\Opencart\System\Engine\Registry']();
+		const registry = new global['OpencartSystemEngineRegistry']();
 		registry.set('autoloader', this.autoloader);
 
 		// Config
-		const config = new global['\Opencart\System\Engine\Config']();
+		const config = new global['OpencartSystemEngineConfig']();
 		registry.set('config', config);
 
 		// Load the default config
@@ -130,24 +130,24 @@ module.exports = class StoreSettingModel extends global['\Opencart\System\Engine
 		registry.set('log', this.log);
 
 		// Event
-		const event = new global['\Opencart\System\Engine\Event'](registry);
+		const event = new global['OpencartSystemEngineEvent'](registry);
 		registry.set('event', event);
 
 		// Event Register
 		if (config.has('action_event')) {
 			for (let [key, value] of Object.entries(config.get('action_event'))) {
 				for (let [priority, action] of Object.entries(value)) {
-					event.register(key, new global['\Opencart\System\Engine\Action'](action), priority);
+					event.register(key, new global['OpencartSystemEngineAction'](action), priority);
 				}
 			}
 		}
 
 		// Loader
-		const loader = new global['\Opencart\System\Engine\Loader'](registry);
+		const loader = new global['OpencartSystemEngineLoader'](registry);
 		registry.set('load', loader);
 
 		// Create a dummy request class, so we can feed the data to the order editor
-		const request = new global['\Opencart\System\Library\Request'](this.request.server);
+		const request = new global['OpencartSystemLibraryRequest'](this.request.server);
 		request.get = [];
 		request.post = [];
 		request.cookie = [];
@@ -156,7 +156,7 @@ module.exports = class StoreSettingModel extends global['\Opencart\System\Engine
 		registry.set('request', request);
 
 		// Response
-		const response = new global['\Opencart\System\Library\Response'](this.response.response, this.request.server);
+		const response = new global['OpencartSystemLibraryResponse'](this.response.response, this.request.server);
 		registry.set('response', response);
 
 		// Database
@@ -166,8 +166,8 @@ module.exports = class StoreSettingModel extends global['\Opencart\System\Engine
 		registry.set('cache', this.cache);
 
 		// Session
-		// let session = new global['\Opencart\System\Library\Session'](config.get('session_engine'), registry);
-		const session = new global['\Opencart\System\Library\Session'](request.server.session);
+		// let session = new global['OpencartSystemLibrarySession'](config.get('session_engine'), registry);
+		const session = new global['OpencartSystemLibrarySession'](request.server.session);
 		session.start(request.server.sessionID)
 		registry.set('session', session);
 
@@ -175,7 +175,7 @@ module.exports = class StoreSettingModel extends global['\Opencart\System\Engine
 		// session.start(session_id);
 
 		// Template
-		const template = new global['\Opencart\System\Library\Template'](config.get('template_engine'));
+		const template = new global['OpencartSystemLibraryTemplate'](config.get('template_engine'));
 		template.addPath(DIR_CATALOG + 'view/template/');
 		registry.set('template', template);
 
@@ -183,16 +183,16 @@ module.exports = class StoreSettingModel extends global['\Opencart\System\Engine
 		request.get['language'] = language;
 
 		// Language
-		const languageLib = new global['\Opencart\System\Library\Language'](config.get('language_code'));
+		const languageLib = new global['OpencartSystemLibraryLanguage'](config.get('language_code'));
 		languageLib.addPath(DIR_CATALOG + 'language/');
 		languageLib.load('default');
 		registry.set('language', languageLib);
 
 		// Url
-		registry.set('url', new global['\Opencart\System\Library\Url'](config.get('site_url')));
+		registry.set('url', new global['OpencartSystemLibraryUrl'](config.get('site_url')));
 
 		// Document
-		registry.set('document', new global['\Opencart\System\Library\Document'](registry));
+		registry.set('document', new global['OpencartSystemLibraryDocument'](registry));
 
 		// Run pre actions to load key settings and classes+
 		let pre_actions = [

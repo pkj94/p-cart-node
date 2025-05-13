@@ -1,4 +1,4 @@
-global['\Opencart\Catalog\Model\Extension\Opencart\Payment\FreeCheckout'] = class FreeCheckout extends global['\Opencart\System\Engine\Model'] {
+global['OpencartCatalogModelExtensionOpencartPaymentFreeCheckout'] = class FreeCheckout extends global['OpencartSystemEngineModel'] {
 	/**
 	 * @param address
 	 *

@@ -1,4 +1,4 @@
-global['\Opencart\Admin\Controller\Extension\Opencart\Total\Tax'] = class Tax extends global['\Opencart\System\Engine\Controller'] {
+global['OpencartAdminControllerExtensionOpencartTotalTax'] = class Tax extends global['OpencartSystemEngineController'] {
 	constructor(registry) {
 		super(registry);
 		this.array = [];

@@ -1,4 +1,4 @@
-module.exports = class NotificationController extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class NotificationController extends global['OpencartSystemEngineController'] {
 	constructor(registry) {
 		super(registry)
 	}

@@ -1,4 +1,4 @@
-module.exports = class AuthorizeController extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class AuthorizeController extends global['OpencartSystemEngineController'] {
 	constructor(registry) {
 		super(registry)
 	}
@@ -26,11 +26,11 @@ module.exports = class AuthorizeController extends global['\Opencart\System\Engi
 			const token_info = await this.model_user_user.getAuthorizeByToken(await this.user.getId(), token);
 
 			if (!token_info || !token_info.status && token_info.attempts <= 2) {
-				return new global['\Opencart\System\Engine\Action']('common/authorize');
+				return new global['OpencartSystemEngineAction']('common/authorize');
 			}
 
 			if (token_info && !token_info.status && token_info.attempts > 2) {
-				return new global['\Opencart\System\Engine\Action']('common/authorize.unlock');
+				return new global['OpencartSystemEngineAction']('common/authorize.unlock');
 			}
 		}
 

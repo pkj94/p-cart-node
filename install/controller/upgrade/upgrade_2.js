@@ -1,4 +1,4 @@
-global['\Opencart\Install\Controller\Upgrade\Upgrade2'] = class Upgrade2 extends global['\Opencart\System\Engine\Controller'] {
+module.exports =  class Upgrade2 extends global['OpencartSystemEngineController'] {
 	/**
 	 * @return void
 	 */

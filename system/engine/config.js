@@ -1,5 +1,5 @@
 
-global['\Opencart\System\Engine\Config'] = class Config {
+module.exports =  class Config {
     directory = '';
     path = {};
     data = {};

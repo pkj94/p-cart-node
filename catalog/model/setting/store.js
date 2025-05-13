@@ -1,4 +1,4 @@
-module.exports = class Store extends global['\Opencart\System\Engine\Model'] {
+module.exports = class Store extends global['OpencartSystemEngineModel'] {
 	/**
 	 * @param store_id
 	 *
@@ -45,7 +45,7 @@ module.exports = class Store extends global['\Opencart\System\Engine\Model'] {
 	 * @param string language
 	 * @param string session_id
 	 *
-	 * @return \Opencart\System\Engine\Registry
+	 * @return OpencartSystemEngineRegistry
 	 * @throws \Exception
 	 */
 	async createStoreInstance(store_id = 0, language = '', session_id = '') {
@@ -79,7 +79,7 @@ module.exports = class Store extends global['\Opencart\System\Engine\Model'] {
 		if (config.has('action_event')) {
 			for (let [key, value] of Object.entries(config.get('action_event'))) {
 				for (let [priority, action] of Object.entries(value)) {
-					event.register(key, new global['\Opencart\System\Engine\Action'](action), priority);
+					event.register(key, new global['OpencartSystemEngineAction'](action), priority);
 				}
 			}
 		}
@@ -105,7 +105,7 @@ module.exports = class Store extends global['\Opencart\System\Engine\Model'] {
 		registry.set('cache', this.cache);
 
 		// Session
-		session = new global['\Opencart\System\Library\Session'](this.request.server.session);
+		session = new global['OpencartSystemLibrarySession'](this.request.server.session);
 		session.start(this.request.server.sessionID)
 		registry.set('session', session);
 
@@ -143,7 +143,7 @@ module.exports = class Store extends global['\Opencart\System\Engine\Model'] {
 		registry.set('language', languageLib);
 
 		// Url
-		registry.set('url', new global['\Opencart\System\Library\Url'](config.get('site_url')));
+		registry.set('url', new global['OpencartSystemLibraryUrl'](config.get('site_url')));
 
 		// Document
 		registry.set('document', new DocumentLibrary());

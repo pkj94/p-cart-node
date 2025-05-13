@@ -2,7 +2,7 @@ const strtotime = require("locutus/php/datetime/strtotime");
 const nl2br = require("locutus/php/strings/nl2br");
 const sprintf = require("locutus/php/strings/sprintf");
 
-module.exports = class CustomerController extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class CustomerController extends global['OpencartSystemEngineController'] {
 	/**
 	 * @return void
 	 */
@@ -834,7 +834,7 @@ module.exports = class CustomerController extends global['\Opencart\System\Engin
 
 			return null;
 		} else {
-			return new global['\Opencart\System\Engine\Action']('error/not_found');
+			return new global['OpencartSystemEngineAction']('error/not_found');
 		}
 	}
 

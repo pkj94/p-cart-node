@@ -1,4 +1,4 @@
-module.exports = class Login extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class Login extends global['OpencartSystemEngineController'] {
 	/*
 	 * Opencart\Catalog\Controller\Api\Account\Login+Index
 	 *
@@ -100,7 +100,7 @@ module.exports = class Login extends global['\Opencart\System\Engine\Controller'
 		if (!Object.keys(json).length) {
 			json['success'] = this.language.get('text_success');
 
-			session = new global['\Opencart\System\Library\Session'](this.config.get('session_engine'), this.registry);
+			session = new global['OpencartSystemLibrarySession'](this.config.get('session_engine'), this.registry);
 			session.start();
 
 			await this.model_account_api.addSession(api_info['api_id'], session.getId(), (this.request.server.headers['x-forwarded-for'] ||

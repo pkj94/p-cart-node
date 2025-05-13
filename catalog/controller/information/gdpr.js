@@ -1,4 +1,4 @@
-module.exports = class Gdpr extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class Gdpr extends global['OpencartSystemEngineController'] {
 	/**
 	 * @return object|Action|null
 	 */
@@ -48,7 +48,7 @@ module.exports = class Gdpr extends global['\Opencart\System\Engine\Controller']
 
 			return null;
 		} else {
-			return new global['\Opencart\System\Engine\Action']('error/not_found');
+			return new global['OpencartSystemEngineAction']('error/not_found');
 		}
 	}
 
@@ -196,7 +196,7 @@ module.exports = class Gdpr extends global['\Opencart\System\Engine\Controller']
 
 			return null;
 		} else {
-			return new global['\Opencart\System\Engine\Action']('error/not_found');
+			return new global['OpencartSystemEngineAction']('error/not_found');
 		}
 	}
 }

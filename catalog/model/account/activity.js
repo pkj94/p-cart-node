@@ -1,4 +1,4 @@
-module.exports = class Activity extends global['\Opencart\System\Engine\Model'] {
+module.exports = class Activity extends global['OpencartSystemEngineModel'] {
 	/**
 	 * @param string key
 	 * @param  data

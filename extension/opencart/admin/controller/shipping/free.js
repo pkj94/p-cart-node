@@ -1,4 +1,4 @@
-global['\Opencart\Admin\Controller\Extension\Opencart\Shipping\Free'] = class Free extends global['\Opencart\System\Engine\Controller'] {
+global['OpencartAdminControllerExtensionOpencartShippingFree'] = class Free extends global['OpencartSystemEngineController'] {
 	constructor(registry) {
 		super(registry)
 	}

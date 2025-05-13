@@ -1,4 +1,4 @@
-module.exports = class Currency extends global['\Opencart\System\Engine\Model'] {
+module.exports = class Currency extends global['OpencartSystemEngineModel'] {
 	/**
 	 * @param string code
 	 * @param  value

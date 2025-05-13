@@ -1,10 +1,10 @@
-module.exports = class Session extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class Session extends global['OpencartSystemEngineController'] {
 	/**
 	 * @return void
 	 * @throws \Exception
 	 */
 	async index() {
-		let session = new global['\Opencart\System\Library\Session'](this.request.server.session);
+		let session = new global['OpencartSystemLibrarySession'](this.request.server.session);
 		session.start(this.request.server.sessionID)
 		this.registry.set('session', session);
 

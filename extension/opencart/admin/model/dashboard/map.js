@@ -1,4 +1,4 @@
-global['Opencart\Admin\Model\Extension\Opencart\Dashboard\Map'] = class Map extends global['\Opencart\System\Engine\Model']  {
+global['OpencartAdminModelExtensionOpencartDashboardMap'] = class Map extends global['OpencartSystemEngineModel']  {
 	/**
 	 * @return array
 	 */

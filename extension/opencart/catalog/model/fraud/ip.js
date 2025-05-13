@@ -1,4 +1,4 @@
-global['\Opencart\Catalog\Model\Extension\Opencart\Fraud\Ip'] = class Ip extends global['\Opencart\System\Engine\Model'] {
+global['OpencartCatalogModelExtensionOpencartFraudIp'] = class Ip extends global['OpencartSystemEngineModel'] {
 	/**
 	 * @param order_info
 	 *

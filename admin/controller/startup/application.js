@@ -1,23 +1,23 @@
-module.exports = class ApplicationController extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class ApplicationController extends global['OpencartSystemEngineController'] {
 	constructor(registry) {
 		super(registry)
 	}
 
 	async index() {
 		// Url
-		const url = new global['\Opencart\System\Library\Url'](this.config.get('site_url'));
+		const url = new global['OpencartSystemLibraryUrl'](this.config.get('site_url'));
 		this.registry.set('url', url);
 
 		// Customer
-		const customer = new global['\Opencart\System\Library\Cart\Customer'](this.registry);
+		const customer = new global['OpencartSystemLibraryCart\Customer'](this.registry);
 		this.registry.set('customer', customer);
 
 		// Currency
-		const currency = new global['\Opencart\System\Library\Cart\Currency'](this.registry);
+		const currency = new global['OpencartSystemLibraryCart\Currency'](this.registry);
 		this.registry.set('currency', currency);
 
 		// Tax
-		const tax = new global['\Opencart\System\Library\Cart\Tax'](this.registry);
+		const tax = new global['OpencartSystemLibraryCart\Tax'](this.registry);
 		this.registry.set('tax', tax);
 
 		if (this.config.get('config_tax_default') === 'shipping') {
@@ -31,15 +31,15 @@ module.exports = class ApplicationController extends global['\Opencart\System\En
 		tax.setStoreAddress(this.config.get('config_country_id'), this.config.get('config_zone_id'));
 
 		// Weight
-		const weight = new global['\Opencart\System\Library\Cart\Weight'](this.registry);
+		const weight = new global['OpencartSystemLibraryCart\Weight'](this.registry);
 		this.registry.set('weight', weight);
 
 		// Length
-		const length = new global['\Opencart\System\Library\Cart\Length'](this.registry);
+		const length = new global['OpencartSystemLibraryCart\Length'](this.registry);
 		this.registry.set('length', length);
 
 		// Cart
-		const cart = new global['\Opencart\System\Library\Cart\Cart'](this.registry);
+		const cart = new global['OpencartSystemLibraryCart\Cart'](this.registry);
 		this.registry.set('cart', cart);
 	}
 }

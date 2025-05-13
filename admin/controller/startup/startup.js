@@ -1,4 +1,4 @@
-module.exports = class StartupController extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class StartupController extends global['OpencartSystemEngineController'] {
 	constructor(registry) {
 		super(registry)
 	}

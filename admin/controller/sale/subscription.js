@@ -1,7 +1,7 @@
 const strtotime = require("locutus/php/datetime/strtotime");
 const sprintf = require("locutus/php/strings/sprintf");
 
-module.exports = class SubscriptionController extends global['\Opencart\System\Engine\Controller'] {
+module.exports = class SubscriptionController extends global['OpencartSystemEngineController'] {
 	/**
 	 * @return void
 	 */

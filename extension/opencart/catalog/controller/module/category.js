@@ -1,4 +1,4 @@
-global['\Opencart\Catalog\Controller\Extension\Opencart\Module\Category'] = class Category extends global['\Opencart\System\Engine\Controller'] {
+global['OpencartCatalogControllerExtensionOpencartModuleCategory'] = class Category extends global['OpencartSystemEngineController'] {
 	constructor(registry) {
 		super(registry)
 	}

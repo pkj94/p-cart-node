@@ -1,4 +1,4 @@
-module.exports = class VoucherTheme extends global['\Opencart\System\Engine\Model'] {
+module.exports = class VoucherTheme extends global['OpencartSystemEngineModel'] {
 	/**
 	 * @param voucher_theme_id
 	 *

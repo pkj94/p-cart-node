@@ -1,5 +1,5 @@
 const proxy = Proxy;
-class Controller {
+module.exports = class Controller {
     registry;
     constructor(registry) {
         this.registry = registry;
@@ -35,4 +35,3 @@ class Controller {
         this.registry.set(key, value);
     }
 }
-global['\Opencart\System\Engine\Controller'] = Controller

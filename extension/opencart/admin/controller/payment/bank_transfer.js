@@ -1,4 +1,4 @@
-global['\Opencart\Admin\Controller\Extension\Opencart\Payment\BankTransfer'] = class BankTransfer extends global['\Opencart\System\Engine\Controller'] {
+global['OpencartAdminControllerExtensionOpencartPaymentBankTransfer'] = class BankTransfer extends global['OpencartSystemEngineController'] {
 	constructor(registry) {
 		super(registry)
 	}
