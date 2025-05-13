@@ -6,7 +6,7 @@ $(document).ready(function () {
 		if ($(this).attr('data-lang') && $(this).attr('data-lang') != 'en-gb') {
 			$('head').append('<script type="text/javascript" src="view/javascript/summernote/lang/summernote-' + $(this).attr('data-lang') + '.min.js"></script>');
 		}
-		console.log("$(this).attr('data-lang')======", $(this).attr('data-lang'))
+		// console.log("$(this).attr('data-lang')======", $(this).attr('data-lang'))
 		$(element).summernote({
 			lang: $(this).attr('data-lang'),
 			disableDragAndDrop: true,

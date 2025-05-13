@@ -61,7 +61,7 @@ module.exports = function () {
             if (registry.get('config').get('error_display')) {
                 res.status(200).send('<b>' + errorType + '</b>: ' + error.toString());
             } else {
-                console.log(registry.get('config').get('error_page'))
+                // console.log(registry.get('config').get('error_page'))
                 res.redirect(registry.get('config').get('error_page'));
             }
 

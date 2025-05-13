@@ -1,7 +1,7 @@
 module.exports = class ControllerStartupRouter extends Controller {
 	async index() {
 		// Route
-		console.log('route---', this.request.get['route'])
+		// console.log('route---', this.request.get['route'])
 
 		let route = this.config.get('action_default');
 		if ((this.request.get['route']) && this.request.get['route'] != 'startup/router') {

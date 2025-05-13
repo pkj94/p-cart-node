@@ -118,7 +118,7 @@ app.use((req, res, next) => {
 });
 global.APP();
 
-let port = typeof SERVER_PORT == 'undefined' ? 8080 : SERVER_PORT;
+let port = typeof SERVER_PORT == 'undefined' ? 8000 : SERVER_PORT;
 app.listen(port, () => {
     console.log("Application is running on the port:" + port);
 });

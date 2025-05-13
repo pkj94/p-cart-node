@@ -291,7 +291,7 @@ module.exports = class ModelCheckoutOrder extends Model {
 
 				for (let order_total of order_totals) {
 					this.load.model('extension/total/' + order_total['code'], this);
-					console.log('model_extension_total_' + order_total['code'])
+					// console.log('model_extension_total_' + order_total['code'])
 					if (typeof this['model_extension_total_' + order_total['code']].confirm != 'undefined') {
 						// Confirm coupon, vouchers and reward points
 						const fraud_status_id = await this['model_extension_total_' + order_total['code']].confirm(order_info, order_total);

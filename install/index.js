@@ -70,7 +70,7 @@ module.exports = function () {
             if (global.config && global.config.get('error_display')) {
                 res.status(200).send('<b>' + errorType + '</b>: ' + error.toString());
             } else if (global.config) {
-                console.log(global.config.get('error_page'))
+                // console.log(global.config.get('error_page'))
                 res.redirect(config.get('error_page'));
             }
 

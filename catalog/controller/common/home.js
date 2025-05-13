@@ -15,7 +15,6 @@ module.exports = class ControllerCommonHome extends Controller {
 		data['content_bottom'] = await this.load.controller('common/content_bottom');
 		data['footer'] = await this.load.controller('common/footer');
 		data['header'] = await this.load.controller('common/header');
-		
 		this.response.setOutput(await this.load.view('common/home', data));
 	}
 }

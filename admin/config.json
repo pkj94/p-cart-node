@@ -1,8 +1,8 @@
 {
-	"HTTP_SERVER": "http://localhost:8080/admin/",
-	"HTTPS_SERVER": "http://localhost:8080/admin/",
-	"HTTP_CATALOG": "http://localhost:8080/",
-	"HTTPS_CATALOG": "http://localhost:8080/",
+	"HTTP_SERVER": "http://localhost:8000/admin/",
+	"HTTPS_SERVER": "http://localhost:8000/admin/",
+	"HTTP_CATALOG": "http://localhost:8000/",
+	"HTTPS_CATALOG": "http://localhost:8000/",
 	"DIR_OPENCART": "D:/Development/NODE/p-cart-node/",
 	"DIR_APPLICATION": "D:/Development/NODE/p-cart-node/admin/",
 	"DIR_IMAGE": "D:/Development/NODE/p-cart-node/image/",

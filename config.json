@@ -1,6 +1,6 @@
 {
-	"HTTP_SERVER": "http://localhost:8080/",
-	"HTTPS_SERVER": "http://localhost:8080/",
+	"HTTP_SERVER": "http://localhost:8000/",
+	"HTTPS_SERVER": "http://localhost:8000/",
 	"DIR_OPENCART": "D:/Development/NODE/p-cart-node/",
 	"DIR_APPLICATION": "D:/Development/NODE/p-cart-node/catalog/",
 	"DIR_IMAGE": "D:/Development/NODE/p-cart-node/image/",

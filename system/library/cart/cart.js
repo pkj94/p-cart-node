@@ -280,7 +280,7 @@ module.exports = class Cart {
     }
 
     async update(cart_id, quantity) {
-        console.log("UPDATE " + DB_PREFIX + "cart SET quantity = '" + quantity + "' WHERE cart_id = '" + cart_id + "' AND api_id = '" + (this.session.data['api_id'] ? this.session.data['api_id'] : 0) + "' AND customer_id = '" + await this.customer.getId() + "' AND session_id = '" + this.db.escape(this.session.getId()) + "'");
+        // console.log("UPDATE " + DB_PREFIX + "cart SET quantity = '" + quantity + "' WHERE cart_id = '" + cart_id + "' AND api_id = '" + (this.session.data['api_id'] ? this.session.data['api_id'] : 0) + "' AND customer_id = '" + await this.customer.getId() + "' AND session_id = '" + this.db.escape(this.session.getId()) + "'");
         await this.db.query("UPDATE " + DB_PREFIX + "cart SET quantity = '" + quantity + "' WHERE cart_id = '" + cart_id + "' AND api_id = '" + (this.session.data['api_id'] ? this.session.data['api_id'] : 0) + "' AND customer_id = '" + await this.customer.getId() + "' AND session_id = '" + this.db.escape(this.session.getId()) + "'");
     }
 
