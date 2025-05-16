@@ -42,7 +42,7 @@ module.exports = class ControllerCheckoutPaymentMethod extends Controller {
 			this.load.model('setting/extension', this);
 
 			results = await this.model_setting_extension.getExtensions('payment');
-
+			// console.log(results,this.config.get('payment_free_checkout_status'))
 			let recurring = await this.cart.hasRecurringProducts();
 
 			for (let result of results) {
@@ -156,12 +156,12 @@ module.exports = class ControllerCheckoutPaymentMethod extends Controller {
 		if (!(this.request.post['payment_method'])) {
 			json['error'] = json['error'] || {};
 			json['error']['warning'] = this.language.get('error_payment');
-		} else if (!(this.session.data['payment_methods'][this.request.post['payment_method']])) {
+		} else if (!(this.session.data['payment_methods'] && this.session.data['payment_methods'][this.request.post['payment_method']]) || !this.session.data['payment_methods']) {
 			json['error'] = json['error'] || {};
 			json['error']['warning'] = this.language.get('error_payment');
 		}
 
-		if (this.config.get('config_checkout_id')) {
+		if (Number(this.config.get('config_checkout_id'))) {
 			this.load.model('catalog/information', this);
 
 			const information_info = await this.model_catalog_information.getInformation(this.config.get('config_checkout_id'));

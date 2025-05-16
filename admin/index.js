@@ -74,5 +74,5 @@ module.exports = function () {
     app.use('/admin/view/image', express.static(__dirname + '/view/image'));
     app.use('/admin/language', express.static(__dirname + '/language'));
 
-    app.all('/admin', loadAdminControllers);
+    app.all('/admin/*', loadAdminControllers);
 }

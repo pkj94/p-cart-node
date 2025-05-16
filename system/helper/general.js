@@ -213,7 +213,7 @@ global.sha1 = (string) => { return crypto.createHash('sha1').update(string).dige
 global.sprintf = require('locutus/php/strings/sprintf');
 global.strtotime = (relativeDate) => {
     const now = new Date();
-    const [value, unit] = relativeDate.split(' '); // Split the string into value and unit
+    const [value, unit] = relativeDate.toString().split(' '); // Split the string into value and unit
 
     let amount = parseInt(value, 10); // Parse the numeric value
 

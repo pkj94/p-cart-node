@@ -10,6 +10,7 @@ module.exports = class ControllerEventTheme extends Controller {
 		if (this.config.get('config_theme') == 'default') {
 			directory = this.config.get('theme_default_directory');
 		}
+		// console.log('directory', directory, is_file(DIR_TEMPLATE + directory + '/template/' + route + '.twig'), DIR_TEMPLATE + directory + '/template/' + route + '.twig');
 		if (directory != 'default' && is_file(DIR_TEMPLATE + directory + '/template/' + route + '.twig')) {
 			this.config.set('template_directory', directory + '/template/');
 		} else if (is_file(DIR_TEMPLATE + 'default/template/' + route + '.twig')) {

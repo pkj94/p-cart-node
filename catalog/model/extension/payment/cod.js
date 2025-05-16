@@ -4,18 +4,18 @@ module.exports = class ModelExtensionPaymentCOD extends Model {
 
 		const query = await this.db.query("SELECT * FROM " + DB_PREFIX + "zone_to_geo_zone WHERE geo_zone_id = '" + this.config.get('payment_cod_geo_zone_id') + "' AND country_id = '" + address['country_id'] + "' AND (zone_id = '" + address['zone_id'] + "' OR zone_id = '0')");
 		let status = false;
+		// console.log(query, this.config.get('payment_cod_total'), this.config.get('payment_cod_geo_zone_id'), await this.cart.hasShipping(),total)
 		if (Number(this.config.get('payment_cod_total')) > 0 && Number(this.config.get('payment_cod_total')) > total) {
 			status = false;
 		} else if (!await this.cart.hasShipping()) {
 			status = false;
-		} else if (!this.config.get('payment_cod_geo_zone_id')) {
+		} else if (!Number(this.config.get('payment_cod_geo_zone_id'))) {
 			status = true;
 		} else if (query.num_rows) {
 			status = true;
 		} else {
 			status = false;
 		}
-
 		let method_data = null;
 
 		if (status) {

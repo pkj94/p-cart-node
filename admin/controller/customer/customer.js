@@ -728,7 +728,7 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 		if ((this.request.post['custom_field'])) {
 			data['account_custom_field'] = this.request.post['custom_field'];
 		} else if ((customer_info)) {
-			data['account_custom_field'] = JSON.parse(customer_info['custom_field'], true);
+			data['account_custom_field'] = customer_info['custom_field'].trim() ? JSON.parse(customer_info['custom_field'].trim() || '[]', true) : [];
 		} else {
 			data['account_custom_field'] = {};
 		}
@@ -969,7 +969,7 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 		if ((this.request.post['custom_field'])) {
 			data['affiliate_custom_field'] = this.request.post['custom_field'];
 		} else if ((affiliate_info)) {
-			data['affiliate_custom_field'] = JSON.parse(affiliate_info['custom_field']);
+			data['affiliate_custom_field'] = affiliate_info['custom_field'] ? JSON.parse(affiliate_info['custom_field']) : [];
 		} else {
 			data['affiliate_custom_field'] = {};
 		}
@@ -1509,7 +1509,7 @@ module.exports = class ControllerCustomerCustomer extends Controller {
 				'required': !(custom_field['required']) || custom_field['required'] == 0 ? false : true
 			});
 		}
-		console.log('json----------------',json)
+		console.log('json----------------', json)
 		this.response.addHeader('Content-Type: application/json');
 		this.response.setOutput(json);
 	}

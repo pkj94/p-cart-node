@@ -69,5 +69,8 @@ module.exports = function () {
         });
     };
     // loadControllers();
+    app.all('/.well-known/*', (req, res, next) => {
+        return res.sendFile(__dirname + '/.well-known/' + req.params[0]);
+    });
     app.all('/*', loadControllers);
 }

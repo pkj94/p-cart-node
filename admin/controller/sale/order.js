@@ -367,7 +367,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 		if (api_info.api_id && await this.user.hasPermission('modify', 'sale/order')) {
 			const session = new Session(this.request.server.session);
 			// console.log(session)
-			await session.start();
+			await session.start(this.request.server.sessionID);
 
 			await this.model_user_api.deleteApiSessionBySessionId(session.getId());
 
@@ -700,11 +700,11 @@ module.exports = class ControllerSaleOrder extends Controller {
 		this.load.model('user/api', this);
 
 		const api_info = await this.model_user_api.getApi(this.config.get('config_api_id'));
-
+		// console.log(api_info)
 		if (api_info && await this.user.hasPermission('modify', 'sale/order')) {
 			const session = new Session(this.request.server.session);
 
-			await session.start();
+			await session.start(this.request.server.sessionID);
 
 			await this.model_user_api.deleteApiSessionBySessionId(session.getId());
 
@@ -716,6 +716,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 			session.data['api_id'] = api_info['api_id'];
 
 			data['api_token'] = session.getId();
+			// console.log('api_token----',data['api_token'])
 			await session.save(session.data);
 		} else {
 			data['api_token'] = '';
@@ -1256,7 +1257,7 @@ module.exports = class ControllerSaleOrder extends Controller {
 			if (api_info.api_id && await this.user.hasPermission('modify', 'sale/order')) {
 				const session = new Session(this.request.server.session);
 
-				await session.start();
+				await session.start(this.request.server.sessionID);
 
 				await this.model_user_api.deleteApiSessionBySessionId(session.getId());
 

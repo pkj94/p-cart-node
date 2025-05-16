@@ -7,7 +7,6 @@ module.exports = class ModelExtensionPaymentFreeCheckout extends Model {
 		} else {
 			status = false;
 		}
-
 		let method_data = null;
 
 		if (status) {

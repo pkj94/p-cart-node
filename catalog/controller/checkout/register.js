@@ -24,19 +24,19 @@ module.exports = class ControllerCheckoutRegister extends Controller {
 
 		data['customer_group_id'] = this.config.get('config_customer_group_id');
 
-		if ((this.session.data['shipping_address']['postcode'])) {
+		if ((this.session.data['shipping_address'] && this.session.data['shipping_address']['postcode'])) {
 			data['postcode'] = this.session.data['shipping_address']['postcode'];
 		} else {
 			data['postcode'] = '';
 		}
 
-		if ((this.session.data['shipping_address']['country_id'])) {
+		if ((this.session.data['shipping_address'] && this.session.data['shipping_address']['country_id'])) {
 			data['country_id'] = this.session.data['shipping_address']['country_id'];
 		} else {
 			data['country_id'] = this.config.get('config_country_id');
 		}
 
-		if ((this.session.data['shipping_address']['zone_id'])) {
+		if ((this.session.data['shipping_address'] && this.session.data['shipping_address']['zone_id'])) {
 			data['zone_id'] = this.session.data['shipping_address']['zone_id'];
 		} else {
 			data['zone_id'] = '';
@@ -81,7 +81,7 @@ module.exports = class ControllerCheckoutRegister extends Controller {
 		await this.load.language('checkout/checkout');
 
 		const json = {};
-
+		let customer_group_id = '';
 		// Validate if customer is already logged out+
 		if (await this.customer.isLogged()) {
 			json['redirect'] = await this.url.link('checkout/checkout', '', true);
@@ -115,30 +115,37 @@ module.exports = class ControllerCheckoutRegister extends Controller {
 			this.load.model('account/customer', this);
 
 			if ((utf8_strlen(trim(this.request.post['firstname'])) < 1) || (utf8_strlen(trim(this.request.post['firstname'])) > 32)) {
+				json['error'] = json['error'] || {};
 				json['error']['firstname'] = this.language.get('error_firstname');
 			}
 
 			if ((utf8_strlen(trim(this.request.post['lastname'])) < 1) || (utf8_strlen(trim(this.request.post['lastname'])) > 32)) {
+				json['error'] = json['error'] || {};
 				json['error']['lastname'] = this.language.get('error_lastname');
 			}
 
 			if ((utf8_strlen(this.request.post['email']) > 96) || !isEmailValid(this.request.post['email'])) {
+				json['error'] = json['error'] || {};
 				json['error']['email'] = this.language.get('error_email');
 			}
 
 			if (await this.model_account_customer.getTotalCustomersByEmail(this.request.post['email'])) {
+				json['error'] = json['error'] || {};
 				json['error']['warning'] = this.language.get('error_exists');
 			}
 
 			if ((utf8_strlen(this.request.post['telephone']) < 3) || (utf8_strlen(this.request.post['telephone']) > 32)) {
+				json['error'] = json['error'] || {};
 				json['error']['telephone'] = this.language.get('error_telephone');
 			}
 
 			if ((utf8_strlen(trim(this.request.post['address_1'])) < 3) || (utf8_strlen(trim(this.request.post['address_1'])) > 128)) {
+				json['error'] = json['error'] || {};
 				json['error']['address_1'] = this.language.get('error_address_1');
 			}
 
 			if ((utf8_strlen(trim(this.request.post['city'])) < 2) || (utf8_strlen(trim(this.request.post['city'])) > 128)) {
+				json['error'] = json['error'] || {};
 				json['error']['city'] = this.language.get('error_city');
 			}
 
@@ -147,22 +154,27 @@ module.exports = class ControllerCheckoutRegister extends Controller {
 			const country_info = await this.model_localisation_country.getCountry(this.request.post['country_id']);
 
 			if (country_info.country_id && country_info['postcode_required'] && (utf8_strlen(trim(this.request.post['postcode'])) < 2 || utf8_strlen(trim(this.request.post['postcode'])) > 10)) {
+				json['error'] = json['error'] || {};
 				json['error']['postcode'] = this.language.get('error_postcode');
 			}
 
 			if (this.request.post['country_id'] == '') {
+				json['error'] = json['error'] || {};
 				json['error']['country'] = this.language.get('error_country');
 			}
 
 			if (!(this.request.post['zone_id']) || this.request.post['zone_id'] == '' || !is_numeric(this.request.post['zone_id'])) {
+				json['error'] = json['error'] || {};
 				json['error']['zone'] = this.language.get('error_zone');
 			}
 
 			if ((utf8_strlen(html_entity_decode(this.request.post['password'])) < 4) || (utf8_strlen(html_entity_decode(this.request.post['password'])) > 40)) {
+				json['error'] = json['error'] || {};
 				json['error']['password'] = this.language.get('error_password');
 			}
 
 			if (this.request.post['confirm'] != this.request.post['password']) {
+				json['error'] = json['error'] || {};
 				json['error']['confirm'] = this.language.get('error_confirm');
 			}
 
@@ -172,12 +184,13 @@ module.exports = class ControllerCheckoutRegister extends Controller {
 				const information_info = await this.model_catalog_information.getInformation(this.config.get('config_account_id'));
 
 				if (information_info.information_id && !(this.request.post['agree'])) {
+					json['error'] = json['error'] || {};
 					json['error']['warning'] = sprintf(this.language.get('error_agree'), information_info['title']);
 				}
 			}
 
 			// Customer Group
-			let customer_group_id = this.config.get('config_customer_group_id');
+			customer_group_id = this.config.get('config_customer_group_id');
 			if ((this.request.post['customer_group_id']) && Array.isArray(this.config.get('config_customer_group_display')) && this.config.get('config_customer_group_display').includes(this.request.post['customer_group_id'])) {
 				customer_group_id = this.request.post['customer_group_id'];
 			}

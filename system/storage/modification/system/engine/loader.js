@@ -130,7 +130,8 @@ module.exports = class Loader {
         if (result && !(result instanceof Error)) {
             output = result;
         } else {
-            output = await global.registry.get('language').load(route, key);
+            // console.log(this.registry.get('language'),route, key);
+            output = await this.registry.get('language').load(route, key);
         }
 
         result = await this.registry.get('event').trigger(`language/${trigger}/after`, [route, key, output]);
@@ -152,7 +153,7 @@ module.exports = class Loader {
             if (result && !(result instanceof Error)) {
                 output = result;
             } else {
-                // console.log('=====', expressPath.join(DIR_APPLICATION, 'model', route + '.js'))
+                // console.log('=====', expressPath.join(DIR_APPLICATION, 'model', route + '.js'),DIR_APPLICATION,this.registry.get('request').server.url)
                 const ModelClass = require(expressPath.join(DIR_APPLICATION, 'model', route + '.js')); // Adjust the path as needed
                 const model = new ModelClass(this.registry);
 

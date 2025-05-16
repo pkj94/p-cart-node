@@ -884,7 +884,7 @@ module.exports = class ControllerExtensionPaymentSquareup extends Controller {
         if (api_info && await this.user.hasPermission('modify', 'sale/order')) {
             const session = new Session(this.request.server.session);
 
-            await session.start();
+            await session.start(this.request.server.sessionID);
 
             await this.model_user_api.deleteApiSessionBySessionId(session.getId());
 

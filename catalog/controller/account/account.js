@@ -31,6 +31,7 @@ module.exports = class ControllerAccountAccount extends Controller {
 			data['success'] = '';
 		}
 
+		data['text_wishlist'] = this.language.get('text_wishlist');
 		data['edit'] = await this.url.link('account/edit', '', true);
 		data['password'] = await this.url.link('account/password', '', true);
 		data['address'] = await this.url.link('account/address', '', true);

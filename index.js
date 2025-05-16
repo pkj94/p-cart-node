@@ -3,19 +3,20 @@ global.APPROOT = __dirname;
 global.date = require('php-date-format');
 global.fs = require('fs');
 global.expressPath = require('path');
+let adminRoutes = require('./admin');
+let catalogRoutes = require('./catalog');
 
 global.APP = () => {
-    let adminRoutes = require('./admin');
-    let catalogRoutes = require('./catalog');
+
     let installRoutes;
     if (fs.existsSync('./install'))
         installRoutes = require('./install');
-    // admin
-    adminRoutes();
     if (installRoutes)
         installRoutes();
-    app.use('/error.html', express.static('./error.html'));
+    // admin
+    adminRoutes();
     catalogRoutes();
+    app.use('/error.html', express.static('./error.html'));
 
 }
 process.setMaxListeners(100)

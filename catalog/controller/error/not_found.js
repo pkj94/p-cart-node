@@ -1,6 +1,6 @@
 module.exports = class ControllerErrorNotFound extends Controller {
 	async index() {
-const data = {};
+		const data = {};
 		await this.load.language('error/not_found');
 
 		this.document.setTitle(this.language.get('heading_title'));
@@ -8,28 +8,28 @@ const data = {};
 		data['breadcrumbs'] = [];
 
 		data['breadcrumbs'].push({
-			'text' : this.language.get('text_home'),
-			'href' : await this.url.link('common/home')
+			'text': this.language.get('text_home'),
+			'href': await this.url.link('common/home')
 		});
 
 		if ((this.request.get['route'])) {
-			url_data = this.request.get;
+			let url_data = this.request.get;
 
-			delete url_data['_route_']);
+			delete url_data['_route_'];
 
-			route = url_data['route'];
+			let route = url_data['route'];
 
-			delete url_data['route']);
+			delete url_data['route'];
 
-			url = '';
+			let url = '';
 
 			if (url_data) {
 				url = '&' + decodeURIComponent(http_build_query(url_data, '', '&'));
 			}
 
 			data['breadcrumbs'].push({
-				'text' : this.language.get('heading_title'),
-				'href' : await this.url.link(route, url, this.request.server['HTTPS'])
+				'text': this.language.get('heading_title'),
+				'href': await this.url.link(route, url, this.request.server['HTTPS'])
 			});
 		}
 

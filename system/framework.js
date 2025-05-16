@@ -3,7 +3,7 @@
 module.exports = class Framework {
     async init(application_config, req, res, next) {
         // Registry
-        global.registry = new Registry();
+        this.registry = new Registry();
         // Config
         const config = new Config();
         // Load the default config
@@ -14,16 +14,16 @@ module.exports = class Framework {
         // console.log('config--', config)
 
         // Set the default application
-        global.registry.set('config', config);
+        this.registry.set('config', config);
         // Set the default time zone
         const dateTimezone = config.get('date_timezone');
         Intl.DateTimeFormat().resolvedOptions().timeZone = dateTimezone;
         // Logging
         const log = new Log(config.get('error_filename'));
-        global.registry.set('log', log);
+        this.registry.set('log', log);
         // Event
-        const event = new global.Event(registry);
-        global.registry.set('event', event);
+        const event = new global.Event(this.registry);
+        this.registry.set('event', event);
         // Event Register
         if (config.has('action_event')) {
             const actionEvents = config.get('action_event');
@@ -36,11 +36,11 @@ module.exports = class Framework {
             }
         }
         // Loader
-        const loader = new Loader(registry);
-        global.registry.set('load', loader);
+        const loader = new Loader(this.registry);
+        this.registry.set('load', loader);
         // Request
         const request = new global.Request(req);
-        global.registry.set('request', request);
+        this.registry.set('request', request);
 
         // Response
         const response = new global.Response(res, req);
@@ -50,7 +50,7 @@ module.exports = class Framework {
         response.addHeader('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
         response.addHeader('Pragma: no-cache');
         response.setCompression(config.get('config_compression'));
-        global.registry.set('response', response);
+        this.registry.set('response', response);
         // Database
         // console.log("config.get('db_autostart')----", config.get('db_autostart'))
         if (config.get('db_autostart')) {
@@ -63,7 +63,7 @@ module.exports = class Framework {
             //     console.log('db connection error', e)
             // }
             // console.log('db=--=', db)
-            global.registry.set('db', db);
+            this.registry.set('db', db);
             // Set time zone
             const query = await db.query("SELECT * FROM " + DB_PREFIX + "setting WHERE `key` = 'config_timezone' AND store_id = '0'");
 
@@ -78,22 +78,22 @@ module.exports = class Framework {
         if (config.get('session_autostart')) {
             let session = new global.Session(req.session);
             session.start(req.sessionID)
-            global.registry.set('session', session);
+            this.registry.set('session', session);
 
         }
         // Cache
         const cache = new global.Cache(config.get('cache_engine'), config.get('cache_expire'));
-        global.registry.set('cache', cache);
+        this.registry.set('cache', cache);
         // Url
         if (config.get('url_autostart')) {
-            global.registry.set('url', new Url(config.get('site_url'), config.get('site_ssl')));
+            this.registry.set('url', new Url(config.get('site_url'), config.get('site_ssl')));
         }
         // Language
         const language = new Language(config.get('language_directory'));
-        global.registry.set('language', language);
+        this.registry.set('language', language);
 
         // Document
-        global.registry.set('document', new Document());
+        this.registry.set('document', new Document());
         // Config Autoload
         if (config.has('config_autoload')) {
             for (let value of config.get('config_autoload')) {
@@ -123,7 +123,7 @@ module.exports = class Framework {
             }
         }
         // Route
-        const route = new Router(registry);
+        const route = new Router(this.registry);
 
         // Pre Actions
         if (config.has('action_pre_action') && Array.isArray(config.get('action_pre_action'))) {
@@ -138,6 +138,7 @@ module.exports = class Framework {
         // console.log('outout')
 
         // await registry.get('cache').cleanUp()
+        global.registry = this.registry;
         return response.output();
     }
 }
