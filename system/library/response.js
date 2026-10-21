@@ -44,9 +44,10 @@ module.exports = class Response {
       return data;
     }
     let encoding;
-    if (this.request.headers['accept-encoding'].includes('gzip')) {
+    const acceptEncoding = this.request.headers['accept-encoding'] || '';
+    if (acceptEncoding.includes('gzip')) {
       encoding = 'gzip';
-    } else if (this.request.headers['accept-encoding'].includes('x-gzip')) {
+    } else if (acceptEncoding.includes('x-gzip')) {
       encoding = 'x-gzip';
     }
     if (!encoding || (level < -1 || level > 9)) {

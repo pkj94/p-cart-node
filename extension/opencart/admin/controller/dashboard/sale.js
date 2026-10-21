@@ -66,11 +66,11 @@ global['OpencartAdminControllerExtensionOpencartDashboardSale'] = class Sale ext
 		this.load.model('extension/opencart/report/sale', this);
 
 		const today = await this.model_extension_opencart_report_sale.getTotalSales({
-			filter_date_added: date('Y-m-d', new Date('-1 day'))
+			filter_date_added: date('Y-m-d', new Date(Date.now() - 86400000))
 		});
 
 		const yesterday = await this.model_extension_opencart_report_sale.getTotalSales({
-			filter_date_added:date('Y-m-d', new Date('-2 day'))
+			filter_date_added:date('Y-m-d', new Date(Date.now() - (2 * 86400000)))
 		});
 
 		const difference = today - yesterday;

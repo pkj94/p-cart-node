@@ -1,12 +1,12 @@
 const Framework = require('../system/framework');
+const context = require('../system/engine/context');
 
-module.exports = function (registry) {
-    const loadAdminControllers = async (req, res, next) => {
+module.exports = function (baseRegistry) {
+    // Each request gets its own registry and its own config.json globals (see system/engine/context.js)
+    const loadAdminControllers = (req, res, next) => context.run(context.loadConfig(__dirname + '/config.json'), () => handleAdmin(req, res, next));
+    const handleAdmin = async (req, res, next) => {
+        const registry = context.createRegistry(baseRegistry);
         const config = registry.get('config');
-        if (fs.readFileSync('./config.json').toString())
-            for (let [key, value] of Object.entries(require('./config.json'))) {
-                global[key] = value;
-            }
         // console.log('DIR_APPLICATION', typeof DIR_APPLICATION)
         if (typeof DIR_APPLICATION == 'undefined')
             return res.redirect('/install');
@@ -59,14 +59,13 @@ module.exports = function (registry) {
                 registry.get('log').write('JavaScript ' + errorType + ':  ' + error.toString());
             }
 
-            if (config.get('error_display')) {
-                res.status(200).send('<b>' + errorType + '</b>: ' + error.toString());
-            } else {
-                console.log(config.get('error_page'))
-                res.redirect(config.get('error_page'));
+            if (res.headersSent) {
+                return;
             }
-
-            return res.status(200).send(registry.get('response').outputData);
+            if (config.get('error_display')) {
+                return res.status(200).send('<b>' + errorType + '</b>: ' + error.toString());
+            }
+            return res.redirect(config.get('error_page'));
         });
     };
     // loadAdminControllers();

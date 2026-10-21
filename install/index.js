@@ -1,6 +1,13 @@
 const Framework = require('../system/framework');
-module.exports = function (registry) {
-    const loadInstall = async (req, res, next) => {
+const context = require('../system/engine/context');
+
+// Globals this handler sets; scoped per request (see system/engine/context.js)
+const INSTALL_GLOBALS = ['APPLICATION', 'HTTP_SERVER', 'HTTP_OPENCART', 'DIR_OPENCART', 'DIR_APPLICATION', 'DIR_SYSTEM', 'DIR_EXTENSION', 'DIR_IMAGE', 'DIR_STORAGE', 'DIR_LANGUAGE', 'DIR_TEMPLATE', 'DIR_CONFIG', 'DIR_CACHE', 'DIR_DOWNLOAD', 'DIR_LOGS', 'DIR_SESSION', 'DIR_UPLOAD'];
+
+module.exports = function (baseRegistry) {
+    const loadInstall = (req, res, next) => context.run(Object.fromEntries(INSTALL_GLOBALS.map(key => [key, undefined])), () => handleInstall(req, res, next));
+    const handleInstall = async (req, res, next) => {
+        const registry = context.createRegistry(baseRegistry);
         let protocol = req.protocol + '://';
         // APPLICATION
         global.APPLICATION = 'Install';

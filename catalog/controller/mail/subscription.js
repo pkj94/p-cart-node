@@ -1,3 +1,4 @@
+const strtotime = require('locutus/php/datetime/strtotime');
 module.exports = class Subscription extends global['OpencartSystemEngineController'] {
 	/**
 	 * @param string route
@@ -53,9 +54,9 @@ module.exports = class Subscription extends global['OpencartSystemEngineControll
 
 
 		if (subscription['trial_duration'] && subscription['trial_remaining']) {
-			date_next = date('Y-m-d', strtotime('+' + subscription['trial_cycle'] + ' ' + subscription['trial_frequency']));
+			date_next = date('Y-m-d', strtotime('+' + subscription['trial_cycle'] + ' ' + subscription['trial_frequency']) * 1000);
 		} else if (subscription['duration'] && subscription['remaining']) {
-			date_next = date('Y-m-d', strtotime('+' + subscription['cycle'] + ' ' + subscription['frequency']));
+			date_next = date('Y-m-d', strtotime('+' + subscription['cycle'] + ' ' + subscription['frequency']) * 1000);
 		}
 
 		// Subscription

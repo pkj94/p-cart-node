@@ -1,3 +1,4 @@
+const strtotime = require('locutus/php/datetime/strtotime');
 module.exports =class Gdpr extends global['OpencartSystemEngineModel'] {
 	/**
 	 * @param string code
@@ -57,7 +58,7 @@ module.exports =class Gdpr extends global['OpencartSystemEngineModel'] {
 	 * @return array
 	 */
 	async getExpires() {
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "gdpr` WHERE `status` = '2' AND DATE(`date_added`) <= DATE(" + this.db.escape(date('Y-m-d', strtotime('+' + this.config.get('config_gdpr_limit') + ' days'))) + ") ORDER BY `date_added` DESC");
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "gdpr` WHERE `status` = '2' AND DATE(`date_added`) <= DATE(" + this.db.escape(date('Y-m-d', strtotime('+' + this.config.get('config_gdpr_limit') + ' days') * 1000)) + ") ORDER BY `date_added` DESC");
 
 		return query.rows;
 	}

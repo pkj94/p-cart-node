@@ -243,7 +243,7 @@ module.exports = class Cart extends global['OpencartSystemEngineController'] {
 		this.load.model('catalog/product', this);
 
 		const product_info = await this.model_catalog_product.getProduct(product_id);
-		console.log(option,this.request.post['option'])
+		// console.log(option,this.request.post['option'])
 		if (product_info.product_id) {
 			// If variant get master product
 			if (product_info['master_id']) {

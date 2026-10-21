@@ -1,5 +1,6 @@
 const timeFun = require("locutus/php/datetime/time");
 const expressPath = require('path');
+
 module.exports = class MarketplaceMarketplaceController extends global['OpencartSystemEngineController'] {
 	/**
 	 * @return void

@@ -18,7 +18,7 @@ global.AppLoad = () => {
         installRoutes = require('./install');
     // boostrap all models
     // Start Optimize
-    console.log('installRoutes---', installRoutes)
+    // console.log('installRoutes---', installRoutes)
     const autoloader = new OpencartSystemEngineAutoloader();
     autoloader.register(`Opencart${getConfig('APPLICATION', 'admin')}`, getConfig('DIR_APPLICATION', 'admin'));
     autoloader.register(`Opencart${getConfig('APPLICATION')}`, getConfig('DIR_APPLICATION'));
@@ -85,7 +85,7 @@ if (app.get('env') === 'production') {
 }
 
 app.use(session(sess));
-useragent(true);
+
 app.use(fileUpload());
 //
 app.get('/ping', (req, res) => {

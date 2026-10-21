@@ -13,10 +13,11 @@ module.exports = class File {
         return null;
     }
 
-    set(key, value, expire = 0) {
+    set(key, value=null, expire = 0) {
         this.delete(key);
         expire = expire || this.expire;
         const filePath = DIR_CACHE + `cache.${this.sanitizeKey(key)}.${Date.now() + expire}`;
+        // console.log(`Setting cache for key: ${key}, filePath: ${filePath}`, value);
         fs.writeFileSync(filePath, JSON.stringify(value), 'utf-8');
     }
 

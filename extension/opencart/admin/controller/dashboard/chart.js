@@ -129,10 +129,10 @@ global['OpencartAdminControllerExtensionOpencartDashboardChart'] = class Chart e
 				}
 
 
-				date_start = new Date('-' + date('w') + ' days');
+				date_start = Date.now() - (date('w') * 86400000);
 
 				for (let i = 0; i < 7; i++) {
-					let dt = date('Y-m-d', date_start + (i * 86400));
+					let dt = date('Y-m-d', date_start + (i * 86400000));
 
 					json['xaxis'].push([date('w', new Date(dt)), date('D', new Date(dt))]);
 				}

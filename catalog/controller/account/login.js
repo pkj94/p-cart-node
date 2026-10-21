@@ -126,7 +126,7 @@ module.exports = class Login extends global['OpencartSystemEngineController'] {
 
 			const login_info = await this.model_account_customer.getLoginAttempts(this.request.post['email']);
 
-			if (login_info['total'] && (login_info['total'] >= this.config.get('config_login_attempts')) && new Date('-1 hour') < new Date(login_info['date_modified'])) {
+			if (login_info['total'] && (login_info['total'] >= this.config.get('config_login_attempts')) && new Date(Date.now() - 3600000) < new Date(login_info['date_modified'])) {
 				json['error']['warning'] = this.language.get('error_attempts');
 			}
 

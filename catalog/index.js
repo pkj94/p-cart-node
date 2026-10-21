@@ -1,12 +1,12 @@
 const Framework = require("../system/framework");
+const context = require('../system/engine/context');
 
-module.exports = function (registry) {
-    const loadControllers = async (req, res, next) => {
+module.exports = function (baseRegistry) {
+    // Each request gets its own registry and its own config.json globals (see system/engine/context.js)
+    const loadControllers = (req, res, next) => context.run(context.loadConfig(APPROOT + '/config.json'), () => handleCatalog(req, res, next));
+    const handleCatalog = async (req, res, next) => {
         // console.log(req.params)
-        if (fs.readFileSync(APPROOT + '/config.json').toString())
-            for (let [key, value] of Object.entries(require('../config.json'))) {
-                global[key] = value;
-            }
+        const registry = context.createRegistry(baseRegistry);
         const config = registry.get('config');
         // console.log('DIR_APPLICATION', typeof DIR_APPLICATION)
         if (typeof DIR_APPLICATION == 'undefined')
@@ -50,14 +50,13 @@ module.exports = function (registry) {
                 registry.get('log').write('JavaScript ' + errorType + ':  ' + error.toString());
             }
 
-            if (config.get('error_display')) {
-                res.status(200).send('<b>' + errorType + '</b>: ' + error.toString());
-            } else {
-                registry.get('log')(config.get('error_page'))
-                res.redirect(config.get('error_page'));
+            if (res.headersSent) {
+                return;
             }
-
-            return res.status(200).send(registry.get('response').outputData);
+            if (config.get('error_display')) {
+                return res.status(200).send('<b>' + errorType + '</b>: ' + error.toString());
+            }
+            return res.redirect(config.get('error_page'));
         });
     };
     // loadControllers();

@@ -91,9 +91,9 @@ global['OpencartAdminControllerExtensionOpencartDashboardOrder'] = class Order e
 		// Total Orders
 		this.load.model('sale/order', this);
 
-		let today = await this.model_sale_order.getTotalOrders({ 'filter_date_added': date('Y-m-d', new Date('-1 day')) });
+		let today = await this.model_sale_order.getTotalOrders({ 'filter_date_added': date('Y-m-d', new Date(Date.now() - 86400000)) });
 
-		let yesterday = await this.model_sale_order.getTotalOrders({ 'filter_date_added': date('Y-m-d', new Date('-2 day')) });
+		let yesterday = await this.model_sale_order.getTotalOrders({ 'filter_date_added': date('Y-m-d', new Date(Date.now() - (2 * 86400000))) });
 
 		let difference = today - yesterday;
 

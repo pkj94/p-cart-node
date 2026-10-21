@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon index.js --trace-deprecation",
+    "dev": "node --watch index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -19,41 +20,35 @@
   "homepage": "https://github.com/pkj94/p-cart-node#readme",
   "dependencies": {
     "adm-zip": "^0.5.16",
-    "async": "^3.2.5",
     "axios": "^1.7.7",
-    "bcrypt": "^5.1.1",
+    "bcrypt": "^6.0.0",
     "body-parser": "^1.20.2",
-    "canvas": "^2.11.2",
+    "canvas": "^3.2.0",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",
     "express": "^4.19.2",
     "express-fileupload": "^1.5.1",
-    "express-http-proxy": "^2.0.0",
     "express-session": "^1.18.0",
     "glob": "^11.0.0",
     "html-entities": "^2.5.2",
     "locutus": "^2.0.32",
-    "memcache": "^0.3.0",
     "memcached": "^2.2.2",
     "moment-timezone": "^0.5.46",
     "morgan": "^1.10.0",
-    "mustache": "^4.2.0",
-    "mysql": "^2.18.1",
+    "mysql2": "^3.24.6",
     "node-cache": "^5.1.2",
     "nodemailer": "^6.9.14",
     "pg": "^8.13.0",
     "php-date-format": "^1.0.7",
     "redis": "^4.7.0",
-    "request": "^2.88.2",
-    "require-all": "^3.0.0",
     "sass": "^1.77.6",
-    "sharp": "^0.33.5",
+    "sharp": "^0.34.4",
     "sharp-ico": "^0.1.5",
-    "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-express": "^5.0.1",
     "twig": "^1.17.1",
     "useragent": "^2.3.0",
-    "utf8": "^3.0.0",
-    "yamlparser": "^0.0.2"
+    "utf8": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
   }
 }

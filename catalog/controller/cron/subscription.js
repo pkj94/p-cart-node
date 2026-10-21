@@ -386,9 +386,9 @@ module.exports = class Subscription extends global['OpencartSystemEngineControll
 				/*
 				if (product['subscription']) {
 					if (product['subscription']['trial_duration'] && product['subscription']['trial_remaining']) {
-						date_next = date('Y-m-d', strtotime('+' + product['subscription']['trial_cycle'] + ' ' + product['subscription']['trial_frequency']));
+						date_next = date('Y-m-d', strtotime('+' + product['subscription']['trial_cycle'] + ' ' + product['subscription']['trial_frequency']) * 1000);
 					} else if (product['subscription']['duration'] && product['subscription']['remaining']) {
-						date_next = date('Y-m-d', strtotime('+' + product['subscription']['cycle'] + ' ' + product['subscription']['frequency']));
+						date_next = date('Y-m-d', strtotime('+' + product['subscription']['cycle'] + ' ' + product['subscription']['frequency']) * 1000);
 					}
 
 					subscription_data = [
@@ -411,11 +411,11 @@ module.exports = class Subscription extends global['OpencartSystemEngineControll
 				*/
 				// Transaction
 				if (this.config.get('config_subscription_active_status_id') == subscription_status_id) {
-					let date_next = date('Y-m-d', strtotime('+' + result['cycle'] + ' ' + result['frequency']));
+					let date_next = date('Y-m-d', strtotime('+' + result['cycle'] + ' ' + result['frequency']) * 1000);
 					if (result['trial_duration'] && result['trial_remaining']) {
-						date_next = date('Y-m-d', strtotime('+' + result['trial_cycle'] + ' ' + result['trial_frequency']));
+						date_next = date('Y-m-d', strtotime('+' + result['trial_cycle'] + ' ' + result['trial_frequency']) * 1000);
 					} else if (result['duration'] && result['remaining']) {
-						date_next = date('Y-m-d', strtotime('+' + result['cycle'] + ' ' + result['frequency']));
+						date_next = date('Y-m-d', strtotime('+' + result['cycle'] + ' ' + result['frequency']) * 1000);
 					}
 
 					let filter_data = {

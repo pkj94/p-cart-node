@@ -70,10 +70,10 @@ global['OpencartAdminModelExtensionOpencartReportSale'] = class Sale extends glo
 
 		let order_data = {};
 
-		let date_start = new Date('-' + date('w') + ' days');
+		let date_start = Date.now() - (date('w') * 86400000);
 
 		for (let i = 0; i < 7; i++) {
-			let dt = date('Y-m-d', date_start + (i * 86400));
+			let dt = date('Y-m-d', date_start + (i * 86400000));
 
 			order_data[date('w', new Date(dt))] = {
 				'day': date('D', new Date(dt)),

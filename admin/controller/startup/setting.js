@@ -18,9 +18,7 @@ module.exports = class SettingController extends global['OpencartSystemEngineCon
 		// Set time zone
 		if (this.config.get('config_timezone')) {
 			process.env.TZ = this.config.get('config_timezone');
-
-			// Sync PHP and DB time zones.
-			await this.db.query(`SET time_zone = '${date('P')}'`);
+			// The DB driver syncs each connection's time_zone to this before every query
 		}
 
 		// Response output compression level

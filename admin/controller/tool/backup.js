@@ -1,6 +1,7 @@
 
 const sprintf = require('locutus/php/strings/sprintf');
 const expressPath = require('path');
+
 module.exports = class BackupController extends global['OpencartSystemEngineController'] {
 	/**
 	 * @return void

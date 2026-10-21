@@ -1,4 +1,3 @@
-const strtotime = require("locutus/php/datetime/strtotime");
 const uniqid = require("locutus/php/misc/uniqid");
 const sprintf = require("locutus/php/strings/sprintf");
 

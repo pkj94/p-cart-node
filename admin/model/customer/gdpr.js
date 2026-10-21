@@ -1,5 +1,3 @@
-const strtotime = require("locutus/php/datetime/strtotime");
-
 module.exports = class GdprModel extends global['OpencartSystemEngineModel'] {
 	constructor(registry) {
 		super(registry)

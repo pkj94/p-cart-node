@@ -49,7 +49,8 @@ module.exports = class Session extends global['OpencartSystemEngineController'] 
 		// session.start(session_id);
 
 		let option = {
-			'expires': new Date(Date.now() + (parseInt(this.config.get('config_session_expire')) * 1000)),
+			// cookie@0.7+ (express 4.21+) throws on an Invalid Date, so fall back when the setting is empty
+			'expires': new Date(Date.now() + ((parseInt(this.config.get('config_session_expire')) || parseInt(this.config.get('session_expire')) || 86400) * 1000)),
 			'path': this.config.get('session_path'),
 			'secure': this.request.server['protocol'].toLowerCase() == 'https' ? true : false,
 			'httponly': false,
