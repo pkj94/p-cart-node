@@ -34,17 +34,17 @@ global['OpencartCatalogControllerExtensionOpencartModuleFeatured'] = class Featu
 				if (product['image']) {
 					image = await this.model_tool_image.resize(html_entity_decode(product['image']), setting['width'], setting['height']);
 				}
-				let price = false;
+				let price = 0;
 				if (await this.customer.isLogged() || !Number(this.config.get('config_customer_price'))) {
 					price = this.currency.format(this.tax.calculate(product['price'], product['tax_class_id'], Number(this.config.get('config_tax'))), this.session.data['currency']);
 				}
-				let special = false;
-				if (product['special']) {
+				let special = 0;
+				if (product['special'] && product['special'] != null) {
 					special = this.currency.format(this.tax.calculate(product['special'], product['tax_class_id'], Number(this.config.get('config_tax'))), this.session.data['currency']);
 				}
-				let tax = false;
+				let tax = 0;
 				if (Number(this.config.get('config_tax'))) {
-					tax = this.currency.format(product['special'] ? product['special'] : product['price'], this.session.data['currency']);
+					tax = this.currency.format(product['special'] && product['special'] != null ? product['special'] : product['price'], this.session.data['currency']);
 				}
 
 				let product_data = {
@@ -59,7 +59,6 @@ global['OpencartCatalogControllerExtensionOpencartModuleFeatured'] = class Featu
 					'rating': product['rating'],
 					'href': await this.url.link('product/product', 'language=' + this.config.get('config_language') + '&product_id=' + product['product_id'])
 				};
-
 				data['products'].push(await this.load.controller('product/thumb', product_data));
 			}
 		}

@@ -134,18 +134,18 @@ module.exports = class TaxLibrary {
         const tax_rate_data = {};
         if (this.tax_rates[tax_class_id]) {
             for (const tax_rate of Object.values(this.tax_rates[tax_class_id])) {
-                let amount = tax_rate_data[tax_rate.tax_rate_id] ? tax_rate_data[tax_rate.tax_rate_id].amount : 0;
+                let amount = tax_rate_data[tax_rate.tax_rate_id] ? Number(tax_rate_data[tax_rate.tax_rate_id].amount) : 0;
 
                 if (tax_rate.type === 'F') {
-                    amount = amount + tax_rate.rate;
+                    amount = amount + Number(tax_rate.rate);
                 } else if (tax_rate.type === 'P') {
-                    amount = amount + (value / 100 * tax_rate.rate);
+                    amount = amount + (value / 100 * Number(tax_rate.rate));
                 }
 
                 tax_rate_data[tax_rate.tax_rate_id] = {
                     tax_rate_id: tax_rate.tax_rate_id,
                     name: tax_rate.name,
-                    rate: tax_rate.rate,
+                    rate: Number(tax_rate.rate),
                     type: tax_rate.type,
                     amount: amount
                 };

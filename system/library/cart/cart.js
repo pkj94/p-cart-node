@@ -172,7 +172,7 @@ module.exports = class Cart {
                         }
                     }
 
-                    let price = product_query.row['price'];
+                    let price = Number(product_query.row['price']);
 
                     // Product Discounts
                     let discount_quantity = 0;
@@ -253,7 +253,7 @@ module.exports = class Cart {
                             'trial_duration': subscription_query.row['trial_duration'],
                             'trial_remaining': subscription_query.row['trial_duration'],
                             'trial_status': subscription_query.row['trial_status'],
-                            'price': subscription_query.row['price'],
+                            'price': Number(subscription_query.row['price']),
                             'frequency': subscription_query.row['frequency'],
                             'cycle': subscription_query.row['cycle'],
                             'duration': subscription_query.row['duration'],

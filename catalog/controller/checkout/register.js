@@ -168,7 +168,7 @@ module.exports = class Register extends global['OpencartSystemEngineController']
 
 		const json = {};
 
-		keys = [
+		const keys = [
 			'account',
 			'customer_group_id',
 			'firstname',
@@ -216,15 +216,16 @@ module.exports = class Register extends global['OpencartSystemEngineController']
 
 		// Validate minimum quantity requirements+
 		let products = await this.cart.getProducts();
-
-		for (let product of products) {
+		// console.log(Object.values(products));
+		for (let product of Object.values(products)) {
 			if (!product['minimum']) {
 				json['redirect'] = await this.url.link('checkout/cart', 'language=' + this.config.get('config_language'), true);
 
 				break;
 			}
 		}
-
+		let customer_group_id = 0;
+		let customer_data = {};
 		if (!Object.keys(json).length) {
 			// If not guest checkout disabled, login require price or cart has downloads
 			if (!this.request.post['account'] && (!this.config.get('config_checkout_guest') || Number(this.config.get('config_customer_price')))) {
@@ -232,6 +233,7 @@ module.exports = class Register extends global['OpencartSystemEngineController']
 			}
 
 			// Customer Group
+
 			if (this.request.post['customer_group_id']) {
 				customer_group_id = this.request.post['customer_group_id'];
 			} else {
@@ -242,7 +244,7 @@ module.exports = class Register extends global['OpencartSystemEngineController']
 
 			const customer_group_info = await this.model_account_customer_group.getCustomerGroup(customer_group_id);
 
-			if (!customer_group_info || !in_array(customer_group_id, this.config.get('config_customer_group_display'))) {
+			if (!customer_group_info || this.config.get('config_customer_group_display').indexOf(customer_group_id) === -1) {
 				json['error']['warning'] = this.language.get('error_customer_group');
 			}
 
@@ -254,7 +256,7 @@ module.exports = class Register extends global['OpencartSystemEngineController']
 				json['error']['lastname'] = this.language.get('error_lastname');
 			}
 
-			if ((oc_strlen(this.request.post['email']) > 96) || !filter_var(this.request.post['email'], FILTER_VALIDATE_EMAIL)) {
+			if ((oc_strlen(this.request.post['email']) > 96) || !isEmailValid(this.request.post['email'])) {
 				json['error']['email'] = this.language.get('error_email');
 			}
 
@@ -398,7 +400,7 @@ module.exports = class Register extends global['OpencartSystemEngineController']
 			if (!await this.customer.isLogged()) {
 				const extension_info = await this.model_setting_extension.getExtensionByCode('captcha', this.config.get('config_captcha'));
 
-				if (extension_info && Number(this.config.get('captcha_' + this.config.get('config_captcha') + '_status')) && in_array('register', this.config.get('config_captcha_page'))) {
+				if (extension_info && Number(this.config.get('captcha_' + this.config.get('config_captcha') + '_status')) && this.config.get('config_captcha_page').indexOf('register') !== -1) {
 					const captcha = await this.load.controller('extension/' + extension_info['extension'] + '/captcha/' + extension_info['code'] + '.validate');
 
 					if (captcha) {
