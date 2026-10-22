@@ -60,7 +60,7 @@ module.exports = class Blog extends global['OpencartSystemEngineController'] {
 
 		topic_info = await this.model_cms_topic.getTopic(topic_id);
 
-		if (topic_info) {
+		if (topic_info && topic_info.topic_id) {
 			let url = '';
 
 			if ((this.request.get['search'])) {
@@ -87,13 +87,13 @@ module.exports = class Blog extends global['OpencartSystemEngineController'] {
 
 		this.load.model('tool/image', this);
 
-		if (topic_info && is_file(DIR_IMAGE + html_entity_decode(topic_info['image']))) {
+		if (topic_info && topic_info.topic_id && is_file(DIR_IMAGE + html_entity_decode(topic_info['image']))) {
 			data['thumb'] = await this.model_tool_image.resize(html_entity_decode(topic_info['image']), this.config.get('config_image_blog_width'), this.config.get('config_image_blog_height'));
 		} else {
 			data['thumb'] = '';
 		}
 
-		if (topic_info) {
+		if (topic_info && topic_info.topic_id) {
 			this.document.setTitle(topic_info['meta_title']);
 			this.document.setDescription(topic_info['meta_description']);
 			this.document.setKeywords(topic_info['meta_keyword']);
@@ -105,7 +105,7 @@ module.exports = class Blog extends global['OpencartSystemEngineController'] {
 			data['heading_title'] = this.language.get('heading_title');
 		}
 
-		if (topic_info) {
+		if (topic_info && topic_info.topic_id) {
 			data['description'] = html_entity_decode(topic_info['description']);
 		} else {
 			data['description'] = '';
@@ -271,7 +271,7 @@ module.exports = class Blog extends global['OpencartSystemEngineController'] {
 
 			topic_info = await this.model_cms_topic.getTopic(topic_id);
 
-			if (topic_info) {
+			if (topic_info && topic_info.topic_id) {
 				data['breadcrumbs'].push({
 					'text': topic_info['name'],
 					'href': await this.url.link('cms/article', 'language=' + this.config.get('config_language') + url)

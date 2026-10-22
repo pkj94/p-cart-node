@@ -4,6 +4,10 @@ module.exports = {
 
     // Text
     text_blog: 'Blog',
+    text_all: 'All Topics',
+    text_search: 'Search',
+    text_refine: 'Topics',
+    text_no_articles: 'There are no articles to list.',
     text_comments: '%s comments',
     text_write: 'Write a comment',
     text_login: 'Please <a href="%s">login</a> or <a href="%s">register</a> to comment',
