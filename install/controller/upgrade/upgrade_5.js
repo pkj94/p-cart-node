@@ -228,7 +228,7 @@ module.exports = class Upgrade5 extends global['OpencartSystemEngineController']
 				'action': 'event/currency'
 			});
 
-			for (events of event) {
+			for (let event of events) {
 				query = this.db.query("SELECT * FROM `" + DB_PREFIX + "event` WHERE `code` = " + this.db.escape(event['code']));
 
 				if (!query.num_rows) {

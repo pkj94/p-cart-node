@@ -558,7 +558,7 @@ module.exports = class CustomerController extends global['OpencartSystemEngineCo
 		}
 
 		if ((customer_info)) {
-			data['account_custom_field'] = JSON.parse(customer_info['custom_field']||'{}', true);
+			data['account_custom_field'] = oc_json_decode(customer_info['custom_field'], {});
 		} else {
 			data['account_custom_field'] = [];
 		}
@@ -1291,7 +1291,7 @@ module.exports = class CustomerController extends global['OpencartSystemEngineCo
 					'lastname': result['lastname'],
 					'email': result['email'],
 					'telephone': result['telephone'],
-					'custom_field': JSON.parse(result['custom_field'], true),
+					'custom_field': oc_json_decode(result['custom_field'], {}),
 					'address': this.model_customer_customer.getAddresses(result['customer_id'])
 				});
 			}

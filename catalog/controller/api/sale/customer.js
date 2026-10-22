@@ -8,7 +8,7 @@ module.exports = class Customer extends global['OpencartSystemEngineController']
 
 		const json = {};
 
-		keys = [
+		let keys = [
 			'customer_id',
 			'customer_group_id',
 			'firstname',
@@ -61,7 +61,7 @@ module.exports = class Customer extends global['OpencartSystemEngineController']
 			json['error']['lastname'] = this.language.get('error_lastname');
 		}
 
-		if ((oc_strlen(this.request.post['email']) > 96) || !filter_var(this.request.post['email'], FILTER_VALIDATE_EMAIL)) {
+		if ((oc_strlen(this.request.post['email']) > 96) || !isEmailValid(this.request.post['email'])) {
 			json['error'] = json['error'] || {};
 			json['error']['email'] = this.language.get('error_email');
 		}

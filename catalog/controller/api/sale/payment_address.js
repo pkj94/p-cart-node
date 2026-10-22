@@ -9,7 +9,7 @@ module.exports = class PaymentAddress extends global['OpencartSystemEngineContro
 		const json = {};
 
 		// Add keys for missing post vars
-		keys = [
+		let keys = [
 			'firstname',
 			'lastname',
 			'company',

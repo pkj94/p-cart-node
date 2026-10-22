@@ -1,7 +1,4 @@
-// Error reporting
-process.on('uncaughtException', (err) => {
-    console.error('There was an uncaught error', err);
-});
+// Error reporting: process-wide handlers are registered once in index.js
 
 // Check PHP version equivalent in Node.js (we'll just note the version)
 // console.log(`Node.js version: ${process.version}`);

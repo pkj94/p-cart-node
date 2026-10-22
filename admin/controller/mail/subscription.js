@@ -45,7 +45,7 @@ module.exports = class SubscriptionController extends global['OpencartSystemEngi
         const subscriptions = await this.model_checkout_subscription.getSubscriptions(filter_data);
 
         if (subscriptions) {
-            for (subscriptions of subscription) {
+            for (let subscription of subscriptions) {
                 // Subscription histories
                 const history_total = await this.model_sale_subscription.getTotalHistoriesBySubscriptionStatusId(subscription_status_id);
 
@@ -215,7 +215,7 @@ module.exports = class SubscriptionController extends global['OpencartSystemEngi
         const subscriptions = await this.model_checkout_subscription.getSubscriptions(filter_data);
 
         if (subscriptions) {
-            for (subscriptions of subscription) {
+            for (let subscription of subscriptions) {
                 const transaction_total = await this.model_sale_subscription.getTotalTransactions(subscription_id);
 
                 if (transaction_total) {

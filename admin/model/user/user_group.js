@@ -99,7 +99,7 @@ module.exports = class UserGroupUserModel extends global['OpencartSystemEngineMo
 		const user_group_query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "user_group` WHERE `user_group_id` = " + this.db.quote(user_group_id));
 
 		if (user_group_query.num_rows) {
-			let data = JSON.parse(user_group_query.row['permission']);
+			let data = oc_json_decode(user_group_query.row['permission'], { 'access': [], 'modify': [] });
 			data[type] = data[type] || [];
 			data[type].push(route);
 
@@ -118,7 +118,7 @@ module.exports = class UserGroupUserModel extends global['OpencartSystemEngineMo
 		const user_group_query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "user_group` WHERE `user_group_id` = " + this.db.quote(user_group_id));
 
 		if (user_group_query.num_rows) {
-			let data = JSON.parse(user_group_query.row['permission'], true);
+			let data = oc_json_decode(user_group_query.row['permission'], { 'access': [], 'modify': [] });
 
 			if ((data[type])) {
 				data[type] = array_diff(data[type], [route]);

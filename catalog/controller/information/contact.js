@@ -115,7 +115,7 @@ module.exports = class Contact extends global['OpencartSystemEngineController'] 
 			json['error']['name'] = this.language.get('error_name');
 		}
 
-		if (!filter_var(this.request.post['email'], FILTER_VALIDATE_EMAIL)) {
+		if (!isEmailValid(this.request.post['email'])) {
 			json['error']['email'] = this.language.get('error_email');
 		}
 

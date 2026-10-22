@@ -637,7 +637,7 @@ module.exports = class AffiliateController extends global['OpencartSystemEngineC
 		}
 
 		if (affiliate_info.customer_id) {
-			data['affiliate_custom_field'] = JSON.parse(affiliate_info['custom_field']);
+			data['affiliate_custom_field'] = oc_json_decode(affiliate_info['custom_field'], {});
 		} else {
 			data['affiliate_custom_field'] = [];
 		}

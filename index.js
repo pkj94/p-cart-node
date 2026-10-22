@@ -68,7 +68,6 @@ global.AppLoad = () => {
 
 }
 
-process.setMaxListeners(100)
 var compression = require('compression')
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
@@ -248,16 +247,34 @@ const server = app.listen(port, () => {
     console.warn("Application is running on the port:" + port);
 });
 
+// Process-wide errors go to the console and to system/storage/logs/error.log (same format as the
+// request error log), with the stack so the file and line are known
+const writeErrorLog = (text) => {
+    try {
+        const dir = getConfig('DIR_LOGS') || __dirname + '/system/storage/logs/';
+        fs.mkdirSync(dir, { recursive: true });
+        fs.appendFileSync(dir + 'error.log', new Date().toISOString().replace('T', ' ').slice(0, 19) + ' - ' + text + '\n');
+    } catch (e) {
+        console.error('Could not write error log:', e.message);
+    }
+};
+
 // A rejected promise nobody handled: log it and keep serving other requests
 process.on('unhandledRejection', (reason) => {
     console.error('Unhandled promise rejection:', reason);
+    writeErrorLog('Node.js Unhandled rejection: ' + (reason && reason.stack ? reason.stack : String(reason)));
 });
 
 // An exception outside any request handler leaves the process in an unknown state: log it and
 // exit, so PM2 (or nodemon) starts a clean process
 process.on('uncaughtException', (error) => {
     console.error('Uncaught exception:', error);
+    writeErrorLog('Node.js Uncaught exception: ' + (error && error.stack ? error.stack : String(error)));
     shutdown('uncaughtException', 1);
+});
+
+process.on('warning', (warning) => {
+    writeErrorLog('Node.js Warning: ' + warning.name + ': ' + warning.message);
 });
 
 // Graceful shutdown: stop accepting connections, let running requests finish (max 10s), then exit

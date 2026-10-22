@@ -24,6 +24,28 @@ global.oc_strtoupper = (string) => {
 global.oc_strtolower = (string) => {
     return String(string ?? '').toLowerCase();
 }
+// JSON stored in the database (custom_field, permission, setting, ...). Empty or broken values
+// give fallback instead of throwing "Unexpected end of JSON input"; already-parsed values pass through.
+global.oc_json_decode = (value, fallback = {}) => {
+    if (value === null || value === undefined || value === '') {
+        return fallback;
+    }
+    if (typeof value !== 'string') {
+        return value;
+    }
+    try {
+        return JSON.parse(value);
+    } catch (e) {
+        return fallback;
+    }
+}
+// PHP in_array(): loose (==) comparison against the values of an array or object
+global.in_array = (needle, haystack, strict = false) => {
+    if (!haystack || typeof haystack !== 'object') {
+        return false;
+    }
+    return Object.values(haystack).some(value => strict ? value === needle : value == needle);
+}
 // Other
 global.oc_token = (length = 32) => {
     return crypto.randomBytes(Math.ceil(length / 2))

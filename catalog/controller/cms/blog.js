@@ -373,7 +373,7 @@ module.exports = class Blog extends global['OpencartSystemEngineController'] {
 			json['error']['warning'] = this.language.get('error_token');
 		}
 
-		keys = [
+		let keys = [
 			'comment',
 			'author'
 		];

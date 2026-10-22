@@ -62,7 +62,7 @@ module.exports = class ModuleController extends global['OpencartSystemEngineCont
 				for (let module of modules) {
 					let setting_info = {};
 					if (module['setting']) {
-						setting_info = JSON.parse(module['setting']);
+						setting_info = oc_json_decode(module['setting'], {});
 					}
 
 					module_data.push({

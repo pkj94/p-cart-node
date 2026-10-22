@@ -11,7 +11,7 @@ module.exports = class SettingController extends global['OpencartSystemEngineCon
 			if (!result.serialized) {
 				this.config.set(result.key, result.value);
 			} else {
-				this.config.set(result.key, JSON.parse(result.value));
+				this.config.set(result.key, oc_json_decode(result.value, []));
 			}
 		});
 

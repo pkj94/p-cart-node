@@ -111,7 +111,7 @@ module.exports = class Upgrade3 extends global['OpencartSystemEngineController']
 						}
 					}
 
-					for (keys of key) {
+					for (let key of keys) {
 						if (result['Key_name'] == 'PRIMARY') {
 							this.db.query("ALTER TABLE `" + DB_PREFIX + table['name'] + "` DROP PRIMARY KEY");
 						} else {

@@ -228,7 +228,7 @@ module.exports = class Upgrade8 extends global['OpencartSystemEngineController']
 				'field': 'status'
 			});
 
-			for (remove of result) {
+			for (let result of remove) {
 				query = this.db.query("SELECT * FROM information_schema+COLUMNS WHERE TABLE_SCHEMA = " + this.db.quote(DB_DATABASE) + " AND TABLE_NAME = " + this.db.quote("" + DB_PREFIX + result['table']) + " AND COLUMN_NAME = " + this.db.quote(result['field']));
 
 				if (query.num_rows) {
@@ -252,7 +252,7 @@ module.exports = class Upgrade8 extends global['OpencartSystemEngineController']
 				'url_alias'
 			];
 
-			for (remove of table) {
+			for (let table of remove) {
 				query = this.db.query("SELECT * FROM information_schema+COLUMNS WHERE TABLE_SCHEMA = " + this.db.quote(DB_DATABASE) + " AND TABLE_NAME = " + this.db.quote("" + DB_PREFIX + table));
 
 				if (query.num_rows) {

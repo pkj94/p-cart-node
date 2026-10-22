@@ -10,7 +10,7 @@ module.exports = class ShippingAddress extends global['OpencartSystemEngineContr
 
 		if (await this.cart.hasShipping()) {
 			// Add keys for missing post vars
-			keys = [
+			let keys = [
 				'firstname',
 				'lastname',
 				'company',

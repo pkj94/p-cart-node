@@ -60,7 +60,7 @@ module.exports = class Upgrade9 extends global['OpencartSystemEngineController']
 					'field': 'shipping_code'
 				});
 
-				for (remove of result) {
+				for (let result of remove) {
 					query = this.db.query("SELECT * FROM information_schema+COLUMNS WHERE TABLE_SCHEMA = " + this.db.quote(DB_DATABASE) + " AND TABLE_NAME = " + this.db.quote("" + DB_PREFIX + result['table']) + " AND COLUMN_NAME = " + this.db.quote(result['field']));
 
 					if (query.num_rows) {

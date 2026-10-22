@@ -65,7 +65,7 @@ module.exports = class Edit extends global['OpencartSystemEngineController'] {
 		}
 
 		if ((customer_info.custom_field)) {
-			data['account_custom_field'] = JSON.parse(customer_info['custom_field']);
+			data['account_custom_field'] = oc_json_decode(customer_info['custom_field'], {});
 		} else {
 			data['account_custom_field'] = {};
 		}

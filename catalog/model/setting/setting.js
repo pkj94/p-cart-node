@@ -24,7 +24,7 @@ module.exports = class Setting extends global['OpencartSystemEngineModel'] {
 			if (!result['serialized']) {
 				setting_data[result['key']] = result['value'];
 			} else {
-				setting_data[result['key']] = JSON.parse(result['value'], true);
+				setting_data[result['key']] = oc_json_decode(result['value'], []);
 			}
 		}
 

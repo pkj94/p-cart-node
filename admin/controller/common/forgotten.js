@@ -46,9 +46,9 @@ module.exports = class ForgottenController extends global['OpencartSystemEngineC
 			json['redirect'] = await this.url.link('common/login', '', true);
 		}
 
-		keys = ['email'];
+		let keys = ['email'];
 
-		for (keys of key) {
+		for (let key of keys) {
 			if (!(this.request.post[key])) {
 				this.request.post[key] = '';
 			}
@@ -150,7 +150,7 @@ module.exports = class ForgottenController extends global['OpencartSystemEngineC
 			'confirm'
 		];
 
-		for (keys of key) {
+		for (let key of keys) {
 			if (!(this.request.post[key])) {
 				this.request.post[key] = '';
 			}

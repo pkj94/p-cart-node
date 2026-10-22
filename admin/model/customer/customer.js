@@ -271,7 +271,7 @@ module.exports = class CustomerCustomerModel extends global['OpencartSystemEngin
 				'iso_code_2': iso_code_2,
 				'iso_code_3': iso_code_3,
 				'address_format': address_format,
-				'custom_field': JSON.parse(address_query.row['custom_field']),
+				'custom_field': oc_json_decode(address_query.row['custom_field'], {}),
 				'default': address_query.row['default']
 			};
 		}

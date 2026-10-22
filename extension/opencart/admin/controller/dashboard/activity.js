@@ -78,7 +78,7 @@ global['OpencartAdminControllerExtensionOpencartDashboardActivity'] = class Acti
 
 		const results = await this.model_extension_opencart_report_activity.getActivities();
 		results.forEach(async (result) => {
-			const comment = vsprintf(this.language.get('text_activity_' + result.key), JSON.parse(result.data));
+			const comment = vsprintf(this.language.get('text_activity_' + result.key), oc_json_decode(result.data, []));
 
 			const find = [
 				'customer_id=',

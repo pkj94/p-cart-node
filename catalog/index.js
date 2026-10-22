@@ -42,19 +42,22 @@ module.exports = function (baseRegistry) {
                     errorType = 'Fatal Error';
                     break;
                 default:
-                    errorType = 'Unknown';
+                    // TypeError, ReferenceError, ...
+                    errorType = error.name || 'Error';
                     break;
             }
 
             if (config.get('error_log')) {
-                registry.get('log').write('JavaScript ' + errorType + ':  ' + error.toString());
+                // Message, URL and the top of the stack, so the entry shows where it happened
+                const stack = String(error.stack || '').split('\n').slice(1, 6).map(line => '    ' + line.trim()).join('\n');
+                registry.get('log').write('JavaScript ' + errorType + ': ' + error.message + '\n    URL: ' + req.method + ' ' + req.originalUrl + (stack ? '\n' + stack : ''));
             }
 
             if (res.headersSent) {
                 return;
             }
             if (config.get('error_display')) {
-                return res.status(200).send('<b>' + errorType + '</b>: ' + error.toString());
+                return res.status(500).send('<b>' + errorType + '</b>: ' + error.toString());
             }
             return res.redirect(config.get('error_page'));
         });

@@ -41,7 +41,7 @@ module.exports = class ModuleSettingModel extends global['OpencartSystemEngineMo
 		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "module` WHERE `module_id` = " + this.db.quote(module_id));
 
 		if (query.row) {
-			return JSON.parse(query.row['setting']);
+			return oc_json_decode(query.row['setting'], {});
 		} else {
 			return {};
 		}

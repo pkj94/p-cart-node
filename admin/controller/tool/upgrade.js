@@ -155,7 +155,7 @@ module.exports = class UpgradeController extends global['OpencartSystemEngineCon
 							// Must not have a path before files and directories can be moved
 							directories = explode('/', dirname(destination));
 
-							for (directories of directory) {
+							for (let directory of directories) {
 								if (!path) {
 									path = directory;
 								} else {

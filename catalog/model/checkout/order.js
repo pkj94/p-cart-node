@@ -207,10 +207,10 @@ module.exports = class Order extends global['OpencartSystemEngineModel'] {
 
 				// order_data[column + '_custom_field'] = JSON.parse(order_query.row[column + '_custom_field']);
 
-				order_data[column + '_custom_field'] = JSON.parse(order_query.row[column + '_custom_field']);
+				order_data[column + '_custom_field'] = oc_json_decode(order_query.row[column + '_custom_field'], {});
 
 				// Payment and shipping method details
-				order_data[column + '_method'] = JSON.parse(order_query.row[column + '_method']);
+				order_data[column + '_method'] = oc_json_decode(order_query.row[column + '_method'], {});
 			}
 
 			return order_data;

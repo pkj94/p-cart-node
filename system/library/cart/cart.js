@@ -18,7 +18,7 @@ module.exports = class Cart {
 
             for (let cart of cart_query.rows) {
                 await this.db.query(`DELETE FROM \`${DB_PREFIX}cart\` WHERE cart_id = ${this.db.quote(cart.cart_id)}`);
-                await this.add(cart.product_id, cart.quantity, JSON.parse(cart.option), cart.subscription_plan_id, cart.override, cart.price);
+                await this.add(cart.product_id, cart.quantity, oc_json_decode(cart.option, {}), cart.subscription_plan_id, cart.override, cart.price);
             }
         }
 

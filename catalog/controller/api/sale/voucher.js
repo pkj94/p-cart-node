@@ -50,7 +50,7 @@ module.exports = class Voucher extends global['OpencartSystemEngineController'] 
 		const json = {};
 
 		// Add keys for missing post vars
-		keys = [
+		let keys = [
 			'from_name',
 			'from_email',
 			'to_name',
@@ -72,7 +72,7 @@ module.exports = class Voucher extends global['OpencartSystemEngineController'] 
 			json['error']['from_name'] = this.language.get('error_from_name');
 		}
 
-		if ((oc_strlen(this.request.post['from_email']) > 96) || !filter_var(this.request.post['from_email'], FILTER_VALIDATE_EMAIL)) {
+		if ((oc_strlen(this.request.post['from_email']) > 96) || !isEmailValid(this.request.post['from_email'])) {
 			json['error'] = json['error'] || {};
 			json['error']['from_email'] = this.language.get('error_email');
 		}
@@ -82,7 +82,7 @@ module.exports = class Voucher extends global['OpencartSystemEngineController'] 
 			json['error']['to_name'] = this.language.get('error_to_name');
 		}
 
-		if ((oc_strlen(this.request.post['to_email']) > 96) || !filter_var(this.request.post['to_email'], FILTER_VALIDATE_EMAIL)) {
+		if ((oc_strlen(this.request.post['to_email']) > 96) || !isEmailValid(this.request.post['to_email'])) {
 			json['error'] = json['error'] || {};
 			json['error']['to_email'] = this.language.get('error_email');
 		}

@@ -632,7 +632,7 @@ module.exports = class OrderController extends global['OpencartSystemEngineContr
 
 			const options = await this.model_sale_order.getOptions(order_id, product['order_product_id']);
 
-			for (options of option) {
+			for (let option of options) {
 				if (option['type'] != 'file') {
 					option_data.push({
 						'name': option['name'],
@@ -1087,7 +1087,7 @@ module.exports = class OrderController extends global['OpencartSystemEngineContr
 		if ((order_info)) {
 			const totals = await this.model_sale_order.getTotals(order_id);
 
-			for (totals of total) {
+			for (let total of totals) {
 				data['order_totals'].push({
 					'title': total['title'],
 					'text': this.currency.format(total['value'], order_info?.['currency_code'], order_info?.['currency_value'])
@@ -1280,7 +1280,7 @@ module.exports = class OrderController extends global['OpencartSystemEngineContr
 			orders.push(this.request.get['order_id']);
 		}
 
-		for (orders of order_id) {
+		for (let order_id of orders) {
 			const order_info = await this.model_sale_order.getOrder(order_id);
 
 			if (order_info.order_id) {
@@ -1442,7 +1442,7 @@ module.exports = class OrderController extends global['OpencartSystemEngineContr
 
 				const vouchers = await this.model_sale_order.getVouchers(order_id);
 
-				for (vouchers of voucher) {
+				for (let voucher of vouchers) {
 					voucher_data.push({
 						'description': voucher['description'],
 						'amount': this.currency.format(voucher['amount'], order_info?.['currency_code'], order_info?.['currency_value'])
@@ -1453,7 +1453,7 @@ module.exports = class OrderController extends global['OpencartSystemEngineContr
 
 				const totals = await this.model_sale_order.getTotals(order_id);
 
-				for (totals of total) {
+				for (let total of totals) {
 					total_data.push({
 						'title': total['title'],
 						'text': this.currency.format(total['value'], order_info?.['currency_code'], order_info?.['currency_value'])

@@ -312,7 +312,7 @@ module.exports = class Upgrade4 extends global['OpencartSystemEngineController']
 			});
 
 			// Add missing keys and serialized values
-			for (missing of setting) {
+			for (let setting of missing) {
 				query = this.db.query("SELECT setting_id FROM `" + DB_PREFIX + "setting` WHERE `store_id` = '0' AND `key` = " + this.db.escape(setting['key']));
 
 				if (!query.num_rows && !isset(settings[setting['key']])) {
@@ -358,7 +358,7 @@ module.exports = class Upgrade4 extends global['OpencartSystemEngineController']
 				'config_smtp_timeout'
 			];
 
-			for (remove of key) {
+			for (let key of remove) {
 				this.db.query("DELETE FROM `" + DB_PREFIX + "setting` WHERE `key` = " + this.db.escape(key));
 			}
 

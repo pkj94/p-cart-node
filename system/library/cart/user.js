@@ -30,7 +30,7 @@ module.exports = class UserLibrary {
                         this.request.server.connection.socket.remoteAddress) : ''))} WHERE user_id = ${this.db.quote(this.session.data.user_id)}`);
 
                 const user_group_query = await this.db.query(`SELECT permission FROM ${DB_PREFIX}user_group WHERE user_group_id = ${this.db.quote(user_query.row.user_group_id)}`);
-                this.permission = JSON.parse(user_group_query.row.permission);
+                this.permission = oc_json_decode(user_group_query.row.permission, { 'access': [], 'modify': [] });
             } else {
                 this.logout();
             }
@@ -63,7 +63,7 @@ module.exports = class UserLibrary {
                 this.email = user_query.row.email;
 
                 const user_group_query = await this.db.query(`SELECT permission FROM ${DB_PREFIX}user_group WHERE user_group_id = ${this.db.quote(user_query.row.user_group_id)}`);
-                this.permission = JSON.parse(user_group_query.row.permission);
+                this.permission = oc_json_decode(user_group_query.row.permission, { 'access': [], 'modify': [] });
                 await this.session.save(this.session.data);
                 resolve(true);
             } else {
