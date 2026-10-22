@@ -44,6 +44,10 @@ module.exports = class PgSQLDBLibrary {
         return this.client.escapeIdentifier(value);
     }
 
+    quote(value) {
+        return this.client.escapeLiteral(String(value));
+    }
+
     async countAffected() {
         const res = await this.client.query('SELECT COUNT(*) FROM '+DB_PREFIX+'affected_rows');
         return res.rowCount;

@@ -5,7 +5,7 @@ module.exports =class ReturnReason extends global['OpencartSystemEngineModel'] {
 	 * @return array
 	 */
 	async getReturnReasons(data = {}) {
-		const sql = "SELECT * FROM `" + DB_PREFIX + "return_reason` WHERE `language_id` = '" + this.config.get('config_language_id') + "' ORDER BY `name`";
+		const sql = "SELECT * FROM `" + DB_PREFIX + "return_reason` WHERE `language_id` = " + this.db.quote(this.config.get('config_language_id')) + " ORDER BY `name`";
 
 		if ((data['return']) && (data['return'] == 'DESC')) {
 			sql += " DESC";
@@ -22,7 +22,7 @@ module.exports =class ReturnReason extends global['OpencartSystemEngineModel'] {
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql += " LIMIT " + (parseInt(data['start']) || 0) + "," + (parseInt(data['limit']) || 0);
 		}
 
 		return_reason_data = await this.cache.get('return_reason.' + md5(sql));

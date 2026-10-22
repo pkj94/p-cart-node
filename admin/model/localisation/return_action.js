@@ -12,9 +12,9 @@ module.exports = class ReturnActionLocalisationModel extends global['OpencartSys
 		for (let [language_id, value] of Object.entries(data['return_action'])) {
 			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 			if ((return_action_id)) {
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "return_action` SET `return_action_id` = '" + return_action_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + "");
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "return_action` SET `return_action_id` = " + this.db.quote(return_action_id) + ", `language_id` = " + this.db.quote(language_id) + ", `name` = " + this.db.escape(value['name']));
 			} else {
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "return_action` SET `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + "");
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "return_action` SET `language_id` = " + this.db.quote(language_id) + ", `name` = " + this.db.escape(value['name']));
 
 				return_action_id = this.db.getLastId();
 			}
@@ -32,11 +32,11 @@ module.exports = class ReturnActionLocalisationModel extends global['OpencartSys
 	 * @return void
 	 */
 	async editReturnAction(return_action_id, data) {
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "return_action` WHERE `return_action_id` = '" + return_action_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "return_action` WHERE `return_action_id` = " + this.db.quote(return_action_id));
 
 		for (let [language_id, value] of Object.entries(data['return_action'])) {
 			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "return_action` SET `return_action_id` = '" + return_action_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + "");
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "return_action` SET `return_action_id` = " + this.db.quote(return_action_id) + ", `language_id` = " + this.db.quote(language_id) + ", `name` = " + this.db.escape(value['name']));
 		}
 
 		await this.cache.delete('return_action');
@@ -48,7 +48,7 @@ module.exports = class ReturnActionLocalisationModel extends global['OpencartSys
 	 * @return void
 	 */
 	async deleteReturnAction(return_action_id) {
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "return_action` WHERE `return_action_id` = '" + return_action_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "return_action` WHERE `return_action_id` = " + this.db.quote(return_action_id));
 
 		await this.cache.delete('return_action');
 	}
@@ -59,7 +59,7 @@ module.exports = class ReturnActionLocalisationModel extends global['OpencartSys
 	 * @return array
 	 */
 	async getReturnAction(return_action_id) {
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "return_action` WHERE `return_action_id` = '" + return_action_id + "' AND `language_id` = '" + this.config.get('config_language_id') + "'");
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "return_action` WHERE `return_action_id` = " + this.db.quote(return_action_id) + " AND `language_id` = " + this.db.quote(this.config.get('config_language_id')));
 
 		return query.row;
 	}
@@ -70,7 +70,7 @@ module.exports = class ReturnActionLocalisationModel extends global['OpencartSys
 	 * @return array
 	 */
 	async getReturnActions(data = {}) {
-		let sql = "SELECT * FROM `" + DB_PREFIX + "return_action` WHERE `language_id` = '" + this.config.get('config_language_id') + "' ORDER BY `name`";
+		let sql = "SELECT * FROM `" + DB_PREFIX + "return_action` WHERE `language_id` = " + this.db.quote(this.config.get('config_language_id')) + " ORDER BY `name`";
 
 		if ((data['order']) && (data['order'] == 'DESC')) {
 			sql += " DESC";
@@ -89,7 +89,7 @@ module.exports = class ReturnActionLocalisationModel extends global['OpencartSys
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql += " LIMIT " + (parseInt(data['start']) || 0) + "," + (parseInt(data['limit']) || 0);
 		}
 
 		let return_action_data = await this.cache.get('return_action.' + md5(sql));
@@ -113,7 +113,7 @@ module.exports = class ReturnActionLocalisationModel extends global['OpencartSys
 	async getDescriptions(return_action_id) {
 		let return_action_data = {};
 
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "return_action` WHERE `return_action_id` = '" + return_action_id + "'");
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "return_action` WHERE `return_action_id` = " + this.db.quote(return_action_id));
 
 		for (let result of query.rows) {
 			return_action_data[result['language_id']] = { 'name': result['name'] };
@@ -126,7 +126,7 @@ module.exports = class ReturnActionLocalisationModel extends global['OpencartSys
 	 * @return int
 	 */
 	async getTotalReturnActions() {
-		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "return_action` WHERE `language_id` = '" + this.config.get('config_language_id') + "'");
+		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "return_action` WHERE `language_id` = " + this.db.quote(this.config.get('config_language_id')));
 
 		return query.row['total'];
 	}

@@ -6,7 +6,7 @@ module.exports = class Currency extends global['OpencartSystemEngineModel'] {
 	 * @return void
 	 */
 	async editValueByCode(code, value) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "currency` SET `value` = '" + value + "', `date_modified` = NOW() WHERE `code` = " + this.db.escape(code));
+		await this.db.query("UPDATE `" + DB_PREFIX + "currency` SET `value` = " + this.db.quote(value) + ", `date_modified` = NOW() WHERE `code` = " + this.db.escape(code));
 
 		await this.cache.delete('currency');
 	}

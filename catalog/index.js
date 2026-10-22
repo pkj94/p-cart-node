@@ -19,7 +19,7 @@ module.exports = function (baseRegistry) {
                 // console.log(registry.get('response').headers)
                 registry.get('response').headers.forEach(header => {
                     // console.log('header----', header)
-                    res.header(header.split(':')[0].trim(), header.split(':')[1].trim());
+                    res.header(header.split(':')[0].trim(), header.slice(header.indexOf(':') + 1).trim());
                 });
                 res.status(registry.get('response').status || 200).send(output);
                 console.log('request send---', new Date().toISOString())

@@ -7,7 +7,7 @@ module.exports = class UserGroupUserModel extends global['OpencartSystemEngineMo
 	 * @return int
 	 */
 	async addUserGroup(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "user_group` SET `name` = " + this.db.escape(data['name']) + ", `permission` = '" + JSON.stringify(data['permission'] || {}) + "'");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "user_group` SET `name` = " + this.db.escape(data['name']) + ", `permission` = " + this.db.quote(JSON.stringify(data['permission'] || {})));
 
 		return this.db.getLastId();
 	}
@@ -19,7 +19,7 @@ module.exports = class UserGroupUserModel extends global['OpencartSystemEngineMo
 	 * @return void
 	 */
 	async editUserGroup(user_group_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "user_group` SET `name` = " + this.db.escape(data['name']) + ", `permission` = '" + JSON.stringify(data['permission'] || {}) + "' WHERE `user_group_id` = '" + user_group_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "user_group` SET `name` = " + this.db.escape(data['name']) + ", `permission` = " + this.db.quote(JSON.stringify(data['permission'] || {})) + " WHERE `user_group_id` = " + this.db.quote(user_group_id));
 	}
 
 	/**
@@ -28,7 +28,7 @@ module.exports = class UserGroupUserModel extends global['OpencartSystemEngineMo
 	 * @return void
 	 */
 	async deleteUserGroup(user_group_id) {
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "user_group` WHERE `user_group_id` = '" + user_group_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "user_group` WHERE `user_group_id` = " + this.db.quote(user_group_id));
 	}
 
 	/**
@@ -37,7 +37,7 @@ module.exports = class UserGroupUserModel extends global['OpencartSystemEngineMo
 	 * @return array
 	 */
 	async getUserGroup(user_group_id) {
-		let query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "user_group` WHERE `user_group_id` = '" + user_group_id + "'");
+		let query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "user_group` WHERE `user_group_id` = " + this.db.quote(user_group_id));
 
 		const user_group = {
 			'name': query.row['name'],
@@ -71,7 +71,7 @@ module.exports = class UserGroupUserModel extends global['OpencartSystemEngineMo
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql += " LIMIT " + (parseInt(data['start']) || 0) + "," + (parseInt(data['limit']) || 0);
 		}
 
 		const query = await this.db.query(sql);
@@ -96,14 +96,14 @@ module.exports = class UserGroupUserModel extends global['OpencartSystemEngineMo
 	 * @return void
 	 */
 	async addPermission(user_group_id, type, route) {
-		const user_group_query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "user_group` WHERE `user_group_id` = '" + user_group_id + "'");
+		const user_group_query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "user_group` WHERE `user_group_id` = " + this.db.quote(user_group_id));
 
 		if (user_group_query.num_rows) {
 			let data = JSON.parse(user_group_query.row['permission']);
 			data[type] = data[type] || [];
 			data[type].push(route);
 
-			await this.db.query("UPDATE `" + DB_PREFIX + "user_group` SET `permission` = " + this.db.escape(JSON.stringify(data)) + " WHERE `user_group_id` = '" + user_group_id + "'");
+			await this.db.query("UPDATE `" + DB_PREFIX + "user_group` SET `permission` = " + this.db.escape(JSON.stringify(data)) + " WHERE `user_group_id` = " + this.db.quote(user_group_id));
 		}
 	}
 
@@ -115,7 +115,7 @@ module.exports = class UserGroupUserModel extends global['OpencartSystemEngineMo
 	 * @return void
 	 */
 	async removePermission(user_group_id, type, route) {
-		const user_group_query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "user_group` WHERE `user_group_id` = '" + user_group_id + "'");
+		const user_group_query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "user_group` WHERE `user_group_id` = " + this.db.quote(user_group_id));
 
 		if (user_group_query.num_rows) {
 			let data = JSON.parse(user_group_query.row['permission'], true);
@@ -124,7 +124,7 @@ module.exports = class UserGroupUserModel extends global['OpencartSystemEngineMo
 				data[type] = array_diff(data[type], [route]);
 			}
 
-			await this.db.query("UPDATE `" + DB_PREFIX + "user_group` SET `permission` = " + this.db.escape(JSON.stringify(data)) + " WHERE `user_group_id` = '" + user_group_id + "'");
+			await this.db.query("UPDATE `" + DB_PREFIX + "user_group` SET `permission` = " + this.db.escape(JSON.stringify(data)) + " WHERE `user_group_id` = " + this.db.quote(user_group_id));
 		}
 	}
 }

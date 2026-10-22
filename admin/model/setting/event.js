@@ -4,7 +4,7 @@ module.exports = class EventSettingModel extends global['OpencartSystemEngineMod
     }
 
     async addEvent(data) {
-        await this.db.query(`INSERT INTO ${DB_PREFIX}event SET code = ${this.db.escape(data.code)}, description = ${this.db.escape(data.description)}, trigger = ${this.db.escape(data.trigger)}, action = ${this.db.escape(data.action)}, status = ${data.status}, sort_order = ${parseInt(data.sort_order)}`);
+        await this.db.query(`INSERT INTO ${DB_PREFIX}event SET code = ${this.db.escape(data.code)}, description = ${this.db.escape(data.description)}, trigger = ${this.db.escape(data.trigger)}, action = ${this.db.escape(data.action)}, status = ${this.db.quote(data.status)}, sort_order = ${parseInt(data.sort_order)}`);
         return this.db.getLastId();
     }
 
@@ -17,7 +17,7 @@ module.exports = class EventSettingModel extends global['OpencartSystemEngineMod
     }
 
     async editStatus(event_id, status) {
-        await this.db.query(`UPDATE ${DB_PREFIX}event SET status = ${status} WHERE event_id = ${parseInt(event_id)}`);
+        await this.db.query(`UPDATE ${DB_PREFIX}event SET status = ${this.db.quote(status)} WHERE event_id = ${parseInt(event_id)}`);
     }
 
     async getEvent(event_id) {

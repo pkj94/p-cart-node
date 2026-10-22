@@ -16,9 +16,10 @@ module.exports = class NotFound extends global['OpencartSystemEngineController']
 		});
 
 		if ((this.request.get['route'])) {
-			url_data = this.request.get;
+			// Copy, so removing route below doesn't change the request
+			const url_data = { ...this.request.get };
 
-			route = url_data['route'];
+			const route = url_data['route'];
 
 			delete (url_data['route']);
 
@@ -43,7 +44,7 @@ module.exports = class NotFound extends global['OpencartSystemEngineController']
 		data['footer'] = await this.load.controller('common/footer');
 		data['header'] = await this.load.controller('common/header');
 
-		this.response.addHeader(this.request.server['SERVER_PROTOCOL'] + ' 404 Not Found');
+		this.response.setStatus(404);
 
 		this.response.setOutput(await this.load.view('error/not_found', data));
 	}

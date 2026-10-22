@@ -8,7 +8,7 @@ global['OpencartAdminModelExtensionOpencartReportReturns'] = class Returns exten
 		let sql = "SELECT MIN(r.`date_added`) AS date_start, MAX(r.`date_added`) AS date_end, COUNT(r.`return_id`) AS returns FROM `" + DB_PREFIX + "return` r";
 
 		if (data['filter_return_status_id']) {
-			sql += " WHERE r.`return_status_id` = '" + data['filter_return_status_id'] + "'";
+			sql += " WHERE r.`return_status_id` = " + this.db.quote(data['filter_return_status_id']);
 		} else {
 			sql += " WHERE r.`return_status_id` > '0'";
 		}
@@ -51,7 +51,7 @@ global['OpencartAdminModelExtensionOpencartReportReturns'] = class Returns exten
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql += " LIMIT " + (parseInt(data['start']) || 0) + "," + (parseInt(data['limit']) || 0);
 		}
 
 		let query = await this.db.query(sql);
@@ -87,7 +87,7 @@ global['OpencartAdminModelExtensionOpencartReportReturns'] = class Returns exten
 		}
 
 		if (data['filter_return_status_id']) {
-			sql += " WHERE `return_status_id` = '" + data['filter_return_status_id'] + "'";
+			sql += " WHERE `return_status_id` = " + this.db.quote(data['filter_return_status_id']);
 		} else {
 			sql += " WHERE `return_status_id` > '0'";
 		}

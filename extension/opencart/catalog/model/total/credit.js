@@ -41,7 +41,7 @@ global['OpencartCatalogModelExtensionOpencartTotalCredit'] = class Credit extend
 		await this.load.language('extension/opencart/total/credit');
 
 		if (order_info['customer_id']) {
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "customer_transaction` SET `customer_id` = '" + order_info['customer_id'] + "', `order_id` = '" + order_info['order_id'] + "', `description` = " + this.db.escape(sprintf(this.language.get('text_order_id'), order_info['order_id'])) + ", `amount` = '" + order_total['value'] + "', `date_added` = NOW()");
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "customer_transaction` SET `customer_id` = " + this.db.quote(order_info['customer_id']) + ", `order_id` = " + this.db.quote(order_info['order_id']) + ", `description` = " + this.db.escape(sprintf(this.language.get('text_order_id'), order_info['order_id'])) + ", `amount` = " + this.db.quote(order_total['value']) + ", `date_added` = NOW()");
 		}
 	}
 
@@ -51,6 +51,6 @@ global['OpencartCatalogModelExtensionOpencartTotalCredit'] = class Credit extend
 	 * @return void
 	 */
 	async unconfirm(order_id) {
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_transaction` WHERE `order_id` = '" + order_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_transaction` WHERE `order_id` = " + this.db.quote(order_id));
 	}
 }

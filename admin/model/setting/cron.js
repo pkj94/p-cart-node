@@ -9,7 +9,7 @@ module.exports = class CronSettingModel extends global['OpencartSystemEngineMode
 	 * @return int
 	 */
 	async addCron(code, description, cycle, action, status) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "cron` SET `code` = " + this.db.escape(code) + ", `description` = " + this.db.escape(description) + ", `cycle` = " + this.db.escape(cycle) + ", `action` = " + this.db.escape(action) + ", `status` = '" + status + "', `date_added` = NOW(), `date_modified` = NOW()");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "cron` SET `code` = " + this.db.escape(code) + ", `description` = " + this.db.escape(description) + ", `cycle` = " + this.db.escape(cycle) + ", `action` = " + this.db.escape(action) + ", `status` = " + this.db.quote(status) + ", `date_added` = NOW(), `date_modified` = NOW()");
 
 		return this.db.getLastId();
 	}
@@ -20,7 +20,7 @@ module.exports = class CronSettingModel extends global['OpencartSystemEngineMode
 	 * @return void
 	 */
 	async deleteCron(cron_id) {
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "cron` WHERE `cron_id` = '" + cron_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "cron` WHERE `cron_id` = " + this.db.quote(cron_id));
 	}
 
 	/**
@@ -38,7 +38,7 @@ module.exports = class CronSettingModel extends global['OpencartSystemEngineMode
 	 * @return void
 	 */
 	async editCron(cron_id) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "cron` SET `date_modified` = NOW() WHERE `cron_id` = '" + cron_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "cron` SET `date_modified` = NOW() WHERE `cron_id` = " + this.db.quote(cron_id));
 	}
 
 	/**
@@ -48,7 +48,7 @@ module.exports = class CronSettingModel extends global['OpencartSystemEngineMode
 	 * @return void
 	 */
 	async editStatus(cron_id, status) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "cron` SET `status` = '" + status + "' WHERE `cron_id` = '" + cron_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "cron` SET `status` = " + this.db.quote(status) + " WHERE `cron_id` = " + this.db.quote(cron_id));
 	}
 
 	/**
@@ -57,7 +57,7 @@ module.exports = class CronSettingModel extends global['OpencartSystemEngineMode
 	 * @return array
 	 */
 	async getCron(cron_id) {
-		let query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "cron` WHERE `cron_id` = '" + cron_id + "'");
+		let query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "cron` WHERE `cron_id` = " + this.db.quote(cron_id));
 
 		return query.row;
 	}
@@ -112,7 +112,7 @@ module.exports = class CronSettingModel extends global['OpencartSystemEngineMode
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql += " LIMIT " + (parseInt(data['start']) || 0) + "," + (parseInt(data['limit']) || 0);
 		}
 
 		let query = await this.db.query(sql);

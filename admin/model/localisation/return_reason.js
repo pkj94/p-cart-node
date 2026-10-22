@@ -12,9 +12,9 @@ module.exports = class ReturnReasonLocalisationModel extends global['OpencartSys
 		for (let [language_id, value] of Object.entries(data['return_reason'])) {
 			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 			if ((return_reason_id)) {
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "return_reason` SET `return_reason_id` = '" + return_reason_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + "");
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "return_reason` SET `return_reason_id` = " + this.db.quote(return_reason_id) + ", `language_id` = " + this.db.quote(language_id) + ", `name` = " + this.db.escape(value['name']));
 			} else {
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "return_reason` SET `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + "");
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "return_reason` SET `language_id` = " + this.db.quote(language_id) + ", `name` = " + this.db.escape(value['name']));
 
 				return_reason_id = this.db.getLastId();
 			}
@@ -32,11 +32,11 @@ module.exports = class ReturnReasonLocalisationModel extends global['OpencartSys
 	 * @return void
 	 */
 	async editReturnReason(return_reason_id, data) {
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "return_reason` WHERE `return_reason_id` = '" + return_reason_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "return_reason` WHERE `return_reason_id` = " + this.db.quote(return_reason_id));
 
 		for (let [language_id, value] of Object.entries(data['return_reason'])) {
 			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "return_reason` SET `return_reason_id` = '" + return_reason_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + "");
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "return_reason` SET `return_reason_id` = " + this.db.quote(return_reason_id) + ", `language_id` = " + this.db.quote(language_id) + ", `name` = " + this.db.escape(value['name']));
 		}
 
 		await this.cache.delete('return_reason');
@@ -48,7 +48,7 @@ module.exports = class ReturnReasonLocalisationModel extends global['OpencartSys
 	 * @return void
 	 */
 	async deleteReturnReason(return_reason_id) {
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "return_reason` WHERE `return_reason_id` = '" + return_reason_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "return_reason` WHERE `return_reason_id` = " + this.db.quote(return_reason_id));
 
 		await this.cache.delete('return_reason');
 	}
@@ -59,7 +59,7 @@ module.exports = class ReturnReasonLocalisationModel extends global['OpencartSys
 	 * @return array
 	 */
 	async getReturnReason(return_reason_id) {
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "return_reason` WHERE `return_reason_id` = '" + return_reason_id + "' AND `language_id` = '" + this.config.get('config_language_id') + "'");
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "return_reason` WHERE `return_reason_id` = " + this.db.quote(return_reason_id) + " AND `language_id` = " + this.db.quote(this.config.get('config_language_id')));
 
 		return query.row;
 	}
@@ -70,7 +70,7 @@ module.exports = class ReturnReasonLocalisationModel extends global['OpencartSys
 	 * @return array
 	 */
 	async getReturnReasons(data = {}) {
-		let sql = "SELECT * FROM `" + DB_PREFIX + "return_reason` WHERE `language_id` = '" + this.config.get('config_language_id') + "' ORDER BY `name`";
+		let sql = "SELECT * FROM `" + DB_PREFIX + "return_reason` WHERE `language_id` = " + this.db.quote(this.config.get('config_language_id')) + " ORDER BY `name`";
 
 		if ((data['order']) && (data['order'] == 'DESC')) {
 			sql += " DESC";
@@ -89,7 +89,7 @@ module.exports = class ReturnReasonLocalisationModel extends global['OpencartSys
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql += " LIMIT " + (parseInt(data['start']) || 0) + "," + (parseInt(data['limit']) || 0);
 		}
 
 		let return_reason_data = await this.cache.get('return_reason.' + md5(sql));
@@ -113,7 +113,7 @@ module.exports = class ReturnReasonLocalisationModel extends global['OpencartSys
 	async getDescriptions(return_reason_id) {
 		let return_reason_data = {};
 
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "return_reason` WHERE `return_reason_id` = '" + return_reason_id + "'");
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "return_reason` WHERE `return_reason_id` = " + this.db.quote(return_reason_id));
 
 		for (let result of query.rows) {
 			return_reason_data[result['language_id']] = { 'name': result['name'] };
@@ -126,7 +126,7 @@ module.exports = class ReturnReasonLocalisationModel extends global['OpencartSys
 	 * @return int
 	 */
 	async getTotalReturnReasons() {
-		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "return_reason` WHERE `language_id` = '" + this.config.get('config_language_id') + "'");
+		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "return_reason` WHERE `language_id` = " + this.db.quote(this.config.get('config_language_id')));
 
 		return query.row['total'];
 	}

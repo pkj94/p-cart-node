@@ -5,7 +5,7 @@ module.exports = class VoucherTheme extends global['OpencartSystemEngineModel'] 
 	 * @return array
 	 */
 	async getVoucherTheme(voucher_theme_id) {
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "voucher_theme` vt LEFT JOIN `" + DB_PREFIX + "voucher_theme_description` vtd ON (vt.`voucher_theme_id` = vtd.`voucher_theme_id`) WHERE vt.`voucher_theme_id` = '" + voucher_theme_id + "' AND vtd.`language_id` = '" + this.config.get('config_language_id') + "'");
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "voucher_theme` vt LEFT JOIN `" + DB_PREFIX + "voucher_theme_description` vtd ON (vt.`voucher_theme_id` = vtd.`voucher_theme_id`) WHERE vt.`voucher_theme_id` = " + this.db.quote(voucher_theme_id) + " AND vtd.`language_id` = " + this.db.quote(this.config.get('config_language_id')));
 
 		return query.row;
 	}
@@ -16,7 +16,7 @@ module.exports = class VoucherTheme extends global['OpencartSystemEngineModel'] 
 	 * @return array
 	 */
 	async getVoucherThemes(data = {}) {
-		let sql = "SELECT * FROM `" + DB_PREFIX + "voucher_theme` vt LEFT JOIN `" + DB_PREFIX + "voucher_theme_description` vtd ON (vt.`voucher_theme_id` = vtd.`voucher_theme_id`) WHERE vtd.`language_id` = '" + this.config.get('config_language_id') + "' ORDER BY vtd.`name`";
+		let sql = "SELECT * FROM `" + DB_PREFIX + "voucher_theme` vt LEFT JOIN `" + DB_PREFIX + "voucher_theme_description` vtd ON (vt.`voucher_theme_id` = vtd.`voucher_theme_id`) WHERE vtd.`language_id` = " + this.db.quote(this.config.get('config_language_id')) + " ORDER BY vtd.`name`";
 
 		if ((data['order']) && (data['order'] == 'DESC')) {
 			sql += " DESC";
@@ -33,7 +33,7 @@ module.exports = class VoucherTheme extends global['OpencartSystemEngineModel'] 
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql += " LIMIT " + (parseInt(data['start']) || 0) + "," + (parseInt(data['limit']) || 0);
 		}
 
 		let voucher_theme_data = await this.cache.get('voucher_theme.' + md5(sql));

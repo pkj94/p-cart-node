@@ -8,18 +8,18 @@ module.exports = class InformationCatalogModel extends global['OpencartSystemEng
 	 * @return int
 	 */
 	async addInformation(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "information` SET `sort_order` = '" + data['sort_order'] + "', `bottom` = '" + ((data['bottom']) ? data['bottom'] : 0) + "', `status` = '" + (data['status'] ? data['status'] : 0) + "'");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "information` SET `sort_order` = " + this.db.quote(data['sort_order']) + ", `bottom` = " + this.db.quote(((data['bottom']) ? data['bottom'] : 0)) + ", `status` = " + this.db.quote((data['status'] ? data['status'] : 0)));
 
 		const information_id = this.db.getLastId();
 
 		for (let [language_id, value] of Object.entries(data['information_description'])) {
 			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "information_description` SET `information_id` = '" + information_id + "', `language_id` = '" + language_id + "', `title` = " + this.db.escape(value['title']) + ", `description` = " + this.db.escape(value['description']) + ", `meta_title` = " + this.db.escape(value['meta_title']) + ", `meta_description` = " + this.db.escape(value['meta_description']) + ", `meta_keyword` = " + this.db.escape(value['meta_keyword']) + "");
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "information_description` SET `information_id` = " + this.db.quote(information_id) + ", `language_id` = " + this.db.quote(language_id) + ", `title` = " + this.db.escape(value['title']) + ", `description` = " + this.db.escape(value['description']) + ", `meta_title` = " + this.db.escape(value['meta_title']) + ", `meta_description` = " + this.db.escape(value['meta_description']) + ", `meta_keyword` = " + this.db.escape(value['meta_keyword']));
 		}
 
 		if ((data['information_store'])) {
 			for (let store_id of data['information_store']) {
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "information_to_store` SET `information_id` = '" + information_id + "', `store_id` = '" + store_id + "'");
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "information_to_store` SET `information_id` = " + this.db.quote(information_id) + ", `store_id` = " + this.db.quote(store_id));
 			}
 		}
 
@@ -29,7 +29,7 @@ module.exports = class InformationCatalogModel extends global['OpencartSystemEng
 				store_id = store_id.indexOf('store') >= 0 ? store_id.split('-')[1] : store_id;
 				for (let [language_id, keyword] of Object.entries(language)) {
 					language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
-					await this.db.query("INSERT INTO `" + DB_PREFIX + "seo_url` SET `store_id` = '" + store_id + "', `language_id` = '" + language_id + "', `key` = 'information_id', `value` = '" + information_id + "', `keyword` = " + this.db.escape(keyword) + "");
+					await this.db.query("INSERT INTO `" + DB_PREFIX + "seo_url` SET `store_id` = " + this.db.quote(store_id) + ", `language_id` = " + this.db.quote(language_id) + ", `key` = 'information_id', `value` = " + this.db.quote(information_id) + ", `keyword` = " + this.db.escape(keyword));
 				}
 			}
 		}
@@ -37,7 +37,7 @@ module.exports = class InformationCatalogModel extends global['OpencartSystemEng
 		if ((data['information_layout'])) {
 			for (let [store_id, layout_id] of Object.entries(data['information_layout'])) {
 				store_id = store_id.indexOf('store') >= 0 ? store_id.split('-')[1] : store_id;
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "information_to_layout` SET `information_id` = '" + information_id + "', `store_id` = '" + store_id + "', `layout_id` = '" + layout_id + "'");
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "information_to_layout` SET `information_id` = " + this.db.quote(information_id) + ", `store_id` = " + this.db.quote(store_id) + ", `layout_id` = " + this.db.quote(layout_id));
 			}
 		}
 
@@ -53,41 +53,41 @@ module.exports = class InformationCatalogModel extends global['OpencartSystemEng
 	 * @return void
 	 */
 	async editInformation(information_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "information` SET `sort_order` = '" + data['sort_order'] + "', `bottom` = '" + ((data['bottom']) ? data['bottom'] : 0) + "', `status` = '" + (data['status'] ? data['status'] : 0) + "' WHERE `information_id` = '" + information_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "information` SET `sort_order` = " + this.db.quote(data['sort_order']) + ", `bottom` = " + this.db.quote(((data['bottom']) ? data['bottom'] : 0)) + ", `status` = " + this.db.quote((data['status'] ? data['status'] : 0)) + " WHERE `information_id` = " + this.db.quote(information_id));
 
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "information_description` WHERE `information_id` = '" + information_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "information_description` WHERE `information_id` = " + this.db.quote(information_id));
 
 		for (let [language_id, value] of Object.entries(data['information_description'])) {
 			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "information_description` SET `information_id` = '" + information_id + "', `language_id` = '" + language_id + "', `title` = " + this.db.escape(value['title']) + ", `description` = " + this.db.escape(value['description']) + ", `meta_title` = " + this.db.escape(value['meta_title']) + ", `meta_description` = " + this.db.escape(value['meta_description']) + ", `meta_keyword` = " + this.db.escape(value['meta_keyword']) + "");
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "information_description` SET `information_id` = " + this.db.quote(information_id) + ", `language_id` = " + this.db.quote(language_id) + ", `title` = " + this.db.escape(value['title']) + ", `description` = " + this.db.escape(value['description']) + ", `meta_title` = " + this.db.escape(value['meta_title']) + ", `meta_description` = " + this.db.escape(value['meta_description']) + ", `meta_keyword` = " + this.db.escape(value['meta_keyword']));
 		}
 
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "information_to_store` WHERE `information_id` = '" + information_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "information_to_store` WHERE `information_id` = " + this.db.quote(information_id));
 
 		if ((data['information_store'])) {
 			for (let store_id of data['information_store']) {
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "information_to_store` SET `information_id` = '" + information_id + "', `store_id` = '" + store_id + "'");
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "information_to_store` SET `information_id` = " + this.db.quote(information_id) + ", `store_id` = " + this.db.quote(store_id));
 			}
 		}
 
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "seo_url` WHERE `key` = 'information_id' AND `value` = '" + information_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "seo_url` WHERE `key` = 'information_id' AND `value` = " + this.db.quote(information_id));
 
 		if ((data['information_seo_url'])) {
 			for (let [store_id, language] of Object.entries(data['information_seo_url'])) {
 				store_id = store_id.indexOf('store') >= 0 ? store_id.split('-')[1] : store_id;
 				for (let [language_id, keyword] of Object.entries(language)) {
 					language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
-					await this.db.query("INSERT INTO `" + DB_PREFIX + "seo_url` SET `store_id` = '" + store_id + "', `language_id` = '" + language_id + "', `key` = 'information_id', `value` = '" + information_id + "', `keyword` = " + this.db.escape(keyword));
+					await this.db.query("INSERT INTO `" + DB_PREFIX + "seo_url` SET `store_id` = " + this.db.quote(store_id) + ", `language_id` = " + this.db.quote(language_id) + ", `key` = 'information_id', `value` = " + this.db.quote(information_id) + ", `keyword` = " + this.db.escape(keyword));
 				}
 			}
 		}
 
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "information_to_layout` WHERE `information_id` = '" + information_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "information_to_layout` WHERE `information_id` = " + this.db.quote(information_id));
 
 		if ((data['information_layout'])) {
 			for (let [store_id, layout_id] of Object.entries(data['information_layout'])) {
 				store_id = store_id.indexOf('store') >= 0 ? store_id.split('-')[1] : store_id;
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "information_to_layout` SET `information_id` = '" + information_id + "', `store_id` = '" + store_id + "', `layout_id` = '" + layout_id + "'");
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "information_to_layout` SET `information_id` = " + this.db.quote(information_id) + ", `store_id` = " + this.db.quote(store_id) + ", `layout_id` = " + this.db.quote(layout_id));
 			}
 		}
 
@@ -100,11 +100,11 @@ module.exports = class InformationCatalogModel extends global['OpencartSystemEng
 	 * @return void
 	 */
 	async deleteInformation(information_id) {
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "information` WHERE `information_id` = '" + information_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "information_description` WHERE `information_id` = '" + information_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "information_to_store` WHERE `information_id` = '" + information_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "information_to_layout` WHERE `information_id` = '" + information_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "seo_url` WHERE `key` = 'information_id' AND `value` = '" + information_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "information` WHERE `information_id` = " + this.db.quote(information_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "information_description` WHERE `information_id` = " + this.db.quote(information_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "information_to_store` WHERE `information_id` = " + this.db.quote(information_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "information_to_layout` WHERE `information_id` = " + this.db.quote(information_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "seo_url` WHERE `key` = 'information_id' AND `value` = " + this.db.quote(information_id));
 
 		await this.cache.delete('information');
 	}
@@ -115,7 +115,7 @@ module.exports = class InformationCatalogModel extends global['OpencartSystemEng
 	 * @return array
 	 */
 	async getInformation(information_id) {
-		let query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "information` WHERE `information_id` = '" + information_id + "'");
+		let query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "information` WHERE `information_id` = " + this.db.quote(information_id));
 
 		return query.row;
 	}
@@ -126,7 +126,7 @@ module.exports = class InformationCatalogModel extends global['OpencartSystemEng
 	 * @return array
 	 */
 	async getInformations(data = {}) {
-		let sql = "SELECT * FROM `" + DB_PREFIX + "information` i LEFT JOIN `" + DB_PREFIX + "information_description` id ON (i.`information_id` = id.`information_id`) WHERE id.`language_id` = '" + this.config.get('config_language_id') + "'";
+		let sql = "SELECT * FROM `" + DB_PREFIX + "information` i LEFT JOIN `" + DB_PREFIX + "information_description` id ON (i.`information_id` = id.`information_id`) WHERE id.`language_id` = " + this.db.quote(this.config.get('config_language_id'));
 
 		let sort_data = [
 			'id.title',
@@ -156,7 +156,7 @@ module.exports = class InformationCatalogModel extends global['OpencartSystemEng
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql += " LIMIT " + (parseInt(data['start']) || 0) + "," + (parseInt(data['limit']) || 0);
 		}
 
 		let information_data = await this.cache.get('information.' + md5(sql));
@@ -180,7 +180,7 @@ module.exports = class InformationCatalogModel extends global['OpencartSystemEng
 	async getDescriptions(information_id) {
 		let information_description_data = {};
 
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "information_description` WHERE `information_id` = '" + information_id + "'");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "information_description` WHERE `information_id` = " + this.db.quote(information_id));
 
 		for (let result of query.rows) {
 			information_description_data[result['language_id']] = {
@@ -203,7 +203,7 @@ module.exports = class InformationCatalogModel extends global['OpencartSystemEng
 	async getStores(information_id) {
 		let information_store_data = [];
 
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "information_to_store` WHERE `information_id` = '" + information_id + "'");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "information_to_store` WHERE `information_id` = " + this.db.quote(information_id));
 
 		for (let result of query.rows) {
 			information_store_data.push(result['store_id']);
@@ -220,7 +220,7 @@ module.exports = class InformationCatalogModel extends global['OpencartSystemEng
 	async getSeoUrls(information_id) {
 		let information_seo_url_data = {};
 
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "seo_url` WHERE `key` = 'information_id' AND `value` = '" + information_id + "'");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "seo_url` WHERE `key` = 'information_id' AND `value` = " + this.db.quote(information_id));
 
 		for (let result of query.rows) {
 			information_seo_url_data[result['store_id']] = information_seo_url_data[result['store_id']] || {}
@@ -238,7 +238,7 @@ module.exports = class InformationCatalogModel extends global['OpencartSystemEng
 	async getLayouts(information_id) {
 		let information_layout_data = {};
 
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "information_to_layout` WHERE `information_id` = '" + information_id + "'");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "information_to_layout` WHERE `information_id` = " + this.db.quote(information_id));
 
 		for (let result of query.rows) {
 			information_layout_data[result['store_id']] = result['layout_id'];
@@ -262,7 +262,7 @@ module.exports = class InformationCatalogModel extends global['OpencartSystemEng
 	 * @return int
 	 */
 	async getTotalInformationsByLayoutId(layout_id) {
-		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "information_to_layout` WHERE `layout_id` = '" + layout_id + "'");
+		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "information_to_layout` WHERE `layout_id` = " + this.db.quote(layout_id));
 
 		return query.row['total'];
 	}

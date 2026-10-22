@@ -18,7 +18,7 @@ module.exports =class Gdpr extends global['OpencartSystemEngineModel'] {
 	 * @return void
 	 */
 	async editStatus(gdpr_id, status) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "gdpr` SET `status` = '" + status + "' WHERE `gdpr_id` = '" + gdpr_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "gdpr` SET `status` = " + this.db.quote(status) + " WHERE `gdpr_id` = " + this.db.quote(gdpr_id));
 	}
 
 	/**
@@ -27,7 +27,7 @@ module.exports =class Gdpr extends global['OpencartSystemEngineModel'] {
 	 * @return array
 	 */
 	async getGdpr(gdpr_id) {
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "gdpr` WHERE `gdpr_id` = '" + gdpr_id + "'");
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "gdpr` WHERE `gdpr_id` = " + this.db.quote(gdpr_id));
 
 		return query.row;
 	}

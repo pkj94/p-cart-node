@@ -8,7 +8,7 @@ module.exports = class BannerModel extends global['OpencartSystemEngineModel'] {
 	 * @return int
 	 */
 	async addBanner(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "banner` SET `name` = " + this.db.escape(data['name']) + ", `status` = '" + (data['status'] ? data['status'] : 0) + "'");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "banner` SET `name` = " + this.db.escape(data['name']) + ", `status` = " + this.db.quote((data['status'] ? data['status'] : 0)));
 
 		const banner_id = this.db.getLastId();
 
@@ -16,7 +16,7 @@ module.exports = class BannerModel extends global['OpencartSystemEngineModel'] {
 			for (let [language_id, value] of Object.entries(data['banner_image'])) {
 				language_id = language_id.indexOf('language-') >= 0 ? language_id.split('-')[1] : language_id;
 				for (let banner_image of value) {
-					await this.db.query("INSERT INTO `" + DB_PREFIX + "banner_image` SET `banner_id` = '" + banner_id + "', `language_id` = '" + language_id + "', `title` = " + this.db.escape(banner_image['title']) + ", `link` = " + this.db.escape(banner_image['link']) + ", `image` = " + this.db.escape(decodeURIComponent(banner_image['image'])) + ", `sort_order` = '" + banner_image['sort_order'] + "'");
+					await this.db.query("INSERT INTO `" + DB_PREFIX + "banner_image` SET `banner_id` = " + this.db.quote(banner_id) + ", `language_id` = " + this.db.quote(language_id) + ", `title` = " + this.db.escape(banner_image['title']) + ", `link` = " + this.db.escape(banner_image['link']) + ", `image` = " + this.db.escape(decodeURIComponent(banner_image['image'])) + ", `sort_order` = " + this.db.quote(banner_image['sort_order']));
 				}
 			}
 		}
@@ -31,15 +31,15 @@ module.exports = class BannerModel extends global['OpencartSystemEngineModel'] {
 	 * @return void
 	 */
 	async editBanner(banner_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "banner` SET `name` = " + this.db.escape(data['name']) + ", `status` = '" + (data['status'] ? data['status'] : 0) + "' WHERE `banner_id` = '" + banner_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "banner` SET `name` = " + this.db.escape(data['name']) + ", `status` = " + this.db.quote((data['status'] ? data['status'] : 0)) + " WHERE `banner_id` = " + this.db.quote(banner_id));
 
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "banner_image` WHERE `banner_id` = '" + banner_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "banner_image` WHERE `banner_id` = " + this.db.quote(banner_id));
 
 		if ((data['banner_image'])) {
 			for (let [language_id, value] of Object.entries(data['banner_image'])) {
 				language_id = language_id.indexOf('language-') >= 0 ? language_id.split('-')[1] : language_id;
 				for (let banner_image of value) {
-					await this.db.query("INSERT INTO `" + DB_PREFIX + "banner_image` SET `banner_id` = '" + banner_id + "', `language_id` = '" + language_id + "', `title` = " + this.db.escape(banner_image['title']) + ", `link` = " + this.db.escape(banner_image['link']) + ", `image` = " + this.db.escape(decodeURIComponent(banner_image['image'])) + ", `sort_order` = '" + banner_image['sort_order'] + "'");
+					await this.db.query("INSERT INTO `" + DB_PREFIX + "banner_image` SET `banner_id` = " + this.db.quote(banner_id) + ", `language_id` = " + this.db.quote(language_id) + ", `title` = " + this.db.escape(banner_image['title']) + ", `link` = " + this.db.escape(banner_image['link']) + ", `image` = " + this.db.escape(decodeURIComponent(banner_image['image'])) + ", `sort_order` = " + this.db.quote(banner_image['sort_order']));
 				}
 			}
 		}
@@ -51,8 +51,8 @@ module.exports = class BannerModel extends global['OpencartSystemEngineModel'] {
 	 * @return void
 	 */
 	async deleteBanner(banner_id) {
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "banner` WHERE `banner_id` = '" + banner_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "banner_image` WHERE `banner_id` = '" + banner_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "banner` WHERE `banner_id` = " + this.db.quote(banner_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "banner_image` WHERE `banner_id` = " + this.db.quote(banner_id));
 	}
 
 	/**
@@ -61,7 +61,7 @@ module.exports = class BannerModel extends global['OpencartSystemEngineModel'] {
 	 * @return array
 	 */
 	async getBanner(banner_id) {
-		let query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "banner` WHERE `banner_id` = '" + banner_id + "'");
+		let query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "banner` WHERE `banner_id` = " + this.db.quote(banner_id));
 
 		return query.row;
 	}
@@ -102,7 +102,7 @@ module.exports = class BannerModel extends global['OpencartSystemEngineModel'] {
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql += " LIMIT " + (parseInt(data['start']) || 0) + "," + (parseInt(data['limit']) || 0);
 		}
 
 		let query = await this.db.query(sql);
@@ -118,7 +118,7 @@ module.exports = class BannerModel extends global['OpencartSystemEngineModel'] {
 	async getImages(banner_id) {
 		let banner_image_data = {};
 
-		const banner_image_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "banner_image` WHERE `banner_id` = '" + banner_id + "' ORDER BY `sort_order` ASC");
+		const banner_image_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "banner_image` WHERE `banner_id` = " + this.db.quote(banner_id) + " ORDER BY `sort_order` ASC");
 
 		for (let banner_image of banner_image_query.rows) {
 			banner_image_data[banner_image['language_id']] = banner_image_data[banner_image['language_id']] || [];

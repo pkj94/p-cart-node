@@ -8,7 +8,7 @@ global['OpencartAdminModelExtensionOpencartReportMarketing'] = class Marketing e
 		let sql = "SELECT m.`marketing_id`, m.`name` AS campaign, m.`code`, m.`clicks` AS clicks, (SELECT COUNT(DISTINCT `order_id`) FROM `" + DB_PREFIX + "order` o1 WHERE o1.`marketing_id` = m.`marketing_id`";
 
 		if (data['filter_order_status_id']) {
-			sql += " AND o1.`order_status_id` = '" + data['filter_order_status_id'] + "'";
+			sql += " AND o1.`order_status_id` = " + this.db.quote(data['filter_order_status_id']);
 		} else {
 			sql += " AND o1.`order_status_id` > '0'";
 		}
@@ -24,7 +24,7 @@ global['OpencartAdminModelExtensionOpencartReportMarketing'] = class Marketing e
 		sql += ") AS `orders`, (SELECT SUM(`total`) FROM `" + DB_PREFIX + "order` o2 WHERE o2.`marketing_id` = m.`marketing_id`";
 
 		if (data['filter_order_status_id']) {
-			sql += " AND o2.`order_status_id` = '" + data['filter_order_status_id'] + "'";
+			sql += " AND o2.`order_status_id` = " + this.db.quote(data['filter_order_status_id']);
 		} else {
 			sql += " AND o2.`order_status_id` > '0'";
 		}
@@ -49,7 +49,7 @@ if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql += " LIMIT " + (parseInt(data['start']) || 0) + "," + (parseInt(data['limit']) || 0);
 		}
 
 		let query = await this.db.query(sql);

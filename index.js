@@ -10,11 +10,15 @@ const getConfig = (key, from = '') => {
         return (require(__dirname + '/' + (from ? from + '/' : from) + 'config.json'))[key]
     return '';
 }
+// The store counts as installed once config.json has database details. The installer is then
+// disabled, otherwise anyone could re-run it and take over the store. ALLOW_INSTALL=1 re-enables it.
+const isInstalled = () => !!getConfig('DB_DATABASE') && fs.existsSync(__dirname + '/admin/config.json');
+
 global.AppLoad = () => {
     let adminRoutes = require('./admin');
     let catalogRoutes = require('./catalog');
     let installRoutes;
-    if (fs.existsSync('./install'))
+    if (fs.existsSync('./install') && (!isInstalled() || process.env.ALLOW_INSTALL === '1'))
         installRoutes = require('./install');
     // boostrap all models
     // Start Optimize
@@ -34,11 +38,13 @@ global.AppLoad = () => {
     registry.set('config', config);
     // End Optimize
     // Install
-    let path = __dirname.replaceAll('\\', '/') + '/install/';
-    app.use('/install/view/stylesheet', express.static(path + 'view/stylesheet'));
-    app.use('/install/view/javascript', express.static(path + 'view/javascript'));
-    app.use('/install/view/image', express.static(path + 'view/image'));
-    app.use('/install/language', express.static(path + 'language'));
+    if (installRoutes) {
+        let path = __dirname.replaceAll('\\', '/') + '/install/';
+        app.use('/install/view/stylesheet', express.static(path + 'view/stylesheet'));
+        app.use('/install/view/javascript', express.static(path + 'view/javascript'));
+        app.use('/install/view/image', express.static(path + 'view/image'));
+        app.use('/install/language', express.static(path + 'language'));
+    }
 
     // admin
     app.use('/admin/view/stylesheet', express.static(getConfig('DIR_APPLICATION', 'admin') + 'view/stylesheet'));
@@ -68,15 +74,43 @@ const cookieParser = require("cookie-parser");
 
 app.use(cookieParser());
 const session = require('express-session')
+
+// A fixed secret, so restarts don't log everyone out: SESSION_SECRET env var, else one generated
+// once and kept in system/storage/session_secret (git-ignored)
+const sessionSecret = () => {
+    if (process.env.SESSION_SECRET) return process.env.SESSION_SECRET;
+    const file = __dirname + '/system/storage/session_secret';
+    if (!fs.existsSync(file)) {
+        fs.writeFileSync(file, require('crypto').randomBytes(32).toString('hex'), { mode: 0o600 });
+    }
+    return fs.readFileSync(file).toString().trim();
+}
+
 var sess = {
-    secret: require('crypto').randomBytes(26).toString('hex').slice(0, 26),
+    secret: sessionSecret(),
     cookie: {
         maxAge: 30 * 60 * 60 * 1000,
-        httpOnly: false,
+        httpOnly: true,
+        sameSite: 'lax',
         secure: false
     },
     resave: false,
+    // Guest carts are keyed by session id, so the id must stay stable from the first visit
     saveUninitialized: true
+}
+
+// Keep sessions in the database (OpenCart's session table) once installed; before install there is no DB yet
+if (getConfig('DB_DATABASE')) {
+    const MySQLSessionStore = require('./system/session_store');
+    sess.store = new MySQLSessionStore({
+        host: getConfig('DB_HOSTNAME'),
+        user: getConfig('DB_USERNAME'),
+        password: getConfig('DB_PASSWORD'),
+        database: getConfig('DB_DATABASE'),
+        port: getConfig('DB_PORT'),
+        prefix: getConfig('DB_PREFIX'),
+        ttl: sess.cookie.maxAge / 1000
+    });
 }
 
 if (app.get('env') === 'production') {
@@ -102,7 +136,18 @@ app.use('/catalog/view/stylesheet', express.static('catalog/view/stylesheet'));
 app.use('/catalog/view/javascript', express.static('catalog/view/javascript'));
 app.use('/catalog/view/image', express.static('catalog/view/image'));
 app.use('/catalog/language', express.static('catalog/language'));
-app.use('/extension', express.static('extension'));
+// Only extension view assets are public (extension/<name>/admin|catalog/view/...); the controllers,
+// models and config next to them are server code and must not be downloadable
+const isExtensionAsset = (urlPath) => {
+    let decoded;
+    try {
+        decoded = decodeURIComponent(urlPath);
+    } catch (e) {
+        return false;
+    }
+    return /^\/[\w-]+\/(admin|catalog)\/view\/(?!template\/)/.test(decoded) && !decoded.split(/[\\/]/).includes('..');
+}
+app.use('/extension', (req, res, next) => isExtensionAsset(req.path) ? next() : res.sendStatus(404), express.static('extension'));
 app.use('/favicon.ico', express.static('./favicon.ico'));
 app.use(morgan('dev'));
 const decodeObject = (obj) => {

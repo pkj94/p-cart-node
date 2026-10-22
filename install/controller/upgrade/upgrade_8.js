@@ -9,14 +9,14 @@ module.exports = class Upgrade8 extends global['OpencartSystemEngineController']
 
 		try {
 			// customer_activity
-			query = this.db.query("SELECT * FROM information_schema+COLUMNS WHERE TABLE_SCHEMA = '" + DB_DATABASE + "' AND TABLE_NAME = '" + DB_PREFIX + "customer_activity' AND COLUMN_NAME = 'activity_id'");
+			query = this.db.query("SELECT * FROM information_schema+COLUMNS WHERE TABLE_SCHEMA = " + this.db.quote(DB_DATABASE) + " AND TABLE_NAME = " + this.db.quote("" + DB_PREFIX + "customer_activity") + " AND COLUMN_NAME = 'activity_id'");
 
 			if (query.num_rows) {
 				this.db.query("UPDATE `" + DB_PREFIX + "customer_activity` SET `customer_activity_id` = `activity_id` WHERE `customer_activity_id` IS NULL or `customer_activity_id` = ''");
 			}
 
 			// Customer Group
-			query = this.db.query("SELECT * FROM information_schema+COLUMNS WHERE TABLE_SCHEMA = '" + DB_DATABASE + "' AND TABLE_NAME = '" + DB_PREFIX + "customer_group' AND COLUMN_NAME = 'name'");
+			query = this.db.query("SELECT * FROM information_schema+COLUMNS WHERE TABLE_SCHEMA = " + this.db.quote(DB_DATABASE) + " AND TABLE_NAME = " + this.db.quote("" + DB_PREFIX + "customer_group") + " AND COLUMN_NAME = 'name'");
 
 			if (query.num_rows) {
 				customer_group_query = this.db.query("SELECT * FROM `" + DB_PREFIX + "customer_group`");
@@ -25,13 +25,13 @@ module.exports = class Upgrade8 extends global['OpencartSystemEngineController']
 					language_query = this.db.query("SELECT `language_id` FROM `" + DB_PREFIX + "language`");
 
 					for (language_query.rows of language) {
-						this.db.query("INSERT INTO `" + DB_PREFIX + "customer_group_description` SET `customer_group_id` = '" + customer_group['customer_group_id'] + "', `language_id` = '" + language['language_id'] + "', `name` = " + this.db.escape(customer_group['name']));
+						this.db.query("INSERT INTO `" + DB_PREFIX + "customer_group_description` SET `customer_group_id` = " + this.db.quote(customer_group['customer_group_id']) + ", `language_id` = " + this.db.quote(language['language_id']) + ", `name` = " + this.db.escape(customer_group['name']));
 					}
 				}
 			}
 
 			// Affiliate customer merge code
-			query = this.db.query("SELECT * FROM information_schema+COLUMNS WHERE TABLE_SCHEMA = '" + DB_DATABASE + "' AND TABLE_NAME = '" + DB_PREFIX + "affiliate'");
+			query = this.db.query("SELECT * FROM information_schema+COLUMNS WHERE TABLE_SCHEMA = " + this.db.quote(DB_DATABASE) + " AND TABLE_NAME = " + this.db.quote("" + DB_PREFIX + "affiliate"));
 
 			if (query.num_rows) {
 				// Removing affiliate and moving to the customer account+
@@ -49,35 +49,35 @@ module.exports = class Upgrade8 extends global['OpencartSystemEngineController']
 					customer_query = this.db.query("SELECT * FROM `" + DB_PREFIX + "customer` WHERE `email` = " + this.db.escape(affiliate['email']));
 
 					if (!customer_query.num_rows) {
-						this.db.query("INSERT INTO `" + DB_PREFIX + "customer` SET `customer_group_id` = '" + config.get('config_customer_group_id') + "', `language_id` = '" + config.get('config_customer_group_id') + "', `firstname` = " + this.db.escape(affiliate['firstname']) + ", `lastname` = " + this.db.escape(affiliate['lastname']) + ", `email` = " + this.db.escape(affiliate['email']) + ", `password` = " + this.db.escape(affiliate['password']) + ", `newsletter` = '0', `custom_field` = " + this.db.escape(JSON.stringify([])) + ", `ip` = " + this.db.escape(affiliate['ip']) + ", `status` = " + this.db.escape(affiliate['status']) + ", `date_added` = " + this.db.escape(affiliate['date_added']));
+						this.db.query("INSERT INTO `" + DB_PREFIX + "customer` SET `customer_group_id` = " + this.db.quote(config.get('config_customer_group_id')) + ", `language_id` = " + this.db.quote(config.get('config_customer_group_id')) + ", `firstname` = " + this.db.escape(affiliate['firstname']) + ", `lastname` = " + this.db.escape(affiliate['lastname']) + ", `email` = " + this.db.escape(affiliate['email']) + ", `password` = " + this.db.escape(affiliate['password']) + ", `newsletter` = '0', `custom_field` = " + this.db.escape(JSON.stringify([])) + ", `ip` = " + this.db.escape(affiliate['ip']) + ", `status` = " + this.db.escape(affiliate['status']) + ", `date_added` = " + this.db.escape(affiliate['date_added']));
 
 						customer_id = this.db.getLastId();
 
-						this.db.query("INSERT INTO `" + DB_PREFIX + "address` SET `customer_id` = '" + customer_id + "', `firstname` = " + this.db.escape(affiliate['firstname']) + ", `lastname` = " + this.db.escape(affiliate['lastname']) + ", `company` = " + this.db.escape(affiliate['company']) + ", `address_1` = " + this.db.escape(affiliate['address_1']) + ", `address_2` = " + this.db.escape(affiliate['address_2']) + ", `city` = " + this.db.escape(affiliate['city']) + ", `postcode` = " + this.db.escape(affiliate['postcode']) + ", `zone_id` = '" + affiliate['zone_id'] + "', `country_id` = '" + affiliate['country_id'] + "', `custom_field` = " + this.db.escape(JSON.stringify([])));
+						this.db.query("INSERT INTO `" + DB_PREFIX + "address` SET `customer_id` = " + this.db.quote(customer_id) + ", `firstname` = " + this.db.escape(affiliate['firstname']) + ", `lastname` = " + this.db.escape(affiliate['lastname']) + ", `company` = " + this.db.escape(affiliate['company']) + ", `address_1` = " + this.db.escape(affiliate['address_1']) + ", `address_2` = " + this.db.escape(affiliate['address_2']) + ", `city` = " + this.db.escape(affiliate['city']) + ", `postcode` = " + this.db.escape(affiliate['postcode']) + ", `zone_id` = " + this.db.quote(affiliate['zone_id']) + ", `country_id` = " + this.db.quote(affiliate['country_id']) + ", `custom_field` = " + this.db.escape(JSON.stringify([])));
 					} else {
 						customer_id = customer_query.row['customer_id'];
 					}
 
-					customer_query = this.db.query("SELECT * FROM `" + DB_PREFIX + "customer_affiliate` WHERE `customer_id` = '" + customer_id + "'");
+					customer_query = this.db.query("SELECT * FROM `" + DB_PREFIX + "customer_affiliate` WHERE `customer_id` = " + this.db.quote(customer_id));
 
 					if (!customer_query.num_rows) {
-						this.db.query("INSERT INTO `" + DB_PREFIX + "customer_affiliate` SET `customer_id` = '" + customer_id + "', `company` = " + this.db.escape(affiliate['company']) + ", `tracking` = " + this.db.escape(affiliate['code']) + ", `commission` = '" + affiliate['commission'] + "', `tax` = " + this.db.escape(affiliate['tax']) + ", `payment_method` = " + this.db.escape(affiliate['payment_method']) + ", `cheque` = " + this.db.escape(affiliate['cheque']) + ", `paypal` = " + this.db.escape(affiliate['paypal']) + ", `bank_name` = " + this.db.escape(affiliate['bank_name']) + ", `bank_branch_number` = " + this.db.escape(affiliate['bank_branch_number']) + ", `bank_account_name` = " + this.db.escape(affiliate['bank_account_name']) + ", `bank_account_number` = " + this.db.escape(affiliate['bank_account_number']) + ", `status` = '" + (isset(affiliate['approved']) ? affiliate['approved'] : affiliate['status']) + "', `date_added` = " + this.db.escape(affiliate['date_added']));
+						this.db.query("INSERT INTO `" + DB_PREFIX + "customer_affiliate` SET `customer_id` = " + this.db.quote(customer_id) + ", `company` = " + this.db.escape(affiliate['company']) + ", `tracking` = " + this.db.escape(affiliate['code']) + ", `commission` = " + this.db.quote(affiliate['commission']) + ", `tax` = " + this.db.escape(affiliate['tax']) + ", `payment_method` = " + this.db.escape(affiliate['payment_method']) + ", `cheque` = " + this.db.escape(affiliate['cheque']) + ", `paypal` = " + this.db.escape(affiliate['paypal']) + ", `bank_name` = " + this.db.escape(affiliate['bank_name']) + ", `bank_branch_number` = " + this.db.escape(affiliate['bank_branch_number']) + ", `bank_account_name` = " + this.db.escape(affiliate['bank_account_name']) + ", `bank_account_number` = " + this.db.escape(affiliate['bank_account_number']) + ", `status` = " + this.db.quote((isset(affiliate['approved']) ? affiliate['approved'] : affiliate['status'])) + ", `date_added` = " + this.db.escape(affiliate['date_added']));
 					}
 
-					affiliate_transaction_query = this.db.query("SELECT * FROM `" + DB_PREFIX + "affiliate_transaction` WHERE `affiliate_id` = '" + affiliate['affiliate_id'] + "'");
+					affiliate_transaction_query = this.db.query("SELECT * FROM `" + DB_PREFIX + "affiliate_transaction` WHERE `affiliate_id` = " + this.db.quote(affiliate['affiliate_id']));
 
 					for (affiliate_transaction_query.rows of affiliate_transaction) {
-						this.db.query("INSERT INTO `" + DB_PREFIX + "customer_transaction` SET `customer_id` = '" + customer_id + "', `order_id` = '" + affiliate_transaction['order_id'] + "', `description` = " + this.db.escape(affiliate_transaction['description']) + ", `amount` = '" + affiliate_transaction['amount'] + "', `date_added` = " + this.db.escape(affiliate_transaction['date_added']));
+						this.db.query("INSERT INTO `" + DB_PREFIX + "customer_transaction` SET `customer_id` = " + this.db.quote(customer_id) + ", `order_id` = " + this.db.quote(affiliate_transaction['order_id']) + ", `description` = " + this.db.escape(affiliate_transaction['description']) + ", `amount` = " + this.db.quote(affiliate_transaction['amount']) + ", `date_added` = " + this.db.escape(affiliate_transaction['date_added']));
 
-						this.db.query("DELETE FROM `" + DB_PREFIX + "affiliate_transaction` WHERE `affiliate_transaction_id` = '" + affiliate_transaction['affiliate_transaction_id'] + "'");
+						this.db.query("DELETE FROM `" + DB_PREFIX + "affiliate_transaction` WHERE `affiliate_transaction_id` = " + this.db.quote(affiliate_transaction['affiliate_transaction_id']));
 					}
 
-					this.db.query("UPDATE `" + DB_PREFIX + "order` SET `affiliate_id` = '" + customer_id + "' WHERE `affiliate_id` = '" + affiliate['affiliate_id'] + "'");
+					this.db.query("UPDATE `" + DB_PREFIX + "order` SET `affiliate_id` = " + this.db.quote(customer_id) + " WHERE `affiliate_id` = " + this.db.quote(affiliate['affiliate_id']));
 				}
 			}
 
 			// affiliate payment > payment_method
-			query = this.db.query("SELECT * FROM information_schema+COLUMNS WHERE TABLE_SCHEMA = '" + DB_DATABASE + "' AND TABLE_NAME = '" + DB_PREFIX + "customer_affiliate' AND COLUMN_NAME = 'payment'");
+			query = this.db.query("SELECT * FROM information_schema+COLUMNS WHERE TABLE_SCHEMA = " + this.db.quote(DB_DATABASE) + " AND TABLE_NAME = " + this.db.quote("" + DB_PREFIX + "customer_affiliate") + " AND COLUMN_NAME = 'payment'");
 
 			if (query.num_rows) {
 				this.db.query("UPDATE `" + DB_PREFIX + "customer_affiliate` SET `payment_method` = `payment`");
@@ -86,14 +86,14 @@ module.exports = class Upgrade8 extends global['OpencartSystemEngineController']
 			}
 
 			// Country address_format_id
-			query = this.db.query("SELECT * FROM information_schema+COLUMNS WHERE TABLE_SCHEMA = '" + DB_DATABASE + "' AND TABLE_NAME = '" + DB_PREFIX + "country' AND COLUMN_NAME = 'address_format_id'");
+			query = this.db.query("SELECT * FROM information_schema+COLUMNS WHERE TABLE_SCHEMA = " + this.db.quote(DB_DATABASE) + " AND TABLE_NAME = " + this.db.quote("" + DB_PREFIX + "country") + " AND COLUMN_NAME = 'address_format_id'");
 
 			if (!query.num_rows) {
 				this.db.query("ALTER TABLE `" + DB_PREFIX + "country` ADD COLUMN `address_format_id` int(11) NOT NULL AFTER `address_format`");
 				this.db.query("ALTER TABLE `" + DB_PREFIX + "country` DROP COLUMN `address_format`");
 			}
 
-			query = this.db.query("SELECT * FROM information_schema+COLUMNS WHERE TABLE_SCHEMA = '" + DB_DATABASE + "' AND TABLE_NAME = '" + DB_PREFIX + "address_format'");
+			query = this.db.query("SELECT * FROM information_schema+COLUMNS WHERE TABLE_SCHEMA = " + this.db.quote(DB_DATABASE) + " AND TABLE_NAME = " + this.db.quote("" + DB_PREFIX + "address_format"));
 
 			if (query.num_rows) {
 				address_format_total = this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "address_format`");
@@ -107,14 +107,14 @@ module.exports = class Upgrade8 extends global['OpencartSystemEngineController']
 			this.db.query("UPDATE `" + DB_PREFIX + "country` SET `address_format_id` = '1' WHERE `address_format_id` = '0'");
 
 			// Api
-			query = this.db.query("SELECT * FROM information_schema+COLUMNS WHERE TABLE_SCHEMA = '" + DB_DATABASE + "' AND TABLE_NAME = '" + DB_PREFIX + "api' AND COLUMN_NAME = 'name'");
+			query = this.db.query("SELECT * FROM information_schema+COLUMNS WHERE TABLE_SCHEMA = " + this.db.quote(DB_DATABASE) + " AND TABLE_NAME = " + this.db.quote("" + DB_PREFIX + "api") + " AND COLUMN_NAME = 'name'");
 
 			if (query.num_rows) {
 				this.db.query("UPDATE `" + DB_PREFIX + "api` SET `name` = `username` WHERE `username` IS NULL or `username` = ''");
 			}
 
 			// Cart - Subscriptions
-			query = this.db.query("SELECT * FROM information_schema+COLUMNS WHERE TABLE_SCHEMA = '" + DB_DATABASE + "' AND TABLE_NAME = '" + DB_PREFIX + "cart' AND COLUMN_NAME = 'subscription_plan_id'");
+			query = this.db.query("SELECT * FROM information_schema+COLUMNS WHERE TABLE_SCHEMA = " + this.db.quote(DB_DATABASE) + " AND TABLE_NAME = " + this.db.quote("" + DB_PREFIX + "cart") + " AND COLUMN_NAME = 'subscription_plan_id'");
 
 			if (!query.num_rows) {
 				this.db.query("TRUNCATE TABLE `" + DB_PREFIX + "cart`");
@@ -124,7 +124,7 @@ module.exports = class Upgrade8 extends global['OpencartSystemEngineController']
 			}
 
 			// Addresses
-			query = this.db.query("SELECT * FROM information_schema+COLUMNS WHERE TABLE_SCHEMA = '" + DB_DATABASE + "' AND TABLE_NAME = '" + DB_PREFIX + "address' AND COLUMN_NAME = 'default'");
+			query = this.db.query("SELECT * FROM information_schema+COLUMNS WHERE TABLE_SCHEMA = " + this.db.quote(DB_DATABASE) + " AND TABLE_NAME = " + this.db.quote("" + DB_PREFIX + "address") + " AND COLUMN_NAME = 'default'");
 
 			if (!query.num_rows) {
 				this.db.query("ALTER TABLE `" + DB_PREFIX + "address` ADD COLUMN `default` tinyint(1) NOT NULL AFTER `custom_field`");
@@ -229,7 +229,7 @@ module.exports = class Upgrade8 extends global['OpencartSystemEngineController']
 			});
 
 			for (remove of result) {
-				query = this.db.query("SELECT * FROM information_schema+COLUMNS WHERE TABLE_SCHEMA = '" + DB_DATABASE + "' AND TABLE_NAME = '" + DB_PREFIX + result['table'] + "' AND COLUMN_NAME = '" + result['field'] + "'");
+				query = this.db.query("SELECT * FROM information_schema+COLUMNS WHERE TABLE_SCHEMA = " + this.db.quote(DB_DATABASE) + " AND TABLE_NAME = " + this.db.quote("" + DB_PREFIX + result['table']) + " AND COLUMN_NAME = " + this.db.quote(result['field']));
 
 				if (query.num_rows) {
 					this.db.query("ALTER TABLE `" + DB_PREFIX + result['table'] + "` DROP `" + result['field'] + "`");
@@ -253,7 +253,7 @@ module.exports = class Upgrade8 extends global['OpencartSystemEngineController']
 			];
 
 			for (remove of table) {
-				query = this.db.query("SELECT * FROM information_schema+COLUMNS WHERE TABLE_SCHEMA = '" + DB_DATABASE + "' AND TABLE_NAME = '" + DB_PREFIX + table + "'");
+				query = this.db.query("SELECT * FROM information_schema+COLUMNS WHERE TABLE_SCHEMA = " + this.db.quote(DB_DATABASE) + " AND TABLE_NAME = " + this.db.quote("" + DB_PREFIX + table));
 
 				if (query.num_rows) {
 					this.db.query("DROP TABLE `" + DB_PREFIX + table + "`");

@@ -7,7 +7,7 @@ module.exports =class Subscription extends global['OpencartSystemEngineModel'] {
 	async getSubscription(subscription_id) {
 		let subscription_data = {};
 
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "subscription` `s` WHERE `subscription_id` = '" + subscription_id + "' AND `customer_id` = '" + await this.customer.getId() + "'");
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "subscription` `s` WHERE `subscription_id` = " + this.db.quote(subscription_id) + " AND `customer_id` = " + this.db.quote((await this.customer.getId())));
 
 		if (query.num_rows) {
 			subscription_data = query.row;
@@ -28,7 +28,7 @@ module.exports =class Subscription extends global['OpencartSystemEngineModel'] {
 	async getSubscriptionByOrderProductId(order_id, order_product_id) {
 		let subscription_data = {};
 
-		const query = await this.db.query("SELECT * FROM  `" + DB_PREFIX + "subscription` WHERE `order_id` = '" + order_id + "' AND `order_product_id` = '" + order_product_id + "' AND `customer_id` = '" + await this.customer.getId() + "'");
+		const query = await this.db.query("SELECT * FROM  `" + DB_PREFIX + "subscription` WHERE `order_id` = " + this.db.quote(order_id) + " AND `order_product_id` = " + this.db.quote(order_product_id) + " AND `customer_id` = " + this.db.quote((await this.customer.getId())));
 
 		if (query.num_rows) {
 			subscription_data = query.row;
@@ -55,7 +55,7 @@ module.exports =class Subscription extends global['OpencartSystemEngineModel'] {
 			limit = 1;
 		}
 
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "subscription` WHERE `customer_id` = '" + await this.customer.getId() + "' AND `subscription_status_id` > '0' AND `store_id` = '" + this.config.get('config_store_id') + "' ORDER BY `subscription_id` DESC LIMIT " + start + "," + limit);
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "subscription` WHERE `customer_id` = " + this.db.quote((await this.customer.getId())) + " AND `subscription_status_id` > '0' AND `store_id` = " + this.db.quote(this.config.get('config_store_id')) + " ORDER BY `subscription_id` DESC LIMIT " + (parseInt(start) || 0) + "," + (parseInt(limit) || 0));
 
 		return query.rows;
     }
@@ -64,7 +64,7 @@ module.exports =class Subscription extends global['OpencartSystemEngineModel'] {
 	 * @return int
 	 */
 	async getTotalSubscriptions() {
-		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "subscription` WHERE `customer_id` = '" + await this.customer.getId() + "' AND `subscription_status_id` > '0' AND `store_id` = '" + this.config.get('config_store_id') + "'");
+		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "subscription` WHERE `customer_id` = " + this.db.quote((await this.customer.getId())) + " AND `subscription_status_id` > '0' AND `store_id` = " + this.db.quote(this.config.get('config_store_id')));
 
 		if (query.num_rows) {
 			return query.row['total'];
@@ -79,7 +79,7 @@ module.exports =class Subscription extends global['OpencartSystemEngineModel'] {
 	 * @return int
 	 */
 	async getTotalSubscriptionByShippingAddressId(address_id) {
-		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "subscription` WHERE `customer_id` = '" + await this.customer.getId() + "' AND `shipping_address_id` = '" + address_id + "'");
+		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "subscription` WHERE `customer_id` = " + this.db.quote((await this.customer.getId())) + " AND `shipping_address_id` = " + this.db.quote(address_id));
 
 		return query.row['total'];
 	}
@@ -90,7 +90,7 @@ module.exports =class Subscription extends global['OpencartSystemEngineModel'] {
 	 * @return int
 	 */
 	async getTotalSubscriptionByPaymentAddressId(address_id) {
-		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "subscription` WHERE `customer_id` = '" + await this.customer.getId() + "' AND `payment_address_id` = '" + address_id + "'");
+		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "subscription` WHERE `customer_id` = " + this.db.quote((await this.customer.getId())) + " AND `payment_address_id` = " + this.db.quote(address_id));
 
 		return query.row['total'];
 	}
@@ -111,7 +111,7 @@ module.exports =class Subscription extends global['OpencartSystemEngineModel'] {
 			let limit = 10;
 		}
 
-		const query = await this.db.query("SELECT sh.`date_added`, ss.`name` AS status, sh.`comment`, sh.`notify` FROM `" + DB_PREFIX + "subscription_history` `sh` LEFT JOIN `" + DB_PREFIX + "subscription_status` `ss` ON `sh`.`subscription_status_id` = ss.`subscription_status_id` WHERE sh.`subscription_id` = '" + subscription_id + "' AND ss.`language_id` = '" + this.config.get('config_language_id') + "' ORDER BY sh.`date_added` DESC LIMIT " + start + "," + limit);
+		const query = await this.db.query("SELECT sh.`date_added`, ss.`name` AS status, sh.`comment`, sh.`notify` FROM `" + DB_PREFIX + "subscription_history` `sh` LEFT JOIN `" + DB_PREFIX + "subscription_status` `ss` ON `sh`.`subscription_status_id` = ss.`subscription_status_id` WHERE sh.`subscription_id` = " + this.db.quote(subscription_id) + " AND ss.`language_id` = " + this.db.quote(this.config.get('config_language_id')) + " ORDER BY sh.`date_added` DESC LIMIT " + (parseInt(start) || 0) + "," + (parseInt(limit) || 0));
 
 		return query.rows;
 	}
@@ -122,7 +122,7 @@ module.exports =class Subscription extends global['OpencartSystemEngineModel'] {
 	 * @return int
 	 */
 	async getTotalHistories(subscription_id) {
-		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "subscription_history` WHERE `subscription_id` = '" + subscription_id + "'");
+		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "subscription_history` WHERE `subscription_id` = " + this.db.quote(subscription_id));
 
 		return query.row['total'];
 	}

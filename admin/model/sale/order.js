@@ -5,10 +5,10 @@ module.exports = class OrderSaleModel extends global['OpencartSystemEngineModel'
 	 * @return array
 	 */
 	async getOrder(order_id) {
-		let order_query = await this.db.query("SELECT *, (SELECT `os`.`name` FROM `" + DB_PREFIX + "order_status` os WHERE `os`.`order_status_id` = `o`.`order_status_id` AND `os`.`language_id` = '" + this.config.get('config_language_id') + "') AS `order_status` FROM `" + DB_PREFIX + "order` `o` WHERE `o`.`order_id` = '" + order_id + "'");
+		let order_query = await this.db.query("SELECT *, (SELECT `os`.`name` FROM `" + DB_PREFIX + "order_status` os WHERE `os`.`order_status_id` = `o`.`order_status_id` AND `os`.`language_id` = " + this.db.quote(this.config.get('config_language_id')) + ") AS `order_status` FROM `" + DB_PREFIX + "order` `o` WHERE `o`.`order_id` = " + this.db.quote(order_id));
 
 		if (order_query.num_rows) {
-			let country_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "country` WHERE `country_id` = '" + order_query.row['payment_country_id'] + "'");
+			let country_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "country` WHERE `country_id` = " + this.db.quote(order_query.row['payment_country_id']));
 
 			if (country_query.num_rows) {
 				payment_iso_code_2 = country_query.row['iso_code_2'];
@@ -18,7 +18,7 @@ module.exports = class OrderSaleModel extends global['OpencartSystemEngineModel'
 				payment_iso_code_3 = '';
 			}
 
-			let zone_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "zone` WHERE `zone_id` = '" + order_query.row['payment_zone_id'] + "'");
+			let zone_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "zone` WHERE `zone_id` = " + this.db.quote(order_query.row['payment_zone_id']));
 
 			if (zone_query.num_rows) {
 				payment_zone_code = zone_query.row['code'];
@@ -26,7 +26,7 @@ module.exports = class OrderSaleModel extends global['OpencartSystemEngineModel'
 				payment_zone_code = '';
 			}
 
-			country_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "country` WHERE `country_id` = '" + order_query.row['shipping_country_id'] + "'");
+			country_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "country` WHERE `country_id` = " + this.db.quote(order_query.row['shipping_country_id']));
 
 			if (country_query.num_rows) {
 				shipping_iso_code_2 = country_query.row['iso_code_2'];
@@ -36,7 +36,7 @@ module.exports = class OrderSaleModel extends global['OpencartSystemEngineModel'
 				shipping_iso_code_3 = '';
 			}
 
-			zone_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "zone` WHERE `zone_id` = '" + order_query.row['shipping_zone_id'] + "'");
+			zone_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "zone` WHERE `zone_id` = " + this.db.quote(order_query.row['shipping_zone_id']));
 
 			if (zone_query.num_rows) {
 				shipping_zone_code = zone_query.row['code'];
@@ -46,7 +46,7 @@ module.exports = class OrderSaleModel extends global['OpencartSystemEngineModel'
 
 			reward = 0;
 
-			let order_product_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "order_product` WHERE `order_id` = '" + order_id + "'");
+			let order_product_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "order_product` WHERE `order_id` = " + this.db.quote(order_id));
 
 			for (let product of order_product_query.rows) {
 				reward += product['reward'];
@@ -152,7 +152,7 @@ if (language_info) {
 	 * @return array
 	 */
 	async getOrders(data = {}) {
-		let sql = "SELECT o.`order_id`, CONCAT(o.`firstname`, ' ', o.`lastname`) AS customer, (SELECT os.`name` FROM `" + DB_PREFIX + "order_status` os WHERE os.`order_status_id` = o.`order_status_id` AND os.`language_id` = '" + this.config.get('config_language_id') + "') AS order_status, o.`store_name`, o.`shipping_method`, o.`total`, o.`currency_code`, o.`currency_value`, o.`date_added`, o.`date_modified` FROM `" + DB_PREFIX + "order` o";
+		let sql = "SELECT o.`order_id`, CONCAT(o.`firstname`, ' ', o.`lastname`) AS customer, (SELECT os.`name` FROM `" + DB_PREFIX + "order_status` os WHERE os.`order_status_id` = o.`order_status_id` AND os.`language_id` = " + this.db.quote(this.config.get('config_language_id')) + ") AS order_status, o.`store_name`, o.`shipping_method`, o.`total`, o.`currency_code`, o.`currency_value`, o.`date_added`, o.`date_modified` FROM `" + DB_PREFIX + "order` o";
 
 		if ((data['filter_order_status'])) {
 			let implode = [];
@@ -160,28 +160,28 @@ if (language_info) {
 			let order_statuses = data['filter_order_status'].split(',',);
 
 			for (let order_status_id of order_statuses) {
-				implode.push("o.`order_status_id` = '" + order_status_id + "'");
+				implode.push("o.`order_status_id` = " + this.db.quote(order_status_id));
 			}
 
 			if (implode.length) {
 				sql += " WHERE (" + implode.join(" OR ") + ")";
 			}
 		} else if ((data['filter_order_status_id']) && data['filter_order_status_id'] !== '') {
-			sql += " WHERE o.`order_status_id` = '" + data['filter_order_status_id'] + "'";
+			sql += " WHERE o.`order_status_id` = " + this.db.quote(data['filter_order_status_id']);
 		} else {
 			sql += " WHERE o.`order_status_id` > '0'";
 		}
 
 		if ((data['filter_order_id'])) {
-			sql += " AND o.`order_id` = '" + data['filter_order_id'] + "'";
+			sql += " AND o.`order_id` = " + this.db.quote(data['filter_order_id']);
 		}
 
 		if ((data['filter_store_id']) && data['filter_store_id'] !== '') {
-			sql += " AND o.`store_id` = '" + data['filter_store_id'] + "'";
+			sql += " AND o.`store_id` = " + this.db.quote(data['filter_store_id']);
 		}
 
 		if ((data['filter_customer_id'])) {
-			sql += " AND o.`customer_id` = '" + data['filter_customer_id'] + "'";
+			sql += " AND o.`customer_id` = " + this.db.quote(data['filter_customer_id']);
 		}
 
 		if ((data['filter_customer'])) {
@@ -201,7 +201,7 @@ if (language_info) {
 		}
 
 		if ((data['filter_total'])) {
-			sql += " AND o.`total` = '" + data['filter_total'] + "'";
+			sql += " AND o.`total` = " + this.db.quote(data['filter_total']);
 		}
 
 		let sort_data = [
@@ -237,7 +237,7 @@ if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql += " LIMIT " + (parseInt(data['start']) || 0) + "," + (parseInt(data['limit']) || 0);
 		}
 
 		let query = await this.db.query(sql);
@@ -251,7 +251,7 @@ if (data['limit'] < 1) {
 	 * @return array
 	 */
 	async getOrdersBySubscriptionId(subscription_id) {
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "order` WHERE `subscription_id` = '" + subscription_id + "'");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "order` WHERE `subscription_id` = " + this.db.quote(subscription_id));
 
 		return query.rows;
 	}
@@ -262,7 +262,7 @@ if (data['limit'] < 1) {
 	 * @return int
 	 */
 	async getTotalOrdersBySubscriptionId(subscription_id) {
-		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "order` WHERE `subscription_id` = '" + subscription_id + "'");
+		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "order` WHERE `subscription_id` = " + this.db.quote(subscription_id));
 
 		return query.row['total'];
 	}
@@ -273,12 +273,12 @@ if (data['limit'] < 1) {
 	 * @return array
 	 */
 	async getProducts(order_id) {
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "order_product` WHERE `order_id` = '" + order_id + "' ORDER BY order_product_id ASC");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "order_product` WHERE `order_id` = " + this.db.quote(order_id) + " ORDER BY order_product_id ASC");
 
 		return query.rows;
 	}
 	async getProductByOrderProductId(order_id, product_id) {
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "order_product` WHERE `order_id` = '" + order_id + "' and `product_id` = '" + product_id + "' ORDER BY order_product_id ASC");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "order_product` WHERE `order_id` = " + this.db.quote(order_id) + " and `product_id` = " + this.db.quote(product_id) + " ORDER BY order_product_id ASC");
 
 		return query.row;
 	}
@@ -289,7 +289,7 @@ if (data['limit'] < 1) {
 	 * @return int
 	 */
 	async getTotalProductsByProductId(product_id) {
-		let sql = "SELECT SUM(op.quantity) AS `total` FROM `" + DB_PREFIX + "order_product` `op` LEFT JOIN `" + DB_PREFIX + "order` `o` ON (`op`.`order_id` = `o`.`order_id`) WHERE `op`.`product_id` = '" + product_id + "'";
+		let sql = "SELECT SUM(op.quantity) AS `total` FROM `" + DB_PREFIX + "order_product` `op` LEFT JOIN `" + DB_PREFIX + "order` `o` ON (`op`.`order_id` = `o`.`order_id`) WHERE `op`.`product_id` = " + this.db.quote(product_id);
 
 		if ((data['filter_order_status'])) {
 			let implode = [];
@@ -297,14 +297,14 @@ if (data['limit'] < 1) {
 			let order_statuses = data['filter_order_status'].split(',',);
 
 			for (let order_status_id of order_statuses) {
-				implode.push("`order_status_id` = '" + order_status_id + "'");
+				implode.push("`order_status_id` = " + this.db.quote(order_status_id));
 			}
 
 			if (implode.length) {
 				sql += " AND (" + implode.join(" OR ") + ")";
 			}
 		} else if((data['filter_order_status_id']) && data['filter_order_status_id'] !== '') {
-			sql += " AND `order_status_id` = '" + data['filter_order_status_id'] + "'";
+			sql += " AND `order_status_id` = " + this.db.quote(data['filter_order_status_id']);
 		} else {
 			sql += " AND `order_status_id` > '0'";
 		}
@@ -321,7 +321,7 @@ if (data['limit'] < 1) {
 	 * @return array
 	 */
 	async getOptions(order_id, order_product_id) {
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "order_option` WHERE `order_id` = '" + order_id + "' AND `order_product_id` = '" + order_product_id + "'");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "order_option` WHERE `order_id` = " + this.db.quote(order_id) + " AND `order_product_id` = " + this.db.quote(order_product_id));
 
 		return query.rows;
 	}
@@ -333,7 +333,7 @@ if (data['limit'] < 1) {
 	 * @return array
 	 */
 	async getSubscription(order_id, order_product_id) {
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "order_subscription` WHERE `order_id` = '" + order_id + "' AND `order_product_id` = '" + order_product_id + "'");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "order_subscription` WHERE `order_id` = " + this.db.quote(order_id) + " AND `order_product_id` = " + this.db.quote(order_product_id));
 
 		return query.row;
 	}
@@ -344,7 +344,7 @@ if (data['limit'] < 1) {
 	 * @return array
 	 */
 	async getVouchers(order_id) {
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "order_voucher` WHERE `order_id` = '" + order_id + "'");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "order_voucher` WHERE `order_id` = " + this.db.quote(order_id));
 
 		return query.rows;
 	}
@@ -355,7 +355,7 @@ if (data['limit'] < 1) {
 	 * @return array
 	 */
 	async getVoucherByVoucherId(voucher_id) {
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "order_voucher` WHERE `voucher_id` = '" + voucher_id + "'");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "order_voucher` WHERE `voucher_id` = " + this.db.quote(voucher_id));
 
 		return query.row;
 	}
@@ -366,7 +366,7 @@ if (data['limit'] < 1) {
 	 * @return array
 	 */
 	async getTotals(order_id) {
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "order_total` WHERE `order_id` = '" + order_id + "' ORDER BY `sort_order`");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "order_total` WHERE `order_id` = " + this.db.quote(order_id) + " ORDER BY `sort_order`");
 
 		return query.rows;
 	}
@@ -385,28 +385,28 @@ if (data['limit'] < 1) {
 			let order_statuses = data['filter_order_status'].split(',',);
 
 			for (let order_status_id of order_statuses) {
-				implode.push("`order_status_id` = '" + order_status_id + "'");
+				implode.push("`order_status_id` = " + this.db.quote(order_status_id));
 			}
 
 			if (implode.length) {
 				sql += " WHERE (" + implode.join(" OR ") + ")";
 			}
 		} else if((data['filter_order_status_id']) && data['filter_order_status_id'] !== '') {
-			sql += " WHERE `order_status_id` = '" + data['filter_order_status_id'] + "'";
+			sql += " WHERE `order_status_id` = " + this.db.quote(data['filter_order_status_id']);
 		} else {
 			sql += " WHERE `order_status_id` > '0'";
 		}
 
 		if ((data['filter_order_id'])) {
-			sql += " AND `order_id` = '" + data['filter_order_id'] + "'";
+			sql += " AND `order_id` = " + this.db.quote(data['filter_order_id']);
 		}
 
 		if ((data['filter_store_id']) && data['filter_store_id'] !== '') {
-			sql += " AND `store_id` = '" + data['filter_store_id'] + "'";
+			sql += " AND `store_id` = " + this.db.quote(data['filter_store_id']);
 		}
 
 		if ((data['filter_customer_id'])) {
-			sql += " AND `customer_id` = '" + data['filter_customer_id'] + "'";
+			sql += " AND `customer_id` = " + this.db.quote(data['filter_customer_id']);
 		}
 
 		if ((data['filter_customer'])) {
@@ -426,7 +426,7 @@ if (data['limit'] < 1) {
 		}
 
 		if ((data['filter_total'])) {
-			sql += " AND `total` = '" + data['filter_total'] + "'";
+			sql += " AND `total` = " + this.db.quote(data['filter_total']);
 		}
 
 		let query = await this.db.query(sql);
@@ -440,7 +440,7 @@ if (data['limit'] < 1) {
 	 * @return int
 	 */
 	async getTotalOrdersByStoreId(store_id) {
-		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "order` WHERE `store_id` = '" + store_id + "'");
+		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "order` WHERE `store_id` = " + this.db.quote(store_id));
 
 		return query.row['total'];
 	}
@@ -451,7 +451,7 @@ if (data['limit'] < 1) {
 	 * @return int
 	 */
 	async getTotalOrdersByOrderStatusId(order_status_id) {
-		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "order` WHERE `order_status_id` = '" + order_status_id + "' AND `order_status_id` > '0'");
+		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "order` WHERE `order_status_id` = " + this.db.quote(order_status_id) + " AND `order_status_id` > '0'");
 
 		return query.row['total'];
 	}
@@ -465,7 +465,7 @@ if (data['limit'] < 1) {
 		order_statuses = this.config.get('config_processing_status');
 
 		for (let order_status_id of order_statuses) {
-			implode.push("`order_status_id` = '" + order_status_id + "'");
+			implode.push("`order_status_id` = " + this.db.quote(order_status_id));
 		}
 
 		if (implode.length) {
@@ -486,7 +486,7 @@ if (data['limit'] < 1) {
 		order_statuses = this.config.get('config_complete_status');
 
 		for (let order_status_id of order_statuses) {
-			implode.push("`order_status_id` = '" + order_status_id + "'");
+			implode.push("`order_status_id` = " + this.db.quote(order_status_id));
 		}
 
 		if (implode.length) {
@@ -504,7 +504,7 @@ if (data['limit'] < 1) {
 	 * @return int
 	 */
 	async getTotalOrdersByLanguageId(language_id) {
-		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "order` WHERE `language_id` = '" + language_id + "' AND `order_status_id` > '0'");
+		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "order` WHERE `language_id` = " + this.db.quote(language_id) + " AND `order_status_id` > '0'");
 
 		return query.row['total'];
 	}
@@ -515,7 +515,7 @@ if (data['limit'] < 1) {
 	 * @return int
 	 */
 	async getTotalOrdersByCurrencyId(currency_id) {
-		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "order` WHERE `currency_id` = '" + currency_id + "' AND `order_status_id` > '0'");
+		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "order` WHERE `currency_id` = " + this.db.quote(currency_id) + " AND `order_status_id` > '0'");
 
 		return query.row['total'];
 	}
@@ -534,28 +534,28 @@ if (data['limit'] < 1) {
 			let order_statuses = data['filter_order_status'].split(',',);
 
 			for (let order_status_id of order_statuses) {
-				implode.push("`order_status_id` = '" + order_status_id + "'");
+				implode.push("`order_status_id` = " + this.db.quote(order_status_id));
 			}
 
 			if (implode.length) {
 				sql += " WHERE (" + implode.join(" OR ") + ")";
 			}
 		} else if((data['filter_order_status_id']) && data['filter_order_status_id'] !== '') {
-			sql += " WHERE `order_status_id` = '" + data['filter_order_status_id'] + "'";
+			sql += " WHERE `order_status_id` = " + this.db.quote(data['filter_order_status_id']);
 		} else {
 			sql += " WHERE `order_status_id` > '0'";
 		}
 
 		if ((data['filter_order_id'])) {
-			sql += " AND `order_id` = '" + data['filter_order_id'] + "'";
+			sql += " AND `order_id` = " + this.db.quote(data['filter_order_id']);
 		}
 
 		if ((data['filter_store_id']) && data['filter_store_id'] !== '') {
-			sql += " AND `store_id` = '" + data['filter_store_id'] + "'";
+			sql += " AND `store_id` = " + this.db.quote(data['filter_store_id']);
 		}
 
 		if ((data['filter_customer_id'])) {
-			sql += " AND `customer_id` = '" + data['filter_customer_id'] + "'";
+			sql += " AND `customer_id` = " + this.db.quote(data['filter_customer_id']);
 		}
 
 		if ((data['filter_customer'])) {
@@ -575,7 +575,7 @@ if (data['limit'] < 1) {
 		}
 
 		if ((data['filter_total'])) {
-			sql += " AND `total` = '" + data['filter_total'] + "'";
+			sql += " AND `total` = " + this.db.quote(data['filter_total']);
 		}
 
 		let query = await this.db.query(sql);
@@ -597,7 +597,7 @@ if (data['limit'] < 1) {
 			if (query.row['invoice_no']) {
 				invoice_no = query.row['invoice_no'] + 1;
 			}
-			await this.db.query("UPDATE `" + DB_PREFIX + "order` SET `invoice_no` = '" + invoice_no + "', `invoice_prefix` = " + this.db.escape(order_info['invoice_prefix']) + " WHERE `order_id` = '" + order_id + "'");
+			await this.db.query("UPDATE `" + DB_PREFIX + "order` SET `invoice_no` = " + this.db.quote(invoice_no) + ", `invoice_prefix` = " + this.db.escape(order_info['invoice_prefix']) + " WHERE `order_id` = " + this.db.quote(order_id));
 
 			return order_info['invoice_prefix'] + invoice_no;
 		}
@@ -611,7 +611,7 @@ if (data['limit'] < 1) {
 	 * @return int
 	 */
 	async getRewardTotal(order_id) {
-		let query = await this.db.query("SELECT SUM(reward) AS `total` FROM `" + DB_PREFIX + "order_product` WHERE `order_id` = '" + order_id + "'");
+		let query = await this.db.query("SELECT SUM(reward) AS `total` FROM `" + DB_PREFIX + "order_product` WHERE `order_id` = " + this.db.quote(order_id));
 
 		return query.row['total'];
 	}
@@ -632,7 +632,7 @@ if (data['limit'] < 1) {
 			limit = 10;
 		}
 
-		let query = await this.db.query("SELECT oh.`date_added`, os.`name` AS `status`, oh.`comment`, oh.`notify` FROM `" + DB_PREFIX + "order_history` oh LEFT JOIN `" + DB_PREFIX + "order_status` os ON oh.`order_status_id` = os.`order_status_id` WHERE oh.`order_id` = '" + order_id + "' AND os.`language_id` = '" + this.config.get('config_language_id') + "' ORDER BY oh.`date_added` DESC LIMIT " + start + "," + limit);
+		let query = await this.db.query("SELECT oh.`date_added`, os.`name` AS `status`, oh.`comment`, oh.`notify` FROM `" + DB_PREFIX + "order_history` oh LEFT JOIN `" + DB_PREFIX + "order_status` os ON oh.`order_status_id` = os.`order_status_id` WHERE oh.`order_id` = " + this.db.quote(order_id) + " AND os.`language_id` = " + this.db.quote(this.config.get('config_language_id')) + " ORDER BY oh.`date_added` DESC LIMIT " + (parseInt(start) || 0) + "," + (parseInt(limit) || 0));
 
 		return query.rows;
 	}
@@ -643,7 +643,7 @@ if (data['limit'] < 1) {
 	 * @return int
 	 */
 	async getTotalHistories(order_id) {
-		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "order_history` WHERE `order_id` = '" + order_id + "'");
+		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "order_history` WHERE `order_id` = " + this.db.quote(order_id));
 
 		return query.row['total'];
 	}
@@ -654,7 +654,7 @@ if (data['limit'] < 1) {
 	 * @return int
 	 */
 	async getTotalHistoriesByOrderStatusId(order_status_id) {
-		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "order_history` WHERE `order_status_id` = '" + order_status_id + "'");
+		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "order_history` WHERE `order_status_id` = " + this.db.quote(order_status_id));
 
 		return query.row['total'];
 	}
@@ -670,10 +670,10 @@ if (data['limit'] < 1) {
 		let implode = [];
 
 		for (let product_id of products) {
-			implode.push("op.`product_id` = '" + product_id + "'");
+			implode.push("op.`product_id` = " + this.db.quote(product_id));
 		}
 
-		let query = await this.db.query("SELECT DISTINCT o.`email` FROM `" + DB_PREFIX + "order` o LEFT JOIN `" + DB_PREFIX + "order_product` op ON (o.`order_id` = op.`order_id`) WHERE (" + implode.join(" OR ") + ") AND o.`order_status_id` <> '0' LIMIT " + start + "," + end);
+		let query = await this.db.query("SELECT DISTINCT o.`email` FROM `" + DB_PREFIX + "order` o LEFT JOIN `" + DB_PREFIX + "order_product` op ON (o.`order_id` = op.`order_id`) WHERE (" + implode.join(" OR ") + ") AND o.`order_status_id` <> '0' LIMIT " + (parseInt(start) || 0) + "," + (parseInt(end) || 0));
 
 		return query.rows;
 	}
@@ -687,7 +687,7 @@ if (data['limit'] < 1) {
 		let implode = [];
 
 		for (let product_id of products) {
-			implode.push("op.`product_id` = '" + product_id + "'");
+			implode.push("op.`product_id` = " + this.db.quote(product_id));
 		}
 
 		let query = await this.db.query("SELECT COUNT(DISTINCT o.`email`) AS `total` FROM `" + DB_PREFIX + "order` o LEFT JOIN `" + DB_PREFIX + "order_product` op ON (o.`order_id` = op.`order_id`) WHERE (" + implode.join(" OR ") + ") AND o.`order_status_id` <> '0'");

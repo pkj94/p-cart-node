@@ -18,6 +18,10 @@ module.exports = class DBLibrary {
     escape(value) {
         return this.adaptor.escape(value);
     }
+    // Quoted SQL string literal for a value, e.g. `WHERE id = " + this.db.quote(id)`. Never paste raw values into SQL.
+    quote(value) {
+        return this.adaptor.quote(value);
+    }
     escapeId(value) {
         return this.adaptor.escapeId(value);
     }

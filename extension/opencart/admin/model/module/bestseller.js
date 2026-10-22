@@ -20,7 +20,7 @@ global['OpencartAdminModelExtensionOpencartModuleBestseller'] = class Bestseller
 	 * @return void
 	 */
 	async editTotal(product_id, total) {
-		await this.db.query("REPLACE INTO `" + DB_PREFIX + "product_bestseller` SET `product_id` = '" + product_id + "', `total` = '" + total + "'");
+		await this.db.query("REPLACE INTO `" + DB_PREFIX + "product_bestseller` SET `product_id` = " + this.db.quote(product_id) + ", `total` = " + this.db.quote(total));
 	}
 
 	/**
@@ -29,7 +29,7 @@ global['OpencartAdminModelExtensionOpencartModuleBestseller'] = class Bestseller
 	 * @return void
 	 */
 	async delete(product_id) {
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_bestseller` WHERE `product_id` = '" + product_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_bestseller` WHERE `product_id` = " + this.db.quote(product_id));
 	}
 
 	/**
@@ -47,7 +47,7 @@ global['OpencartAdminModelExtensionOpencartModuleBestseller'] = class Bestseller
 			limit = 10;
 		}
 
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_bestseller` ORDER BY `total` DESC LIMIT " + start + "," + limit);
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_bestseller` ORDER BY `total` DESC LIMIT " + (parseInt(start) || 0) + "," + (parseInt(limit) || 0));
 
 		return query.rows;
 	}

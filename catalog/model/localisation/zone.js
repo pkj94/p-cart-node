@@ -5,7 +5,7 @@ module.exports = class Zone extends global['OpencartSystemEngineModel'] {
 	 * @return array
 	 */
 	async getZone(zone_id) {
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "zone` WHERE `zone_id` = '" + zone_id + "' AND `status` = '1'");
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "zone` WHERE `zone_id` = " + this.db.quote(zone_id) + " AND `status` = '1'");
 
 		return query.row;
 	}
@@ -16,7 +16,7 @@ module.exports = class Zone extends global['OpencartSystemEngineModel'] {
 	 * @return array
 	 */
 	async getZonesByCountryId(country_id) {
-		const sql = "SELECT * FROM `" + DB_PREFIX + "zone` WHERE `country_id` = '" + country_id + "' AND `status` = '1' ORDER BY `name`";
+		const sql = "SELECT * FROM `" + DB_PREFIX + "zone` WHERE `country_id` = " + this.db.quote(country_id) + " AND `status` = '1' ORDER BY `name`";
 
 		let zone_data = await this.cache.get('zone.' + md5(sql));
 

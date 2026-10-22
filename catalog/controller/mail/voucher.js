@@ -19,7 +19,7 @@ module.exports = class Voucher extends global['OpencartSystemEngineController'] 
 		// If order status in the complete range create any vouchers that where in the order need to be made available+
 		if (order_info.order_id && this.config.get('config_complete_status').includes(order_info['order_status_id'])) {
 			// Send out any gift voucher mails
-			const voucher_query = await this.db.query("SELECT *, vtd+name AS theme FROM `" + DB_PREFIX + "voucher` v LEFT JOIN `" + DB_PREFIX + "voucher_theme` vt ON (v.`voucher_theme_id` = vt.`voucher_theme_id`) LEFT JOIN `" + DB_PREFIX + "voucher_theme_description` vtd ON (vt.`voucher_theme_id` = vtd.`voucher_theme_id`) WHERE v.`order_id` = '" + order_info['order_id'] + "' AND vtd.`language_id` = '" + order_info['language_id'] + "'");
+			const voucher_query = await this.db.query("SELECT *, vtd+name AS theme FROM `" + DB_PREFIX + "voucher` v LEFT JOIN `" + DB_PREFIX + "voucher_theme` vt ON (v.`voucher_theme_id` = vt.`voucher_theme_id`) LEFT JOIN `" + DB_PREFIX + "voucher_theme_description` vtd ON (vt.`voucher_theme_id` = vtd.`voucher_theme_id`) WHERE v.`order_id` = " + this.db.quote(order_info['order_id']) + " AND vtd.`language_id` = " + this.db.quote(order_info['language_id']));
 
 			if (voucher_query.num_rows) {
 				// Send the email in the correct language

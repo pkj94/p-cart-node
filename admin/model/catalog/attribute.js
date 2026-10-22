@@ -17,13 +17,13 @@ module.exports = class AttributeCatalogModel extends global['OpencartSystemEngin
 	 * @return int
 	 */
 	async addAttribute(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "attribute` SET `attribute_group_id` = '" + data['attribute_group_id'] + "', `sort_order` = '" + data['sort_order'] + "'");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "attribute` SET `attribute_group_id` = " + this.db.quote(data['attribute_group_id']) + ", `sort_order` = " + this.db.quote(data['sort_order']));
 
 		const attribute_id = this.db.getLastId();
 
 		for (let [language_id,  value] of Object.entries(data['attribute_description'])) {
 			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "attribute_description` SET `attribute_id` = '" + attribute_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + "");
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "attribute_description` SET `attribute_id` = " + this.db.quote(attribute_id) + ", `language_id` = " + this.db.quote(language_id) + ", `name` = " + this.db.escape(value['name']));
 		}
 
 		return attribute_id;
@@ -48,13 +48,13 @@ module.exports = class AttributeCatalogModel extends global['OpencartSystemEngin
 	 * @return void
 	 */
 	async editAttribute(attribute_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "attribute` SET `attribute_group_id` = '" + data['attribute_group_id'] + "', `sort_order` = '" + data['sort_order'] + "' WHERE `attribute_id` = '" + attribute_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "attribute` SET `attribute_group_id` = " + this.db.quote(data['attribute_group_id']) + ", `sort_order` = " + this.db.quote(data['sort_order']) + " WHERE `attribute_id` = " + this.db.quote(attribute_id));
 
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "attribute_description` WHERE `attribute_id` = '" + attribute_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "attribute_description` WHERE `attribute_id` = " + this.db.quote(attribute_id));
 
 		for (let [language_id,  value] of Object.entries(data['attribute_description'])) {
 			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "attribute_description` SET `attribute_id` = '" + attribute_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + "");
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "attribute_description` SET `attribute_id` = " + this.db.quote(attribute_id) + ", `language_id` = " + this.db.quote(language_id) + ", `name` = " + this.db.escape(value['name']));
 		}
 	}
 
@@ -74,8 +74,8 @@ module.exports = class AttributeCatalogModel extends global['OpencartSystemEngin
 	 * @return void
 	 */
 	async deleteAttribute(attribute_id) {
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "attribute` WHERE `attribute_id` = '" + attribute_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "attribute_description` WHERE `attribute_id` = '" + attribute_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "attribute` WHERE `attribute_id` = " + this.db.quote(attribute_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "attribute_description` WHERE `attribute_id` = " + this.db.quote(attribute_id));
 	}
 
 	/*
@@ -94,7 +94,7 @@ module.exports = class AttributeCatalogModel extends global['OpencartSystemEngin
 	 * @return array
 	 */
 	async getAttribute(attribute_id) {
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "attribute` a LEFT JOIN `" + DB_PREFIX + "attribute_description` ad ON (a.`attribute_id` = ad.`attribute_id`) WHERE a.`attribute_id` = '" + attribute_id + "' AND ad.`language_id` = '" + this.config.get('config_language_id') + "'");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "attribute` a LEFT JOIN `" + DB_PREFIX + "attribute_description` ad ON (a.`attribute_id` = ad.`attribute_id`) WHERE a.`attribute_id` = " + this.db.quote(attribute_id) + " AND ad.`language_id` = " + this.db.quote(this.config.get('config_language_id')));
 
 		return query.row;
 	}
@@ -115,14 +115,14 @@ module.exports = class AttributeCatalogModel extends global['OpencartSystemEngin
 	 * @return array
 	 */
 	async getAttributes(data = {}) {
-		let sql = "SELECT *, (SELECT agd.`name` FROM `" + DB_PREFIX + "attribute_group_description` agd WHERE agd.`attribute_group_id` = a.`attribute_group_id` AND agd.`language_id` = '" + this.config.get('config_language_id') + "') AS attribute_group FROM `" + DB_PREFIX + "attribute` a LEFT JOIN `" + DB_PREFIX + "attribute_description` ad ON (a.`attribute_id` = ad.`attribute_id`) WHERE ad.`language_id` = '" + this.config.get('config_language_id') + "'";
+		let sql = "SELECT *, (SELECT agd.`name` FROM `" + DB_PREFIX + "attribute_group_description` agd WHERE agd.`attribute_group_id` = a.`attribute_group_id` AND agd.`language_id` = " + this.db.quote(this.config.get('config_language_id')) + ") AS attribute_group FROM `" + DB_PREFIX + "attribute` a LEFT JOIN `" + DB_PREFIX + "attribute_description` ad ON (a.`attribute_id` = ad.`attribute_id`) WHERE ad.`language_id` = " + this.db.quote(this.config.get('config_language_id'));
 
 		if (data['filter_name']) {
 			sql += " AND ad.`name` LIKE " + this.db.escape(data['filter_name'] + '%');
 		}
 
 		if ((data['filter_attribute_group_id'])) {
-			sql += " AND a.`attribute_group_id` = '" + data['filter_attribute_group_id'] + "'";
+			sql += " AND a.`attribute_group_id` = " + this.db.quote(data['filter_attribute_group_id']);
 		}
 
 		let sort_data = ['ad.name', 'attribute_group', 'a.sort_order'];
@@ -150,7 +150,7 @@ module.exports = class AttributeCatalogModel extends global['OpencartSystemEngin
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql += " LIMIT " + (parseInt(data['start']) || 0) + "," + (parseInt(data['limit']) || 0);
 		}
 
 		let query = await this.db.query(sql);
@@ -176,7 +176,7 @@ module.exports = class AttributeCatalogModel extends global['OpencartSystemEngin
 	async getDescriptions(attribute_id) {
 		let attribute_data = {};
 
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "attribute_description` WHERE `attribute_id` = '" + attribute_id + "'");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "attribute_description` WHERE `attribute_id` = " + this.db.quote(attribute_id));
 
 		for (let result of query.rows) {
 			attribute_data[result['language_id']] = {'name' : result['name']};
@@ -220,7 +220,7 @@ module.exports = class AttributeCatalogModel extends global['OpencartSystemEngin
 	 * @return int
 	 */
 	async getTotalAttributesByAttributeGroupId(attribute_group_id) {
-		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "attribute` WHERE `attribute_group_id` = '" + attribute_group_id + "'");
+		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "attribute` WHERE `attribute_group_id` = " + this.db.quote(attribute_group_id));
 
 		return query.row['total'];
 	}

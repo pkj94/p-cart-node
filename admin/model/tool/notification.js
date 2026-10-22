@@ -8,7 +8,7 @@ module.exports = class NotificationToolModel  extends global['OpencartSystemEngi
 	 * @return int
 	 */
 	async addNotification(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "notification` SET `title` = " + this.db.escape(data['title']) + ", `text` = " + this.db.escape(data['text']) + ", `status` = '" + data['status'] + "', `date_added` = NOW()");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "notification` SET `title` = " + this.db.escape(data['title']) + ", `text` = " + this.db.escape(data['text']) + ", `status` = " + this.db.quote(data['status']) + ", `date_added` = NOW()");
 
 		return this.db.getLastId();
 	}
@@ -20,7 +20,7 @@ module.exports = class NotificationToolModel  extends global['OpencartSystemEngi
 	 * @return void
 	 */
 	async editStatus(notification_id, status) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "notification` SET `status` = '" + status + "' WHERE `notification_id` = '" + notification_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "notification` SET `status` = " + this.db.quote(status) + " WHERE `notification_id` = " + this.db.quote(notification_id));
 	}
 
 	/**
@@ -29,7 +29,7 @@ module.exports = class NotificationToolModel  extends global['OpencartSystemEngi
 	 * @return void
 	 */
 	async deleteNotification(notification_id) {
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "notification` WHERE `notification_id` = '" + notification_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "notification` WHERE `notification_id` = " + this.db.quote(notification_id));
 	}
 
 	/**
@@ -38,7 +38,7 @@ module.exports = class NotificationToolModel  extends global['OpencartSystemEngi
 	 * @return array
 	 */
 	async getNotification(notification_id) {
-		let query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "notification` WHERE `notification_id` = '" + notification_id + "'");
+		let query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "notification` WHERE `notification_id` = " + this.db.quote(notification_id));
 
 		return query.row;
 	}
@@ -52,7 +52,7 @@ module.exports = class NotificationToolModel  extends global['OpencartSystemEngi
 		let sql = "SELECT * FROM `" + DB_PREFIX + "notification`";
 
 		if (typeof data['filter_status'] != 'undefined' && data['filter_status'] !== '') {
-			sql += " WHERE `status` = '" + data['filter_status'] + "'";
+			sql += " WHERE `status` = " + this.db.quote(data['filter_status']);
 		}
 
 		sql += " ORDER BY `date_added` DESC";
@@ -68,7 +68,7 @@ if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql += " LIMIT " + (parseInt(data['start']) || 0) + "," + (parseInt(data['limit']) || 0);
 		}
 
 		let query = await this.db.query(sql);
@@ -85,7 +85,7 @@ if (data['limit'] < 1) {
 		let sql = "SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "notification`";
 
 		if (typeof data['filter_status'] != 'undefined' && data['filter_status'] !== '') {
-			sql += " WHERE `status` = '" + data['filter_status'] + "'";
+			sql += " WHERE `status` = " + this.db.quote(data['filter_status']);
 		}
 
 		let query = await this.db.query(sql);

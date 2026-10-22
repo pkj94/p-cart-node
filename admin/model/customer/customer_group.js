@@ -8,13 +8,13 @@ module.exports = class CustomerGroupCustomerModel extends global['OpencartSystem
 	 * @return int
 	 */
 	async addCustomerGroup(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "customer_group` SET `approval` = '" + ((data['approval']) ? data['approval'] : 0) + "', `sort_order` = '" + data['sort_order'] + "'");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "customer_group` SET `approval` = " + this.db.quote(((data['approval']) ? data['approval'] : 0)) + ", `sort_order` = " + this.db.quote(data['sort_order']));
 
 		const customer_group_id = this.db.getLastId();
 
 		for (let [language_id, value] of Object.entries(data['customer_group_description'])) {
 			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "customer_group_description` SET `customer_group_id` = '" + customer_group_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + ", `description` = " + this.db.escape(value['description']) + "");
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "customer_group_description` SET `customer_group_id` = " + this.db.quote(customer_group_id) + ", `language_id` = " + this.db.quote(language_id) + ", `name` = " + this.db.escape(value['name']) + ", `description` = " + this.db.escape(value['description']));
 		}
 
 		return customer_group_id;
@@ -27,13 +27,13 @@ module.exports = class CustomerGroupCustomerModel extends global['OpencartSystem
 	 * @return void
 	 */
 	async editCustomerGroup(customer_group_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "customer_group` SET `approval` = '" + ((data['approval']) ? data['approval'] : 0) + "', `sort_order` = '" + data['sort_order'] + "' WHERE `customer_group_id` = '" + customer_group_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "customer_group` SET `approval` = " + this.db.quote(((data['approval']) ? data['approval'] : 0)) + ", `sort_order` = " + this.db.quote(data['sort_order']) + " WHERE `customer_group_id` = " + this.db.quote(customer_group_id));
 
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_group_description` WHERE `customer_group_id` = '" + customer_group_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_group_description` WHERE `customer_group_id` = " + this.db.quote(customer_group_id));
 
 		for (let [language_id, value] of Object.entries(data['customer_group_description'])) {
 			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "customer_group_description` SET `customer_group_id` = '" + customer_group_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + ", `description` = " + this.db.escape(value['description']) + "");
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "customer_group_description` SET `customer_group_id` = " + this.db.quote(customer_group_id) + ", `language_id` = " + this.db.quote(language_id) + ", `name` = " + this.db.escape(value['name']) + ", `description` = " + this.db.escape(value['description']));
 		}
 	}
 
@@ -43,12 +43,12 @@ module.exports = class CustomerGroupCustomerModel extends global['OpencartSystem
 	 * @return void
 	 */
 	async deleteCustomerGroup(customer_group_id) {
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_group` WHERE `customer_group_id` = '" + customer_group_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_group_description` WHERE `customer_group_id` = '" + customer_group_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_discount` WHERE `customer_group_id` = '" + customer_group_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_special` WHERE `customer_group_id` = '" + customer_group_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_reward` WHERE `customer_group_id` = '" + customer_group_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "tax_rate_to_customer_group` WHERE `customer_group_id` = '" + customer_group_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_group` WHERE `customer_group_id` = " + this.db.quote(customer_group_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_group_description` WHERE `customer_group_id` = " + this.db.quote(customer_group_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_discount` WHERE `customer_group_id` = " + this.db.quote(customer_group_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_special` WHERE `customer_group_id` = " + this.db.quote(customer_group_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_reward` WHERE `customer_group_id` = " + this.db.quote(customer_group_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "tax_rate_to_customer_group` WHERE `customer_group_id` = " + this.db.quote(customer_group_id));
 	}
 
 	/**
@@ -57,7 +57,7 @@ module.exports = class CustomerGroupCustomerModel extends global['OpencartSystem
 	 * @return array
 	 */
 	async getCustomerGroup(customer_group_id) {
-		let query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "customer_group` cg LEFT JOIN `" + DB_PREFIX + "customer_group_description` cgd ON (cg.`customer_group_id` = cgd.`customer_group_id`) WHERE cg.`customer_group_id` = '" + customer_group_id + "' AND cgd.`language_id` = '" + this.config.get('config_language_id') + "'");
+		let query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "customer_group` cg LEFT JOIN `" + DB_PREFIX + "customer_group_description` cgd ON (cg.`customer_group_id` = cgd.`customer_group_id`) WHERE cg.`customer_group_id` = " + this.db.quote(customer_group_id) + " AND cgd.`language_id` = " + this.db.quote(this.config.get('config_language_id')));
 
 		return query.row;
 	}
@@ -68,7 +68,7 @@ module.exports = class CustomerGroupCustomerModel extends global['OpencartSystem
 	 * @return array
 	 */
 	async getCustomerGroups(data = {}) {
-		let sql = "SELECT * FROM `" + DB_PREFIX + "customer_group` cg LEFT JOIN `" + DB_PREFIX + "customer_group_description` cgd ON (cg.`customer_group_id` = cgd.`customer_group_id`) WHERE cgd.`language_id` = '" + this.config.get('config_language_id') + "'";
+		let sql = "SELECT * FROM `" + DB_PREFIX + "customer_group` cg LEFT JOIN `" + DB_PREFIX + "customer_group_description` cgd ON (cg.`customer_group_id` = cgd.`customer_group_id`) WHERE cgd.`language_id` = " + this.db.quote(this.config.get('config_language_id'));
 
 		let sort_data = [
 			'cgd.name',
@@ -98,7 +98,7 @@ module.exports = class CustomerGroupCustomerModel extends global['OpencartSystem
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql += " LIMIT " + (parseInt(data['start']) || 0) + "," + (parseInt(data['limit']) || 0);
 		}
 
 		let query = await this.db.query(sql);
@@ -114,7 +114,7 @@ module.exports = class CustomerGroupCustomerModel extends global['OpencartSystem
 	async getDescriptions(customer_group_id) {
 		let customer_group_data = {};
 
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "customer_group_description` WHERE `customer_group_id` = '" + customer_group_id + "'");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "customer_group_description` WHERE `customer_group_id` = " + this.db.quote(customer_group_id));
 
 		for (let result of query.rows) {
 			customer_group_data[result['language_id']] = {

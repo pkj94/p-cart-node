@@ -35,7 +35,7 @@ module.exports = class BackupModel extends global['OpencartSystemEngineModel'] {
 			limit = 10;
 		}
 
-		let query = await this.db.query("SELECT * FROM `" + table + "` LIMIT " + start + "," + limit);
+		let query = await this.db.query("SELECT * FROM `" + table + "` LIMIT " + (parseInt(start) || 0) + "," + (parseInt(limit) || 0));
 
 		if (query.num_rows) {
 			return query.rows;

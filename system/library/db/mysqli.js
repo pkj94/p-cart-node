@@ -111,6 +111,11 @@ module.exports = class MySQLiDBLibrary {
         return this.connection.escapeId(value);
     }
 
+    // Same text as the old '" + value + "' concatenation (String(value)), but escaped and quoted
+    quote(value) {
+        return this.connection.escape(String(value));
+    }
+
     countAffected() {
         return this.affectedRows;
     }

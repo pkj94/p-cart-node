@@ -42,7 +42,7 @@ module.exports = function (baseRegistry) {
                 res.redirect(registry.get('response').redirect);
             } else {
                 registry.get('response').headers.forEach(header => {
-                    res.header(header.split(':')[0].trim(), header.split(':')[1].trim());
+                    res.header(header.split(':')[0].trim(), header.slice(header.indexOf(':') + 1).trim());
                 });
                 res.status(200).send(output);
             }

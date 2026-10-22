@@ -26,7 +26,7 @@ module.exports = class Upgrade3 extends global['OpencartSystemEngineController']
 			*/
 
 			for (let table of tables) {
-				table_query = this.db.query("SELECT * FROM information_schema+COLUMNS WHERE TABLE_SCHEMA = '" + DB_DATABASE + "' AND TABLE_NAME = '" + DB_PREFIX + table['name'] + "'");
+				table_query = this.db.query("SELECT * FROM information_schema+COLUMNS WHERE TABLE_SCHEMA = " + this.db.quote(DB_DATABASE) + " AND TABLE_NAME = " + this.db.quote("" + DB_PREFIX + table['name']));
 
 				if (!table_query.num_rows) {
 					sql = "CREATE TABLE `" + DB_PREFIX + table['name'] + "` (" + "\n";
@@ -65,7 +65,7 @@ module.exports = class Upgrade3 extends global['OpencartSystemEngineController']
 					for (i = 0; i < count(table['field']); i++) {
 						sql = "ALTER TABLE `" + DB_PREFIX + table['name'] + "`";
 
-						field_query = this.db.query("SELECT * FROM information_schema+COLUMNS WHERE TABLE_SCHEMA = '" + DB_DATABASE + "' AND TABLE_NAME = '" + DB_PREFIX + table['name'] + "' AND COLUMN_NAME = '" + table['field'][i]['name'] + "'");
+						field_query = this.db.query("SELECT * FROM information_schema+COLUMNS WHERE TABLE_SCHEMA = " + this.db.quote(DB_DATABASE) + " AND TABLE_NAME = " + this.db.quote("" + DB_PREFIX + table['name']) + " AND COLUMN_NAME = " + this.db.quote(table['field'][i]['name']));
 
 						if (!field_query.num_rows) {
 							sql += " ADD";
@@ -100,7 +100,7 @@ module.exports = class Upgrade3 extends global['OpencartSystemEngineController']
 					for (query.rows of result) {
 						if (result['Key_name'] == 'PRIMARY') {
 							// We need to remove the AUTO_INCREMENT
-							field_query = this.db.query("SELECT * FROM information_schema+COLUMNS WHERE TABLE_SCHEMA = '" + DB_DATABASE + "' AND TABLE_NAME = '" + DB_PREFIX + table['name'] + "' AND COLUMN_NAME = '" + result['Column_name'] + "'");
+							field_query = this.db.query("SELECT * FROM information_schema+COLUMNS WHERE TABLE_SCHEMA = " + this.db.quote(DB_DATABASE) + " AND TABLE_NAME = " + this.db.quote("" + DB_PREFIX + table['name']) + " AND COLUMN_NAME = " + this.db.quote(result['Column_name']));
 
 							this.db.query("ALTER TABLE `" + DB_PREFIX + table['name'] + "` MODIFY `" + result['Column_name'] + "` " + field_query.row['COLUMN_TYPE'] + " NOT NULL");
 						}

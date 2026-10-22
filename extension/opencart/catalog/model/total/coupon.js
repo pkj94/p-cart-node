@@ -143,7 +143,7 @@ global['OpencartCatalogModelExtensionOpencartTotalCoupon'] = class Coupon extend
 			}
 
 			if (status) {
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "coupon_history` SET `coupon_id` = '" + coupon_query.row['coupon_id'] + "', `order_id` = '" + order_info['order_id'] + "', `customer_id` = '" + order_info['customer_id'] + "', `amount` = '" + order_total['value'] + "', `date_added` = NOW()");
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "coupon_history` SET `coupon_id` = " + this.db.quote(coupon_query.row['coupon_id']) + ", `order_id` = " + this.db.quote(order_info['order_id']) + ", `customer_id` = " + this.db.quote(order_info['customer_id']) + ", `amount` = " + this.db.quote(order_total['value']) + ", `date_added` = NOW()");
 			} else {
 				return this.config.get('config_fraud_status_id');
 			}
@@ -158,6 +158,6 @@ global['OpencartCatalogModelExtensionOpencartTotalCoupon'] = class Coupon extend
 	 * @return void
 	 */
 	async unconfirm(order_id) {
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "coupon_history` WHERE `order_id` = '" + order_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "coupon_history` WHERE `order_id` = " + this.db.quote(order_id));
 	}
 }

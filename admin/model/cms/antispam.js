@@ -19,7 +19,7 @@ module.exports = class AntispamModel extends global['OpencartSystemEngineModel']
 	 * @return int
 	 */
 	async editAntispam(antispam_id, data = {}) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "antispam` SET `keyword` = " + this.db.escape(data['keyword']) + " WHERE `antispam_id` = '" + antispam_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "antispam` SET `keyword` = " + this.db.escape(data['keyword']) + " WHERE `antispam_id` = " + this.db.quote(antispam_id));
 	}
 
 	/**
@@ -28,7 +28,7 @@ module.exports = class AntispamModel extends global['OpencartSystemEngineModel']
 	 * @return void
 	 */
 	async deleteAntispam(antispam_id) {
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "antispam` WHERE `antispam_id` = '" + antispam_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "antispam` WHERE `antispam_id` = " + this.db.quote(antispam_id));
 	}
 
 	/**
@@ -37,7 +37,7 @@ module.exports = class AntispamModel extends global['OpencartSystemEngineModel']
 	 * @return array
 	 */
 	async getAntispam(antispam_id) {
-		let query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "antispam` WHERE `antispam_id` = '" + antispam_id + "'");
+		let query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "antispam` WHERE `antispam_id` = " + this.db.quote(antispam_id));
 
 		return query.row;
 	}
@@ -85,7 +85,7 @@ module.exports = class AntispamModel extends global['OpencartSystemEngineModel']
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql += " LIMIT " + (parseInt(data['start']) || 0) + "," + (parseInt(data['limit']) || 0);
 		}
 
 		let query = await this.db.query(sql);

@@ -8,24 +8,24 @@ module.exports = class OptionCatalogModel extends global['OpencartSystemEngineMo
 	 * @return int
 	 */
 	async addOption(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "option` SET `type` = " + this.db.escape(data['type']) + ", `sort_order` = '" + data['sort_order'] + "'");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "option` SET `type` = " + this.db.escape(data['type']) + ", `sort_order` = " + this.db.quote(data['sort_order']));
 
 		const option_id = this.db.getLastId();
 
 		for (let [language_id, value] of Object.entries(data['option_description'])) {
 			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "option_description` SET `option_id` = '" + option_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + "");
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "option_description` SET `option_id` = " + this.db.quote(option_id) + ", `language_id` = " + this.db.quote(language_id) + ", `name` = " + this.db.escape(value['name']));
 		}
 
 		if ((data['option_value'])) {
 			for (let option_value of data['option_value']) {
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "option_value` SET `option_id` = '" + option_id + "', `image` = " + this.db.escape(html_entity_decode(option_value['image'])) + ", `sort_order` = '" + option_value['sort_order'] + "'");
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "option_value` SET `option_id` = " + this.db.quote(option_id) + ", `image` = " + this.db.escape(html_entity_decode(option_value['image'])) + ", `sort_order` = " + this.db.quote(option_value['sort_order']));
 
 				let option_value_id = this.db.getLastId();
 
 				for (let [language_id, option_value_description] of Object.entries(option_value['option_value_description'])) {
 					language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
-					await this.db.query("INSERT INTO `" + DB_PREFIX + "option_value_description` SET `option_value_id` = '" + option_value_id + "', `language_id` = '" + language_id + "', `option_id` = '" + option_id + "', `name` = " + this.db.escape(option_value_description['name']));
+					await this.db.query("INSERT INTO `" + DB_PREFIX + "option_value_description` SET `option_value_id` = " + this.db.quote(option_value_id) + ", `language_id` = " + this.db.quote(language_id) + ", `option_id` = " + this.db.quote(option_id) + ", `name` = " + this.db.escape(option_value_description['name']));
 				}
 			}
 		}
@@ -40,31 +40,31 @@ module.exports = class OptionCatalogModel extends global['OpencartSystemEngineMo
 	 * @return void
 	 */
 	async editOption(option_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "option` SET `type` = " + this.db.escape(data['type']) + ", `sort_order` = '" + data['sort_order'] + "' WHERE `option_id` = '" + option_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "option` SET `type` = " + this.db.escape(data['type']) + ", `sort_order` = " + this.db.quote(data['sort_order']) + " WHERE `option_id` = " + this.db.quote(option_id));
 
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "option_description` WHERE `option_id` = '" + option_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "option_description` WHERE `option_id` = " + this.db.quote(option_id));
 
 		for (let [language_id, value] of Object.entries(data['option_description'])) {
 			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "option_description` SET `option_id` = '" + option_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + "");
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "option_description` SET `option_id` = " + this.db.quote(option_id) + ", `language_id` = " + this.db.quote(language_id) + ", `name` = " + this.db.escape(value['name']));
 		}
 
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "option_value` WHERE `option_id` = '" + option_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "option_value_description` WHERE `option_id` = '" + option_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "option_value` WHERE `option_id` = " + this.db.quote(option_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "option_value_description` WHERE `option_id` = " + this.db.quote(option_id));
 
 		if ((data['option_value'])) {
 			for (let option_value of data['option_value']) {
 				if (option_value['option_value_id']) {
-					await this.db.query("INSERT INTO `" + DB_PREFIX + "option_value` SET `option_value_id` = '" + option_value['option_value_id'] + "', `option_id` = '" + option_id + "', `image` = " + this.db.escape(html_entity_decode(option_value['image'])) + ", `sort_order` = '" + option_value['sort_order'] + "'");
+					await this.db.query("INSERT INTO `" + DB_PREFIX + "option_value` SET `option_value_id` = " + this.db.quote(option_value['option_value_id']) + ", `option_id` = " + this.db.quote(option_id) + ", `image` = " + this.db.escape(html_entity_decode(option_value['image'])) + ", `sort_order` = " + this.db.quote(option_value['sort_order']));
 				} else {
-					await this.db.query("INSERT INTO `" + DB_PREFIX + "option_value` SET `option_id` = '" + option_id + "', `image` = " + this.db.escape(html_entity_decode(option_value['image'])) + ", `sort_order` = '" + option_value['sort_order'] + "'");
+					await this.db.query("INSERT INTO `" + DB_PREFIX + "option_value` SET `option_id` = " + this.db.quote(option_id) + ", `image` = " + this.db.escape(html_entity_decode(option_value['image'])) + ", `sort_order` = " + this.db.quote(option_value['sort_order']));
 				}
 
 				let option_value_id = this.db.getLastId();
 
 				for (let [language_id, option_value_description] of Object.entries(option_value['option_value_description'])) {
 					language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
-					await this.db.query("INSERT INTO `" + DB_PREFIX + "option_value_description` SET `option_value_id` = '" + option_value_id + "', `language_id` = '" + language_id + "', `option_id` = '" + option_id + "', `name` = " + this.db.escape(option_value_description['name']));
+					await this.db.query("INSERT INTO `" + DB_PREFIX + "option_value_description` SET `option_value_id` = " + this.db.quote(option_value_id) + ", `language_id` = " + this.db.quote(language_id) + ", `option_id` = " + this.db.quote(option_id) + ", `name` = " + this.db.escape(option_value_description['name']));
 				}
 			}
 		}
@@ -76,10 +76,10 @@ module.exports = class OptionCatalogModel extends global['OpencartSystemEngineMo
 	 * @return void
 	 */
 	async deleteOption(option_id) {
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "option` WHERE `option_id` = '" + option_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "option_description` WHERE `option_id` = '" + option_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "option_value` WHERE `option_id` = '" + option_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "option_value_description` WHERE `option_id` = '" + option_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "option` WHERE `option_id` = " + this.db.quote(option_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "option_description` WHERE `option_id` = " + this.db.quote(option_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "option_value` WHERE `option_id` = " + this.db.quote(option_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "option_value_description` WHERE `option_id` = " + this.db.quote(option_id));
 	}
 
 	/**
@@ -88,7 +88,7 @@ module.exports = class OptionCatalogModel extends global['OpencartSystemEngineMo
 	 * @return array
 	 */
 	async getOption(option_id) {
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "option` o LEFT JOIN `" + DB_PREFIX + "option_description` od ON (o.`option_id` = od.`option_id`) WHERE o.`option_id` = '" + option_id + "' AND od.`language_id` = '" + this.config.get('config_language_id') + "'");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "option` o LEFT JOIN `" + DB_PREFIX + "option_description` od ON (o.`option_id` = od.`option_id`) WHERE o.`option_id` = " + this.db.quote(option_id) + " AND od.`language_id` = " + this.db.quote(this.config.get('config_language_id')));
 
 		return query.row;
 	}
@@ -99,7 +99,7 @@ module.exports = class OptionCatalogModel extends global['OpencartSystemEngineMo
 	 * @return array
 	 */
 	async getOptions(data = {}) {
-		let sql = "SELECT * FROM `" + DB_PREFIX + "option` o LEFT JOIN `" + DB_PREFIX + "option_description` od ON (o.`option_id` = od.`option_id`) WHERE od.`language_id` = '" + this.config.get('config_language_id') + "'";
+		let sql = "SELECT * FROM `" + DB_PREFIX + "option` o LEFT JOIN `" + DB_PREFIX + "option_description` od ON (o.`option_id` = od.`option_id`) WHERE od.`language_id` = " + this.db.quote(this.config.get('config_language_id'));
 
 		if (data['filter_name']) {
 			sql += " AND od.`name` LIKE " + this.db.escape(data['filter_name'] + '%');
@@ -134,7 +134,7 @@ module.exports = class OptionCatalogModel extends global['OpencartSystemEngineMo
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql += " LIMIT " + (parseInt(data['start']) || 0) + "," + (parseInt(data['limit']) || 0);
 		}
 
 		let query = await this.db.query(sql);
@@ -150,7 +150,7 @@ module.exports = class OptionCatalogModel extends global['OpencartSystemEngineMo
 	async getDescriptions(option_id) {
 		let option_data = {};
 
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "option_description` WHERE `option_id` = '" + option_id + "'");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "option_description` WHERE `option_id` = " + this.db.quote(option_id));
 
 		for (let result of query.rows) {
 			option_data[result['language_id']] = { 'name': result['name'] };
@@ -165,7 +165,7 @@ module.exports = class OptionCatalogModel extends global['OpencartSystemEngineMo
 	 * @return array
 	 */
 	async getValue(option_value_id) {
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "option_value` ov LEFT JOIN `" + DB_PREFIX + "option_value_description` ovd ON (ov.`option_value_id` = ovd.`option_value_id`) WHERE ov.`option_value_id` = '" + option_value_id + "' AND ovd.`language_id` = '" + this.config.get('config_language_id') + "'");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "option_value` ov LEFT JOIN `" + DB_PREFIX + "option_value_description` ovd ON (ov.`option_value_id` = ovd.`option_value_id`) WHERE ov.`option_value_id` = " + this.db.quote(option_value_id) + " AND ovd.`language_id` = " + this.db.quote(this.config.get('config_language_id')));
 
 		return query.row;
 	}
@@ -178,7 +178,7 @@ module.exports = class OptionCatalogModel extends global['OpencartSystemEngineMo
 	async getValues(option_id) {
 		let option_value_data = [];
 
-		const option_value_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "option_value` ov LEFT JOIN `" + DB_PREFIX + "option_value_description` ovd ON (ov.`option_value_id` = ovd.`option_value_id`) WHERE ov.`option_id` = '" + option_id + "' AND ovd.`language_id` = '" + this.config.get('config_language_id') + "' ORDER BY ov.`sort_order`, ovd.`name`");
+		const option_value_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "option_value` ov LEFT JOIN `" + DB_PREFIX + "option_value_description` ovd ON (ov.`option_value_id` = ovd.`option_value_id`) WHERE ov.`option_id` = " + this.db.quote(option_id) + " AND ovd.`language_id` = " + this.db.quote(this.config.get('config_language_id')) + " ORDER BY ov.`sort_order`, ovd.`name`");
 
 		for (let option_value of option_value_query.rows) {
 			option_value_data.push({
@@ -200,12 +200,12 @@ module.exports = class OptionCatalogModel extends global['OpencartSystemEngineMo
 	async getValueDescriptions(option_id) {
 		let option_value_data = [];
 
-		const option_value_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "option_value` WHERE `option_id` = '" + option_id + "' ORDER BY `sort_order`");
+		const option_value_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "option_value` WHERE `option_id` = " + this.db.quote(option_id) + " ORDER BY `sort_order`");
 
 		for (let option_value of option_value_query.rows) {
 			let option_value_description_data = {};
 
-			const option_value_description_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "option_value_description` WHERE `option_value_id` = '" + option_value['option_value_id'] + "'");
+			const option_value_description_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "option_value_description` WHERE `option_value_id` = " + this.db.quote(option_value['option_value_id']));
 
 			for (let option_value_description of option_value_description_query.rows) {
 				option_value_description_data[option_value_description['language_id']] = { 'name': option_value_description['name'] };

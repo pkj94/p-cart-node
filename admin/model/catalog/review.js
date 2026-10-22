@@ -8,7 +8,7 @@ module.exports = class ReviewCatalogModel extends global['OpencartSystemEngineMo
 	 * @return int
 	 */
 	async addReview(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "review` SET `author` = " + this.db.escape(data['author']) + ", `product_id` = '" + data['product_id'] + "', `text` = " + this.db.escape(strip_tags(data['text'])) + ", `rating` = '" + data['rating'] + "', `status` = '" + (data['status'] ? data['status'] : 0) + "', `date_added` = " + this.db.escape(data['date_added']));
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "review` SET `author` = " + this.db.escape(data['author']) + ", `product_id` = " + this.db.quote(data['product_id']) + ", `text` = " + this.db.escape(strip_tags(data['text'])) + ", `rating` = " + this.db.quote(data['rating']) + ", `status` = " + this.db.quote((data['status'] ? data['status'] : 0)) + ", `date_added` = " + this.db.escape(data['date_added']));
 
 		const review_id = this.db.getLastId();
 
@@ -29,7 +29,7 @@ module.exports = class ReviewCatalogModel extends global['OpencartSystemEngineMo
 	 * @return void
 	 */
 	async editReview(review_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "review` SET `author` = " + this.db.escape(data['author']) + ", `product_id` = '" + data['product_id'] + "', `text` = " + this.db.escape(strip_tags(data['text'])) + ", `rating` = '" + data['rating'] + "', `status` = '" + (data['status'] ? data['status'] : 0) + "', `date_added` = " + this.db.escape(data['date_added']) + ", `date_modified` = NOW() WHERE `review_id` = '" + review_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "review` SET `author` = " + this.db.escape(data['author']) + ", `product_id` = " + this.db.quote(data['product_id']) + ", `text` = " + this.db.escape(strip_tags(data['text'])) + ", `rating` = " + this.db.quote(data['rating']) + ", `status` = " + this.db.quote((data['status'] ? data['status'] : 0)) + ", `date_added` = " + this.db.escape(data['date_added']) + ", `date_modified` = NOW() WHERE `review_id` = " + this.db.quote(review_id));
 
 		// Update product rating
 		this.load.model('catalog/product', this);
@@ -48,7 +48,7 @@ module.exports = class ReviewCatalogModel extends global['OpencartSystemEngineMo
 		const review_info = await this.getReview(review_id);
 
 		if (review_info && review_info.review_id) {
-			await this.db.query("DELETE FROM `" + DB_PREFIX + "review` WHERE `review_id` = '" + review_info['review_id'] + "'");
+			await this.db.query("DELETE FROM `" + DB_PREFIX + "review` WHERE `review_id` = " + this.db.quote(review_info['review_id']));
 
 			// Update product rating
 			this.load.model('catalog/product', this);
@@ -65,7 +65,7 @@ module.exports = class ReviewCatalogModel extends global['OpencartSystemEngineMo
 	 * @return array
 	 */
 	async getReview(review_id) {
-		let query = await this.db.query("SELECT DISTINCT *, (SELECT pd.`name` FROM `" + DB_PREFIX + "product_description` pd WHERE pd.`product_id` = r.`product_id` AND pd.`language_id` = '" + this.config.get('config_language_id') + "') AS product FROM `" + DB_PREFIX + "review` r WHERE r.`review_id` = '" + review_id + "'");
+		let query = await this.db.query("SELECT DISTINCT *, (SELECT pd.`name` FROM `" + DB_PREFIX + "product_description` pd WHERE pd.`product_id` = r.`product_id` AND pd.`language_id` = " + this.db.quote(this.config.get('config_language_id')) + ") AS product FROM `" + DB_PREFIX + "review` r WHERE r.`review_id` = " + this.db.quote(review_id));
 
 		return query.row;
 	}
@@ -76,7 +76,7 @@ module.exports = class ReviewCatalogModel extends global['OpencartSystemEngineMo
 	 * @return int
 	 */
 	async getRating(product_id) {
-		let query = await this.db.query("SELECT AVG(`rating`) AS `total` FROM `" + DB_PREFIX + "review` WHERE `product_id` = '" + product_id + "' AND `status` = '1'");
+		let query = await this.db.query("SELECT AVG(`rating`) AS `total` FROM `" + DB_PREFIX + "review` WHERE `product_id` = " + this.db.quote(product_id) + " AND `status` = '1'");
 
 		if (query.num_rows) {
 			return query.row['total'];
@@ -91,7 +91,7 @@ module.exports = class ReviewCatalogModel extends global['OpencartSystemEngineMo
 	 * @return array
 	 */
 	async getReviews(data = {}) {
-		let sql = "SELECT r.`review_id`, pd.`name`, r.`author`, r.`rating`, r.`status`, r.`date_added` FROM `" + DB_PREFIX + "review` r LEFT JOIN `" + DB_PREFIX + "product_description` pd ON (r.`product_id` = pd.`product_id`) WHERE pd.`language_id` = '" + this.config.get('config_language_id') + "'";
+		let sql = "SELECT r.`review_id`, pd.`name`, r.`author`, r.`rating`, r.`status`, r.`date_added` FROM `" + DB_PREFIX + "review` r LEFT JOIN `" + DB_PREFIX + "product_description` pd ON (r.`product_id` = pd.`product_id`) WHERE pd.`language_id` = " + this.db.quote(this.config.get('config_language_id'));
 
 		if ((data['filter_product'])) {
 			sql += " AND pd.`name` LIKE " + this.db.escape(data['filter_product'] + '%');
@@ -102,7 +102,7 @@ module.exports = class ReviewCatalogModel extends global['OpencartSystemEngineMo
 		}
 
 		if (typeof data['filter_status'] != 'undefined' && data['filter_status'] !== '') {
-			sql += " AND r.`status` = '" + data['filter_status'] + "'";
+			sql += " AND r.`status` = " + this.db.quote(data['filter_status']);
 		}
 
 		if ((data['filter_date_from'])) {
@@ -144,7 +144,7 @@ module.exports = class ReviewCatalogModel extends global['OpencartSystemEngineMo
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql += " LIMIT " + (parseInt(data['start']) || 0) + "," + (parseInt(data['limit']) || 0);
 		}
 
 		let query = await this.db.query(sql);
@@ -158,7 +158,7 @@ module.exports = class ReviewCatalogModel extends global['OpencartSystemEngineMo
 	 * @return int
 	 */
 	async getTotalReviews(data = {}) {
-		let sql = "SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "review` r LEFT JOIN `" + DB_PREFIX + "product_description` pd ON (r.`product_id` = pd.`product_id`) WHERE pd.`language_id` = '" + this.config.get('config_language_id') + "'";
+		let sql = "SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "review` r LEFT JOIN `" + DB_PREFIX + "product_description` pd ON (r.`product_id` = pd.`product_id`) WHERE pd.`language_id` = " + this.db.quote(this.config.get('config_language_id'));
 
 		if ((data['filter_product'])) {
 			sql += " AND pd.`name` LIKE " + this.db.escape(data['filter_product'] + '%');
@@ -169,7 +169,7 @@ module.exports = class ReviewCatalogModel extends global['OpencartSystemEngineMo
 		}
 
 		if (typeof data['filter_status'] != 'undefined' && data['filter_status'] !== '') {
-			sql += " AND r.`status` = '" + data['filter_status'] + "'";
+			sql += " AND r.`status` = " + this.db.quote(data['filter_status']);
 		}
 
 		if ((data['filter_date_from'])) {

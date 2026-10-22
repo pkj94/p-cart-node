@@ -8,13 +8,13 @@ module.exports = class WeightClassLocalisationModel extends global['OpencartSyst
 	 * @return int
 	 */
 	async addWeightClass(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "weight_class` SET `value` = '" + data['value'] + "'");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "weight_class` SET `value` = " + this.db.quote(data['value']));
 
 		const weight_class_id = this.db.getLastId();
 
 		for (let [language_id, value] of Object.entries(data['weight_class_description'])) {
 			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "weight_class_description` SET `weight_class_id` = '" + weight_class_id + "', `language_id` = '" + language_id + "', `title` = " + this.db.escape(value['title']) + ", `unit` = " + this.db.escape(value['unit']) + "");
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "weight_class_description` SET `weight_class_id` = " + this.db.quote(weight_class_id) + ", `language_id` = " + this.db.quote(language_id) + ", `title` = " + this.db.escape(value['title']) + ", `unit` = " + this.db.escape(value['unit']));
 		}
 
 		await this.cache.delete('weight_class');
@@ -29,13 +29,13 @@ module.exports = class WeightClassLocalisationModel extends global['OpencartSyst
 	 * @return void
 	 */
 	async editWeightClass(weight_class_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "weight_class` SET `value` = '" + data['value'] + "' WHERE `weight_class_id` = '" + weight_class_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "weight_class` SET `value` = " + this.db.quote(data['value']) + " WHERE `weight_class_id` = " + this.db.quote(weight_class_id));
 
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "weight_class_description` WHERE `weight_class_id` = '" + weight_class_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "weight_class_description` WHERE `weight_class_id` = " + this.db.quote(weight_class_id));
 
 		for (let [language_id, value] of Object.entries(data['weight_class_description'])) {
 			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "weight_class_description` SET `weight_class_id` = '" + weight_class_id + "', `language_id` = '" + language_id + "', `title` = " + this.db.escape(value['title']) + ", `unit` = " + this.db.escape(value['unit']) + "");
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "weight_class_description` SET `weight_class_id` = " + this.db.quote(weight_class_id) + ", `language_id` = " + this.db.quote(language_id) + ", `title` = " + this.db.escape(value['title']) + ", `unit` = " + this.db.escape(value['unit']));
 		}
 
 		await this.cache.delete('weight_class');
@@ -47,8 +47,8 @@ module.exports = class WeightClassLocalisationModel extends global['OpencartSyst
 	 * @return void
 	 */
 	async deleteWeightClass(weight_class_id) {
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "weight_class` WHERE `weight_class_id` = '" + weight_class_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "weight_class_description` WHERE `weight_class_id` = '" + weight_class_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "weight_class` WHERE `weight_class_id` = " + this.db.quote(weight_class_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "weight_class_description` WHERE `weight_class_id` = " + this.db.quote(weight_class_id));
 
 		await this.cache.delete('weight_class');
 	}
@@ -59,7 +59,7 @@ module.exports = class WeightClassLocalisationModel extends global['OpencartSyst
 	 * @return array
 	 */
 	async getWeightClasses(data = {}) {
-		let sql = "SELECT * FROM `" + DB_PREFIX + "weight_class` wc LEFT JOIN `" + DB_PREFIX + "weight_class_description` wcd ON (wc.`weight_class_id` = wcd.`weight_class_id`) WHERE wcd.`language_id` = '" + this.config.get('config_language_id') + "'";
+		let sql = "SELECT * FROM `" + DB_PREFIX + "weight_class` wc LEFT JOIN `" + DB_PREFIX + "weight_class_description` wcd ON (wc.`weight_class_id` = wcd.`weight_class_id`) WHERE wcd.`language_id` = " + this.db.quote(this.config.get('config_language_id'));
 
 		let sort_data = [
 			'title',
@@ -90,7 +90,7 @@ module.exports = class WeightClassLocalisationModel extends global['OpencartSyst
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql += " LIMIT " + (parseInt(data['start']) || 0) + "," + (parseInt(data['limit']) || 0);
 		}
 
 		let weight_class_data = await this.cache.get('weight_class.' + md5(sql));
@@ -112,7 +112,7 @@ module.exports = class WeightClassLocalisationModel extends global['OpencartSyst
 	 * @return array
 	 */
 	async getWeightClass(weight_class_id) {
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "weight_class` wc LEFT JOIN `" + DB_PREFIX + "weight_class_description` wcd ON (wc.`weight_class_id` = wcd.`weight_class_id`) WHERE wc.`weight_class_id` = '" + weight_class_id + "' AND wcd.`language_id` = '" + this.config.get('config_language_id') + "'");
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "weight_class` wc LEFT JOIN `" + DB_PREFIX + "weight_class_description` wcd ON (wc.`weight_class_id` = wcd.`weight_class_id`) WHERE wc.`weight_class_id` = " + this.db.quote(weight_class_id) + " AND wcd.`language_id` = " + this.db.quote(this.config.get('config_language_id')));
 
 		return query.row;
 	}
@@ -123,7 +123,7 @@ module.exports = class WeightClassLocalisationModel extends global['OpencartSyst
 	 * @return array
 	 */
 	async getDescriptionByUnit(unit) {
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "weight_class_description` WHERE `unit` = " + this.db.escape(unit) + " AND `language_id` = '" + this.config.get('config_language_id') + "'");
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "weight_class_description` WHERE `unit` = " + this.db.escape(unit) + " AND `language_id` = " + this.db.quote(this.config.get('config_language_id')));
 
 		return query.row;
 	}
@@ -136,7 +136,7 @@ module.exports = class WeightClassLocalisationModel extends global['OpencartSyst
 	async getDescriptions(weight_class_id) {
 		let weight_class_data = {};
 
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "weight_class_description` WHERE `weight_class_id` = '" + weight_class_id + "'");
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "weight_class_description` WHERE `weight_class_id` = " + this.db.quote(weight_class_id));
 
 		for (let result of query.rows) {
 			weight_class_data[result['language_id']] = {

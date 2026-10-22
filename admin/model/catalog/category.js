@@ -8,35 +8,35 @@ module.exports = class CategoryCatalogModel extends global['OpencartSystemEngine
 	 * @return int
 	 */
 	async addCategory(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "category` SET `image` = " + this.db.escape(data['image']) + ", `parent_id` = '" + data['parent_id'] + "', `top` = '" + ((data['top']) ? data['top'] : 0) + "', `column` = '" + data['column'] + "', `sort_order` = '" + data['sort_order'] + "', `status` = '" + (data['status'] ? data['status'] : 0) + "', `date_modified` = NOW(), `date_added` = NOW()");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "category` SET `image` = " + this.db.escape(data['image']) + ", `parent_id` = " + this.db.quote(data['parent_id']) + ", `top` = " + this.db.quote(((data['top']) ? data['top'] : 0)) + ", `column` = " + this.db.quote(data['column']) + ", `sort_order` = " + this.db.quote(data['sort_order']) + ", `status` = " + this.db.quote((data['status'] ? data['status'] : 0)) + ", `date_modified` = NOW(), `date_added` = NOW()");
 		let category_id = this.db.getLastId();
 		for (let [language_id, value] of Object.entries(data['category_description'])) {
 			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "category_description` SET `category_id` = '" + category_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + ", `description` = " + this.db.escape(value['description']) + ", `meta_title` = " + this.db.escape(value['meta_title']) + ", `meta_description` = " + this.db.escape(value['meta_description']) + ", `meta_keyword` = " + this.db.escape(value['meta_keyword']) + "");
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "category_description` SET `category_id` = " + this.db.quote(category_id) + ", `language_id` = " + this.db.quote(language_id) + ", `name` = " + this.db.escape(value['name']) + ", `description` = " + this.db.escape(value['description']) + ", `meta_title` = " + this.db.escape(value['meta_title']) + ", `meta_description` = " + this.db.escape(value['meta_description']) + ", `meta_keyword` = " + this.db.escape(value['meta_keyword']));
 		}
 
 		// MySQL Hierarchical Data Closure Table Pattern
 		let level = 0;
 
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "category_path` WHERE `category_id` = '" + data['parent_id'] + "' ORDER BY `level` ASC");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "category_path` WHERE `category_id` = " + this.db.quote(data['parent_id']) + " ORDER BY `level` ASC");
 
 		for (let result of query.rows) {
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "category_path` SET `category_id` = '" + category_id + "', `path_id` = '" + result['path_id'] + "', `level` = '" + level + "'");
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "category_path` SET `category_id` = " + this.db.quote(category_id) + ", `path_id` = " + this.db.quote(result['path_id']) + ", `level` = " + this.db.quote(level));
 
 			level++;
 		}
 
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "category_path` SET `category_id` = '" + category_id + "', `path_id` = '" + category_id + "', `level` = '" + level + "'");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "category_path` SET `category_id` = " + this.db.quote(category_id) + ", `path_id` = " + this.db.quote(category_id) + ", `level` = " + this.db.quote(level));
 
 		if ((data['category_filter'])) {
 			for (let filter_id of data['category_filter']) {
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "category_filter` SET `category_id` = '" + category_id + "', `filter_id` = '" + filter_id + "'");
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "category_filter` SET `category_id` = " + this.db.quote(category_id) + ", `filter_id` = " + this.db.quote(filter_id));
 			}
 		}
 
 		if ((data['category_store'])) {
 			for (let store_id  of data['category_store']) {
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "category_to_store` SET `category_id` = '" + category_id + "', `store_id` = '" + store_id + "'");
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "category_to_store` SET `category_id` = " + this.db.quote(category_id) + ", `store_id` = " + this.db.quote(store_id));
 			}
 		}
 
@@ -65,7 +65,7 @@ module.exports = class CategoryCatalogModel extends global['OpencartSystemEngine
 					keyword = seo_url_info['keyword'] + '/' + keyword;
 				}
 
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "seo_url` SET `store_id` = '" + store_id + "', `language_id` = '" + language_id + "', `key` = 'path', `value`= " + this.db.escape(path) + ", `keyword` = " + this.db.escape(keyword) + "");
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "seo_url` SET `store_id` = " + this.db.quote(store_id) + ", `language_id` = " + this.db.quote(language_id) + ", `key` = 'path', `value`= " + this.db.escape(path) + ", `keyword` = " + this.db.escape(keyword));
 			}
 		}
 
@@ -73,7 +73,7 @@ module.exports = class CategoryCatalogModel extends global['OpencartSystemEngine
 		if ((data['category_layout'])) {
 			for (let [store_id, layout_id] of Object.entries(data['category_layout'])) {
 				store_id = store_id.indexOf('store') >= 0 ? store_id.split('-')[1] : store_id;
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "category_to_layout` SET `category_id` = '" + category_id + "', `store_id` = '" + store_id + "', `layout_id` = '" + layout_id + "'");
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "category_to_layout` SET `category_id` = " + this.db.quote(category_id) + ", `store_id` = " + this.db.quote(store_id) + ", `layout_id` = " + this.db.quote(layout_id));
 			}
 		}
 
@@ -87,38 +87,38 @@ module.exports = class CategoryCatalogModel extends global['OpencartSystemEngine
 	 * @return void
 	 */
 	async editCategory(category_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "category` SET `image` = " + this.db.escape(data['image']) + ", `parent_id` = '" + data['parent_id'] + "', `top` = '" + ((data['top']) ? data['top'] : 0) + "', `column` = '" + data['column'] + "', `sort_order` = '" + data['sort_order'] + "', `status` = '" + (data['status'] ? data['status'] : 0) + "', `date_modified` = NOW() WHERE `category_id` = '" + category_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "category` SET `image` = " + this.db.escape(data['image']) + ", `parent_id` = " + this.db.quote(data['parent_id']) + ", `top` = " + this.db.quote(((data['top']) ? data['top'] : 0)) + ", `column` = " + this.db.quote(data['column']) + ", `sort_order` = " + this.db.quote(data['sort_order']) + ", `status` = " + this.db.quote((data['status'] ? data['status'] : 0)) + ", `date_modified` = NOW() WHERE `category_id` = " + this.db.quote(category_id));
 		// console.log('category_id------',category_id)
 
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "category_description` WHERE `category_id` = '" + category_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "category_description` WHERE `category_id` = " + this.db.quote(category_id));
 
 		for (let [language_id, value] of Object.entries(data['category_description'])) {
 			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "category_description` SET `category_id` = '" + category_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + ", `description` = " + this.db.escape(value['description']) + ", `meta_title` = " + this.db.escape(value['meta_title']) + ", `meta_description` = " + this.db.escape(value['meta_description']) + ", `meta_keyword` = " + this.db.escape(value['meta_keyword']) + "");
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "category_description` SET `category_id` = " + this.db.quote(category_id) + ", `language_id` = " + this.db.quote(language_id) + ", `name` = " + this.db.escape(value['name']) + ", `description` = " + this.db.escape(value['description']) + ", `meta_title` = " + this.db.escape(value['meta_title']) + ", `meta_description` = " + this.db.escape(value['meta_description']) + ", `meta_keyword` = " + this.db.escape(value['meta_keyword']));
 		}
 
 		// Old path
 		let path_old = await this.getPath(category_id);
 
 		// MySQL Hierarchical Data Closure Table Pattern
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "category_path` WHERE `path_id` = '" + category_id + "' ORDER BY `level` ASC");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "category_path` WHERE `path_id` = " + this.db.quote(category_id) + " ORDER BY `level` ASC");
 
 		if (query.rows) {
 			for (let category_path of query.rows) {
 				// Delete the path below the current one
-				await this.db.query("DELETE FROM `" + DB_PREFIX + "category_path` WHERE `category_id` = '" + category_path['category_id'] + "' AND `level` < '" + category_path['level'] + "'");
+				await this.db.query("DELETE FROM `" + DB_PREFIX + "category_path` WHERE `category_id` = " + this.db.quote(category_path['category_id']) + " AND `level` < " + this.db.quote(category_path['level']));
 
 				let paths = [];
 
 				// Get the nodes new parents
-				let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "category_path` WHERE `category_id` = '" + data['parent_id'] + "' ORDER BY `level` ASC");
+				let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "category_path` WHERE `category_id` = " + this.db.quote(data['parent_id']) + " ORDER BY `level` ASC");
 
 				for (let result of query.rows) {
 					paths.push(result['path_id']);
 				}
 
 				// Get whats left of the nodes current path
-				query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "category_path` WHERE `category_id` = '" + category_path['category_id'] + "' ORDER BY `level` ASC");
+				query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "category_path` WHERE `category_id` = " + this.db.quote(category_path['category_id']) + " ORDER BY `level` ASC");
 
 				for (let result of query.rows) {
 					paths.push(result['path_id']);
@@ -128,42 +128,42 @@ module.exports = class CategoryCatalogModel extends global['OpencartSystemEngine
 				let level = 0;
 
 				for (let path_id of paths) {
-					await this.db.query("REPLACE INTO `" + DB_PREFIX + "category_path` SET `category_id` = '" + category_path['category_id'] + "', `path_id` = '" + path_id + "', `level` = '" + level + "'");
+					await this.db.query("REPLACE INTO `" + DB_PREFIX + "category_path` SET `category_id` = " + this.db.quote(category_path['category_id']) + ", `path_id` = " + this.db.quote(path_id) + ", `level` = " + this.db.quote(level));
 
 					level++;
 				}
 			}
 		} else {
 			// Delete the path below the current one
-			await this.db.query("DELETE FROM `" + DB_PREFIX + "category_path` WHERE `category_id` = '" + category_id + "'");
+			await this.db.query("DELETE FROM `" + DB_PREFIX + "category_path` WHERE `category_id` = " + this.db.quote(category_id));
 
 			// Fix for records with no paths
 			let level = 0;
 
-			let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "category_path` WHERE `category_id` = '" + data['parent_id'] + "' ORDER BY `level` ASC");
+			let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "category_path` WHERE `category_id` = " + this.db.quote(data['parent_id']) + " ORDER BY `level` ASC");
 
 			for (let result of query.rows) {
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "category_path` SET `category_id` = '" + category_id + "', `path_id` = '" + result['path_id'] + "', `level` = '" + level + "'");
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "category_path` SET `category_id` = " + this.db.quote(category_id) + ", `path_id` = " + this.db.quote(result['path_id']) + ", `level` = " + this.db.quote(level));
 
 				level++;
 			}
 
-			await this.db.query("REPLACE INTO `" + DB_PREFIX + "category_path` SET `category_id` = '" + category_id + "', `path_id` = '" + category_id + "', `level` = '" + level + "'");
+			await this.db.query("REPLACE INTO `" + DB_PREFIX + "category_path` SET `category_id` = " + this.db.quote(category_id) + ", `path_id` = " + this.db.quote(category_id) + ", `level` = " + this.db.quote(level));
 		}
 
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "category_filter` WHERE `category_id` = '" + category_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "category_filter` WHERE `category_id` = " + this.db.quote(category_id));
 
 		if ((data['category_filter'])) {
 			for (let filter_id of data['category_filter']) {
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "category_filter` SET `category_id` = '" + category_id + "', `filter_id` = '" + filter_id + "'");
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "category_filter` SET `category_id` = " + this.db.quote(category_id) + ", `filter_id` = " + this.db.quote(filter_id));
 			}
 		}
 
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "category_to_store` WHERE `category_id` = '" + category_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "category_to_store` WHERE `category_id` = " + this.db.quote(category_id));
 
 		if ((data['category_store'])) {
 			for (let store_id  of data['category_store']) {
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "category_to_store` SET `category_id` = '" + category_id + "', `store_id` = '" + store_id + "'");
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "category_to_store` SET `category_id` = " + this.db.quote(category_id) + ", `store_id` = " + this.db.quote(store_id));
 			}
 		}
 
@@ -197,22 +197,22 @@ module.exports = class CategoryCatalogModel extends global['OpencartSystemEngine
 					keyword = parent_info['keyword'] + '/' + keyword;
 				}
 
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "seo_url` SET `store_id` = '" + store_id + "', `language_id` = '" + language_id + "', `key` = 'path', `value` = " + this.db.escape(path_new) + ", `keyword` = " + this.db.escape(keyword) + "");
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "seo_url` SET `store_id` = " + this.db.quote(store_id) + ", `language_id` = " + this.db.quote(language_id) + ", `key` = 'path', `value` = " + this.db.escape(path_new) + ", `keyword` = " + this.db.escape(keyword));
 
 				// Update sub category seo urls
 				if ((seo_url_data[store_id] && seo_url_data[store_id][language_id])) {
-					await this.db.query("UPDATE `" + DB_PREFIX + "seo_url` SET `value` = CONCAT(" + this.db.escape(path_new + '_') + ", SUBSTRING(`value`, " + (strlen(path_old + '_') + 1) + ")), `keyword` = CONCAT(" + this.db.escape(keyword) + ", SUBSTRING(`keyword`, " + (oc_strlen(seo_url_data[store_id][language_id]) + 1) + ")) WHERE `store_id` = '" + store_id + "' AND `language_id` = '" + language_id + "' AND `key` = 'path' AND `value` LIKE " + this.db.escape(path_old + '\_%') + "");
+					await this.db.query("UPDATE `" + DB_PREFIX + "seo_url` SET `value` = CONCAT(" + this.db.escape(path_new + '_') + ", SUBSTRING(`value`, " + (strlen(path_old + '_') + 1) + ")), `keyword` = CONCAT(" + this.db.escape(keyword) + ", SUBSTRING(`keyword`, " + (oc_strlen(seo_url_data[store_id][language_id]) + 1) + ")) WHERE `store_id` = " + this.db.quote(store_id) + " AND `language_id` = " + this.db.quote(language_id) + " AND `key` = 'path' AND `value` LIKE " + this.db.escape(path_old + '\_%'));
 				}
 			}
 		}
 
 		// Layouts
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "category_to_layout` WHERE `category_id` = '" + category_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "category_to_layout` WHERE `category_id` = " + this.db.quote(category_id));
 
 		if ((data['category_layout'])) {
 			for (let [store_id, layout_id] of Object.entries(data['category_layout'])) {
 				store_id = store_id.indexOf('store') >= 0 ? store_id.split('-')[1] : store_id;
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "category_to_layout` SET `category_id` = '" + category_id + "', `store_id` = '" + store_id + "', `layout_id` = '" + layout_id + "'");
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "category_to_layout` SET `category_id` = " + this.db.quote(category_id) + ", `store_id` = " + this.db.quote(store_id) + ", `layout_id` = " + this.db.quote(layout_id));
 			}
 		}
 	}
@@ -223,17 +223,17 @@ module.exports = class CategoryCatalogModel extends global['OpencartSystemEngine
 	 * @return void
 	 */
 	async deleteCategory(category_id) {
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "category` WHERE `category_id` = '" + category_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "category_description` WHERE `category_id` = '" + category_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "category_filter` WHERE `category_id` = '" + category_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "category_to_store` WHERE `category_id` = '" + category_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "category_to_layout` WHERE `category_id` = '" + category_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_to_category` WHERE `category_id` = '" + category_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "coupon_category` WHERE `category_id` = '" + category_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "category` WHERE `category_id` = " + this.db.quote(category_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "category_description` WHERE `category_id` = " + this.db.quote(category_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "category_filter` WHERE `category_id` = " + this.db.quote(category_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "category_to_store` WHERE `category_id` = " + this.db.quote(category_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "category_to_layout` WHERE `category_id` = " + this.db.quote(category_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_to_category` WHERE `category_id` = " + this.db.quote(category_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "coupon_category` WHERE `category_id` = " + this.db.quote(category_id));
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "seo_url` WHERE `key` = 'path' AND `value` = " + this.db.escape(await this.getPath(category_id)) + "");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "category_path` WHERE `category_id` = '" + category_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "category_path` WHERE `category_id` = " + this.db.quote(category_id));
 
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "category_path` WHERE `path_id` = '" + category_id + "'");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "category_path` WHERE `path_id` = " + this.db.quote(category_id));
 
 		for (let result of query.rows) {
 			await this.deleteCategory(result['category_id']);
@@ -246,24 +246,24 @@ module.exports = class CategoryCatalogModel extends global['OpencartSystemEngine
 	 * @return void
 	 */
 	async repairCategories(parent_id = 0) {
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "category` WHERE `parent_id` = '" + parent_id + "'");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "category` WHERE `parent_id` = " + this.db.quote(parent_id));
 
 		for (let category of query.rows) {
 			// Delete the path below the current one
-			await this.db.query("DELETE FROM `" + DB_PREFIX + "category_path` WHERE `category_id` = '" + category['category_id'] + "'");
+			await this.db.query("DELETE FROM `" + DB_PREFIX + "category_path` WHERE `category_id` = " + this.db.quote(category['category_id']));
 
 			// Fix for records with no paths
 			let level = 0;
 
-			let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "category_path` WHERE `category_id` = '" + parent_id + "' ORDER BY `level` ASC");
+			let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "category_path` WHERE `category_id` = " + this.db.quote(parent_id) + " ORDER BY `level` ASC");
 
 			for (let result of query.rows) {
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "category_path` SET `category_id` = '" + category['category_id'] + "', `path_id` = '" + result['path_id'] + "', `level` = '" + level + "'");
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "category_path` SET `category_id` = " + this.db.quote(category['category_id']) + ", `path_id` = " + this.db.quote(result['path_id']) + ", `level` = " + this.db.quote(level));
 
 				level++;
 			}
 
-			await this.db.query("REPLACE INTO `" + DB_PREFIX + "category_path` SET `category_id` = '" + category['category_id'] + "', `path_id` = '" + category['category_id'] + "', `level` = '" + level + "'");
+			await this.db.query("REPLACE INTO `" + DB_PREFIX + "category_path` SET `category_id` = " + this.db.quote(category['category_id']) + ", `path_id` = " + this.db.quote(category['category_id']) + ", `level` = " + this.db.quote(level));
 
 			this.repairCategories(category['category_id']);
 		}
@@ -275,7 +275,7 @@ module.exports = class CategoryCatalogModel extends global['OpencartSystemEngine
 	 * @return array
 	 */
 	async getCategory(category_id) {
-		let query = await this.db.query("SELECT DISTINCT *, (SELECT GROUP_CONCAT(cd1.`name` ORDER BY `level` SEPARATOR ' > ') FROM `" + DB_PREFIX + "category_path` cp LEFT JOIN `" + DB_PREFIX + "category_description` cd1 ON (cp.`path_id` = cd1.`category_id` AND cp.`category_id` != cp.`path_id`) WHERE cp.`category_id` = c.`category_id` AND cd1.`language_id` = '" + this.config.get('config_language_id') + "' GROUP BY cp.`category_id`) AS `path` FROM `" + DB_PREFIX + "category` c LEFT JOIN `" + DB_PREFIX + "category_description` cd2 ON (c.`category_id` = cd2.`category_id`) WHERE c.`category_id` = '" + category_id + "' AND cd2.`language_id` = '" + this.config.get('config_language_id') + "'");
+		let query = await this.db.query("SELECT DISTINCT *, (SELECT GROUP_CONCAT(cd1.`name` ORDER BY `level` SEPARATOR ' > ') FROM `" + DB_PREFIX + "category_path` cp LEFT JOIN `" + DB_PREFIX + "category_description` cd1 ON (cp.`path_id` = cd1.`category_id` AND cp.`category_id` != cp.`path_id`) WHERE cp.`category_id` = c.`category_id` AND cd1.`language_id` = " + this.db.quote(this.config.get('config_language_id')) + " GROUP BY cp.`category_id`) AS `path` FROM `" + DB_PREFIX + "category` c LEFT JOIN `" + DB_PREFIX + "category_description` cd2 ON (c.`category_id` = cd2.`category_id`) WHERE c.`category_id` = " + this.db.quote(category_id) + " AND cd2.`language_id` = " + this.db.quote(this.config.get('config_language_id')));
 
 		return query.row;
 	}
@@ -296,7 +296,7 @@ module.exports = class CategoryCatalogModel extends global['OpencartSystemEngine
 	 * @return array
 	 */
 	async getPaths(category_id) {
-		let query = await this.db.query("SELECT `category_id`, `path_id`, `level` FROM `" + DB_PREFIX + "category_path` WHERE `category_id` = '" + category_id + "' ORDER BY `level` ASC");
+		let query = await this.db.query("SELECT `category_id`, `path_id`, `level` FROM `" + DB_PREFIX + "category_path` WHERE `category_id` = " + this.db.quote(category_id) + " ORDER BY `level` ASC");
 
 		return query.rows;
 	}
@@ -307,7 +307,7 @@ module.exports = class CategoryCatalogModel extends global['OpencartSystemEngine
 	 * @return array
 	 */
 	async getCategories(data = {}) {
-		let sql = "SELECT cp.`category_id` AS `category_id`, GROUP_CONCAT(cd1.`name` ORDER BY cp.`level` SEPARATOR ' > ') AS `name`, c1.`parent_id`, c1.`sort_order`, c1.`status` FROM `" + DB_PREFIX + "category_path` cp LEFT JOIN `" + DB_PREFIX + "category` c1 ON (cp.`category_id` = c1.`category_id`) LEFT JOIN `" + DB_PREFIX + "category` c2 ON (cp.`path_id` = c2.`category_id`) LEFT JOIN `" + DB_PREFIX + "category_description` cd1 ON (cp.`path_id` = cd1.`category_id`) LEFT JOIN `" + DB_PREFIX + "category_description` cd2 ON (cp.`category_id` = cd2.`category_id`) WHERE cd1.`language_id` = '" + this.config.get('config_language_id') + "' AND cd2.`language_id` = '" + this.config.get('config_language_id') + "'";
+		let sql = "SELECT cp.`category_id` AS `category_id`, GROUP_CONCAT(cd1.`name` ORDER BY cp.`level` SEPARATOR ' > ') AS `name`, c1.`parent_id`, c1.`sort_order`, c1.`status` FROM `" + DB_PREFIX + "category_path` cp LEFT JOIN `" + DB_PREFIX + "category` c1 ON (cp.`category_id` = c1.`category_id`) LEFT JOIN `" + DB_PREFIX + "category` c2 ON (cp.`path_id` = c2.`category_id`) LEFT JOIN `" + DB_PREFIX + "category_description` cd1 ON (cp.`path_id` = cd1.`category_id`) LEFT JOIN `" + DB_PREFIX + "category_description` cd2 ON (cp.`category_id` = cd2.`category_id`) WHERE cd1.`language_id` = " + this.db.quote(this.config.get('config_language_id')) + " AND cd2.`language_id` = " + this.db.quote(this.config.get('config_language_id'));
 
 		if (data['filter_name']) {
 			sql += " AND cd2.`name` LIKE " + this.db.escape(data['filter_name']) + "";
@@ -343,7 +343,7 @@ if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql += " LIMIT " + (parseInt(data['start']) || 0) + "," + (parseInt(data['limit']) || 0);
 		}
 
 		let query = await this.db.query(sql);
@@ -359,7 +359,7 @@ if (data['limit'] < 1) {
 	async getDescriptions(category_id) {
 		let category_description_data = [];
 
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "category_description` WHERE `category_id` = '" + category_id + "'");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "category_description` WHERE `category_id` = " + this.db.quote(category_id));
 
 		for (let result of query.rows) {
 			category_description_data[result['language_id']] = {
@@ -382,7 +382,7 @@ if (data['limit'] < 1) {
 	async getFilters(category_id) {
 		let category_filter_data = [];
 
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "category_filter` WHERE `category_id` = '" + category_id + "'");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "category_filter` WHERE `category_id` = " + this.db.quote(category_id));
 
 		for (let result of query.rows) {
 			category_filter_data.push(result['filter_id']);
@@ -417,7 +417,7 @@ if (data['limit'] < 1) {
 	async getStores(category_id) {
 		let category_store_data = [];
 
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "category_to_store` WHERE `category_id` = '" + category_id + "'");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "category_to_store` WHERE `category_id` = " + this.db.quote(category_id));
 
 		for (let result of query.rows) {
 			category_store_data.push(result['store_id']);
@@ -434,7 +434,7 @@ if (data['limit'] < 1) {
 	async getLayouts(category_id) {
 		let category_layout_data = {};
 
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "category_to_layout` WHERE `category_id` = '" + category_id + "'");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "category_to_layout` WHERE `category_id` = " + this.db.quote(category_id));
 
 		for (let result of query.rows) {
 			category_layout_data[result['store_id']] = result['layout_id'];
@@ -458,7 +458,7 @@ if (data['limit'] < 1) {
 	 * @return int
 	 */
 	async getTotalCategoriesByLayoutId(layout_id) {
-		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "category_to_layout` WHERE `layout_id` = '" + layout_id + "'");
+		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "category_to_layout` WHERE `layout_id` = " + this.db.quote(layout_id));
 
 		return query.row['total'];
 	}

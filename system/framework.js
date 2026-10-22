@@ -59,11 +59,18 @@ module.exports = class Framework {
         for (let header of config.get('response_header') || []) {
             response.addHeader(header);
         }
-        response.addHeader('Access-Control-Allow-Origin: *');
-        response.addHeader('Access-Control-Allow-Credentials: true');
-        response.addHeader('Access-Control-Max-Age: 1000');
-        response.addHeader('Access-Control-Allow-Headers: X-Requested-With, Content-Type, Origin, Cache-Control, Pragma, Authorization, Accept, Accept-Encoding');
-        response.addHeader('Access-Control-Allow-Methods: PUT, POST, GET, OPTIONS, DELETE');
+        // CORS only for origins listed in CORS_ORIGINS (comma separated). A wildcard together with
+        // credentials would let any website call the store with the visitor's session.
+        const origin = req.headers.origin;
+        const allowedOrigins = (process.env.CORS_ORIGINS || '').split(',').map(a => a.trim()).filter(Boolean);
+        if (origin && allowedOrigins.includes(origin)) {
+            response.addHeader('Access-Control-Allow-Origin: ' + origin);
+            response.addHeader('Vary: Origin');
+            response.addHeader('Access-Control-Allow-Credentials: true');
+            response.addHeader('Access-Control-Max-Age: 1000');
+            response.addHeader('Access-Control-Allow-Headers: X-Requested-With, Content-Type, Origin, Cache-Control, Pragma, Authorization, Accept, Accept-Encoding');
+            response.addHeader('Access-Control-Allow-Methods: PUT, POST, GET, OPTIONS, DELETE');
+        }
         response.addHeader('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
         response.addHeader('Pragma: no-cache');
         response.setCompression(config.get('response_compression'));

@@ -8,7 +8,7 @@ module.exports = class TranslationDesignModel extends global['OpencartSystemEngi
 	 * @return void
 	 */
 	async addTranslation(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "translation` SET `store_id` = '" + data['store_id'] + "', `language_id` = '" + data['language_id'] + "', `route` = " + this.db.escape(data['route']) + ", `key` = " + this.db.escape(data['key']) + ", `value` = " + this.db.escape(data['value']) + ", `date_added` = NOW()");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "translation` SET `store_id` = " + this.db.quote(data['store_id']) + ", `language_id` = " + this.db.quote(data['language_id']) + ", `route` = " + this.db.escape(data['route']) + ", `key` = " + this.db.escape(data['key']) + ", `value` = " + this.db.escape(data['value']) + ", `date_added` = NOW()");
 	}
 
 	/**
@@ -18,7 +18,7 @@ module.exports = class TranslationDesignModel extends global['OpencartSystemEngi
 	 * @return void
 	 */
 	async editTranslation(translation_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "translation` SET `store_id` = '" + data['store_id'] + "', `language_id` = '" + data['language_id'] + "', `route` = " + this.db.escape(data['route']) + ", `key` = " + this.db.escape(data['key']) + ", `value` = " + this.db.escape(data['value']) + " WHERE `translation_id` = '" + translation_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "translation` SET `store_id` = " + this.db.quote(data['store_id']) + ", `language_id` = " + this.db.quote(data['language_id']) + ", `route` = " + this.db.escape(data['route']) + ", `key` = " + this.db.escape(data['key']) + ", `value` = " + this.db.escape(data['value']) + " WHERE `translation_id` = " + this.db.quote(translation_id));
 	}
 
 	/**
@@ -27,7 +27,7 @@ module.exports = class TranslationDesignModel extends global['OpencartSystemEngi
 	 * @return void
 	 */
 	async deleteTranslation(translation_id) {
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "translation` WHERE `translation_id` = '" + translation_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "translation` WHERE `translation_id` = " + this.db.quote(translation_id));
 	}
 
 	/**
@@ -36,7 +36,7 @@ module.exports = class TranslationDesignModel extends global['OpencartSystemEngi
 	 * @return array
 	 */
 	async getTranslation(translation_id) {
-		let query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "translation` WHERE `translation_id` = '" + translation_id + "'");
+		let query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "translation` WHERE `translation_id` = " + this.db.quote(translation_id));
 
 		return query.row;
 	}
@@ -80,7 +80,7 @@ module.exports = class TranslationDesignModel extends global['OpencartSystemEngi
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql += " LIMIT " + (parseInt(data['start']) || 0) + "," + (parseInt(data['limit']) || 0);
 		}
 
 		let query = await this.db.query(sql);

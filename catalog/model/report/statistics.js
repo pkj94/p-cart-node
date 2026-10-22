@@ -30,7 +30,7 @@ module.exports = class Statistics extends global['OpencartSystemEngineModel'] {
 	 * @return void
 	 */
 	async addValue(code, value) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "statistics` SET `value` = (`value` + '" + value + "') WHERE `code` = " + this.db.escape(code) + "");
+		await this.db.query("UPDATE `" + DB_PREFIX + "statistics` SET `value` = (`value` + " + this.db.quote(value) + ") WHERE `code` = " + this.db.escape(code));
 	}
 
 	/**
@@ -40,7 +40,7 @@ module.exports = class Statistics extends global['OpencartSystemEngineModel'] {
 	 * @return void
 	 */
 	async removeValue(code, value) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "statistics` SET `value` = (`value` - '" + value + "') WHERE `code` = " + this.db.escape(code) + "");
+		await this.db.query("UPDATE `" + DB_PREFIX + "statistics` SET `value` = (`value` - " + this.db.quote(value) + ") WHERE `code` = " + this.db.escape(code));
 	}
 
 	/**
@@ -50,6 +50,6 @@ module.exports = class Statistics extends global['OpencartSystemEngineModel'] {
 	 * @return void
 	 */
 	async editValue(code, value) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "statistics` SET `value` = '" + value + "' WHERE `code` = " + this.db.escape(code) + "");
+		await this.db.query("UPDATE `" + DB_PREFIX + "statistics` SET `value` = " + this.db.quote(value) + " WHERE `code` = " + this.db.escape(code));
 	}
 }

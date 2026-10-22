@@ -8,7 +8,7 @@ module.exports = class CurrencyLocalisationModel extends global['OpencartSystemE
 	 * @return int
 	 */
 	async addCurrency(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "currency` SET `title` = " + this.db.escape(data['title']) + ", `code` = " + this.db.escape(data['code']) + ", `symbol_left` = " + this.db.escape(data['symbol_left']) + ", `symbol_right` = " + this.db.escape(data['symbol_right']) + ", `decimal_place` = '" + data['decimal_place'] + "', `value` = '" + data['value'] + "', `status` = '" + ((data['status']) ? data['status'] : 0) + "', `date_modified` = NOW()");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "currency` SET `title` = " + this.db.escape(data['title']) + ", `code` = " + this.db.escape(data['code']) + ", `symbol_left` = " + this.db.escape(data['symbol_left']) + ", `symbol_right` = " + this.db.escape(data['symbol_right']) + ", `decimal_place` = " + this.db.quote(data['decimal_place']) + ", `value` = " + this.db.quote(data['value']) + ", `status` = " + this.db.quote(((data['status']) ? data['status'] : 0)) + ", `date_modified` = NOW()");
 
 		await this.cache.delete('currency');
 
@@ -22,7 +22,7 @@ module.exports = class CurrencyLocalisationModel extends global['OpencartSystemE
 	 * @return void
 	 */
 	async editCurrency(currency_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "currency` SET `title` = " + this.db.escape(data['title']) + ", `code` = " + this.db.escape(data['code']) + ", `symbol_left` = " + this.db.escape(data['symbol_left']) + ", `symbol_right` = " + this.db.escape(data['symbol_right']) + ", `decimal_place` = '" + data['decimal_place'] + "', `value` = '" + data['value'] + "', `status` = '" + ((data['status']) ? data['status'] : 0) + "', `date_modified` = NOW() WHERE `currency_id` = '" + currency_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "currency` SET `title` = " + this.db.escape(data['title']) + ", `code` = " + this.db.escape(data['code']) + ", `symbol_left` = " + this.db.escape(data['symbol_left']) + ", `symbol_right` = " + this.db.escape(data['symbol_right']) + ", `decimal_place` = " + this.db.quote(data['decimal_place']) + ", `value` = " + this.db.quote(data['value']) + ", `status` = " + this.db.quote(((data['status']) ? data['status'] : 0)) + ", `date_modified` = NOW() WHERE `currency_id` = " + this.db.quote(currency_id));
 
 		await this.cache.delete('currency');
 	}
@@ -34,7 +34,7 @@ module.exports = class CurrencyLocalisationModel extends global['OpencartSystemE
 	 * @return void
 	 */
 	async editValueByCode(code, value) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "currency` SET `value` = '" + value + "', `date_modified` = NOW() WHERE `code` = " + this.db.escape(code));
+		await this.db.query("UPDATE `" + DB_PREFIX + "currency` SET `value` = " + this.db.quote(value) + ", `date_modified` = NOW() WHERE `code` = " + this.db.escape(code));
 
 		await this.cache.delete('currency');
 	}
@@ -45,7 +45,7 @@ module.exports = class CurrencyLocalisationModel extends global['OpencartSystemE
 	 * @return void
 	 */
 	async deleteCurrency(currency_id) {
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "currency` WHERE `currency_id` = '" + currency_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "currency` WHERE `currency_id` = " + this.db.quote(currency_id));
 
 		await this.cache.delete('currency');
 	}
@@ -56,7 +56,7 @@ module.exports = class CurrencyLocalisationModel extends global['OpencartSystemE
 	 * @return array
 	 */
 	async getCurrency(currency_id) {
-		const query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "currency` WHERE `currency_id` = '" + currency_id + "'");
+		const query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "currency` WHERE `currency_id` = " + this.db.quote(currency_id));
 
 		return query.row;
 	}
@@ -110,7 +110,7 @@ module.exports = class CurrencyLocalisationModel extends global['OpencartSystemE
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql += " LIMIT " + (parseInt(data['start']) || 0) + "," + (parseInt(data['limit']) || 0);
 		}
 
 		let results = await this.cache.get('currency.' + md5(sql));

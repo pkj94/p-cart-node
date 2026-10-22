@@ -5,7 +5,7 @@ module.exports =class SubscriptionStatus extends global['OpencartSystemEngineMod
 	 * @return array
 	 */
 	async getSubscriptionStatus(subscription_status_id) {
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "subscription_status` WHERE `subscription_status_id` = '" + subscription_status_id + "' AND `language_id` = '" + this.config.get('config_language_id') + "'");
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "subscription_status` WHERE `subscription_status_id` = " + this.db.quote(subscription_status_id) + " AND `language_id` = " + this.db.quote(this.config.get('config_language_id')));
 
 		return query.row;
 	}
@@ -14,7 +14,7 @@ module.exports =class SubscriptionStatus extends global['OpencartSystemEngineMod
 	 * @return array
 	 */
 	async getSubscriptionStatuses() {
-		const sql = "SELECT `subscription_status_id`, `name` FROM `" + DB_PREFIX + "subscription_status` WHERE `language_id` = '" + this.config.get('config_language_id') + "' ORDER BY `name`";
+		const sql = "SELECT `subscription_status_id`, `name` FROM `" + DB_PREFIX + "subscription_status` WHERE `language_id` = " + this.db.quote(this.config.get('config_language_id')) + " ORDER BY `name`";
 
 		subscription_status_data = await this.cache.get('subscription_status.'+ md5(sql));
 

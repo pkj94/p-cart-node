@@ -24,7 +24,7 @@ global['OpencartAdminModelExtensionOpencartReportProductViewed'] = class Product
 	 * @return void
 	 */
 	async addReport( product_id,  viewed) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "product_viewed` SET `product_id` = '" + product_id + "', `viewed` = '" + viewed + "'");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "product_viewed` SET `product_id` = " + this.db.quote(product_id) + ", `viewed` = " + this.db.quote(viewed));
 	}
 
 	/**
@@ -42,7 +42,7 @@ global['OpencartAdminModelExtensionOpencartReportProductViewed'] = class Product
 			limit = 10;
 		}
 
-		let query = await this.db.query("SELECT `product_id`, `viewed` FROM `" + DB_PREFIX + "product_viewed` ORDER BY `viewed` DESC LIMIT " + start + "," + limit);
+		let query = await this.db.query("SELECT `product_id`, `viewed` FROM `" + DB_PREFIX + "product_viewed` ORDER BY `viewed` DESC LIMIT " + (parseInt(start) || 0) + "," + (parseInt(limit) || 0));
 
 		return query.rows;
 	}

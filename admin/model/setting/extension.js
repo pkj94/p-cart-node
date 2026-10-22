@@ -42,7 +42,7 @@ module.exports = class ExtensionModel extends global['OpencartSystemEngineModel'
     }
 
     async editStatus(extension_install_id, status) {
-        await this.db.query(`UPDATE ${DB_PREFIX}extension_install SET status = '${status}' WHERE extension_install_id = '${parseInt(extension_install_id)}'`);
+        await this.db.query(`UPDATE ${DB_PREFIX}extension_install SET status = ${this.db.quote(status)} WHERE extension_install_id = '${parseInt(extension_install_id)}'`);
     }
 
     async getInstall(extension_install_id) {

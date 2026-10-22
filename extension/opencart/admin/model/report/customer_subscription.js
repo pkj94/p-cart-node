@@ -5,7 +5,7 @@ global['OpencartAdminModelExtensionOpencartReportCustomerSubscription'] = class 
 	 * @return array
 	 */
 	async getTransactions(data = {}) {
-		let sql = "SELECT `s`.`subscription_id`, `s`.`customer_id`, CONCAT(c.`firstname`, ' ', c.`lastname`) AS customer, c.`email`, cgd.`name` AS customer_group, c.`status`, SUM(st.`amount`) AS `total` FROM `" + DB_PREFIX + "subscription_transaction` st LEFT JOIN `" + DB_PREFIX + "subscription` `s` ON (st.`subscription_id` = `s`.`subscription_id`) LEFT JOIN `" + DB_PREFIX + "customer` c ON (`s`.`customer_id` = c.`customer_id`) LEFT JOIN `" + DB_PREFIX + "customer_group_description` cgd ON (c.`customer_group_id` = cgd.`customer_group_id`) WHERE cgd.`language_id` = '" + this.config.get('config_language_id') + "'";
+		let sql = "SELECT `s`.`subscription_id`, `s`.`customer_id`, CONCAT(c.`firstname`, ' ', c.`lastname`) AS customer, c.`email`, cgd.`name` AS customer_group, c.`status`, SUM(st.`amount`) AS `total` FROM `" + DB_PREFIX + "subscription_transaction` st LEFT JOIN `" + DB_PREFIX + "subscription` `s` ON (st.`subscription_id` = `s`.`subscription_id`) LEFT JOIN `" + DB_PREFIX + "customer` c ON (`s`.`customer_id` = c.`customer_id`) LEFT JOIN `" + DB_PREFIX + "customer_group_description` cgd ON (c.`customer_group_id` = cgd.`customer_group_id`) WHERE cgd.`language_id` = " + this.db.quote(this.config.get('config_language_id'));
 
 		if (data['filter_date_start']) {
 			sql += " AND DATE(st.`date_added`) >= DATE(" + this.db.escape(data['filter_date_start']) + ")";
@@ -31,7 +31,7 @@ global['OpencartAdminModelExtensionOpencartReportCustomerSubscription'] = class 
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql += " LIMIT " + (parseInt(data['start']) || 0) + "," + (parseInt(data['limit']) || 0);
 		}
 
 		let query = await this.db.query(sql);

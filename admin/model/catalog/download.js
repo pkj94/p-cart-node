@@ -14,7 +14,7 @@ module.exports = class DownloadCatalogModel extends global['OpencartSystemEngine
 
 		for (let [language_id, value] of Object.entries(data['download_description'])) {
 			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "download_description` SET `download_id` = '" + download_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + "");
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "download_description` SET `download_id` = " + this.db.quote(download_id) + ", `language_id` = " + this.db.quote(language_id) + ", `name` = " + this.db.escape(value['name']));
 		}
 
 		return download_id;
@@ -27,13 +27,13 @@ module.exports = class DownloadCatalogModel extends global['OpencartSystemEngine
 	 * @return void
 	 */
 	async editDownload(download_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "download` SET `filename` = " + this.db.escape(data['filename']) + ", `mask` = " + this.db.escape(data['mask']) + " WHERE `download_id` = '" + download_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "download` SET `filename` = " + this.db.escape(data['filename']) + ", `mask` = " + this.db.escape(data['mask']) + " WHERE `download_id` = " + this.db.quote(download_id));
 
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "download_description` WHERE `download_id` = '" + download_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "download_description` WHERE `download_id` = " + this.db.quote(download_id));
 
 		for (let [language_id, value] of Object.entries(data['download_description'])) {
 			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "download_description` SET `download_id` = '" + download_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + "");
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "download_description` SET `download_id` = " + this.db.quote(download_id) + ", `language_id` = " + this.db.quote(language_id) + ", `name` = " + this.db.escape(value['name']));
 		}
 	}
 
@@ -43,8 +43,8 @@ module.exports = class DownloadCatalogModel extends global['OpencartSystemEngine
 	 * @return void
 	 */
 	async deleteDownload(download_id) {
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "download` WHERE `download_id` = '" + download_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "download_description` WHERE `download_id` = '" + download_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "download` WHERE `download_id` = " + this.db.quote(download_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "download_description` WHERE `download_id` = " + this.db.quote(download_id));
 	}
 
 	/**
@@ -53,7 +53,7 @@ module.exports = class DownloadCatalogModel extends global['OpencartSystemEngine
 	 * @return array
 	 */
 	async getDownload(download_id) {
-		let query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "download` d LEFT JOIN `" + DB_PREFIX + "download_description` dd ON (d.`download_id` = dd.`download_id`) WHERE d.`download_id` = '" + download_id + "' AND dd.`language_id` = '" + this.config.get('config_language_id') + "'");
+		let query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "download` d LEFT JOIN `" + DB_PREFIX + "download_description` dd ON (d.`download_id` = dd.`download_id`) WHERE d.`download_id` = " + this.db.quote(download_id) + " AND dd.`language_id` = " + this.db.quote(this.config.get('config_language_id')));
 
 		return query.row;
 	}
@@ -64,7 +64,7 @@ module.exports = class DownloadCatalogModel extends global['OpencartSystemEngine
 	 * @return array
 	 */
 	async getDownloads(data = {}) {
-		let sql = "SELECT * FROM `" + DB_PREFIX + "download` d LEFT JOIN `" + DB_PREFIX + "download_description` dd ON (d.`download_id` = dd.`download_id`) WHERE dd.`language_id` = '" + this.config.get('config_language_id') + "'";
+		let sql = "SELECT * FROM `" + DB_PREFIX + "download` d LEFT JOIN `" + DB_PREFIX + "download_description` dd ON (d.`download_id` = dd.`download_id`) WHERE dd.`language_id` = " + this.db.quote(this.config.get('config_language_id'));
 
 		if (data['filter_name']) {
 			sql += " AND dd.`name` LIKE " + this.db.escape(data['filter_name'] + '%');
@@ -98,7 +98,7 @@ module.exports = class DownloadCatalogModel extends global['OpencartSystemEngine
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql += " LIMIT " + (parseInt(data['start']) || 0) + "," + (parseInt(data['limit']) || 0);
 		}
 
 		let query = await this.db.query(sql);
@@ -114,7 +114,7 @@ module.exports = class DownloadCatalogModel extends global['OpencartSystemEngine
 	async getDescriptions(download_id) {
 		let download_description_data = {};
 
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "download_description` WHERE `download_id` = '" + download_id + "'");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "download_description` WHERE `download_id` = " + this.db.quote(download_id));
 
 		for (let result of query.rows) {
 			download_description_data[result['language_id']] = {'name' : result['name']};
@@ -148,7 +148,7 @@ module.exports = class DownloadCatalogModel extends global['OpencartSystemEngine
 			limit = 10;
 		}
 
-		let query = await this.db.query("SELECT `ip`, `store_id`, `country`, `date_added` FROM `" + DB_PREFIX + "download_report` WHERE `download_id` = '" + download_id + "' ORDER BY `date_added` ASC LIMIT " + start + "," + limit);
+		let query = await this.db.query("SELECT `ip`, `store_id`, `country`, `date_added` FROM `" + DB_PREFIX + "download_report` WHERE `download_id` = " + this.db.quote(download_id) + " ORDER BY `date_added` ASC LIMIT " + (parseInt(start) || 0) + "," + (parseInt(limit) || 0));
 
 		return query.rows;
 	}
@@ -159,7 +159,7 @@ module.exports = class DownloadCatalogModel extends global['OpencartSystemEngine
 	 * @return int
 	 */
 	async getTotalReports(download_id) {
-		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "download_report` WHERE `download_id` = '" + download_id + "'");
+		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "download_report` WHERE `download_id` = " + this.db.quote(download_id));
 
 		return query.row['total'];
 	}

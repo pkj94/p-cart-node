@@ -61,7 +61,7 @@ module.exports = class Order extends global['OpencartSystemEngineController'] {
 
 		for (let order_product of order_products) {
 			// Check if there are any linked downloads
-			const product_download_query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "product_to_download` WHERE `product_id` = '" + order_product['product_id'] + "'");
+			const product_download_query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "product_to_download` WHERE `product_id` = " + this.db.quote(order_product['product_id']));
 
 			if (product_download_query.row['total']) {
 				download_status = true;
@@ -140,7 +140,7 @@ module.exports = class Order extends global['OpencartSystemEngineController'] {
 		data['telephone'] = order_info['telephone'];
 		data['ip'] = order_info['ip'];
 
-		const order_status_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "order_status` WHERE `order_status_id` = '" + order_status_id + "' AND `language_id` = '" + order_info['language_id'] + "'");
+		const order_status_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "order_status` WHERE `order_status_id` = " + this.db.quote(order_status_id) + " AND `language_id` = " + this.db.quote(order_info['language_id']));
 
 		if (order_status_query.num_rows) {
 			data['order_status'] = order_status_query.row['name'];
@@ -398,7 +398,7 @@ module.exports = class Order extends global['OpencartSystemEngineController'] {
 		data['order_id'] = order_info['order_id'];
 		data['date_added'] = date(this.language.get('date_format_short'), new Date(order_info['date_added']));
 
-		const order_status_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "order_status` WHERE `order_status_id` = '" + order_status_id + "' AND `language_id` = '" + order_info['language_id'] + "'");
+		const order_status_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "order_status` WHERE `order_status_id` = " + this.db.quote(order_status_id) + " AND `language_id` = " + this.db.quote(order_info['language_id']));
 
 		if (order_status_query.num_rows) {
 			data['order_status'] = order_status_query.row['name'];
@@ -483,7 +483,7 @@ module.exports = class Order extends global['OpencartSystemEngineController'] {
 			data['order_id'] = order_info['order_id'];
 			data['date_added'] = date(this.language.get('date_format_short'), new Date(order_info['date_added']));
 
-			const order_status_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "order_status` WHERE `order_status_id` = '" + order_status_id + "' AND `language_id` = '" + this.config.get('config_language_id') + "'");
+			const order_status_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "order_status` WHERE `order_status_id` = " + this.db.quote(order_status_id) + " AND `language_id` = " + this.db.quote(this.config.get('config_language_id')));
 
 			if (order_status_query.num_rows) {
 				data['order_status'] = order_status_query.row['name'];

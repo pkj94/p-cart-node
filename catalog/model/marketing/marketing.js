@@ -18,6 +18,6 @@ module.exports = class Marketing extends global['OpencartSystemEngineModel'] {
 	 * @return void
 	 */
 	async addReport(marketing_id, ip, country = '') {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "marketing_report` SET `marketing_id` = '" + marketing_id + "', `store_id` = '" + this.config.get('config_store_id') + "', `ip` = " + this.db.escape(ip) + ", `country` = " + this.db.escape(country) + ", `date_added` = NOW()");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "marketing_report` SET `marketing_id` = " + this.db.quote(marketing_id) + ", `store_id` = " + this.db.quote(this.config.get('config_store_id')) + ", `ip` = " + this.db.escape(ip) + ", `country` = " + this.db.escape(country) + ", `date_added` = NOW()");
 	}
 }

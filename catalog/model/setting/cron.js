@@ -5,7 +5,7 @@ module.exports = class Cron extends global['OpencartSystemEngineModel'] {
 	 * @return void
 	 */
 	async editCron(cron_id) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "cron` SET `date_modified` = NOW() WHERE `cron_id` = '" + cron_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "cron` SET `date_modified` = NOW() WHERE `cron_id` = " + this.db.quote(cron_id));
 	}
 
 	/**
@@ -15,7 +15,7 @@ module.exports = class Cron extends global['OpencartSystemEngineModel'] {
 	 * @return void
 	 */
 	async editStatus(cron_id, status) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "cron` SET `status` = '" + status + "' WHERE `cron_id` = '" + cron_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "cron` SET `status` = " + this.db.quote(status) + " WHERE `cron_id` = " + this.db.quote(cron_id));
 	}
 
 	/**
@@ -24,7 +24,7 @@ module.exports = class Cron extends global['OpencartSystemEngineModel'] {
 	 * @return array
 	 */
 	async getCron(cron_id) {
-		const query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "cron` WHERE `cron_id` = '" + cron_id + "'");
+		const query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "cron` WHERE `cron_id` = " + this.db.quote(cron_id));
 
 		return query.row;
 	}

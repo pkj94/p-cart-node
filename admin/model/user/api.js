@@ -5,14 +5,14 @@ module.exports = class ApiModel extends global['OpencartSystemEngineModel'] {
 	 * @return int
 	 */
 	async addApi(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "api` SET `username` = " + this.db.escape(data['username']) + ", `key` = " + this.db.escape(data['key']) + ", `status` = '" + ((data['status']) ? data['status'] : 0) + "', `date_added` = NOW(), `date_modified` = NOW()");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "api` SET `username` = " + this.db.escape(data['username']) + ", `key` = " + this.db.escape(data['key']) + ", `status` = " + this.db.quote(((data['status']) ? data['status'] : 0)) + ", `date_added` = NOW(), `date_modified` = NOW()");
 
 		const api_id = this.db.getLastId();
 
 		if ((data['api_ip'])) {
 			for (let ip of data['api_ip']) {
 				if (ip) {
-					await this.db.query("INSERT INTO `" + DB_PREFIX + "api_ip` SET `api_id` = '" + api_id + "', `ip` = " + this.db.escape(ip));
+					await this.db.query("INSERT INTO `" + DB_PREFIX + "api_ip` SET `api_id` = " + this.db.quote(api_id) + ", `ip` = " + this.db.escape(ip));
 				}
 			}
 		}
@@ -27,14 +27,14 @@ module.exports = class ApiModel extends global['OpencartSystemEngineModel'] {
 	 * @return void
 	 */
 	async editApi(api_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "api` SET `username` = " + this.db.escape(data['username']) + ", `key` = " + this.db.escape(data['key']) + ", `status` = '" + ((data['status']) ? data['status'] : 0) + "', `date_modified` = NOW() WHERE `api_id` = '" + api_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "api` SET `username` = " + this.db.escape(data['username']) + ", `key` = " + this.db.escape(data['key']) + ", `status` = " + this.db.quote(((data['status']) ? data['status'] : 0)) + ", `date_modified` = NOW() WHERE `api_id` = " + this.db.quote(api_id));
 
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "api_ip` WHERE `api_id` = '" + api_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "api_ip` WHERE `api_id` = " + this.db.quote(api_id));
 
 		if ((data['api_ip'])) {
 			for (let ip of data['api_ip']) {
 				if (ip) {
-					await this.db.query("INSERT INTO `" + DB_PREFIX + "api_ip` SET `api_id` = '" + api_id + "', `ip` = " + this.db.escape(ip));
+					await this.db.query("INSERT INTO `" + DB_PREFIX + "api_ip` SET `api_id` = " + this.db.quote(api_id) + ", `ip` = " + this.db.escape(ip));
 				}
 			}
 		}
@@ -46,7 +46,7 @@ module.exports = class ApiModel extends global['OpencartSystemEngineModel'] {
 	 * @return void
 	 */
 	async deleteApi(api_id) {
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "api` WHERE `api_id` = '" + api_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "api` WHERE `api_id` = " + this.db.quote(api_id));
 	}
 
 	/**
@@ -55,7 +55,7 @@ module.exports = class ApiModel extends global['OpencartSystemEngineModel'] {
 	 * @return array
 	 */
 	async getApi(api_id) {
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "api` WHERE `api_id` = '" + api_id + "'");
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "api` WHERE `api_id` = " + this.db.quote(api_id));
 
 		return query.row;
 	}
@@ -97,7 +97,7 @@ module.exports = class ApiModel extends global['OpencartSystemEngineModel'] {
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql += " LIMIT " + (parseInt(data['start']) || 0) + "," + (parseInt(data['limit']) || 0);
 		}
 
 		const query = await this.db.query(sql);
@@ -121,7 +121,7 @@ module.exports = class ApiModel extends global['OpencartSystemEngineModel'] {
 	 * @return void
 	 */
 	async addIp(api_id, ip) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "api_ip` SET `api_id` = '" + api_id + "', `ip` = " + this.db.escape(ip));
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "api_ip` SET `api_id` = " + this.db.quote(api_id) + ", `ip` = " + this.db.escape(ip));
 	}
 
 	/**
@@ -132,7 +132,7 @@ module.exports = class ApiModel extends global['OpencartSystemEngineModel'] {
 	async getIps(api_id) {
 		let ip_data = [];
 
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "api_ip` WHERE `api_id` = '" + api_id + "'");
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "api_ip` WHERE `api_id` = " + this.db.quote(api_id));
 
 		for (let result of query.rows) {
 			ip_data.push(result['ip']);
@@ -152,10 +152,10 @@ module.exports = class ApiModel extends global['OpencartSystemEngineModel'] {
 		const api_ip_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "api_ip` WHERE `ip` = " + this.db.escape(ip));
 
 		if (!api_ip_query.num_rows) {
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "api_ip` SET `api_id` = '" + api_id + "', `ip` = " + this.db.escape(ip));
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "api_ip` SET `api_id` = " + this.db.quote(api_id) + ", `ip` = " + this.db.escape(ip));
 		}
 
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "api_session` SET `api_id` = '" + api_id + "', `session_id` = " + this.db.escape(session_id) + ", `ip` = " + this.db.escape(ip) + ", `date_added` = NOW(), `date_modified` = NOW()");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "api_session` SET `api_id` = " + this.db.quote(api_id) + ", `session_id` = " + this.db.escape(session_id) + ", `ip` = " + this.db.escape(ip) + ", `date_added` = NOW(), `date_modified` = NOW()");
 
 		return this.db.getLastId();
 	}
@@ -166,7 +166,7 @@ module.exports = class ApiModel extends global['OpencartSystemEngineModel'] {
 	 * @return array
 	 */
 	async getSessions(api_id) {
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "api_session` WHERE `api_id` = '" + api_id + "'");
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "api_session` WHERE `api_id` = " + this.db.quote(api_id));
 
 		return query.rows;
 	}
@@ -177,7 +177,7 @@ module.exports = class ApiModel extends global['OpencartSystemEngineModel'] {
 	 * @return void
 	 */
 	async deleteSession(api_session_id) {
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "api_session` WHERE `api_session_id` = '" + api_session_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "api_session` WHERE `api_session_id` = " + this.db.quote(api_session_id));
 	}
 
 	/**

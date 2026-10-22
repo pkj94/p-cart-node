@@ -5,7 +5,7 @@ module.exports =class Country extends global['OpencartSystemEngineModel'] {
 	 * @return array
 	 */
 	async getCountry(country_id) {
-		const query = await this.db.query("SELECT *, `c`.`name` FROM `" + DB_PREFIX + "country` `c` LEFT JOIN `" + DB_PREFIX + "address_format` af ON (`c`.`address_format_id` = `af`.`address_format_id`) WHERE `c`.`country_id` = '" + country_id + "' AND `c`.`status` = '1'");
+		const query = await this.db.query("SELECT *, `c`.`name` FROM `" + DB_PREFIX + "country` `c` LEFT JOIN `" + DB_PREFIX + "address_format` af ON (`c`.`address_format_id` = `af`.`address_format_id`) WHERE `c`.`country_id` = " + this.db.quote(country_id) + " AND `c`.`status` = '1'");
 
 		return query.row;
 	}

@@ -34,7 +34,7 @@ global['OpencartAdminModelExtensionOpencartReportSale'] = class Sale extends glo
 		const implode = [];
 
 		for (let order_status_id of this.config.get('config_complete_status')) {
-			implode.push("'" + order_status_id + "'");
+			implode.push(this.db.quote(order_status_id));
 		}
 
 		let order_data = {};
@@ -65,7 +65,7 @@ global['OpencartAdminModelExtensionOpencartReportSale'] = class Sale extends glo
 		const implode = [];
 
 		for (let order_status_id of this.config.get('config_complete_status')) {
-			implode.push("'" + order_status_id + "'");
+			implode.push(this.db.quote(order_status_id));
 		}
 
 		let order_data = {};
@@ -100,7 +100,7 @@ global['OpencartAdminModelExtensionOpencartReportSale'] = class Sale extends glo
 		const implode = [];
 
 		for (let order_status_id of this.config.get('config_complete_status')) {
-			implode.push("'" + order_status_id + "'");
+			implode.push(this.db.quote(order_status_id));
 		}
 
 		let order_data = {};
@@ -133,7 +133,7 @@ global['OpencartAdminModelExtensionOpencartReportSale'] = class Sale extends glo
 		const implode = [];
 
 		for (let order_status_id of this.config.get('config_complete_status')) {
-			implode.push("'" + order_status_id + "'");
+			implode.push(this.db.quote(order_status_id));
 		}
 
 		let order_data = {};
@@ -166,7 +166,7 @@ global['OpencartAdminModelExtensionOpencartReportSale'] = class Sale extends glo
 		let sql = "SELECT MIN(o.`date_added`) AS date_start, MAX(o.`date_added`) AS date_end, COUNT(*) AS orders, SUM((SELECT SUM(op.`quantity`) FROM `" + DB_PREFIX + "order_product` `op` WHERE `op`.`order_id` = `o`.`order_id` GROUP BY `op`.`order_id`)) AS products, SUM((SELECT SUM(`ot`.`value`) FROM `" + DB_PREFIX + "order_total` ot WHERE ot.`order_id` = o.`order_id` AND ot.`code` = 'tax' GROUP BY ot.`order_id`)) AS tax, SUM(o.`total`) AS `total` FROM `" + DB_PREFIX + "order` o";
 
 		if (data['filter_order_status_id']) {
-			sql += " WHERE o.`order_status_id` = '" + data['filter_order_status_id'] + "'";
+			sql += " WHERE o.`order_status_id` = " + this.db.quote(data['filter_order_status_id']);
 		} else {
 			sql += " WHERE o.`order_status_id` > '0'";
 		}
@@ -211,7 +211,7 @@ global['OpencartAdminModelExtensionOpencartReportSale'] = class Sale extends glo
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql += " LIMIT " + (parseInt(data['start']) || 0) + "," + (parseInt(data['limit']) || 0);
 		}
 
 		let query = await this.db.query(sql);
@@ -247,7 +247,7 @@ global['OpencartAdminModelExtensionOpencartReportSale'] = class Sale extends glo
 		}
 
 		if (data['filter_order_status_id']) {
-			sql += " WHERE `order_status_id` = '" + data['filter_order_status_id'] + "'";
+			sql += " WHERE `order_status_id` = " + this.db.quote(data['filter_order_status_id']);
 		} else {
 			sql += " WHERE `order_status_id` > '0'";
 		}
@@ -274,7 +274,7 @@ global['OpencartAdminModelExtensionOpencartReportSale'] = class Sale extends glo
 		let sql = "SELECT MIN(o.`date_added`) AS date_start, MAX(o.`date_added`) AS date_end, ot.`title`, SUM(ot.`value`) AS total, COUNT(o.`order_id`) AS `orders` FROM `" + DB_PREFIX + "order` o LEFT JOIN `" + DB_PREFIX + "order_total` ot ON (ot.`order_id` = o.`order_id`) WHERE ot.`code` = 'tax'";
 
 		if (data['filter_order_status_id']) {
-			sql += " AND `o`.`order_status_id` = '" + data['filter_order_status_id'] + "'";
+			sql += " AND `o`.`order_status_id` = " + this.db.quote(data['filter_order_status_id']);
 		} else {
 			sql += " AND `o`.`order_status_id` > '0'";
 		}
@@ -317,7 +317,7 @@ global['OpencartAdminModelExtensionOpencartReportSale'] = class Sale extends glo
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql += " LIMIT " + (parseInt(data['start']) || 0) + "," + (parseInt(data['limit']) || 0);
 		}
 
 		let query = await this.db.query(sql);
@@ -355,7 +355,7 @@ global['OpencartAdminModelExtensionOpencartReportSale'] = class Sale extends glo
 		sql += " LEFT JOIN `" + DB_PREFIX + "order_total` `ot` ON (`o`.`order_id` = `ot`.`order_id`) WHERE `ot`.`code` = 'tax'";
 
 		if (data['filter_order_status_id']) {
-			sql += " AND `o`.`order_status_id` = '" + data['filter_order_status_id'] + "'";
+			sql += " AND `o`.`order_status_id` = " + this.db.quote(data['filter_order_status_id']);
 		} else {
 			sql += " AND `o`.`order_status_id` > '0'";
 		}
@@ -382,7 +382,7 @@ global['OpencartAdminModelExtensionOpencartReportSale'] = class Sale extends glo
 		let sql = "SELECT MIN(o.`date_added`) AS date_start, MAX(o.`date_added`) AS date_end, ot.`title`, SUM(ot.`value`) AS total, COUNT(o.`order_id`) AS orders FROM `" + DB_PREFIX + "order` o LEFT JOIN `" + DB_PREFIX + "order_total` ot ON (o.`order_id` = ot.`order_id`) WHERE ot.`code` = 'shipping'";
 
 		if (data['filter_order_status_id']) {
-			sql += " AND `o`.`order_status_id` = '" + data['filter_order_status_id'] + "'";
+			sql += " AND `o`.`order_status_id` = " + this.db.quote(data['filter_order_status_id']);
 		} else {
 			sql += " AND `o`.`order_status_id` > '0'";
 		}
@@ -425,7 +425,7 @@ global['OpencartAdminModelExtensionOpencartReportSale'] = class Sale extends glo
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql += " LIMIT " + (parseInt(data['start']) || 0) + "," + (parseInt(data['limit']) || 0);
 		}
 
 		let query = await this.db.query(sql);
@@ -463,7 +463,7 @@ global['OpencartAdminModelExtensionOpencartReportSale'] = class Sale extends glo
 		sql += " LEFT JOIN `" + DB_PREFIX + "order_total` ot ON (o.`order_id` = ot.`order_id`) WHERE ot.`code` = 'shipping'";
 
 		if (data['filter_order_status_id']) {
-			sql += " AND `order_status_id` = '" + data['filter_order_status_id'] + "'";
+			sql += " AND `order_status_id` = " + this.db.quote(data['filter_order_status_id']);
 		} else {
 			sql += " AND `order_status_id` > '0'";
 		}

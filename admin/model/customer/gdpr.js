@@ -9,7 +9,7 @@ module.exports = class GdprModel extends global['OpencartSystemEngineModel'] {
 	 * @return void
 	 */
 	async editStatus(gdpr_id, status) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "gdpr` SET `status` = '" + status + "' WHERE `gdpr_id` = '" + gdpr_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "gdpr` SET `status` = " + this.db.quote(status) + " WHERE `gdpr_id` = " + this.db.quote(gdpr_id));
 	}
 
 	/**
@@ -18,7 +18,7 @@ module.exports = class GdprModel extends global['OpencartSystemEngineModel'] {
 	 * @return void
 	 */
 	async deleteGdpr(gdpr_id) {
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "gdpr` WHERE `gdpr_id` = '" + gdpr_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "gdpr` WHERE `gdpr_id` = " + this.db.quote(gdpr_id));
 	}
 
 	/**
@@ -40,7 +40,7 @@ module.exports = class GdprModel extends global['OpencartSystemEngineModel'] {
 		}
 
 		if (typeof data['filter_status'] != 'undefined' && data['filter_status'] !== '') {
-			implode.push("`status` = '" + data['filter_status'] + "'");
+			implode.push("`status` = " + this.db.quote(data['filter_status']));
 		}
 
 		if ((data['filter_date_from'])) {
@@ -68,7 +68,7 @@ module.exports = class GdprModel extends global['OpencartSystemEngineModel'] {
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql += " LIMIT " + (parseInt(data['start']) || 0) + "," + (parseInt(data['limit']) || 0);
 		}
 
 		let query = await this.db.query(sql);
@@ -82,7 +82,7 @@ module.exports = class GdprModel extends global['OpencartSystemEngineModel'] {
 	 * @return array
 	 */
 	async getGdpr(gdpr_id) {
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "gdpr` WHERE `gdpr_id` = '" + gdpr_id + "'");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "gdpr` WHERE `gdpr_id` = " + this.db.quote(gdpr_id));
 
 		return query.row;
 	}
@@ -106,7 +106,7 @@ module.exports = class GdprModel extends global['OpencartSystemEngineModel'] {
 		}
 
 		if (typeof data['filter_status'] != 'undefined' && data['filter_status'] !== '') {
-			implode.push("`status` = '" + data['filter_status'] + "'");
+			implode.push("`status` = " + this.db.quote(data['filter_status']));
 		}
 
 		if ((data['filter_date_from'])) {

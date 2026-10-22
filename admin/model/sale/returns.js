@@ -5,7 +5,7 @@ module.exports = class ReturnsSaleModel extends global['OpencartSystemEngineMode
 	 * @return int
 	 */
 	async addReturn(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "return` SET `order_id` = '" + data['order_id'] + "', `product_id` = '" + data['product_id'] + "', `customer_id` = '" + data['customer_id'] + "', `firstname` = " + this.db.escape(data['firstname']) + ", `lastname` = " + this.db.escape(data['lastname']) + ", `email` = " + this.db.escape(data['email']) + ", `telephone` = " + this.db.escape(data['telephone']) + ", `product` = " + this.db.escape(data['product']) + ", `model` = " + this.db.escape(data['model']) + ", `quantity` = '" + data['quantity'] + "', `opened` = '" + data['opened'] + "', `return_reason_id` = '" + data['return_reason_id'] + "', `return_action_id` = '" + data['return_action_id'] + "', `return_status_id` = '" + data['return_status_id'] + "', `comment` = " + this.db.escape(data['comment']) + ", `date_ordered` = " + this.db.escape(data['date_ordered']) + ", `date_added` = NOW(), `date_modified` = NOW()");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "return` SET `order_id` = " + this.db.quote(data['order_id']) + ", `product_id` = " + this.db.quote(data['product_id']) + ", `customer_id` = " + this.db.quote(data['customer_id']) + ", `firstname` = " + this.db.escape(data['firstname']) + ", `lastname` = " + this.db.escape(data['lastname']) + ", `email` = " + this.db.escape(data['email']) + ", `telephone` = " + this.db.escape(data['telephone']) + ", `product` = " + this.db.escape(data['product']) + ", `model` = " + this.db.escape(data['model']) + ", `quantity` = " + this.db.quote(data['quantity']) + ", `opened` = " + this.db.quote(data['opened']) + ", `return_reason_id` = " + this.db.quote(data['return_reason_id']) + ", `return_action_id` = " + this.db.quote(data['return_action_id']) + ", `return_status_id` = " + this.db.quote(data['return_status_id']) + ", `comment` = " + this.db.escape(data['comment']) + ", `date_ordered` = " + this.db.escape(data['date_ordered']) + ", `date_added` = NOW(), `date_modified` = NOW()");
 
 		return this.db.getLastId();
 	}
@@ -17,7 +17,7 @@ module.exports = class ReturnsSaleModel extends global['OpencartSystemEngineMode
 	 * @return void
 	 */
 	async editReturn(return_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "return` SET `order_id` = '" + data['order_id'] + "', `product_id` = '" + data['product_id'] + "', `customer_id` = '" + data['customer_id'] + "', `firstname` = " + this.db.escape(data['firstname']) + ", `lastname` = " + this.db.escape(data['lastname']) + ", `email` = " + this.db.escape(data['email']) + ", `telephone` = " + this.db.escape(data['telephone']) + ", `product` = " + this.db.escape(data['product']) + ", `model` = " + this.db.escape(data['model']) + ", `quantity` = '" + data['quantity'] + "', `opened` = '" + data['opened'] + "', `return_reason_id` = '" + data['return_reason_id'] + "', `return_action_id` = '" + data['return_action_id'] + "', `comment` = " + this.db.escape(data['comment']) + ", `date_ordered` = " + this.db.escape(data['date_ordered']) + ", `date_modified` = NOW() WHERE `return_id` = '" + return_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "return` SET `order_id` = " + this.db.quote(data['order_id']) + ", `product_id` = " + this.db.quote(data['product_id']) + ", `customer_id` = " + this.db.quote(data['customer_id']) + ", `firstname` = " + this.db.escape(data['firstname']) + ", `lastname` = " + this.db.escape(data['lastname']) + ", `email` = " + this.db.escape(data['email']) + ", `telephone` = " + this.db.escape(data['telephone']) + ", `product` = " + this.db.escape(data['product']) + ", `model` = " + this.db.escape(data['model']) + ", `quantity` = " + this.db.quote(data['quantity']) + ", `opened` = " + this.db.quote(data['opened']) + ", `return_reason_id` = " + this.db.quote(data['return_reason_id']) + ", `return_action_id` = " + this.db.quote(data['return_action_id']) + ", `comment` = " + this.db.escape(data['comment']) + ", `date_ordered` = " + this.db.escape(data['date_ordered']) + ", `date_modified` = NOW() WHERE `return_id` = " + this.db.quote(return_id));
 	}
 
 	/**
@@ -26,8 +26,8 @@ module.exports = class ReturnsSaleModel extends global['OpencartSystemEngineMode
 	 * @return void
 	 */
 	async deleteReturn(return_id) {
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "return` WHERE `return_id` = '" + return_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "return_history` WHERE `return_id` = '" + return_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "return` WHERE `return_id` = " + this.db.quote(return_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "return_history` WHERE `return_id` = " + this.db.quote(return_id));
 	}
 
 	/**
@@ -36,7 +36,7 @@ module.exports = class ReturnsSaleModel extends global['OpencartSystemEngineMode
 	 * @return array
 	 */
 	async getReturn(return_id) {
-		let query = await this.db.query("SELECT DISTINCT *, (SELECT CONCAT(c.`firstname`, ' ', c.`lastname`) FROM `" + DB_PREFIX + "customer` c WHERE c.`customer_id` = r.`customer_id`) AS customer, (SELECT c.`language_id` FROM `" + DB_PREFIX + "customer` c WHERE c.`customer_id` = r.`customer_id`) AS language_id, (SELECT rs.`name` FROM `" + DB_PREFIX + "return_status` rs WHERE rs.`return_status_id` = r.`return_status_id` AND rs.`language_id` = '" + this.config.get('config_language_id') + "') AS return_status FROM `" + DB_PREFIX + "return` r WHERE r.`return_id` = '" + return_id + "'");
+		let query = await this.db.query("SELECT DISTINCT *, (SELECT CONCAT(c.`firstname`, ' ', c.`lastname`) FROM `" + DB_PREFIX + "customer` c WHERE c.`customer_id` = r.`customer_id`) AS customer, (SELECT c.`language_id` FROM `" + DB_PREFIX + "customer` c WHERE c.`customer_id` = r.`customer_id`) AS language_id, (SELECT rs.`name` FROM `" + DB_PREFIX + "return_status` rs WHERE rs.`return_status_id` = r.`return_status_id` AND rs.`language_id` = " + this.db.quote(this.config.get('config_language_id')) + ") AS return_status FROM `" + DB_PREFIX + "return` r WHERE r.`return_id` = " + this.db.quote(return_id));
 
 		return query.row;
 	}
@@ -47,16 +47,16 @@ module.exports = class ReturnsSaleModel extends global['OpencartSystemEngineMode
 	 * @return array
 	 */
 	async getReturns(data = {}) {
-		let sql = "SELECT *, CONCAT(r.`firstname`, ' ', r.`lastname`) AS customer, (SELECT rs.`name` FROM `" + DB_PREFIX + "return_status` rs WHERE rs.`return_status_id` = r.`return_status_id` AND rs.`language_id` = '" + this.config.get('config_language_id') + "') AS return_status FROM `" + DB_PREFIX + "return` r";
+		let sql = "SELECT *, CONCAT(r.`firstname`, ' ', r.`lastname`) AS customer, (SELECT rs.`name` FROM `" + DB_PREFIX + "return_status` rs WHERE rs.`return_status_id` = r.`return_status_id` AND rs.`language_id` = " + this.db.quote(this.config.get('config_language_id')) + ") AS return_status FROM `" + DB_PREFIX + "return` r";
 
 		let implode = [];
 
 		if ((data['filter_return_id'])) {
-			implode.push("r.`return_id` = '" + data['filter_return_id'] + "'");
+			implode.push("r.`return_id` = " + this.db.quote(data['filter_return_id']));
 		}
 
 		if ((data['filter_order_id'])) {
-			implode.push("r.`order_id` = '" + data['filter_order_id'] + "'");
+			implode.push("r.`order_id` = " + this.db.quote(data['filter_order_id']));
 		}
 
 		if ((data['filter_customer'])) {
@@ -72,7 +72,7 @@ module.exports = class ReturnsSaleModel extends global['OpencartSystemEngineMode
 		}
 
 		if ((data['filter_return_status_id'])) {
-			implode.push("r.`return_status_id` = '" + data['filter_return_status_id'] + "'");
+			implode.push("r.`return_status_id` = " + this.db.quote(data['filter_return_status_id']));
 		}
 
 		if ((data['filter_date_from'])) {
@@ -121,7 +121,7 @@ module.exports = class ReturnsSaleModel extends global['OpencartSystemEngineMode
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql += " LIMIT " + (parseInt(data['start']) || 0) + "," + (parseInt(data['limit']) || 0);
 		}
 
 		let query = await this.db.query(sql);
@@ -140,7 +140,7 @@ module.exports = class ReturnsSaleModel extends global['OpencartSystemEngineMode
 		let implode = [];
 
 		if ((data['filter_return_id'])) {
-			implode.push("r.`return_id` = '" + data['filter_return_id'] + "'");
+			implode.push("r.`return_id` = " + this.db.quote(data['filter_return_id']));
 		}
 
 		if ((data['filter_customer'])) {
@@ -160,7 +160,7 @@ module.exports = class ReturnsSaleModel extends global['OpencartSystemEngineMode
 		}
 
 		if ((data['filter_return_status_id'])) {
-			implode.push("r.`return_status_id` = '" + data['filter_return_status_id'] + "'");
+			implode.push("r.`return_status_id` = " + this.db.quote(data['filter_return_status_id']));
 		}
 
 		if ((data['filter_date_from'])) {
@@ -186,7 +186,7 @@ module.exports = class ReturnsSaleModel extends global['OpencartSystemEngineMode
 	 * @return int
 	 */
 	async getTotalReturnsByReturnStatusId(return_status_id) {
-		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "return` WHERE `return_status_id` = '" + return_status_id + "'");
+		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "return` WHERE `return_status_id` = " + this.db.quote(return_status_id));
 
 		return query.row['total'];
 	}
@@ -197,7 +197,7 @@ module.exports = class ReturnsSaleModel extends global['OpencartSystemEngineMode
 	 * @return int
 	 */
 	async getTotalReturnsByReturnReasonId(return_reason_id) {
-		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "return` WHERE `return_reason_id` = '" + return_reason_id + "'");
+		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "return` WHERE `return_reason_id` = " + this.db.quote(return_reason_id));
 
 		return query.row['total'];
 	}
@@ -208,7 +208,7 @@ module.exports = class ReturnsSaleModel extends global['OpencartSystemEngineMode
 	 * @return int
 	 */
 	async getTotalReturnsByReturnActionId(return_action_id) {
-		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "return` WHERE `return_action_id` = '" + return_action_id + "'");
+		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "return` WHERE `return_action_id` = " + this.db.quote(return_action_id));
 
 		return query.row['total'];
 	}
@@ -222,8 +222,8 @@ module.exports = class ReturnsSaleModel extends global['OpencartSystemEngineMode
 	 * @return void
 	 */
 	async addHistory(return_id, return_status_id, comment, notify) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "return` SET `return_status_id` = '" + return_status_id + "', `date_modified` = NOW() WHERE `return_id` = '" + return_id + "'");
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "return_history` SET `return_id` = '" + return_id + "', `return_status_id` = '" + return_status_id + "', `notify` = '" + notify + "', `comment` = " + this.db.escape(strip_tags(comment)) + ", `date_added` = NOW()");
+		await this.db.query("UPDATE `" + DB_PREFIX + "return` SET `return_status_id` = " + this.db.quote(return_status_id) + ", `date_modified` = NOW() WHERE `return_id` = " + this.db.quote(return_id));
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "return_history` SET `return_id` = " + this.db.quote(return_id) + ", `return_status_id` = " + this.db.quote(return_status_id) + ", `notify` = " + this.db.quote(notify) + ", `comment` = " + this.db.escape(strip_tags(comment)) + ", `date_added` = NOW()");
 	}
 
 	/**
@@ -242,7 +242,7 @@ module.exports = class ReturnsSaleModel extends global['OpencartSystemEngineMode
 			limit = 10;
 		}
 
-		let query = await this.db.query("SELECT rh.`date_added`, rs.`name` AS status, rh.`comment`, rh.`notify` FROM `" + DB_PREFIX + "return_history` rh LEFT JOIN `" + DB_PREFIX + "return_status` rs ON rh.`return_status_id` = rs.`return_status_id` WHERE rh.`return_id` = '" + return_id + "' AND rs.`language_id` = '" + this.config.get('config_language_id') + "' ORDER BY rh.`date_added` DESC LIMIT " + start + "," + limit);
+		let query = await this.db.query("SELECT rh.`date_added`, rs.`name` AS status, rh.`comment`, rh.`notify` FROM `" + DB_PREFIX + "return_history` rh LEFT JOIN `" + DB_PREFIX + "return_status` rs ON rh.`return_status_id` = rs.`return_status_id` WHERE rh.`return_id` = " + this.db.quote(return_id) + " AND rs.`language_id` = " + this.db.quote(this.config.get('config_language_id')) + " ORDER BY rh.`date_added` DESC LIMIT " + (parseInt(start) || 0) + "," + (parseInt(limit) || 0));
 
 		return query.rows;
 	}
@@ -253,7 +253,7 @@ module.exports = class ReturnsSaleModel extends global['OpencartSystemEngineMode
 	 * @return int
 	 */
 	async getTotalHistories(return_id) {
-		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "return_history` WHERE `return_id` = '" + return_id + "'");
+		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "return_history` WHERE `return_id` = " + this.db.quote(return_id));
 
 		return query.row['total'];
 	}
@@ -264,7 +264,7 @@ module.exports = class ReturnsSaleModel extends global['OpencartSystemEngineMode
 	 * @return int
 	 */
 	async getTotalHistoriesByReturnStatusId(return_status_id) {
-		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "return_history` WHERE `return_status_id` = '" + return_status_id + "'");
+		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "return_history` WHERE `return_status_id` = " + this.db.quote(return_status_id));
 
 		return query.row['total'];
 	}

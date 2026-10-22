@@ -15,7 +15,7 @@ module.exports = class Upgrade9 extends global['OpencartSystemEngineController']
 			this.db.query("UPDATE `" + DB_PREFIX + "banner_image` SET `link` = REPLACE(`link`, '|', '+')");
 
 			// order
-			query = this.db.query("SELECT * FROM information_schema+COLUMNS WHERE TABLE_SCHEMA = '" + DB_DATABASE + "' AND TABLE_NAME = '" + DB_PREFIX + "order' AND COLUMN_NAME = 'payment_code'");
+			query = this.db.query("SELECT * FROM information_schema+COLUMNS WHERE TABLE_SCHEMA = " + this.db.quote(DB_DATABASE) + " AND TABLE_NAME = " + this.db.quote("" + DB_PREFIX + "order") + " AND COLUMN_NAME = 'payment_code'");
 
 			if (query.num_rows) {
 				query = this.db.query("SELECT `order_id`, `payment_code`, `payment_method`, `shipping_method`, `shipping_code` FROM `" + DB_PREFIX + "order`");
@@ -27,11 +27,11 @@ module.exports = class Upgrade9 extends global['OpencartSystemEngineController']
 							'code': result['payment_code']
 						};
 
-						this.db.query("UPDATE `" + DB_PREFIX + "order` SET `payment_custom_field` = " + this.db.escape(JSON.stringify(payment_method)) + " WHERE `order_id` = '" + result['order_id'] + "'");
+						this.db.query("UPDATE `" + DB_PREFIX + "order` SET `payment_custom_field` = " + this.db.escape(JSON.stringify(payment_method)) + " WHERE `order_id` = " + this.db.quote(result['order_id']));
 					}
 
 					if (isset(result['shipping_code'])) {
-						order_total_query = this.db.query("SELECT * FROM `" + DB_PREFIX + "order_total` WHERE `order_id` = '" + result['order_id'] + "' AND `code` = 'shipping'");
+						order_total_query = this.db.query("SELECT * FROM `" + DB_PREFIX + "order_total` WHERE `order_id` = " + this.db.quote(result['order_id']) + " AND `code` = 'shipping'");
 
 						if (order_total_query.num_rows) {
 							shipping_method = {
@@ -41,7 +41,7 @@ module.exports = class Upgrade9 extends global['OpencartSystemEngineController']
 								'text': result['shipping_method']
 							};
 
-							this.db.query("UPDATE `" + DB_PREFIX + "order` SET `shipping_method` = " + this.db.escape(JSON.stringify(shipping_method)) + " WHERE `order_id` = '" + result['order_id'] + "'");
+							this.db.query("UPDATE `" + DB_PREFIX + "order` SET `shipping_method` = " + this.db.escape(JSON.stringify(shipping_method)) + " WHERE `order_id` = " + this.db.quote(result['order_id']));
 						}
 					}
 				}
@@ -61,7 +61,7 @@ module.exports = class Upgrade9 extends global['OpencartSystemEngineController']
 				});
 
 				for (remove of result) {
-					query = this.db.query("SELECT * FROM information_schema+COLUMNS WHERE TABLE_SCHEMA = '" + DB_DATABASE + "' AND TABLE_NAME = '" + DB_PREFIX + result['table'] + "' AND COLUMN_NAME = '" + result['field'] + "'");
+					query = this.db.query("SELECT * FROM information_schema+COLUMNS WHERE TABLE_SCHEMA = " + this.db.quote(DB_DATABASE) + " AND TABLE_NAME = " + this.db.quote("" + DB_PREFIX + result['table']) + " AND COLUMN_NAME = " + this.db.quote(result['field']));
 
 					if (query.num_rows) {
 						this.db.query("ALTER TABLE `" + DB_PREFIX + result['table'] + "` DROP `" + result['field'] + "`");

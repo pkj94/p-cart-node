@@ -8,7 +8,7 @@ module.exports = class SeoUrlDesignModel extends global['OpencartSystemEngineMod
 	 * @return int
 	 */
 	async addSeoUrl(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "seo_url` SET `store_id` = '" + data['store_id'] + "', `language_id` = '" + data['language_id'] + "', `key` = " + this.db.escape(data['key']) + ", `value` = " + this.db.escape(data['value']) + ", `keyword` = " + this.db.escape(data['keyword']) + ", `sort_order` = '" + data['sort_order'] + "'");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "seo_url` SET `store_id` = " + this.db.quote(data['store_id']) + ", `language_id` = " + this.db.quote(data['language_id']) + ", `key` = " + this.db.escape(data['key']) + ", `value` = " + this.db.escape(data['value']) + ", `keyword` = " + this.db.escape(data['keyword']) + ", `sort_order` = " + this.db.quote(data['sort_order']));
 
 		return this.db.getLastId();
 	}
@@ -20,7 +20,7 @@ module.exports = class SeoUrlDesignModel extends global['OpencartSystemEngineMod
 	 * @return void
 	 */
 	async editSeoUrl(seo_url_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "seo_url` SET `store_id` = '" + data['store_id'] + "', `language_id` = '" + data['language_id'] + "', `key` = " + this.db.escape(data['key']) + ", `value` = " + this.db.escape(data['value']) + ", `keyword` = " + this.db.escape(data['keyword']) + ", `sort_order` = '" + data['sort_order'] + "' WHERE `seo_url_id` = '" + seo_url_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "seo_url` SET `store_id` = " + this.db.quote(data['store_id']) + ", `language_id` = " + this.db.quote(data['language_id']) + ", `key` = " + this.db.escape(data['key']) + ", `value` = " + this.db.escape(data['value']) + ", `keyword` = " + this.db.escape(data['keyword']) + ", `sort_order` = " + this.db.quote(data['sort_order']) + " WHERE `seo_url_id` = " + this.db.quote(seo_url_id));
 	}
 
 	/**
@@ -29,7 +29,7 @@ module.exports = class SeoUrlDesignModel extends global['OpencartSystemEngineMod
 	 * @return void
 	 */
 	async deleteSeoUrl(seo_url_id) {
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "seo_url` WHERE `seo_url_id` = '" + seo_url_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "seo_url` WHERE `seo_url_id` = " + this.db.quote(seo_url_id));
 	}
 
 	/**
@@ -38,7 +38,7 @@ module.exports = class SeoUrlDesignModel extends global['OpencartSystemEngineMod
 	 * @return array
 	 */
 	async getSeoUrl(seo_url_id) {
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "seo_url` WHERE `seo_url_id` = '" + seo_url_id + "'");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "seo_url` WHERE `seo_url_id` = " + this.db.quote(seo_url_id));
 
 		return query.row;
 	}
@@ -66,11 +66,11 @@ module.exports = class SeoUrlDesignModel extends global['OpencartSystemEngineMod
 		}
 
 		if ((data['filter_store_id']) && data['filter_store_id'] !== '') {
-			implode.push("`store_id` = '" + data['filter_store_id'] + "'");
+			implode.push("`store_id` = " + this.db.quote(data['filter_store_id']));
 		}
 
 		if ((data['filter_language_id']) && data['filter_language_id'] !== '') {
-			implode.push("`language_id` = '" + data['filter_language_id'] + "'");
+			implode.push("`language_id` = " + this.db.quote(data['filter_language_id']));
 		}
 
 		if (implode.length) {
@@ -109,7 +109,7 @@ module.exports = class SeoUrlDesignModel extends global['OpencartSystemEngineMod
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql += " LIMIT " + (parseInt(data['start']) || 0) + "," + (parseInt(data['limit']) || 0);
 		}
 
 		let query = await this.db.query(sql);
@@ -140,11 +140,11 @@ module.exports = class SeoUrlDesignModel extends global['OpencartSystemEngineMod
 		}
 
 		if ((data['filter_store_id']) && data['filter_store_id'] !== '') {
-			implode.push("`store_id` = '" + data['filter_store_id'] + "'");
+			implode.push("`store_id` = " + this.db.quote(data['filter_store_id']));
 		}
 
 		if ((data['filter_language_id']) && data['filter_language_id'] !== '') {
-			implode.push("`language_id` = '" + data['filter_language_id'] + "'");
+			implode.push("`language_id` = " + this.db.quote(data['filter_language_id']));
 		}
 
 		if (implode.length) {
@@ -165,7 +165,7 @@ module.exports = class SeoUrlDesignModel extends global['OpencartSystemEngineMod
 	 * @return array
 	 */
 	async getSeoUrlByKeyValue(key, value, store_id, language_id) {
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "seo_url` WHERE `key` = " + this.db.escape(key) + " AND `value` = " + this.db.escape(value) + " AND `store_id` = '" + store_id + "' AND `language_id` = '" + language_id + "'");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "seo_url` WHERE `key` = " + this.db.escape(key) + " AND `value` = " + this.db.escape(value) + " AND `store_id` = " + this.db.quote(store_id) + " AND `language_id` = " + this.db.quote(language_id));
 
 		return query.row;
 	}
@@ -178,10 +178,10 @@ module.exports = class SeoUrlDesignModel extends global['OpencartSystemEngineMod
 	 * @return array
 	 */
 	async getSeoUrlByKeyword(keyword, store_id, language_id = 0) {
-		let sql = "SELECT * FROM `" + DB_PREFIX + "seo_url` WHERE (`keyword` = " + this.db.escape(keyword) + " OR `keyword` LIKE " + this.db.escape('%/' + keyword) + ") AND `store_id` = '" + store_id + "'";
+		let sql = "SELECT * FROM `" + DB_PREFIX + "seo_url` WHERE (`keyword` = " + this.db.escape(keyword) + " OR `keyword` LIKE " + this.db.escape('%/' + keyword) + ") AND `store_id` = " + this.db.quote(store_id);
 
 		if (language_id) {
-			sql += " AND `language_id` = '" + language_id + "'";
+			sql += " AND `language_id` = " + this.db.quote(language_id);
 		}
 
 		let query = await this.db.query(sql);

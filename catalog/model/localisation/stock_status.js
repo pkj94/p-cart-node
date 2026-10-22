@@ -5,7 +5,7 @@ module.exports = class StockStatus extends global['OpencartSystemEngineModel'] {
 	 * @return array
 	 */
 	async getStockStatus(stock_status_id) {
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "stock_status` WHERE `stock_status_id` = '" + stock_status_id + "' AND `language_id` = '" + this.config.get('config_language_id') + "'");
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "stock_status` WHERE `stock_status_id` = " + this.db.quote(stock_status_id) + " AND `language_id` = " + this.db.quote(this.config.get('config_language_id')));
 
 		return query.row;
 	}
@@ -16,7 +16,7 @@ module.exports = class StockStatus extends global['OpencartSystemEngineModel'] {
 	 * @return array
 	 */
 	async getStockStatuses(data = {}) {
-		const sql = "SELECT * FROM `" + DB_PREFIX + "stock_status` WHERE `language_id` = '" + this.config.get('config_language_id') + "' ORDER BY `name`";
+		const sql = "SELECT * FROM `" + DB_PREFIX + "stock_status` WHERE `language_id` = " + this.db.quote(this.config.get('config_language_id')) + " ORDER BY `name`";
 
 		if ((data['order']) && (data['order'] == 'DESC')) {
 			sql += " DESC";
@@ -33,7 +33,7 @@ module.exports = class StockStatus extends global['OpencartSystemEngineModel'] {
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql += " LIMIT " + (parseInt(data['start']) || 0) + "," + (parseInt(data['limit']) || 0);
 		}
 
 		stock_status_data = await this.cache.get('stock_status.' + md5(sql));

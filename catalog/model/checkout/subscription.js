@@ -23,7 +23,7 @@ module.exports = class Subscription extends global['OpencartSystemEngineModel'] 
 			date_next = date('Y-m-d', strtotime('+' + data['cycle'] + ' ' + data['frequency']) * 1000);
 		}
 
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "subscription` SET `order_product_id` = '" + data['order_product_id'] + "', `order_id` = '" + data['order_id'] + "', `store_id` = '" + data['store_id'] + "', `customer_id` = '" + data['customer_id'] + "', `payment_address_id` = '" + data['payment_address_id'] + "', `payment_method` = " + this.db.escape(data['payment_method'] ? JSON.stringify(data['payment_method']) : '') + ", `shipping_address_id` = '" + data['shipping_address_id'] + "', `shipping_method` = " + this.db.escape(data['shipping_method'] ? JSON.stringify(data['shipping_method']) : '') + ", `product_id` = '" + data['product_id'] + "', `quantity` = '" + data['quantity'] + "', `subscription_plan_id` = '" + data['subscription_plan_id'] + "', 			`trial_price` = '" + data['trial_price'] + "', 			`trial_frequency` = " + this.db.escape(data['trial_frequency']) + ", 			`trial_cycle` = '" + data['trial_cycle'] + "', 			`trial_duration` = '" + data['trial_duration'] + "', 			`trial_remaining` = '" + trial_remaining + "', 			`trial_status` = '" + data['trial_status'] + "', 			`price` = '" + data['price'] + "', 			`frequency` = " + this.db.escape(data['frequency']) + ", 			`cycle` = '" + data['cycle'] + "', 			`duration` = '" + data['duration'] + "', 			`remaining` = '" + trial_remaining + "', 			`date_next` = " + this.db.escape(date_next) + ", 			`comment` = " + this.db.escape(data['comment']) + ", 			`affiliate_id` = '" + data['affiliate_id'] + "', 			`marketing_id` = '" + data['marketing_id'] + "', 			`tracking` = " + this.db.escape(data['tracking']) + ", 			`language_id` = '" + data['language_id'] + "', 			`currency_id` = '" + data['currency_id'] + "', 			`ip` = " + this.db.escape(data['ip']) + ", 			`forwarded_ip` = " + this.db.escape(data['forwarded_ip']) + ", 			`user_agent` = " + this.db.escape(data['user_agent']) + ", 			`accept_language` = " + this.db.escape(data['accept_language']) + ", 			`date_added` = NOW(), 			`date_modified` = NOW() 		");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "subscription` SET `order_product_id` = " + this.db.quote(data['order_product_id']) + ", `order_id` = " + this.db.quote(data['order_id']) + ", `store_id` = " + this.db.quote(data['store_id']) + ", `customer_id` = " + this.db.quote(data['customer_id']) + ", `payment_address_id` = " + this.db.quote(data['payment_address_id']) + ", `payment_method` = " + this.db.escape(data['payment_method'] ? JSON.stringify(data['payment_method']) : '') + ", `shipping_address_id` = " + this.db.quote(data['shipping_address_id']) + ", `shipping_method` = " + this.db.escape(data['shipping_method'] ? JSON.stringify(data['shipping_method']) : '') + ", `product_id` = " + this.db.quote(data['product_id']) + ", `quantity` = " + this.db.quote(data['quantity']) + ", `subscription_plan_id` = " + this.db.quote(data['subscription_plan_id']) + ", \t\t\t`trial_price` = " + this.db.quote(data['trial_price']) + ", \t\t\t`trial_frequency` = " + this.db.escape(data['trial_frequency']) + ", \t\t\t`trial_cycle` = " + this.db.quote(data['trial_cycle']) + ", \t\t\t`trial_duration` = " + this.db.quote(data['trial_duration']) + ", \t\t\t`trial_remaining` = " + this.db.quote(trial_remaining) + ", \t\t\t`trial_status` = " + this.db.quote(data['trial_status']) + ", \t\t\t`price` = " + this.db.quote(data['price']) + ", \t\t\t`frequency` = " + this.db.escape(data['frequency']) + ", \t\t\t`cycle` = " + this.db.quote(data['cycle']) + ", \t\t\t`duration` = " + this.db.quote(data['duration']) + ", \t\t\t`remaining` = " + this.db.quote(trial_remaining) + ", \t\t\t`date_next` = " + this.db.escape(date_next) + ", \t\t\t`comment` = " + this.db.escape(data['comment']) + ", \t\t\t`affiliate_id` = " + this.db.quote(data['affiliate_id']) + ", \t\t\t`marketing_id` = " + this.db.quote(data['marketing_id']) + ", \t\t\t`tracking` = " + this.db.escape(data['tracking']) + ", \t\t\t`language_id` = " + this.db.quote(data['language_id']) + ", \t\t\t`currency_id` = " + this.db.quote(data['currency_id']) + ", \t\t\t`ip` = " + this.db.escape(data['ip']) + ", \t\t\t`forwarded_ip` = " + this.db.escape(data['forwarded_ip']) + ", \t\t\t`user_agent` = " + this.db.escape(data['user_agent']) + ", \t\t\t`accept_language` = " + this.db.escape(data['accept_language']) + ", \t\t\t`date_added` = NOW(), \t\t\t`date_modified` = NOW() \t\t");
 
 		return this.db.getLastId();
 	}
@@ -52,7 +52,7 @@ module.exports = class Subscription extends global['OpencartSystemEngineModel'] 
 			date_next = date('Y-m-d', strtotime('+' + data['cycle'] + ' ' + data['frequency']) * 1000);
 		}
 
-		await this.db.query("UPDATE `" + DB_PREFIX + "subscription` SET  			`order_product_id` = '" + data['order_product_id'] + "', 			`order_id` = '" + data['order_id'] + "', 			`store_id` = '" + data['store_id'] + "', 			`customer_id` = '" + data['customer_id'] + "', 			`payment_address_id` = '" + data['payment_address_id'] + "', 			`payment_method` = " + this.db.escape(data['payment_method'] ? JSON.stringify(data['payment_method']) : '') + ", 			`shipping_address_id` = '" + data['shipping_address_id'] + "', 			`shipping_method` = " + this.db.escape(data['shipping_method'] ? JSON.stringify(data['shipping_method']) : '') + ", 			`product_id` = '" + data['product_id'] + "', 			`subscription_plan_id` = '" + data['subscription_plan_id'] + "', 			`trial_price` = '" + data['trial_price'] + "', 			`trial_frequency` = " + this.db.escape(data['trial_frequency']) + ", 			`trial_cycle` = '" + data['trial_cycle'] + "', 			`trial_duration` = '" + data['trial_duration'] + "', 			`trial_remaining` = '" + trial_remaining + "', 			`trial_status` = '" + data['trial_status'] + "', 			`price` = '" + data['price'] + "', 			`frequency` = " + this.db.escape(data['frequency']) + ", 			`cycle` = '" + data['cycle'] + "', 			`duration` = '" + data['duration'] + "', 			`remaining` = '" + remaining + "', 			`date_next` = " + this.db.escape(date_next) + ", 			`comment` = " + this.db.escape(data['comment']) + ", 			`affiliate_id` = '" + data['affiliate_id'] + "', 			`marketing_id` = '" + data['marketing_id'] + "', 			`tracking` = " + this.db.escape(data['tracking']) + ", 			`language_id` = '" + data['language_id'] + "', 			`currency_id` = '" + data['currency_id'] + "', 			`ip` = " + this.db.escape(data['ip']) + ", 			`forwarded_ip` = " + this.db.escape(data['forwarded_ip']) + ", 			`user_agent` = " + this.db.escape(data['user_agent']) + ", 			`accept_language` = " + this.db.escape(data['accept_language']) + ", 			`date_modified` = NOW() 			WHERE`subscription_id` = '" + subscription_id + "' 		");
+		await this.db.query("UPDATE `" + DB_PREFIX + "subscription` SET  \t\t\t`order_product_id` = " + this.db.quote(data['order_product_id']) + ", \t\t\t`order_id` = " + this.db.quote(data['order_id']) + ", \t\t\t`store_id` = " + this.db.quote(data['store_id']) + ", \t\t\t`customer_id` = " + this.db.quote(data['customer_id']) + ", \t\t\t`payment_address_id` = " + this.db.quote(data['payment_address_id']) + ", \t\t\t`payment_method` = " + this.db.escape(data['payment_method'] ? JSON.stringify(data['payment_method']) : '') + ", \t\t\t`shipping_address_id` = " + this.db.quote(data['shipping_address_id']) + ", \t\t\t`shipping_method` = " + this.db.escape(data['shipping_method'] ? JSON.stringify(data['shipping_method']) : '') + ", \t\t\t`product_id` = " + this.db.quote(data['product_id']) + ", \t\t\t`subscription_plan_id` = " + this.db.quote(data['subscription_plan_id']) + ", \t\t\t`trial_price` = " + this.db.quote(data['trial_price']) + ", \t\t\t`trial_frequency` = " + this.db.escape(data['trial_frequency']) + ", \t\t\t`trial_cycle` = " + this.db.quote(data['trial_cycle']) + ", \t\t\t`trial_duration` = " + this.db.quote(data['trial_duration']) + ", \t\t\t`trial_remaining` = " + this.db.quote(trial_remaining) + ", \t\t\t`trial_status` = " + this.db.quote(data['trial_status']) + ", \t\t\t`price` = " + this.db.quote(data['price']) + ", \t\t\t`frequency` = " + this.db.escape(data['frequency']) + ", \t\t\t`cycle` = " + this.db.quote(data['cycle']) + ", \t\t\t`duration` = " + this.db.quote(data['duration']) + ", \t\t\t`remaining` = " + this.db.quote(remaining) + ", \t\t\t`date_next` = " + this.db.escape(date_next) + ", \t\t\t`comment` = " + this.db.escape(data['comment']) + ", \t\t\t`affiliate_id` = " + this.db.quote(data['affiliate_id']) + ", \t\t\t`marketing_id` = " + this.db.quote(data['marketing_id']) + ", \t\t\t`tracking` = " + this.db.escape(data['tracking']) + ", \t\t\t`language_id` = " + this.db.quote(data['language_id']) + ", \t\t\t`currency_id` = " + this.db.quote(data['currency_id']) + ", \t\t\t`ip` = " + this.db.escape(data['ip']) + ", \t\t\t`forwarded_ip` = " + this.db.escape(data['forwarded_ip']) + ", \t\t\t`user_agent` = " + this.db.escape(data['user_agent']) + ", \t\t\t`accept_language` = " + this.db.escape(data['accept_language']) + ", \t\t\t`date_modified` = NOW() \t\t\tWHERE`subscription_id` = " + this.db.quote(subscription_id) + " \t\t");
 	}
 
 	/**
@@ -61,7 +61,7 @@ module.exports = class Subscription extends global['OpencartSystemEngineModel'] 
 	 * @return void
 	 */
 	async deleteSubscriptionByOrderId(order_id) {
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "subscription` WHERE `order_id` = '" + order_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "subscription` WHERE `order_id` = " + this.db.quote(order_id));
 	}
 
 	/**
@@ -73,7 +73,7 @@ module.exports = class Subscription extends global['OpencartSystemEngineModel'] 
 	async getSubscriptionByOrderProductId(order_id, order_product_id) {
 		subscription_data = [];
 
-		const query = await this.db.query("SELECT * FROM  `" + DB_PREFIX + "subscription` WHERE `order_id` = '" + order_id + "' AND `order_product_id` = '" + order_product_id + "'");
+		const query = await this.db.query("SELECT * FROM  `" + DB_PREFIX + "subscription` WHERE `order_id` = " + this.db.quote(order_id) + " AND `order_product_id` = " + this.db.quote(order_product_id));
 
 		if (query.num_rows) {
 			subscription_data = query.row;
@@ -94,9 +94,9 @@ module.exports = class Subscription extends global['OpencartSystemEngineModel'] 
 	 * @return void
 	 */
 	async addHistory(subscription_id, subscription_status_id, comment = '', notify = false) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "subscription_history` SET `subscription_id` = '" + subscription_id + "', `subscription_status_id` = '" + subscription_status_id + "', `comment` = " + this.db.escape(comment) + ", `notify` = '" + notify + "', `date_added` = NOW()");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "subscription_history` SET `subscription_id` = " + this.db.quote(subscription_id) + ", `subscription_status_id` = " + this.db.quote(subscription_status_id) + ", `comment` = " + this.db.escape(comment) + ", `notify` = " + this.db.quote(notify) + ", `date_added` = NOW()");
 
-		await this.db.query("UPDATE `" + DB_PREFIX + "subscription` SET `subscription_status_id` = '" + subscription_status_id + "' WHERE `subscription_id` = '" + subscription_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "subscription` SET `subscription_status_id` = " + this.db.quote(subscription_status_id) + " WHERE `subscription_id` = " + this.db.quote(subscription_id));
 	}
 
 	/**
@@ -106,7 +106,7 @@ module.exports = class Subscription extends global['OpencartSystemEngineModel'] 
 	 * @return void
 	 */
 	async editSubscriptionStatus(subscription_id, subscription_status_id) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "subscription` SET `subscription_status_id` = '" + subscription_status_id + "' WHERE `subscription_id` = '" + subscription_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "subscription` SET `subscription_status_id` = " + this.db.quote(subscription_status_id) + " WHERE `subscription_id` = " + this.db.quote(subscription_id));
 	}
 
 	/**
@@ -116,7 +116,7 @@ module.exports = class Subscription extends global['OpencartSystemEngineModel'] 
 	 * @return void
 	 */
 	async editTrialRemaining(subscription_id, trial_remaining) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "subscription` SET `trial_remaining` = '" + trial_remaining + "' WHERE `subscription_id` = '" + subscription_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "subscription` SET `trial_remaining` = " + this.db.quote(trial_remaining) + " WHERE `subscription_id` = " + this.db.quote(subscription_id));
 	}
 
 	/**
@@ -126,6 +126,6 @@ module.exports = class Subscription extends global['OpencartSystemEngineModel'] 
 	 * @return void
 	 */
 	async editDateNext(subscription_id, date_next) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "subscription` SET `date_next` = " + this.db.escape(date_next) + " WHERE `subscription_id` = '" + subscription_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "subscription` SET `date_next` = " + this.db.escape(date_next) + " WHERE `subscription_id` = " + this.db.quote(subscription_id));
 	}
 }

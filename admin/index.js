@@ -16,22 +16,22 @@ module.exports = function (baseRegistry) {
         new Framework(registry).init(req, res, next).then(output => {
             if (registry.get('response').end) {
                 registry.get('response').headers.forEach(header => {
-                    res.header((header.split(':')[0] || '').trim(), (header.split(':')[1] || '').trim());
+                    res.header((header.split(':')[0] || '').trim(), header.slice(header.indexOf(':') + 1).trim());
                 });
                 res.end(registry.get('response').end);
             } else if (registry.get('response').file) {
 
                 registry.get('response').headers.forEach(header => {
-                    res.header((header.split(':')[0] || '').trim(), (header.split(':')[1] || '').trim());
+                    res.header((header.split(':')[0] || '').trim(), header.slice(header.indexOf(':') + 1).trim());
                 });
                 res.sendFile(registry.get('response').file);
             } else if (registry.get('response').redirect) {
                 res.redirect(registry.get('response').redirect);
             } else {
                 registry.get('response').headers.forEach(header => {
-                    res.header((header.split(':')[0] || '').trim(), (header.split(':')[1] || '').trim());
+                    res.header((header.split(':')[0] || '').trim(), header.slice(header.indexOf(':') + 1).trim());
                 });
-                res.status(200).send(output);
+                res.status(registry.get('response').status || 200).send(output);
             }
         }).catch(error => {
             // Error Handler

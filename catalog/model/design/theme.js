@@ -5,7 +5,7 @@ module.exports = class Theme extends global['OpencartSystemEngineModel'] {
 	 * @return array
 	 */
 	async getTheme(route) {
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "theme` WHERE `store_id` = '" + this.config.get('config_store_id') + "' AND `route` = " + this.db.escape(route));
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "theme` WHERE `store_id` = " + this.db.quote(this.config.get('config_store_id')) + " AND `route` = " + this.db.escape(route));
 
 		return query.row;
 	}

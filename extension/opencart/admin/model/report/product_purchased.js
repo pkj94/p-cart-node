@@ -8,7 +8,7 @@ global['OpencartAdminModelExtensionOpencartReportProductPurchased'] = class Prod
 		let sql = "SELECT op.`name`, op.`model`, SUM(op.`quantity`) AS quantity, SUM((op.`price` + op.`tax`) * op.`quantity`) AS `total` FROM `" + DB_PREFIX + "order_product` op LEFT JOIN `" + DB_PREFIX + "order` o ON (op.`order_id` = o.`order_id`)";
 
 		if (data['filter_order_status_id']) {
-			sql += " WHERE o.`order_status_id` = '" + data['filter_order_status_id'] + "'";
+			sql += " WHERE o.`order_status_id` = " + this.db.quote(data['filter_order_status_id']);
 		} else {
 			sql += " WHERE o.`order_status_id` > '0'";
 		}
@@ -33,7 +33,7 @@ global['OpencartAdminModelExtensionOpencartReportProductPurchased'] = class Prod
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql += " LIMIT " + (parseInt(data['start']) || 0) + "," + (parseInt(data['limit']) || 0);
 		}
 
 		let query = await this.db.query(sql);
@@ -50,7 +50,7 @@ global['OpencartAdminModelExtensionOpencartReportProductPurchased'] = class Prod
 		let sql = "SELECT COUNT(DISTINCT op.`product_id`) AS `total` FROM `" + DB_PREFIX + "order_product` op LEFT JOIN `" + DB_PREFIX + "order` o ON (op.`order_id` = o.`order_id`)";
 
 		if (data['filter_order_status_id']) {
-			sql += " WHERE o.`order_status_id` = '" + data['filter_order_status_id'] + "'";
+			sql += " WHERE o.`order_status_id` = " + this.db.quote(data['filter_order_status_id']);
 		} else {
 			sql += " WHERE o.`order_status_id` > '0'";
 		}

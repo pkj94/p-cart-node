@@ -53,8 +53,9 @@ module.exports = class Session extends global['OpencartSystemEngineController'] 
 			'expires': new Date(Date.now() + ((parseInt(this.config.get('config_session_expire')) || parseInt(this.config.get('session_expire')) || 86400) * 1000)),
 			'path': this.config.get('session_path'),
 			'secure': this.request.server['protocol'].toLowerCase() == 'https' ? true : false,
-			'httponly': false,
-			'SameSite': this.config.get('session_samesite')
+			// Express option names are httpOnly/sameSite; the session id must not be readable from page scripts
+			'httpOnly': true,
+			'sameSite': String(this.config.get('session_samesite') || 'lax').toLowerCase()
 		};
 		// console.log(option)
 

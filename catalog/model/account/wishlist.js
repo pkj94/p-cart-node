@@ -5,9 +5,9 @@ module.exports =class Wishlist extends global['OpencartSystemEngineModel'] {
 	 * @return void
 	 */
 	async addWishlist(product_id) {
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_wishlist` WHERE `customer_id` = '" + await this.customer.getId() + "' AND `product_id` = '" + product_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_wishlist` WHERE `customer_id` = " + this.db.quote((await this.customer.getId())) + " AND `product_id` = " + this.db.quote(product_id));
 
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "customer_wishlist` SET `customer_id` = '" + await this.customer.getId() + "', `product_id` = '" + product_id + "', `date_added` = NOW()");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "customer_wishlist` SET `customer_id` = " + this.db.quote((await this.customer.getId())) + ", `product_id` = " + this.db.quote(product_id) + ", `date_added` = NOW()");
 	}
 
 	/**
@@ -16,14 +16,14 @@ module.exports =class Wishlist extends global['OpencartSystemEngineModel'] {
 	 * @return void
 	 */
 	async deleteWishlist(product_id) {
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_wishlist` WHERE `customer_id` = '" + await this.customer.getId() + "' AND `product_id` = '" + product_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_wishlist` WHERE `customer_id` = " + this.db.quote((await this.customer.getId())) + " AND `product_id` = " + this.db.quote(product_id));
 	}
 
 	/**
 	 * @return array
 	 */
 	async getWishlist() {
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "customer_wishlist` WHERE `customer_id` = '" + await this.customer.getId() + "'");
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "customer_wishlist` WHERE `customer_id` = " + this.db.quote((await this.customer.getId())));
 
 		return query.rows;
 	}
@@ -32,7 +32,7 @@ module.exports =class Wishlist extends global['OpencartSystemEngineModel'] {
 	 * @return int
 	 */
 	async getTotalWishlist() {
-		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "customer_wishlist` WHERE `customer_id` = '" + await this.customer.getId() + "'");
+		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "customer_wishlist` WHERE `customer_id` = " + this.db.quote((await this.customer.getId())));
 
 		return query.row['total'];
 	}

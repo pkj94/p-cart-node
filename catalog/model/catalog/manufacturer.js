@@ -5,7 +5,7 @@ module.exports=class Manufacturer extends global['OpencartSystemEngineModel'] {
 	 * @return array
 	 */
 	async getManufacturer(manufacturer_id) {
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "manufacturer` m LEFT JOIN `" + DB_PREFIX + "manufacturer_to_store` m2s ON (m.`manufacturer_id` = m2s.`manufacturer_id`) WHERE m.`manufacturer_id` = '" + manufacturer_id + "' AND m2s.`store_id` = '" + this.config.get('config_store_id') + "'");
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "manufacturer` m LEFT JOIN `" + DB_PREFIX + "manufacturer_to_store` m2s ON (m.`manufacturer_id` = m2s.`manufacturer_id`) WHERE m.`manufacturer_id` = " + this.db.quote(manufacturer_id) + " AND m2s.`store_id` = " + this.db.quote(this.config.get('config_store_id')));
 
 		return query.row;
 	}
@@ -16,7 +16,7 @@ module.exports=class Manufacturer extends global['OpencartSystemEngineModel'] {
 	 * @return array
 	 */
 	async getManufacturers(data = {}) {
-		let sql = "SELECT * FROM `" + DB_PREFIX + "manufacturer` m LEFT JOIN `" + DB_PREFIX + "manufacturer_to_store` m2s ON (m.`manufacturer_id` = m2s.`manufacturer_id`) WHERE m2s.`store_id` = '" + this.config.get('config_store_id') + "'";
+		let sql = "SELECT * FROM `" + DB_PREFIX + "manufacturer` m LEFT JOIN `" + DB_PREFIX + "manufacturer_to_store` m2s ON (m.`manufacturer_id` = m2s.`manufacturer_id`) WHERE m2s.`store_id` = " + this.db.quote(this.config.get('config_store_id'));
 
 		let sort_data = [
 			'name',
@@ -44,7 +44,7 @@ module.exports=class Manufacturer extends global['OpencartSystemEngineModel'] {
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql += " LIMIT " + (parseInt(data['start']) || 0) + "," + (parseInt(data['limit']) || 0);
 		}
 
 		let manufacturer_data = await this.cache.get('manufacturer.' + md5(sql));
@@ -66,7 +66,7 @@ module.exports=class Manufacturer extends global['OpencartSystemEngineModel'] {
 	 * @return int
 	 */
 	async getLayoutId(manufacturer_id) {
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "manufacturer_to_layout` WHERE `manufacturer_id` = '" + manufacturer_id + "' AND `store_id` = '" + this.config.get('config_store_id') + "'");
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "manufacturer_to_layout` WHERE `manufacturer_id` = " + this.db.quote(manufacturer_id) + " AND `store_id` = " + this.db.quote(this.config.get('config_store_id')));
 
 		if (query.num_rows) {
 			return query.row['layout_id'];

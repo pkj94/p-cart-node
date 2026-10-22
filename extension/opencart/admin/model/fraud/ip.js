@@ -46,7 +46,7 @@ global['OpencartAdminModelExtensionOpencartFraudIp'] = class Ip extends global['
 			limit = 10;
 		}
 
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "fraud_ip` ORDER BY `ip` ASC LIMIT " + start + "," + limit);
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "fraud_ip` ORDER BY `ip` ASC LIMIT " + (parseInt(start) || 0) + "," + (parseInt(limit) || 0));
 
 		return query.rows;
 	}

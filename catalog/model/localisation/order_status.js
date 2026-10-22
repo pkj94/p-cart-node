@@ -5,7 +5,7 @@ module.exports =class OrderStatus extends global['OpencartSystemEngineModel'] {
 	 * @return array
 	 */
 	async getOrderStatus(order_status_id) {
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "order_status` WHERE `order_status_id` = '" + order_status_id + "' AND `language_id` = '" + this.config.get('config_language_id') + "'");
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "order_status` WHERE `order_status_id` = " + this.db.quote(order_status_id) + " AND `language_id` = " + this.db.quote(this.config.get('config_language_id')));
 
 		return query.row;
 	}
@@ -14,7 +14,7 @@ module.exports =class OrderStatus extends global['OpencartSystemEngineModel'] {
 	 * @return array
 	 */
 	async getOrderStatuses() {
-		const sql = "SELECT `order_status_id`, `name` FROM `" + DB_PREFIX + "order_status` WHERE `language_id` = '" + this.config.get('config_language_id') + "' ORDER BY `name`";
+		const sql = "SELECT `order_status_id`, `name` FROM `" + DB_PREFIX + "order_status` WHERE `language_id` = " + this.db.quote(this.config.get('config_language_id')) + " ORDER BY `name`";
 
 		order_status_data = await this.cache.get('order_status+' + md5(sql));
 

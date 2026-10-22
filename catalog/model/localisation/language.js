@@ -8,7 +8,7 @@ module.exports = class Language extends global['OpencartSystemEngineModel'] {
 			return this.data[language_id];
 		}
 
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "language` WHERE `language_id` = '" + language_id + "'");
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "language` WHERE `language_id` = " + this.db.quote(language_id));
 
 		let language = query.row;
 

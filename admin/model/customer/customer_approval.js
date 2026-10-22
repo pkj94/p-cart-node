@@ -8,10 +8,10 @@ module.exports = class CustomerApprovalModel extends global['OpencartSystemEngin
 	 * @return array
 	 */
 	async getCustomerApprovals(data = {}) {
-		let sql = "SELECT *, CONCAT(c.`firstname`, ' ', c.`lastname`) AS customer, cgd.`name` AS customer_group, ca.`type` FROM `" + DB_PREFIX + "customer_approval` ca LEFT JOIN `" + DB_PREFIX + "customer` c ON (ca.`customer_id` = c.`customer_id`) LEFT JOIN `" + DB_PREFIX + "customer_group_description` cgd ON (c.`customer_group_id` = cgd.`customer_group_id`) WHERE cgd.`language_id` = '" + this.config.get('config_language_id') + "'";
+		let sql = "SELECT *, CONCAT(c.`firstname`, ' ', c.`lastname`) AS customer, cgd.`name` AS customer_group, ca.`type` FROM `" + DB_PREFIX + "customer_approval` ca LEFT JOIN `" + DB_PREFIX + "customer` c ON (ca.`customer_id` = c.`customer_id`) LEFT JOIN `" + DB_PREFIX + "customer_group_description` cgd ON (c.`customer_group_id` = cgd.`customer_group_id`) WHERE cgd.`language_id` = " + this.db.quote(this.config.get('config_language_id'));
 
 		if ((data['filter_customer'])) {
-			sql += " AND CONCAT(c.`firstname`, ' ', c.`lastname`) LIKE " + this.db.escape('%' + data['filter_customer'] + '%') + "'";
+			sql += " AND CONCAT(c.`firstname`, ' ', c.`lastname`) LIKE " + this.db.escape('%' + data['filter_customer'] + '%');
 		}
 
 		if ((data['filter_email'])) {
@@ -19,7 +19,7 @@ module.exports = class CustomerApprovalModel extends global['OpencartSystemEngin
 		}
 
 		if ((data['filter_customer_group_id'])) {
-			sql += " AND c.`customer_group_id` = '" + data['filter_customer_group_id'] + "'";
+			sql += " AND c.`customer_group_id` = " + this.db.quote(data['filter_customer_group_id']);
 		}
 
 		if ((data['filter_type'])) {
@@ -47,7 +47,7 @@ module.exports = class CustomerApprovalModel extends global['OpencartSystemEngin
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql += " LIMIT " + (parseInt(data['start']) || 0) + "," + (parseInt(data['limit']) || 0);
 		}
 
 		let query = await this.db.query(sql);
@@ -61,7 +61,7 @@ module.exports = class CustomerApprovalModel extends global['OpencartSystemEngin
 	 * @return array
 	 */
 	async getCustomerApproval(customer_approval_id) {
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "customer_approval` WHERE `customer_approval_id` = '" + customer_approval_id + "'");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "customer_approval` WHERE `customer_approval_id` = " + this.db.quote(customer_approval_id));
 
 		return query.row;
 	}
@@ -85,7 +85,7 @@ module.exports = class CustomerApprovalModel extends global['OpencartSystemEngin
 		}
 
 		if ((data['filter_customer_group_id'])) {
-			implode.push("c.`customer_group_id` = '" + data['filter_customer_group_id'] + "'");
+			implode.push("c.`customer_group_id` = " + this.db.quote(data['filter_customer_group_id']));
 		}
 
 		if ((data['filter_type'])) {
@@ -115,8 +115,8 @@ module.exports = class CustomerApprovalModel extends global['OpencartSystemEngin
 	 * @return void
 	 */
 	async approveCustomer(customer_id) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "customer` SET `status` = '1' WHERE `customer_id` = '" + customer_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_approval` WHERE `customer_id` = '" + customer_id + "' AND `type` = 'customer'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "customer` SET `status` = '1' WHERE `customer_id` = " + this.db.quote(customer_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_approval` WHERE `customer_id` = " + this.db.quote(customer_id) + " AND `type` = 'customer'");
 	}
 
 	/**
@@ -125,7 +125,7 @@ module.exports = class CustomerApprovalModel extends global['OpencartSystemEngin
 	 * @return void
 	 */
 	async denyCustomer(customer_id) {
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_approval` WHERE `customer_id` = '" + customer_id + "' AND `type` = 'customer'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_approval` WHERE `customer_id` = " + this.db.quote(customer_id) + " AND `type` = 'customer'");
 	}
 
 	/**
@@ -134,8 +134,8 @@ module.exports = class CustomerApprovalModel extends global['OpencartSystemEngin
 	 * @return void
 	 */
 	async approveAffiliate(customer_id) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "customer_affiliate` SET `status` = '1' WHERE `customer_id` = '" + customer_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_approval` WHERE `customer_id` = '" + customer_id + "' AND `type` = 'affiliate'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "customer_affiliate` SET `status` = '1' WHERE `customer_id` = " + this.db.quote(customer_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_approval` WHERE `customer_id` = " + this.db.quote(customer_id) + " AND `type` = 'affiliate'");
 	}
 
 	/**
@@ -144,6 +144,6 @@ module.exports = class CustomerApprovalModel extends global['OpencartSystemEngin
 	 * @return void
 	 */
 	async denyAffiliate(customer_id) {
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_approval` WHERE `customer_id` = '" + customer_id + "' AND `type` = 'affiliate'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_approval` WHERE `customer_id` = " + this.db.quote(customer_id) + " AND `type` = 'affiliate'");
 	}
 }

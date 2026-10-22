@@ -11,7 +11,7 @@ module.exports = class StoreSettingModel extends global['OpencartSystemEngineMod
 		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "layout_route` WHERE `store_id` = '0'");
 
 		for (let layout_route of query.rows) {
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "layout_route` SET `layout_id` = '" + layout_route['layout_id'] + "', `route` = " + this.db.escape(layout_route['route']) + ", `store_id` = '" + store_id + "'");
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "layout_route` SET `layout_id` = " + this.db.quote(layout_route['layout_id']) + ", `route` = " + this.db.escape(layout_route['route']) + ", `store_id` = " + this.db.quote(store_id));
 		}
 
 		await this.cache.delete('store');
@@ -37,31 +37,31 @@ module.exports = class StoreSettingModel extends global['OpencartSystemEngineMod
 	 * @return void
 	 */
 	async deleteStore(store_id) {
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "store` WHERE `store_id` = '" + store_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "store` WHERE `store_id` = " + this.db.quote(store_id));
 
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "category_to_layout` WHERE `store_id` = '" + store_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "category_to_store` WHERE `store_id` = '" + store_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer` WHERE `store_id` = '" + store_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_affiliate_report` WHERE `store_id` = '" + store_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_ip` WHERE `store_id` = '" + store_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_search` WHERE `store_id` = '" + store_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "download_report` WHERE `store_id` = '" + store_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "gdpr` WHERE `store_id` = '" + store_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "information_to_layout` WHERE `store_id` = '" + store_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "information_to_store` WHERE `store_id` = '" + store_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "layout_route` WHERE `store_id` = '" + store_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "manufacturer_to_layout` WHERE `store_id` = '" + store_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "manufacturer_to_store` WHERE `store_id` = '" + store_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "marketing_report` WHERE `store_id` = '" + store_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "order` WHERE `store_id` = '" + store_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_report` WHERE `store_id` = '" + store_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_to_layout` WHERE `store_id` = '" + store_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_to_store` WHERE `store_id` = '" + store_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "setting` WHERE `store_id` = '" + store_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "subscription` WHERE `store_id` = '" + store_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "theme` WHERE `store_id` = '" + store_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "translation` WHERE `store_id` = '" + store_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "seo_url` WHERE `store_id` = '" + store_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "category_to_layout` WHERE `store_id` = " + this.db.quote(store_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "category_to_store` WHERE `store_id` = " + this.db.quote(store_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer` WHERE `store_id` = " + this.db.quote(store_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_affiliate_report` WHERE `store_id` = " + this.db.quote(store_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_ip` WHERE `store_id` = " + this.db.quote(store_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_search` WHERE `store_id` = " + this.db.quote(store_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "download_report` WHERE `store_id` = " + this.db.quote(store_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "gdpr` WHERE `store_id` = " + this.db.quote(store_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "information_to_layout` WHERE `store_id` = " + this.db.quote(store_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "information_to_store` WHERE `store_id` = " + this.db.quote(store_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "layout_route` WHERE `store_id` = " + this.db.quote(store_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "manufacturer_to_layout` WHERE `store_id` = " + this.db.quote(store_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "manufacturer_to_store` WHERE `store_id` = " + this.db.quote(store_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "marketing_report` WHERE `store_id` = " + this.db.quote(store_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "order` WHERE `store_id` = " + this.db.quote(store_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_report` WHERE `store_id` = " + this.db.quote(store_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_to_layout` WHERE `store_id` = " + this.db.quote(store_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_to_store` WHERE `store_id` = " + this.db.quote(store_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "setting` WHERE `store_id` = " + this.db.quote(store_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "subscription` WHERE `store_id` = " + this.db.quote(store_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "theme` WHERE `store_id` = " + this.db.quote(store_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "translation` WHERE `store_id` = " + this.db.quote(store_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "seo_url` WHERE `store_id` = " + this.db.quote(store_id));
 
 		await this.cache.delete('store');
 	}
@@ -72,7 +72,7 @@ module.exports = class StoreSettingModel extends global['OpencartSystemEngineMod
 	 * @return array
 	 */
 	async getStore(store_id) {
-		let query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "store` WHERE `store_id` = '" + store_id + "'");
+		let query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "store` WHERE `store_id` = " + this.db.quote(store_id));
 
 		return query.row;
 	}
@@ -230,7 +230,7 @@ module.exports = class StoreSettingModel extends global['OpencartSystemEngineMod
 	 * @return int
 	 */
 	async getTotalStoresByLayoutId(layout_id) {
-		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "setting` WHERE `key` = 'config_layout_id' AND `value` = '" + layout_id + "' AND `store_id` != '0'");
+		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "setting` WHERE `key` = 'config_layout_id' AND `value` = " + this.db.quote(layout_id) + " AND `store_id` != '0'");
 
 		return query.row['total'];
 	}
@@ -263,7 +263,7 @@ module.exports = class StoreSettingModel extends global['OpencartSystemEngineMod
 	 * @return int
 	 */
 	async getTotalStoresByCountryId(country_id) {
-		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "setting` WHERE `key` = 'config_country_id' AND `value` = '" + country_id + "' AND `store_id` != '0'");
+		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "setting` WHERE `key` = 'config_country_id' AND `value` = " + this.db.quote(country_id) + " AND `store_id` != '0'");
 
 		return query.row['total'];
 	}
@@ -274,7 +274,7 @@ module.exports = class StoreSettingModel extends global['OpencartSystemEngineMod
 	 * @return int
 	 */
 	async getTotalStoresByZoneId(zone_id) {
-		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "setting` WHERE `key` = 'config_zone_id' AND `value` = '" + zone_id + "' AND `store_id` != '0'");
+		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "setting` WHERE `key` = 'config_zone_id' AND `value` = " + this.db.quote(zone_id) + " AND `store_id` != '0'");
 
 		return query.row['total'];
 	}
@@ -285,7 +285,7 @@ module.exports = class StoreSettingModel extends global['OpencartSystemEngineMod
 	 * @return int
 	 */
 	async getTotalStoresByCustomerGroupId(customer_group_id) {
-		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "setting` WHERE `key` = 'config_customer_group_id' AND `value` = '" + customer_group_id + "' AND `store_id` != '0'");
+		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "setting` WHERE `key` = 'config_customer_group_id' AND `value` = " + this.db.quote(customer_group_id) + " AND `store_id` != '0'");
 
 		return query.row['total'];
 	}
@@ -296,9 +296,9 @@ module.exports = class StoreSettingModel extends global['OpencartSystemEngineMod
 	 * @return int
 	 */
 	async getTotalStoresByInformationId(information_id) {
-		const account_query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "setting` WHERE `key` = 'config_account_id' AND `value` = '" + information_id + "' AND `store_id` != '0'");
+		const account_query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "setting` WHERE `key` = 'config_account_id' AND `value` = " + this.db.quote(information_id) + " AND `store_id` != '0'");
 
-		const checkout_query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "setting` WHERE `key` = 'config_checkout_id' AND `value` = '" + information_id + "' AND `store_id` != '0'");
+		const checkout_query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "setting` WHERE `key` = 'config_checkout_id' AND `value` = " + this.db.quote(information_id) + " AND `store_id` != '0'");
 
 		return (account_query.row['total'] + checkout_query.row['total']);
 	}
@@ -309,7 +309,7 @@ module.exports = class StoreSettingModel extends global['OpencartSystemEngineMod
 	 * @return int
 	 */
 	async getTotalStoresByOrderStatusId(order_status_id) {
-		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "setting` WHERE `key` = 'config_order_status_id' AND `value` = '" + order_status_id + "' AND `store_id` != '0'");
+		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "setting` WHERE `key` = 'config_order_status_id' AND `value` = " + this.db.quote(order_status_id) + " AND `store_id` != '0'");
 
 		return query.row['total'];
 	}

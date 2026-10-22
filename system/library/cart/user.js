@@ -16,7 +16,7 @@ module.exports = class UserLibrary {
     async init() {
         // console.log('library user-----', this.user_id, JSON.stringify(this.permission));
         if (this.session.data.user_id && !this.user_id) {
-            const user_query = await this.db.query(`SELECT * FROM ${DB_PREFIX}user WHERE user_id = ${this.session.data.user_id} AND status = '1'`);
+            const user_query = await this.db.query(`SELECT * FROM ${DB_PREFIX}user WHERE user_id = ${this.db.quote(this.session.data.user_id)} AND status = '1'`);
 
             if (user_query.num_rows) {
                 this.user_id = user_query.row.user_id;
@@ -24,12 +24,12 @@ module.exports = class UserLibrary {
                 this.user_group_id = user_query.row.user_group_id;
                 this.email = user_query.row.email;
 
-                await this.db.query(`UPDATE ${DB_PREFIX}user SET ip = '${this.request.server.headers['x-forwarded-for'] || (
+                await this.db.query(`UPDATE ${DB_PREFIX}user SET ip = ${this.db.quote(this.request.server.headers['x-forwarded-for'] || (
                     this.request.server.connection ? (this.request.server.connection.remoteAddress ||
                         this.request.server.socket.remoteAddress ||
-                        this.request.server.connection.socket.remoteAddress) : '')}' WHERE user_id = ${this.session.data.user_id}`);
+                        this.request.server.connection.socket.remoteAddress) : ''))} WHERE user_id = ${this.db.quote(this.session.data.user_id)}`);
 
-                const user_group_query = await this.db.query(`SELECT permission FROM ${DB_PREFIX}user_group WHERE user_group_id = ${user_query.row.user_group_id}`);
+                const user_group_query = await this.db.query(`SELECT permission FROM ${DB_PREFIX}user_group WHERE user_group_id = ${this.db.quote(user_query.row.user_group_id)}`);
                 this.permission = JSON.parse(user_group_query.row.permission);
             } else {
                 this.logout();
@@ -38,7 +38,7 @@ module.exports = class UserLibrary {
     }
     login(username, password) {
         return new Promise(async (resolve, reject) => {
-            const user_query = await this.db.query(`SELECT * FROM ${DB_PREFIX}user WHERE username = '${username}' AND status = '1'`);
+            const user_query = await this.db.query(`SELECT * FROM ${DB_PREFIX}user WHERE username = ${this.db.quote(username)} AND status = '1'`);
             // console.log(user_query,`SELECT * FROM ${DB_PREFIX}user WHERE username = '${username}' AND status = '1'`)
             if (user_query.num_rows) {
                 let rehash = false;
@@ -52,7 +52,7 @@ module.exports = class UserLibrary {
                     resolve(false);
                 }
                 if (rehash) {
-                    await this.db.query(`UPDATE ${DB_PREFIX}user SET password = '${await password_hash(password, 10)}' WHERE user_id = ${user_query.row.user_id}`);
+                    await this.db.query(`UPDATE ${DB_PREFIX}user SET password = ${this.db.quote(await password_hash(password, 10))} WHERE user_id = ${this.db.quote(user_query.row.user_id)}`);
                 }
 
                 this.session.data.user_id = user_query.row.user_id;
@@ -62,7 +62,7 @@ module.exports = class UserLibrary {
                 this.user_group_id = user_query.row.user_group_id;
                 this.email = user_query.row.email;
 
-                const user_group_query = await this.db.query(`SELECT permission FROM ${DB_PREFIX}user_group WHERE user_group_id = ${user_query.row.user_group_id}`);
+                const user_group_query = await this.db.query(`SELECT permission FROM ${DB_PREFIX}user_group WHERE user_group_id = ${this.db.quote(user_query.row.user_group_id)}`);
                 this.permission = JSON.parse(user_group_query.row.permission);
                 await this.session.save(this.session.data);
                 resolve(true);

@@ -6,12 +6,12 @@ module.exports = class Address extends global['OpencartSystemEngineModel'] {
 	 * @return int
 	 */
 	async addAddress(customer_id, data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "address` SET `customer_id` = '" + customer_id + "', `firstname` = " + this.db.escape(data['firstname']) + ", `lastname` = " + this.db.escape(data['lastname']) + ", `company` = " + this.db.escape(data['company']) + ", `address_1` = " + this.db.escape(data['address_1']) + ", `address_2` = " + this.db.escape(data['address_2']) + ", `postcode` = " + this.db.escape(data['postcode']) + ", `city` = " + this.db.escape(data['city']) + ", `zone_id` = '" + data['zone_id'] + "', `country_id` = '" + data['country_id'] + "', `custom_field` = " + this.db.escape((data['custom_field']) ? JSON.stringify(data['custom_field']) : '') + ", `default` = '" + ((data['default']) ? data['default'] : 0) + "'");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "address` SET `customer_id` = " + this.db.quote(customer_id) + ", `firstname` = " + this.db.escape(data['firstname']) + ", `lastname` = " + this.db.escape(data['lastname']) + ", `company` = " + this.db.escape(data['company']) + ", `address_1` = " + this.db.escape(data['address_1']) + ", `address_2` = " + this.db.escape(data['address_2']) + ", `postcode` = " + this.db.escape(data['postcode']) + ", `city` = " + this.db.escape(data['city']) + ", `zone_id` = " + this.db.quote(data['zone_id']) + ", `country_id` = " + this.db.quote(data['country_id']) + ", `custom_field` = " + this.db.escape((data['custom_field']) ? JSON.stringify(data['custom_field']) : '') + ", `default` = " + this.db.quote(((data['default']) ? data['default'] : 0)));
 
 		const address_id = this.db.getLastId();
 
 		if ((data['default'])) {
-			await this.db.query("UPDATE `" + DB_PREFIX + "address` SET `default` = '0' WHERE `address_id` != '" + address_id + "' AND `customer_id` = '" + await this.customer.getId() + "'");
+			await this.db.query("UPDATE `" + DB_PREFIX + "address` SET `default` = '0' WHERE `address_id` != " + this.db.quote(address_id) + " AND `customer_id` = " + this.db.quote((await this.customer.getId())));
 		}
 
 		return address_id;
@@ -24,10 +24,10 @@ module.exports = class Address extends global['OpencartSystemEngineModel'] {
 	 * @return void
 	 */
 	async editAddress(address_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "address` SET `firstname` = " + this.db.escape(data['firstname']) + ", `lastname` = " + this.db.escape(data['lastname']) + ", `company` = " + this.db.escape(data['company']) + ", `address_1` = " + this.db.escape(data['address_1']) + ", `address_2` = " + this.db.escape(data['address_2']) + ", `postcode` = " + this.db.escape(data['postcode']) + ", `city` = " + this.db.escape(data['city']) + ", `zone_id` = '" + data['zone_id'] + "', `country_id` = '" + data['country_id'] + "', `custom_field` = " + this.db.escape((data['custom_field']) ? JSON.stringify(data['custom_field']) : '') + ", `default` = '" + ((data['default']) ? data['default'] : 0) + "' WHERE `address_id` = '" + address_id + "' AND `customer_id` = '" + await this.customer.getId() + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "address` SET `firstname` = " + this.db.escape(data['firstname']) + ", `lastname` = " + this.db.escape(data['lastname']) + ", `company` = " + this.db.escape(data['company']) + ", `address_1` = " + this.db.escape(data['address_1']) + ", `address_2` = " + this.db.escape(data['address_2']) + ", `postcode` = " + this.db.escape(data['postcode']) + ", `city` = " + this.db.escape(data['city']) + ", `zone_id` = " + this.db.quote(data['zone_id']) + ", `country_id` = " + this.db.quote(data['country_id']) + ", `custom_field` = " + this.db.escape((data['custom_field']) ? JSON.stringify(data['custom_field']) : '') + ", `default` = " + this.db.quote(((data['default']) ? data['default'] : 0)) + " WHERE `address_id` = " + this.db.quote(address_id) + " AND `customer_id` = " + this.db.quote((await this.customer.getId())));
 
 		if ((data['default'])) {
-			await this.db.query("UPDATE `" + DB_PREFIX + "address` SET `default` = '0' WHERE `address_id` != '" + address_id + "' AND `customer_id` = '" + await this.customer.getId() + "'");
+			await this.db.query("UPDATE `" + DB_PREFIX + "address` SET `default` = '0' WHERE `address_id` != " + this.db.quote(address_id) + " AND `customer_id` = " + this.db.quote((await this.customer.getId())));
 		}
 	}
 
@@ -37,7 +37,7 @@ module.exports = class Address extends global['OpencartSystemEngineModel'] {
 	 * @return void
 	 */
 	async deleteAddress(address_id) {
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "address` WHERE `address_id` = '" + address_id + "' AND `customer_id` = '" + await this.customer.getId() + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "address` WHERE `address_id` = " + this.db.quote(address_id) + " AND `customer_id` = " + this.db.quote((await this.customer.getId())));
 	}
 
 	/**
@@ -47,7 +47,7 @@ module.exports = class Address extends global['OpencartSystemEngineModel'] {
 	 * @return array
 	 */
 	async getAddress(customer_id, address_id) {
-		const address_query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "address` WHERE `address_id` = '" + address_id + "' AND `customer_id` = '" + customer_id + "'");
+		const address_query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "address` WHERE `address_id` = " + this.db.quote(address_id) + " AND `customer_id` = " + this.db.quote(customer_id));
 
 		if (address_query.num_rows) {
 			this.load.model('localisation/country', this);
@@ -107,7 +107,7 @@ module.exports = class Address extends global['OpencartSystemEngineModel'] {
 	async getAddresses(customer_id) {
 		let address_data = {};
 
-		const query = await this.db.query("SELECT `address_id` FROM `" + DB_PREFIX + "address` WHERE `customer_id` = '" + customer_id + "'");
+		const query = await this.db.query("SELECT `address_id` FROM `" + DB_PREFIX + "address` WHERE `customer_id` = " + this.db.quote(customer_id));
 
 		for (let result of query.rows) {
 			const address_info = await this.getAddress(customer_id, result['address_id']);
@@ -126,7 +126,7 @@ module.exports = class Address extends global['OpencartSystemEngineModel'] {
 	 * @return int
 	 */
 	async getTotalAddresses(customer_id) {
-		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "address` WHERE `customer_id` = '" + customer_id + "'");
+		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "address` WHERE `customer_id` = " + this.db.quote(customer_id));
 
 		return query.row['total'];
 	}

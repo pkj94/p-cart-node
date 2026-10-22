@@ -8,12 +8,12 @@ module.exports = class SubscriptionPlanCatalogModel extends global['OpencartSyst
 	 * @return int
 	 */
 	async addSubscriptionPlan(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "subscription_plan` SET `trial_frequency` = " + this.db.escape(data['trial_frequency']) + ", `trial_duration` = '" + data['trial_duration'] + "', `trial_cycle` = '" + data['trial_cycle'] + "', `trial_status` = '" + data['trial_status'] + "', `frequency` = " + this.db.escape(data['frequency']) + ", `duration` = '" + data['duration'] + "', `cycle` = '" + data['cycle'] + "', `status` = '" + (data['status'] ? data['status'] : 0) + "', `sort_order` = '" + data['sort_order'] + "'");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "subscription_plan` SET `trial_frequency` = " + this.db.escape(data['trial_frequency']) + ", `trial_duration` = " + this.db.quote(data['trial_duration']) + ", `trial_cycle` = " + this.db.quote(data['trial_cycle']) + ", `trial_status` = " + this.db.quote(data['trial_status']) + ", `frequency` = " + this.db.escape(data['frequency']) + ", `duration` = " + this.db.quote(data['duration']) + ", `cycle` = " + this.db.quote(data['cycle']) + ", `status` = " + this.db.quote((data['status'] ? data['status'] : 0)) + ", `sort_order` = " + this.db.quote(data['sort_order']));
 
 		const subscription_plan_id = this.db.getLastId();
 		for (let [language_id, subscription_plan_description] of Object.entries(data['subscription_plan_description'])) {
 			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "subscription_plan_description` SET `subscription_plan_id` = '" + subscription_plan_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(subscription_plan_description['name']));
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "subscription_plan_description` SET `subscription_plan_id` = " + this.db.quote(subscription_plan_id) + ", `language_id` = " + this.db.quote(language_id) + ", `name` = " + this.db.escape(subscription_plan_description['name']));
 		}
 
 		return subscription_plan_id;
@@ -26,13 +26,13 @@ module.exports = class SubscriptionPlanCatalogModel extends global['OpencartSyst
 	 * @return void
 	 */
 	async editSubscriptionPlan(subscription_plan_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "subscription_plan` SET  `trial_frequency` = " + this.db.escape(data['trial_frequency']) + ", `trial_duration` = '" + data['trial_duration'] + "', `trial_cycle` = '" + data['trial_cycle'] + "', `trial_status` = '" + data['trial_status'] + "', `frequency` = " + this.db.escape(data['frequency']) + ", `duration` = '" + data['duration'] + "', `cycle` = '" + data['cycle'] + "', `status` = '" + (data['status'] ? data['status'] : 0) + "', `sort_order` = '" + data['sort_order'] + "' WHERE `subscription_plan_id` = '" + subscription_plan_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "subscription_plan` SET  `trial_frequency` = " + this.db.escape(data['trial_frequency']) + ", `trial_duration` = " + this.db.quote(data['trial_duration']) + ", `trial_cycle` = " + this.db.quote(data['trial_cycle']) + ", `trial_status` = " + this.db.quote(data['trial_status']) + ", `frequency` = " + this.db.escape(data['frequency']) + ", `duration` = " + this.db.quote(data['duration']) + ", `cycle` = " + this.db.quote(data['cycle']) + ", `status` = " + this.db.quote((data['status'] ? data['status'] : 0)) + ", `sort_order` = " + this.db.quote(data['sort_order']) + " WHERE `subscription_plan_id` = " + this.db.quote(subscription_plan_id));
 
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "subscription_plan_description` WHERE `subscription_plan_id` = '" + subscription_plan_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "subscription_plan_description` WHERE `subscription_plan_id` = " + this.db.quote(subscription_plan_id));
 
 		for (let [language_id, subscription_plan_description] of Object.entries(data['subscription_plan_description'])) {
 			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "subscription_plan_description` SET `subscription_plan_id` = '" + subscription_plan_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(subscription_plan_description['name']));
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "subscription_plan_description` SET `subscription_plan_id` = " + this.db.quote(subscription_plan_id) + ", `language_id` = " + this.db.quote(language_id) + ", `name` = " + this.db.escape(subscription_plan_description['name']));
 		}
 	}
 
@@ -55,10 +55,10 @@ module.exports = class SubscriptionPlanCatalogModel extends global['OpencartSyst
 	 * @return void
 	 */
 	async deleteSubscriptionPlan(subscription_plan_id) {
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "subscription_plan` WHERE `subscription_plan_id` = '" + subscription_plan_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "subscription_plan_description` WHERE `subscription_plan_id` = '" + subscription_plan_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_subscription` WHERE `subscription_plan_id` = '" + subscription_plan_id + "'");
-		await this.db.query("UPDATE `" + DB_PREFIX + "subscription` SET `subscription_plan_id` = '0' WHERE `subscription_plan_id` = '" + subscription_plan_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "subscription_plan` WHERE `subscription_plan_id` = " + this.db.quote(subscription_plan_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "subscription_plan_description` WHERE `subscription_plan_id` = " + this.db.quote(subscription_plan_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_subscription` WHERE `subscription_plan_id` = " + this.db.quote(subscription_plan_id));
+		await this.db.query("UPDATE `" + DB_PREFIX + "subscription` SET `subscription_plan_id` = '0' WHERE `subscription_plan_id` = " + this.db.quote(subscription_plan_id));
 	}
 
 	/**
@@ -67,7 +67,7 @@ module.exports = class SubscriptionPlanCatalogModel extends global['OpencartSyst
 	 * @return array
 	 */
 	async getSubscriptionPlan(subscription_plan_id) {
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "subscription_plan` sp LEFT JOIN `" + DB_PREFIX + "subscription_plan_description` spd ON (sp.`subscription_plan_id` = spd.`subscription_plan_id`) WHERE sp.`subscription_plan_id` = '" + subscription_plan_id + "' AND spd.`language_id` = '" + this.config.get('config_language_id') + "'");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "subscription_plan` sp LEFT JOIN `" + DB_PREFIX + "subscription_plan_description` spd ON (sp.`subscription_plan_id` = spd.`subscription_plan_id`) WHERE sp.`subscription_plan_id` = " + this.db.quote(subscription_plan_id) + " AND spd.`language_id` = " + this.db.quote(this.config.get('config_language_id')));
 
 		return query.row;
 	}
@@ -80,7 +80,7 @@ module.exports = class SubscriptionPlanCatalogModel extends global['OpencartSyst
 	async getDescription(subscription_plan_id) {
 		let subscription_plan_description_data = {};
 
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "subscription_plan_description` WHERE `subscription_plan_id` = '" + subscription_plan_id + "'");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "subscription_plan_description` WHERE `subscription_plan_id` = " + this.db.quote(subscription_plan_id));
 
 		for (let result of query.rows) {
 			subscription_plan_description_data[result['language_id']] = { 'name': result['name'] };
@@ -95,7 +95,7 @@ module.exports = class SubscriptionPlanCatalogModel extends global['OpencartSyst
 	 * @return array
 	 */
 	async getSubscriptionPlans(data = {}) {
-		let sql = "SELECT * FROM `" + DB_PREFIX + "subscription_plan` sp LEFT JOIN `" + DB_PREFIX + "subscription_plan_description` spd ON (sp.`subscription_plan_id` = spd.`subscription_plan_id`) WHERE spd.`language_id` = '" + this.config.get('config_language_id') + "'";
+		let sql = "SELECT * FROM `" + DB_PREFIX + "subscription_plan` sp LEFT JOIN `" + DB_PREFIX + "subscription_plan_description` spd ON (sp.`subscription_plan_id` = spd.`subscription_plan_id`) WHERE spd.`language_id` = " + this.db.quote(this.config.get('config_language_id'));
 
 		if (data['filter_name']) {
 			sql += " AND spd.`name` LIKE " + this.db.escape(data['filter_name'] + '%');
@@ -129,7 +129,7 @@ module.exports = class SubscriptionPlanCatalogModel extends global['OpencartSyst
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql += " LIMIT " + (parseInt(data['start']) || 0) + "," + (parseInt(data['limit']) || 0);
 		}
 
 		let query = await this.db.query(sql);

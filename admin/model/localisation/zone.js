@@ -8,7 +8,7 @@ module.exports = class ZoneLocalisationModel extends global['OpencartSystemEngin
 	 * @return int
 	 */
 	async addZone(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "zone` SET `name` = " + this.db.escape(data['name']) + ", `code` = " + this.db.escape(data['code']) + ", `country_id` = '" + data['country_id'] + "', `status` = '" + ((data['status']) ? data['status'] : 0) + "'");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "zone` SET `name` = " + this.db.escape(data['name']) + ", `code` = " + this.db.escape(data['code']) + ", `country_id` = " + this.db.quote(data['country_id']) + ", `status` = " + this.db.quote(((data['status']) ? data['status'] : 0)));
 
 		await this.cache.delete('zone');
 
@@ -22,7 +22,7 @@ module.exports = class ZoneLocalisationModel extends global['OpencartSystemEngin
 	 * @return void
 	 */
 	async editZone(zone_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "zone` SET `name` = " + this.db.escape(data['name']) + ", `code` = " + this.db.escape(data['code']) + ", `country_id` = '" + data['country_id'] + "', `status` = '" + ((data['status']) ? data['status'] : 0) + "' WHERE `zone_id` = '" + zone_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "zone` SET `name` = " + this.db.escape(data['name']) + ", `code` = " + this.db.escape(data['code']) + ", `country_id` = " + this.db.quote(data['country_id']) + ", `status` = " + this.db.quote(((data['status']) ? data['status'] : 0)) + " WHERE `zone_id` = " + this.db.quote(zone_id));
 
 		await this.cache.delete('zone');
 	}
@@ -33,7 +33,7 @@ module.exports = class ZoneLocalisationModel extends global['OpencartSystemEngin
 	 * @return void
 	 */
 	async deleteZone(zone_id) {
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "zone` WHERE `zone_id` = '" + zone_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "zone` WHERE `zone_id` = " + this.db.quote(zone_id));
 
 		await this.cache.delete('zone');
 	}
@@ -44,7 +44,7 @@ module.exports = class ZoneLocalisationModel extends global['OpencartSystemEngin
 	 * @return array
 	 */
 	async getZone(zone_id) {
-		const query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "zone` WHERE `zone_id` = '" + zone_id + "'");
+		const query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "zone` WHERE `zone_id` = " + this.db.quote(zone_id));
 
 		return query.row;
 	}
@@ -104,7 +104,7 @@ module.exports = class ZoneLocalisationModel extends global['OpencartSystemEngin
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql += " LIMIT " + (parseInt(data['start']) || 0) + "," + (parseInt(data['limit']) || 0);
 		}
 
 		const query = await this.db.query(sql);
@@ -118,7 +118,7 @@ module.exports = class ZoneLocalisationModel extends global['OpencartSystemEngin
 	 * @return array
 	 */
 	async getZonesByCountryId(country_id) {
-		let sql = "SELECT * FROM `" + DB_PREFIX + "zone` WHERE `country_id` = '" + country_id + "' AND `status` = '1' ORDER BY `name`";
+		let sql = "SELECT * FROM `" + DB_PREFIX + "zone` WHERE `country_id` = " + this.db.quote(country_id) + " AND `status` = '1' ORDER BY `name`";
 
 		let zone_data = await this.cache.get('zone.' + md5(sql));
 
@@ -174,7 +174,7 @@ module.exports = class ZoneLocalisationModel extends global['OpencartSystemEngin
 	 * @return int
 	 */
 	async getTotalZonesByCountryId(country_id) {
-		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "zone` WHERE `country_id` = '" + country_id + "'");
+		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "zone` WHERE `country_id` = " + this.db.quote(country_id));
 
 		return query.row['total'];
 	}

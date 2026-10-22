@@ -8,56 +8,56 @@ module.exports = class ProductCatalogModel extends global['OpencartSystemEngineM
 	 * @return int
 	 */
 	async addProduct(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "product` SET `master_id` = '" + data['master_id'] + "', `model` = " + this.db.escape(data['model']) + ", `sku` = " + this.db.escape(data['sku']) + ", `upc` = " + this.db.escape(data['upc']) + ", `ean` = " + this.db.escape(data['ean']) + ", `jan` = " + this.db.escape(data['jan']) + ", `isbn` = " + this.db.escape(data['isbn']) + ", `mpn` = " + this.db.escape(data['mpn']) + ", `location` = " + this.db.escape(data['location']) + ", `variant` = " + this.db.escape((data['variant']) ? JSON.stringify(data['variant']) : '') + ", `override` = " + this.db.escape((data['override']) ? JSON.stringify(data['override']) : '') + ", `quantity` = '" + data['quantity'] + "', `minimum` = '" + data['minimum'] + "', `subtract` = '" + ((data['subtract']) ? data['subtract'] : 0) + "', `stock_status_id` = '" + data['stock_status_id'] + "', `date_available` = " + this.db.escape(data['date_available']) + ", `manufacturer_id` = '" + data['manufacturer_id'] + "', `shipping` = '" + ((data['shipping']) ? data['shipping'] : 0) + "', `price` = '" + data['price'] + "', `points` = '" + data['points'] + "', `weight` = '" + data['weight'] + "', `weight_class_id` = '" + data['weight_class_id'] + "', `length` = '" + data['length'] + "', `width` = '" + data['width'] + "', `height` = '" + data['height'] + "', `length_class_id` = '" + data['length_class_id'] + "', `status` = '" + (data['status'] ? data['status'] : 0) + "', `tax_class_id` = '" + data['tax_class_id'] + "', `sort_order` = '" + data['sort_order'] + "', `date_added` = NOW(), `date_modified` = NOW()");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "product` SET `master_id` = " + this.db.quote(data['master_id']) + ", `model` = " + this.db.escape(data['model']) + ", `sku` = " + this.db.escape(data['sku']) + ", `upc` = " + this.db.escape(data['upc']) + ", `ean` = " + this.db.escape(data['ean']) + ", `jan` = " + this.db.escape(data['jan']) + ", `isbn` = " + this.db.escape(data['isbn']) + ", `mpn` = " + this.db.escape(data['mpn']) + ", `location` = " + this.db.escape(data['location']) + ", `variant` = " + this.db.escape((data['variant']) ? JSON.stringify(data['variant']) : '') + ", `override` = " + this.db.escape((data['override']) ? JSON.stringify(data['override']) : '') + ", `quantity` = " + this.db.quote(data['quantity']) + ", `minimum` = " + this.db.quote(data['minimum']) + ", `subtract` = " + this.db.quote(((data['subtract']) ? data['subtract'] : 0)) + ", `stock_status_id` = " + this.db.quote(data['stock_status_id']) + ", `date_available` = " + this.db.escape(data['date_available']) + ", `manufacturer_id` = " + this.db.quote(data['manufacturer_id']) + ", `shipping` = " + this.db.quote(((data['shipping']) ? data['shipping'] : 0)) + ", `price` = " + this.db.quote(data['price']) + ", `points` = " + this.db.quote(data['points']) + ", `weight` = " + this.db.quote(data['weight']) + ", `weight_class_id` = " + this.db.quote(data['weight_class_id']) + ", `length` = " + this.db.quote(data['length']) + ", `width` = " + this.db.quote(data['width']) + ", `height` = " + this.db.quote(data['height']) + ", `length_class_id` = " + this.db.quote(data['length_class_id']) + ", `status` = " + this.db.quote((data['status'] ? data['status'] : 0)) + ", `tax_class_id` = " + this.db.quote(data['tax_class_id']) + ", `sort_order` = " + this.db.quote(data['sort_order']) + ", `date_added` = NOW(), `date_modified` = NOW()");
 
 		const product_id = this.db.getLastId();
 
 		if (data['image']) {
-			await this.db.query("UPDATE `" + DB_PREFIX + "product` SET `image` = " + this.db.escape(data['image']) + " WHERE `product_id` = '" + product_id + "'");
+			await this.db.query("UPDATE `" + DB_PREFIX + "product` SET `image` = " + this.db.escape(data['image']) + " WHERE `product_id` = " + this.db.quote(product_id));
 		}
 
 		// Description
 		for (let [language_id, value] of Object.entries(data['product_description'])) {
 			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 			// console.log('language_id-----------',language_id);
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "product_description` SET `product_id` = '" + product_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + ", `description` = " + this.db.escape(value['description']) + ", `tag` = " + this.db.escape(value['tag']) + ", `meta_title` = " + this.db.escape(value['meta_title']) + ", `meta_description` = " + this.db.escape(value['meta_description']) + ", `meta_keyword` = " + this.db.escape(value['meta_keyword']) + "");
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "product_description` SET `product_id` = " + this.db.quote(product_id) + ", `language_id` = " + this.db.quote(language_id) + ", `name` = " + this.db.escape(value['name']) + ", `description` = " + this.db.escape(value['description']) + ", `tag` = " + this.db.escape(value['tag']) + ", `meta_title` = " + this.db.escape(value['meta_title']) + ", `meta_description` = " + this.db.escape(value['meta_description']) + ", `meta_keyword` = " + this.db.escape(value['meta_keyword']));
 		}
 
 		// Categories
 		if ((data['product_category'])) {
 			for (let category_id of data['product_category']) {
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_to_category` SET `product_id` = '" + product_id + "', `category_id` = '" + category_id + "'");
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_to_category` SET `product_id` = " + this.db.quote(product_id) + ", `category_id` = " + this.db.quote(category_id));
 			}
 		}
 
 		// Filters
 		if ((data['product_filter'])) {
 			for (let filter_id of data['product_filter']) {
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_filter` SET `product_id` = '" + product_id + "', `filter_id` = '" + filter_id + "'");
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_filter` SET `product_id` = " + this.db.quote(product_id) + ", `filter_id` = " + this.db.quote(filter_id));
 			}
 		}
 
 		// Stores
 		if ((data['product_store'])) {
 			for (let store_id of data['product_store']) {
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_to_store` SET `product_id` = '" + product_id + "', `store_id` = '" + store_id + "'");
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_to_store` SET `product_id` = " + this.db.quote(product_id) + ", `store_id` = " + this.db.quote(store_id));
 			}
 		}
 
 		// Downloads
 		if ((data['product_download'])) {
 			for (let download_id of data['product_download']) {
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_to_download` SET `product_id` = '" + product_id + "', `download_id` = '" + download_id + "'");
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_to_download` SET `product_id` = " + this.db.quote(product_id) + ", `download_id` = " + this.db.quote(download_id));
 			}
 		}
 
 		// Related
 		if ((data['product_related'])) {
 			for (let related_id of data['product_related']) {
-				await this.db.query("DELETE FROM `" + DB_PREFIX + "product_related` WHERE `product_id` = '" + product_id + "' AND `related_id` = '" + related_id + "'");
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_related` SET `product_id` = '" + product_id + "', `related_id` = '" + related_id + "'");
-				await this.db.query("DELETE FROM `" + DB_PREFIX + "product_related` WHERE `product_id` = '" + related_id + "' AND `related_id` = '" + product_id + "'");
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_related` SET `product_id` = '" + related_id + "', `related_id` = '" + product_id + "'");
+				await this.db.query("DELETE FROM `" + DB_PREFIX + "product_related` WHERE `product_id` = " + this.db.quote(product_id) + " AND `related_id` = " + this.db.quote(related_id));
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_related` SET `product_id` = " + this.db.quote(product_id) + ", `related_id` = " + this.db.quote(related_id));
+				await this.db.query("DELETE FROM `" + DB_PREFIX + "product_related` WHERE `product_id` = " + this.db.quote(related_id) + " AND `related_id` = " + this.db.quote(product_id));
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_related` SET `product_id` = " + this.db.quote(related_id) + ", `related_id` = " + this.db.quote(product_id));
 			}
 		}
 
@@ -66,11 +66,11 @@ module.exports = class ProductCatalogModel extends global['OpencartSystemEngineM
 			for (let product_attribute of data['product_attribute']) {
 				if (product_attribute['attribute_id']) {
 					// Removes duplicates
-					await this.db.query("DELETE FROM `" + DB_PREFIX + "product_attribute` WHERE `product_id` = '" + product_id + "' AND `attribute_id` = '" + product_attribute['attribute_id'] + "'");
+					await this.db.query("DELETE FROM `" + DB_PREFIX + "product_attribute` WHERE `product_id` = " + this.db.quote(product_id) + " AND `attribute_id` = " + this.db.quote(product_attribute['attribute_id']));
 
 					for (let [language_id, product_attribute_description] of Object.entries(product_attribute['product_attribute_description'])) {
 						language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
-						await this.db.query("INSERT INTO `" + DB_PREFIX + "product_attribute` SET `product_id` = '" + product_id + "', `attribute_id` = '" + product_attribute['attribute_id'] + "', `language_id` = '" + language_id + "', `text` = " + this.db.escape(product_attribute_description['text']) + "");
+						await this.db.query("INSERT INTO `" + DB_PREFIX + "product_attribute` SET `product_id` = " + this.db.quote(product_id) + ", `attribute_id` = " + this.db.quote(product_attribute['attribute_id']) + ", `language_id` = " + this.db.quote(language_id) + ", `text` = " + this.db.escape(product_attribute_description['text']));
 					}
 				}
 			}
@@ -81,16 +81,16 @@ module.exports = class ProductCatalogModel extends global['OpencartSystemEngineM
 			for (let product_option of data['product_option']) {
 				if (product_option['type'] == 'select' || product_option['type'] == 'radio' || product_option['type'] == 'checkbox' || product_option['type'] == 'image') {
 					if (product_option['product_option_value'] && product_option['product_option_value'].length) {
-						await this.db.query("INSERT INTO `" + DB_PREFIX + "product_option` SET `product_id` = '" + product_id + "', `option_id` = '" + product_option['option_id'] + "', `required` = '" + product_option['required'] + "'");
+						await this.db.query("INSERT INTO `" + DB_PREFIX + "product_option` SET `product_id` = " + this.db.quote(product_id) + ", `option_id` = " + this.db.quote(product_option['option_id']) + ", `required` = " + this.db.quote(product_option['required']));
 
 						product_option_id = this.db.getLastId();
 
 						for (let product_option_value of product_option['product_option_value']) {
-							await this.db.query("INSERT INTO `" + DB_PREFIX + "product_option_value` SET `product_option_id` = '" + product_option_id + "', `product_id` = '" + product_id + "', `option_id` = '" + product_option['option_id'] + "', `option_value_id` = '" + product_option_value['option_value_id'] + "', `quantity` = '" + product_option_value['quantity'] + "', `subtract` = '" + product_option_value['subtract'] + "', `price` = '" + product_option_value['price'] + "', `price_prefix` = " + this.db.escape(product_option_value['price_prefix']) + ", `points` = '" + product_option_value['points'] + "', `points_prefix` = " + this.db.escape(product_option_value['points_prefix']) + ", `weight` = '" + product_option_value['weight'] + "', `weight_prefix` = " + this.db.escape(product_option_value['weight_prefix']) + "");
+							await this.db.query("INSERT INTO `" + DB_PREFIX + "product_option_value` SET `product_option_id` = " + this.db.quote(product_option_id) + ", `product_id` = " + this.db.quote(product_id) + ", `option_id` = " + this.db.quote(product_option['option_id']) + ", `option_value_id` = " + this.db.quote(product_option_value['option_value_id']) + ", `quantity` = " + this.db.quote(product_option_value['quantity']) + ", `subtract` = " + this.db.quote(product_option_value['subtract']) + ", `price` = " + this.db.quote(product_option_value['price']) + ", `price_prefix` = " + this.db.escape(product_option_value['price_prefix']) + ", `points` = " + this.db.quote(product_option_value['points']) + ", `points_prefix` = " + this.db.escape(product_option_value['points_prefix']) + ", `weight` = " + this.db.quote(product_option_value['weight']) + ", `weight_prefix` = " + this.db.escape(product_option_value['weight_prefix']));
 						}
 					}
 				} else {
-					await this.db.query("INSERT INTO `" + DB_PREFIX + "product_option` SET `product_id` = '" + product_id + "', `option_id` = '" + product_option['option_id'] + "', `value` = " + this.db.escape(product_option['value']) + ", `required` = '" + product_option['required'] + "'");
+					await this.db.query("INSERT INTO `" + DB_PREFIX + "product_option` SET `product_id` = " + this.db.quote(product_id) + ", `option_id` = " + this.db.quote(product_option['option_id']) + ", `value` = " + this.db.escape(product_option['value']) + ", `required` = " + this.db.quote(product_option['required']));
 				}
 			}
 		}
@@ -98,10 +98,10 @@ module.exports = class ProductCatalogModel extends global['OpencartSystemEngineM
 		// Subscription
 		if ((data['product_subscription'])) {
 			for (let product_subscription of data['product_subscription']) {
-				let query = await this.db.query("SELECT `product_id` FROM `" + DB_PREFIX + "product_subscription` WHERE `product_id` = '" + product_id + "' AND `customer_group_id` = '" + product_subscription['customer_group_id'] + "' AND `subscription_plan_id` = '" + product_subscription['subscription_plan_id'] + "'");
+				let query = await this.db.query("SELECT `product_id` FROM `" + DB_PREFIX + "product_subscription` WHERE `product_id` = " + this.db.quote(product_id) + " AND `customer_group_id` = " + this.db.quote(product_subscription['customer_group_id']) + " AND `subscription_plan_id` = " + this.db.quote(product_subscription['subscription_plan_id']));
 
 				if (!query.num_rows) {
-					await this.db.query("INSERT INTO `" + DB_PREFIX + "product_subscription` SET `product_id` = '" + product_id + "', `customer_group_id` = '" + product_subscription['customer_group_id'] + "', `subscription_plan_id` = '" + product_subscription['subscription_plan_id'] + "', `trial_price` = '" + product_subscription['trial_price'] + "', `price` = '" + product_subscription['price'] + "'");
+					await this.db.query("INSERT INTO `" + DB_PREFIX + "product_subscription` SET `product_id` = " + this.db.quote(product_id) + ", `customer_group_id` = " + this.db.quote(product_subscription['customer_group_id']) + ", `subscription_plan_id` = " + this.db.quote(product_subscription['subscription_plan_id']) + ", `trial_price` = " + this.db.quote(product_subscription['trial_price']) + ", `price` = " + this.db.quote(product_subscription['price']));
 				}
 			}
 		}
@@ -109,21 +109,21 @@ module.exports = class ProductCatalogModel extends global['OpencartSystemEngineM
 		// Discounts
 		if ((data['product_discount'])) {
 			for (let product_discount of data['product_discount']) {
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_discount` SET `product_id` = '" + product_id + "', `customer_group_id` = '" + product_discount['customer_group_id'] + "', `quantity` = '" + product_discount['quantity'] + "', `priority` = '" + product_discount['priority'] + "', `price` = '" + product_discount['price'] + "', `date_start` = " + this.db.escape(product_discount['date_start']) + ", `date_end` = " + this.db.escape(product_discount['date_end']) + "");
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_discount` SET `product_id` = " + this.db.quote(product_id) + ", `customer_group_id` = " + this.db.quote(product_discount['customer_group_id']) + ", `quantity` = " + this.db.quote(product_discount['quantity']) + ", `priority` = " + this.db.quote(product_discount['priority']) + ", `price` = " + this.db.quote(product_discount['price']) + ", `date_start` = " + this.db.escape(product_discount['date_start']) + ", `date_end` = " + this.db.escape(product_discount['date_end']));
 			}
 		}
 
 		// Specials
 		if ((data['product_special'])) {
 			for (let product_special of data['product_special']) {
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_special` SET `product_id` = '" + product_id + "', `customer_group_id` = '" + product_special['customer_group_id'] + "', `priority` = '" + product_special['priority'] + "', `price` = '" + product_special['price'] + "', `date_start` = " + this.db.escape(product_special['date_start']) + ", `date_end` = " + this.db.escape(product_special['date_end']) + "");
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_special` SET `product_id` = " + this.db.quote(product_id) + ", `customer_group_id` = " + this.db.quote(product_special['customer_group_id']) + ", `priority` = " + this.db.quote(product_special['priority']) + ", `price` = " + this.db.quote(product_special['price']) + ", `date_start` = " + this.db.escape(product_special['date_start']) + ", `date_end` = " + this.db.escape(product_special['date_end']));
 			}
 		}
 
 		// Images
 		if ((data['product_image'])) {
 			for (let product_image of data['product_image']) {
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_image` SET `product_id` = '" + product_id + "', `image` = " + this.db.escape(product_image['image']) + ", `sort_order` = '" + product_image['sort_order'] + "'");
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_image` SET `product_id` = " + this.db.quote(product_id) + ", `image` = " + this.db.escape(product_image['image']) + ", `sort_order` = " + this.db.quote(product_image['sort_order']));
 			}
 		}
 
@@ -131,7 +131,7 @@ module.exports = class ProductCatalogModel extends global['OpencartSystemEngineM
 		if ((data['product_reward'])) {
 			for (let [customer_group_id, product_reward] of Object.entries(data['product_reward'])) {
 				if (product_reward['points'] > 0) {
-					await this.db.query("INSERT INTO `" + DB_PREFIX + "product_reward` SET `product_id` = '" + product_id + "', `customer_group_id` = '" + customer_group_id + "', `points` = '" + product_reward['points'] + "'");
+					await this.db.query("INSERT INTO `" + DB_PREFIX + "product_reward` SET `product_id` = " + this.db.quote(product_id) + ", `customer_group_id` = " + this.db.quote(customer_group_id) + ", `points` = " + this.db.quote(product_reward['points']));
 				}
 			}
 		}
@@ -142,7 +142,7 @@ module.exports = class ProductCatalogModel extends global['OpencartSystemEngineM
 				store_id = store_id.indexOf('store') >= 0 ? store_id.split('-')[1] : store_id;
 				for (let [language_id, keyword] of Object.entries(language)) {
 					language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
-					await this.db.query("INSERT INTO `" + DB_PREFIX + "seo_url` SET `store_id` = '" + store_id + "', `language_id` = '" + language_id + "', `key` = 'product_id', `value` = '" + product_id + "', `keyword` = " + this.db.escape(keyword) + "");
+					await this.db.query("INSERT INTO `" + DB_PREFIX + "seo_url` SET `store_id` = " + this.db.quote(store_id) + ", `language_id` = " + this.db.quote(language_id) + ", `key` = 'product_id', `value` = " + this.db.quote(product_id) + ", `keyword` = " + this.db.escape(keyword));
 				}
 			}
 		}
@@ -151,7 +151,7 @@ module.exports = class ProductCatalogModel extends global['OpencartSystemEngineM
 		if ((data['product_layout'])) {
 			for (let [store_id, layout_id] of Object.entries(data['product_layout'])) {
 				store_id = store_id.indexOf('store') >= 0 ? store_id.split('-')[1] : store_id;
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_to_layout` SET `product_id` = '" + product_id + "', `store_id` = '" + store_id + "', `layout_id` = '" + layout_id + "'");
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_to_layout` SET `product_id` = " + this.db.quote(product_id) + ", `store_id` = " + this.db.quote(store_id) + ", `layout_id` = " + this.db.quote(layout_id));
 			}
 		}
 
@@ -167,180 +167,180 @@ module.exports = class ProductCatalogModel extends global['OpencartSystemEngineM
 	 * @return void
 	 */
 	async editProduct(product_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "product` SET `model` = " + this.db.escape(data['model']) + ", `sku` = " + this.db.escape(data['sku']) + ", `upc` = " + this.db.escape(data['upc']) + ", `ean` = " + this.db.escape(data['ean']) + ", `jan` = " + this.db.escape(data['jan']) + ", `isbn` = " + this.db.escape(data['isbn']) + ", `mpn` = " + this.db.escape(data['mpn']) + ", `location` = " + this.db.escape(data['location']) + ", `variant` = " + this.db.escape((data['variant']) ? JSON.stringify(data['variant']) : '') + ", `override` = " + this.db.escape((data['override']) ? JSON.stringify(data['override']) : '') + ", `quantity` = '" + data['quantity'] + "', `minimum` = '" + data['minimum'] + "', `subtract` = '" + ((data['subtract']) ? data['subtract'] : 0) + "', `stock_status_id` = '" + data['stock_status_id'] + "', `date_available` = " + this.db.escape(data['date_available']) + ", `manufacturer_id` = '" + data['manufacturer_id'] + "', `shipping` = '" + ((data['shipping']) ? data['shipping'] : 0) + "', `price` = '" + data['price'] + "', `points` = '" + data['points'] + "', `weight` = '" + data['weight'] + "', `weight_class_id` = '" + data['weight_class_id'] + "', `length` = '" + data['length'] + "', `width` = '" + data['width'] + "', `height` = '" + data['height'] + "', `length_class_id` = '" + data['length_class_id'] + "', `status` = '" + (data['status'] ? data['status'] : 0) + "', `tax_class_id` = '" + data['tax_class_id'] + "', `sort_order` = '" + data['sort_order'] + "', `date_modified` = NOW() WHERE `product_id` = '" + product_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "product` SET `model` = " + this.db.escape(data['model']) + ", `sku` = " + this.db.escape(data['sku']) + ", `upc` = " + this.db.escape(data['upc']) + ", `ean` = " + this.db.escape(data['ean']) + ", `jan` = " + this.db.escape(data['jan']) + ", `isbn` = " + this.db.escape(data['isbn']) + ", `mpn` = " + this.db.escape(data['mpn']) + ", `location` = " + this.db.escape(data['location']) + ", `variant` = " + this.db.escape((data['variant']) ? JSON.stringify(data['variant']) : '') + ", `override` = " + this.db.escape((data['override']) ? JSON.stringify(data['override']) : '') + ", `quantity` = " + this.db.quote(data['quantity']) + ", `minimum` = " + this.db.quote(data['minimum']) + ", `subtract` = " + this.db.quote(((data['subtract']) ? data['subtract'] : 0)) + ", `stock_status_id` = " + this.db.quote(data['stock_status_id']) + ", `date_available` = " + this.db.escape(data['date_available']) + ", `manufacturer_id` = " + this.db.quote(data['manufacturer_id']) + ", `shipping` = " + this.db.quote(((data['shipping']) ? data['shipping'] : 0)) + ", `price` = " + this.db.quote(data['price']) + ", `points` = " + this.db.quote(data['points']) + ", `weight` = " + this.db.quote(data['weight']) + ", `weight_class_id` = " + this.db.quote(data['weight_class_id']) + ", `length` = " + this.db.quote(data['length']) + ", `width` = " + this.db.quote(data['width']) + ", `height` = " + this.db.quote(data['height']) + ", `length_class_id` = " + this.db.quote(data['length_class_id']) + ", `status` = " + this.db.quote((data['status'] ? data['status'] : 0)) + ", `tax_class_id` = " + this.db.quote(data['tax_class_id']) + ", `sort_order` = " + this.db.quote(data['sort_order']) + ", `date_modified` = NOW() WHERE `product_id` = " + this.db.quote(product_id));
 
 		if (data['image']) {
-			await this.db.query("UPDATE `" + DB_PREFIX + "product` SET `image` = " + this.db.escape(data['image']) + " WHERE `product_id` = '" + product_id + "'");
+			await this.db.query("UPDATE `" + DB_PREFIX + "product` SET `image` = " + this.db.escape(data['image']) + " WHERE `product_id` = " + this.db.quote(product_id));
 		}
 
 		// Description
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_description` WHERE `product_id` = '" + product_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_description` WHERE `product_id` = " + this.db.quote(product_id));
 
 		for (let [language_id, value] of Object.entries(data['product_description'])) {
 			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "product_description` SET `product_id` = '" + product_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + ", `description` = " + this.db.escape(value['description']) + ", `tag` = " + this.db.escape(value['tag']) + ", `meta_title` = " + this.db.escape(value['meta_title']) + ", `meta_description` = " + this.db.escape(value['meta_description']) + ", `meta_keyword` = " + this.db.escape(value['meta_keyword']) + "");
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "product_description` SET `product_id` = " + this.db.quote(product_id) + ", `language_id` = " + this.db.quote(language_id) + ", `name` = " + this.db.escape(value['name']) + ", `description` = " + this.db.escape(value['description']) + ", `tag` = " + this.db.escape(value['tag']) + ", `meta_title` = " + this.db.escape(value['meta_title']) + ", `meta_description` = " + this.db.escape(value['meta_description']) + ", `meta_keyword` = " + this.db.escape(value['meta_keyword']));
 		}
 
 		// Categories
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_to_category` WHERE `product_id` = '" + product_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_to_category` WHERE `product_id` = " + this.db.quote(product_id));
 
 		if ((data['product_category'])) {
 			for (let category_id of data['product_category']) {
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_to_category` SET `product_id` = '" + product_id + "', `category_id` = '" + category_id + "'");
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_to_category` SET `product_id` = " + this.db.quote(product_id) + ", `category_id` = " + this.db.quote(category_id));
 			}
 		}
 
 		// Filters
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_filter` WHERE `product_id` = '" + product_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_filter` WHERE `product_id` = " + this.db.quote(product_id));
 
 		if ((data['product_filter'])) {
 			for (let filter_id of data['product_filter']) {
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_filter` SET `product_id` = '" + product_id + "', `filter_id` = '" + filter_id + "'");
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_filter` SET `product_id` = " + this.db.quote(product_id) + ", `filter_id` = " + this.db.quote(filter_id));
 			}
 		}
 
 		// Stores
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_to_store` WHERE `product_id` = '" + product_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_to_store` WHERE `product_id` = " + this.db.quote(product_id));
 
 		if ((data['product_store'])) {
 			for (let store_id of data['product_store']) {
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_to_store` SET `product_id` = '" + product_id + "', `store_id` = '" + store_id + "'");
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_to_store` SET `product_id` = " + this.db.quote(product_id) + ", `store_id` = " + this.db.quote(store_id));
 			}
 		}
 
 		// Downloads
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_to_download` WHERE `product_id` = '" + product_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_to_download` WHERE `product_id` = " + this.db.quote(product_id));
 
 		if ((data['product_download'])) {
 			for (let download_id of data['product_download']) {
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_to_download` SET `product_id` = '" + product_id + "', `download_id` = '" + download_id + "'");
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_to_download` SET `product_id` = " + this.db.quote(product_id) + ", `download_id` = " + this.db.quote(download_id));
 			}
 		}
 
 		// Related
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_related` WHERE `product_id` = '" + product_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_related` WHERE `related_id` = '" + product_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_related` WHERE `product_id` = " + this.db.quote(product_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_related` WHERE `related_id` = " + this.db.quote(product_id));
 
 		if ((data['product_related'])) {
 			for (let related_id of data['product_related']) {
-				await this.db.query("DELETE FROM `" + DB_PREFIX + "product_related` WHERE `product_id` = '" + product_id + "' AND `related_id` = '" + related_id + "'");
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_related` SET `product_id` = '" + product_id + "', `related_id` = '" + related_id + "'");
-				await this.db.query("DELETE FROM `" + DB_PREFIX + "product_related` WHERE `product_id` = '" + related_id + "' AND `related_id` = '" + product_id + "'");
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_related` SET `product_id` = '" + related_id + "', `related_id` = '" + product_id + "'");
+				await this.db.query("DELETE FROM `" + DB_PREFIX + "product_related` WHERE `product_id` = " + this.db.quote(product_id) + " AND `related_id` = " + this.db.quote(related_id));
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_related` SET `product_id` = " + this.db.quote(product_id) + ", `related_id` = " + this.db.quote(related_id));
+				await this.db.query("DELETE FROM `" + DB_PREFIX + "product_related` WHERE `product_id` = " + this.db.quote(related_id) + " AND `related_id` = " + this.db.quote(product_id));
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_related` SET `product_id` = " + this.db.quote(related_id) + ", `related_id` = " + this.db.quote(product_id));
 			}
 		}
 
 		// Attributes
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_attribute` WHERE `product_id` = '" + product_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_attribute` WHERE `product_id` = " + this.db.quote(product_id));
 
 		if ((data['product_attribute'])) {
 			for (let product_attribute of
 				data['product_attribute']) {
 				if (product_attribute['attribute_id']) {
 					// Removes duplicates
-					await this.db.query("DELETE FROM `" + DB_PREFIX + "product_attribute` WHERE `product_id` = '" + product_id + "' AND `attribute_id` = '" + product_attribute['attribute_id'] + "'");
+					await this.db.query("DELETE FROM `" + DB_PREFIX + "product_attribute` WHERE `product_id` = " + this.db.quote(product_id) + " AND `attribute_id` = " + this.db.quote(product_attribute['attribute_id']));
 
 					for (let [language_id, product_attribute_description] of Object.entries(product_attribute['product_attribute_description'])) {
 						language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
-						await this.db.query("INSERT INTO `" + DB_PREFIX + "product_attribute` SET `product_id` = '" + product_id + "', `attribute_id` = '" + product_attribute['attribute_id'] + "', `language_id` = '" + language_id + "', `text` = " + this.db.escape(product_attribute_description['text']) + "");
+						await this.db.query("INSERT INTO `" + DB_PREFIX + "product_attribute` SET `product_id` = " + this.db.quote(product_id) + ", `attribute_id` = " + this.db.quote(product_attribute['attribute_id']) + ", `language_id` = " + this.db.quote(language_id) + ", `text` = " + this.db.escape(product_attribute_description['text']));
 					}
 				}
 			}
 		}
 
 		// Options
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_option` WHERE `product_id` = '" + product_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_option_value` WHERE `product_id` = '" + product_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_option` WHERE `product_id` = " + this.db.quote(product_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_option_value` WHERE `product_id` = " + this.db.quote(product_id));
 
 		if ((data['product_option'])) {
 			for (let product_option of data['product_option']) {
 				if (product_option['type'] == 'select' || product_option['type'] == 'radio' || product_option['type'] == 'checkbox' || product_option['type'] == 'image') {
 					if (product_option['product_option_value'] && product_option['product_option_value'].length) {
-						await this.db.query("INSERT INTO `" + DB_PREFIX + "product_option` SET `product_option_id` = '" + product_option['product_option_id'] + "', `product_id` = '" + product_id + "', `option_id` = '" + product_option['option_id'] + "', `required` = '" + product_option['required'] + "'");
+						await this.db.query("INSERT INTO `" + DB_PREFIX + "product_option` SET `product_option_id` = " + this.db.quote(product_option['product_option_id']) + ", `product_id` = " + this.db.quote(product_id) + ", `option_id` = " + this.db.quote(product_option['option_id']) + ", `required` = " + this.db.quote(product_option['required']));
 
 						let product_option_id = this.db.getLastId();
 
 						for (let product_option_value of product_option['product_option_value']) {
-							await this.db.query("INSERT INTO `" + DB_PREFIX + "product_option_value` SET `product_option_value_id` = '" + product_option_value['product_option_value_id'] + "', `product_option_id` = '" + product_option_id + "', `product_id` = '" + product_id + "', `option_id` = '" + product_option['option_id'] + "', `option_value_id` = '" + product_option_value['option_value_id'] + "', `quantity` = '" + product_option_value['quantity'] + "', `subtract` = '" + product_option_value['subtract'] + "', `price` = '" + product_option_value['price'] + "', `price_prefix` = " + this.db.escape(product_option_value['price_prefix']) + ", `points` = '" + product_option_value['points'] + "', `points_prefix` = " + this.db.escape(product_option_value['points_prefix']) + ", `weight` = '" + product_option_value['weight'] + "', `weight_prefix` = " + this.db.escape(product_option_value['weight_prefix']) + "");
+							await this.db.query("INSERT INTO `" + DB_PREFIX + "product_option_value` SET `product_option_value_id` = " + this.db.quote(product_option_value['product_option_value_id']) + ", `product_option_id` = " + this.db.quote(product_option_id) + ", `product_id` = " + this.db.quote(product_id) + ", `option_id` = " + this.db.quote(product_option['option_id']) + ", `option_value_id` = " + this.db.quote(product_option_value['option_value_id']) + ", `quantity` = " + this.db.quote(product_option_value['quantity']) + ", `subtract` = " + this.db.quote(product_option_value['subtract']) + ", `price` = " + this.db.quote(product_option_value['price']) + ", `price_prefix` = " + this.db.escape(product_option_value['price_prefix']) + ", `points` = " + this.db.quote(product_option_value['points']) + ", `points_prefix` = " + this.db.escape(product_option_value['points_prefix']) + ", `weight` = " + this.db.quote(product_option_value['weight']) + ", `weight_prefix` = " + this.db.escape(product_option_value['weight_prefix']));
 						}
 					}
 				} else {
-					await this.db.query("INSERT INTO `" + DB_PREFIX + "product_option` SET `product_option_id` = '" + product_option['product_option_id'] + "', `product_id` = '" + product_id + "', `option_id` = '" + product_option['option_id'] + "', `value` = " + this.db.escape(product_option['value']) + ", `required` = '" + product_option['required'] + "'");
+					await this.db.query("INSERT INTO `" + DB_PREFIX + "product_option` SET `product_option_id` = " + this.db.quote(product_option['product_option_id']) + ", `product_id` = " + this.db.quote(product_id) + ", `option_id` = " + this.db.quote(product_option['option_id']) + ", `value` = " + this.db.escape(product_option['value']) + ", `required` = " + this.db.quote(product_option['required']));
 				}
 			}
 		}
 
 		// Subscription
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_subscription` WHERE `product_id` = '" + product_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_subscription` WHERE `product_id` = " + this.db.quote(product_id));
 
 		if ((data['product_subscription'])) {
 			for (let product_subscription of data['product_subscription']) {
-				let query = await this.db.query("SELECT `product_id` FROM `" + DB_PREFIX + "product_subscription` WHERE `product_id` = '" + product_id + "' AND `customer_group_id` = '" + product_subscription['customer_group_id'] + "' AND `subscription_plan_id` = '" + product_subscription['subscription_plan_id'] + "'");
+				let query = await this.db.query("SELECT `product_id` FROM `" + DB_PREFIX + "product_subscription` WHERE `product_id` = " + this.db.quote(product_id) + " AND `customer_group_id` = " + this.db.quote(product_subscription['customer_group_id']) + " AND `subscription_plan_id` = " + this.db.quote(product_subscription['subscription_plan_id']));
 
 				if (!query.num_rows) {
-					await this.db.query("INSERT INTO `" + DB_PREFIX + "product_subscription` SET `product_id` = '" + product_id + "', `customer_group_id` = '" + product_subscription['customer_group_id'] + "', `subscription_plan_id` = '" + product_subscription['subscription_plan_id'] + "', `trial_price` = '" + product_subscription['trial_price'] + "', `price` = '" + product_subscription['price'] + "'");
+					await this.db.query("INSERT INTO `" + DB_PREFIX + "product_subscription` SET `product_id` = " + this.db.quote(product_id) + ", `customer_group_id` = " + this.db.quote(product_subscription['customer_group_id']) + ", `subscription_plan_id` = " + this.db.quote(product_subscription['subscription_plan_id']) + ", `trial_price` = " + this.db.quote(product_subscription['trial_price']) + ", `price` = " + this.db.quote(product_subscription['price']));
 				}
 			}
 		}
 
 		// Discounts
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_discount` WHERE `product_id` = '" + product_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_discount` WHERE `product_id` = " + this.db.quote(product_id));
 
 		if ((data['product_discount'])) {
 			for (let product_discount of data['product_discount']) {
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_discount` SET `product_id` = '" + product_id + "', `customer_group_id` = '" + product_discount['customer_group_id'] + "', `quantity` = '" + product_discount['quantity'] + "', `priority` = '" + product_discount['priority'] + "', `price` = '" + product_discount['price'] + "', `date_start` = " + this.db.escape(product_discount['date_start']) + ", `date_end` = " + this.db.escape(product_discount['date_end']) + "");
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_discount` SET `product_id` = " + this.db.quote(product_id) + ", `customer_group_id` = " + this.db.quote(product_discount['customer_group_id']) + ", `quantity` = " + this.db.quote(product_discount['quantity']) + ", `priority` = " + this.db.quote(product_discount['priority']) + ", `price` = " + this.db.quote(product_discount['price']) + ", `date_start` = " + this.db.escape(product_discount['date_start']) + ", `date_end` = " + this.db.escape(product_discount['date_end']));
 			}
 		}
 
 		// Specials
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_special` WHERE `product_id` = '" + product_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_special` WHERE `product_id` = " + this.db.quote(product_id));
 
 		if ((data['product_special'])) {
 			for (let product_special of data['product_special']) {
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_special` SET `product_id` = '" + product_id + "', `customer_group_id` = '" + product_special['customer_group_id'] + "', `priority` = '" + product_special['priority'] + "', `price` = '" + product_special['price'] + "', `date_start` = " + this.db.escape(product_special['date_start']) + ", `date_end` = " + this.db.escape(product_special['date_end']) + "");
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_special` SET `product_id` = " + this.db.quote(product_id) + ", `customer_group_id` = " + this.db.quote(product_special['customer_group_id']) + ", `priority` = " + this.db.quote(product_special['priority']) + ", `price` = " + this.db.quote(product_special['price']) + ", `date_start` = " + this.db.escape(product_special['date_start']) + ", `date_end` = " + this.db.escape(product_special['date_end']));
 			}
 		}
 
 		// Images
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_image` WHERE `product_id` = '" + product_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_image` WHERE `product_id` = " + this.db.quote(product_id));
 
 		if ((data['product_image'])) {
 			for (let product_image of data['product_image']) {
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_image` SET `product_id` = '" + product_id + "', `image` = " + this.db.escape(product_image['image']) + ", `sort_order` = '" + product_image['sort_order'] + "'");
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_image` SET `product_id` = " + this.db.quote(product_id) + ", `image` = " + this.db.escape(product_image['image']) + ", `sort_order` = " + this.db.quote(product_image['sort_order']));
 			}
 		}
 
 		// Rewards
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_reward` WHERE `product_id` = '" + product_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_reward` WHERE `product_id` = " + this.db.quote(product_id));
 
 		if ((data['product_reward'])) {
 			for (let [customer_group_id, value] of Object.entries(data['product_reward'])) {
 				if (value['points'] > 0) {
-					await this.db.query("INSERT INTO `" + DB_PREFIX + "product_reward` SET `product_id` = '" + product_id + "', `customer_group_id` = '" + customer_group_id + "', `points` = '" + value['points'] + "'");
+					await this.db.query("INSERT INTO `" + DB_PREFIX + "product_reward` SET `product_id` = " + this.db.quote(product_id) + ", `customer_group_id` = " + this.db.quote(customer_group_id) + ", `points` = " + this.db.quote(value['points']));
 				}
 			}
 		}
 
 		// SEO URL
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "seo_url` WHERE `key` = 'product_id' AND `value` = '" + product_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "seo_url` WHERE `key` = 'product_id' AND `value` = " + this.db.quote(product_id));
 
 		if ((data['product_seo_url'])) {
 			for (let [store_id, language] of Object.entries(data['product_seo_url'])) {
 				store_id = store_id.indexOf('store') >= 0 ? store_id.split('-')[1] : store_id;
 				for (let [language_id, keyword] of Object.entries(language)) {
 					language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
-					await this.db.query("INSERT INTO `" + DB_PREFIX + "seo_url` SET `store_id` = '" + store_id + "', `language_id` = '" + language_id + "', `key` = 'product_id', `value` = '" + product_id + "', `keyword` = " + this.db.escape(keyword) + "");
+					await this.db.query("INSERT INTO `" + DB_PREFIX + "seo_url` SET `store_id` = " + this.db.quote(store_id) + ", `language_id` = " + this.db.quote(language_id) + ", `key` = 'product_id', `value` = " + this.db.quote(product_id) + ", `keyword` = " + this.db.escape(keyword));
 				}
 			}
 		}
 
 		// Layout
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_to_layout` WHERE `product_id` = '" + product_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_to_layout` WHERE `product_id` = " + this.db.quote(product_id));
 
 		if ((data['product_layout'])) {
 			for (let [store_id, layout_id] of Object.entries(data['product_layout'])) {
 				store_id = store_id.indexOf('store') >= 0 ? store_id.split('-')[1] : store_id;
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_to_layout` SET `product_id` = '" + product_id + "', `store_id` = '" + store_id + "', `layout_id` = '" + layout_id + "'");
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "product_to_layout` SET `product_id` = " + this.db.quote(product_id) + ", `store_id` = " + this.db.quote(store_id) + ", `layout_id` = " + this.db.quote(layout_id));
 			}
 		}
 
@@ -390,30 +390,30 @@ module.exports = class ProductCatalogModel extends global['OpencartSystemEngineM
 	 * @return void
 	 */
 	async deleteProduct(product_id) {
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "product` WHERE `product_id` = '" + product_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_attribute` WHERE `product_id` = '" + product_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_description` WHERE `product_id` = '" + product_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_discount` WHERE `product_id` = '" + product_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_filter` WHERE `product_id` = '" + product_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_image` WHERE `product_id` = '" + product_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_option` WHERE `product_id` = '" + product_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_option_value` WHERE `product_id` = '" + product_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_subscription` WHERE `product_id` = '" + product_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_related` WHERE `product_id` = '" + product_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_related` WHERE `related_id` = '" + product_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_report` WHERE `product_id` = '" + product_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_reward` WHERE `product_id` = '" + product_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_special` WHERE `product_id` = '" + product_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_to_category` WHERE `product_id` = '" + product_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_to_download` WHERE `product_id` = '" + product_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_to_layout` WHERE `product_id` = '" + product_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_to_store` WHERE `product_id` = '" + product_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "product` WHERE `product_id` = " + this.db.quote(product_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_attribute` WHERE `product_id` = " + this.db.quote(product_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_description` WHERE `product_id` = " + this.db.quote(product_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_discount` WHERE `product_id` = " + this.db.quote(product_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_filter` WHERE `product_id` = " + this.db.quote(product_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_image` WHERE `product_id` = " + this.db.quote(product_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_option` WHERE `product_id` = " + this.db.quote(product_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_option_value` WHERE `product_id` = " + this.db.quote(product_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_subscription` WHERE `product_id` = " + this.db.quote(product_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_related` WHERE `product_id` = " + this.db.quote(product_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_related` WHERE `related_id` = " + this.db.quote(product_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_report` WHERE `product_id` = " + this.db.quote(product_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_reward` WHERE `product_id` = " + this.db.quote(product_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_special` WHERE `product_id` = " + this.db.quote(product_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_to_category` WHERE `product_id` = " + this.db.quote(product_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_to_download` WHERE `product_id` = " + this.db.quote(product_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_to_layout` WHERE `product_id` = " + this.db.quote(product_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_to_store` WHERE `product_id` = " + this.db.quote(product_id));
 
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "review` WHERE `product_id` = '" + product_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "seo_url` WHERE `key` = 'product_id' AND `value` = '" + product_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "coupon_product` WHERE `product_id` = '" + product_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "review` WHERE `product_id` = " + this.db.quote(product_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "seo_url` WHERE `key` = 'product_id' AND `value` = " + this.db.quote(product_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "coupon_product` WHERE `product_id` = " + this.db.quote(product_id));
 
-		await this.db.query("UPDATE `" + DB_PREFIX + "product` SET `master_id` = '0' WHERE `master_id` = '" + product_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "product` SET `master_id` = '0' WHERE `master_id` = " + this.db.quote(product_id));
 
 		await this.cache.delete('product');
 	}
@@ -844,7 +844,7 @@ module.exports = class ProductCatalogModel extends global['OpencartSystemEngineM
 	 * @return void
 	 */
 	async editRating(product_id, rating) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "product` SET `rating` = '" + rating + "', `date_modified` = NOW() WHERE `product_id` = '" + product_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "product` SET `rating` = " + this.db.quote(rating) + ", `date_modified` = NOW() WHERE `product_id` = " + this.db.quote(product_id));
 	}
 
 	/**
@@ -853,7 +853,7 @@ module.exports = class ProductCatalogModel extends global['OpencartSystemEngineM
 	 * @return array
 	 */
 	async getProduct(product_id) {
-		let query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "product` p LEFT JOIN `" + DB_PREFIX + "product_description` pd ON (p.`product_id` = pd.`product_id`) WHERE p.`product_id` = '" + product_id + "' AND pd.`language_id` = '" + this.config.get('config_language_id') + "'");
+		let query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "product` p LEFT JOIN `" + DB_PREFIX + "product_description` pd ON (p.`product_id` = pd.`product_id`) WHERE p.`product_id` = " + this.db.quote(product_id) + " AND pd.`language_id` = " + this.db.quote(this.config.get('config_language_id')));
 
 		return query.row;
 	}
@@ -864,10 +864,10 @@ module.exports = class ProductCatalogModel extends global['OpencartSystemEngineM
 	 * @return array
 	 */
 	async getProducts(data = {}) {
-		let sql = "SELECT * FROM `" + DB_PREFIX + "product` p LEFT JOIN `" + DB_PREFIX + "product_description` pd ON (p.`product_id` = pd.`product_id`) WHERE pd.`language_id` = '" + this.config.get('config_language_id') + "'";
+		let sql = "SELECT * FROM `" + DB_PREFIX + "product` p LEFT JOIN `" + DB_PREFIX + "product_description` pd ON (p.`product_id` = pd.`product_id`) WHERE pd.`language_id` = " + this.db.quote(this.config.get('config_language_id'));
 
 		if ((data['filter_master_id'])) {
-			sql += " AND p.`master_id` = '" + data['filter_master_id'] + "'";
+			sql += " AND p.`master_id` = " + this.db.quote(data['filter_master_id']);
 		}
 
 		if (data['filter_name']) {
@@ -879,15 +879,15 @@ module.exports = class ProductCatalogModel extends global['OpencartSystemEngineM
 		}
 
 		if ((data['filter_price'])) {
-			sql += " AND p.`price` = " + data['filter_price'];
+			sql += " AND p.`price` = " + this.db.quote(data['filter_price']);
 		}
 
 		if ((data['filter_quantity']) && data['filter_quantity'] !== '') {
-			sql += " AND p.`quantity` = '" + data['filter_quantity'] + "'";
+			sql += " AND p.`quantity` = " + this.db.quote(data['filter_quantity']);
 		}
 
 		if (typeof data['filter_status'] != 'undefined' && data['filter_status'] !== '') {
-			sql += " AND p.`status` = '" + data['filter_status'] + "'";
+			sql += " AND p.`status` = " + this.db.quote(data['filter_status']);
 		}
 
 		sql += " GROUP BY p.`product_id`";
@@ -924,7 +924,7 @@ module.exports = class ProductCatalogModel extends global['OpencartSystemEngineM
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql += " LIMIT " + (parseInt(data['start']) || 0) + "," + (parseInt(data['limit']) || 0);
 		}
 		// console.log(sql)
 		let query = await this.db.query(sql);
@@ -940,7 +940,7 @@ module.exports = class ProductCatalogModel extends global['OpencartSystemEngineM
 	async getDescriptions(product_id) {
 		let product_description_data = {};
 
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_description` WHERE `product_id` = '" + product_id + "'");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_description` WHERE `product_id` = " + this.db.quote(product_id));
 
 		for (let result of query.rows) {
 			product_description_data[result['language_id']] = {
@@ -964,7 +964,7 @@ module.exports = class ProductCatalogModel extends global['OpencartSystemEngineM
 	async getCategories(product_id) {
 		let product_category_data = [];
 
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_to_category` WHERE `product_id` = '" + product_id + "'");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_to_category` WHERE `product_id` = " + this.db.quote(product_id));
 
 		for (let result of query.rows) {
 			product_category_data.push(result['category_id']);
@@ -981,7 +981,7 @@ module.exports = class ProductCatalogModel extends global['OpencartSystemEngineM
 	async getFilters(product_id) {
 		let product_filter_data = [];
 
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_filter` WHERE `product_id` = '" + product_id + "'");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_filter` WHERE `product_id` = " + this.db.quote(product_id));
 
 		for (let result of query.rows) {
 			product_filter_data.push(result['filter_id']);
@@ -998,12 +998,12 @@ module.exports = class ProductCatalogModel extends global['OpencartSystemEngineM
 	async getAttributes(product_id) {
 		let product_attribute_data = [];
 
-		const product_attribute_query = await this.db.query("SELECT attribute_id FROM `" + DB_PREFIX + "product_attribute` WHERE `product_id` = '" + product_id + "' GROUP BY `attribute_id`");
+		const product_attribute_query = await this.db.query("SELECT attribute_id FROM `" + DB_PREFIX + "product_attribute` WHERE `product_id` = " + this.db.quote(product_id) + " GROUP BY `attribute_id`");
 
 		for (let product_attribute of product_attribute_query.rows) {
 			let product_attribute_description_data = {};
 
-			const product_attribute_description_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_attribute` WHERE `product_id` = '" + product_id + "' AND `attribute_id` = '" + product_attribute['attribute_id'] + "'");
+			const product_attribute_description_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_attribute` WHERE `product_id` = " + this.db.quote(product_id) + " AND `attribute_id` = " + this.db.quote(product_attribute['attribute_id']));
 
 			for (let product_attribute_description of product_attribute_description_query.rows) {
 				product_attribute_description_data[product_attribute_description['language_id']] = { 'text': product_attribute_description['text'] };
@@ -1026,12 +1026,12 @@ module.exports = class ProductCatalogModel extends global['OpencartSystemEngineM
 	async getOptions(product_id) {
 		let product_option_data = [];
 
-		const product_option_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_option` po LEFT JOIN `" + DB_PREFIX + "option` o ON (po.`option_id` = o.`option_id`) LEFT JOIN `" + DB_PREFIX + "option_description` od ON (o.`option_id` = od.`option_id`) WHERE po.`product_id` = '" + product_id + "' AND od.`language_id` = '" + this.config.get('config_language_id') + "' ORDER BY o.`sort_order` ASC");
+		const product_option_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_option` po LEFT JOIN `" + DB_PREFIX + "option` o ON (po.`option_id` = o.`option_id`) LEFT JOIN `" + DB_PREFIX + "option_description` od ON (o.`option_id` = od.`option_id`) WHERE po.`product_id` = " + this.db.quote(product_id) + " AND od.`language_id` = " + this.db.quote(this.config.get('config_language_id')) + " ORDER BY o.`sort_order` ASC");
 
 		for (let product_option of product_option_query.rows) {
 			let product_option_value_data = [];
 
-			const product_option_value_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_option_value` pov LEFT JOIN `" + DB_PREFIX + "option_value` ov ON (pov.`option_value_id` = ov.`option_value_id`) WHERE pov.`product_option_id` = '" + product_option['product_option_id'] + "' ORDER BY ov.`sort_order` ASC");
+			const product_option_value_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_option_value` pov LEFT JOIN `" + DB_PREFIX + "option_value` ov ON (pov.`option_value_id` = ov.`option_value_id`) WHERE pov.`product_option_id` = " + this.db.quote(product_option['product_option_id']) + " ORDER BY ov.`sort_order` ASC");
 
 			for (let product_option_value of product_option_value_query.rows) {
 				product_option_value_data.push({
@@ -1069,7 +1069,7 @@ module.exports = class ProductCatalogModel extends global['OpencartSystemEngineM
 	 * @return array
 	 */
 	async getOptionValue(product_id, product_option_value_id) {
-		let query = await this.db.query("SELECT pov.`option_value_id`, ovd.`name`, pov.`quantity`, pov.`subtract`, pov.`price`, pov.`price_prefix`, pov.`points`, pov.`points_prefix`, pov.`weight`, pov.`weight_prefix` FROM `" + DB_PREFIX + "product_option_value` pov LEFT JOIN `" + DB_PREFIX + "option_value` ov ON (pov.`option_value_id` = ov.`option_value_id`) LEFT JOIN `" + DB_PREFIX + "option_value_description` ovd ON (ov.`option_value_id` = ovd.`option_value_id`) WHERE pov.`product_id` = '" + product_id + "' AND pov.`product_option_value_id` = '" + product_option_value_id + "' AND ovd.`language_id` = '" + this.config.get('config_language_id') + "'");
+		let query = await this.db.query("SELECT pov.`option_value_id`, ovd.`name`, pov.`quantity`, pov.`subtract`, pov.`price`, pov.`price_prefix`, pov.`points`, pov.`points_prefix`, pov.`weight`, pov.`weight_prefix` FROM `" + DB_PREFIX + "product_option_value` pov LEFT JOIN `" + DB_PREFIX + "option_value` ov ON (pov.`option_value_id` = ov.`option_value_id`) LEFT JOIN `" + DB_PREFIX + "option_value_description` ovd ON (ov.`option_value_id` = ovd.`option_value_id`) WHERE pov.`product_id` = " + this.db.quote(product_id) + " AND pov.`product_option_value_id` = " + this.db.quote(product_option_value_id) + " AND ovd.`language_id` = " + this.db.quote(this.config.get('config_language_id')));
 
 		return query.row;
 	}
@@ -1080,7 +1080,7 @@ module.exports = class ProductCatalogModel extends global['OpencartSystemEngineM
 	 * @return array
 	 */
 	async getOptionValuesByOptionId(option_id) {
-		let query = await this.db.query("SELECT DISTINCT `option_value_id` FROM `" + DB_PREFIX + "product_option_value` WHERE `option_id` = '" + option_id + "'");
+		let query = await this.db.query("SELECT DISTINCT `option_value_id` FROM `" + DB_PREFIX + "product_option_value` WHERE `option_id` = " + this.db.quote(option_id));
 
 		return query.rows;
 	}
@@ -1091,7 +1091,7 @@ module.exports = class ProductCatalogModel extends global['OpencartSystemEngineM
 	 * @return array
 	 */
 	async getImages(product_id) {
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_image` WHERE `product_id` = '" + product_id + "' ORDER BY `sort_order` ASC");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_image` WHERE `product_id` = " + this.db.quote(product_id) + " ORDER BY `sort_order` ASC");
 
 		return query.rows;
 	}
@@ -1102,7 +1102,7 @@ module.exports = class ProductCatalogModel extends global['OpencartSystemEngineM
 	 * @return array
 	 */
 	async getDiscounts(product_id) {
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_discount` WHERE `product_id` = '" + product_id + "' ORDER BY `quantity`, `priority`, `price`");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_discount` WHERE `product_id` = " + this.db.quote(product_id) + " ORDER BY `quantity`, `priority`, `price`");
 
 		return query.rows;
 	}
@@ -1113,7 +1113,7 @@ module.exports = class ProductCatalogModel extends global['OpencartSystemEngineM
 	 * @return array
 	 */
 	async getSpecials(product_id) {
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_special` WHERE `product_id` = '" + product_id + "' ORDER BY `priority`, `price`");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_special` WHERE `product_id` = " + this.db.quote(product_id) + " ORDER BY `priority`, `price`");
 
 		return query.rows;
 	}
@@ -1126,7 +1126,7 @@ module.exports = class ProductCatalogModel extends global['OpencartSystemEngineM
 	async getRewards(product_id) {
 		let product_reward_data = {};
 
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_reward` WHERE `product_id` = '" + product_id + "'");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_reward` WHERE `product_id` = " + this.db.quote(product_id));
 
 		for (let result of query.rows) {
 			product_reward_data[result['customer_group_id']] = { 'points': result['points'] };
@@ -1143,7 +1143,7 @@ module.exports = class ProductCatalogModel extends global['OpencartSystemEngineM
 	async getDownloads(product_id) {
 		let product_download_data = [];
 
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_to_download` WHERE `product_id` = '" + product_id + "'");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_to_download` WHERE `product_id` = " + this.db.quote(product_id));
 
 		for (let result of query.rows) {
 			product_download_data.push(result['download_id']);
@@ -1160,7 +1160,7 @@ module.exports = class ProductCatalogModel extends global['OpencartSystemEngineM
 	async getStores(product_id) {
 		let product_store_data = [];
 
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_to_store` WHERE `product_id` = '" + product_id + "'");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_to_store` WHERE `product_id` = " + this.db.quote(product_id));
 
 		for (let result of query.rows) {
 			product_store_data.push(result['store_id']);
@@ -1177,7 +1177,7 @@ module.exports = class ProductCatalogModel extends global['OpencartSystemEngineM
 	async getSeoUrls(product_id) {
 		let product_seo_url_data = {};
 
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "seo_url` WHERE `key` = 'product_id' AND `value` = '" + product_id + "'");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "seo_url` WHERE `key` = 'product_id' AND `value` = " + this.db.quote(product_id));
 
 		for (let result of query.rows) {
 			product_seo_url_data[result['store_id']] = product_seo_url_data[result['store_id']] || {};
@@ -1195,7 +1195,7 @@ module.exports = class ProductCatalogModel extends global['OpencartSystemEngineM
 	async getLayouts(product_id) {
 		let product_layout_data = {};
 
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_to_layout` WHERE `product_id` = '" + product_id + "'");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_to_layout` WHERE `product_id` = " + this.db.quote(product_id));
 
 		for (let result of query.rows) {
 			product_layout_data[result['store_id']] = result['layout_id'];
@@ -1212,7 +1212,7 @@ module.exports = class ProductCatalogModel extends global['OpencartSystemEngineM
 	async getRelated(product_id) {
 		let product_related_data = [];
 
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_related` WHERE `product_id` = '" + product_id + "'");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_related` WHERE `product_id` = " + this.db.quote(product_id));
 
 		for (let result of query.rows) {
 			product_related_data.push(result['related_id']);
@@ -1227,7 +1227,7 @@ module.exports = class ProductCatalogModel extends global['OpencartSystemEngineM
 	 * @return array
 	 */
 	async getSubscriptions(product_id) {
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_subscription` WHERE `product_id` = '" + product_id + "'");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_subscription` WHERE `product_id` = " + this.db.quote(product_id));
 
 		return query.rows;
 	}
@@ -1238,10 +1238,10 @@ module.exports = class ProductCatalogModel extends global['OpencartSystemEngineM
 	 * @return int
 	 */
 	async getTotalProducts(data = {}) {
-		let sql = "SELECT COUNT(DISTINCT p.`product_id`) AS `total` FROM `" + DB_PREFIX + "product` p LEFT JOIN `" + DB_PREFIX + "product_description` pd ON (p.`product_id` = pd.`product_id`) WHERE pd.`language_id` = '" + this.config.get('config_language_id') + "'";
+		let sql = "SELECT COUNT(DISTINCT p.`product_id`) AS `total` FROM `" + DB_PREFIX + "product` p LEFT JOIN `" + DB_PREFIX + "product_description` pd ON (p.`product_id` = pd.`product_id`) WHERE pd.`language_id` = " + this.db.quote(this.config.get('config_language_id'));
 
 		if ((data['filter_master_id'])) {
-			sql += " AND p.`master_id` = '" + data['filter_master_id'] + "'";
+			sql += " AND p.`master_id` = " + this.db.quote(data['filter_master_id']);
 		}
 
 		if (data['filter_name']) {
@@ -1253,15 +1253,15 @@ module.exports = class ProductCatalogModel extends global['OpencartSystemEngineM
 		}
 
 		if ((data['filter_price']) && data['filter_price'] !== '') {
-			sql += " AND p.`price` = " + data['filter_price'];
+			sql += " AND p.`price` = " + this.db.quote(data['filter_price']);
 		}
 
 		if ((data['filter_quantity']) && data['filter_quantity'] !== '') {
-			sql += " AND p.`quantity` = '" + data['filter_quantity'] + "'";
+			sql += " AND p.`quantity` = " + this.db.quote(data['filter_quantity']);
 		}
 
 		if (typeof data['filter_status'] != 'undefined' && data['filter_status'] !== '') {
-			sql += " AND p.`status` = '" + data['filter_status'] + "'";
+			sql += " AND p.`status` = " + this.db.quote(data['filter_status']);
 		}
 
 		let query = await this.db.query(sql);
@@ -1275,7 +1275,7 @@ module.exports = class ProductCatalogModel extends global['OpencartSystemEngineM
 	 * @return int
 	 */
 	async getTotalProductsByTaxClassId(tax_class_id) {
-		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "product` WHERE `tax_class_id` = '" + tax_class_id + "'");
+		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "product` WHERE `tax_class_id` = " + this.db.quote(tax_class_id));
 
 		return query.row['total'];
 	}
@@ -1286,7 +1286,7 @@ module.exports = class ProductCatalogModel extends global['OpencartSystemEngineM
 	 * @return int
 	 */
 	async getTotalProductsByStockStatusId(stock_status_id) {
-		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "product` WHERE `stock_status_id` = '" + stock_status_id + "'");
+		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "product` WHERE `stock_status_id` = " + this.db.quote(stock_status_id));
 
 		return query.row['total'];
 	}
@@ -1297,7 +1297,7 @@ module.exports = class ProductCatalogModel extends global['OpencartSystemEngineM
 	 * @return int
 	 */
 	async getTotalProductsByWeightClassId(weight_class_id) {
-		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "product` WHERE `weight_class_id` = '" + weight_class_id + "'");
+		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "product` WHERE `weight_class_id` = " + this.db.quote(weight_class_id));
 
 		return query.row['total'];
 	}
@@ -1308,7 +1308,7 @@ module.exports = class ProductCatalogModel extends global['OpencartSystemEngineM
 	 * @return int
 	 */
 	async getTotalProductsByLengthClassId(length_class_id) {
-		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "product` WHERE `length_class_id` = '" + length_class_id + "'");
+		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "product` WHERE `length_class_id` = " + this.db.quote(length_class_id));
 
 		return query.row['total'];
 	}
@@ -1319,7 +1319,7 @@ module.exports = class ProductCatalogModel extends global['OpencartSystemEngineM
 	 * @return int
 	 */
 	async getTotalProductsByDownloadId(download_id) {
-		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "product_to_download` WHERE `download_id` = '" + download_id + "'");
+		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "product_to_download` WHERE `download_id` = " + this.db.quote(download_id));
 
 		return query.row['total'];
 	}
@@ -1330,7 +1330,7 @@ module.exports = class ProductCatalogModel extends global['OpencartSystemEngineM
 	 * @return int
 	 */
 	async getTotalProductsByManufacturerId(manufacturer_id) {
-		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "product` WHERE `manufacturer_id` = '" + manufacturer_id + "'");
+		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "product` WHERE `manufacturer_id` = " + this.db.quote(manufacturer_id));
 
 		return query.row['total'];
 	}
@@ -1341,7 +1341,7 @@ module.exports = class ProductCatalogModel extends global['OpencartSystemEngineM
 	 * @return int
 	 */
 	async getTotalProductsByAttributeId(attribute_id) {
-		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "product_attribute` WHERE `attribute_id` = '" + attribute_id + "'");
+		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "product_attribute` WHERE `attribute_id` = " + this.db.quote(attribute_id));
 
 		return query.row['total'];
 	}
@@ -1352,7 +1352,7 @@ module.exports = class ProductCatalogModel extends global['OpencartSystemEngineM
 	 * @return int
 	 */
 	async getTotalProductsBySubscriptionPlanId(subscription_plan_id) {
-		let query = await this.db.query("SELECT COUNT(DISTINCT `product_id`) AS `total` FROM `" + DB_PREFIX + "product_subscription` WHERE `subscription_plan_id` = '" + subscription_plan_id + "'");
+		let query = await this.db.query("SELECT COUNT(DISTINCT `product_id`) AS `total` FROM `" + DB_PREFIX + "product_subscription` WHERE `subscription_plan_id` = " + this.db.quote(subscription_plan_id));
 
 		return query.row['total'];
 	}
@@ -1363,7 +1363,7 @@ module.exports = class ProductCatalogModel extends global['OpencartSystemEngineM
 	 * @return int
 	 */
 	async getTotalProductsByLayoutId(layout_id) {
-		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "product_to_layout` WHERE `layout_id` = '" + layout_id + "'");
+		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "product_to_layout` WHERE `layout_id` = " + this.db.quote(layout_id));
 
 		return query.row['total'];
 	}
@@ -1374,7 +1374,7 @@ module.exports = class ProductCatalogModel extends global['OpencartSystemEngineM
 	 * @return int
 	 */
 	async getTotalProductsByOptionId(option_id) {
-		let query = await this.db.query("SELECT COUNT(DISTINCT `product_id`) AS `total` FROM `" + DB_PREFIX + "product_option` WHERE `option_id` = '" + option_id + "'");
+		let query = await this.db.query("SELECT COUNT(DISTINCT `product_id`) AS `total` FROM `" + DB_PREFIX + "product_option` WHERE `option_id` = " + this.db.quote(option_id));
 
 		return query.row['total'];
 	}
@@ -1385,7 +1385,7 @@ module.exports = class ProductCatalogModel extends global['OpencartSystemEngineM
 	 * @return int
 	 */
 	async getTotalProductsByOptionValueId(option_value_id) {
-		let query = await this.db.query("SELECT COUNT(DISTINCT `product_id`) AS `total` FROM `" + DB_PREFIX + "product_option_value` WHERE `option_value_id` = '" + option_value_id + "'");
+		let query = await this.db.query("SELECT COUNT(DISTINCT `product_id`) AS `total` FROM `" + DB_PREFIX + "product_option_value` WHERE `option_value_id` = " + this.db.quote(option_value_id));
 
 		return query.row['total'];
 	}
@@ -1406,7 +1406,7 @@ module.exports = class ProductCatalogModel extends global['OpencartSystemEngineM
 			limit = 10;
 		}
 
-		let query = await this.db.query("SELECT `ip`, `store_id`, `country`, `date_added` FROM `" + DB_PREFIX + "product_report` WHERE `product_id` = '" + product_id + "' ORDER BY `date_added` ASC LIMIT " + start + "," + limit);
+		let query = await this.db.query("SELECT `ip`, `store_id`, `country`, `date_added` FROM `" + DB_PREFIX + "product_report` WHERE `product_id` = " + this.db.quote(product_id) + " ORDER BY `date_added` ASC LIMIT " + (parseInt(start) || 0) + "," + (parseInt(limit) || 0));
 
 		return query.rows;
 	}
@@ -1417,7 +1417,7 @@ module.exports = class ProductCatalogModel extends global['OpencartSystemEngineM
 	 * @return int
 	 */
 	async getTotalReports(product_id) {
-		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "product_report` WHERE `product_id` = '" + product_id + "'");
+		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "product_report` WHERE `product_id` = " + this.db.quote(product_id));
 
 		return query.row['total'];
 	}

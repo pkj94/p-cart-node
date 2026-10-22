@@ -33,7 +33,7 @@ module.exports = class Coupon extends global['OpencartSystemEngineModel'] {
 			// Products
 			let coupon_product_data = [];
 
-			const coupon_product_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "coupon_product` WHERE `coupon_id` = '" + coupon_query.row['coupon_id'] + "'");
+			const coupon_product_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "coupon_product` WHERE `coupon_id` = " + this.db.quote(coupon_query.row['coupon_id']));
 
 			for (let product of coupon_product_query.rows) {
 				coupon_product_data.push(product['product_id']);
@@ -42,7 +42,7 @@ module.exports = class Coupon extends global['OpencartSystemEngineModel'] {
 			// Categories
 			let coupon_category_data = [];
 
-			const coupon_category_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "coupon_category` cc LEFT JOIN `" + DB_PREFIX + "category_path` cp ON (cc.`category_id` = cp.`path_id`) WHERE cc.`coupon_id` = '" + coupon_query.row['coupon_id'] + "'");
+			const coupon_category_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "coupon_category` cc LEFT JOIN `" + DB_PREFIX + "category_path` cp ON (cc.`category_id` = cp.`path_id`) WHERE cc.`coupon_id` = " + this.db.quote(coupon_query.row['coupon_id']));
 
 			for (let category of coupon_category_query.rows) {
 				coupon_category_data.push(category['category_id']);
@@ -59,7 +59,7 @@ module.exports = class Coupon extends global['OpencartSystemEngineModel'] {
 					}
 
 					for (let category_id of coupon_category_data) {
-						const coupon_category_query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "product_to_category` WHERE `product_id` = '" + product['product_id'] + "' AND `category_id` = '" + category_id + "'");
+						const coupon_category_query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "product_to_category` WHERE `product_id` = " + this.db.quote(product['product_id']) + " AND `category_id` = " + this.db.quote(category_id));
 
 						if (coupon_category_query.row['total']) {
 							product_data.push(product['product_id']);
@@ -117,7 +117,7 @@ module.exports = class Coupon extends global['OpencartSystemEngineModel'] {
 	 * @return int
 	 */
 	async getTotalHistoriesByCustomerId(coupon, customer_id) {
-		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "coupon_history` ch LEFT JOIN `" + DB_PREFIX + "coupon` c ON (ch.`coupon_id` = c.`coupon_id`) WHERE c.`code` = " + this.db.escape(coupon) + " AND ch.`customer_id` = '" + customer_id + "'");
+		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "coupon_history` ch LEFT JOIN `" + DB_PREFIX + "coupon` c ON (ch.`coupon_id` = c.`coupon_id`) WHERE c.`code` = " + this.db.escape(coupon) + " AND ch.`customer_id` = " + this.db.quote(customer_id));
 
 		return query.row['total'];
 	}

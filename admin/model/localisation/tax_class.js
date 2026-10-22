@@ -14,7 +14,7 @@ module.exports = class TaxClassLocalisationModel extends global['OpencartSystemE
 
 		if ((data['tax_rule'])) {
 			for (let tax_rule of data['tax_rule']) {
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "tax_rule` SET `tax_class_id` = '" + tax_class_id + "', `tax_rate_id` = '" + tax_rule['tax_rate_id'] + "', `based` = " + this.db.escape(tax_rule['based']) + ", `priority` = '" + tax_rule['priority'] + "'");
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "tax_rule` SET `tax_class_id` = " + this.db.quote(tax_class_id) + ", `tax_rate_id` = " + this.db.quote(tax_rule['tax_rate_id']) + ", `based` = " + this.db.escape(tax_rule['based']) + ", `priority` = " + this.db.quote(tax_rule['priority']));
 			}
 		}
 
@@ -30,13 +30,13 @@ module.exports = class TaxClassLocalisationModel extends global['OpencartSystemE
 	 * @return void
 	 */
 	async editTaxClass(tax_class_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "tax_class` SET `title` = " + this.db.escape(data['title']) + ", `description` = " + this.db.escape(data['description']) + ", `date_modified` = NOW() WHERE `tax_class_id` = '" + tax_class_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "tax_class` SET `title` = " + this.db.escape(data['title']) + ", `description` = " + this.db.escape(data['description']) + ", `date_modified` = NOW() WHERE `tax_class_id` = " + this.db.quote(tax_class_id));
 
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "tax_rule` WHERE `tax_class_id` = '" + tax_class_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "tax_rule` WHERE `tax_class_id` = " + this.db.quote(tax_class_id));
 
 		if ((data['tax_rule'])) {
 			for (let tax_rule of data['tax_rule']) {
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "tax_rule` SET `tax_class_id` = '" + tax_class_id + "', `tax_rate_id` = '" + tax_rule['tax_rate_id'] + "', `based` = " + this.db.escape(tax_rule['based']) + ", `priority` = '" + tax_rule['priority'] + "'");
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "tax_rule` SET `tax_class_id` = " + this.db.quote(tax_class_id) + ", `tax_rate_id` = " + this.db.quote(tax_rule['tax_rate_id']) + ", `based` = " + this.db.escape(tax_rule['based']) + ", `priority` = " + this.db.quote(tax_rule['priority']));
 			}
 		}
 
@@ -49,8 +49,8 @@ module.exports = class TaxClassLocalisationModel extends global['OpencartSystemE
 	 * @return void
 	 */
 	async deleteTaxClass(tax_class_id) {
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "tax_class` WHERE `tax_class_id` = '" + tax_class_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "tax_rule` WHERE `tax_class_id` = '" + tax_class_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "tax_class` WHERE `tax_class_id` = " + this.db.quote(tax_class_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "tax_rule` WHERE `tax_class_id` = " + this.db.quote(tax_class_id));
 
 		await this.cache.delete('tax_class');
 	}
@@ -61,7 +61,7 @@ module.exports = class TaxClassLocalisationModel extends global['OpencartSystemE
 	 * @return array
 	 */
 	async getTaxClass(tax_class_id) {
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "tax_class` WHERE `tax_class_id` = '" + tax_class_id + "'");
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "tax_class` WHERE `tax_class_id` = " + this.db.quote(tax_class_id));
 
 		return query.row;
 	}
@@ -91,7 +91,7 @@ module.exports = class TaxClassLocalisationModel extends global['OpencartSystemE
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql += " LIMIT " + (parseInt(data['start']) || 0) + "," + (parseInt(data['limit']) || 0);
 		}
 
 		let tax_class_data = await this.cache.get('tax_class.' + md5(sql));
@@ -122,7 +122,7 @@ module.exports = class TaxClassLocalisationModel extends global['OpencartSystemE
 	 * @return array
 	 */
 	async getTaxRules(tax_class_id) {
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "tax_rule` WHERE `tax_class_id` = '" + tax_class_id + "' ORDER BY `priority` ASC");
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "tax_rule` WHERE `tax_class_id` = " + this.db.quote(tax_class_id) + " ORDER BY `priority` ASC");
 
 		return query.rows;
 	}
@@ -133,7 +133,7 @@ module.exports = class TaxClassLocalisationModel extends global['OpencartSystemE
 	 * @return int
 	 */
 	async getTotalTaxRulesByTaxRateId(tax_rate_id) {
-		const query = await this.db.query("SELECT COUNT(DISTINCT `tax_class_id`) AS `total` FROM `" + DB_PREFIX + "tax_rule` WHERE `tax_rate_id` = '" + tax_rate_id + "'");
+		const query = await this.db.query("SELECT COUNT(DISTINCT `tax_class_id`) AS `total` FROM `" + DB_PREFIX + "tax_rule` WHERE `tax_rate_id` = " + this.db.quote(tax_rate_id));
 
 		return query.row['total'];
 	}

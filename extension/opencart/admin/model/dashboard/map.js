@@ -7,7 +7,7 @@ global['OpencartAdminModelExtensionOpencartDashboardMap'] = class Map extends gl
 
 		if (Array.isArray(this.config.get('config_complete_status'))) {
 			for (let order_status_id of this.config.get('config_complete_status')) {
-				implode.push("'" + order_status_id + "'");
+				implode.push(this.db.quote(order_status_id));
 			}
 		}
 

@@ -5,24 +5,24 @@ module.exports = class Order extends global['OpencartSystemEngineModel'] {
 	 * @return int
 	 */
 	async addOrder(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "order` SET `invoice_prefix` = " + this.db.escape(data['invoice_prefix']) + ", `store_id` = '" + data['store_id'] + "', `store_name` = " + this.db.escape(data['store_name']) + ", `store_url` = " + this.db.escape(data['store_url']) + ", `customer_id` = '" + data['customer_id'] + "', `customer_group_id` = '" + data['customer_group_id'] + "', `firstname` = " + this.db.escape(data['firstname']) + ", `lastname` = " + this.db.escape(data['lastname']) + ", `email` = " + this.db.escape(data['email']) + ", `telephone` = " + this.db.escape(data['telephone']) + ", `custom_field` = " + this.db.escape((data['custom_field']) ? JSON.stringify(data['custom_field']) : '') + ", `payment_address_id` = '" + data['payment_address_id'] + "', `payment_firstname` = " + this.db.escape(data['payment_firstname']) + ", `payment_lastname` = " + this.db.escape(data['payment_lastname']) + ", `payment_company` = " + this.db.escape(data['payment_company']) + ", `payment_address_1` = " + this.db.escape(data['payment_address_1']) + ", `payment_address_2` = " + this.db.escape(data['payment_address_2']) + ", `payment_city` = " + this.db.escape(data['payment_city']) + ", `payment_postcode` = " + this.db.escape(data['payment_postcode']) + ", `payment_country` = " + this.db.escape(data['payment_country']) + ", `payment_country_id` = '" + data['payment_country_id'] + "', `payment_zone` = " + this.db.escape(data['payment_zone']) + ", `payment_zone_id` = '" + data['payment_zone_id'] + "', `payment_address_format` = " + this.db.escape(data['payment_address_format']) + ", `payment_custom_field` = " + this.db.escape((data['payment_custom_field']) ? JSON.stringify(data['payment_custom_field']) : '') + ", `payment_method` = " + this.db.escape(data['payment_method'] ? JSON.stringify(data['payment_method']) : '') + ", `shipping_address_id` = '" + data['shipping_address_id'] + "', `shipping_firstname` = " + this.db.escape(data['shipping_firstname']) + ", `shipping_lastname` = " + this.db.escape(data['shipping_lastname']) + ", `shipping_company` = " + this.db.escape(data['shipping_company']) + ", `shipping_address_1` = " + this.db.escape(data['shipping_address_1']) + ", `shipping_address_2` = " + this.db.escape(data['shipping_address_2']) + ", `shipping_city` = " + this.db.escape(data['shipping_city']) + ", `shipping_postcode` = " + this.db.escape(data['shipping_postcode']) + ", `shipping_country` = " + this.db.escape(data['shipping_country']) + ", `shipping_country_id` = '" + data['shipping_country_id'] + "', `shipping_zone` = " + this.db.escape(data['shipping_zone']) + ", `shipping_zone_id` = '" + data['shipping_zone_id'] + "', `shipping_address_format` = " + this.db.escape(data['shipping_address_format']) + ", `shipping_custom_field` = " + this.db.escape((data['shipping_custom_field']) ? JSON.stringify(data['shipping_custom_field']) : '') + ", `shipping_method` = " + this.db.escape(data['shipping_method'] ? JSON.stringify(data['shipping_method']) : '') + ", `comment` = " + this.db.escape(data['comment']) + ", `total` = '" + data['total'] + "', `affiliate_id` = '" + data['affiliate_id'] + "', `commission` = '" + data['commission'] + "', `marketing_id` = '" + data['marketing_id'] + "', `tracking` = " + this.db.escape(data['tracking']) + ", `language_id` = '" + data['language_id'] + "', `currency_id` = '" + data['currency_id'] + "', `currency_code` = " + this.db.escape(data['currency_code']) + ", `currency_value` = '" + data['currency_value'] + "', `ip` = " + this.db.escape(data['ip']) + ", `forwarded_ip` = " + this.db.escape(data['forwarded_ip']) + ", `user_agent` = " + this.db.escape(data['user_agent']) + ", `accept_language` = " + this.db.escape(data['accept_language']) + ", `date_added` = NOW(), `date_modified` = NOW()");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "order` SET `invoice_prefix` = " + this.db.escape(data['invoice_prefix']) + ", `store_id` = " + this.db.quote(data['store_id']) + ", `store_name` = " + this.db.escape(data['store_name']) + ", `store_url` = " + this.db.escape(data['store_url']) + ", `customer_id` = " + this.db.quote(data['customer_id']) + ", `customer_group_id` = " + this.db.quote(data['customer_group_id']) + ", `firstname` = " + this.db.escape(data['firstname']) + ", `lastname` = " + this.db.escape(data['lastname']) + ", `email` = " + this.db.escape(data['email']) + ", `telephone` = " + this.db.escape(data['telephone']) + ", `custom_field` = " + this.db.escape((data['custom_field']) ? JSON.stringify(data['custom_field']) : '') + ", `payment_address_id` = " + this.db.quote(data['payment_address_id']) + ", `payment_firstname` = " + this.db.escape(data['payment_firstname']) + ", `payment_lastname` = " + this.db.escape(data['payment_lastname']) + ", `payment_company` = " + this.db.escape(data['payment_company']) + ", `payment_address_1` = " + this.db.escape(data['payment_address_1']) + ", `payment_address_2` = " + this.db.escape(data['payment_address_2']) + ", `payment_city` = " + this.db.escape(data['payment_city']) + ", `payment_postcode` = " + this.db.escape(data['payment_postcode']) + ", `payment_country` = " + this.db.escape(data['payment_country']) + ", `payment_country_id` = " + this.db.quote(data['payment_country_id']) + ", `payment_zone` = " + this.db.escape(data['payment_zone']) + ", `payment_zone_id` = " + this.db.quote(data['payment_zone_id']) + ", `payment_address_format` = " + this.db.escape(data['payment_address_format']) + ", `payment_custom_field` = " + this.db.escape((data['payment_custom_field']) ? JSON.stringify(data['payment_custom_field']) : '') + ", `payment_method` = " + this.db.escape(data['payment_method'] ? JSON.stringify(data['payment_method']) : '') + ", `shipping_address_id` = " + this.db.quote(data['shipping_address_id']) + ", `shipping_firstname` = " + this.db.escape(data['shipping_firstname']) + ", `shipping_lastname` = " + this.db.escape(data['shipping_lastname']) + ", `shipping_company` = " + this.db.escape(data['shipping_company']) + ", `shipping_address_1` = " + this.db.escape(data['shipping_address_1']) + ", `shipping_address_2` = " + this.db.escape(data['shipping_address_2']) + ", `shipping_city` = " + this.db.escape(data['shipping_city']) + ", `shipping_postcode` = " + this.db.escape(data['shipping_postcode']) + ", `shipping_country` = " + this.db.escape(data['shipping_country']) + ", `shipping_country_id` = " + this.db.quote(data['shipping_country_id']) + ", `shipping_zone` = " + this.db.escape(data['shipping_zone']) + ", `shipping_zone_id` = " + this.db.quote(data['shipping_zone_id']) + ", `shipping_address_format` = " + this.db.escape(data['shipping_address_format']) + ", `shipping_custom_field` = " + this.db.escape((data['shipping_custom_field']) ? JSON.stringify(data['shipping_custom_field']) : '') + ", `shipping_method` = " + this.db.escape(data['shipping_method'] ? JSON.stringify(data['shipping_method']) : '') + ", `comment` = " + this.db.escape(data['comment']) + ", `total` = " + this.db.quote(data['total']) + ", `affiliate_id` = " + this.db.quote(data['affiliate_id']) + ", `commission` = " + this.db.quote(data['commission']) + ", `marketing_id` = " + this.db.quote(data['marketing_id']) + ", `tracking` = " + this.db.escape(data['tracking']) + ", `language_id` = " + this.db.quote(data['language_id']) + ", `currency_id` = " + this.db.quote(data['currency_id']) + ", `currency_code` = " + this.db.escape(data['currency_code']) + ", `currency_value` = " + this.db.quote(data['currency_value']) + ", `ip` = " + this.db.escape(data['ip']) + ", `forwarded_ip` = " + this.db.escape(data['forwarded_ip']) + ", `user_agent` = " + this.db.escape(data['user_agent']) + ", `accept_language` = " + this.db.escape(data['accept_language']) + ", `date_added` = NOW(), `date_modified` = NOW()");
 
 		const order_id = this.db.getLastId();
 
 		// Products
 		if ((data['products'] && data['products'].length)) {
 			for (let product of data['products']) {
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "order_product` SET `order_id` = '" + order_id + "', `product_id` = '" + product['product_id'] + "', `master_id` = '" + product['master_id'] + "', `name` = " + this.db.escape(product['name']) + ", `model` = " + this.db.escape(product['model']) + ", `quantity` = '" + product['quantity'] + "', `price` = '" + product['price'] + "', `total` = '" + product['total'] + "', `tax` = '" + product['tax'] + "', `reward` = '" + product['reward'] + "'");
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "order_product` SET `order_id` = " + this.db.quote(order_id) + ", `product_id` = " + this.db.quote(product['product_id']) + ", `master_id` = " + this.db.quote(product['master_id']) + ", `name` = " + this.db.escape(product['name']) + ", `model` = " + this.db.escape(product['model']) + ", `quantity` = " + this.db.quote(product['quantity']) + ", `price` = " + this.db.quote(product['price']) + ", `total` = " + this.db.quote(product['total']) + ", `tax` = " + this.db.quote(product['tax']) + ", `reward` = " + this.db.quote(product['reward']));
 
 				const order_product_id = this.db.getLastId();
 
 				for (let option of product['option']) {
-					await this.db.query("INSERT INTO `" + DB_PREFIX + "order_option` SET `order_id` = '" + order_id + "', `order_product_id` = '" + order_product_id + "', `product_option_id` = '" + option['product_option_id'] + "', `product_option_value_id` = '" + option['product_option_value_id'] + "', `name` = " + this.db.escape(option['name']) + ", `value` = " + this.db.escape(option['value']) + ", `type` = " + this.db.escape(option['type']) + "");
+					await this.db.query("INSERT INTO `" + DB_PREFIX + "order_option` SET `order_id` = " + this.db.quote(order_id) + ", `order_product_id` = " + this.db.quote(order_product_id) + ", `product_option_id` = " + this.db.quote(option['product_option_id']) + ", `product_option_value_id` = " + this.db.quote(option['product_option_value_id']) + ", `name` = " + this.db.escape(option['name']) + ", `value` = " + this.db.escape(option['value']) + ", `type` = " + this.db.escape(option['type']));
 				}
 
 				// If subscription add details
 				if (product['subscription'] && product['subscription'].subscription_plan_id) {
-					await this.db.query("INSERT INTO `" + DB_PREFIX + "order_subscription` SET `order_id` = '" + order_id + "', `order_product_id` = '" + order_product_id + "', `subscription_plan_id` = '" + product['subscription']['subscription_plan_id'] + "', `trial_price` = '" + product['subscription']['trial_price'] + "', `trial_tax` = '" + product['subscription']['trial_tax'] + "', `trial_frequency` = " + this.db.escape(product['subscription']['trial_frequency']) + ", `trial_cycle` = '" + product['subscription']['trial_cycle'] + "', `trial_duration` = '" + product['subscription']['trial_duration'] + "', `trial_remaining` = '" + product['subscription']['trial_remaining'] + "', `trial_status` = '" + product['subscription']['trial_status'] + "', `price` = '" + product['subscription']['price'] + "', `tax` = '" + product['subscription']['tax'] + "', `frequency` = " + this.db.escape(product['subscription']['frequency']) + ", `cycle` = '" + product['subscription']['cycle'] + "', `duration` = '" + product['subscription']['duration'] + "'");
+					await this.db.query("INSERT INTO `" + DB_PREFIX + "order_subscription` SET `order_id` = " + this.db.quote(order_id) + ", `order_product_id` = " + this.db.quote(order_product_id) + ", `subscription_plan_id` = " + this.db.quote(product['subscription']['subscription_plan_id']) + ", `trial_price` = " + this.db.quote(product['subscription']['trial_price']) + ", `trial_tax` = " + this.db.quote(product['subscription']['trial_tax']) + ", `trial_frequency` = " + this.db.escape(product['subscription']['trial_frequency']) + ", `trial_cycle` = " + this.db.quote(product['subscription']['trial_cycle']) + ", `trial_duration` = " + this.db.quote(product['subscription']['trial_duration']) + ", `trial_remaining` = " + this.db.quote(product['subscription']['trial_remaining']) + ", `trial_status` = " + this.db.quote(product['subscription']['trial_status']) + ", `price` = " + this.db.quote(product['subscription']['price']) + ", `tax` = " + this.db.quote(product['subscription']['tax']) + ", `frequency` = " + this.db.escape(product['subscription']['frequency']) + ", `cycle` = " + this.db.quote(product['subscription']['cycle']) + ", `duration` = " + this.db.quote(product['subscription']['duration']));
 				}
 			}
 		}
@@ -32,20 +32,20 @@ module.exports = class Order extends global['OpencartSystemEngineModel'] {
 			this.load.model('checkout/voucher', this);
 
 			for (let voucher of data['vouchers']) {
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "order_voucher` SET `order_id` = '" + order_id + "', `description` = " + this.db.escape(voucher['description']) + ", `code` = " + this.db.escape(voucher['code']) + ", `from_name` = " + this.db.escape(voucher['from_name']) + ", `from_email` = " + this.db.escape(voucher['from_email']) + ", `to_name` = " + this.db.escape(voucher['to_name']) + ", `to_email` = " + this.db.escape(voucher['to_email']) + ", `voucher_theme_id` = '" + voucher['voucher_theme_id'] + "', `message` = " + this.db.escape(voucher['message']) + ", `amount` = '" + voucher['amount'] + "'");
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "order_voucher` SET `order_id` = " + this.db.quote(order_id) + ", `description` = " + this.db.escape(voucher['description']) + ", `code` = " + this.db.escape(voucher['code']) + ", `from_name` = " + this.db.escape(voucher['from_name']) + ", `from_email` = " + this.db.escape(voucher['from_email']) + ", `to_name` = " + this.db.escape(voucher['to_name']) + ", `to_email` = " + this.db.escape(voucher['to_email']) + ", `voucher_theme_id` = " + this.db.quote(voucher['voucher_theme_id']) + ", `message` = " + this.db.escape(voucher['message']) + ", `amount` = " + this.db.quote(voucher['amount']));
 
 				const order_voucher_id = this.db.getLastId();
 
 				const voucher_id = await this.model_checkout_voucher.addVoucher(order_id, voucher);
 
-				await this.db.query("UPDATE `" + DB_PREFIX + "order_voucher` SET `voucher_id` = '" + voucher_id + "' WHERE `order_voucher_id` = '" + order_voucher_id + "'");
+				await this.db.query("UPDATE `" + DB_PREFIX + "order_voucher` SET `voucher_id` = " + this.db.quote(voucher_id) + " WHERE `order_voucher_id` = " + this.db.quote(order_voucher_id));
 			}
 		}
 
 		// Totals
 		if ((data['totals'] && data['totals'].length)) {
 			for (let total of data['totals']) {
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "order_total` SET `order_id` = '" + order_id + "', `extension` = " + this.db.escape(total['extension']) + ", `code` = " + this.db.escape(total['code']) + ", `title` = " + this.db.escape(total['title']) + ", `value` = '" + total['value'] + "', `sort_order` = '" + total['sort_order'] + "'");
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "order_total` SET `order_id` = " + this.db.quote(order_id) + ", `extension` = " + this.db.escape(total['extension']) + ", `code` = " + this.db.escape(total['code']) + ", `title` = " + this.db.escape(total['title']) + ", `value` = " + this.db.quote(total['value']) + ", `sort_order` = " + this.db.quote(total['sort_order']));
 			}
 		}
 
@@ -72,25 +72,25 @@ module.exports = class Order extends global['OpencartSystemEngineModel'] {
 				}
 			}
 
-			await this.db.query("UPDATE `" + DB_PREFIX + "order` SET `invoice_prefix` = " + this.db.escape(data['invoice_prefix']) + ", `store_id` = '" + data['store_id'] + "', `store_name` = " + this.db.escape(data['store_name']) + ", `store_url` = " + this.db.escape(data['store_url']) + ", `customer_id` = '" + data['customer_id'] + "', `customer_group_id` = '" + data['customer_group_id'] + "', `firstname` = " + this.db.escape(data['firstname']) + ", `lastname` = " + this.db.escape(data['lastname']) + ", `email` = " + this.db.escape(data['email']) + ", `telephone` = " + this.db.escape(data['telephone']) + ", `custom_field` = " + this.db.escape(JSON.stringify(data['custom_field'])) + ", `payment_address_id` = '" + data['payment_address_id'] + "', `payment_firstname` = " + this.db.escape(data['payment_firstname']) + ", `payment_lastname` = " + this.db.escape(data['payment_lastname']) + ", `payment_company` = " + this.db.escape(data['payment_company']) + ", `payment_address_1` = " + this.db.escape(data['payment_address_1']) + ", `payment_address_2` = " + this.db.escape(data['payment_address_2']) + ", `payment_city` = " + this.db.escape(data['payment_city']) + ", `payment_postcode` = " + this.db.escape(data['payment_postcode']) + ", `payment_country` = " + this.db.escape(data['payment_country']) + ", `payment_country_id` = '" + data['payment_country_id'] + "', `payment_zone` = " + this.db.escape(data['payment_zone']) + ", `payment_zone_id` = '" + data['payment_zone_id'] + "', `payment_address_format` = " + this.db.escape(data['payment_address_format']) + ", `payment_custom_field` = " + this.db.escape((data['payment_custom_field']) ? JSON.stringify(data['payment_custom_field']) : '') + ", `payment_method` = " + this.db.escape(data['payment_method'] ? JSON.stringify(data['payment_method']) : '') + ", `shipping_address_id` = '" + data['shipping_address_id'] + "', `shipping_firstname` = " + this.db.escape(data['shipping_firstname']) + ", `shipping_lastname` = " + this.db.escape(data['shipping_lastname']) + ", `shipping_company` = " + this.db.escape(data['shipping_company']) + ", `shipping_address_1` = " + this.db.escape(data['shipping_address_1']) + ", `shipping_address_2` = " + this.db.escape(data['shipping_address_2']) + ", `shipping_city` = " + this.db.escape(data['shipping_city']) + ", `shipping_postcode` = " + this.db.escape(data['shipping_postcode']) + ", `shipping_country` = " + this.db.escape(data['shipping_country']) + ", `shipping_country_id` = '" + data['shipping_country_id'] + "', `shipping_zone` = " + this.db.escape(data['shipping_zone']) + ", `shipping_zone_id` = '" + data['shipping_zone_id'] + "', `shipping_address_format` = " + this.db.escape(data['shipping_address_format']) + ", `shipping_custom_field` = " + this.db.escape((data['shipping_custom_field']) ? JSON.stringify(data['shipping_custom_field']) : '') + ", `shipping_method` = " + this.db.escape(data['shipping_method'] ? JSON.stringify(data['shipping_method']) : '') + ", `comment` = " + this.db.escape(data['comment']) + ", `total` = '" + data['total'] + "', `affiliate_id` = '" + data['affiliate_id'] + "', `commission` = '" + data['commission'] + "', `date_modified` = NOW() WHERE `order_id` = '" + order_id + "'");
+			await this.db.query("UPDATE `" + DB_PREFIX + "order` SET `invoice_prefix` = " + this.db.escape(data['invoice_prefix']) + ", `store_id` = " + this.db.quote(data['store_id']) + ", `store_name` = " + this.db.escape(data['store_name']) + ", `store_url` = " + this.db.escape(data['store_url']) + ", `customer_id` = " + this.db.quote(data['customer_id']) + ", `customer_group_id` = " + this.db.quote(data['customer_group_id']) + ", `firstname` = " + this.db.escape(data['firstname']) + ", `lastname` = " + this.db.escape(data['lastname']) + ", `email` = " + this.db.escape(data['email']) + ", `telephone` = " + this.db.escape(data['telephone']) + ", `custom_field` = " + this.db.escape(JSON.stringify(data['custom_field'])) + ", `payment_address_id` = " + this.db.quote(data['payment_address_id']) + ", `payment_firstname` = " + this.db.escape(data['payment_firstname']) + ", `payment_lastname` = " + this.db.escape(data['payment_lastname']) + ", `payment_company` = " + this.db.escape(data['payment_company']) + ", `payment_address_1` = " + this.db.escape(data['payment_address_1']) + ", `payment_address_2` = " + this.db.escape(data['payment_address_2']) + ", `payment_city` = " + this.db.escape(data['payment_city']) + ", `payment_postcode` = " + this.db.escape(data['payment_postcode']) + ", `payment_country` = " + this.db.escape(data['payment_country']) + ", `payment_country_id` = " + this.db.quote(data['payment_country_id']) + ", `payment_zone` = " + this.db.escape(data['payment_zone']) + ", `payment_zone_id` = " + this.db.quote(data['payment_zone_id']) + ", `payment_address_format` = " + this.db.escape(data['payment_address_format']) + ", `payment_custom_field` = " + this.db.escape((data['payment_custom_field']) ? JSON.stringify(data['payment_custom_field']) : '') + ", `payment_method` = " + this.db.escape(data['payment_method'] ? JSON.stringify(data['payment_method']) : '') + ", `shipping_address_id` = " + this.db.quote(data['shipping_address_id']) + ", `shipping_firstname` = " + this.db.escape(data['shipping_firstname']) + ", `shipping_lastname` = " + this.db.escape(data['shipping_lastname']) + ", `shipping_company` = " + this.db.escape(data['shipping_company']) + ", `shipping_address_1` = " + this.db.escape(data['shipping_address_1']) + ", `shipping_address_2` = " + this.db.escape(data['shipping_address_2']) + ", `shipping_city` = " + this.db.escape(data['shipping_city']) + ", `shipping_postcode` = " + this.db.escape(data['shipping_postcode']) + ", `shipping_country` = " + this.db.escape(data['shipping_country']) + ", `shipping_country_id` = " + this.db.quote(data['shipping_country_id']) + ", `shipping_zone` = " + this.db.escape(data['shipping_zone']) + ", `shipping_zone_id` = " + this.db.quote(data['shipping_zone_id']) + ", `shipping_address_format` = " + this.db.escape(data['shipping_address_format']) + ", `shipping_custom_field` = " + this.db.escape((data['shipping_custom_field']) ? JSON.stringify(data['shipping_custom_field']) : '') + ", `shipping_method` = " + this.db.escape(data['shipping_method'] ? JSON.stringify(data['shipping_method']) : '') + ", `comment` = " + this.db.escape(data['comment']) + ", `total` = " + this.db.quote(data['total']) + ", `affiliate_id` = " + this.db.quote(data['affiliate_id']) + ", `commission` = " + this.db.quote(data['commission']) + ", `date_modified` = NOW() WHERE `order_id` = " + this.db.quote(order_id));
 
-			await this.db.query("DELETE FROM `" + DB_PREFIX + "order_product` WHERE `order_id` = '" + order_id + "'");
-			await this.db.query("DELETE FROM `" + DB_PREFIX + "order_option` WHERE `order_id` = '" + order_id + "'");
-			await this.db.query("DELETE FROM `" + DB_PREFIX + "order_subscription` WHERE `order_id` = '" + order_id + "'");
+			await this.db.query("DELETE FROM `" + DB_PREFIX + "order_product` WHERE `order_id` = " + this.db.quote(order_id));
+			await this.db.query("DELETE FROM `" + DB_PREFIX + "order_option` WHERE `order_id` = " + this.db.quote(order_id));
+			await this.db.query("DELETE FROM `" + DB_PREFIX + "order_subscription` WHERE `order_id` = " + this.db.quote(order_id));
 
 			// Products
 			if ((data['products'] && data['products'].length)) {
 				for (let product of data['products']) {
-					await this.db.query("INSERT INTO `" + DB_PREFIX + "order_product` SET `order_id` = '" + order_id + "', `product_id` = '" + product['product_id'] + "', `master_id` = '" + product['master_id'] + "', `name` = " + this.db.escape(product['name']) + ", `model` = " + this.db.escape(product['model']) + ", `quantity` = '" + product['quantity'] + "', `price` = '" + product['price'] + "', `total` = '" + product['total'] + "', `tax` = '" + product['tax'] + "', `reward` = '" + product['reward'] + "'");
+					await this.db.query("INSERT INTO `" + DB_PREFIX + "order_product` SET `order_id` = " + this.db.quote(order_id) + ", `product_id` = " + this.db.quote(product['product_id']) + ", `master_id` = " + this.db.quote(product['master_id']) + ", `name` = " + this.db.escape(product['name']) + ", `model` = " + this.db.escape(product['model']) + ", `quantity` = " + this.db.quote(product['quantity']) + ", `price` = " + this.db.quote(product['price']) + ", `total` = " + this.db.quote(product['total']) + ", `tax` = " + this.db.quote(product['tax']) + ", `reward` = " + this.db.quote(product['reward']));
 
 					const order_product_id = this.db.getLastId();
 
 					for (let option of product['option']) {
-						await this.db.query("INSERT INTO `" + DB_PREFIX + "order_option` SET `order_id` = '" + order_id + "', `order_product_id` = '" + order_product_id + "', `product_option_id` = '" + option['product_option_id'] + "', `product_option_value_id` = '" + option['product_option_value_id'] + "', `name` = " + this.db.escape(option['name']) + ", `value` = " + this.db.escape(option['value']) + ", `type` = " + this.db.escape(option['type']) + "");
+						await this.db.query("INSERT INTO `" + DB_PREFIX + "order_option` SET `order_id` = " + this.db.quote(order_id) + ", `order_product_id` = " + this.db.quote(order_product_id) + ", `product_option_id` = " + this.db.quote(option['product_option_id']) + ", `product_option_value_id` = " + this.db.quote(option['product_option_value_id']) + ", `name` = " + this.db.escape(option['name']) + ", `value` = " + this.db.escape(option['value']) + ", `type` = " + this.db.escape(option['type']));
 					}
 
 					if (product['subscription'] && product['subscription'].subscription_plan_id) {
-						await this.db.query("INSERT INTO `" + DB_PREFIX + "order_subscription` SET `order_id` = '" + order_id + "', `order_product_id` = '" + order_product_id + "', `subscription_plan_id` = '" + product['subscription']['subscription_plan_id'] + "', `trial_price` = '" + product['subscription']['trial_price'] + "', `trial_tax` = '" + product['subscription']['trial_tax'] + "', `trial_frequency` = " + this.db.escape(product['subscription']['trial_frequency']) + ", `trial_cycle` = '" + product['subscription']['trial_cycle'] + "', `trial_duration` = '" + product['subscription']['trial_duration'] + "', `trial_remaining` = '" + product['subscription']['trial_remaining'] + "', `trial_status` = '" + product['subscription']['trial_status'] + "', `price` = '" + product['subscription']['price'] + "', `tax` = '" + product['subscription']['tax'] + "', `frequency` = " + this.db.escape(product['subscription']['frequency']) + ", `cycle` = '" + product['subscription']['cycle'] + "', `duration` = '" + product['subscription']['duration'] + "'");
+						await this.db.query("INSERT INTO `" + DB_PREFIX + "order_subscription` SET `order_id` = " + this.db.quote(order_id) + ", `order_product_id` = " + this.db.quote(order_product_id) + ", `subscription_plan_id` = " + this.db.quote(product['subscription']['subscription_plan_id']) + ", `trial_price` = " + this.db.quote(product['subscription']['trial_price']) + ", `trial_tax` = " + this.db.quote(product['subscription']['trial_tax']) + ", `trial_frequency` = " + this.db.escape(product['subscription']['trial_frequency']) + ", `trial_cycle` = " + this.db.quote(product['subscription']['trial_cycle']) + ", `trial_duration` = " + this.db.quote(product['subscription']['trial_duration']) + ", `trial_remaining` = " + this.db.quote(product['subscription']['trial_remaining']) + ", `trial_status` = " + this.db.quote(product['subscription']['trial_status']) + ", `price` = " + this.db.quote(product['subscription']['price']) + ", `tax` = " + this.db.quote(product['subscription']['tax']) + ", `frequency` = " + this.db.escape(product['subscription']['frequency']) + ", `cycle` = " + this.db.quote(product['subscription']['cycle']) + ", `duration` = " + this.db.quote(product['subscription']['duration']));
 					}
 				}
 			}
@@ -101,26 +101,26 @@ module.exports = class Order extends global['OpencartSystemEngineModel'] {
 			await this.model_checkout_voucher.deleteVoucherByOrderId(order_id);
 
 			// Vouchers
-			await this.db.query("DELETE FROM `" + DB_PREFIX + "order_voucher` WHERE `order_id` = '" + order_id + "'");
+			await this.db.query("DELETE FROM `" + DB_PREFIX + "order_voucher` WHERE `order_id` = " + this.db.quote(order_id));
 
 			if ((data['vouchers'] && data['vouchers'].length)) {
 				for (let voucher of data['vouchers']) {
-					await this.db.query("INSERT INTO `" + DB_PREFIX + "order_voucher` SET `order_id` = '" + order_id + "', `description` = " + this.db.escape(voucher['description']) + ", `code` = " + this.db.escape(voucher['code']) + ", `from_name` = " + this.db.escape(voucher['from_name']) + ", `from_email` = " + this.db.escape(voucher['from_email']) + ", `to_name` = " + this.db.escape(voucher['to_name']) + ", `to_email` = " + this.db.escape(voucher['to_email']) + ", `voucher_theme_id` = '" + voucher['voucher_theme_id'] + "', `message` = " + this.db.escape(voucher['message']) + ", `amount` = '" + voucher['amount'] + "'");
+					await this.db.query("INSERT INTO `" + DB_PREFIX + "order_voucher` SET `order_id` = " + this.db.quote(order_id) + ", `description` = " + this.db.escape(voucher['description']) + ", `code` = " + this.db.escape(voucher['code']) + ", `from_name` = " + this.db.escape(voucher['from_name']) + ", `from_email` = " + this.db.escape(voucher['from_email']) + ", `to_name` = " + this.db.escape(voucher['to_name']) + ", `to_email` = " + this.db.escape(voucher['to_email']) + ", `voucher_theme_id` = " + this.db.quote(voucher['voucher_theme_id']) + ", `message` = " + this.db.escape(voucher['message']) + ", `amount` = " + this.db.quote(voucher['amount']));
 
 					const order_voucher_id = this.db.getLastId();
 
 					const voucher_id = await this.model_checkout_voucher.addVoucher(order_id, voucher);
 
-					await this.db.query("UPDATE `" + DB_PREFIX + "order_voucher` SET `voucher_id` = '" + voucher_id + "' WHERE `order_voucher_id` = '" + order_voucher_id + "'");
+					await this.db.query("UPDATE `" + DB_PREFIX + "order_voucher` SET `voucher_id` = " + this.db.quote(voucher_id) + " WHERE `order_voucher_id` = " + this.db.quote(order_voucher_id));
 				}
 			}
 
 			// Totals
-			await this.db.query("DELETE FROM `" + DB_PREFIX + "order_total` WHERE `order_id` = '" + order_id + "'");
+			await this.db.query("DELETE FROM `" + DB_PREFIX + "order_total` WHERE `order_id` = " + this.db.quote(order_id));
 
 			if ((data['totals'] && data['totals'].length)) {
 				for (let total of data['totals']) {
-					await this.db.query("INSERT INTO `" + DB_PREFIX + "order_total` SET `order_id` = '" + order_id + "', `extension` = " + this.db.escape(total['extension']) + ", `code` = " + this.db.escape(total['code']) + ", `title` = " + this.db.escape(total['title']) + ", `value` = '" + total['value'] + "', `sort_order` = '" + total['sort_order'] + "'");
+					await this.db.query("INSERT INTO `" + DB_PREFIX + "order_total` SET `order_id` = " + this.db.quote(order_id) + ", `extension` = " + this.db.escape(total['extension']) + ", `code` = " + this.db.escape(total['code']) + ", `title` = " + this.db.escape(total['title']) + ", `value` = " + this.db.quote(total['value']) + ", `sort_order` = " + this.db.quote(total['sort_order']));
 				}
 			}
 		}
@@ -133,7 +133,7 @@ module.exports = class Order extends global['OpencartSystemEngineModel'] {
 	 * @return void
 	 */
 	async editTransactionId(order_id, transaction_id) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "order` SET `transaction_id` = " + this.db.escape(transaction_id) + " WHERE `order_id` = '" + order_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "order` SET `transaction_id` = " + this.db.escape(transaction_id) + " WHERE `order_id` = " + this.db.quote(order_id));
 	}
 
 	/**
@@ -143,7 +143,7 @@ module.exports = class Order extends global['OpencartSystemEngineModel'] {
 	 * @return void
 	 */
 	async editComment(order_id, comment) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "order` SET `comment` = " + this.db.escape(comment) + " WHERE `order_id` = '" + order_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "order` SET `comment` = " + this.db.escape(comment) + " WHERE `order_id` = " + this.db.quote(order_id));
 	}
 
 	/**
@@ -155,14 +155,14 @@ module.exports = class Order extends global['OpencartSystemEngineModel'] {
 		// Void the order first
 		await this.addHistory(order_id, 0);
 
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "order` WHERE `order_id` = '" + order_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "order_product` WHERE `order_id` = '" + order_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "order_option` WHERE `order_id` = '" + order_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "order_subscription` WHERE `order_id` = '" + order_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "order_voucher` WHERE `order_id` = '" + order_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "order_total` WHERE `order_id` = '" + order_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "order_history` WHERE `order_id` = '" + order_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_transaction` WHERE `order_id` = '" + order_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "order` WHERE `order_id` = " + this.db.quote(order_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "order_product` WHERE `order_id` = " + this.db.quote(order_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "order_option` WHERE `order_id` = " + this.db.quote(order_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "order_subscription` WHERE `order_id` = " + this.db.quote(order_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "order_voucher` WHERE `order_id` = " + this.db.quote(order_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "order_total` WHERE `order_id` = " + this.db.quote(order_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "order_history` WHERE `order_id` = " + this.db.quote(order_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_transaction` WHERE `order_id` = " + this.db.quote(order_id));
 
 		// Gift Voucher
 		this.load.model('checkout/voucher', this);
@@ -176,7 +176,7 @@ module.exports = class Order extends global['OpencartSystemEngineModel'] {
 	 * @return array
 	 */
 	async getOrder(order_id) {
-		const order_query = await this.db.query("SELECT *, (SELECT `os`.`name` FROM `" + DB_PREFIX + "order_status` `os` WHERE `os`.`order_status_id` = `o`.`order_status_id` AND `os`.`language_id` = `o`.`language_id`) AS order_status FROM `" + DB_PREFIX + "order` `o` WHERE `o`.`order_id` = '" + order_id + "'");
+		const order_query = await this.db.query("SELECT *, (SELECT `os`.`name` FROM `" + DB_PREFIX + "order_status` `os` WHERE `os`.`order_status_id` = `o`.`order_status_id` AND `os`.`language_id` = `o`.`language_id`) AS order_status FROM `" + DB_PREFIX + "order` `o` WHERE `o`.`order_id` = " + this.db.quote(order_id));
 
 		if (order_query.num_rows) {
 			let order_data = order_query.row;
@@ -226,7 +226,7 @@ module.exports = class Order extends global['OpencartSystemEngineModel'] {
 	 * @return array
 	 */
 	async getProduct(order_id, order_product_id) {
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "order_product` WHERE `order_id` = '" + order_id + "' AND `order_product_id` = '" + order_product_id + "'");
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "order_product` WHERE `order_id` = " + this.db.quote(order_id) + " AND `order_product_id` = " + this.db.quote(order_product_id));
 
 		return query.rows;
 	}
@@ -237,7 +237,7 @@ module.exports = class Order extends global['OpencartSystemEngineModel'] {
 	 * @return array
 	 */
 	async getProducts(order_id) {
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "order_product` WHERE `order_id` = '" + order_id + "'");
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "order_product` WHERE `order_id` = " + this.db.quote(order_id));
 
 		return query.rows;
 	}
@@ -249,7 +249,7 @@ module.exports = class Order extends global['OpencartSystemEngineModel'] {
 	 * @return array
 	 */
 	async getOptions(order_id, order_product_id) {
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "order_option` WHERE `order_id` = '" + order_id + "' AND `order_product_id` = '" + order_product_id + "'");
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "order_option` WHERE `order_id` = " + this.db.quote(order_id) + " AND `order_product_id` = " + this.db.quote(order_product_id));
 
 		return query.rows;
 	}
@@ -261,7 +261,7 @@ module.exports = class Order extends global['OpencartSystemEngineModel'] {
 	 * @return array
 	 */
 	async getSubscription(order_id, order_product_id) {
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "order_subscription` WHERE `order_id` = '" + order_id + "' AND `order_product_id` = '" + order_product_id + "'");
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "order_subscription` WHERE `order_id` = " + this.db.quote(order_id) + " AND `order_product_id` = " + this.db.quote(order_product_id));
 
 		return query.row;
 	}
@@ -281,7 +281,7 @@ module.exports = class Order extends global['OpencartSystemEngineModel'] {
 		}
 
 		if ((data['filter_subscription_status_id'])) {
-			implode.push("`subscription_status_id` = '" + data['filter_subscription_status_id'] + "'");
+			implode.push("`subscription_status_id` = " + this.db.quote(data['filter_subscription_status_id']));
 		}
 
 		if (implode) {
@@ -318,7 +318,7 @@ module.exports = class Order extends global['OpencartSystemEngineModel'] {
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql += " LIMIT " + (parseInt(data['start']) || 0) + "," + (parseInt(data['limit']) || 0);
 		}
 
 		const query = await this.db.query(sql);
@@ -332,7 +332,7 @@ module.exports = class Order extends global['OpencartSystemEngineModel'] {
 	 * @return array
 	 */
 	async getVouchers(order_id) {
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "order_voucher` WHERE `order_id` = '" + order_id + "'");
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "order_voucher` WHERE `order_id` = " + this.db.quote(order_id));
 
 		return query.rows;
 	}
@@ -343,7 +343,7 @@ module.exports = class Order extends global['OpencartSystemEngineModel'] {
 	 * @return array
 	 */
 	async getTotals(order_id) {
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "order_total` WHERE `order_id` = '" + order_id + "' ORDER BY `sort_order` ASC");
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "order_total` WHERE `order_id` = " + this.db.quote(order_id) + " ORDER BY `sort_order` ASC");
 
 		return query.rows;
 	}
@@ -419,17 +419,17 @@ module.exports = class Order extends global['OpencartSystemEngineModel'] {
 
 				for (let order_product of order_products) {
 					// Stock subtraction
-					await this.db.query("UPDATE `" + DB_PREFIX + "product` SET `quantity` = (`quantity` - " + order_product['quantity'] + ") WHERE `product_id` = '" + order_product['product_id'] + "' AND `subtract` = '1'");
+					await this.db.query("UPDATE `" + DB_PREFIX + "product` SET `quantity` = (`quantity` - " + order_product['quantity'] + ") WHERE `product_id` = " + this.db.quote(order_product['product_id']) + " AND `subtract` = '1'");
 
 					// Stock subtraction from master product
 					if (order_product['master_id']) {
-						await this.db.query("UPDATE `" + DB_PREFIX + "product` SET `quantity` = (`quantity` - " + order_product['quantity'] + ") WHERE `product_id` = '" + order_product['master_id'] + "' AND `subtract` = '1'");
+						await this.db.query("UPDATE `" + DB_PREFIX + "product` SET `quantity` = (`quantity` - " + order_product['quantity'] + ") WHERE `product_id` = " + this.db.quote(order_product['master_id']) + " AND `subtract` = '1'");
 					}
 
 					const order_options = await this.getOptions(order_id, order_product['order_product_id']);
 
 					for (let order_option of order_options) {
-						await this.db.query("UPDATE `" + DB_PREFIX + "product_option_value` SET `quantity` = (`quantity` - " + order_product['quantity'] + ") WHERE `product_option_value_id` = '" + order_option['product_option_value_id'] + "' AND `subtract` = '1'");
+						await this.db.query("UPDATE `" + DB_PREFIX + "product_option_value` SET `quantity` = (`quantity` - " + order_product['quantity'] + ") WHERE `product_option_value_id` = " + this.db.quote(order_option['product_option_value_id']) + " AND `subtract` = '1'");
 					}
 				}
 			}
@@ -473,17 +473,17 @@ module.exports = class Order extends global['OpencartSystemEngineModel'] {
 			if ([...this.config.get('config_processing_status'), ...this.config.get('config_complete_status')].includes(order_info['order_status_id']) && ![...this.config.get('config_processing_status'), ...this.config.get('config_complete_status')].includes(order_status_id)) {
 				// Restock
 				for (let order_product of order_products) {
-					await this.db.query("UPDATE `" + DB_PREFIX + "product` SET `quantity` = (`quantity` + " + order_product['quantity'] + ") WHERE `product_id` = '" + order_product['product_id'] + "' AND `subtract` = '1'");
+					await this.db.query("UPDATE `" + DB_PREFIX + "product` SET `quantity` = (`quantity` + " + order_product['quantity'] + ") WHERE `product_id` = " + this.db.quote(order_product['product_id']) + " AND `subtract` = '1'");
 
 					// Restock the master product stock level if product is a variant
 					if (order_product['master_id']) {
-						await this.db.query("UPDATE `" + DB_PREFIX + "product` SET `quantity` = (`quantity` + " + order_product['quantity'] + ") WHERE `product_id` = '" + order_product['master_id'] + "' AND `subtract` = '1'");
+						await this.db.query("UPDATE `" + DB_PREFIX + "product` SET `quantity` = (`quantity` + " + order_product['quantity'] + ") WHERE `product_id` = " + this.db.quote(order_product['master_id']) + " AND `subtract` = '1'");
 					}
 
 					const order_options = this.getOptions(order_id, order_product['order_product_id']);
 
 					for (let order_option of order_options) {
-						await this.db.query("UPDATE `" + DB_PREFIX + "product_option_value` SET `quantity` = (`quantity` + " + order_product['quantity'] + ") WHERE `product_option_value_id` = '" + order_option['product_option_value_id'] + "' AND `subtract` = '1'");
+						await this.db.query("UPDATE `" + DB_PREFIX + "product_option_value` SET `quantity` = (`quantity` + " + order_product['quantity'] + ") WHERE `product_option_value_id` = " + this.db.quote(order_option['product_option_value_id']) + " AND `subtract` = '1'");
 					}
 				}
 
@@ -521,9 +521,9 @@ module.exports = class Order extends global['OpencartSystemEngineModel'] {
 			}
 
 			// Update the DB with the new statuses
-			await this.db.query("UPDATE `" + DB_PREFIX + "order` SET `order_status_id` = '" + order_status_id + "', `date_modified` = NOW() WHERE `order_id` = '" + order_id + "'");
+			await this.db.query("UPDATE `" + DB_PREFIX + "order` SET `order_status_id` = " + this.db.quote(order_status_id) + ", `date_modified` = NOW() WHERE `order_id` = " + this.db.quote(order_id));
 
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "order_history` SET `order_id` = '" + order_id + "', `order_status_id` = '" + order_status_id + "', `notify` = '" + notify + "', `comment` = " + this.db.escape(comment) + ", `date_added` = NOW()");
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "order_history` SET `order_id` = " + this.db.quote(order_id) + ", `order_status_id` = " + this.db.quote(order_status_id) + ", `notify` = " + this.db.quote(notify) + ", `comment` = " + this.db.escape(comment) + ", `date_added` = NOW()");
 
 			await this.cache.delete('product');
 		}

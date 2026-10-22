@@ -8,13 +8,13 @@ module.exports = class ManufacturerCatalogModel extends global['OpencartSystemEn
 	 * @return int
 	 */
 	async addManufacturer(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "manufacturer` SET `name` = " + this.db.escape(data['name']) + ", `image` = " + this.db.escape(data['image']) + ", `sort_order` = '" + data['sort_order'] + "'");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "manufacturer` SET `name` = " + this.db.escape(data['name']) + ", `image` = " + this.db.escape(data['image']) + ", `sort_order` = " + this.db.quote(data['sort_order']));
 
 		const manufacturer_id = this.db.getLastId();
 
 		if ((data['manufacturer_store'])) {
 			for (let store_id of data['manufacturer_store']) {
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "manufacturer_to_store` SET `manufacturer_id` = '" + manufacturer_id + "', `store_id` = '" + store_id + "'");
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "manufacturer_to_store` SET `manufacturer_id` = " + this.db.quote(manufacturer_id) + ", `store_id` = " + this.db.quote(store_id));
 			}
 		}
 
@@ -24,7 +24,7 @@ module.exports = class ManufacturerCatalogModel extends global['OpencartSystemEn
 				store_id = store_id.indexOf('store') >= 0 ? store_id.split('-')[1] : store_id;
 				for (let [language_id, keyword] of Object.entries(language)) {
 					language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
-					await this.db.query("INSERT INTO `" + DB_PREFIX + "seo_url` SET `store_id` = '" + store_id + "', `language_id` = '" + language_id + "', `key` = 'manufacturer_id', `value` = '" + manufacturer_id + "', `keyword` = " + this.db.escape(keyword) + "");
+					await this.db.query("INSERT INTO `" + DB_PREFIX + "seo_url` SET `store_id` = " + this.db.quote(store_id) + ", `language_id` = " + this.db.quote(language_id) + ", `key` = 'manufacturer_id', `value` = " + this.db.quote(manufacturer_id) + ", `keyword` = " + this.db.escape(keyword));
 				}
 			}
 		}
@@ -32,7 +32,7 @@ module.exports = class ManufacturerCatalogModel extends global['OpencartSystemEn
 		if ((data['manufacturer_layout'])) {
 			for (let [store_id, layout_id] of Object.entries(data['manufacturer_layout'])) {
 				store_id = store_id.indexOf('store') >= 0 ? store_id.split('-')[1] : store_id;
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "manufacturer_to_layout` SET `manufacturer_id` = '" + manufacturer_id + "', `store_id` = '" + store_id + "', `layout_id` = '" + layout_id + "'");
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "manufacturer_to_layout` SET `manufacturer_id` = " + this.db.quote(manufacturer_id) + ", `store_id` = " + this.db.quote(store_id) + ", `layout_id` = " + this.db.quote(layout_id));
 			}
 		}
 
@@ -48,34 +48,34 @@ module.exports = class ManufacturerCatalogModel extends global['OpencartSystemEn
 	 * @return void
 	 */
 	async editManufacturer(manufacturer_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "manufacturer` SET `name` = " + this.db.escape(data['name']) + ", `image` = " + this.db.escape(data['image']) + ", `sort_order` = '" + data['sort_order'] + "' WHERE `manufacturer_id` = '" + manufacturer_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "manufacturer` SET `name` = " + this.db.escape(data['name']) + ", `image` = " + this.db.escape(data['image']) + ", `sort_order` = " + this.db.quote(data['sort_order']) + " WHERE `manufacturer_id` = " + this.db.quote(manufacturer_id));
 
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "manufacturer_to_store` WHERE `manufacturer_id` = '" + manufacturer_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "manufacturer_to_store` WHERE `manufacturer_id` = " + this.db.quote(manufacturer_id));
 
 		if ((data['manufacturer_store'])) {
 			for (let store_id of data['manufacturer_store']) {
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "manufacturer_to_store` SET `manufacturer_id` = '" + manufacturer_id + "', `store_id` = '" + store_id + "'");
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "manufacturer_to_store` SET `manufacturer_id` = " + this.db.quote(manufacturer_id) + ", `store_id` = " + this.db.quote(store_id));
 			}
 		}
 
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "seo_url` WHERE `key` = 'manufacturer_id' AND `value` = '" + manufacturer_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "seo_url` WHERE `key` = 'manufacturer_id' AND `value` = " + this.db.quote(manufacturer_id));
 
 		if ((data['manufacturer_seo_url'])) {
 			for (let [store_id, language] of Object.entries(data['manufacturer_seo_url'])) {
 				store_id = store_id.indexOf('store') >= 0 ? store_id.split('-')[1] : store_id;
 				for (let [language_id, keyword] of Object.entries(language)) {
 					language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
-					await this.db.query("INSERT INTO `" + DB_PREFIX + "seo_url` SET `store_id` = '" + store_id + "', `language_id` = '" + language_id + "', `key` = 'manufacturer_id', `value` = '" + manufacturer_id + "', `keyword` = " + this.db.escape(keyword) + "");
+					await this.db.query("INSERT INTO `" + DB_PREFIX + "seo_url` SET `store_id` = " + this.db.quote(store_id) + ", `language_id` = " + this.db.quote(language_id) + ", `key` = 'manufacturer_id', `value` = " + this.db.quote(manufacturer_id) + ", `keyword` = " + this.db.escape(keyword));
 				}
 			}
 		}
 
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "manufacturer_to_layout` WHERE `manufacturer_id` = '" + manufacturer_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "manufacturer_to_layout` WHERE `manufacturer_id` = " + this.db.quote(manufacturer_id));
 
 		if ((data['manufacturer_layout'])) {
 			for (let [store_id, layout_id] of Object.entries(data['manufacturer_layout'])) {
 				store_id = store_id.indexOf('store') >= 0 ? store_id.split('-')[1] : store_id;
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "manufacturer_to_layout` SET `manufacturer_id` = '" + manufacturer_id + "', `store_id` = '" + store_id + "', `layout_id` = '" + layout_id + "'");
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "manufacturer_to_layout` SET `manufacturer_id` = " + this.db.quote(manufacturer_id) + ", `store_id` = " + this.db.quote(store_id) + ", `layout_id` = " + this.db.quote(layout_id));
 			}
 		}
 
@@ -88,10 +88,10 @@ module.exports = class ManufacturerCatalogModel extends global['OpencartSystemEn
 	 * @return void
 	 */
 	async deleteManufacturer(manufacturer_id) {
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "manufacturer` WHERE `manufacturer_id` = '" + manufacturer_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "manufacturer_to_store` WHERE `manufacturer_id` = '" + manufacturer_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "manufacturer_to_layout` WHERE `manufacturer_id` = '" + manufacturer_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "seo_url` WHERE `key` = 'manufacturer_id' AND `value` = '" + manufacturer_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "manufacturer` WHERE `manufacturer_id` = " + this.db.quote(manufacturer_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "manufacturer_to_store` WHERE `manufacturer_id` = " + this.db.quote(manufacturer_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "manufacturer_to_layout` WHERE `manufacturer_id` = " + this.db.quote(manufacturer_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "seo_url` WHERE `key` = 'manufacturer_id' AND `value` = " + this.db.quote(manufacturer_id));
 
 		await this.cache.delete('manufacturer');
 	}
@@ -102,7 +102,7 @@ module.exports = class ManufacturerCatalogModel extends global['OpencartSystemEn
 	 * @return array
 	 */
 	async getManufacturer(manufacturer_id) {
-		let query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "manufacturer` WHERE `manufacturer_id` = '" + manufacturer_id + "'");
+		let query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "manufacturer` WHERE `manufacturer_id` = " + this.db.quote(manufacturer_id));
 
 		return query.row;
 	}
@@ -147,7 +147,7 @@ module.exports = class ManufacturerCatalogModel extends global['OpencartSystemEn
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql += " LIMIT " + (parseInt(data['start']) || 0) + "," + (parseInt(data['limit']) || 0);
 		}
 
 		let query = await this.db.query(sql);
@@ -163,7 +163,7 @@ module.exports = class ManufacturerCatalogModel extends global['OpencartSystemEn
 	async getStores(manufacturer_id) {
 		let manufacturer_store_data = [];
 
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "manufacturer_to_store` WHERE `manufacturer_id` = '" + manufacturer_id + "'");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "manufacturer_to_store` WHERE `manufacturer_id` = " + this.db.quote(manufacturer_id));
 
 		for (let result of query.rows) {
 			manufacturer_store_data.push(result['store_id']);
@@ -180,7 +180,7 @@ module.exports = class ManufacturerCatalogModel extends global['OpencartSystemEn
 	async getSeoUrls(manufacturer_id) {
 		let manufacturer_seo_url_data = {};
 
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "seo_url` WHERE `key` = 'manufacturer_id' AND `value` = '" + manufacturer_id + "'");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "seo_url` WHERE `key` = 'manufacturer_id' AND `value` = " + this.db.quote(manufacturer_id));
 
 		for (let result of query.rows) {
 			manufacturer_seo_url_data[result['store_id']] = manufacturer_seo_url_data[result['store_id']]||{}
@@ -198,7 +198,7 @@ module.exports = class ManufacturerCatalogModel extends global['OpencartSystemEn
 	async getLayouts(manufacturer_id) {
 		let manufacturer_layout_data = {};
 
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "manufacturer_to_layout` WHERE `manufacturer_id` = '" + manufacturer_id + "'");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "manufacturer_to_layout` WHERE `manufacturer_id` = " + this.db.quote(manufacturer_id));
 
 		for (let result of query.rows) {
 			manufacturer_layout_data[result['store_id']] = result['layout_id'];
@@ -222,7 +222,7 @@ module.exports = class ManufacturerCatalogModel extends global['OpencartSystemEn
 	 * @return int
 	 */
 	async getTotalManufacturersByLayoutId(layout_id) {
-		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "manufacturer_to_layout` WHERE `layout_id` = '" + layout_id + "'");
+		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "manufacturer_to_layout` WHERE `layout_id` = " + this.db.quote(layout_id));
 
 		return query.row['total'];
 	}

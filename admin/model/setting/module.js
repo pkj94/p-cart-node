@@ -20,7 +20,7 @@ module.exports = class ModuleSettingModel extends global['OpencartSystemEngineMo
 	 * @return void
 	 */
 	async editModule(module_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "module` SET `name` = " + this.db.escape(data['name']) + ", `setting` = " + this.db.escape(JSON.stringify(data)) + " WHERE `module_id` = '" + module_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "module` SET `name` = " + this.db.escape(data['name']) + ", `setting` = " + this.db.escape(JSON.stringify(data)) + " WHERE `module_id` = " + this.db.quote(module_id));
 	}
 
 	/**
@@ -29,7 +29,7 @@ module.exports = class ModuleSettingModel extends global['OpencartSystemEngineMo
 	 * @return void
 	 */
 	async deleteModule(module_id) {
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "module` WHERE `module_id` = '" + module_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "module` WHERE `module_id` = " + this.db.quote(module_id));
 	}
 
 	/**
@@ -38,7 +38,7 @@ module.exports = class ModuleSettingModel extends global['OpencartSystemEngineMo
 	 * @return array
 	 */
 	async getModule(module_id) {
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "module` WHERE `module_id` = '" + module_id + "'");
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "module` WHERE `module_id` = " + this.db.quote(module_id));
 
 		if (query.row) {
 			return JSON.parse(query.row['setting']);

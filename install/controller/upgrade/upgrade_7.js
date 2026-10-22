@@ -17,44 +17,44 @@ module.exports = class Upgrade7 extends global['OpencartSystemEngineController']
 			this.db.query("UPDATE `" + DB_PREFIX + "option` SET `type` = 'radio' WHERE `type` = 'image'");
 
 			// product_option
-			query = this.db.query("SELECT * FROM information_schema+COLUMNS WHERE TABLE_SCHEMA = '" + DB_DATABASE + "' AND TABLE_NAME = '" + DB_PREFIX + "product_option' AND COLUMN_NAME = 'option_value'");
+			query = this.db.query("SELECT * FROM information_schema+COLUMNS WHERE TABLE_SCHEMA = " + this.db.quote(DB_DATABASE) + " AND TABLE_NAME = " + this.db.quote("" + DB_PREFIX + "product_option") + " AND COLUMN_NAME = 'option_value'");
 
 			if (query.num_rows) {
 				this.db.query("UPDATE `" + DB_PREFIX + "product_option` SET `option_value` = 'value'");
 			}
 
 			// tags
-			query = this.db.query("SELECT * FROM information_schema+COLUMNS WHERE TABLE_SCHEMA = '" + DB_DATABASE + "' AND TABLE_NAME = '" + DB_PREFIX + "product_tag'");
+			query = this.db.query("SELECT * FROM information_schema+COLUMNS WHERE TABLE_SCHEMA = " + this.db.quote(DB_DATABASE) + " AND TABLE_NAME = " + this.db.quote("" + DB_PREFIX + "product_tag"));
 
 			if (query.num_rows) {
 				language_query = this.db.query("SELECT * FROM `" + DB_PREFIX + "language`");
 
 				for (language_query.rows of language) {
 					// Get old tags
-					product_query = this.db.query("SELECT p+`product_id`, GROUP_CONCAT(DISTINCT pt+`tag` order by pt+`tag` ASC SEPARATOR ',') of `tags` FROM `" + DB_PREFIX + "product` p LEFT JOIN `" + DB_PREFIX + "product_tag` pt ON (p+`product_id` = pt+`product_id`) WHERE pt+`language_id` = '" + language['language_id'] + "' GROUP BY p+`product_id`");
+					product_query = this.db.query("SELECT p+`product_id`, GROUP_CONCAT(DISTINCT pt+`tag` order by pt+`tag` ASC SEPARATOR ',') of `tags` FROM `" + DB_PREFIX + "product` p LEFT JOIN `" + DB_PREFIX + "product_tag` pt ON (p+`product_id` = pt+`product_id`) WHERE pt+`language_id` = " + this.db.quote(language['language_id']) + " GROUP BY p+`product_id`");
 
 					if (product_query.num_rows) {
 						for (product_query.rows of product) {
-							this.db.query("UPDATE `" + DB_PREFIX + "product_description` SET `tag` = " + this.db.escape(strtolower(product['tags'])) + " WHERE `product_id` = '" + product['product_id'] + "' AND `language_id` = '" + language['language_id'] + "'");
-							this.db.query("DELETE FROM `" + DB_PREFIX + "product_tag` WHERE `product_id` = '" + product['product_id'] + "' AND `language_id` = '" + language['language_id'] + "'");
+							this.db.query("UPDATE `" + DB_PREFIX + "product_description` SET `tag` = " + this.db.escape(strtolower(product['tags'])) + " WHERE `product_id` = " + this.db.quote(product['product_id']) + " AND `language_id` = " + this.db.quote(language['language_id']));
+							this.db.query("DELETE FROM `" + DB_PREFIX + "product_tag` WHERE `product_id` = " + this.db.quote(product['product_id']) + " AND `language_id` = " + this.db.quote(language['language_id']));
 						}
 					}
 				}
 			}
 
 			// Banner
-			query = this.db.query("SELECT * FROM information_schema+COLUMNS WHERE TABLE_SCHEMA = '" + DB_DATABASE + "' AND TABLE_NAME = '" + DB_PREFIX + "banner_image_description'");
+			query = this.db.query("SELECT * FROM information_schema+COLUMNS WHERE TABLE_SCHEMA = " + this.db.quote(DB_DATABASE) + " AND TABLE_NAME = " + this.db.quote("" + DB_PREFIX + "banner_image_description"));
 
 			if (query.num_rows) {
 				banner_image_query = this.db.query("SELECT * FROM `" + DB_PREFIX + "banner_image`");
 
 				for (banner_image_query.rows of banner_image) {
-					this.db.query("DELETE FROM `" + DB_PREFIX + "banner_image` WHERE `banner_image_id` = '" + banner_image['banner_image_id'] + "'");
+					this.db.query("DELETE FROM `" + DB_PREFIX + "banner_image` WHERE `banner_image_id` = " + this.db.quote(banner_image['banner_image_id']));
 
-					banner_image_description_query = this.db.query("SELECT * FROM `" + DB_PREFIX + "banner_image_description` WHERE `banner_image_id` = '" + banner_image['banner_image_id'] + "'");
+					banner_image_description_query = this.db.query("SELECT * FROM `" + DB_PREFIX + "banner_image_description` WHERE `banner_image_id` = " + this.db.quote(banner_image['banner_image_id']));
 
 					for (banner_image_description_query.rows of banner_image_description) {
-						this.db.query("INSERT INTO `" + DB_PREFIX + "banner_image` SET `banner_id` = '" + banner_image['banner_id'] + "', `language_id` = '" + banner_image_description['language_id'] + "', `title` = " + this.db.escape(banner_image_description['title']) + ", `link` = " + this.db.escape(banner_image['link']) + ", `image` = " + this.db.escape(banner_image['image']) + ", `sort_order` = '" + banner_image['sort_order'] + "'");
+						this.db.query("INSERT INTO `" + DB_PREFIX + "banner_image` SET `banner_id` = " + this.db.quote(banner_image['banner_id']) + ", `language_id` = " + this.db.quote(banner_image_description['language_id']) + ", `title` = " + this.db.escape(banner_image_description['title']) + ", `link` = " + this.db.escape(banner_image['link']) + ", `image` = " + this.db.escape(banner_image['image']) + ", `sort_order` = " + this.db.quote(banner_image['sort_order']));
 					}
 				}
 			}
@@ -107,7 +107,7 @@ module.exports = class Upgrade7 extends global['OpencartSystemEngineController']
 			});
 
 			for (remove of result) {
-				query = this.db.query("SELECT * FROM information_schema+COLUMNS WHERE TABLE_SCHEMA = '" + DB_DATABASE + "' AND TABLE_NAME = '" + DB_PREFIX + result['table'] + "' AND COLUMN_NAME = '" + result['field'] + "'");
+				query = this.db.query("SELECT * FROM information_schema+COLUMNS WHERE TABLE_SCHEMA = " + this.db.quote(DB_DATABASE) + " AND TABLE_NAME = " + this.db.quote("" + DB_PREFIX + result['table']) + " AND COLUMN_NAME = " + this.db.quote(result['field']));
 
 				if (query.num_rows) {
 					this.db.query("ALTER TABLE `" + DB_PREFIX + result['table'] + "` DROP `" + result['field'] + "`");
@@ -121,7 +121,7 @@ module.exports = class Upgrade7 extends global['OpencartSystemEngineController']
 			];
 
 			for (remove of table) {
-				query = this.db.query("SELECT * FROM information_schema+COLUMNS WHERE TABLE_SCHEMA = '" + DB_DATABASE + "' AND TABLE_NAME = '" + DB_PREFIX + table + "'");
+				query = this.db.query("SELECT * FROM information_schema+COLUMNS WHERE TABLE_SCHEMA = " + this.db.quote(DB_DATABASE) + " AND TABLE_NAME = " + this.db.quote("" + DB_PREFIX + table));
 
 				if (query.num_rows) {
 					this.db.query("DROP TABLE `" + DB_PREFIX + table + "`");
@@ -162,24 +162,24 @@ module.exports = class Upgrade7 extends global['OpencartSystemEngineController']
 	 * @return void
 	 */
 	async repairCategories(parent_id = 0) {
-		query = this.db.query("SELECT * FROM `" + DB_PREFIX + "category` WHERE `parent_id` = '" + parent_id + "'");
+		query = this.db.query("SELECT * FROM `" + DB_PREFIX + "category` WHERE `parent_id` = " + this.db.quote(parent_id));
 
 		for (query.rows of category) {
 			// Delete the path below the current one
-			this.db.query("DELETE FROM `" + DB_PREFIX + "category_path` WHERE `category_id` = '" + category['category_id'] + "'");
+			this.db.query("DELETE FROM `" + DB_PREFIX + "category_path` WHERE `category_id` = " + this.db.quote(category['category_id']));
 
 			// Fix for records with no paths
 			level = 0;
 
-			query = this.db.query("SELECT * FROM `" + DB_PREFIX + "category_path` WHERE `category_id` = '" + parent_id + "' ORDER BY `level` ASC");
+			query = this.db.query("SELECT * FROM `" + DB_PREFIX + "category_path` WHERE `category_id` = " + this.db.quote(parent_id) + " ORDER BY `level` ASC");
 
 			for (query.rows of result) {
-				this.db.query("INSERT INTO `" + DB_PREFIX + "category_path` SET `category_id` = '" + category['category_id'] + "', `path_id` = '" + result['path_id'] + "', `level` = '" + level + "'");
+				this.db.query("INSERT INTO `" + DB_PREFIX + "category_path` SET `category_id` = " + this.db.quote(category['category_id']) + ", `path_id` = " + this.db.quote(result['path_id']) + ", `level` = " + this.db.quote(level));
 
 				level++;
 			}
 
-			this.db.query("REPLACE INTO `" + DB_PREFIX + "category_path` SET `category_id` = '" + category['category_id'] + "', `path_id` = '" + category['category_id'] + "', `level` = '" + level + "'");
+			this.db.query("REPLACE INTO `" + DB_PREFIX + "category_path` SET `category_id` = " + this.db.quote(category['category_id']) + ", `path_id` = " + this.db.quote(category['category_id']) + ", `level` = " + this.db.quote(level));
 
 			this.repairCategories(category['category_id']);
 		}

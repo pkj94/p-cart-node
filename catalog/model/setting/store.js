@@ -5,7 +5,7 @@ module.exports = class Store extends global['OpencartSystemEngineModel'] {
 	 * @return array
 	 */
 	async getStore(store_id) {
-		const query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "store` WHERE `store_id` = '" + store_id + "'");
+		const query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "store` WHERE `store_id` = " + this.db.quote(store_id));
 
 		return query.row;
 	}

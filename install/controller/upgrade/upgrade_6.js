@@ -23,7 +23,7 @@ module.exports = class Upgrade6 extends global['OpencartSystemEngineController']
 
 			for (query.rows of result) {
 				if (preg_match('/^(a:)/', result['data'])) {
-					this.db.query("UPDATE `" + DB_PREFIX + "customer_activity` SET `data` = " + this.db.escape(JSON.stringify(result['data'])) + " WHERE `customer_activity_id` = '" + result['customer_activity_id'] + "'");
+					this.db.query("UPDATE `" + DB_PREFIX + "customer_activity` SET `data` = " + this.db.escape(JSON.stringify(result['data'])) + " WHERE `customer_activity_id` = " + this.db.quote(result['customer_activity_id']));
 				}
 			}
 
@@ -41,7 +41,7 @@ module.exports = class Upgrade6 extends global['OpencartSystemEngineController']
 
 			for (query.rows of result) {
 				if (preg_match('/^(a:)/', result['setting'])) {
-					this.db.query("UPDATE `" + DB_PREFIX + "module` SET `setting` = " + this.db.escape(JSON.stringify(result['setting'])) + " WHERE `module_id` = '" + result['module_id'] + "'");
+					this.db.query("UPDATE `" + DB_PREFIX + "module` SET `setting` = " + this.db.escape(JSON.stringify(result['setting'])) + " WHERE `module_id` = " + this.db.quote(result['module_id']));
 				}
 			}
 
@@ -50,7 +50,7 @@ module.exports = class Upgrade6 extends global['OpencartSystemEngineController']
 
 			for (query.rows of result) {
 				if (preg_match('/^(a:)/', result['custom_field'])) {
-					this.db.query("UPDATE `" + DB_PREFIX + "order` SET `custom_field` = " + this.db.escape(JSON.stringify(result['custom_field'])) + " WHERE `order_id` = '" + result['order_id'] + "'");
+					this.db.query("UPDATE `" + DB_PREFIX + "order` SET `custom_field` = " + this.db.escape(JSON.stringify(result['custom_field'])) + " WHERE `order_id` = " + this.db.quote(result['order_id']));
 				}
 
 				if (preg_match('/^(a:)/', result['payment_custom_field'])) {
@@ -58,7 +58,7 @@ module.exports = class Upgrade6 extends global['OpencartSystemEngineController']
 				}
 
 				if (preg_match('/^(a:)/', result['shipping_custom_field'])) {
-					this.db.query("UPDATE `" + DB_PREFIX + "order` SET `shipping_custom_field` = " + this.db.escape(JSON.stringify((result['shipping_custom_field']))) + " WHERE `order_id` = '" + result['order_id'] + "'");
+					this.db.query("UPDATE `" + DB_PREFIX + "order` SET `shipping_custom_field` = " + this.db.escape(JSON.stringify((result['shipping_custom_field']))) + " WHERE `order_id` = " + this.db.quote(result['order_id']));
 				}
 			}
 
@@ -67,7 +67,7 @@ module.exports = class Upgrade6 extends global['OpencartSystemEngineController']
 
 			for (query.rows of result) {
 				if (preg_match('/^(a:)/', result['permission'])) {
-					this.db.query("UPDATE `" + DB_PREFIX + "user_group` SET `permission` = " + this.db.escape(JSON.stringify((result['permission']))) + " WHERE `user_group_id` = '" + result['user_group_id'] + "'");
+					this.db.query("UPDATE `" + DB_PREFIX + "user_group` SET `permission` = " + this.db.escape(JSON.stringify((result['permission']))) + " WHERE `user_group_id` = " + this.db.quote(result['user_group_id']));
 				}
 			}
 		} catch (exception) {

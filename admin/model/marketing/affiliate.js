@@ -8,7 +8,7 @@ module.exports = class AffiliateModel extends global['OpencartSystemEngineModel'
 	 * @return void
 	 */
 	async addAffiliate(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "customer_affiliate` SET `customer_id` = '" + data['customer_id'] + "', `company` = " + this.db.escape(data['company']) + ", `website` = " + this.db.escape(data['website']) + ", `tracking` = " + this.db.escape(data['tracking']) + ", `commission` = '" + data['commission'] + "', `tax` = " + this.db.escape(data['tax']) + ", `payment_method` = " + this.db.escape(data['payment_method']) + ", `cheque` = " + this.db.escape(data['cheque']) + ", `paypal` = " + this.db.escape(data['paypal']) + ", `bank_name` = " + this.db.escape(data['bank_name']) + ", `bank_branch_number` = " + this.db.escape(data['bank_branch_number']) + ", `bank_swift_code` = " + this.db.escape(data['bank_swift_code']) + ", `bank_account_name` = " + this.db.escape(data['bank_account_name']) + ", `bank_account_number` = " + this.db.escape(data['bank_account_number']) + ", `custom_field` = " + this.db.escape(data['custom_field'] ? JSON.stringify(data['custom_field']) : JSON.stringify({})) + ", `status` = '" + (data['status'] ? data['status'] : 0) + "', `date_added` = NOW()");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "customer_affiliate` SET `customer_id` = " + this.db.quote(data['customer_id']) + ", `company` = " + this.db.escape(data['company']) + ", `website` = " + this.db.escape(data['website']) + ", `tracking` = " + this.db.escape(data['tracking']) + ", `commission` = " + this.db.quote(data['commission']) + ", `tax` = " + this.db.escape(data['tax']) + ", `payment_method` = " + this.db.escape(data['payment_method']) + ", `cheque` = " + this.db.escape(data['cheque']) + ", `paypal` = " + this.db.escape(data['paypal']) + ", `bank_name` = " + this.db.escape(data['bank_name']) + ", `bank_branch_number` = " + this.db.escape(data['bank_branch_number']) + ", `bank_swift_code` = " + this.db.escape(data['bank_swift_code']) + ", `bank_account_name` = " + this.db.escape(data['bank_account_name']) + ", `bank_account_number` = " + this.db.escape(data['bank_account_number']) + ", `custom_field` = " + this.db.escape(data['custom_field'] ? JSON.stringify(data['custom_field']) : JSON.stringify({})) + ", `status` = " + this.db.quote((data['status'] ? data['status'] : 0)) + ", `date_added` = NOW()");
 	}
 
 	/**
@@ -18,7 +18,7 @@ module.exports = class AffiliateModel extends global['OpencartSystemEngineModel'
 	 * @return void
 	 */
 	async editAffiliate(customer_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "customer_affiliate` SET `company` = " + this.db.escape(data['company']) + ", `website` = " + this.db.escape(data['website']) + ", `tracking` = " + this.db.escape(data['tracking']) + ", `commission` = '" + data['commission'] + "', `tax` = " + this.db.escape(data['tax']) + ", `payment_method` = " + this.db.escape(data['payment_method']) + ", `cheque` = " + this.db.escape(data['cheque']) + ", `paypal` = " + this.db.escape(data['paypal']) + ", `bank_name` = " + this.db.escape(data['bank_name']) + ", `bank_branch_number` = " + this.db.escape(data['bank_branch_number']) + ", `bank_swift_code` = " + this.db.escape(data['bank_swift_code']) + ", `bank_account_name` = " + this.db.escape(data['bank_account_name']) + ", `bank_account_number` = " + this.db.escape(data['bank_account_number']) + ", `custom_field` = " + this.db.escape(data['custom_field'] ? JSON.stringify(data['custom_field']) : JSON.stringify({})) + ", `status` = '" + (data['status'] ? data['status'] : 0) + "' WHERE `customer_id` = '" + customer_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "customer_affiliate` SET `company` = " + this.db.escape(data['company']) + ", `website` = " + this.db.escape(data['website']) + ", `tracking` = " + this.db.escape(data['tracking']) + ", `commission` = " + this.db.quote(data['commission']) + ", `tax` = " + this.db.escape(data['tax']) + ", `payment_method` = " + this.db.escape(data['payment_method']) + ", `cheque` = " + this.db.escape(data['cheque']) + ", `paypal` = " + this.db.escape(data['paypal']) + ", `bank_name` = " + this.db.escape(data['bank_name']) + ", `bank_branch_number` = " + this.db.escape(data['bank_branch_number']) + ", `bank_swift_code` = " + this.db.escape(data['bank_swift_code']) + ", `bank_account_name` = " + this.db.escape(data['bank_account_name']) + ", `bank_account_number` = " + this.db.escape(data['bank_account_number']) + ", `custom_field` = " + this.db.escape(data['custom_field'] ? JSON.stringify(data['custom_field']) : JSON.stringify({})) + ", `status` = " + this.db.quote((data['status'] ? data['status'] : 0)) + " WHERE `customer_id` = " + this.db.quote(customer_id));
 	}
 
 	/**
@@ -28,7 +28,7 @@ module.exports = class AffiliateModel extends global['OpencartSystemEngineModel'
 	 * @return void
 	 */
 	async editBalance(customer_id, amount) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "customer_affiliate` SET `balance` = '" + amount + "' WHERE `customer_id` = '" + customer_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "customer_affiliate` SET `balance` = " + this.db.quote(amount) + " WHERE `customer_id` = " + this.db.quote(customer_id));
 	}
 
 	/**
@@ -37,8 +37,8 @@ module.exports = class AffiliateModel extends global['OpencartSystemEngineModel'
 	 * @return void
 	 */
 	async deleteAffiliate(customer_id) {
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_affiliate` WHERE `customer_id` = '" + customer_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_affiliate_report` WHERE `customer_id` = '" + customer_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_affiliate` WHERE `customer_id` = " + this.db.quote(customer_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_affiliate_report` WHERE `customer_id` = " + this.db.quote(customer_id));
 	}
 
 	/**
@@ -47,7 +47,7 @@ module.exports = class AffiliateModel extends global['OpencartSystemEngineModel'
 	 * @return array
 	 */
 	async getAffiliate(customer_id) {
-		let query = await this.db.query("SELECT DISTINCT *, CONCAT(c.`firstname`, ' ', c.`lastname`) AS `customer`, ca.`custom_field` FROM `" + DB_PREFIX + "customer_affiliate` ca LEFT JOIN `" + DB_PREFIX + "customer` c ON (ca.`customer_id` = c.`customer_id`) WHERE ca.`customer_id` = '" + customer_id + "'");
+		let query = await this.db.query("SELECT DISTINCT *, CONCAT(c.`firstname`, ' ', c.`lastname`) AS `customer`, ca.`custom_field` FROM `" + DB_PREFIX + "customer_affiliate` ca LEFT JOIN `" + DB_PREFIX + "customer` c ON (ca.`customer_id` = c.`customer_id`) WHERE ca.`customer_id` = " + this.db.quote(customer_id));
 
 		return query.row;
 	}
@@ -86,7 +86,7 @@ module.exports = class AffiliateModel extends global['OpencartSystemEngineModel'
 		}
 
 		if ((data['filter_commission'])) {
-			implode.push("`ca`.`commission` = '" + data['filter_commission'] + "'");
+			implode.push("`ca`.`commission` = " + this.db.quote(data['filter_commission']));
 		}
 
 		if ((data['filter_date_from'])) {
@@ -98,7 +98,7 @@ module.exports = class AffiliateModel extends global['OpencartSystemEngineModel'
 		}
 
 		if (typeof data['filter_status'] != 'undefined' && data['filter_status'] !== '') {
-			implode.push("`ca`.`status` = '" + data['filter_status'] + "'");
+			implode.push("`ca`.`status` = " + this.db.quote(data['filter_status']));
 		}
 
 		if (implode.length) {
@@ -136,7 +136,7 @@ module.exports = class AffiliateModel extends global['OpencartSystemEngineModel'
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql += " LIMIT " + (parseInt(data['start']) || 0) + "," + (parseInt(data['limit']) || 0);
 		}
 
 		let query = await this.db.query(sql);
@@ -167,7 +167,7 @@ module.exports = class AffiliateModel extends global['OpencartSystemEngineModel'
 		}
 
 		if ((data['filter_commission'])) {
-			implode.push("`ca`.`commission` = '" + data['filter_commission'] + "'");
+			implode.push("`ca`.`commission` = " + this.db.quote(data['filter_commission']));
 		}
 
 		if ((data['filter_date_from'])) {
@@ -179,7 +179,7 @@ module.exports = class AffiliateModel extends global['OpencartSystemEngineModel'
 		}
 
 		if (typeof data['filter_status'] != 'undefined' && data['filter_status'] !== '') {
-			implode.push("`ca`.`status` = '" + data['filter_status'] + "'");
+			implode.push("`ca`.`status` = " + this.db.quote(data['filter_status']));
 		}
 
 		if (implode.length) {
@@ -207,7 +207,7 @@ module.exports = class AffiliateModel extends global['OpencartSystemEngineModel'
 			limit = 10;
 		}
 
-		let query = await this.db.query("SELECT `ip`, `store_id`, `country`, `date_added` FROM `" + DB_PREFIX + "customer_affiliate_report` WHERE `customer_id` = '" + customer_id + "' ORDER BY `date_added` ASC LIMIT " + start + "," + limit);
+		let query = await this.db.query("SELECT `ip`, `store_id`, `country`, `date_added` FROM `" + DB_PREFIX + "customer_affiliate_report` WHERE `customer_id` = " + this.db.quote(customer_id) + " ORDER BY `date_added` ASC LIMIT " + (parseInt(start) || 0) + "," + (parseInt(limit) || 0));
 
 		return query.rows;
 	}
@@ -218,7 +218,7 @@ module.exports = class AffiliateModel extends global['OpencartSystemEngineModel'
 	 * @return int
 	 */
 	async getTotalReports(customer_id) {
-		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "customer_affiliate_report` WHERE `customer_id` = '" + customer_id + "'");
+		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "customer_affiliate_report` WHERE `customer_id` = " + this.db.quote(customer_id));
 
 		return query.row['total'];
 	}

@@ -22,7 +22,7 @@ module.exports = class UploadModel extends global['OpencartSystemEngineModel'] {
 	 * @return void
 	 */
 	async deleteUpload(upload_id) {
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "upload` WHERE `upload_id` = '" + upload_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "upload` WHERE `upload_id` = " + this.db.quote(upload_id));
 	}
 
 	/**
@@ -31,7 +31,7 @@ module.exports = class UploadModel extends global['OpencartSystemEngineModel'] {
 	 * @return array
 	 */
 	async getUpload(upload_id) {
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "upload` WHERE `upload_id` = '" + upload_id + "'");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "upload` WHERE `upload_id` = " + this.db.quote(upload_id));
 
 		return query.row;
 	}
@@ -106,7 +106,7 @@ module.exports = class UploadModel extends global['OpencartSystemEngineModel'] {
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql += " LIMIT " + (parseInt(data['start']) || 0) + "," + (parseInt(data['limit']) || 0);
 		}
 
 		let query = await this.db.query(sql);

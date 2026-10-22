@@ -5,7 +5,7 @@ module.exports =class Banner extends global['OpencartSystemEngineModel'] {
 	 * @return array
 	 */
 	async getBanner(banner_id) {
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "banner` b LEFT JOIN `" + DB_PREFIX + "banner_image` bi ON (b.`banner_id` = bi.`banner_id`) WHERE b.`banner_id` = '" + banner_id + "' AND b.`status` = '1' AND bi.`language_id` = '" + this.config.get('config_language_id') + "' ORDER BY bi.`sort_order` ASC");
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "banner` b LEFT JOIN `" + DB_PREFIX + "banner_image` bi ON (b.`banner_id` = bi.`banner_id`) WHERE b.`banner_id` = " + this.db.quote(banner_id) + " AND b.`status` = '1' AND bi.`language_id` = " + this.db.quote(this.config.get('config_language_id')) + " ORDER BY bi.`sort_order` ASC");
 
 		return query.rows;
 	}

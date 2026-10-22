@@ -8,13 +8,13 @@ module.exports = class TaxRateLocalisationModel extends global['OpencartSystemEn
 	 * @return int
 	 */
 	async addTaxRate(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "tax_rate` SET `name` = " + this.db.escape(data['name']) + ", `rate` = '" + data['rate'] + "', `type` = " + this.db.escape(data['type']) + ", `geo_zone_id` = '" + data['geo_zone_id'] + "', `date_added` = NOW(), `date_modified` = NOW()");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "tax_rate` SET `name` = " + this.db.escape(data['name']) + ", `rate` = " + this.db.quote(data['rate']) + ", `type` = " + this.db.escape(data['type']) + ", `geo_zone_id` = " + this.db.quote(data['geo_zone_id']) + ", `date_added` = NOW(), `date_modified` = NOW()");
 
 		const tax_rate_id = this.db.getLastId();
 
 		if ((data['tax_rate_customer_group'])) {
 			for (let customer_group_id of data['tax_rate_customer_group']) {
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "tax_rate_to_customer_group` SET `tax_rate_id` = '" + tax_rate_id + "', `customer_group_id` = '" + customer_group_id + "'");
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "tax_rate_to_customer_group` SET `tax_rate_id` = " + this.db.quote(tax_rate_id) + ", `customer_group_id` = " + this.db.quote(customer_group_id));
 			}
 		}
 
@@ -28,13 +28,13 @@ module.exports = class TaxRateLocalisationModel extends global['OpencartSystemEn
 	 * @return void
 	 */
 	async editTaxRate(tax_rate_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "tax_rate` SET `name` = " + this.db.escape(data['name']) + ", `rate` = '" + data['rate'] + "', `type` = " + this.db.escape(data['type']) + ", `geo_zone_id` = '" + data['geo_zone_id'] + "', `date_modified` = NOW() WHERE `tax_rate_id` = '" + tax_rate_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "tax_rate` SET `name` = " + this.db.escape(data['name']) + ", `rate` = " + this.db.quote(data['rate']) + ", `type` = " + this.db.escape(data['type']) + ", `geo_zone_id` = " + this.db.quote(data['geo_zone_id']) + ", `date_modified` = NOW() WHERE `tax_rate_id` = " + this.db.quote(tax_rate_id));
 
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "tax_rate_to_customer_group` WHERE `tax_rate_id` = '" + tax_rate_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "tax_rate_to_customer_group` WHERE `tax_rate_id` = " + this.db.quote(tax_rate_id));
 
 		if ((data['tax_rate_customer_group'])) {
 			for (let customer_group_id of data['tax_rate_customer_group']) {
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "tax_rate_to_customer_group` SET `tax_rate_id` = '" + tax_rate_id + "', `customer_group_id` = '" + customer_group_id + "'");
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "tax_rate_to_customer_group` SET `tax_rate_id` = " + this.db.quote(tax_rate_id) + ", `customer_group_id` = " + this.db.quote(customer_group_id));
 			}
 		}
 	}
@@ -45,8 +45,8 @@ module.exports = class TaxRateLocalisationModel extends global['OpencartSystemEn
 	 * @return void
 	 */
 	async deleteTaxRate(tax_rate_id) {
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "tax_rate` WHERE `tax_rate_id` = '" + tax_rate_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "tax_rate_to_customer_group` WHERE `tax_rate_id` = '" + tax_rate_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "tax_rate` WHERE `tax_rate_id` = " + this.db.quote(tax_rate_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "tax_rate_to_customer_group` WHERE `tax_rate_id` = " + this.db.quote(tax_rate_id));
 	}
 
 	/**
@@ -55,7 +55,7 @@ module.exports = class TaxRateLocalisationModel extends global['OpencartSystemEn
 	 * @return array
 	 */
 	async getTaxRate(tax_rate_id) {
-		const query = await this.db.query("SELECT tr.`tax_rate_id`, tr.`name` AS name, tr.`rate`, tr.`type`, tr.`geo_zone_id`, gz.`name` AS geo_zone, tr.`date_added`, tr.`date_modified` FROM `" + DB_PREFIX + "tax_rate` tr LEFT JOIN `" + DB_PREFIX + "geo_zone` gz ON (tr.`geo_zone_id` = gz.`geo_zone_id`) WHERE tr.`tax_rate_id` = '" + tax_rate_id + "'");
+		const query = await this.db.query("SELECT tr.`tax_rate_id`, tr.`name` AS name, tr.`rate`, tr.`type`, tr.`geo_zone_id`, gz.`name` AS geo_zone, tr.`date_added`, tr.`date_modified` FROM `" + DB_PREFIX + "tax_rate` tr LEFT JOIN `" + DB_PREFIX + "geo_zone` gz ON (tr.`geo_zone_id` = gz.`geo_zone_id`) WHERE tr.`tax_rate_id` = " + this.db.quote(tax_rate_id));
 
 		return query.row;
 	}
@@ -100,7 +100,7 @@ module.exports = class TaxRateLocalisationModel extends global['OpencartSystemEn
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql += " LIMIT " + (parseInt(data['start']) || 0) + "," + (parseInt(data['limit']) || 0);
 		}
 
 		const query = await this.db.query(sql);
@@ -116,7 +116,7 @@ module.exports = class TaxRateLocalisationModel extends global['OpencartSystemEn
 	async getCustomerGroups(tax_rate_id) {
 		let tax_customer_group_data = [];
 
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "tax_rate_to_customer_group` WHERE `tax_rate_id` = '" + tax_rate_id + "'");
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "tax_rate_to_customer_group` WHERE `tax_rate_id` = " + this.db.quote(tax_rate_id));
 
 		for (let result of query.rows) {
 			tax_customer_group_data.push(result['customer_group_id']);
@@ -140,7 +140,7 @@ module.exports = class TaxRateLocalisationModel extends global['OpencartSystemEn
 	 * @return int
 	 */
 	async getTotalTaxRatesByGeoZoneId(geo_zone_id) {
-		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "tax_rate` WHERE `geo_zone_id` = '" + geo_zone_id + "'");
+		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "tax_rate` WHERE `geo_zone_id` = " + this.db.quote(geo_zone_id));
 
 		return query.row['total'];
 	}

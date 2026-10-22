@@ -31,7 +31,7 @@ module.exports =class Api extends global['OpencartSystemEngineModel'] {
 	 * @return array
 	 */
 	async getSessions(api_id) {
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "api_session` WHERE TIMESTAMPADD(HOUR, 1, `date_modified`) < NOW() AND `api_id` = '" + api_id + "'");
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "api_session` WHERE TIMESTAMPADD(HOUR, 1, `date_modified`) < NOW() AND `api_id` = " + this.db.quote(api_id));
 
 		return query.rows;
 	}
@@ -42,7 +42,7 @@ module.exports =class Api extends global['OpencartSystemEngineModel'] {
 	 * @return array
 	 */
 	async deleteSessions(api_id) {
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "api_session` WHERE TIMESTAMPADD(HOUR, 1, `date_modified`) < NOW() AND `api_id` = '" + api_id + "'");
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "api_session` WHERE TIMESTAMPADD(HOUR, 1, `date_modified`) < NOW() AND `api_id` = " + this.db.quote(api_id));
 
 		return query.rows;
 	}
@@ -54,7 +54,7 @@ module.exports =class Api extends global['OpencartSystemEngineModel'] {
 	 */
 	async updateSession(api_session_id) {
 		// keep the session alive
-		await this.db.query("UPDATE `" + DB_PREFIX + "api_session` SET `date_modified` = NOW() WHERE `api_session_id` = '" + api_session_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "api_session` SET `date_modified` = NOW() WHERE `api_session_id` = " + this.db.quote(api_session_id));
 	}
 
 	/**

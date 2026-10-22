@@ -160,7 +160,7 @@ global['OpencartAdminModelExtensionOpencartReportCustomer'] = class Customer ext
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql += " LIMIT " + (parseInt(data['start']) || 0) + "," + (parseInt(data['limit']) || 0);
 		}
 
 		let query = await this.db.query(sql);
@@ -220,7 +220,7 @@ global['OpencartAdminModelExtensionOpencartReportCustomer'] = class Customer ext
 	 * @return array
 	 */
 	async getOrders(data = {}) {
-		let sql = "SELECT c.`customer_id`, CONCAT(c.`firstname`, ' ', c.`lastname`) AS `customer`, c.`email`, cgd.`name` AS `customer_group`, c.`status`, o.`order_id`, SUM(op.`quantity`) AS `products`, o.`total` AS `total` FROM `" + DB_PREFIX + "order` o LEFT JOIN `" + DB_PREFIX + "order_product` op ON (o.`order_id` = op.`order_id`) LEFT JOIN `" + DB_PREFIX + "customer` c ON (o.`customer_id` = c.`customer_id`) LEFT JOIN `" + DB_PREFIX + "customer_group_description` cgd ON (c.`customer_group_id` = cgd.`customer_group_id`) WHERE o.`customer_id` > '0' AND cgd.`language_id` = '" + this.config.get('config_language_id') + "'";
+		let sql = "SELECT c.`customer_id`, CONCAT(c.`firstname`, ' ', c.`lastname`) AS `customer`, c.`email`, cgd.`name` AS `customer_group`, c.`status`, o.`order_id`, SUM(op.`quantity`) AS `products`, o.`total` AS `total` FROM `" + DB_PREFIX + "order` o LEFT JOIN `" + DB_PREFIX + "order_product` op ON (o.`order_id` = op.`order_id`) LEFT JOIN `" + DB_PREFIX + "customer` c ON (o.`customer_id` = c.`customer_id`) LEFT JOIN `" + DB_PREFIX + "customer_group_description` cgd ON (c.`customer_group_id` = cgd.`customer_group_id`) WHERE o.`customer_id` > '0' AND cgd.`language_id` = " + this.db.quote(this.config.get('config_language_id'));
 
 		if (data['filter_date_start']) {
 			sql += " AND DATE(o.`date_added`) >= DATE(" + this.db.escape(data['filter_date_start']) + ")";
@@ -235,7 +235,7 @@ global['OpencartAdminModelExtensionOpencartReportCustomer'] = class Customer ext
 		}
 
 		if (data['filter_order_status_id']) {
-			sql += " AND o.`order_status_id` = '" + data['filter_order_status_id'] + "'";
+			sql += " AND o.`order_status_id` = " + this.db.quote(data['filter_order_status_id']);
 		} else {
 			sql += " AND o.`order_status_id` > '0'";
 		}
@@ -254,7 +254,7 @@ global['OpencartAdminModelExtensionOpencartReportCustomer'] = class Customer ext
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql += " LIMIT " + (parseInt(data['start']) || 0) + "," + (parseInt(data['limit']) || 0);
 		}
 
 		let query = await this.db.query(sql);
@@ -283,7 +283,7 @@ global['OpencartAdminModelExtensionOpencartReportCustomer'] = class Customer ext
 		}
 
 		if (data['filter_order_status_id']) {
-			sql += " AND o.`order_status_id` = '" + data['filter_order_status_id'] + "'";
+			sql += " AND o.`order_status_id` = " + this.db.quote(data['filter_order_status_id']);
 		} else {
 			sql += " AND o.`order_status_id` > '0'";
 		}
@@ -299,7 +299,7 @@ global['OpencartAdminModelExtensionOpencartReportCustomer'] = class Customer ext
 	 * @return array
 	 */
 	async getRewardPoints(data = {}) {
-		let sql = "SELECT cr.`customer_id`, CONCAT(c.`firstname`, ' ', c.`lastname`) AS `customer`, c.`email`, cgd.`name` AS `customer_group`, c.`status`, SUM(cr.`points`) AS `points`, COUNT(o.`order_id`) AS `orders`, SUM(o.`total`) AS `total` FROM `" + DB_PREFIX + "customer_reward` cr LEFT JOIN `" + DB_PREFIX + "customer` c ON (cr.`customer_id` = c.`customer_id`) LEFT JOIN `" + DB_PREFIX + "customer_group_description` cgd ON (c.`customer_group_id` = cgd.`customer_group_id`) LEFT JOIN `" + DB_PREFIX + "order` o ON (cr.`order_id` = o.`order_id`) WHERE cgd.`language_id` = '" + this.config.get('config_language_id') + "'";
+		let sql = "SELECT cr.`customer_id`, CONCAT(c.`firstname`, ' ', c.`lastname`) AS `customer`, c.`email`, cgd.`name` AS `customer_group`, c.`status`, SUM(cr.`points`) AS `points`, COUNT(o.`order_id`) AS `orders`, SUM(o.`total`) AS `total` FROM `" + DB_PREFIX + "customer_reward` cr LEFT JOIN `" + DB_PREFIX + "customer` c ON (cr.`customer_id` = c.`customer_id`) LEFT JOIN `" + DB_PREFIX + "customer_group_description` cgd ON (c.`customer_group_id` = cgd.`customer_group_id`) LEFT JOIN `" + DB_PREFIX + "order` o ON (cr.`order_id` = o.`order_id`) WHERE cgd.`language_id` = " + this.db.quote(this.config.get('config_language_id'));
 
 		if (data['filter_date_start']) {
 			sql += " AND DATE(cr.`date_added`) >= DATE(" + this.db.escape(data['filter_date_start']) + ")";
@@ -325,7 +325,7 @@ global['OpencartAdminModelExtensionOpencartReportCustomer'] = class Customer ext
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql += " LIMIT " + (parseInt(data['start']) || 0) + "," + (parseInt(data['limit']) || 0);
 		}
 
 		let query = await this.db.query(sql);
@@ -406,7 +406,7 @@ global['OpencartAdminModelExtensionOpencartReportCustomer'] = class Customer ext
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql += " LIMIT " + (parseInt(data['start']) || 0) + "," + (parseInt(data['limit']) || 0);
 		}
 
 		let query = await this.db.query(sql);
@@ -496,7 +496,7 @@ global['OpencartAdminModelExtensionOpencartReportCustomer'] = class Customer ext
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql += " LIMIT " + (parseInt(data['start']) || 0) + "," + (parseInt(data['limit']) || 0);
 		}
 
 		let query = await this.db.query(sql);

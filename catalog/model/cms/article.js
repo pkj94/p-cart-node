@@ -5,7 +5,7 @@ module.exports = class Article extends global['OpencartSystemEngineModel'] {
 	 * @return array
 	 */
 	async getArticle(article_id) {
-		const sql = "SELECT DISTINCT * FROM `" + DB_PREFIX + "article` `a` LEFT JOIN `" + DB_PREFIX + "article_description` `ad` ON (`a`.`article_id` = `ad`.`article_id`) LEFT JOIN `" + DB_PREFIX + "article_to_store` `a2s` ON (`a`.`article_id` = `a2s`.`article_id`) WHERE `a`.`article_id` = '" + article_id + "' AND `ad`.`language_id` = '" + this.config.get('config_language_id') + "' AND `a2s`.`store_id` = '" + this.config.get('config_store_id') + "'";
+		const sql = "SELECT DISTINCT * FROM `" + DB_PREFIX + "article` `a` LEFT JOIN `" + DB_PREFIX + "article_description` `ad` ON (`a`.`article_id` = `ad`.`article_id`) LEFT JOIN `" + DB_PREFIX + "article_to_store` `a2s` ON (`a`.`article_id` = `a2s`.`article_id`) WHERE `a`.`article_id` = " + this.db.quote(article_id) + " AND `ad`.`language_id` = " + this.db.quote(this.config.get('config_language_id')) + " AND `a2s`.`store_id` = " + this.db.quote(this.config.get('config_store_id'));
 
 		article_data = await this.cache.get('article.' + md5(sql));
 
@@ -26,7 +26,7 @@ module.exports = class Article extends global['OpencartSystemEngineModel'] {
 	 * @return array
 	 */
 	async getArticles(data = {}) {
-		const sql = "SELECT * FROM `" + DB_PREFIX + "article` `a` LEFT JOIN `" + DB_PREFIX + "article_description` `ad` ON (`a`.`article_id` = `ad`.`article_id`) LEFT JOIN `" + DB_PREFIX + "article_to_store` `a2s` ON (`a`.`article_id` = `a2s`.`article_id`) WHERE `ad`.`language_id` = '" + this.config.get('config_language_id') + "' AND `a2s`.`store_id` = '" + this.config.get('config_store_id') + "'";
+		const sql = "SELECT * FROM `" + DB_PREFIX + "article` `a` LEFT JOIN `" + DB_PREFIX + "article_description` `ad` ON (`a`.`article_id` = `ad`.`article_id`) LEFT JOIN `" + DB_PREFIX + "article_to_store` `a2s` ON (`a`.`article_id` = `a2s`.`article_id`) WHERE `ad`.`language_id` = " + this.db.quote(this.config.get('config_language_id')) + " AND `a2s`.`store_id` = " + this.db.quote(this.config.get('config_store_id'));
 
 		if ((data['filter_search'])) {
 			sql += " AND (";
@@ -59,11 +59,11 @@ module.exports = class Article extends global['OpencartSystemEngineModel'] {
 		}
 
 		if ((data['filter_topic_id'])) {
-			sql += " AND `a`.`topic_id` = '" + data['filter_topic_id'] + "'";
+			sql += " AND `a`.`topic_id` = " + this.db.quote(data['filter_topic_id']);
 		}
 
 		if ((data['filter_author'])) {
-			sql += " AND `a`.`author` = '" + data['filter_author'] + "'";
+			sql += " AND `a`.`author` = " + this.db.quote(data['filter_author']);
 		}
 
 		sql += " ORDER BY `a`.`date_added` DESC";
@@ -77,7 +77,7 @@ module.exports = class Article extends global['OpencartSystemEngineModel'] {
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql += " LIMIT " + (parseInt(data['start']) || 0) + "," + (parseInt(data['limit']) || 0);
 		}
 
 		article_data = await this.cache.get('article.' + md5(sql));
@@ -97,7 +97,7 @@ module.exports = class Article extends global['OpencartSystemEngineModel'] {
 	 * @return int
 	 */
 	async getTotalArticles() {
-		const sql = "SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "article` `a` LEFT JOIN `" + DB_PREFIX + "article_description` `ad` ON (`a`.`article_id` = `ad`.`article_id`) LEFT JOIN `" + DB_PREFIX + "article_to_store` `a2s` ON (`a`.`article_id` = `a2s`.`article_id`) WHERE `ad`.`language_id` = '" + this.config.get('config_language_id') + "' AND `a2s`.`store_id` = '" + this.config.get('config_store_id') + "'";
+		const sql = "SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "article` `a` LEFT JOIN `" + DB_PREFIX + "article_description` `ad` ON (`a`.`article_id` = `ad`.`article_id`) LEFT JOIN `" + DB_PREFIX + "article_to_store` `a2s` ON (`a`.`article_id` = `a2s`.`article_id`) WHERE `ad`.`language_id` = " + this.db.quote(this.config.get('config_language_id')) + " AND `a2s`.`store_id` = " + this.db.quote(this.config.get('config_store_id'));
 
 		if ((data['filter_search'])) {
 			sql += " AND (";
@@ -130,11 +130,11 @@ module.exports = class Article extends global['OpencartSystemEngineModel'] {
 		}
 
 		if ((data['filter_topic_id'])) {
-			sql += " AND `a`.`topic_id` = '" + data['filter_topic_id'] + "'";
+			sql += " AND `a`.`topic_id` = " + this.db.quote(data['filter_topic_id']);
 		}
 
 		if ((data['filter_author'])) {
-			sql += " AND `a`.`author` = '" + data['filter_author'] + "'";
+			sql += " AND `a`.`author` = " + this.db.quote(data['filter_author']);
 		}
 
 		const query = await this.db.query(sql);
@@ -148,7 +148,7 @@ module.exports = class Article extends global['OpencartSystemEngineModel'] {
 	 * @return array
 	 */
 	async getLayoutId(article_id) {
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "article_to_layout` WHERE `article_id` = '" + article_id + "' AND `store_id` = '" + this.config.get('config_store_id') + "'");
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "article_to_layout` WHERE `article_id` = " + this.db.quote(article_id) + " AND `store_id` = " + this.db.quote(this.config.get('config_store_id')));
 
 		if (query.num_rows) {
 			return query.row['layout_id'];
@@ -164,7 +164,7 @@ module.exports = class Article extends global['OpencartSystemEngineModel'] {
 	 * @return int
 	 */
 	async addComment(article_id, data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "article_comment` SET `article_id` = '" + article_id + "', `customer_id` = '" + await this.customer.getId() + "', `author` = " + this.db.escape(data['author']) + ", `comment` = " + this.db.escape(data['comment']) + ", `status` = '" + (data['status']) + "', `date_added` = NOW()");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "article_comment` SET `article_id` = " + this.db.quote(article_id) + ", `customer_id` = " + this.db.quote((await this.customer.getId())) + ", `author` = " + this.db.escape(data['author']) + ", `comment` = " + this.db.escape(data['comment']) + ", `status` = " + this.db.quote(data['status']) + ", `date_added` = NOW()");
 
 		return this.db.getLastId();
 	}
@@ -183,7 +183,7 @@ module.exports = class Article extends global['OpencartSystemEngineModel'] {
 			let limit = 10;
 		}
 
-		const sql = "SELECT * FROM `" + DB_PREFIX + "article_comment` WHERE `article_id` = '" + article_id + "' AND `status` = '1' ORDER BY `date_added` DESC LIMIT " + start + "," + limit;
+		const sql = "SELECT * FROM `" + DB_PREFIX + "article_comment` WHERE `article_id` = " + this.db.quote(article_id) + " AND `status` = '1' ORDER BY `date_added` DESC LIMIT " + (parseInt(start) || 0) + "," + (parseInt(limit) || 0);
 
 		comment_data = await this.cache.get('comment+' + md5(sql));
 
@@ -204,7 +204,7 @@ module.exports = class Article extends global['OpencartSystemEngineModel'] {
 	 * @return int
 	 */
 	async getTotalComments(article_id) {
-		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "article_comment` WHERE `article_id` = '" + article_id + "' AND `status` = '1'");
+		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "article_comment` WHERE `article_id` = " + this.db.quote(article_id) + " AND `status` = '1'");
 
 		return query.row['total'];
 	}

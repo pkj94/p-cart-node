@@ -62,7 +62,7 @@ global['OpencartCatalogModelExtensionOpencartTotalVoucher'] = class Voucher exte
 			const voucher_info = await this.registry.get('model_checkout_voucher').getVoucher(code);
 
 			if (voucher_info.voucher_id) {
-				this.db.query("INSERT INTO `" + DB_PREFIX + "voucher_history` SET `voucher_id` = '" + voucher_info['voucher_id'] + "', `order_id` = '" + order_info['order_id'] + "', `amount` = '" + order_total['value'] + "', `date_added` = NOW()");
+				this.db.query("INSERT INTO `" + DB_PREFIX + "voucher_history` SET `voucher_id` = " + this.db.quote(voucher_info['voucher_id']) + ", `order_id` = " + this.db.quote(order_info['order_id']) + ", `amount` = " + this.db.quote(order_total['value']) + ", `date_added` = NOW()");
 			} else {
 				return this.config.get('config_fraud_status_id');
 			}
@@ -77,6 +77,6 @@ global['OpencartCatalogModelExtensionOpencartTotalVoucher'] = class Voucher exte
 	 * @return void
 	 */
 	async unconfirm(order_id) {
-		this.db.query("DELETE FROM `" + DB_PREFIX + "voucher_history` WHERE `order_id` = '" + order_id + "'");
+		this.db.query("DELETE FROM `" + DB_PREFIX + "voucher_history` WHERE `order_id` = " + this.db.quote(order_id));
 	}
 }

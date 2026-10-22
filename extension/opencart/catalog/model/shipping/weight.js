@@ -16,7 +16,7 @@ global['OpencartCatalogModelExtensionOpencartShippingWeight'] = class Weight ext
 		for (let result of query.rows) {
 			let status = false;
 			if (this.config.get('shipping_weight_' + result['geo_zone_id'] + '_status')) {
-				const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "zone_to_geo_zone` WHERE `geo_zone_id` = '" + result['geo_zone_id'] + "' AND `country_id` = '" + address['country_id'] + "' AND (`zone_id` = '" + address['zone_id'] + "' OR `zone_id` = '0')");
+				const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "zone_to_geo_zone` WHERE `geo_zone_id` = " + this.db.quote(result['geo_zone_id']) + " AND `country_id` = " + this.db.quote(address['country_id']) + " AND (`zone_id` = " + this.db.quote(address['zone_id']) + " OR `zone_id` = '0')");
 
 				if (query.num_rows) {
 					status = true;

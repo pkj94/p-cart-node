@@ -16,7 +16,7 @@ module.exports = class CustomerLibrary {
     }
     async init() {
         if (this.session.data.customer_id) {
-            const customer_query = await this.db.query(`SELECT * FROM ${DB_PREFIX}customer WHERE customer_id = ${this.session.data.customer_id} AND status = '1'`);
+            const customer_query = await this.db.query(`SELECT * FROM ${DB_PREFIX}customer WHERE customer_id = ${this.db.quote(this.session.data.customer_id)} AND status = '1'`);
             if (customer_query.num_rows) {
                 this.customer_id = customer_query.row.customer_id;
                 this.firstname = customer_query.row.firstname;
@@ -26,10 +26,10 @@ module.exports = class CustomerLibrary {
                 this.telephone = customer_query.row.telephone;
                 this.newsletter = customer_query.row.newsletter;
 
-                await this.db.query(`UPDATE ${DB_PREFIX}customer SET language_id = ${this.config.get('config_language_id')}, ip = '${this.request.server.headers['x-forwarded-for'] || (
+                await this.db.query(`UPDATE ${DB_PREFIX}customer SET language_id = ${this.db.quote(this.config.get('config_language_id'))}, ip = ${this.db.quote(this.request.server.headers['x-forwarded-for'] || (
                     this.request.server.connection ? (this.request.server.connection.remoteAddress ||
                         this.request.server.socket.remoteAddress ||
-                        this.request.server.connection.socket.remoteAddress) : '')}' WHERE customer_id = ${this.customer_id}`);
+                        this.request.server.connection.socket.remoteAddress) : ''))} WHERE customer_id = ${this.db.quote(this.customer_id)}`);
             } else {
                 this.logout();
             }
@@ -52,7 +52,7 @@ module.exports = class CustomerLibrary {
                 }
 
                 if (rehash) {
-                    await this.db.query("UPDATE `" + DB_PREFIX + "customer` SET `password` = " + this.db.escape(password_hash(password)) + " WHERE `customer_id` = '" + customer_query.row['customer_id'] + "'");
+                    await this.db.query("UPDATE `" + DB_PREFIX + "customer` SET `password` = " + this.db.escape(password_hash(password)) + " WHERE `customer_id` = " + this.db.quote(customer_query.row['customer_id']));
                 }
             }
 
@@ -66,10 +66,10 @@ module.exports = class CustomerLibrary {
             this.telephone = customer_query.row['telephone'];
             this.newsletter = customer_query.row['newsletter'];
 
-            await this.db.query("UPDATE `" + DB_PREFIX + "customer` SET `language_id` = '" + this.config.get('config_language_id') + "', `ip` = " + this.db.escape((
+            await this.db.query("UPDATE `" + DB_PREFIX + "customer` SET `language_id` = " + this.db.quote(this.config.get('config_language_id')) + ", `ip` = " + this.db.escape((
                 this.request.server.connection ? (this.request.server.connection.remoteAddress ||
                     this.request.server.socket.remoteAddress ||
-                    this.request.server.connection.socket.remoteAddress) : '')) + " WHERE `customer_id` = '" + this.customer_id + "'");
+                    this.request.server.connection.socket.remoteAddress) : '')) + " WHERE `customer_id` = " + this.db.quote(this.customer_id));
 
             return true;
         } else {
@@ -131,20 +131,20 @@ module.exports = class CustomerLibrary {
 
     async getAddressId() {
         await this.init();
-        const query = await this.db.query(`SELECT * FROM ${DB_PREFIX}address WHERE customer_id = ${this.customer_id} AND \`default\` = '1'`);
+        const query = await this.db.query(`SELECT * FROM ${DB_PREFIX}address WHERE customer_id = ${this.db.quote(this.customer_id)} AND \`default\` = '1'`);
 
         return query.row.address_id || 0;
     }
 
     async getBalance() {
         await this.init();
-        const query = await this.db.query(`SELECT SUM(amount) AS total FROM ${DB_PREFIX}customer_transaction WHERE customer_id = ${this.customer_id}`);
+        const query = await this.db.query(`SELECT SUM(amount) AS total FROM ${DB_PREFIX}customer_transaction WHERE customer_id = ${this.db.quote(this.customer_id)}`);
         return query.row.total || 0;
     }
 
     async getRewardPoints() {
         await this.init();
-        const query = await this.db.query(`SELECT SUM(points) AS total FROM ${DB_PREFIX}customer_reward WHERE customer_id = ${this.customer_id}`);
+        const query = await this.db.query(`SELECT SUM(points) AS total FROM ${DB_PREFIX}customer_reward WHERE customer_id = ${this.db.quote(this.customer_id)}`);
         return query.row.total || 0;
     }
 }

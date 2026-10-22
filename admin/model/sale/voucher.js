@@ -8,7 +8,7 @@ module.exports = class VoucherSaleModel extends global['OpencartSystemEngineMode
 	 * @return int
 	 */
 	async addVoucher(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "voucher` SET `code` = " + this.db.escape(data['code']) + ", `from_name` = " + this.db.escape(data['from_name']) + ", `from_email` = " + this.db.escape(data['from_email']) + ", `to_name` = " + this.db.escape(data['to_name']) + ", `to_email` = " + this.db.escape(data['to_email']) + ", `voucher_theme_id` = '" + data['voucher_theme_id'] + "', `message` = " + this.db.escape(data['message']) + ", `amount` = '" + data['amount'] + "', `status` = '" + data['status'] + "', `date_added` = NOW()");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "voucher` SET `code` = " + this.db.escape(data['code']) + ", `from_name` = " + this.db.escape(data['from_name']) + ", `from_email` = " + this.db.escape(data['from_email']) + ", `to_name` = " + this.db.escape(data['to_name']) + ", `to_email` = " + this.db.escape(data['to_email']) + ", `voucher_theme_id` = " + this.db.quote(data['voucher_theme_id']) + ", `message` = " + this.db.escape(data['message']) + ", `amount` = " + this.db.quote(data['amount']) + ", `status` = " + this.db.quote(data['status']) + ", `date_added` = NOW()");
 
 		return this.db.getLastId();
 	}
@@ -20,7 +20,7 @@ module.exports = class VoucherSaleModel extends global['OpencartSystemEngineMode
 	 * @return void
 	 */
 	async editVoucher(voucher_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "voucher` SET `code` = " + this.db.escape(data['code']) + ", `from_name` = " + this.db.escape(data['from_name']) + ", `from_email` = " + this.db.escape(data['from_email']) + ", `to_name` = " + this.db.escape(data['to_name']) + ", `to_email` = " + this.db.escape(data['to_email']) + ", `voucher_theme_id` = '" + data['voucher_theme_id'] + "', `message` = " + this.db.escape(data['message']) + ", `amount` = '" + data['amount'] + "', `status` = '" + data['status'] + "' WHERE `voucher_id` = '" + voucher_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "voucher` SET `code` = " + this.db.escape(data['code']) + ", `from_name` = " + this.db.escape(data['from_name']) + ", `from_email` = " + this.db.escape(data['from_email']) + ", `to_name` = " + this.db.escape(data['to_name']) + ", `to_email` = " + this.db.escape(data['to_email']) + ", `voucher_theme_id` = " + this.db.quote(data['voucher_theme_id']) + ", `message` = " + this.db.escape(data['message']) + ", `amount` = " + this.db.quote(data['amount']) + ", `status` = " + this.db.quote(data['status']) + " WHERE `voucher_id` = " + this.db.quote(voucher_id));
 	}
 
 	/**
@@ -29,8 +29,8 @@ module.exports = class VoucherSaleModel extends global['OpencartSystemEngineMode
 	 * @return void
 	 */
 	async deleteVoucher(voucher_id) {
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "voucher` WHERE `voucher_id` = '" + voucher_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "voucher_history` WHERE `voucher_id` = '" + voucher_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "voucher` WHERE `voucher_id` = " + this.db.quote(voucher_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "voucher_history` WHERE `voucher_id` = " + this.db.quote(voucher_id));
 	}
 
 	/**
@@ -39,7 +39,7 @@ module.exports = class VoucherSaleModel extends global['OpencartSystemEngineMode
 	 * @return array
 	 */
 	async getVoucher(voucher_id) {
-		let query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "voucher` WHERE `voucher_id` = '" + voucher_id + "'");
+		let query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "voucher` WHERE `voucher_id` = " + this.db.quote(voucher_id));
 
 		return query.row;
 	}
@@ -61,7 +61,7 @@ module.exports = class VoucherSaleModel extends global['OpencartSystemEngineMode
 	 * @return array
 	 */
 	async getVouchers(data = {}) {
-		let sql = "SELECT v.`voucher_id`, v.`order_id`, v.`code`, v.`from_name`, v.`from_email`, v.`to_name`, v.`to_email`, (SELECT vtd.`name` FROM `" + DB_PREFIX + "voucher_theme_description` vtd WHERE vtd.`voucher_theme_id` = v.`voucher_theme_id` AND vtd.`language_id` = '" + this.config.get('config_language_id') + "') AS theme, v.`amount`, v.`status`, v.`date_added` FROM `" + DB_PREFIX + "voucher` v";
+		let sql = "SELECT v.`voucher_id`, v.`order_id`, v.`code`, v.`from_name`, v.`from_email`, v.`to_name`, v.`to_email`, (SELECT vtd.`name` FROM `" + DB_PREFIX + "voucher_theme_description` vtd WHERE vtd.`voucher_theme_id` = v.`voucher_theme_id` AND vtd.`language_id` = " + this.db.quote(this.config.get('config_language_id')) + ") AS theme, v.`amount`, v.`status`, v.`date_added` FROM `" + DB_PREFIX + "voucher` v";
 
 		let sort_data = [
 			'v.code',
@@ -96,7 +96,7 @@ module.exports = class VoucherSaleModel extends global['OpencartSystemEngineMode
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql += " LIMIT " + (parseInt(data['start']) || 0) + "," + (parseInt(data['limit']) || 0);
 		}
 
 		let query = await this.db.query(sql);
@@ -119,7 +119,7 @@ module.exports = class VoucherSaleModel extends global['OpencartSystemEngineMode
 	 * @return int
 	 */
 	async getTotalVouchersByVoucherThemeId(voucher_theme_id) {
-		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "voucher` WHERE `voucher_theme_id` = '" + voucher_theme_id + "'");
+		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "voucher` WHERE `voucher_theme_id` = " + this.db.quote(voucher_theme_id));
 
 		return query.row['total'];
 	}
@@ -140,7 +140,7 @@ module.exports = class VoucherSaleModel extends global['OpencartSystemEngineMode
 			limit = 10;
 		}
 
-		let query = await this.db.query("SELECT vh.`order_id`, CONCAT(o.`firstname`, ' ', o.`lastname`) AS customer, vh.`amount`, vh.`date_added` FROM `" + DB_PREFIX + "voucher_history` vh LEFT JOIN `" + DB_PREFIX + "order` o ON (vh.`order_id` = o.`order_id`) WHERE vh.`voucher_id` = '" + voucher_id + "' ORDER BY vh.`date_added` ASC LIMIT " + start + "," + limit);
+		let query = await this.db.query("SELECT vh.`order_id`, CONCAT(o.`firstname`, ' ', o.`lastname`) AS customer, vh.`amount`, vh.`date_added` FROM `" + DB_PREFIX + "voucher_history` vh LEFT JOIN `" + DB_PREFIX + "order` o ON (vh.`order_id` = o.`order_id`) WHERE vh.`voucher_id` = " + this.db.quote(voucher_id) + " ORDER BY vh.`date_added` ASC LIMIT " + (parseInt(start) || 0) + "," + (parseInt(limit) || 0));
 
 		return query.rows;
 	}
@@ -151,7 +151,7 @@ module.exports = class VoucherSaleModel extends global['OpencartSystemEngineMode
 	 * @return int
 	 */
 	async getTotalHistories(voucher_id) {
-		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "voucher_history` WHERE `voucher_id` = '" + voucher_id + "'");
+		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "voucher_history` WHERE `voucher_id` = " + this.db.quote(voucher_id));
 
 		return query.row['total'];
 	}

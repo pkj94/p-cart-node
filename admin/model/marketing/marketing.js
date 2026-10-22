@@ -20,7 +20,7 @@ module.exports = class MarketingModel extends global['OpencartSystemEngineModel'
 	 * @return void
 	 */
 	async editMarketing(marketing_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "marketing` SET `name` = " + this.db.escape(data['name']) + ", `description` = " + this.db.escape(data['description']) + ", `code` = " + this.db.escape(data['code']) + " WHERE `marketing_id` = '" + marketing_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "marketing` SET `name` = " + this.db.escape(data['name']) + ", `description` = " + this.db.escape(data['description']) + ", `code` = " + this.db.escape(data['code']) + " WHERE `marketing_id` = " + this.db.quote(marketing_id));
 	}
 
 	/**
@@ -29,7 +29,7 @@ module.exports = class MarketingModel extends global['OpencartSystemEngineModel'
 	 * @return void
 	 */
 	async deleteMarketing(marketing_id) {
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "marketing` WHERE `marketing_id` = '" + marketing_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "marketing` WHERE `marketing_id` = " + this.db.quote(marketing_id));
 	}
 
 	/**
@@ -38,7 +38,7 @@ module.exports = class MarketingModel extends global['OpencartSystemEngineModel'
 	 * @return array
 	 */
 	async getMarketing(marketing_id) {
-		let query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "marketing` WHERE `marketing_id` = '" + marketing_id + "'");
+		let query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "marketing` WHERE `marketing_id` = " + this.db.quote(marketing_id));
 
 		return query.row;
 	}
@@ -65,7 +65,7 @@ module.exports = class MarketingModel extends global['OpencartSystemEngineModel'
 		const order_statuses = this.config.get('config_complete_status');
 
 		for (let order_status_id of order_statuses) {
-			implode.push("o.`order_status_id` = '" + order_status_id + "'");
+			implode.push("o.`order_status_id` = " + this.db.quote(order_status_id));
 		}
 
 		let sql = "SELECT *, (SELECT COUNT(*) FROM `" + DB_PREFIX + "order` o WHERE (" + implode.join(" OR ") + ") AND o.`marketing_id` = m.`marketing_id`) AS `orders` FROM `" + DB_PREFIX + "marketing` m";
@@ -121,7 +121,7 @@ module.exports = class MarketingModel extends global['OpencartSystemEngineModel'
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql += " LIMIT " + (parseInt(data['start']) || 0) + "," + (parseInt(data['limit']) || 0);
 		}
 
 		let query = await this.db.query(sql);
@@ -180,7 +180,7 @@ module.exports = class MarketingModel extends global['OpencartSystemEngineModel'
 			limit = 10;
 		}
 
-		let query = await this.db.query("SELECT `ip`, `store_id`, `country`, `date_added` FROM `" + DB_PREFIX + "marketing_report` WHERE `marketing_id` = '" + marketing_id + "' ORDER BY `date_added` ASC LIMIT " + start + "," + limit);
+		let query = await this.db.query("SELECT `ip`, `store_id`, `country`, `date_added` FROM `" + DB_PREFIX + "marketing_report` WHERE `marketing_id` = " + this.db.quote(marketing_id) + " ORDER BY `date_added` ASC LIMIT " + (parseInt(start) || 0) + "," + (parseInt(limit) || 0));
 
 		return query.rows;
 	}
@@ -191,7 +191,7 @@ module.exports = class MarketingModel extends global['OpencartSystemEngineModel'
 	 * @return int
 	 */
 	async getTotalReports(marketing_id) {
-		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "marketing_report` WHERE `marketing_id` = '" + marketing_id + "'");
+		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "marketing_report` WHERE `marketing_id` = " + this.db.quote(marketing_id));
 
 		return query.row['total'];
 	}

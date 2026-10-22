@@ -14,9 +14,9 @@ module.exports = class TaxLibrary {
                        LEFT JOIN ${DB_PREFIX}zone_to_geo_zone z2gz ON (tr2.geo_zone_id = z2gz.geo_zone_id) 
                        LEFT JOIN ${DB_PREFIX}geo_zone gz ON (tr2.geo_zone_id = gz.geo_zone_id) 
                        WHERE tr1.based = 'shipping' 
-                       AND tr2cg.customer_group_id = ${this.config.get('config_customer_group_id')} 
-                       AND z2gz.country_id = ${country_id} 
-                       AND (z2gz.zone_id = '0' OR z2gz.zone_id = ${zone_id}) 
+                       AND tr2cg.customer_group_id = ${this.db.quote(this.config.get('config_customer_group_id'))} 
+                       AND z2gz.country_id = ${this.db.quote(country_id)} 
+                       AND (z2gz.zone_id = '0' OR z2gz.zone_id = ${this.db.quote(zone_id)}) 
                        ORDER BY tr1.priority ASC`;
 
         const tax = await this.db.query(query);
@@ -43,9 +43,9 @@ module.exports = class TaxLibrary {
                        LEFT JOIN ${DB_PREFIX}zone_to_geo_zone z2gz ON (tr2.geo_zone_id = z2gz.geo_zone_id) 
                        LEFT JOIN ${DB_PREFIX}geo_zone gz ON (tr2.geo_zone_id = gz.geo_zone_id) 
                        WHERE tr1.based = 'payment' 
-                       AND tr2cg.customer_group_id = ${this.config.get('config_customer_group_id')} 
-                       AND z2gz.country_id = ${country_id} 
-                       AND (z2gz.zone_id = '0' OR z2gz.zone_id = ${zone_id}) 
+                       AND tr2cg.customer_group_id = ${this.db.quote(this.config.get('config_customer_group_id'))} 
+                       AND z2gz.country_id = ${this.db.quote(country_id)} 
+                       AND (z2gz.zone_id = '0' OR z2gz.zone_id = ${this.db.quote(zone_id)}) 
                        ORDER BY tr1.priority ASC`;
 
         const tax = await this.db.query(query);
@@ -72,9 +72,9 @@ module.exports = class TaxLibrary {
                        LEFT JOIN ${DB_PREFIX}zone_to_geo_zone z2gz ON (tr2.geo_zone_id = z2gz.geo_zone_id) 
                        LEFT JOIN ${DB_PREFIX}geo_zone gz ON (tr2.geo_zone_id = gz.geo_zone_id) 
                        WHERE tr1.based = 'store' 
-                       AND tr2cg.customer_group_id = ${this.config.get('config_customer_group_id')} 
-                       AND z2gz.country_id = ${country_id} 
-                       AND (z2gz.zone_id = '0' OR z2gz.zone_id = ${zone_id}) 
+                       AND tr2cg.customer_group_id = ${this.db.quote(this.config.get('config_customer_group_id'))} 
+                       AND z2gz.country_id = ${this.db.quote(country_id)} 
+                       AND (z2gz.zone_id = '0' OR z2gz.zone_id = ${this.db.quote(zone_id)}) 
                        ORDER BY tr1.priority ASC`;
 
         const tax = await this.db.query(query);

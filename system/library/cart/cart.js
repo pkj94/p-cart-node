@@ -13,11 +13,11 @@ module.exports = class Cart {
         await this.db.query(`DELETE FROM \`${DB_PREFIX}cart\` WHERE (api_id > 0 OR customer_id = '0') AND date_added < DATE_SUB(NOW(), INTERVAL 1 HOUR)`);
 
         if (await this.customer.isLogged()) {
-            await this.db.query(`UPDATE \`${DB_PREFIX}cart\` SET session_id = '${this.session.getId()}' WHERE api_id = '0' AND customer_id = ${await this.customer.getId()}`);
-            const cart_query = await this.db.query(`SELECT * FROM \`${DB_PREFIX}cart\` WHERE api_id = '0' AND customer_id = '0' AND session_id = '${this.session.getId()}'`);
+            await this.db.query(`UPDATE \`${DB_PREFIX}cart\` SET session_id = ${this.db.quote(this.session.getId())} WHERE api_id = '0' AND customer_id = ${this.db.quote(await this.customer.getId())}`);
+            const cart_query = await this.db.query(`SELECT * FROM \`${DB_PREFIX}cart\` WHERE api_id = '0' AND customer_id = '0' AND session_id = ${this.db.quote(this.session.getId())}`);
 
             for (let cart of cart_query.rows) {
-                await this.db.query(`DELETE FROM \`${DB_PREFIX}cart\` WHERE cart_id = ${cart.cart_id}`);
+                await this.db.query(`DELETE FROM \`${DB_PREFIX}cart\` WHERE cart_id = ${this.db.quote(cart.cart_id)}`);
                 await this.add(cart.product_id, cart.quantity, JSON.parse(cart.option), cart.subscription_plan_id, cart.override, cart.price);
             }
         }
@@ -26,12 +26,12 @@ module.exports = class Cart {
     }
     async getProducts() {
         if (!Object.keys(this.data).length) {
-            const cart_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "cart` WHERE `api_id` = '" + (this.session.data['api_id'] ? this.session.data['api_id'] : 0) + "' AND `customer_id` = '" + await this.customer.getId() + "' AND `session_id` = " + this.db.escape(this.session.getId()));
+            const cart_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "cart` WHERE `api_id` = " + this.db.quote((this.session.data['api_id'] ? this.session.data['api_id'] : 0)) + " AND `customer_id` = " + this.db.quote((await this.customer.getId())) + " AND `session_id` = " + this.db.escape(this.session.getId()));
 
             for (let cart of cart_query.rows) {
                 let stock = true;
 
-                const product_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_to_store` `p2s` LEFT JOIN `" + DB_PREFIX + "product` p ON (p2s.`product_id` = p.`product_id`) LEFT JOIN `" + DB_PREFIX + "product_description` pd ON (p.`product_id` = pd.`product_id`) WHERE p2s.`store_id` = '" + this.config.get('config_store_id') + "' AND p2s.`product_id` = '" + cart['product_id'] + "' AND pd.`language_id` = '" + this.config.get('config_language_id') + "' AND p.`date_available` <= NOW() AND p.`status` = '1'");
+                const product_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_to_store` `p2s` LEFT JOIN `" + DB_PREFIX + "product` p ON (p2s.`product_id` = p.`product_id`) LEFT JOIN `" + DB_PREFIX + "product_description` pd ON (p.`product_id` = pd.`product_id`) WHERE p2s.`store_id` = " + this.db.quote(this.config.get('config_store_id')) + " AND p2s.`product_id` = " + this.db.quote(cart['product_id']) + " AND pd.`language_id` = " + this.db.quote(this.config.get('config_language_id')) + " AND p.`date_available` <= NOW() AND p.`status` = '1'");
 
                 if (product_query.num_rows && (cart['quantity'] > 0)) {
                     let option_price = 0;
@@ -57,11 +57,11 @@ module.exports = class Cart {
                             product_id = cart['product_id'];
                         }
 
-                        const option_query = await this.db.query("SELECT po.`product_option_id`, po.`option_id`, od.`name`, o.`type` FROM `" + DB_PREFIX + "product_option` po LEFT JOIN `" + DB_PREFIX + "option` o ON (po.`option_id` = o.`option_id`) LEFT JOIN `" + DB_PREFIX + "option_description` od ON (o.`option_id` = od.`option_id`) WHERE po.`product_option_id` = '" + product_option_id + "' AND po.`product_id` = '" + product_id + "' AND od.`language_id` = '" + this.config.get('config_language_id') + "'");
+                        const option_query = await this.db.query("SELECT po.`product_option_id`, po.`option_id`, od.`name`, o.`type` FROM `" + DB_PREFIX + "product_option` po LEFT JOIN `" + DB_PREFIX + "option` o ON (po.`option_id` = o.`option_id`) LEFT JOIN `" + DB_PREFIX + "option_description` od ON (o.`option_id` = od.`option_id`) WHERE po.`product_option_id` = " + this.db.quote(product_option_id) + " AND po.`product_id` = " + this.db.quote(product_id) + " AND od.`language_id` = " + this.db.quote(this.config.get('config_language_id')));
 
                         if (option_query.num_rows) {
                             if (option_query.row['type'] == 'select' || option_query.row['type'] == 'radio') {
-                                const option_value_query = await this.db.query("SELECT pov.`option_value_id`, ovd.`name`, pov.`quantity`, pov.`subtract`, pov.`price`, pov.`price_prefix`, pov.`points`, pov.`points_prefix`, pov.`weight`, pov.`weight_prefix` FROM `" + DB_PREFIX + "product_option_value` pov LEFT JOIN `" + DB_PREFIX + "option_value` ov ON (pov.`option_value_id` = ov.`option_value_id`) LEFT JOIN `" + DB_PREFIX + "option_value_description` ovd ON (ov.`option_value_id` = ovd.`option_value_id`) WHERE pov.`product_option_value_id` = '" + value + "' AND pov.`product_option_id` = '" + product_option_id + "' AND ovd.`language_id` = '" + this.config.get('config_language_id') + "'");
+                                const option_value_query = await this.db.query("SELECT pov.`option_value_id`, ovd.`name`, pov.`quantity`, pov.`subtract`, pov.`price`, pov.`price_prefix`, pov.`points`, pov.`points_prefix`, pov.`weight`, pov.`weight_prefix` FROM `" + DB_PREFIX + "product_option_value` pov LEFT JOIN `" + DB_PREFIX + "option_value` ov ON (pov.`option_value_id` = ov.`option_value_id`) LEFT JOIN `" + DB_PREFIX + "option_value_description` ovd ON (ov.`option_value_id` = ovd.`option_value_id`) WHERE pov.`product_option_value_id` = " + this.db.quote(value) + " AND pov.`product_option_id` = " + this.db.quote(product_option_id) + " AND ovd.`language_id` = " + this.db.quote(this.config.get('config_language_id')));
 
                                 if (option_value_query.num_rows) {
                                     if (option_value_query.row['price_prefix'] == '+') {
@@ -106,7 +106,7 @@ module.exports = class Cart {
                                 }
                             } else if (option_query.row['type'] == 'checkbox' && Array.isArray(value)) {
                                 for (let product_option_value_id of value) {
-                                    const option_value_query = await this.db.query("SELECT pov.`option_value_id`, pov.`quantity`, pov.`subtract`, pov.`price`, pov.`price_prefix`, pov.`points`, pov.`points_prefix`, pov.`weight`, pov.`weight_prefix`, ovd.`name` FROM `" + DB_PREFIX + "product_option_value` `pov` LEFT JOIN `" + DB_PREFIX + "option_value_description` ovd ON (pov.`option_value_id` = ovd.option_value_id) WHERE pov.product_option_value_id = '" + product_option_value_id + "' AND pov.product_option_id = '" + product_option_id + "' AND ovd.language_id = '" + this.config.get('config_language_id') + "'");
+                                    const option_value_query = await this.db.query("SELECT pov.`option_value_id`, pov.`quantity`, pov.`subtract`, pov.`price`, pov.`price_prefix`, pov.`points`, pov.`points_prefix`, pov.`weight`, pov.`weight_prefix`, ovd.`name` FROM `" + DB_PREFIX + "product_option_value` `pov` LEFT JOIN `" + DB_PREFIX + "option_value_description` ovd ON (pov.`option_value_id` = ovd.option_value_id) WHERE pov.product_option_value_id = " + this.db.quote(product_option_value_id) + " AND pov.product_option_id = " + this.db.quote(product_option_id) + " AND ovd.language_id = " + this.db.quote(this.config.get('config_language_id')));
 
                                     if (option_value_query.num_rows) {
                                         if (option_value_query.row['price_prefix'] == '+') {
@@ -183,14 +183,14 @@ module.exports = class Cart {
                         }
                     }
 
-                    const product_discount_query = await this.db.query("SELECT `price` FROM `" + DB_PREFIX + "product_discount` WHERE `product_id` = '" + cart['product_id'] + "' AND `customer_group_id` = '" + this.config.get('config_customer_group_id') + "' AND `quantity` <= '" + discount_quantity + "' AND ((`date_start` = '0000-00-00' OR `date_start` < NOW()) AND (`date_end` = '0000-00-00' OR `date_end` > NOW())) ORDER BY `quantity` DESC, `priority` ASC, `price` ASC LIMIT 1");
+                    const product_discount_query = await this.db.query("SELECT `price` FROM `" + DB_PREFIX + "product_discount` WHERE `product_id` = " + this.db.quote(cart['product_id']) + " AND `customer_group_id` = " + this.db.quote(this.config.get('config_customer_group_id')) + " AND `quantity` <= " + this.db.quote(discount_quantity) + " AND ((`date_start` = '0000-00-00' OR `date_start` < NOW()) AND (`date_end` = '0000-00-00' OR `date_end` > NOW())) ORDER BY `quantity` DESC, `priority` ASC, `price` ASC LIMIT 1");
 
                     if (product_discount_query.num_rows) {
                         price = product_discount_query.row['price'];
                     }
 
                     // Product Specials
-                    const product_special_query = await this.db.query("SELECT `price` FROM `" + DB_PREFIX + "product_special` WHERE `product_id` = '" + cart['product_id'] + "' AND `customer_group_id` = '" + this.config.get('config_customer_group_id') + "' AND ((`date_start` = '0000-00-00' OR `date_start` < NOW()) AND (`date_end` = '0000-00-00' OR `date_end` > NOW())) ORDER BY `priority` ASC, `price` ASC LIMIT 1");
+                    const product_special_query = await this.db.query("SELECT `price` FROM `" + DB_PREFIX + "product_special` WHERE `product_id` = " + this.db.quote(cart['product_id']) + " AND `customer_group_id` = " + this.db.quote(this.config.get('config_customer_group_id')) + " AND ((`date_start` = '0000-00-00' OR `date_start` < NOW()) AND (`date_end` = '0000-00-00' OR `date_end` > NOW())) ORDER BY `priority` ASC, `price` ASC LIMIT 1");
 
                     if (product_special_query.num_rows) {
                         price = product_special_query.row['price'];
@@ -209,7 +209,7 @@ module.exports = class Cart {
                     }
 
                     // Reward Points
-                    let product_reward_query = await this.db.query("SELECT `points` FROM `" + DB_PREFIX + "product_reward` WHERE `product_id` = '" + cart['product_id'] + "' AND `customer_group_id` = '" + this.config.get('config_customer_group_id') + "'");
+                    let product_reward_query = await this.db.query("SELECT `points` FROM `" + DB_PREFIX + "product_reward` WHERE `product_id` = " + this.db.quote(cart['product_id']) + " AND `customer_group_id` = " + this.db.quote(this.config.get('config_customer_group_id')));
                     let reward = 0;
                     if (product_reward_query.num_rows) {
                         reward = product_reward_query.row['points'];
@@ -218,7 +218,7 @@ module.exports = class Cart {
                     // Downloads
                     let download_data = [];
 
-                    const download_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_to_download` p2d LEFT JOIN `" + DB_PREFIX + "download` d ON (p2d.`download_id` = d.`download_id`) LEFT JOIN `" + DB_PREFIX + "download_description` dd ON (d.`download_id` = dd.`download_id`) WHERE p2d.`product_id` = '" + cart['product_id'] + "' AND dd.`language_id` = '" + this.config.get('config_language_id') + "'");
+                    const download_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_to_download` p2d LEFT JOIN `" + DB_PREFIX + "download` d ON (p2d.`download_id` = d.`download_id`) LEFT JOIN `" + DB_PREFIX + "download_description` dd ON (d.`download_id` = dd.`download_id`) WHERE p2d.`product_id` = " + this.db.quote(cart['product_id']) + " AND dd.`language_id` = " + this.db.quote(this.config.get('config_language_id')));
 
                     for (let download of download_query.rows) {
                         download_data.push({
@@ -235,7 +235,7 @@ module.exports = class Cart {
                     }
 
                     let subscription_data = {};
-                    const subscription_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_subscription` ps LEFT JOIN `" + DB_PREFIX + "subscription_plan` sp ON (ps.`subscription_plan_id` = sp.`subscription_plan_id`) LEFT JOIN `" + DB_PREFIX + "subscription_plan_description` spd ON (sp.`subscription_plan_id` = spd.`subscription_plan_id`) WHERE ps.`product_id` = '" + cart['product_id'] + "' AND ps.`subscription_plan_id` = '" + cart['subscription_plan_id'] + "' AND ps.`customer_group_id` = '" + this.config.get('config_customer_group_id') + "' AND spd.`language_id` = '" + this.config.get('config_language_id') + "' AND sp.`status` = '1'");
+                    const subscription_query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "product_subscription` ps LEFT JOIN `" + DB_PREFIX + "subscription_plan` sp ON (ps.`subscription_plan_id` = sp.`subscription_plan_id`) LEFT JOIN `" + DB_PREFIX + "subscription_plan_description` spd ON (sp.`subscription_plan_id` = spd.`subscription_plan_id`) WHERE ps.`product_id` = " + this.db.quote(cart['product_id']) + " AND ps.`subscription_plan_id` = " + this.db.quote(cart['subscription_plan_id']) + " AND ps.`customer_group_id` = " + this.db.quote(this.config.get('config_customer_group_id')) + " AND spd.`language_id` = " + this.db.quote(this.config.get('config_language_id')) + " AND sp.`status` = '1'");
 
                     if (subscription_query.num_rows) {
                         price = subscription_query.row['price'];
@@ -303,13 +303,13 @@ module.exports = class Cart {
     async add(product_id, quantity = 1, option = [], subscription_plan_id = 0, override = false, price = 0) {
         //await this.init();
         const query = await this.db.query(
-            "SELECT COUNT(*) as  `total` FROM `" + DB_PREFIX + "cart` WHERE `api_id` = " + (this.session.data.api_id || 0) + " AND `customer_id` = " + await this.customer.getId() + " AND `session_id` = '" + this.session.getId() + "' AND `product_id` = " + product_id + " AND `subscription_plan_id` = " + subscription_plan_id + " AND `option` = '" + JSON.stringify(option) + "'");
+            "SELECT COUNT(*) as  `total` FROM `" + DB_PREFIX + "cart` WHERE `api_id` = " + this.db.quote(this.session.data.api_id || 0) + " AND `customer_id` = " + this.db.quote(await this.customer.getId()) + " AND `session_id` = " + this.db.quote(this.session.getId()) + " AND `product_id` = " + this.db.quote(product_id) + " AND `subscription_plan_id` = " + this.db.quote(subscription_plan_id) + " AND `option` = " + this.db.quote(JSON.stringify(option)));
         if (!query.row.total) {
             await this.db.query(
-                "INSERT INTO `" + DB_PREFIX + "cart` SET `api_id` = " + (this.session.data.api_id || 0) + ", `customer_id` = " + await this.customer.getId() + ", `session_id` = '" + this.session.getId() + "', `product_id` = " + product_id + ", `subscription_plan_id` = " + subscription_plan_id + ", `option` = '" + JSON.stringify(option) + "', `quantity` = " + quantity + ", `override` = '" + override + "', `price` = " + (override ? price : 0) + ", `date_added` = NOW()");
+                "INSERT INTO `" + DB_PREFIX + "cart` SET `api_id` = " + this.db.quote(this.session.data.api_id || 0) + ", `customer_id` = " + this.db.quote(await this.customer.getId()) + ", `session_id` = " + this.db.quote(this.session.getId()) + ", `product_id` = " + this.db.quote(product_id) + ", `subscription_plan_id` = " + this.db.quote(subscription_plan_id) + ", `option` = " + this.db.quote(JSON.stringify(option)) + ", `quantity` = " + this.db.quote(quantity) + ", `override` = " + this.db.quote(override) + ", `price` = " + this.db.quote(override ? price : 0) + ", `date_added` = NOW()");
         } else {
             await this.db.query(
-                "UPDATE `" + DB_PREFIX + "cart` SET `quantity` = (`quantity` + " + quantity + ") WHERE `api_id` = " + (this.session.data.api_id || 0) + " AND `customer_id` = " + await this.customer.getId() + " AND `session_id` = '" + this.session.getId() + "' AND `product_id` = " + product_id + " AND `subscription_plan_id` = " + subscription_plan_id + " AND `option` = '" + JSON.stringify(option) + "'");
+                "UPDATE `" + DB_PREFIX + "cart` SET `quantity` = (`quantity` + " + this.db.quote(quantity) + ") WHERE `api_id` = " + this.db.quote(this.session.data.api_id || 0) + " AND `customer_id` = " + this.db.quote(await this.customer.getId()) + " AND `session_id` = " + this.db.quote(this.session.getId()) + " AND `product_id` = " + this.db.quote(product_id) + " AND `subscription_plan_id` = " + this.db.quote(subscription_plan_id) + " AND `option` = " + this.db.quote(JSON.stringify(option)));
         }
 
         this.data = await this.getProducts();
@@ -318,7 +318,7 @@ module.exports = class Cart {
     async update(cart_id, quantity) {
         //await this.init();
         await this.db.query(
-            "UPDATE `" + DB_PREFIX + "cart` SET `quantity` = " + quantity + " WHERE `cart_id` = " + cart_id + " AND `api_id` = " + (this.session.data.api_id || 0) + " AND `customer_id` = " + await this.customer.getId() + " AND `session_id` = '" + this.session.getId() + "'");
+            "UPDATE `" + DB_PREFIX + "cart` SET `quantity` = " + this.db.quote(quantity) + " WHERE `cart_id` = " + this.db.quote(cart_id) + " AND `api_id` = " + this.db.quote(this.session.data.api_id || 0) + " AND `customer_id` = " + this.db.quote(await this.customer.getId()) + " AND `session_id` = " + this.db.quote(this.session.getId()));
         this.data = await this.getProducts();
     }
 
@@ -329,13 +329,13 @@ module.exports = class Cart {
 
     async remove(cart_id) {
         //await this.init();
-        await this.db.query("DELETE FROM `" + DB_PREFIX + "cart` WHERE `cart_id` = " + cart_id + " AND `api_id` = " + (this.session.data.api_id || 0) + " AND `customer_id` = " + await this.customer.getId() + " AND `session_id` = '" + this.session.getId() + "'");
+        await this.db.query("DELETE FROM `" + DB_PREFIX + "cart` WHERE `cart_id` = " + this.db.quote(cart_id) + " AND `api_id` = " + this.db.quote(this.session.data.api_id || 0) + " AND `customer_id` = " + this.db.quote(await this.customer.getId()) + " AND `session_id` = " + this.db.quote(this.session.getId()));
         delete this.data[cart_id];
     }
 
     async clear() {
         //await this.init();
-        await this.db.query("DELETE FROM `" + DB_PREFIX + "cart` WHERE `api_id` = " + (this.session.data.api_id || 0) + " AND `customer_id` = " + await this.customer.getId() + " AND `session_id` = '" + this.session.getId() + "'");
+        await this.db.query("DELETE FROM `" + DB_PREFIX + "cart` WHERE `api_id` = " + this.db.quote(this.session.data.api_id || 0) + " AND `customer_id` = " + this.db.quote(await this.customer.getId()) + " AND `session_id` = " + this.db.quote(this.session.getId()));
         this.data = [];
     }
 

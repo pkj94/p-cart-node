@@ -8,19 +8,19 @@ module.exports = class CouponModel extends global['OpencartSystemEngineModel'] {
 	 * @return int
 	 */
 	async addCoupon(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "coupon` SET `name` = " + this.db.escape(data['name']) + ", `code` = " + this.db.escape(data['code']) + ", `discount` = '" + data['discount'] + "', `type` = " + this.db.escape(data['type']) + ", `total` = '" + data['total'] + "', `logged` = '" + ((data['logged']) ? data['logged'] : 0) + "', `shipping` = '" + ((data['shipping']) ? data['shipping'] : 0) + "', `date_start` = " + this.db.escape(data['date_start']) + ", `date_end` = " + this.db.escape(data['date_end']) + ", `uses_total` = '" + data['uses_total'] + "', `uses_customer` = '" + data['uses_customer'] + "', `status` = '" + (data['status'] ? data['status'] : 0) + "', `date_added` = NOW()");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "coupon` SET `name` = " + this.db.escape(data['name']) + ", `code` = " + this.db.escape(data['code']) + ", `discount` = " + this.db.quote(data['discount']) + ", `type` = " + this.db.escape(data['type']) + ", `total` = " + this.db.quote(data['total']) + ", `logged` = " + this.db.quote(((data['logged']) ? data['logged'] : 0)) + ", `shipping` = " + this.db.quote(((data['shipping']) ? data['shipping'] : 0)) + ", `date_start` = " + this.db.escape(data['date_start']) + ", `date_end` = " + this.db.escape(data['date_end']) + ", `uses_total` = " + this.db.quote(data['uses_total']) + ", `uses_customer` = " + this.db.quote(data['uses_customer']) + ", `status` = " + this.db.quote((data['status'] ? data['status'] : 0)) + ", `date_added` = NOW()");
 
 		const coupon_id = this.db.getLastId();
 
 		if ((data['coupon_product'])) {
 			for (let product_id of data['coupon_product']) {
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "coupon_product` SET `coupon_id` = '" + coupon_id + "', `product_id` = '" + product_id + "'");
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "coupon_product` SET `coupon_id` = " + this.db.quote(coupon_id) + ", `product_id` = " + this.db.quote(product_id));
 			}
 		}
 
 		if ((data['coupon_category'])) {
 			for (let category_id of data['coupon_category']) {
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "coupon_category` SET `coupon_id` = '" + coupon_id + "', `category_id` = '" + category_id + "'");
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "coupon_category` SET `coupon_id` = " + this.db.quote(coupon_id) + ", `category_id` = " + this.db.quote(category_id));
 			}
 		}
 
@@ -34,21 +34,21 @@ module.exports = class CouponModel extends global['OpencartSystemEngineModel'] {
 	 * @return void
 	 */
 	async editCoupon(coupon_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "coupon` SET `name` = " + this.db.escape(data['name']) + ", `code` = " + this.db.escape(data['code']) + ", `discount` = '" + data['discount'] + "', `type` = " + this.db.escape(data['type']) + ", `total` = '" + data['total'] + "', `logged` = '" + ((data['logged']) ? data['logged'] : 0) + "', `shipping` = '" + ((data['shipping']) ? data['shipping'] : 0) + "', `date_start` = " + this.db.escape(data['date_start']) + ", `date_end` = " + this.db.escape(data['date_end']) + ", `uses_total` = '" + data['uses_total'] + "', `uses_customer` = '" + data['uses_customer'] + "', `status` = '" + (data['status'] ? data['status'] : 0) + "' WHERE `coupon_id` = '" + coupon_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "coupon` SET `name` = " + this.db.escape(data['name']) + ", `code` = " + this.db.escape(data['code']) + ", `discount` = " + this.db.quote(data['discount']) + ", `type` = " + this.db.escape(data['type']) + ", `total` = " + this.db.quote(data['total']) + ", `logged` = " + this.db.quote(((data['logged']) ? data['logged'] : 0)) + ", `shipping` = " + this.db.quote(((data['shipping']) ? data['shipping'] : 0)) + ", `date_start` = " + this.db.escape(data['date_start']) + ", `date_end` = " + this.db.escape(data['date_end']) + ", `uses_total` = " + this.db.quote(data['uses_total']) + ", `uses_customer` = " + this.db.quote(data['uses_customer']) + ", `status` = " + this.db.quote((data['status'] ? data['status'] : 0)) + " WHERE `coupon_id` = " + this.db.quote(coupon_id));
 
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "coupon_product` WHERE `coupon_id` = '" + coupon_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "coupon_product` WHERE `coupon_id` = " + this.db.quote(coupon_id));
 
 		if ((data['coupon_product'])) {
 			for (let product_id of data['coupon_product']) {
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "coupon_product` SET `coupon_id` = '" + coupon_id + "', `product_id` = '" + product_id + "'");
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "coupon_product` SET `coupon_id` = " + this.db.quote(coupon_id) + ", `product_id` = " + this.db.quote(product_id));
 			}
 		}
 
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "coupon_category` WHERE `coupon_id` = '" + coupon_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "coupon_category` WHERE `coupon_id` = " + this.db.quote(coupon_id));
 
 		if ((data['coupon_category'])) {
 			for (let category_id of data['coupon_category']) {
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "coupon_category` SET `coupon_id` = '" + coupon_id + "', `category_id` = '" + category_id + "'");
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "coupon_category` SET `coupon_id` = " + this.db.quote(coupon_id) + ", `category_id` = " + this.db.quote(category_id));
 			}
 		}
 	}
@@ -59,10 +59,10 @@ module.exports = class CouponModel extends global['OpencartSystemEngineModel'] {
 	 * @return void
 	 */
 	async deleteCoupon(coupon_id) {
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "coupon` WHERE `coupon_id` = '" + coupon_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "coupon_product` WHERE `coupon_id` = '" + coupon_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "coupon_category` WHERE `coupon_id` = '" + coupon_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "coupon_history` WHERE `coupon_id` = '" + coupon_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "coupon` WHERE `coupon_id` = " + this.db.quote(coupon_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "coupon_product` WHERE `coupon_id` = " + this.db.quote(coupon_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "coupon_category` WHERE `coupon_id` = " + this.db.quote(coupon_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "coupon_history` WHERE `coupon_id` = " + this.db.quote(coupon_id));
 	}
 
 	/**
@@ -71,7 +71,7 @@ module.exports = class CouponModel extends global['OpencartSystemEngineModel'] {
 	 * @return array
 	 */
 	async getCoupon(coupon_id) {
-		let query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "coupon` WHERE `coupon_id` = '" + coupon_id + "'");
+		let query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "coupon` WHERE `coupon_id` = " + this.db.quote(coupon_id));
 
 		return query.row;
 	}
@@ -127,7 +127,7 @@ module.exports = class CouponModel extends global['OpencartSystemEngineModel'] {
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql += " LIMIT " + (parseInt(data['start']) || 0) + "," + (parseInt(data['limit']) || 0);
 		}
 
 		let query = await this.db.query(sql);
@@ -143,7 +143,7 @@ module.exports = class CouponModel extends global['OpencartSystemEngineModel'] {
 	async getProducts(coupon_id) {
 		let coupon_product_data = [];
 
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "coupon_product` WHERE `coupon_id` = '" + coupon_id + "'");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "coupon_product` WHERE `coupon_id` = " + this.db.quote(coupon_id));
 
 		for (let result of query.rows) {
 			coupon_product_data.push(result['product_id']);
@@ -160,7 +160,7 @@ module.exports = class CouponModel extends global['OpencartSystemEngineModel'] {
 	async getCategories(coupon_id) {
 		const coupon_category_data = [];
 
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "coupon_category` WHERE `coupon_id` = '" + coupon_id + "'");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "coupon_category` WHERE `coupon_id` = " + this.db.quote(coupon_id));
 
 		for (let result of query.rows) {
 			coupon_category_data.push(result['category_id']);
@@ -194,7 +194,7 @@ module.exports = class CouponModel extends global['OpencartSystemEngineModel'] {
 			limit = 10;
 		}
 
-		let query = await this.db.query("SELECT ch.`order_id`, CONCAT(c.`firstname`, ' ', c.`lastname`) AS customer, ch.`amount`, ch.`date_added` FROM `" + DB_PREFIX + "coupon_history` ch LEFT JOIN `" + DB_PREFIX + "customer` c ON (ch.`customer_id` = c.`customer_id`) WHERE ch.`coupon_id` = '" + coupon_id + "' ORDER BY ch.`date_added` ASC LIMIT " + start + "," + limit);
+		let query = await this.db.query("SELECT ch.`order_id`, CONCAT(c.`firstname`, ' ', c.`lastname`) AS customer, ch.`amount`, ch.`date_added` FROM `" + DB_PREFIX + "coupon_history` ch LEFT JOIN `" + DB_PREFIX + "customer` c ON (ch.`customer_id` = c.`customer_id`) WHERE ch.`coupon_id` = " + this.db.quote(coupon_id) + " ORDER BY ch.`date_added` ASC LIMIT " + (parseInt(start) || 0) + "," + (parseInt(limit) || 0));
 
 		return query.rows;
 	}
@@ -205,7 +205,7 @@ module.exports = class CouponModel extends global['OpencartSystemEngineModel'] {
 	 * @return int
 	 */
 	async getTotalHistories(coupon_id) {
-		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "coupon_history` WHERE `coupon_id` = '" + coupon_id + "'");
+		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "coupon_history` WHERE `coupon_id` = " + this.db.quote(coupon_id));
 
 		return query.row['total'];
 	}

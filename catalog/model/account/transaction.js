@@ -5,7 +5,7 @@ module.exports =class Transaction extends global['OpencartSystemEngineModel'] {
 	 * @return array
 	 */
 	async getTransactions(data = {}) {
-		let sql = "SELECT * FROM `" + DB_PREFIX + "customer_transaction` WHERE `customer_id` = '" + await this.customer.getId() + "'";
+		let sql = "SELECT * FROM `" + DB_PREFIX + "customer_transaction` WHERE `customer_id` = " + this.db.quote((await this.customer.getId()));
 
 		let sort_data = [
 			'amount',
@@ -34,7 +34,7 @@ module.exports =class Transaction extends global['OpencartSystemEngineModel'] {
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql += " LIMIT " + (parseInt(data['start']) || 0) + "," + (parseInt(data['limit']) || 0);
 		}
 
 		const query = await this.db.query(sql);
@@ -46,7 +46,7 @@ module.exports =class Transaction extends global['OpencartSystemEngineModel'] {
 	 * @return int
 	 */
 	async getTotalTransactions() {
-		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "customer_transaction` WHERE `customer_id` = '" + await this.customer.getId() + "'");
+		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "customer_transaction` WHERE `customer_id` = " + this.db.quote((await this.customer.getId())));
 
 		return query.row['total'];
 	}
@@ -55,7 +55,7 @@ module.exports =class Transaction extends global['OpencartSystemEngineModel'] {
 	 * @return int
 	 */
 	async getTotalAmount() {
-		const query = await this.db.query("SELECT SUM(`amount`) AS `total` FROM `" + DB_PREFIX + "customer_transaction` WHERE `customer_id` = '" + await this.customer.getId() + "' GROUP BY `customer_id`");
+		const query = await this.db.query("SELECT SUM(`amount`) AS `total` FROM `" + DB_PREFIX + "customer_transaction` WHERE `customer_id` = " + this.db.quote((await this.customer.getId())) + " GROUP BY `customer_id`");
 
 		if (query.num_rows) {
 			return query.row['total'];

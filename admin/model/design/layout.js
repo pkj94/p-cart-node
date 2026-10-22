@@ -14,13 +14,13 @@ module.exports = class LayoutDesignModel  extends global['OpencartSystemEngineMo
 
 		if ((data['layout_route'])) {
 			for (let layout_route of data['layout_route']) {
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "layout_route` SET `layout_id` = '" + layout_id + "', `store_id` = '" + layout_route['store_id'] + "', `route` = " + this.db.escape(layout_route['route']));
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "layout_route` SET `layout_id` = " + this.db.quote(layout_id) + ", `store_id` = " + this.db.quote(layout_route['store_id']) + ", `route` = " + this.db.escape(layout_route['route']));
 			}
 		}
 
 		if ((data['layout_module'])) {
 			for (let layout_module of data['layout_module']) {
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "layout_module` SET `layout_id` = '" + layout_id + "', `code` = " + this.db.escape(layout_module['code']) + ", `position` = " + this.db.escape(layout_module['position']) + ", `sort_order` = '" + layout_module['sort_order'] + "'");
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "layout_module` SET `layout_id` = " + this.db.quote(layout_id) + ", `code` = " + this.db.escape(layout_module['code']) + ", `position` = " + this.db.escape(layout_module['position']) + ", `sort_order` = " + this.db.quote(layout_module['sort_order']));
 			}
 		}
 
@@ -34,21 +34,21 @@ module.exports = class LayoutDesignModel  extends global['OpencartSystemEngineMo
 	 * @return void
 	 */
 	async editLayout(layout_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "layout` SET `name` = " + this.db.escape(data['name']) + " WHERE `layout_id` = '" + layout_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "layout` SET `name` = " + this.db.escape(data['name']) + " WHERE `layout_id` = " + this.db.quote(layout_id));
 
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "layout_route` WHERE `layout_id` = '" + layout_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "layout_route` WHERE `layout_id` = " + this.db.quote(layout_id));
 
 		if ((data['layout_route'])) {
 			for (let layout_route of data['layout_route']) {
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "layout_route` SET `layout_id` = '" + layout_id + "', `store_id` = '" + layout_route['store_id'] + "', `route` = " + this.db.escape(layout_route['route']));
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "layout_route` SET `layout_id` = " + this.db.quote(layout_id) + ", `store_id` = " + this.db.quote(layout_route['store_id']) + ", `route` = " + this.db.escape(layout_route['route']));
 			}
 		}
 
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "layout_module` WHERE `layout_id` = '" + layout_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "layout_module` WHERE `layout_id` = " + this.db.quote(layout_id));
 
 		if ((data['layout_module'])) {
 			for (let layout_module of data['layout_module']) {
-				await this.db.query("INSERT INTO `" + DB_PREFIX + "layout_module` SET `layout_id` = '" + layout_id + "', `code` = " + this.db.escape(layout_module['code']) + ", `position` = " + this.db.escape(layout_module['position']) + ", `sort_order` = '" + layout_module['sort_order'] + "'");
+				await this.db.query("INSERT INTO `" + DB_PREFIX + "layout_module` SET `layout_id` = " + this.db.quote(layout_id) + ", `code` = " + this.db.escape(layout_module['code']) + ", `position` = " + this.db.escape(layout_module['position']) + ", `sort_order` = " + this.db.quote(layout_module['sort_order']));
 			}
 		}
 	}
@@ -59,14 +59,14 @@ module.exports = class LayoutDesignModel  extends global['OpencartSystemEngineMo
 	 * @return void
 	 */
 	async deleteLayout(layout_id) {
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "layout` WHERE `layout_id` = '" + layout_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "layout_route` WHERE `layout_id` = '" + layout_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "layout_module` WHERE `layout_id` = '" + layout_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "category_to_layout` WHERE `layout_id` = '" + layout_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_to_layout` WHERE `layout_id` = '" + layout_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "information_to_layout` WHERE `layout_id` = '" + layout_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "blog_to_layout` WHERE `layout_id` = '" + layout_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "blog_category_to_layout` WHERE `layout_id` = '" + layout_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "layout` WHERE `layout_id` = " + this.db.quote(layout_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "layout_route` WHERE `layout_id` = " + this.db.quote(layout_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "layout_module` WHERE `layout_id` = " + this.db.quote(layout_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "category_to_layout` WHERE `layout_id` = " + this.db.quote(layout_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "product_to_layout` WHERE `layout_id` = " + this.db.quote(layout_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "information_to_layout` WHERE `layout_id` = " + this.db.quote(layout_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "blog_to_layout` WHERE `layout_id` = " + this.db.quote(layout_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "blog_category_to_layout` WHERE `layout_id` = " + this.db.quote(layout_id));
 	}
 
 	/**
@@ -75,7 +75,7 @@ module.exports = class LayoutDesignModel  extends global['OpencartSystemEngineMo
 	 * @return array
 	 */
 	async getLayout(layout_id) {
-		let query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "layout` WHERE `layout_id` = '" + layout_id + "'");
+		let query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "layout` WHERE `layout_id` = " + this.db.quote(layout_id));
 
 		return query.row;
 	}
@@ -113,7 +113,7 @@ if (data['limit'] < 1) {
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql += " LIMIT " + (parseInt(data['start']) || 0) + "," + (parseInt(data['limit']) || 0);
 		}
 
 		let query = await this.db.query(sql);
@@ -127,7 +127,7 @@ if (data['limit'] < 1) {
 	 * @return array
 	 */
 	async getRoutes(layout_id) {
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "layout_route` WHERE `layout_id` = '" + layout_id + "'");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "layout_route` WHERE `layout_id` = " + this.db.quote(layout_id));
 
 		return query.rows;
 	}
@@ -138,7 +138,7 @@ if (data['limit'] < 1) {
 	 * @return array
 	 */
 	async getModules(layout_id) {
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "layout_module` WHERE `layout_id` = '" + layout_id + "' ORDER BY `position` ASC, `sort_order` ASC");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "layout_module` WHERE `layout_id` = " + this.db.quote(layout_id) + " ORDER BY `position` ASC, `sort_order` ASC");
 
 		return query.rows;
 	}

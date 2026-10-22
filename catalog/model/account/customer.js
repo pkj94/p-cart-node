@@ -14,15 +14,15 @@ module.exports = class Customer extends global['OpencartSystemEngineModel'] {
 
 		const customer_group_info = await this.registry.get('model_account_customer_group').getCustomerGroup(customer_group_id);
 
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "customer` SET `customer_group_id` = '" + customer_group_id + "', `store_id` = '" + this.config.get('config_store_id') + "', `language_id` = '" + this.config.get('config_language_id') + "', `firstname` = " + this.db.escape(data['firstname']) + ", `lastname` = " + this.db.escape(data['lastname']) + ", `email` = " + this.db.escape(data['email']) + ", `telephone` = " + this.db.escape(data['telephone']) + ", `custom_field` = " + this.db.escape((data['custom_field']) ? JSON.stringify(data['custom_field']) : '') + ", `password` = " + this.db.escape(await password_hash(html_entity_decode(data['password']))) + ", `newsletter` = '" + ((data['newsletter']) ? data['newsletter'] : 0) + "', `ip` = " + this.db.escape((this.request.server.headers['x-forwarded-for'] ||
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "customer` SET `customer_group_id` = " + this.db.quote(customer_group_id) + ", `store_id` = " + this.db.quote(this.config.get('config_store_id')) + ", `language_id` = " + this.db.quote(this.config.get('config_language_id')) + ", `firstname` = " + this.db.escape(data['firstname']) + ", `lastname` = " + this.db.escape(data['lastname']) + ", `email` = " + this.db.escape(data['email']) + ", `telephone` = " + this.db.escape(data['telephone']) + ", `custom_field` = " + this.db.escape((data['custom_field']) ? JSON.stringify(data['custom_field']) : '') + ", `password` = " + this.db.escape(await password_hash(html_entity_decode(data['password']))) + ", `newsletter` = " + this.db.quote(((data['newsletter']) ? data['newsletter'] : 0)) + ", `ip` = " + this.db.escape((this.request.server.headers['x-forwarded-for'] ||
 			this.request.server.connection.remoteAddress ||
 			this.request.server.socket.remoteAddress ||
-			this.request.server.connection.socket.remoteAddress)) + ", `status` = '" + !customer_group_info['approval'] + "', `date_added` = NOW()");
+			this.request.server.connection.socket.remoteAddress)) + ", `status` = " + this.db.quote((!customer_group_info['approval'])) + ", `date_added` = NOW()");
 
 		const customer_id = this.db.getLastId();
 
 		if (customer_group_info['approval']) {
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "customer_approval` SET `customer_id` = '" + customer_id + "', `type` = 'customer', `date_added` = NOW()");
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "customer_approval` SET `customer_id` = " + this.db.quote(customer_id) + ", `type` = 'customer', `date_added` = NOW()");
 		}
 
 		return customer_id;
@@ -35,7 +35,7 @@ module.exports = class Customer extends global['OpencartSystemEngineModel'] {
 	 * @return void
 	 */
 	async editCustomer(customer_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "customer` SET `firstname` = " + this.db.escape(data['firstname']) + ", `lastname` = " + this.db.escape(data['lastname']) + ", `email` = " + this.db.escape(data['email']) + ", `telephone` = " + this.db.escape(data['telephone']) + ", `custom_field` = " + this.db.escape((data['custom_field']) ? JSON.stringify(data['custom_field']) : '') + " WHERE `customer_id` = '" + customer_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "customer` SET `firstname` = " + this.db.escape(data['firstname']) + ", `lastname` = " + this.db.escape(data['lastname']) + ", `email` = " + this.db.escape(data['email']) + ", `telephone` = " + this.db.escape(data['telephone']) + ", `custom_field` = " + this.db.escape((data['custom_field']) ? JSON.stringify(data['custom_field']) : '') + " WHERE `customer_id` = " + this.db.quote(customer_id));
 	}
 
 	/**
@@ -74,7 +74,7 @@ module.exports = class Customer extends global['OpencartSystemEngineModel'] {
 	 * @return void
 	 */
 	async editNewsletter(newsletter) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "customer` SET `newsletter` = '" + newsletter + "' WHERE `customer_id` = '" + await this.customer.getId() + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "customer` SET `newsletter` = " + this.db.quote(newsletter) + " WHERE `customer_id` = " + this.db.quote((await this.customer.getId())));
 	}
 
 	/**
@@ -83,17 +83,17 @@ module.exports = class Customer extends global['OpencartSystemEngineModel'] {
 	 * @return void
 	 */
 	async deleteCustomer(customer_id) {
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer` WHERE `customer_id` = '" + customer_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_activity` WHERE `customer_id` = '" + customer_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_affiliate` WHERE `customer_id` = '" + customer_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_affiliate_report` WHERE `customer_id` = '" + customer_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_approval` WHERE `customer_id` = '" + customer_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_history` WHERE `customer_id` = '" + customer_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_reward` WHERE `customer_id` = '" + customer_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_transaction` WHERE `customer_id` = '" + customer_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_wishlist` WHERE `customer_id` = '" + customer_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_ip` WHERE `customer_id` = '" + customer_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "address` WHERE `customer_id` = '" + customer_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer` WHERE `customer_id` = " + this.db.quote(customer_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_activity` WHERE `customer_id` = " + this.db.quote(customer_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_affiliate` WHERE `customer_id` = " + this.db.quote(customer_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_affiliate_report` WHERE `customer_id` = " + this.db.quote(customer_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_approval` WHERE `customer_id` = " + this.db.quote(customer_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_history` WHERE `customer_id` = " + this.db.quote(customer_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_reward` WHERE `customer_id` = " + this.db.quote(customer_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_transaction` WHERE `customer_id` = " + this.db.quote(customer_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_wishlist` WHERE `customer_id` = " + this.db.quote(customer_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_ip` WHERE `customer_id` = " + this.db.quote(customer_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "address` WHERE `customer_id` = " + this.db.quote(customer_id));
 	}
 
 	/**
@@ -102,7 +102,7 @@ module.exports = class Customer extends global['OpencartSystemEngineModel'] {
 	 * @return array
 	 */
 	async getCustomer(customer_id) {
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "customer` WHERE `customer_id` = '" + customer_id + "'");
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "customer` WHERE `customer_id` = " + this.db.quote(customer_id));
 
 		return query.row;
 	}
@@ -138,7 +138,7 @@ module.exports = class Customer extends global['OpencartSystemEngineModel'] {
 		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "customer` WHERE `token` = " + this.db.escape(token) + " AND `token` != ''");
 
 		if (query.num_rows) {
-			await this.db.query("UPDATE `" + DB_PREFIX + "customer` SET `token` = '' WHERE `customer_id` = '" + query.row['customer_id'] + "'");
+			await this.db.query("UPDATE `" + DB_PREFIX + "customer` SET `token` = '' WHERE `customer_id` = " + this.db.quote(query.row['customer_id']));
 		}
 
 		return query.row;
@@ -164,7 +164,7 @@ module.exports = class Customer extends global['OpencartSystemEngineModel'] {
 	 * @return void
 	 */
 	async addTransaction(customer_id, description, amount = 0, order_id = 0) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "customer_transaction` SET `customer_id` = '" + customer_id + "', `order_id` = '" + order_id + "', `description` = " + this.db.escape(description) + ", `amount` = '" + amount + "', `date_added` = NOW()");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "customer_transaction` SET `customer_id` = " + this.db.quote(customer_id) + ", `order_id` = " + this.db.quote(order_id) + ", `description` = " + this.db.escape(description) + ", `amount` = " + this.db.quote(amount) + ", `date_added` = NOW()");
 	}
 
 	/**
@@ -173,7 +173,7 @@ module.exports = class Customer extends global['OpencartSystemEngineModel'] {
 	 * @return void
 	 */
 	async deleteTransactionByOrderId(order_id) {
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_transaction` WHERE `order_id` = '" + order_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_transaction` WHERE `order_id` = " + this.db.quote(order_id));
 	}
 
 	/**
@@ -182,7 +182,7 @@ module.exports = class Customer extends global['OpencartSystemEngineModel'] {
 	 * @return float
 	 */
 	async getTransactionTotal(customer_id) {
-		const query = await this.db.query("SELECT SUM(`amount`) AS `total` FROM `" + DB_PREFIX + "customer_transaction` WHERE `customer_id` = '" + customer_id + "'");
+		const query = await this.db.query("SELECT SUM(`amount`) AS `total` FROM `" + DB_PREFIX + "customer_transaction` WHERE `customer_id` = " + this.db.quote(customer_id));
 
 		return query.row['total'];
 	}
@@ -193,7 +193,7 @@ module.exports = class Customer extends global['OpencartSystemEngineModel'] {
 	 * @return int
 	 */
 	async getTotalTransactionsByOrderId(order_id) {
-		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "customer_transaction` WHERE `order_id` = '" + order_id + "'");
+		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "customer_transaction` WHERE `order_id` = " + this.db.quote(order_id));
 
 		return query.row['total'];
 	}
@@ -204,7 +204,7 @@ module.exports = class Customer extends global['OpencartSystemEngineModel'] {
 	 * @return int
 	 */
 	async getRewardTotal(customer_id) {
-		const query = await this.db.query("SELECT SUM(`points`) AS `total` FROM `" + DB_PREFIX + "customer_reward` WHERE `customer_id` = '" + customer_id + "'");
+		const query = await this.db.query("SELECT SUM(`points`) AS `total` FROM `" + DB_PREFIX + "customer_reward` WHERE `customer_id` = " + this.db.quote(customer_id));
 
 		return query.row['total'];
 	}
@@ -215,7 +215,7 @@ module.exports = class Customer extends global['OpencartSystemEngineModel'] {
 	 * @return array
 	 */
 	async getIps(customer_id) {
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "customer_ip` WHERE `customer_id` = '" + customer_id + "'");
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "customer_ip` WHERE `customer_id` = " + this.db.quote(customer_id));
 
 		return query.rows;
 	}
@@ -226,7 +226,7 @@ module.exports = class Customer extends global['OpencartSystemEngineModel'] {
 	 * @return int
 	 */
 	async getTotalIps(customer_id) {
-		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "customer_ip` WHERE `customer_id` = '" + customer_id + "'");
+		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "customer_ip` WHERE `customer_id` = " + this.db.quote(customer_id));
 
 		return query.row['total'];
 	}
@@ -239,7 +239,7 @@ module.exports = class Customer extends global['OpencartSystemEngineModel'] {
 	 * @return void
 	 */
 	async addLogin(customer_id, ip, country = '') {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "customer_ip` SET `customer_id` = '" + customer_id + "', `store_id` = '" + this.config.get('config_store_id') + "', `ip` = " + this.db.escape(ip) + ", `country` = " + this.db.escape(country) + ", `date_added` = NOW()");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "customer_ip` SET `customer_id` = " + this.db.quote(customer_id) + ", `store_id` = " + this.db.quote(this.config.get('config_store_id')) + ", `ip` = " + this.db.escape(ip) + ", `country` = " + this.db.escape(country) + ", `date_added` = NOW()");
 	}
 
 	/**
@@ -259,7 +259,7 @@ module.exports = class Customer extends global['OpencartSystemEngineModel'] {
 				this.request.server.socket.remoteAddress ||
 				this.request.server.connection.socket.remoteAddress)) + ", `total` = '1', `date_added` = " + this.db.escape(date('Y-m-d H:i:s')) + ", `date_modified` = " + this.db.escape(date('Y-m-d H:i:s')) + "");
 		} else {
-			await this.db.query("UPDATE `" + DB_PREFIX + "customer_login` SET `total` = (`total` + 1), `date_modified` = " + this.db.escape(date('Y-m-d H:i:s')) + " WHERE `customer_login_id` = '" + query.row['customer_login_id'] + "'");
+			await this.db.query("UPDATE `" + DB_PREFIX + "customer_login` SET `total` = (`total` + 1), `date_modified` = " + this.db.escape(date('Y-m-d H:i:s')) + " WHERE `customer_login_id` = " + this.db.quote(query.row['customer_login_id']));
 		}
 	}
 

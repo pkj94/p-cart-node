@@ -14,7 +14,7 @@ module.exports = class VoucherThemeSaleModel extends global['OpencartSystemEngin
 
 		for (let [language_id, value] of Object.entries(data['voucher_theme_description'])) {
 			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "voucher_theme_description` SET `voucher_theme_id` = '" + voucher_theme_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + "");
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "voucher_theme_description` SET `voucher_theme_id` = " + this.db.quote(voucher_theme_id) + ", `language_id` = " + this.db.quote(language_id) + ", `name` = " + this.db.escape(value['name']));
 		}
 
 		await this.cache.delete('voucher_theme');
@@ -29,13 +29,13 @@ module.exports = class VoucherThemeSaleModel extends global['OpencartSystemEngin
 	 * @return void
 	 */
 	async editVoucherTheme(voucher_theme_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "voucher_theme` SET `image` = " + this.db.escape(data['image']) + " WHERE `voucher_theme_id` = '" + voucher_theme_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "voucher_theme` SET `image` = " + this.db.escape(data['image']) + " WHERE `voucher_theme_id` = " + this.db.quote(voucher_theme_id));
 
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "voucher_theme_description` WHERE `voucher_theme_id` = '" + voucher_theme_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "voucher_theme_description` WHERE `voucher_theme_id` = " + this.db.quote(voucher_theme_id));
 
 		for (let [language_id, value] of Object.entries(data['voucher_theme_description'])) {
 			language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
-			await this.db.query("INSERT INTO `" + DB_PREFIX + "voucher_theme_description` SET `voucher_theme_id` = '" + voucher_theme_id + "', `language_id` = '" + language_id + "', `name` = " + this.db.escape(value['name']) + "");
+			await this.db.query("INSERT INTO `" + DB_PREFIX + "voucher_theme_description` SET `voucher_theme_id` = " + this.db.quote(voucher_theme_id) + ", `language_id` = " + this.db.quote(language_id) + ", `name` = " + this.db.escape(value['name']));
 		}
 
 		await this.cache.delete('voucher_theme');
@@ -47,8 +47,8 @@ module.exports = class VoucherThemeSaleModel extends global['OpencartSystemEngin
 	 * @return void
 	 */
 	async deleteVoucherTheme(voucher_theme_id) {
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "voucher_theme` WHERE `voucher_theme_id` = '" + voucher_theme_id + "'");
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "voucher_theme_description` WHERE `voucher_theme_id` = '" + voucher_theme_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "voucher_theme` WHERE `voucher_theme_id` = " + this.db.quote(voucher_theme_id));
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "voucher_theme_description` WHERE `voucher_theme_id` = " + this.db.quote(voucher_theme_id));
 
 		await this.cache.delete('voucher_theme');
 	}
@@ -59,7 +59,7 @@ module.exports = class VoucherThemeSaleModel extends global['OpencartSystemEngin
 	 * @return array
 	 */
 	async getVoucherTheme(voucher_theme_id) {
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "voucher_theme` vt LEFT JOIN `" + DB_PREFIX + "voucher_theme_description` vtd ON (vt.`voucher_theme_id` = vtd.`voucher_theme_id`) WHERE vt.`voucher_theme_id` = '" + voucher_theme_id + "' AND vtd.`language_id` = '" + this.config.get('config_language_id') + "'");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "voucher_theme` vt LEFT JOIN `" + DB_PREFIX + "voucher_theme_description` vtd ON (vt.`voucher_theme_id` = vtd.`voucher_theme_id`) WHERE vt.`voucher_theme_id` = " + this.db.quote(voucher_theme_id) + " AND vtd.`language_id` = " + this.db.quote(this.config.get('config_language_id')));
 
 		return query.row;
 	}
@@ -70,7 +70,7 @@ module.exports = class VoucherThemeSaleModel extends global['OpencartSystemEngin
 	 * @return array
 	 */
 	async getVoucherThemes(data = {}) {
-		let sql = "SELECT * FROM `" + DB_PREFIX + "voucher_theme` vt LEFT JOIN `" + DB_PREFIX + "voucher_theme_description` `vtd` ON (`vt`.`voucher_theme_id` = `vtd`.`voucher_theme_id`) WHERE `vtd`.`language_id` = '" + this.config.get('config_language_id') + "' ORDER BY `vtd`.`name`";
+		let sql = "SELECT * FROM `" + DB_PREFIX + "voucher_theme` vt LEFT JOIN `" + DB_PREFIX + "voucher_theme_description` `vtd` ON (`vt`.`voucher_theme_id` = `vtd`.`voucher_theme_id`) WHERE `vtd`.`language_id` = " + this.db.quote(this.config.get('config_language_id')) + " ORDER BY `vtd`.`name`";
 
 		if (data['order'] && (data['order'] == 'DESC')) {
 			sql += " DESC";
@@ -89,7 +89,7 @@ module.exports = class VoucherThemeSaleModel extends global['OpencartSystemEngin
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql += " LIMIT " + (parseInt(data['start']) || 0) + "," + (parseInt(data['limit']) || 0);
 		}
 
 		let voucher_theme_data = await this.cache.get('voucher_theme.' + md5(sql));
@@ -113,7 +113,7 @@ module.exports = class VoucherThemeSaleModel extends global['OpencartSystemEngin
 	async getDescriptions(voucher_theme_id) {
 		let voucher_theme_data = {};
 
-		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "voucher_theme_description` WHERE `voucher_theme_id` = '" + voucher_theme_id + "'");
+		let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "voucher_theme_description` WHERE `voucher_theme_id` = " + this.db.quote(voucher_theme_id));
 
 		for (let result of query.rows) {
 			voucher_theme_data[result['language_id']] = { 'name': result['name'] };

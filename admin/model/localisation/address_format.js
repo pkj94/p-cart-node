@@ -20,7 +20,7 @@ module.exports = class AddressFormatLocalisationModel extends global['OpencartSy
 	 * @return void
 	 */
 	async editAddressFormat(address_format_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "address_format` SET `name` = " + this.db.escape(data['name']) + ", `address_format` = " + this.db.escape(data['address_format']) + " WHERE `address_format_id` = '" + address_format_id + "'");
+		await this.db.query("UPDATE `" + DB_PREFIX + "address_format` SET `name` = " + this.db.escape(data['name']) + ", `address_format` = " + this.db.escape(data['address_format']) + " WHERE `address_format_id` = " + this.db.quote(address_format_id));
 	}
 
 	/**
@@ -29,7 +29,7 @@ module.exports = class AddressFormatLocalisationModel extends global['OpencartSy
 	 * @return void
 	 */
 	async deleteAddressFormat(address_format_id) {
-		await this.db.query("DELETE FROM `" + DB_PREFIX + "address_format` WHERE `address_format_id` = '" + address_format_id + "'");
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "address_format` WHERE `address_format_id` = " + this.db.quote(address_format_id));
 	}
 
 	/**
@@ -38,7 +38,7 @@ module.exports = class AddressFormatLocalisationModel extends global['OpencartSy
 	 * @return array
 	 */
 	async getAddressFormat(address_format_id) {
-		const query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "address_format` WHERE `address_format_id` = '" + address_format_id + "'");
+		const query = await this.db.query("SELECT DISTINCT * FROM `" + DB_PREFIX + "address_format` WHERE `address_format_id` = " + this.db.quote(address_format_id));
 
 		return query.row;
 	}
@@ -62,7 +62,7 @@ module.exports = class AddressFormatLocalisationModel extends global['OpencartSy
 				data['limit'] = 20;
 			}
 
-			sql += " LIMIT " + data['start'] + "," + data['limit'];
+			sql += " LIMIT " + (parseInt(data['start']) || 0) + "," + (parseInt(data['limit']) || 0);
 		}
 
 		const query = await this.db.query(sql);

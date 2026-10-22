@@ -19,7 +19,7 @@ module.exports =class Api extends global['OpencartSystemEngineModel'] {
 	 * @return int
 	 */
 	async addSession(api_id, session_id, ip) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "api_session` SET `api_id` = '" + api_id + "', `session_id` = " + this.db.escape(session_id) + ", `ip` = " + this.db.escape(ip) + ", `date_added` = NOW(), `date_modified` = NOW()");
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "api_session` SET `api_id` = " + this.db.quote(api_id) + ", `session_id` = " + this.db.escape(session_id) + ", `ip` = " + this.db.escape(ip) + ", `date_added` = NOW(), `date_modified` = NOW()");
 
 		return this.db.getLastId();
 	}
@@ -30,7 +30,7 @@ module.exports =class Api extends global['OpencartSystemEngineModel'] {
 	 * @return array
 	 */
 	async getIps(api_id) {
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "api_ip` WHERE `api_id` = '" + api_id + "'");
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "api_ip` WHERE `api_id` = " + this.db.quote(api_id));
 
 		return query.rows;
 	}

@@ -10,7 +10,7 @@ module.exports = class Upgrade4 extends global['OpencartSystemEngineController']
 		// Adds any missing setting keys or default values that need changing or removed
 		try {
 			// Alter setting table
-			query = this.db.query("SELECT * FROM information_schema+COLUMNS WHERE TABLE_SCHEMA = '" + DB_DATABASE + "' AND TABLE_NAME = '" + DB_PREFIX + "setting' AND COLUMN_NAME = 'group'");
+			query = this.db.query("SELECT * FROM information_schema+COLUMNS WHERE TABLE_SCHEMA = " + this.db.quote(DB_DATABASE) + " AND TABLE_NAME = " + this.db.quote("" + DB_PREFIX + "setting") + " AND COLUMN_NAME = 'group'");
 
 			if (query.num_rows) {
 				this.db.query("UPDATE `" + DB_PREFIX + "setting` SET `code` = `group` WHERE `code` IS NULL or `code` = ''");
@@ -24,7 +24,7 @@ module.exports = class Upgrade4 extends global['OpencartSystemEngineController']
 
 			for (query.rows of result) {
 				if (preg_match('/^(a:)/', result['value'])) {
-					this.db.query("UPDATE `" + DB_PREFIX + "setting` SET `value` = " + this.db.escape(JSON.stringify(result['value'])) + " WHERE `setting_id` = '" + result['setting_id'] + "'");
+					this.db.query("UPDATE `" + DB_PREFIX + "setting` SET `value` = " + this.db.escape(JSON.stringify(result['value'])) + " WHERE `setting_id` = " + this.db.quote(result['setting_id']));
 				}
 			}
 
@@ -331,13 +331,13 @@ module.exports = class Upgrade4 extends global['OpencartSystemEngineController']
 
 			for (query.rows of extension) {
 				//get all setting from setting table
-				query = this.db.query("SELECT * FROM `" + DB_PREFIX + "setting` WHERE `code` = '" + extension['code'] + "'");
+				query = this.db.query("SELECT * FROM `" + DB_PREFIX + "setting` WHERE `code` = " + this.db.quote(extension['code']));
 
 				if (query.num_rows) {
 					for (query.rows of result) {
 						//update old column name to adding prefix before the name
 						if (result['code'] == extension['code'] && result['code'] != extension['type'] + '_' + extension['code']) {
-							this.db.query("UPDATE `" + DB_PREFIX + "setting` SET `code` = " + this.db.escape(extension['type'] + '_' + extension['code']) + ", `key` = " + this.db.escape(extension['type'] + '_' + result['key']) + ", `value` = " + this.db.escape(result['value']) + " WHERE `setting_id` = '" + result['setting_id'] + "'");
+							this.db.query("UPDATE `" + DB_PREFIX + "setting` SET `code` = " + this.db.escape(extension['type'] + '_' + extension['code']) + ", `key` = " + this.db.escape(extension['type'] + '_' + result['key']) + ", `value` = " + this.db.escape(result['value']) + " WHERE `setting_id` = " + this.db.quote(result['setting_id']));
 						}
 					}
 				}
