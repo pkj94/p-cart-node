@@ -9,6 +9,8 @@ module.exports = class AuthorizeController extends global['OpencartSystemEngineC
 	 * @throws \Exception
 	 */
 	async index(route, args, output) {
+		const data = {};
+		let code, email;
 		if ((this.request.get['route'])) {
 			route = this.request.get['route'];
 		} else {
@@ -66,6 +68,8 @@ module.exports = class AuthorizeController extends global['OpencartSystemEngineC
 	 * @throws \Exception
 	 */
 	async reset(route, args, output) {
+		const data = {};
+		let code, email;
 		if ((this.request.get['route'])) {
 			route = this.request.get['route'];
 		} else {

@@ -3,6 +3,7 @@ module.exports = class Affiliate extends global['OpencartSystemEngineController'
 	 * @return void
 	 */
 	async index() {
+		let affiliate_id, affiliate_info;
 		const data = {};
 		await this.load.language('api/sale/affiliate');
 

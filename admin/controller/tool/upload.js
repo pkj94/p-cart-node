@@ -260,6 +260,7 @@ module.exports = class UploadController extends global['OpencartSystemEngineCont
 	 * @return void
 	 */
 	async download() {
+		const data = {};
 		await this.load.language('tool/upload');
 		let code = '';
 		if ((this.request.get['code'])) {
@@ -270,8 +271,9 @@ module.exports = class UploadController extends global['OpencartSystemEngineCont
 
 		const upload_info = await this.model_tool_upload.getUploadByCode(code);
 
+		let file = '';
 		if (upload_info.upload_id) {
-			let file = DIR_UPLOAD + upload_info['filename'];
+			file = DIR_UPLOAD + upload_info['filename'];
 			let mask = expressPath.basename(upload_info['name']);
 
 			// if (!headers_sent()) {
@@ -282,7 +284,7 @@ module.exports = class UploadController extends global['OpencartSystemEngineCont
 				this.response.addHeader('Content-Type :application/octet-stream');
 				this.response.setFile(file)
 			} else {
-				exit(sprintf(this.language.get('error_not_found'), basename(file)));
+				this.response.setOutput(sprintf(this.language.get('error_not_found'), basename(file)));
 			}
 			// } else {
 			// 	exit(this.language.get('error_headers_sent'));
@@ -329,9 +331,10 @@ module.exports = class UploadController extends global['OpencartSystemEngineCont
 			json['error'] = this.language.get('error_upload');
 		}
 
+		let filename = '';
 		if (!Object.keys(json).length) {
 			// Sanitize the filename
-			let filename = expressPath.basename(html_entity_decode(this.request.files['file']['name']));
+			filename = expressPath.basename(html_entity_decode(this.request.files['file']['name']));
 
 			// Validate the filename length
 			if ((oc_strlen(filename) < 3) || (oc_strlen(filename) > 128)) {

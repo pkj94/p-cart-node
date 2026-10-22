@@ -60,12 +60,13 @@ module.exports = class Login extends global['OpencartSystemEngineController'] {
 	 *
 	 */
 	async index() {
+		let api_info, ip_data, session;
 		const data = {};
 		await this.load.language('api/account/login');
 
 		const json = {};
 
-		this.load.model('account/api');
+		this.load.model('account/api', this);
 
 		// Login with API Key
 		if ((this.request.post['username']) && (this.request.post['key'])) {

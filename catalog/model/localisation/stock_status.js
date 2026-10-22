@@ -16,7 +16,8 @@ module.exports = class StockStatus extends global['OpencartSystemEngineModel'] {
 	 * @return array
 	 */
 	async getStockStatuses(data = {}) {
-		const sql = "SELECT * FROM `" + DB_PREFIX + "stock_status` WHERE `language_id` = " + this.db.quote(this.config.get('config_language_id')) + " ORDER BY `name`";
+		let stock_status_data;
+		let sql = "SELECT * FROM `" + DB_PREFIX + "stock_status` WHERE `language_id` = " + this.db.quote(this.config.get('config_language_id')) + " ORDER BY `name`";
 
 		if ((data['order']) && (data['order'] == 'DESC')) {
 			sql += " DESC";

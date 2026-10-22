@@ -4,6 +4,7 @@ module.exports = class Voucher extends global['OpencartSystemEngineController'] 
 	 * @return void
 	 */
 	async index() {
+		let voucher, voucher_info;
 		const data = {};
 		await this.load.language('api/sale/voucher');
 
@@ -45,6 +46,7 @@ module.exports = class Voucher extends global['OpencartSystemEngineController'] 
 	 * @return void
 	 */
 	async add() {
+		let code;
 		await this.load.language('api/sale/voucher');
 
 		const json = {};
@@ -118,6 +120,7 @@ module.exports = class Voucher extends global['OpencartSystemEngineController'] 
 	 * @return void
 	 */
 	async remove() {
+		let key;
 		await this.load.language('api/sale/cart');
 
 		const json = {};

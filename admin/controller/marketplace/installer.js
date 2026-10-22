@@ -199,8 +199,10 @@ module.exports = class InstallerMarketplaceController extends global['OpencartSy
 		const json = {};
 
 		// 1. Validate the file uploaded.
+		let filename = '';
+		let file = '';
 		if ((this.request.files['file']['name'])) {
-			let filename = expressPath.basename(this.request.files['file']['name']);
+			filename = expressPath.basename(this.request.files['file']['name']);
 
 			// 2. Validate the filename.
 			if ((oc_strlen(filename) < 1) || (oc_strlen(filename) > 128)) {
@@ -208,12 +210,12 @@ module.exports = class InstallerMarketplaceController extends global['OpencartSy
 			}
 
 			// 3. Validate is ocmod file.
-			if (filename.substring(-10) != '.ocmod.zip') {
+			if (filename.slice(-10) != '.ocmod.zip') {
 				json['error'] = this.language.get('error_file_type');
 			}
 
 			// 4. check if there is already a file
-			let file = DIR_STORAGE + 'marketplace/' + filename;
+			file = DIR_STORAGE + 'marketplace/' + filename;
 
 			if (fs.existsSync(file) && fs.lstatSync(file).isFile()) {
 				json['error'] = this.language.get('error_file_exists');
@@ -225,13 +227,14 @@ module.exports = class InstallerMarketplaceController extends global['OpencartSy
 			// 	json['error'] = this.language.get('error_upload_' + this.request.files['file']['error']);
 			// }
 
-			if (this.model_setting_extension.getInstallByCode(expressPath.basename(filename, '.ocmod.zip'))) {
+			if ((await this.model_setting_extension.getInstallByCode(expressPath.basename(filename, '.ocmod.zip'))).extension_install_id) {
 				json['error'] = this.language.get('error_installed');
 			}
 		} else {
 			json['error'] = this.language.get('error_upload');
 		}
 
+		let install_info = null;
 		// 5. Validate if the file can be opened and there is install.json that can be read.
 		if (!Object.keys(json).length) {
 			try {
@@ -244,7 +247,7 @@ module.exports = class InstallerMarketplaceController extends global['OpencartSy
 				let zip = new AdmZip(file);
 
 				const zipEntries = zip.getEntries();
-				let install_info = null;
+				install_info = null;
 
 				zipEntries.forEach((zipEntry) => {
 					if (zipEntry.entryName === 'install.json') {

@@ -60,6 +60,7 @@ module.exports = class UpgradeController extends global['OpencartSystemEngineCon
 	 * @return void
 	 */
 	async download() {
+		let curl, status;
 		await this.load.language('tool/upgrade');
 
 		const json = {};
@@ -113,6 +114,7 @@ module.exports = class UpgradeController extends global['OpencartSystemEngineCon
 	 * @return void
 	 */
 	async install() {
+		let destination, directories, file, path, remove, source, version, zip;
 		await this.load.language('tool/upgrade');
 
 		const json = {};

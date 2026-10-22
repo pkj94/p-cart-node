@@ -6,6 +6,7 @@ global['OpencartAdminControllerExtensionOpencartShippingWeight'] = class Weight 
 	 * @return void
 	 */
 	async index() {
+		let geo_zones;
 		await this.load.language('extension/opencart/shipping/weight');
 
 		this.document.setTitle(this.language.get('heading_title'));

@@ -119,7 +119,7 @@ module.exports = class ForgottenController extends global['OpencartSystemEngineC
 			'href': await this.url.link('common/forgotten.reset')
 		});
 
-		this.session.data['reset_token'] = substr(bin2hex(openssl_random_pseudo_bytes(26)), 0, 26);
+		this.session.data['reset_token'] = oc_token(26);
 
 		data['reset'] = await this.url.link('common/forgotten.password', 'email=' + encodeURIComponent(email) + '&code=' + code + '&reset_token=' + this.session.data['reset_token']);
 		data['back'] = await this.url.link('common/login');

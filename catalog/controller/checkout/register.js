@@ -164,6 +164,7 @@ module.exports = class Register extends global['OpencartSystemEngineController']
 	 * @return void
 	 */
 	async save() {
+		let address_format, address_id, country, firstname, iso_code_2, iso_code_3, lastname, payment_address_data, payment_country_info, shipping_address_data, shipping_country_info, zone, zone_code, zone_info;
 		await this.load.language('checkout/register');
 
 		const json = {};

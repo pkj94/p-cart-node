@@ -11,6 +11,8 @@ module.exports = class ForgottenController extends global['OpencartSystemEngineC
 	 * @throws \Exception
 	 */
 	async index(route, args, output) {
+		const data = {};
+		let code, email, store_name, subject;
 		if ((this.request.get['route'])) {
 			route = this.request.get['route'];
 		} else {

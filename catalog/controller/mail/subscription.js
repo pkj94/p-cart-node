@@ -8,6 +8,7 @@ module.exports = class Subscription extends global['OpencartSystemEngineControll
 	 * @return void
 	 */
 	async index(route, args, output) {
+		let comment, notify, subscription;
 		let subscription_id = 0;
 		if ((args[0])) {
 			subscription_id = args[0];
@@ -81,7 +82,7 @@ module.exports = class Subscription extends global['OpencartSystemEngineControll
 				// order ID; only as a new order ID added by an extension
 				if (value['customer_id'] == subscription['customer_id'] && value['order_id'] == subscription['order_id']) {
 					// Payment Methods
-					this.load.model('account/payment_method');
+					this.load.model('account/payment_method', this);
 
 					payment_method = await this.model_account_payment_method.getPaymentMethod(value['customer_id'], value['customer_payment_id']);
 
@@ -254,7 +255,7 @@ module.exports = class Subscription extends global['OpencartSystemEngineControll
 									}
 
 									if (this.config.get('payment_' + payment_info['code'] + '_status')) {
-										this.load.model('extension/payment/' + payment_info['code']);
+										this.load.model('extension/payment/' + payment_info['code'], this);
 
 										// Promotion
 										if ((this.{'model_extension_payment_' + payment_info['code']}.promotion)) {

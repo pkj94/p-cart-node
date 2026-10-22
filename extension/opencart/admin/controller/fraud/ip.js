@@ -101,6 +101,7 @@ global['OpencartAdminControllerExtensionOpencartFraudIp'] = class Ip extends glo
 	 * @return void
 	 */
 	async ip() {
+		let limit;
 		const data = {};
 		await this.load.language('extension/opencart/fraud/ip');
 		let page = 1;

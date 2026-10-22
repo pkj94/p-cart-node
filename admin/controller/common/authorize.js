@@ -148,6 +148,7 @@ module.exports = class AuthorizeCommontController extends global['OpencartSystem
 	 * @return void
 	 */
 	async unlock() {
+		const data = {};
 		await this.load.language('common/authorize');
 		let token = '';
 		if ((this.request.cookie['authorize'])) {

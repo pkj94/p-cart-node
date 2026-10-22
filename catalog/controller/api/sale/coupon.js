@@ -3,6 +3,7 @@ module.exports = class Coupon extends global['OpencartSystemEngineController'] {
 	 * @return void
 	 */
 	async index() {
+		let coupon, coupon_info;
 		const data = {};
 		await this.load.language('api/sale/coupon');
 
@@ -15,7 +16,7 @@ module.exports = class Coupon extends global['OpencartSystemEngineController'] {
 		}
 
 		if (coupon) {
-			this.load.model('marketing/coupon');
+			this.load.model('marketing/coupon', this);
 
 			coupon_info = await this.model_marketing_coupon.getCoupon(coupon);
 

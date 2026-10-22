@@ -5,6 +5,7 @@ module.exports = class OrderSaleModel extends global['OpencartSystemEngineModel'
 	 * @return array
 	 */
 	async getOrder(order_id) {
+		let affiliate, payment_iso_code_2, payment_iso_code_3, payment_zone_code, reward, shipping_iso_code_2, shipping_iso_code_3, shipping_zone_code;
 		let order_query = await this.db.query("SELECT *, (SELECT `os`.`name` FROM `" + DB_PREFIX + "order_status` os WHERE `os`.`order_status_id` = `o`.`order_status_id` AND `os`.`language_id` = " + this.db.quote(this.config.get('config_language_id')) + ") AS `order_status` FROM `" + DB_PREFIX + "order` `o` WHERE `o`.`order_id` = " + this.db.quote(order_id));
 
 		if (order_query.num_rows) {
@@ -289,6 +290,7 @@ if (data['limit'] < 1) {
 	 * @return int
 	 */
 	async getTotalProductsByProductId(product_id) {
+		const data = {};
 		let sql = "SELECT SUM(op.quantity) AS `total` FROM `" + DB_PREFIX + "order_product` `op` LEFT JOIN `" + DB_PREFIX + "order` `o` ON (`op`.`order_id` = `o`.`order_id`) WHERE `op`.`product_id` = " + this.db.quote(product_id);
 
 		if ((data['filter_order_status'])) {
@@ -460,6 +462,7 @@ if (data['limit'] < 1) {
 	 * @return int
 	 */
 	async getTotalOrdersByProcessingStatus() {
+		let order_statuses;
 		let implode = [];
 
 		order_statuses = this.config.get('config_processing_status');
@@ -481,6 +484,7 @@ if (data['limit'] < 1) {
 	 * @return int
 	 */
 	async getTotalOrdersByCompleteStatus() {
+		let order_statuses;
 		let implode = [];
 
 		order_statuses = this.config.get('config_complete_status');
@@ -589,6 +593,7 @@ if (data['limit'] < 1) {
 	 * @return string
 	 */
 	async createInvoiceNo(order_id) {
+		let order_info;
 		order_info = this.getOrder(order_id);
 
 		if (order_info && !order_info['invoice_no']) {

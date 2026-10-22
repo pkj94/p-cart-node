@@ -45,6 +45,7 @@ global['OpencartCatalogControllerExtensionOpencartTotalReward'] = class Reward e
 	 * @return void
 	 */
 	async save() {
+		let reward;
 		await this.load.language('extension/opencart/total/reward');
 
 		const json = {};

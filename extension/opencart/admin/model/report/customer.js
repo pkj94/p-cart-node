@@ -31,6 +31,7 @@ global['OpencartAdminModelExtensionOpencartReportCustomer'] = class Customer ext
 	 * @return array
 	 */
 	async getTotalCustomersByWeek() {
+		let date_start;
 		let customer_data = {};
 
 		date_start = Date.now() - (date('w') * 86400000);

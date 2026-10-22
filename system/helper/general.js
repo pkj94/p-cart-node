@@ -39,6 +39,23 @@ global.oc_json_decode = (value, fallback = {}) => {
         return fallback;
     }
 }
+// PHP functions the ported controllers/models call without importing them (PHP semantics via locutus)
+global.sprintf = require('locutus/php/strings/sprintf');
+global.vsprintf = require('locutus/php/strings/vsprintf');
+global.nl2br = require('locutus/php/strings/nl2br');
+global.explode = require('locutus/php/strings/explode');
+global.empty = require('locutus/php/var/empty');
+global.round = require('locutus/php/math/round');
+global.abs = require('locutus/php/math/abs');
+global.ceil = require('locutus/php/math/ceil');
+global.count = require('locutus/php/array/count');
+global.array_slice = require('locutus/php/array/array_slice');
+global.array_filter = require('locutus/php/array/array_filter');
+global.basename = require('locutus/php/filesystem/basename');
+global.dirname = require('locutus/php/filesystem/dirname');
+global.version_compare = require('locutus/php/info/version_compare');
+global.preg_replace = require('locutus/php/pcre/preg_replace');
+global.utf8_strlen = (string) => oc_strlen(string);
 // PHP in_array(): loose (==) comparison against the values of an array or object
 global.in_array = (needle, haystack, strict = false) => {
     if (!haystack || typeof haystack !== 'object') {

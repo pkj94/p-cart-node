@@ -3,6 +3,7 @@ module.exports = class Blog extends global['OpencartSystemEngineController'] {
 	 * @return void
 	 */
 	async index() {
+		let article_total, author, filter_data, image, limit, search, topic_id, topic_info;
 		const data = {};
 		await this.load.language('cms/blog');
 
@@ -55,7 +56,7 @@ module.exports = class Blog extends global['OpencartSystemEngineController'] {
 			'href': await this.url.link('cms/blog', 'language=' + this.config.get('config_language') + url)
 		});
 
-		this.load.model('cms/topic');
+		this.load.model('cms/topic', this);
 
 		topic_info = await this.model_cms_topic.getTopic(topic_id);
 
@@ -122,7 +123,7 @@ module.exports = class Blog extends global['OpencartSystemEngineController'] {
 			'limit': limit
 		};
 
-		this.load.model('cms/article');
+		this.load.model('cms/article', this);
 
 		article_total = await this.model_cms_article.getTotalArticles(filter_data);
 
@@ -215,6 +216,8 @@ module.exports = class Blog extends global['OpencartSystemEngineController'] {
 	}
 
 	async info() {
+		const data = {};
+		let article_id, article_info, topic_id, topic_info;
 		await this.load.language('cms/blog');
 
 		if ((this.request.get['article_id'])) {
@@ -229,7 +232,7 @@ module.exports = class Blog extends global['OpencartSystemEngineController'] {
 			topic_id = 0;
 		}
 
-		this.load.model('cms/article');
+		this.load.model('cms/article', this);
 
 		article_info = await this.model_cms_article.getArticle(article_id);
 
@@ -264,7 +267,7 @@ module.exports = class Blog extends global['OpencartSystemEngineController'] {
 				url += '&page=' + this.request.get['page'];
 			}
 
-			this.load.model('cms/topic');
+			this.load.model('cms/topic', this);
 
 			topic_info = await this.model_cms_topic.getTopic(topic_id);
 
@@ -318,6 +321,8 @@ module.exports = class Blog extends global['OpencartSystemEngineController'] {
 	 * @return string
 	 */
 	async getComments() {
+		const data = {};
+		let article_id, comment_total;
 		if ((this.request.get['article_id'])) {
 			article_id = this.request.get['article_id'];
 		} else {
@@ -331,7 +336,7 @@ module.exports = class Blog extends global['OpencartSystemEngineController'] {
 
 		data['articles'] = [];
 
-		this.load.model('cms/article');
+		this.load.model('cms/article', this);
 
 		comment_total = await this.model_cms_article.getTotalComments(article_id);
 
@@ -358,6 +363,7 @@ module.exports = class Blog extends global['OpencartSystemEngineController'] {
 	}
 
 	async addComment() {
+		let article_id, article_info, comment, spam, status;
 		await this.load.language('cms/article');
 
 		const json = {};
@@ -384,7 +390,7 @@ module.exports = class Blog extends global['OpencartSystemEngineController'] {
 			}
 		}
 
-		this.load.model('cms/article');
+		this.load.model('cms/article', this);
 
 		article_info = await this.model_cms_article.getArticle(article_id);
 
@@ -426,7 +432,7 @@ module.exports = class Blog extends global['OpencartSystemEngineController'] {
 			// Anti-Spam
 			comment = str_replace(' ', '', this.request.post['comment']);
 
-			this.load.model('cms/antispam');
+			this.load.model('cms/antispam', this);
 
 			spam = await this.model_cms_antispam.getSpam(comment);
 

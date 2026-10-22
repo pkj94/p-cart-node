@@ -116,9 +116,6 @@ module.exports = class Security extends global['OpencartSystemEngineController']
 
         this.response.addHeader('Content-Type: application/json');
         this.response.setOutput(json);
-        setTimeout(() => {
-            APP();
-        }, 1000);
     }
 
     /**
@@ -253,9 +250,6 @@ module.exports = class Security extends global['OpencartSystemEngineController']
 
         this.response.addHeader('Content-Type: application/json');
         this.response.setOutput(json);
-        setTimeout(() => {
-            APP();
-        }, 1000);
     }
 
     /**
@@ -364,9 +358,6 @@ module.exports = class Security extends global['OpencartSystemEngineController']
         await this.__destruct();
         this.response.addHeader('Content-Type: application/json');
         this.response.setOutput(json);
-        setTimeout(() => {
-            APP();
-        }, 1000);
     }
 
     /**

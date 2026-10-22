@@ -429,6 +429,7 @@ module.exports = class OrderController extends global['OpencartSystemEngineContr
 	 * @throws \Exception
 	 */
 	async info() {
+		let code, cycle, duration, frequency, trial_cycle, trial_duration, trial_frequency, trial_price;
 		const data = {};
 		await this.load.language('sale/order');
 		let order_id = 0;
@@ -1124,7 +1125,7 @@ module.exports = class OrderController extends global['OpencartSystemEngineContr
 			if (extension_info.extension_id && await this.user.hasPermission('access', 'extension/' + extension_info['extension'] + '/payment/' + extension_info['code'])) {
 				let output = await this.load.controller('extension/' + extension_info['extension'] + '/payment/' + extension_info['code'] + '.order');
 
-				if (!output instanceof Exception) {
+				if (!(output instanceof Error)) {
 					await this.load.language('extension/' + extension_info['extension'] + '/payment/' + extension_info['code'], 'extension');
 
 					data['tabs'].push({
@@ -1147,7 +1148,7 @@ module.exports = class OrderController extends global['OpencartSystemEngineContr
 
 				let output = await this.load.controller('extension/' + extension['extension'] + '/fraud/' + extension['code'] + '.order');
 
-				if (!output instanceof Exception) {
+				if (!(output instanceof Error)) {
 					data['tabs'].push({
 						'code': extension['extension'],
 						'title': this.language.get('extension_heading_title'),
@@ -1245,6 +1246,7 @@ module.exports = class OrderController extends global['OpencartSystemEngineContr
 	 * @return void
 	 */
 	async invoice() {
+		let shipping_address, trial_cycle, trial_duration, trial_frequency, trial_price;
 		const data = {};
 		await this.load.language('sale/order');
 

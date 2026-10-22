@@ -1316,7 +1316,7 @@ module.exports = class CustomerController extends global['OpencartSystemEngineCo
 	async address() {
 		await this.load.language('customer/customer');
 
-		const json = {};
+		let json = {};
 		let address_id = 0;
 		if ((this.request.get['address_id'])) {
 			address_id = this.request.get['address_id'];

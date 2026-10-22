@@ -73,6 +73,7 @@ global['OpencartAdminControllerExtensionOpencartDashboardChart'] = class Chart e
 	}
 
 	async chart() {
+		let date_start;
 		await this.load.language('extension/opencart/dashboard/chart');
 
 		const json = {};

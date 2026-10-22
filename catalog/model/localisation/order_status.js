@@ -14,6 +14,7 @@ module.exports =class OrderStatus extends global['OpencartSystemEngineModel'] {
 	 * @return array
 	 */
 	async getOrderStatuses() {
+		let order_status_data;
 		const sql = "SELECT `order_status_id`, `name` FROM `" + DB_PREFIX + "order_status` WHERE `language_id` = " + this.db.quote(this.config.get('config_language_id')) + " ORDER BY `name`";
 
 		order_status_data = await this.cache.get('order_status+' + md5(sql));

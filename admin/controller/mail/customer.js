@@ -102,6 +102,7 @@ module.exports = class CustomerController extends global['OpencartSystemEngineCo
 	 * @throws \Exception
 	 */
 	async deny(route, args, output) {
+		const data = {};
 		let customer_id = 0;
 		if ((args[0])) {
 			customer_id = args[0];

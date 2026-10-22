@@ -6,6 +6,7 @@ module.exports = class Subscription extends global['OpencartSystemEngineModel'] 
 	 * @return int
 	 */
 	async addSubscription(data) {
+		let date_next, remaining, trial_remaining;
 		if (data['trial_status'] && data['trial_duration']) {
 			trial_remaining = data['trial_duration'] - 1;
 			remaining = data['duration'];
@@ -35,6 +36,7 @@ module.exports = class Subscription extends global['OpencartSystemEngineModel'] 
 	 * @return void
 	 */
 	async editSubscription(subscription_id, data) {
+		let date_next, remaining, trial_remaining;
 		if (data['trial_status'] && data['trial_duration']) {
 			trial_remaining = data['trial_duration'] - 1;
 			remaining = data['duration'];
@@ -71,6 +73,7 @@ module.exports = class Subscription extends global['OpencartSystemEngineModel'] 
 	 * @return array
 	 */
 	async getSubscriptionByOrderProductId(order_id, order_product_id) {
+		let subscription_data;
 		subscription_data = [];
 
 		const query = await this.db.query("SELECT * FROM  `" + DB_PREFIX + "subscription` WHERE `order_id` = " + this.db.quote(order_id) + " AND `order_product_id` = " + this.db.quote(order_product_id));

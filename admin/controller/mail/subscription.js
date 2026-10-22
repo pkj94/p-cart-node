@@ -9,6 +9,8 @@ module.exports = class SubscriptionController extends global['OpencartSystemEngi
      * @throws \Exception
      */
     async history(route, args, output) {
+        const data = {};
+        let alert_email, comment, filter_data, from, language_code, mail, notify, store_name, store_url, subscription_id, subscription_status_id;
         if ((args[0])) {
             subscription_id = args[0];
         } else {
@@ -161,6 +163,8 @@ module.exports = class SubscriptionController extends global['OpencartSystemEngi
      * @throws \Exception
      */
     async transaction(route, args, output) {
+        const data = {};
+        let alert_email, amount, comment, filter_data, from, mail, order_id, payment_code, payment_method, store_name, store_url, subscription_id, type;
         if ((args[0])) {
             subscription_id = args[0];
         } else {

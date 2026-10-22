@@ -5,6 +5,7 @@ module.exports = class Article extends global['OpencartSystemEngineModel'] {
 	 * @return array
 	 */
 	async getArticle(article_id) {
+		let article_data;
 		const sql = "SELECT DISTINCT * FROM `" + DB_PREFIX + "article` `a` LEFT JOIN `" + DB_PREFIX + "article_description` `ad` ON (`a`.`article_id` = `ad`.`article_id`) LEFT JOIN `" + DB_PREFIX + "article_to_store` `a2s` ON (`a`.`article_id` = `a2s`.`article_id`) WHERE `a`.`article_id` = " + this.db.quote(article_id) + " AND `ad`.`language_id` = " + this.db.quote(this.config.get('config_language_id')) + " AND `a2s`.`store_id` = " + this.db.quote(this.config.get('config_store_id'));
 
 		article_data = await this.cache.get('article.' + md5(sql));
@@ -26,7 +27,8 @@ module.exports = class Article extends global['OpencartSystemEngineModel'] {
 	 * @return array
 	 */
 	async getArticles(data = {}) {
-		const sql = "SELECT * FROM `" + DB_PREFIX + "article` `a` LEFT JOIN `" + DB_PREFIX + "article_description` `ad` ON (`a`.`article_id` = `ad`.`article_id`) LEFT JOIN `" + DB_PREFIX + "article_to_store` `a2s` ON (`a`.`article_id` = `a2s`.`article_id`) WHERE `ad`.`language_id` = " + this.db.quote(this.config.get('config_language_id')) + " AND `a2s`.`store_id` = " + this.db.quote(this.config.get('config_store_id'));
+		let article_data, implode, words;
+		let sql = "SELECT * FROM `" + DB_PREFIX + "article` `a` LEFT JOIN `" + DB_PREFIX + "article_description` `ad` ON (`a`.`article_id` = `ad`.`article_id`) LEFT JOIN `" + DB_PREFIX + "article_to_store` `a2s` ON (`a`.`article_id` = `a2s`.`article_id`) WHERE `ad`.`language_id` = " + this.db.quote(this.config.get('config_language_id')) + " AND `a2s`.`store_id` = " + this.db.quote(this.config.get('config_store_id'));
 
 		if ((data['filter_search'])) {
 			sql += " AND (";
@@ -96,8 +98,9 @@ module.exports = class Article extends global['OpencartSystemEngineModel'] {
 	/**
 	 * @return int
 	 */
-	async getTotalArticles() {
-		const sql = "SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "article` `a` LEFT JOIN `" + DB_PREFIX + "article_description` `ad` ON (`a`.`article_id` = `ad`.`article_id`) LEFT JOIN `" + DB_PREFIX + "article_to_store` `a2s` ON (`a`.`article_id` = `a2s`.`article_id`) WHERE `ad`.`language_id` = " + this.db.quote(this.config.get('config_language_id')) + " AND `a2s`.`store_id` = " + this.db.quote(this.config.get('config_store_id'));
+	async getTotalArticles(data = {}) {
+		let implode, words;
+		let sql = "SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "article` `a` LEFT JOIN `" + DB_PREFIX + "article_description` `ad` ON (`a`.`article_id` = `ad`.`article_id`) LEFT JOIN `" + DB_PREFIX + "article_to_store` `a2s` ON (`a`.`article_id` = `a2s`.`article_id`) WHERE `ad`.`language_id` = " + this.db.quote(this.config.get('config_language_id')) + " AND `a2s`.`store_id` = " + this.db.quote(this.config.get('config_store_id'));
 
 		if ((data['filter_search'])) {
 			sql += " AND (";
@@ -175,6 +178,7 @@ module.exports = class Article extends global['OpencartSystemEngineModel'] {
 	 * @return array
 	 */
 	async getComments(article_id, start = 0, limit = 10) {
+		let comment_data;
 		if (start < 0) {
 			start = 0;
 		}

@@ -7,6 +7,7 @@ module.exports = class LogController extends global['OpencartSystemEngineControl
 	 * @return void
 	 */
 	async index() {
+		let i;
 		const data = {};
 		await this.load.language('tool/log');
 

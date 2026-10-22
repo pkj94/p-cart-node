@@ -359,6 +359,7 @@ module.exports = class Order extends global['OpencartSystemEngineController'] {
 	 * @throws \Exception
 	 */
 	async edit(order_info, order_status_id, comment, notify) {
+		const data = {};
 		let store_name = html_entity_decode(this.config.get('config_name'));
 		let store_url = HTTP_SERVER;
 		if (typeof HTTP_CATALOG != 'undefined') {

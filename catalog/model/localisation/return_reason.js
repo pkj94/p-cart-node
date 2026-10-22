@@ -5,7 +5,8 @@ module.exports =class ReturnReason extends global['OpencartSystemEngineModel'] {
 	 * @return array
 	 */
 	async getReturnReasons(data = {}) {
-		const sql = "SELECT * FROM `" + DB_PREFIX + "return_reason` WHERE `language_id` = " + this.db.quote(this.config.get('config_language_id')) + " ORDER BY `name`";
+		let return_reason_data;
+		let sql = "SELECT * FROM `" + DB_PREFIX + "return_reason` WHERE `language_id` = " + this.db.quote(this.config.get('config_language_id')) + " ORDER BY `name`";
 
 		if ((data['return']) && (data['return'] == 'DESC')) {
 			sql += " DESC";

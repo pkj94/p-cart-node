@@ -634,10 +634,11 @@ module.exports = class SubscriptionController extends global['OpencartSystemEngi
 		}
 
 		// Product data
+		let product_info = {};
 		if ((subscription_info)) {
 			this.load.model('sale/order', this);
 
-			const product_info = await this.model_sale_order.getProductByOrderProductId(subscription_info['order_id'], subscription_info['order_product_id']);
+			product_info = await this.model_sale_order.getProductByOrderProductId(subscription_info['order_id'], subscription_info['order_product_id']);
 		}
 
 		if ((product_info['name'])) {

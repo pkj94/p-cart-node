@@ -214,14 +214,16 @@ module.exports = class Returns extends global['OpencartSystemEngineController'] 
 
 		this.load.model('account/order', this);
 
+		let order_info = {};
 		if ((this.request.get['order_id'])) {
-			const order_info = await this.model_account_order.getOrder(this.request.get['order_id']);
+			order_info = await this.model_account_order.getOrder(this.request.get['order_id']);
 		}
 
 		this.load.model('catalog/product', this);
 
+		let product_info = {};
 		if ((this.request.get['product_id'])) {
-			const product_info = await this.model_catalog_product.getProduct(this.request.get['product_id']);
+			product_info = await this.model_catalog_product.getProduct(this.request.get['product_id']);
 		}
 
 		if ((order_info.order_id)) {

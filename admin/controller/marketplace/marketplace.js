@@ -661,6 +661,7 @@ module.exports = class MarketplaceMarketplaceController extends global['Opencart
 	 * @return void
 	 */
 	async extension() {
+		let code;
 		const data = {};
 		await this.load.language('marketplace/marketplace');
 		let extension_id = 0;

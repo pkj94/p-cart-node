@@ -71,6 +71,7 @@ module.exports = class Register extends global['OpencartSystemEngineController']
 	 * @throws \Exception
 	 */
 	async alert(route, args, output) {
+		const data = {};
 		// Send to main admin email if new account email is enabled
 		if (this.config.get('config_mail_alert').includes('account')) {
 			await this.load.language('mail/register');

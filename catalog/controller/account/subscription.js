@@ -5,6 +5,7 @@ module.exports = class Subscription extends global['OpencartSystemEngineControll
 	 * @return void
 	 */
 	async index() {
+		let duration;
 		const data = {};
 		await this.load.language('account/subscription');
 
@@ -134,6 +135,7 @@ module.exports = class Subscription extends global['OpencartSystemEngineControll
 	 * @return void
 	 */
 	async info() {
+		let trial_frequency;
 		const data = {};
 		await this.load.language('account/subscription');
 
@@ -191,7 +193,7 @@ module.exports = class Subscription extends global['OpencartSystemEngineControll
 
 			this.load.model('localisation/subscription_status', this);
 
-			const subscription_status_info = await this.model_localisation_subscription_status.getSubscriptionStatus(subscription_info['subscription_status_id']);
+			let subscription_status_info = await this.model_localisation_subscription_status.getSubscriptionStatus(subscription_info['subscription_status_id']);
 
 			if (subscription_status_info.subscription_status_id) {
 				data['subscription_status'] = subscription_status_info['name'];

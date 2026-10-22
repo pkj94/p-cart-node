@@ -3,6 +3,7 @@ module.exports = class ShippingMethod extends global['OpencartSystemEngineContro
 	 * @return void
 	 */
 	async index() {
+		let shipping_methods;
 		const data = {};
 		await this.load.language('api/sale/shipping_method');
 
@@ -36,6 +37,7 @@ module.exports = class ShippingMethod extends global['OpencartSystemEngineContro
 	 * @return void
 	 */
 	async save() {
+		let shipping;
 		await this.load.language('api/sale/shipping_method');
 
 		const json = {};

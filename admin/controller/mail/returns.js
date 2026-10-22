@@ -8,6 +8,8 @@ module.exports=class ReturnsController extends global['OpencartSystemEngineContr
 	 * @throws \Exception
 	 */
 	async index(route,args, output) {
+		const data = {};
+		let comment, language_code, notify, return_id, return_status_id, store_name, store_url;
 		if ((args[0])) {
 			return_id = args[0];
 		} else {

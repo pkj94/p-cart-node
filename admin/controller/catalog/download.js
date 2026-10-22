@@ -498,6 +498,7 @@ module.exports = class DownloadController extends global['OpencartSystemEngineCo
 	 * @return void
 	 */
 	async download() {
+		const data = {};
 		await this.load.language('catalog/download');
 		let filename = '';
 		if ((this.request.get['filename'])) {

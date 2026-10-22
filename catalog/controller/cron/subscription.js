@@ -57,13 +57,14 @@ module.exports = class Subscription extends global['OpencartSystemEngineControll
 				}
 				let store;
 				// 3. Create new instance of a store
+				let customer_info = {};
 				if (!error) {
 					store = await this.model_setting_store.createStoreInstance(result['store_id'], language_info['code']);
 
 					// Login
 					this.load.model('account/customer', this);
 
-					const customer_info = await this.model_account_customer.getCustomer(result['customer_id']);
+					customer_info = await this.model_account_customer.getCustomer(result['customer_id']);
 
 					if (customer_info.customer_id && await this.customer.login(customer_info['email'], '', true)) {
 						// Add customer details into session
@@ -181,7 +182,7 @@ module.exports = class Subscription extends global['OpencartSystemEngineControll
 						error = this.language.get('error_payment_method');
 					}
 				}
-				const order_data = {}
+				let order_data = {}
 				if (!error) {
 					this.load.model('marketing/marketing', this);
 

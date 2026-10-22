@@ -62,9 +62,7 @@ global['OpencartAdminControllerExtensionOpencartCurrencyEcb'] = class ECB extend
           timeout: 30000
         });
         if (response.status === 200) {
-          const xmlText = JSON.parse(xmlParser.toJson(response.data));
-          // console.log('xmlText----', xmlText['gesmes:Envelope'])
-          const cube = xmlText['gesmes:Envelope']['Cube']['Cube']['Cube'];
+          const cube = [...String(response.data).matchAll(/currency=['"]([A-Z]{3})['"]\s+rate=['"]([\d.]+)['"]/g)].map(m => ({ currency: m[1], rate: m[2] }));
 
           const currencies = {
             EUR: 1.0000

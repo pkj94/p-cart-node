@@ -3,6 +3,7 @@ module.exports = class Reward extends global['OpencartSystemEngineController'] {
 	 * @return void
 	 */
 	async index() {
+		let available, points_total, reward;
 		const data = {};
 		await this.load.language('api/sale/reward');
 

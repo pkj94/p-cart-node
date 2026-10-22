@@ -234,6 +234,7 @@ this.autoloader.register('OpencartAdminControllerExtension' +namespace, DIR_EXTE
 	 * @return void
 	 */
 	async delete() {
+		let module_id;
 		await this.load.language('extension/module');
 
 		const json = {};

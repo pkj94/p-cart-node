@@ -9,7 +9,7 @@ module.exports =  class Config {
         if (!directory) {
             this.directory = namespace;
         } else {
-            $this.path[namespace] = directory;
+            this.path[namespace] = directory;
         }
     }
     set(key, value) {

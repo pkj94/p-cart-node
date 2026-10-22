@@ -1251,6 +1251,7 @@ module.exports = class ProductController extends global['OpencartSystemEngineCon
 	 * @return void
 	 */
 	async autocomplete() {
+		let subscription_plan_info;
 		const json = [];
 
 		let filter_name = '';

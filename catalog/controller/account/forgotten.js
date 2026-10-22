@@ -89,6 +89,7 @@ module.exports = class Forgotten extends global['OpencartSystemEngineController'
 	 * @return void
 	 */
 	async reset() {
+		const data = {};
 		await this.load.language('account/forgotten');
 		let email = '';
 		if ((this.request.get['email'])) {

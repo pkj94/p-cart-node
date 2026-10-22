@@ -366,6 +366,7 @@ module.exports = class Product extends global['OpencartSystemEngineModel'] {
 	 * @return int
 	 */
 	async getTotalProducts(data = {}) {
+		let filters;
 		let sql = "SELECT COUNT(DISTINCT `p`.`product_id`) AS total";
 
 		if ((data['filter_category_id'])) {

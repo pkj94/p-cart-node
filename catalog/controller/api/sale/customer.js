@@ -3,6 +3,7 @@ module.exports = class Customer extends global['OpencartSystemEngineController']
 	 * @return void
 	 */
 	async index() {
+		let customer_group_id, customer_group_info, customer_info;
 		const data = {};
 		await this.load.language('api/sale/customer');
 

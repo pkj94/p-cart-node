@@ -44,6 +44,7 @@ module.exports = class ContactController extends global['OpencartSystemEngineCon
 	 * @throws \Exception
 	 */
 	async send() {
+		let affiliates;
 		await this.load.language('marketing/contact');
 
 		const json = { error: {} };

@@ -3,6 +3,7 @@ module.exports = class Upgrade7 extends global['OpencartSystemEngineController']
 	 * @return void
 	 */
 	async index() {
+		let banner_image_description_query, banner_image_query, json, language_query, product_query, query, remove, url;
 		this.load.language('upgrade/upgrade');
 
 		json = [];
@@ -162,6 +163,7 @@ module.exports = class Upgrade7 extends global['OpencartSystemEngineController']
 	 * @return void
 	 */
 	async repairCategories(parent_id = 0) {
+		let level, query;
 		query = this.db.query("SELECT * FROM `" + DB_PREFIX + "category` WHERE `parent_id` = " + this.db.quote(parent_id));
 
 		for (query.rows of category) {

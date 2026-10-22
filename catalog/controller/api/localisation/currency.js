@@ -3,6 +3,7 @@ module.exports = class Currency extends global['OpencartSystemEngineController']
 	 * @return void
 	 */
 	async index() {
+		let currency, currency_info;
 		const data = {};
 		await this.load.language('api/localisation/currency');
 

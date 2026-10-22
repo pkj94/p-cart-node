@@ -3,6 +3,7 @@ module.exports = class Upgrade6 extends global['OpencartSystemEngineController']
 	 * @return void
 	 */
 	async index() {
+		let json, query, url;
 		this.load.language('upgrade/upgrade');
 
 		json = [];

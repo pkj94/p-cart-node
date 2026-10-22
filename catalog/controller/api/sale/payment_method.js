@@ -3,6 +3,7 @@ module.exports = class PaymentMethod extends global['OpencartSystemEngineControl
 	 * @return void
 	 */
 	async index() {
+		let payment_address, payment_methods;
 		const data = {};
 		await this.load.language('api/sale/payment_method');
 
@@ -44,6 +45,7 @@ module.exports = class PaymentMethod extends global['OpencartSystemEngineControl
 	 * @return void
 	 */
 	async save() {
+		let payment;
 		await this.load.language('api/sale/payment_method');
 
 		const json = {};

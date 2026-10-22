@@ -3,6 +3,7 @@ module.exports = class NotFoundController extends global['OpencartSystemEngineCo
 	 * @return void
 	 */
 	async index() {
+		const data = {};
 		await this.load.language('error/not_found');
 		
 		this.document.setTitle(this.language.get('heading_title'));

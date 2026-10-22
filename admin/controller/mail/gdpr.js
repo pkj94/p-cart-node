@@ -44,6 +44,8 @@ module.exports = class GdprController extends global['OpencartSystemEngineContro
 	 * @throws \Exception
 	 */
 	async export(gdpr_info) {
+		const data = {};
+		let address, language_code, store_logo, store_name, store_url, subject;
 		this.load.model('setting/store', this);
 
 		const store_info = await this.model_setting_store.getStore(gdpr_info['store_id']);
@@ -136,7 +138,7 @@ module.exports = class GdprController extends global['OpencartSystemEngineContro
 		// Order Addresses
 		this.load.model('sale/order', this);
 
-		const results = await this.model_sale_order.getOrders({ 'filter_email': gdpr_info['email'] });
+		let results = await this.model_sale_order.getOrders({ 'filter_email': gdpr_info['email'] });
 
 		for (let result of results) {
 			const order_info = await this.model_sale_order.getOrder(result['order_id']);
@@ -220,6 +222,8 @@ module.exports = class GdprController extends global['OpencartSystemEngineContro
 	 * @throws \Exception
 	 */
 	async approve(gdpr_info) {
+		const data = {};
+		let language_code, results, store_logo, store_name, store_url, subject;
 		this.load.model('setting/store', this);
 
 		const store_info = await this.model_setting_store.getStore(gdpr_info['store_id']);
@@ -311,6 +315,8 @@ module.exports = class GdprController extends global['OpencartSystemEngineContro
 	 * @throws \Exception
 	 */
 	async deny(gdpr_info) {
+		const data = {};
+		let language_code, results, store_logo, store_name, store_url, subject;
 		this.load.model('setting/store', this);
 
 		const store_info = await this.model_setting_store.getStore(gdpr_info['store_id']);
@@ -402,6 +408,8 @@ module.exports = class GdprController extends global['OpencartSystemEngineContro
 	 * @throws \Exception
 	 */
 	async remove(gdpr_info) {
+		const data = {};
+		let language_code, results, store_logo, store_name, store_url, subject;
 		this.load.model('setting/store', this);
 
 		const store_info = await this.model_setting_store.getStore(gdpr_info['store_id']);

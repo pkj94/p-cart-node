@@ -146,8 +146,9 @@ global['OpencartCatalogControllerExtensionOpencartTotalShipping'] = class Shippi
 
 		const json = {};
 
+		let shipping = [];
 		if ((this.request.post['shipping_method'])) {
-			const shipping = this.request.post['shipping_method'].split('.');
+			shipping = this.request.post['shipping_method'].split('.');
 
 			if (!(shipping[0]) || !(shipping[1]) || !(this.session.data['shipping_methods'][shipping[0]]['quote'][shipping[1]])) {
 				json['error'] = this.language.get('error_shipping');

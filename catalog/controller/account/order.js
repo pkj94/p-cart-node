@@ -103,6 +103,7 @@ module.exports = class Order extends global['OpencartSystemEngineController'] {
 	 * @return object|Action|null
 	 */
 	async info() {
+		let upload_info;
 		const data = {};
 		await this.load.language('account/order');
 

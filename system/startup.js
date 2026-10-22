@@ -15,13 +15,13 @@ if (!process.env.TZ) {
 // Windows IIS Compatibility equivalent
 if (!process.env.DOCUMENT_ROOT) {
     if (process.env.SCRIPT_FILENAME) {
-        process.env.DOCUMENT_ROOT = path.dirname(process.env.SCRIPT_FILENAME);
+        process.env.DOCUMENT_ROOT = require('path').dirname(process.env.SCRIPT_FILENAME);
     }
 }
 
 if (!process.env.DOCUMENT_ROOT) {
     if (process.env.PATH_TRANSLATED) {
-        process.env.DOCUMENT_ROOT = path.dirname(process.env.PATH_TRANSLATED);
+        process.env.DOCUMENT_ROOT = require('path').dirname(process.env.PATH_TRANSLATED);
     }
 }
 

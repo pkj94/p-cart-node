@@ -3,6 +3,7 @@ module.exports = class Cart extends global['OpencartSystemEngineController'] {
 	 * @return void
 	 */
 	async index() {
+		let cycle, description, duration, frequency, price, taxes, total, totals, trial_cycle, trial_duration, trial_frequency, trial_price, vouchers;
 		const data = {};
 		await this.load.language('api/sale/cart');
 
@@ -98,6 +99,7 @@ module.exports = class Cart extends global['OpencartSystemEngineController'] {
 	 * @return void
 	 */
 	async add() {
+		let option, product_id, quantity, subscription_plan_id, subscription_plan_ids, subscriptions;
 		await this.load.language('api/sale/cart');
 
 		const json = {};
@@ -185,6 +187,7 @@ module.exports = class Cart extends global['OpencartSystemEngineController'] {
 	 * @return void
 	 */
 	async edit() {
+		let key, quantity;
 		await this.load.language('api/sale/cart');
 
 		const json = {};
@@ -215,6 +218,7 @@ module.exports = class Cart extends global['OpencartSystemEngineController'] {
 	 * @return void
 	 */
 	async remove() {
+		let key;
 		await this.load.language('api/sale/cart');
 
 		const json = {};

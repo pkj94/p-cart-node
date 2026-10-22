@@ -74,9 +74,12 @@ module.exports = class PaymentMethod extends global['OpencartSystemEngineControl
 	 * @return string
 	 */
 	async getList() {
+		const data = {};
+		let payment_method;
+		const method_data = {};
 		data['payment_methods'] = [];
 
-		this.load.model('account/payment_method');
+		this.load.model('account/payment_method', this);
 
 		this.load.model('setting/extension', this);
 
@@ -113,6 +116,7 @@ module.exports = class PaymentMethod extends global['OpencartSystemEngineControl
 	 * @return void
 	 */
 	async delete() {
+		let customer_payment_id, payment_method_info;
 		await this.load.language('account/payment_method');
 
 		const json = {};
@@ -130,7 +134,7 @@ module.exports = class PaymentMethod extends global['OpencartSystemEngineControl
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('account/payment_method');
+			this.load.model('account/payment_method', this);
 
 			payment_method_info = await this.model_account_payment_method.getPaymentMethod(await this.customer.getId(), customer_payment_id);
 
@@ -140,7 +144,7 @@ module.exports = class PaymentMethod extends global['OpencartSystemEngineControl
 		}
 
 		if (!Object.keys(json).length) {
-			this.load.model('extension/' + payment_method_info['extension'] + '/payment/' + payment_method_info['code']);
+			this.load.model('extension/' + payment_method_info['extension'] + '/payment/' + payment_method_info['code'], this);
 
 			if (this['model_extension_' + payment_method_info['extension'] + '_payment_' + payment_method_info['code']].delete(customer_payment_id)) {
 

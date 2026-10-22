@@ -169,6 +169,7 @@ module.exports = class Contact extends global['OpencartSystemEngineController'] 
 	 * @return void
 	 */
 	async success() {
+		const data = {};
 		await this.load.language('information/contact');
 
 		this.document.setTitle(this.language.get('heading_title'));

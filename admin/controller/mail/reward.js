@@ -8,6 +8,8 @@ module.exports = class RewardController extends global['OpencartSystemEngineCont
 	 * @throws \Exception
 	 */
 	async index(route, args, output) {
+		const data = {};
+		let customer_id, description, order_id, points, store_name, store_url, subject;
 		if ((args[0])) {
 			customer_id = args[0];
 		} else {

@@ -3,6 +3,7 @@ module.exports = class PaymentAddress extends global['OpencartSystemEngineContro
 	 * @return void
 	 */
 	async index() {
+		let address_format, country, iso_code_2, iso_code_3, zone, zone_code, zone_info;
 		const data = {};
 		await this.load.language('api/sale/payment_address');
 

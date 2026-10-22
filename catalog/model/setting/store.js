@@ -49,15 +49,16 @@ module.exports = class Store extends global['OpencartSystemEngineModel'] {
 	 * @throws \Exception
 	 */
 	async createStoreInstance(store_id = 0, language = '', session_id = '') {
+		let session;
 		// Autoloader
 		// this.autoloader.register('Opencart\Catalog', DIR_CATALOG);
 
 		// Registry
-		let registry = new Registry();
+		let registry = new global['OpencartSystemEngineRegistry']();
 		// registry.set('autoloader', this.autoloader);
 
 		// Config
-		let config = new Config();
+		let config = new global['OpencartSystemEngineConfig']();
 		registry.set('config', config);
 
 		// Load the default config
@@ -72,7 +73,7 @@ module.exports = class Store extends global['OpencartSystemEngineModel'] {
 		registry.set('log', this.log);
 
 		// Event
-		let event = new Event(registry);
+		let event = new global['OpencartSystemEngineEvent'](registry);
 		registry.set('event', event);
 
 		// Event Register
@@ -85,17 +86,17 @@ module.exports = class Store extends global['OpencartSystemEngineModel'] {
 		}
 
 		// Loader
-		let loader = new Loader(registry);
+		let loader = new global['OpencartSystemEngineLoader'](registry);
 		registry.set('load', loader);
 
 		// Create a dummy request class so we can feed the data to the order editor
-		let request = new RequestLibrary(this.request.server);
+		let request = new global['OpencartSystemLibraryRequest'](this.request.server);
 
 		// Request
 		registry.set('request', request);
 
 		// Response
-		let response = new ResponseLibrary(this.response.response, this.request.server);
+		let response = new global['OpencartSystemLibraryResponse'](this.response.response, this.request.server);
 		registry.set('response', response);
 
 		// Database
@@ -113,7 +114,7 @@ module.exports = class Store extends global['OpencartSystemEngineModel'] {
 		session.start(session_id);
 
 		// Template
-		let template = new TemplateLibrary(config.get('template_engine'));
+		let template = new global['OpencartSystemLibraryTemplate'](config.get('template_engine'));
 		template.addPath(DIR_TEMPLATE);
 		registry.set('template', template);
 
@@ -130,7 +131,7 @@ module.exports = class Store extends global['OpencartSystemEngineModel'] {
 			config.set('config_language', this.config.get('config_language'));
 		}
 
-		let languageLib = new LanguageLibrary(this.config.get('config_language'));
+		let languageLib = new global['OpencartSystemLibraryLanguage'](this.config.get('config_language'));
 
 		if (!language_info['extension']) {
 			languageLib.addPath(DIR_LANGUAGE);
@@ -146,7 +147,7 @@ module.exports = class Store extends global['OpencartSystemEngineModel'] {
 		registry.set('url', new global['OpencartSystemLibraryUrl'](config.get('site_url')));
 
 		// Document
-		registry.set('document', new DocumentLibrary());
+		registry.set('document', new global['OpencartSystemLibraryDocument']());
 
 		// Run pre actions to load key settings and classes+
 		let pre_actions = [

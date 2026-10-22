@@ -331,7 +331,7 @@ module.exports = class AttributeController extends global['OpencartSystemEngineC
 	 * @return void
 	 */
 	async autocomplete() {
-		const json = {};
+		let json = {};
 
 		if ((this.request.get['filter_name'])) {
 			this.load.model('catalog/attribute', this);

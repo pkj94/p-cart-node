@@ -272,7 +272,7 @@ module.exports = class Order extends global['OpencartSystemEngineModel'] {
 	 * @return array
 	 */
 	async getSubscriptions(data) {
-		const sql = "SELECT * FROM `" + DB_PREFIX + "subscription`";
+		let sql = "SELECT * FROM `" + DB_PREFIX + "subscription`";
 
 		let implode = [];
 
@@ -489,7 +489,7 @@ module.exports = class Order extends global['OpencartSystemEngineModel'] {
 
 				// Remove coupon, vouchers and reward points history
 				for (let order_total of order_totals) {
-					this.load.model('extension/' + order_total['extension'] + '/total/' + order_total['code']);
+					this.load.model('extension/' + order_total['extension'] + '/total/' + order_total['code'], this);
 
 					if ((this['model_extension_' + order_total['extension'] + '_total_' + order_total['code']].unconfirm)) {
 						this['model_extension_' + order_total['extension'] + '_total_' + order_total['code']].unconfirm(order_id);

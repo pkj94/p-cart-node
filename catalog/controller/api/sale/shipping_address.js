@@ -3,11 +3,13 @@ module.exports = class ShippingAddress extends global['OpencartSystemEngineContr
 	 * @return void
 	 */
 	async index() {
+		let address_format, country, iso_code_2, iso_code_3, zone, zone_code, zone_info;
 		const data = {};
 		await this.load.language('api/sale/shipping_address');
 
 		const json = {};
 
+		let country_info = undefined;
 		if (await this.cart.hasShipping()) {
 			// Add keys for missing post vars
 			let keys = [
@@ -50,7 +52,7 @@ module.exports = class ShippingAddress extends global['OpencartSystemEngineContr
 
 			this.load.model('localisation/country', this);
 
-			const country_info = await this.model_localisation_country.getCountry(this.request.post['country_id']);
+			country_info = await this.model_localisation_country.getCountry(this.request.post['country_id']);
 
 			if (country_info && country_info['postcode_required'] && (oc_strlen(this.request.post['postcode']) < 2 || oc_strlen(this.request.post['postcode']) > 10)) {
 				json['error'] = json['error'] || {};
