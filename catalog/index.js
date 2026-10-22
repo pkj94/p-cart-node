@@ -26,7 +26,7 @@ module.exports = function (baseRegistry) {
             }
         }).catch(error => {
             // Error Handler
-            console.log('error------', error, JSON.stringify(error));
+            console.error('error------', error, JSON.stringify(error));
             let errorType;
             switch (error.name) {
                 case 'NoticeError':

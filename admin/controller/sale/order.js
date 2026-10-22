@@ -727,9 +727,8 @@ module.exports = class OrderController extends global['OpencartSystemEngineContr
 
 		// Delete any old session
 		if ((this.session.data['api_session'])) {
-			let session = new global['OpencartSystemLibrarySession'](this.request.server.session);
-			session.start(this.session.data['api_session']);
-			session.destroy();
+			// Remove the old API session from the session store (not this admin's own session)
+			await new Promise((resolve) => this.request.server.sessionStore.destroy(this.session.data['api_session'], () => resolve()));
 		}
 		let store_id = 0;
 		if ((order_info)) {

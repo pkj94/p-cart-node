@@ -62,7 +62,7 @@ module.exports = class Loader {
             let ModelClass = global[className];
             model = new ModelClass(this.registry);
         } catch (error) {
-            console.log(className, error)
+            console.error(className, error)
             throw new Error(`Error: Could not load model ${className}!`);
         }
 

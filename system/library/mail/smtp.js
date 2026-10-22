@@ -40,7 +40,7 @@ module.exports = class Smtp {
             let info = await this.transporter.sendMail(mailOptions);
             return info;
         } catch (error) {
-            console.log(error)
+            console.error(error)
             throw new Error(`Error: Could not send mail! Message: ${error.message}`);
         }
     }

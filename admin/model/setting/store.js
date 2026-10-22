@@ -26,7 +26,7 @@ module.exports = class StoreSettingModel extends global['OpencartSystemEngineMod
 	 * @return void
 	 */
 	async editStore(store_id, data) {
-		await this.db.query("UPDATE `" + DB_PREFIX + "store` SET `name` = " + this.db.escape(data['config_name']) + ", `url` = " + this.db.escape(data['config_url']) + "' WHERE `store_id` = '" + store_id);
+		await this.db.query("UPDATE `" + DB_PREFIX + "store` SET `name` = " + this.db.escape(data['config_name']) + ", `url` = " + this.db.escape(data['config_url']) + " WHERE `store_id` = " + this.db.quote(store_id));
 
 		await this.cache.delete('store');
 	}

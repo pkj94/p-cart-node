@@ -190,7 +190,7 @@ module.exports = class Step3 extends global['OpencartSystemEngineController'] {
             try {
                 const db = await new global['OpencartSystemLibraryDb'](this.request.post['db_driver'], this.html_entity_decode(this.request.post['db_hostname']), this.html_entity_decode(this.request.post['db_username']), this.html_entity_decode(this.request.post['db_password']), this.html_entity_decode(this.request.post['db_database']), this.request.post['db_port']).connect();
             } catch (e) {
-                console.log('e----------', e)
+                console.error('e----------', e)
                 this.error['warning'] = e.message;
             }
         }

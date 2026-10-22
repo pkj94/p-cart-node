@@ -46,10 +46,22 @@ function run(values, callback) {
 function loadConfig(file) {
     try {
         const content = require('fs').readFileSync(file).toString();
-        return content.trim() ? JSON.parse(content) : {};
+        return content.trim() ? withEnv(JSON.parse(content)) : {};
     } catch (e) {
         return {};
     }
+}
+
+// DB_* environment variables (e.g. DB_USERNAME, DB_PASSWORD from .env) override config.json,
+// so credentials don't have to live in a committed file
+function withEnv(config) {
+    for (const key of Object.keys(process.env)) {
+        if (key.startsWith('DB_')) {
+            const value = process.env[key];
+            config[key] = value === 'true' ? true : (value === 'false' ? false : value);
+        }
+    }
+    return config;
 }
 
 // A fresh registry per request, so concurrent requests never share request/response/session/config.
@@ -60,4 +72,4 @@ function createRegistry(baseRegistry) {
     return registry;
 }
 
-module.exports = { scope, run, loadConfig, createRegistry };
+module.exports = { scope, run, loadConfig, withEnv, createRegistry };

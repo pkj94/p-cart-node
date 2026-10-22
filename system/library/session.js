@@ -24,12 +24,17 @@ module.exports = class Session {
     start(id) {
         this.session_id = id;
     }
+    // Empties this request's session (logout). Keeps the express-session object and its cookie
+    // settings, so this.data stays the live session and the request can keep using it.
     async destroy() {
-
-        this.data = {};
-        this.session = {};
-        this.session.save((err) => {
-            resolve(true);
+        return new Promise((resolve) => {
+            for (const key of Object.keys(this.session)) {
+                if (key !== 'cookie') {
+                    delete this.session[key];
+                }
+            }
+            this.data = this.session;
+            this.session.save(() => resolve(true));
         });
     }
 }  

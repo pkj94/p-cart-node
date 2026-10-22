@@ -1,14 +1,21 @@
+// Environment from .env (git-ignored): DB_USERNAME, DB_PASSWORD, SESSION_SECRET, NODE_ENV, ... See .env.example
+if (require('fs').existsSync(__dirname + '/.env') && process.loadEnvFile) {
+    process.loadEnvFile(__dirname + '/.env');
+}
+
 const { OpencartSystemEngineAutoloader } = require('./system/startup');
+const context = require('./system/engine/context');
 
 global.VERSION = '4.0.2.3';
 global.APPROOT = __dirname;
 global.date = require('php-date-format');
 global.fs = require('fs');
 global.expressPath = require('path');
+const isProduction = process.env.NODE_ENV === 'production';
+// config.json value, with DB_* environment variables taking precedence
 const getConfig = (key, from = '') => {
-    if (fs.readFileSync(__dirname + '/' + (from ? from + '/' : from) + 'config.json').toString())
-        return (require(__dirname + '/' + (from ? from + '/' : from) + 'config.json'))[key]
-    return '';
+    const value = context.loadConfig(__dirname + '/' + (from ? from + '/' : from) + 'config.json')[key];
+    return value === undefined ? '' : value;
 }
 // The store counts as installed once config.json has database details. The installer is then
 // disabled, otherwise anyone could re-run it and take over the store. ALLOW_INSTALL=1 re-enables it.
@@ -71,6 +78,44 @@ global.app = express();
 global.useragent = require('useragent');
 
 const cookieParser = require("cookie-parser");
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+
+// In production only warnings/errors reach the console unless DEBUG=1 (morgan still logs each request)
+if (isProduction && process.env.DEBUG !== '1') {
+    console.log = console.info = console.debug = () => { };
+}
+
+if (isProduction) {
+    app.set('trust proxy', 1) // trust first proxy, so req.ip / secure cookies work behind nginx
+}
+
+// Security headers. No Content-Security-Policy: the templates rely on inline scripts and styles.
+app.use(helmet({
+    contentSecurityPolicy: false,
+    hsts: isProduction,
+    referrerPolicy: { policy: 'strict-origin-when-cross-origin' }
+}));
+
+// Brute-force protection for login, password reset and sign-up posts, and for the API
+const routeOf = (req) => String(req.query.route || '').replace('|', '.');
+const limitMessage = (message) => ({ error: { warning: message }, message });
+app.use(rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: parseInt(process.env.RATE_LIMIT_AUTH) || 20,
+    standardHeaders: 'draft-7',
+    legacyHeaders: false,
+    skip: (req) => req.method !== 'POST' || !/^(account\/(login|forgotten|register|reset|password)|common\/(login|forgotten|reset)|checkout\/register)/.test(routeOf(req)),
+    message: limitMessage('Too many attempts. Please wait 15 minutes and try again.')
+}));
+app.use(rateLimit({
+    windowMs: 60 * 1000,
+    limit: parseInt(process.env.RATE_LIMIT_API) || 300,
+    standardHeaders: 'draft-7',
+    legacyHeaders: false,
+    skip: (req) => !routeOf(req).startsWith('api/'),
+    message: limitMessage('Too many requests. Please slow down.')
+}));
 
 app.use(cookieParser());
 const session = require('express-session')
@@ -113,29 +158,37 @@ if (getConfig('DB_DATABASE')) {
     });
 }
 
-if (app.get('env') === 'production') {
-    app.set('trust proxy', 1) // trust first proxy
-    sess.cookie.secure = true // serve secure cookies
+if (isProduction) {
+    sess.cookie.secure = true // serve secure cookies (HTTPS only)
 }
 
 app.use(session(sess));
 
-app.use(fileUpload());
+// Uploads: UPLOAD_MAX_MB per file (default 16), rejected with 413 when larger
+app.use(fileUpload({
+    limits: { fileSize: (parseInt(process.env.UPLOAD_MAX_MB) || 16) * 1024 * 1024, files: 20 },
+    abortOnLimit: true
+}));
 //
 app.get('/ping', (req, res) => {
     res.send("pong!");
 });
 
-app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
-app.use(bodyParser.json({ limit: '50mb' }));
+// Form/JSON bodies: BODY_LIMIT (default 5mb) is plenty for admin forms with long descriptions
+const bodyLimit = process.env.BODY_LIMIT || '5mb';
+app.use(bodyParser.urlencoded({ limit: bodyLimit, extended: true }));
+app.use(bodyParser.json({ limit: bodyLimit }));
 
 app.use(compression());
-app.use('/image', express.static('image'));
 
-app.use('/catalog/view/stylesheet', express.static('catalog/view/stylesheet'));
-app.use('/catalog/view/javascript', express.static('catalog/view/javascript'));
-app.use('/catalog/view/image', express.static('catalog/view/image'));
-app.use('/catalog/language', express.static('catalog/language'));
+// Browser caching for static files in production (1 day, revalidated with ETag afterwards)
+const staticOptions = { maxAge: isProduction ? '1d' : 0 };
+app.use('/image', express.static('image', staticOptions));
+
+app.use('/catalog/view/stylesheet', express.static('catalog/view/stylesheet', staticOptions));
+app.use('/catalog/view/javascript', express.static('catalog/view/javascript', staticOptions));
+app.use('/catalog/view/image', express.static('catalog/view/image', staticOptions));
+app.use('/catalog/language', express.static('catalog/language', staticOptions));
 // Only extension view assets are public (extension/<name>/admin|catalog/view/...); the controllers,
 // models and config next to them are server code and must not be downloadable
 const isExtensionAsset = (urlPath) => {
@@ -147,9 +200,10 @@ const isExtensionAsset = (urlPath) => {
     }
     return /^\/[\w-]+\/(admin|catalog)\/view\/(?!template\/)/.test(decoded) && !decoded.split(/[\\/]/).includes('..');
 }
-app.use('/extension', (req, res, next) => isExtensionAsset(req.path) ? next() : res.sendStatus(404), express.static('extension'));
-app.use('/favicon.ico', express.static('./favicon.ico'));
-app.use(morgan('dev'));
+app.use('/extension', (req, res, next) => isExtensionAsset(req.path) ? next() : res.sendStatus(404), express.static('extension', staticOptions));
+app.use('/favicon.ico', express.static('./favicon.ico', staticOptions));
+// Apache-style access log in production (PM2 writes it to its log files), short coloured lines in development
+app.use(morgan(isProduction ? 'combined' : 'dev'));
 const decodeObject = (obj) => {
     for (let [key, value] of Object.entries(obj)) {
         // console.log('value----', typeof value, value)
@@ -176,26 +230,44 @@ const decodeObject = (obj) => {
     return obj;
 }
 app.all('*', (req, res, next) => {
-    console.log('request start---', new Date().toISOString())
-    // console.log('decoded before---', req.body)
-    req.body = decodeObject(req.body);
-    // console.log('decoded---', req.body)
+    req.body = decodeObject(req.body || {});
     next();
 });
 
 app.use((req, res, next) => {
     if (req.method == 'OPTIONS') {
-        res.send(200);
+        res.sendStatus(204);
     } else {
         next();
     }
 });
 AppLoad();
 
-let port = typeof SERVER_PORT == 'undefined' ? 8000 : SERVER_PORT;
-app.listen(port, () => {
-    console.log("Application is running on the port:" + port);
+let port = parseInt(process.env.PORT) || (typeof SERVER_PORT == 'undefined' ? 8000 : SERVER_PORT);
+const server = app.listen(port, () => {
+    console.warn("Application is running on the port:" + port);
 });
-// app.listen(80, () => {
-//     console.log("Application is running on the port:" + 80);
-// });
+
+// A rejected promise nobody handled: log it and keep serving other requests
+process.on('unhandledRejection', (reason) => {
+    console.error('Unhandled promise rejection:', reason);
+});
+
+// An exception outside any request handler leaves the process in an unknown state: log it and
+// exit, so PM2 (or nodemon) starts a clean process
+process.on('uncaughtException', (error) => {
+    console.error('Uncaught exception:', error);
+    shutdown('uncaughtException', 1);
+});
+
+// Graceful shutdown: stop accepting connections, let running requests finish (max 10s), then exit
+let shuttingDown = false;
+const shutdown = (signal, code = 0) => {
+    if (shuttingDown) return;
+    shuttingDown = true;
+    console.warn(`${signal} received, shutting down`);
+    setTimeout(() => process.exit(code), 10000).unref();
+    server.close(() => process.exit(code));
+};
+process.on('SIGTERM', () => shutdown('SIGTERM'));
+process.on('SIGINT', () => shutdown('SIGINT'));

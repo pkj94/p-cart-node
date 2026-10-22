@@ -37,7 +37,7 @@ module.exports = class Action {
                 }
             }
         } catch (e) {
-            console.log(namespace, this, e)
+            console.error(namespace, this, e)
             throw new Error(`Error: Could not call route ${this.route}!`);
         }
 

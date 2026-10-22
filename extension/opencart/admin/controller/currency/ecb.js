@@ -92,7 +92,7 @@ global['OpencartAdminControllerExtensionOpencartCurrencyEcb'] = class ECB extend
           }
         }
       } catch (error) {
-        console.log(error)
+        console.error(error)
         console.error('Error fetching currency data:', error);
       }
     }

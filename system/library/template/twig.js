@@ -59,7 +59,7 @@ module.exports = class TemplateTwigLibrary {
                         }
                     }, (err, template) => {
                         if (err) {
-                            console.log(file, err)
+                            console.error(file, err)
                             throw new Error(`Error: Could not load template ${filename}!`);
                         } else
                             resolve(template)

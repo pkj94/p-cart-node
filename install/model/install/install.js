@@ -53,7 +53,7 @@ module.exports = class Install extends global['OpencartSystemEngineModel'] {
                     try {
                         await this.db.query(sql);
                     } catch (err) {
-                        console.log('create table error ===---===', err)
+                        console.error('create table error ===---===', err)
                         reject(err.message)
                     }
                 }
@@ -105,7 +105,7 @@ module.exports = class Install extends global['OpencartSystemEngineModel'] {
                 await this.db.query(`UPDATE \`${data.db_prefix}setting\` SET \`value\` = 'INV-${new Date().getFullYear()}-00' WHERE \`key\` = 'config_invoice_prefix'`);
                 resolve(true)
             } catch (e) {
-                console.log('err==================', e)
+                console.error('err==================', e)
                 reject(e)
             }
         });

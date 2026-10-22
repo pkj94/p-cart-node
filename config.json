@@ -17,7 +17,7 @@
 	"DIR_UPLOAD": "D:/Development/Pradeep/Shopping-Cart/p-cart-node/system/storage/upload/",
 	"DB_DRIVER": "mysqli",
 	"DB_HOSTNAME": "localhost",
-	"DB_USERNAME": "root",
+	"DB_USERNAME": "",
 	"DB_PASSWORD": "",
 	"DB_DATABASE": "pcart_4.0.2.3",
 	"DB_PORT": "3306",

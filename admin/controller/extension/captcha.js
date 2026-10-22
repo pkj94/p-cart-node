@@ -123,7 +123,7 @@ module.exports = class CaptchaController extends global['OpencartSystemEngineCon
 			try {
 				await this.load.controller('extension/' + extension + '/captcha/' + code + '.install');
 			} catch (e) {
-				console.log('captcha install', e)
+				console.error('captcha install', e)
 			}
 			json['success'] = this.language.get('text_success');
 		}
@@ -153,7 +153,7 @@ module.exports = class CaptchaController extends global['OpencartSystemEngineCon
 			try {
 				await this.load.controller('extension/' + this.request.get['extension'] + '/captcha/' + this.request.get['code'] + '.uninstall');
 			} catch (e) {
-				console.log('captcha uninstall', e)
+				console.error('captcha uninstall', e)
 			}
 			json['success'] = this.language.get('text_success');
 		}

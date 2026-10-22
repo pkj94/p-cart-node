@@ -4,7 +4,7 @@ module.exports = class StartupModel extends global['OpencartSystemEngineModel'] 
     }
 
     async addStartup(data) {
-        await this.db.query(`INSERT INTO ${DB_PREFIX}startup SET code = ${this.db.escape(data.code)}, action = ${this.db.escape(data.action)}, status = ${data.status}, sort_order = ${parseInt(data.sort_order)}`);
+        await this.db.query(`INSERT INTO ${DB_PREFIX}startup SET code = ${this.db.escape(data.code)}, action = ${this.db.escape(data.action)}, status = ${this.db.quote(data.status)}, sort_order = ${parseInt(data.sort_order)}`);
         return this.db.getLastId();
     }
 
