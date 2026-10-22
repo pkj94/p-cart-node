@@ -111,7 +111,7 @@ module.exports = class Subscription extends global['OpencartSystemEngineControll
 				}
 
 				// 5. Add Shipping Address
-				let shipping_address_info;
+				let shipping_address_info = {};
 				if (!error && await store.cart.hasShipping()) {
 					this.load.model('account/address', this);
 
@@ -147,7 +147,7 @@ module.exports = class Subscription extends global['OpencartSystemEngineControll
 
 				// 6. Payment Address
 				let payment_address = [];
-				let payment_address_info;
+				let payment_address_info = {};
 				if (!error && Number(this.config.get('config_checkout_payment_address'))) {
 					this.load.model('account/address', this);
 

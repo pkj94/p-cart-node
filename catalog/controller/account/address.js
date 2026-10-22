@@ -270,7 +270,7 @@ module.exports = class Address extends global['OpencartSystemEngineController'] 
 		}
 
 		if ((this.request.get['address_id'])) {
-			data['default'] = address_info['default'];
+			data['default'] = address_info?.['default'] || false;
 		} else {
 			data['default'] = false;
 		}

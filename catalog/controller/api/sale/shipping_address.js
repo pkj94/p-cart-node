@@ -29,18 +29,22 @@ module.exports = class ShippingAddress extends global['OpencartSystemEngineContr
 			}
 
 			if ((oc_strlen(this.request.post['firstname']) < 1) || (oc_strlen(this.request.post['firstname']) > 32)) {
+				json['error'] = json['error'] || {};
 				json['error']['firstname'] = this.language.get('error_firstname');
 			}
 
 			if ((oc_strlen(this.request.post['lastname']) < 1) || (oc_strlen(this.request.post['lastname']) > 32)) {
+				json['error'] = json['error'] || {};
 				json['error']['lastname'] = this.language.get('error_lastname');
 			}
 
 			if ((oc_strlen(this.request.post['address_1']) < 3) || (oc_strlen(this.request.post['address_1']) > 128)) {
+				json['error'] = json['error'] || {};
 				json['error']['address_1'] = this.language.get('error_address_1');
 			}
 
 			if ((oc_strlen(this.request.post['city']) < 2) || (oc_strlen(this.request.post['city']) > 128)) {
+				json['error'] = json['error'] || {};
 				json['error']['city'] = this.language.get('error_city');
 			}
 
@@ -49,14 +53,17 @@ module.exports = class ShippingAddress extends global['OpencartSystemEngineContr
 			const country_info = await this.model_localisation_country.getCountry(this.request.post['country_id']);
 
 			if (country_info && country_info['postcode_required'] && (oc_strlen(this.request.post['postcode']) < 2 || oc_strlen(this.request.post['postcode']) > 10)) {
+				json['error'] = json['error'] || {};
 				json['error']['postcode'] = this.language.get('error_postcode');
 			}
 
 			if (this.request.post['country_id'] == '') {
+				json['error'] = json['error'] || {};
 				json['error']['country'] = this.language.get('error_country');
 			}
 
 			if (this.request.post['zone_id'] == '') {
+				json['error'] = json['error'] || {};
 				json['error']['zone'] = this.language.get('error_zone');
 			}
 
@@ -75,6 +82,7 @@ module.exports = class ShippingAddress extends global['OpencartSystemEngineContr
 				}
 			}
 		} else {
+			json['error'] = json['error'] || {};
 			json['error']['warning'] = this.language.get('error_shipping');
 		}
 

@@ -30,6 +30,7 @@ module.exports = class Customer extends global['OpencartSystemEngineController']
 			customer_info = await this.model_account_customer.getCustomer(this.request.post['customer_id']);
 
 			if (!customer_info) {
+				json['error'] = json['error'] || {};
 				json['error']['warning'] = this.language.get('error_customer');
 			}
 		}
@@ -46,22 +47,27 @@ module.exports = class Customer extends global['OpencartSystemEngineController']
 		customer_group_info = await this.model_account_customer_group.getCustomerGroup(customer_group_id);
 
 		if (!customer_group_info) {
+			json['error'] = json['error'] || {};
 			json['error']['warning'] = this.language.get('error_customer_group');
 		}
 
 		if ((oc_strlen(this.request.post['firstname']) < 1) || (oc_strlen(this.request.post['firstname']) > 32)) {
+			json['error'] = json['error'] || {};
 			json['error']['firstname'] = this.language.get('error_firstname');
 		}
 
 		if ((oc_strlen(this.request.post['lastname']) < 1) || (oc_strlen(this.request.post['lastname']) > 32)) {
+			json['error'] = json['error'] || {};
 			json['error']['lastname'] = this.language.get('error_lastname');
 		}
 
 		if ((oc_strlen(this.request.post['email']) > 96) || !filter_var(this.request.post['email'], FILTER_VALIDATE_EMAIL)) {
+			json['error'] = json['error'] || {};
 			json['error']['email'] = this.language.get('error_email');
 		}
 
 		if (Number(this.config.get('config_telephone_required')) && (oc_strlen(this.request.post['telephone']) < 3) || (oc_strlen(this.request.post['telephone']) > 32)) {
+			json['error'] = json['error'] || {};
 			json['error']['telephone'] = this.language.get('error_telephone');
 		}
 

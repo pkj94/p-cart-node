@@ -10,6 +10,7 @@ module.exports = class Cart extends global['OpencartSystemEngineController'] {
 
 		// Stock
 		if (!await this.cart.hasStock() && (!Number(this.config.get('config_stock_checkout')) || Number(this.config.get('config_stock_warning')))) {
+			json['error'] = json['error'] || {};
 			json['error']['stock'] = this.language.get('error_stock');
 		}
 
@@ -161,10 +162,12 @@ module.exports = class Cart extends global['OpencartSystemEngineController'] {
 				}
 
 				if (!in_array(subscription_plan_id, subscription_plan_ids)) {
+					json['error'] = json['error'] || {};
 					json['error']['subscription'] = this.language.get('error_subscription');
 				}
 			}
 		} else {
+			json['error'] = json['error'] || {};
 			json['error']['warning'] = this.language.get('error_product');
 		}
 

@@ -68,22 +68,27 @@ module.exports = class Voucher extends global['OpencartSystemEngineController'] 
 
 		// Add a new voucher if set
 		if ((oc_strlen(this.request.post['from_name']) < 1) || (oc_strlen(this.request.post['from_name']) > 64)) {
+			json['error'] = json['error'] || {};
 			json['error']['from_name'] = this.language.get('error_from_name');
 		}
 
 		if ((oc_strlen(this.request.post['from_email']) > 96) || !filter_var(this.request.post['from_email'], FILTER_VALIDATE_EMAIL)) {
+			json['error'] = json['error'] || {};
 			json['error']['from_email'] = this.language.get('error_email');
 		}
 
 		if ((oc_strlen(this.request.post['to_name']) < 1) || (oc_strlen(this.request.post['to_name']) > 64)) {
+			json['error'] = json['error'] || {};
 			json['error']['to_name'] = this.language.get('error_to_name');
 		}
 
 		if ((oc_strlen(this.request.post['to_email']) > 96) || !filter_var(this.request.post['to_email'], FILTER_VALIDATE_EMAIL)) {
+			json['error'] = json['error'] || {};
 			json['error']['to_email'] = this.language.get('error_email');
 		}
 
 		if ((this.request.post['amount'] < this.config.get('config_voucher_min')) || (this.request.post['amount'] > this.config.get('config_voucher_max'))) {
+			json['error'] = json['error'] || {};
 			json['error']['amount'] = sprintf(this.language.get('error_amount'), this.currency.format(this.config.get('config_voucher_min'), this.session.data['currency']), this.currency.format(this.config.get('config_voucher_max'), this.session.data['currency']));
 		}
 

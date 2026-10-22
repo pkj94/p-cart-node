@@ -501,7 +501,7 @@ module.exports = class AffiliateController extends global['OpencartSystemEngineC
 		data['upload'] = await this.url.link('tool/upload.upload', 'user_token=' + this.session.data['user_token']);
 
 		// Affiliate
-		let affiliate_info;
+		let affiliate_info = {};
 		if ((this.request.get['customer_id'])) {
 			this.load.model('marketing/affiliate', this);
 

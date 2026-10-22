@@ -76,7 +76,7 @@ global['OpencartAdminControllerExtensionOpencartModuleBestSeller'] = class BestS
 			json.error = { warning: this.language.get('error_permission') };
 		}
 
-		if (this.request.post['name'].length < 3 || this.request.post['name'].length > 64) {
+		if (oc_strlen(this.request.post['name']) < 3 || oc_strlen(this.request.post['name']) > 64) {
 			json.error.name = this.language.get('error_name');
 		}
 

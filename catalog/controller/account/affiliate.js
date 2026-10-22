@@ -191,7 +191,7 @@ module.exports = class Affiliate extends global['OpencartSystemEngineController'
 				this.request.post[key] = '';
 			}
 		}
-		let affiliate_info;
+		let affiliate_info = {};
 		if (!json.redirect) {
 			// Payment validation
 			if (!this.request.post['payment_method']) {

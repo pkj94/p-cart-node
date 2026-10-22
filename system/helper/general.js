@@ -5,23 +5,24 @@ const crypto = require('crypto');
 const md5 = require('locutus/php/strings/md5');
 
 // String
+// Missing request fields arrive as undefined/null; treat them as '' like PHP does
 global.oc_strlen = (string) => {
-    return string.length;
+    return String(string ?? '').length;
 }
 global.oc_strpos = (string, needle, offset = 0) => {
-    return string.indexOf(needle, offset);
+    return String(string ?? '').indexOf(needle, offset);
 }
 global.oc_strrpos = (string, needle, offset = 0) => {
-    return string.lastIndexOf(needle, offset === 0 ? undefined : offset);
+    return String(string ?? '').lastIndexOf(needle, offset === 0 ? undefined : offset);
 }
 global.oc_substr = (string, offset, length = undefined) => {
-    return string.slice(offset, length !== undefined ? offset + length : undefined);
+    return String(string ?? '').slice(offset, length !== undefined ? offset + length : undefined);
 }
 global.oc_strtoupper = (string) => {
-    return string.toUpperCase();
+    return String(string ?? '').toUpperCase();
 }
 global.oc_strtolower = (string) => {
-    return string.toLowerCase();
+    return String(string ?? '').toLowerCase();
 }
 // Other
 global.oc_token = (length = 32) => {

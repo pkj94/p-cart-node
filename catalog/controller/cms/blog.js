@@ -360,7 +360,7 @@ module.exports = class Blog extends global['OpencartSystemEngineController'] {
 	async addComment() {
 		await this.load.language('cms/article');
 
-		const json = array();
+		const json = {};
 
 		if ((this.request.get['article_id'])) {
 			article_id = this.request.get['article_id'];
@@ -369,6 +369,7 @@ module.exports = class Blog extends global['OpencartSystemEngineController'] {
 		}
 
 		if (!(this.request.get['comment_token']) || !(this.session.data['comment_token']) || this.request.get['comment_token'] != this.session.data['comment_token']) {
+			json['error'] = json['error'] || {};
 			json['error']['warning'] = this.language.get('error_token');
 		}
 
@@ -388,18 +389,22 @@ module.exports = class Blog extends global['OpencartSystemEngineController'] {
 		article_info = await this.model_cms_article.getArticle(article_id);
 
 		if (!article_info) {
+			json['error'] = json['error'] || {};
 			json['error']['warning'] = this.language.get('error_article');
 		}
 
 		if (!await this.customer.isLogged() && !this.config.get('config_comment_guest')) {
+			json['error'] = json['error'] || {};
 			json['error']['warning'] = this.language.get('error_guest');
 		}
 
 		if ((oc_strlen(this.request.post['author']) < 3) || (oc_strlen(this.request.post['author']) > 25)) {
+			json['error'] = json['error'] || {};
 			json['error']['author'] = this.language.get('error_author');
 		}
 
 		if ((utf8_strlen(this.request.post['comment']) < 2) || (utf8_strlen(this.request.post['comment']) > 1000)) {
+			json['error'] = json['error'] || {};
 			json['error']['comment'] = this.language.get('error_comment');
 		}
 
@@ -412,6 +417,7 @@ module.exports = class Blog extends global['OpencartSystemEngineController'] {
 			const captcha = await this.load.controller('extension/' + extension_info['extension'] + '/captcha/' + extension_info['code'] + '.validate');
 
 			if (captcha) {
+				json['error'] = json['error'] || {};
 				json['error']['captcha'] = captcha;
 			}
 		}

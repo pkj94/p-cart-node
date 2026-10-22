@@ -97,6 +97,7 @@ module.exports = class Gdpr extends global['OpencartSystemEngineController'] {
 
 		// Validate E-Mail
 		if ((oc_strlen(email) > 96) || !isEmailValid(email)) {
+			json['error'] = json['error'] || {};
 			json['error']['email'] = this.language.get('error_email');
 		}
 
@@ -107,6 +108,7 @@ module.exports = class Gdpr extends global['OpencartSystemEngineController'] {
 		];
 
 		if (!allowed.includes(action)) {
+			json['error'] = json['error'] || {};
 			json['error']['action'] = this.language.get('error_action');
 		}
 

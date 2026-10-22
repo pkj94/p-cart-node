@@ -217,7 +217,7 @@ module.exports = class Register extends global['OpencartSystemEngineController']
 			const customer_id = await this.model_account_customer.addCustomer(this.request.post);
 
 			// Login if requires approval
-			if (!customer_group_info['approval']) {
+			if (!customer_group_info?.['approval']) {
 				await this.customer.login(this.request.post['email'], html_entity_decode(this.request.post['password']));
 
 				// Add customer details into session

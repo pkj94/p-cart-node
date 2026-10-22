@@ -273,10 +273,12 @@ module.exports = class TranslationController extends global['OpencartSystemEngin
 		const json = {};
 
 		if (!await this.user.hasPermission('modify', 'design/translation')) {
+			json['error'] = json['error'] || {};
 			json['error']['warning'] = this.language.get('error_permission');
 		}
 
 		if ((oc_strlen(this.request.post['key']) < 3) || (oc_strlen(this.request.post['key']) > 64)) {
+			json['error'] = json['error'] || {};
 			json['error']['key'] = this.language.get('error_key');
 		}
 

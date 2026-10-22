@@ -226,9 +226,11 @@ module.exports = class Register extends global['OpencartSystemEngineController']
 		}
 		let customer_group_id = 0;
 		let customer_data = {};
+		let customer_group_info = {};
 		if (!Object.keys(json).length) {
 			// If not guest checkout disabled, login require price or cart has downloads
 			if (!this.request.post['account'] && (!this.config.get('config_checkout_guest') || Number(this.config.get('config_customer_price')))) {
+				json['error'] = json['error'] || {};
 				json['error']['warning'] = this.language.get('error_guest');
 			}
 
@@ -242,27 +244,32 @@ module.exports = class Register extends global['OpencartSystemEngineController']
 
 			this.load.model('account/customer_group', this);
 
-			const customer_group_info = await this.model_account_customer_group.getCustomerGroup(customer_group_id);
+			customer_group_info = await this.model_account_customer_group.getCustomerGroup(customer_group_id);
 
 			if (!customer_group_info || this.config.get('config_customer_group_display').indexOf(customer_group_id) === -1) {
+				json['error'] = json['error'] || {};
 				json['error']['warning'] = this.language.get('error_customer_group');
 			}
 
 			if ((oc_strlen(this.request.post['firstname']) < 1) || (oc_strlen(this.request.post['firstname']) > 32)) {
+				json['error'] = json['error'] || {};
 				json['error']['firstname'] = this.language.get('error_firstname');
 			}
 
 			if ((oc_strlen(this.request.post['lastname']) < 1) || (oc_strlen(this.request.post['lastname']) > 32)) {
+				json['error'] = json['error'] || {};
 				json['error']['lastname'] = this.language.get('error_lastname');
 			}
 
 			if ((oc_strlen(this.request.post['email']) > 96) || !isEmailValid(this.request.post['email'])) {
+				json['error'] = json['error'] || {};
 				json['error']['email'] = this.language.get('error_email');
 			}
 
 			this.load.model('account/customer', this);
 
 			if (this.request.post['account'] && await this.model_account_customer.getTotalCustomersByEmail(this.request.post['email'])) {
+				json['error'] = json['error'] || {};
 				json['error']['warning'] = this.language.get('error_exists');
 			}
 
@@ -271,11 +278,13 @@ module.exports = class Register extends global['OpencartSystemEngineController']
 				const customer_info = await this.model_account_customer.getCustomerByEmail(this.request.post['email']);
 
 				if (customer_info['customer_id'] != await this.customer.getId()) {
+					json['error'] = json['error'] || {};
 					json['error']['warning'] = this.language.get('error_exists');
 				}
 			}
 
 			if (Number(this.config.get('config_telephone_required')) && (oc_strlen(this.request.post['telephone']) < 3) || (oc_strlen(this.request.post['telephone']) > 32)) {
+				json['error'] = json['error'] || {};
 				json['error']['telephone'] = this.language.get('error_telephone');
 			}
 
@@ -296,10 +305,12 @@ module.exports = class Register extends global['OpencartSystemEngineController']
 
 			if (Number(this.config.get('config_checkout_payment_address'))) {
 				if ((oc_strlen(this.request.post['payment_address_1']) < 3) || (oc_strlen(this.request.post['payment_address_1']) > 128)) {
+					json['error'] = json['error'] || {};
 					json['error']['payment_address_1'] = this.language.get('error_address_1');
 				}
 
 				if ((oc_strlen(this.request.post['payment_city']) < 2) || (oc_strlen(this.request.post['payment_city']) > 128)) {
+					json['error'] = json['error'] || {};
 					json['error']['payment_city'] = this.language.get('error_city');
 				}
 
@@ -308,14 +319,17 @@ module.exports = class Register extends global['OpencartSystemEngineController']
 				payment_country_info = await this.model_localisation_country.getCountry(this.request.post['payment_country_id']);
 
 				if (payment_country_info && payment_country_info['postcode_required'] && (oc_strlen(this.request.post['payment_postcode']) < 2 || oc_strlen(this.request.post['payment_postcode']) > 10)) {
+					json['error'] = json['error'] || {};
 					json['error']['payment_postcode'] = this.language.get('error_postcode');
 				}
 
 				if (this.request.post['payment_country_id'] == '') {
+					json['error'] = json['error'] || {};
 					json['error']['payment_country'] = this.language.get('error_country');
 				}
 
 				if (this.request.post['payment_zone_id'] == '') {
+					json['error'] = json['error'] || {};
 					json['error']['payment_zone'] = this.language.get('error_zone');
 				}
 
@@ -335,19 +349,23 @@ module.exports = class Register extends global['OpencartSystemEngineController']
 				// If payment address not required we need to use the firstname and lastname from the account+
 				if (Number(this.config.get('config_checkout_payment_address'))) {
 					if ((oc_strlen(this.request.post['shipping_firstname']) < 1) || (oc_strlen(this.request.post['shipping_firstname']) > 32)) {
+						json['error'] = json['error'] || {};
 						json['error']['shipping_firstname'] = this.language.get('error_firstname');
 					}
 
 					if ((oc_strlen(this.request.post['shipping_lastname']) < 1) || (oc_strlen(this.request.post['shipping_lastname']) > 32)) {
+						json['error'] = json['error'] || {};
 						json['error']['shipping_lastname'] = this.language.get('error_lastname');
 					}
 				}
 
 				if ((oc_strlen(this.request.post['shipping_address_1']) < 3) || (oc_strlen(this.request.post['shipping_address_1']) > 128)) {
+					json['error'] = json['error'] || {};
 					json['error']['shipping_address_1'] = this.language.get('error_address_1');
 				}
 
 				if ((oc_strlen(this.request.post['shipping_city']) < 2) || (oc_strlen(this.request.post['shipping_city']) > 128)) {
+					json['error'] = json['error'] || {};
 					json['error']['shipping_city'] = this.language.get('error_city');
 				}
 
@@ -356,14 +374,17 @@ module.exports = class Register extends global['OpencartSystemEngineController']
 				shipping_country_info = await this.model_localisation_country.getCountry(this.request.post['shipping_country_id']);
 
 				if (shipping_country_info && shipping_country_info['postcode_required'] && (oc_strlen(this.request.post['shipping_postcode']) < 2 || oc_strlen(this.request.post['shipping_postcode']) > 10)) {
+					json['error'] = json['error'] || {};
 					json['error']['shipping_postcode'] = this.language.get('error_postcode');
 				}
 
 				if (this.request.post['shipping_country_id'] == '') {
+					json['error'] = json['error'] || {};
 					json['error']['shipping_country'] = this.language.get('error_country');
 				}
 
 				if (this.request.post['shipping_zone_id'] == '') {
+					json['error'] = json['error'] || {};
 					json['error']['shipping_zone'] = this.language.get('error_zone');
 				}
 
@@ -381,6 +402,7 @@ module.exports = class Register extends global['OpencartSystemEngineController']
 
 			// If account register password required
 			if (this.request.post['account'] && (oc_strlen(html_entity_decode(this.request.post['password'])) < 4) || (oc_strlen(html_entity_decode(this.request.post['password'])) > 40)) {
+				json['error'] = json['error'] || {};
 				json['error']['password'] = this.language.get('error_password');
 			}
 
@@ -390,6 +412,7 @@ module.exports = class Register extends global['OpencartSystemEngineController']
 				const information_info = await this.model_catalog_information.getInformation(this.config.get('config_account_id'));
 
 				if (information_info && !this.request.post['agree']) {
+					json['error'] = json['error'] || {};
 					json['error']['warning'] = sprintf(this.language.get('error_agree'), information_info['title']);
 				}
 			}
@@ -404,6 +427,7 @@ module.exports = class Register extends global['OpencartSystemEngineController']
 					const captcha = await this.load.controller('extension/' + extension_info['extension'] + '/captcha/' + extension_info['code'] + '.validate');
 
 					if (captcha) {
+						json['error'] = json['error'] || {};
 						json['error']['captcha'] = captcha;
 					}
 				}

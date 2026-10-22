@@ -558,7 +558,7 @@ module.exports = class CustomerController extends global['OpencartSystemEngineCo
 		}
 
 		if ((customer_info)) {
-			data['account_custom_field'] = JSON.parse(customer_info['custom_field'], true);
+			data['account_custom_field'] = JSON.parse(customer_info['custom_field']||'{}', true);
 		} else {
 			data['account_custom_field'] = [];
 		}
@@ -657,9 +657,9 @@ module.exports = class CustomerController extends global['OpencartSystemEngineCo
 
 		for (let custom_field of custom_fields) {
 			if (custom_field['status']) {
-				if ((custom_field['location'] == 'account') && custom_field['required'] && !(this.request.post['custom_field'][custom_field['custom_field_id']])) {
+				if ((custom_field['location'] == 'account') && custom_field['required'] && !(this.request.post['custom_field']?.[custom_field['custom_field_id']])) {
 					json['error']['custom_field_' + custom_field['custom_field_id']] = sprintf(this.language.get('error_custom_field'), custom_field['name']);
-				} else if ((custom_field['location'] == 'account') && (custom_field['type'] == 'text') && (custom_field['validation']) && !preg_match(html_entity_decode(custom_field['validation']), this.request.post['custom_field'][custom_field['custom_field_id']])) {
+				} else if ((custom_field['location'] == 'account') && (custom_field['type'] == 'text') && (custom_field['validation']) && !preg_match(html_entity_decode(custom_field['validation']), this.request.post['custom_field']?.[custom_field['custom_field_id']] ?? '')) {
 					json['error']['custom_field_' + custom_field['custom_field_id']] = sprintf(this.language.get('error_regex'), custom_field['name']);
 				}
 			}
@@ -674,7 +674,7 @@ module.exports = class CustomerController extends global['OpencartSystemEngineCo
 				json['error']['confirm'] = this.language.get('error_confirm');
 			}
 		}
-		if ((this.request.post['address'].length)) {
+		if (this.request.post['address'] && Object.keys(this.request.post['address']).length) {
 			for (let [key, value] of Object.entries(this.request.post['address'])) {
 				if ((oc_strlen(value['firstname']) < 1) || (oc_strlen(value['firstname']) > 32)) {
 					json['error']['address_' + key + '_firstname'] = this.language.get('error_firstname');
@@ -711,9 +711,9 @@ module.exports = class CustomerController extends global['OpencartSystemEngineCo
 
 				for (let custom_field of custom_fields) {
 					if (custom_field['status']) {
-						if ((custom_field['location'] == 'address') && custom_field['required'] && !(value['custom_field'][custom_field['custom_field_id']])) {
+						if ((custom_field['location'] == 'address') && custom_field['required'] && !(value['custom_field']?.[custom_field['custom_field_id']])) {
 							json['error']['address_' + key + '_custom_field_' + custom_field['custom_field_id']] = sprintf(this.language.get('error_custom_field'), custom_field['name']);
-						} else if ((custom_field['location'] == 'address') && (custom_field['type'] == 'text') && (custom_field['validation']) && !preg_match(html_entity_decode(custom_field['validation']), value['custom_field'][custom_field['custom_field_id']])) {
+						} else if ((custom_field['location'] == 'address') && (custom_field['type'] == 'text') && (custom_field['validation']) && !preg_match(html_entity_decode(custom_field['validation']), value['custom_field']?.[custom_field['custom_field_id']] ?? '')) {
 							json['error']['address_' + key + '_custom_field_' + custom_field['custom_field_id']] = sprintf(this.language.get('error_regex'), custom_field['name']);
 						}
 					}

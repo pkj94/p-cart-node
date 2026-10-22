@@ -694,8 +694,8 @@ module.exports = class OrderController extends global['OpencartSystemEngineContr
 				'subscription': subscription,
 				'subscription_description': description,
 				'quantity': product['quantity'],
-				'price': this.currency.format(product['price'] + (Number(this.config.get('config_tax')) ? product['tax'] : 0), order_info['currency_code'], order_info['currency_value']),
-				'total': this.currency.format(product['total'] + (Number(this.config.get('config_tax')) ? (product['tax'] * product['quantity']) : 0), order_info['currency_code'], order_info['currency_value']),
+				'price': this.currency.format(product['price'] + (Number(this.config.get('config_tax')) ? product['tax'] : 0), order_info?.['currency_code'], order_info?.['currency_value']),
+				'total': this.currency.format(product['total'] + (Number(this.config.get('config_tax')) ? (product['tax'] * product['quantity']) : 0), order_info?.['currency_code'], order_info?.['currency_value']),
 				'reward': product['reward']
 			});
 		}
@@ -708,7 +708,7 @@ module.exports = class OrderController extends global['OpencartSystemEngineContr
 		for (let voucher of vouchers) {
 			data['order_vouchers'].push({
 				'description': voucher['description'],
-				'amount': this.currency.format(voucher['amount'], order_info['currency_code'], order_info['currency_value']),
+				'amount': this.currency.format(voucher['amount'], order_info?.['currency_code'], order_info?.['currency_value']),
 				'href': await this.url.link('sale/voucher.form', 'user_token=' + this.session.data['user_token'] + '&voucher_id=' + voucher['voucher_id'])
 			});
 		}
@@ -721,7 +721,7 @@ module.exports = class OrderController extends global['OpencartSystemEngineContr
 		for (let total of totals) {
 			data['order_totals'].push({
 				'title': total['title'],
-				'text': this.currency.format(total['value'], order_info['currency_code'], order_info['currency_value'])
+				'text': this.currency.format(total['value'], order_info?.['currency_code'], order_info?.['currency_value'])
 			});
 		}
 
@@ -971,14 +971,14 @@ module.exports = class OrderController extends global['OpencartSystemEngineContr
 		}
 
 		// Payment Method
-		if ((order_info['payment_method']['name'])) {
-			data['payment_method'] = order_info['payment_method']['name'];
+		if ((order_info?.['payment_method']?.['name'])) {
+			data['payment_method'] = order_info?.['payment_method']?.['name'];
 		} else {
 			data['payment_method'] = '';
 		}
 
-		if ((order_info['payment_method']['code'])) {
-			data['payment_code'] = order_info['payment_method']['code'];
+		if ((order_info?.['payment_method']?.['code'])) {
+			data['payment_code'] = order_info?.['payment_method']?.['code'];
 		} else {
 			data['payment_code'] = '';
 		}
@@ -1063,14 +1063,14 @@ module.exports = class OrderController extends global['OpencartSystemEngineContr
 		}
 
 		// Shipping method
-		if ((order_info['shipping_method']['name'])) {
-			data['shipping_method'] = order_info['shipping_method']['name'];
+		if ((order_info?.['shipping_method']?.['name'])) {
+			data['shipping_method'] = order_info?.['shipping_method']?.['name'];
 		} else {
 			data['shipping_method'] = '';
 		}
 
-		if ((order_info['shipping_method']['code'])) {
-			data['shipping_code'] = order_info['shipping_method']['code'];
+		if ((order_info?.['shipping_method']?.['code'])) {
+			data['shipping_code'] = order_info?.['shipping_method']?.['code'];
 		} else {
 			data['shipping_code'] = '';
 		}
@@ -1091,7 +1091,7 @@ module.exports = class OrderController extends global['OpencartSystemEngineContr
 			for (totals of total) {
 				data['order_totals'].push({
 					'title': total['title'],
-					'text': this.currency.format(total['value'], order_info['currency_code'], order_info['currency_value'])
+					'text': this.currency.format(total['value'], order_info?.['currency_code'], order_info?.['currency_value'])
 				});
 			}
 		}
@@ -1113,9 +1113,9 @@ module.exports = class OrderController extends global['OpencartSystemEngineContr
 		// Extension Order Tabs can are called here.
 		this.load.model('setting/extension', this);
 
-		if ((order_info['payment_method']['code'])) {
-			if ((order_info['payment_method']['code'])) {
-				code = oc_substr(order_info['payment_method']['code'], 0, strpos(order_info['payment_method']['code'], '.'));
+		if ((order_info?.['payment_method']?.['code'])) {
+			if ((order_info?.['payment_method']?.['code'])) {
+				code = oc_substr(order_info?.['payment_method']?.['code'], 0, strpos(order_info?.['payment_method']?.['code'], '.'));
 			} else {
 				code = '';
 			}
@@ -1434,8 +1434,8 @@ module.exports = class OrderController extends global['OpencartSystemEngineContr
 						'option': option_data,
 						'subscription': description,
 						'quantity': product['quantity'],
-						'price': this.currency.format(product['price'] + (Number(this.config.get('config_tax')) ? product['tax'] : 0), order_info['currency_code'], order_info['currency_value']),
-						'total': this.currency.format(product['total'] + (Number(this.config.get('config_tax')) ? (product['tax'] * product['quantity']) : 0), order_info['currency_code'], order_info['currency_value'])
+						'price': this.currency.format(product['price'] + (Number(this.config.get('config_tax')) ? product['tax'] : 0), order_info?.['currency_code'], order_info?.['currency_value']),
+						'total': this.currency.format(product['total'] + (Number(this.config.get('config_tax')) ? (product['tax'] * product['quantity']) : 0), order_info?.['currency_code'], order_info?.['currency_value'])
 					});
 				}
 
@@ -1446,7 +1446,7 @@ module.exports = class OrderController extends global['OpencartSystemEngineContr
 				for (vouchers of voucher) {
 					voucher_data.push({
 						'description': voucher['description'],
-						'amount': this.currency.format(voucher['amount'], order_info['currency_code'], order_info['currency_value'])
+						'amount': this.currency.format(voucher['amount'], order_info?.['currency_code'], order_info?.['currency_value'])
 					});
 				}
 
@@ -1457,7 +1457,7 @@ module.exports = class OrderController extends global['OpencartSystemEngineContr
 				for (totals of total) {
 					total_data.push({
 						'title': total['title'],
-						'text': this.currency.format(total['value'], order_info['currency_code'], order_info['currency_value'])
+						'text': this.currency.format(total['value'], order_info?.['currency_code'], order_info?.['currency_value'])
 					});
 				}
 
@@ -1473,9 +1473,9 @@ module.exports = class OrderController extends global['OpencartSystemEngineContr
 					'email': order_info['email'],
 					'telephone': order_info['telephone'],
 					'shipping_address': shipping_address,
-					'shipping_method': (order_info['shipping_method'] ? order_info['shipping_method']['name'] : ''),
+					'shipping_method': (order_info['shipping_method'] ? order_info?.['shipping_method']?.['name'] : ''),
 					'payment_address': payment_address,
-					'payment_method': order_info['payment_method']['name'],
+					'payment_method': order_info?.['payment_method']?.['name'],
 					'product': product_data,
 					'voucher': voucher_data,
 					'total': total_data,
@@ -1657,7 +1657,7 @@ module.exports = class OrderController extends global['OpencartSystemEngineContr
 					'email': order_info['email'],
 					'telephone': order_info['telephone'],
 					'shipping_address': shipping_address,
-					'shipping_method': order_info['shipping_method']['name'],
+					'shipping_method': order_info?.['shipping_method']?.['name'],
 					'product': product_data,
 					'comment': nl2br(order_info['comment'])
 				});
