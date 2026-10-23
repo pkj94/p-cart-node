@@ -5,19 +5,25 @@ module.exports = class StartupModel extends global['OpencartSystemEngineModel'] 
 
     async addStartup(data) {
         await this.db.query(`INSERT INTO ${DB_PREFIX}startup SET code = ${this.db.escape(data.code)}, action = ${this.db.escape(data.action)}, status = ${this.db.quote(data.status)}, sort_order = ${parseInt(data.sort_order)}`);
+
+        // The catalog keeps enabled startups in the cache (catalog/model/setting/startup.js)
+        await this.cache.delete('startup');
         return this.db.getLastId();
     }
 
     async deleteStartup(startup_id) {
         await this.db.query(`DELETE FROM ${DB_PREFIX}startup WHERE startup_id = ${parseInt(startup_id)}`);
+        await this.cache.delete('startup');
     }
 
     async deleteStartupByCode(code) {
         await this.db.query(`DELETE FROM ${DB_PREFIX}startup WHERE code = ${this.db.escape(code)}`);
+        await this.cache.delete('startup');
     }
 
     async editStatus(startup_id, status) {
         await this.db.query(`UPDATE ${DB_PREFIX}startup SET status = {status} WHERE startup_id = ${parseInt(startup_id)}`);
+        await this.cache.delete('startup');
     }
 
     async getStartup(startup_id) {

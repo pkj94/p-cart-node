@@ -3,9 +3,17 @@ module.exports =class Extension extends global['OpencartSystemEngineModel'] {
 	 * @return array
 	 */
 	async getExtensions() {
-		const query = await this.db.query("SELECT DISTINCT `extension` FROM `" + DB_PREFIX + "extension`");
+		// Read on every request, so kept in the cache; admin/model/setting/extension.js clears it on change
+		let extension_data = await this.cache.get('extension.folders');
 
-		return query.rows;
+		if (!extension_data) {
+			const query = await this.db.query("SELECT DISTINCT `extension` FROM `" + DB_PREFIX + "extension`");
+			extension_data = query.rows;
+
+			await this.cache.set('extension.folders', extension_data);
+		}
+
+		return extension_data;
 	}
 
 	/**

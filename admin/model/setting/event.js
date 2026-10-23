@@ -5,19 +5,25 @@ module.exports = class EventSettingModel extends global['OpencartSystemEngineMod
 
     async addEvent(data) {
         await this.db.query(`INSERT INTO ${DB_PREFIX}event SET code = ${this.db.escape(data.code)}, description = ${this.db.escape(data.description)}, trigger = ${this.db.escape(data.trigger)}, action = ${this.db.escape(data.action)}, status = ${this.db.quote(data.status)}, sort_order = ${parseInt(data.sort_order)}`);
+
+        // The catalog keeps enabled events in the cache (catalog/model/setting/event.js)
+        await this.cache.delete('event');
         return this.db.getLastId();
     }
 
     async deleteEvent(event_id) {
         await this.db.query(`DELETE FROM ${DB_PREFIX}event WHERE event_id = ${parseInt(event_id)}`);
+        await this.cache.delete('event');
     }
 
     async deleteEventByCode(code) {
         await this.db.query(`DELETE FROM ${DB_PREFIX}event WHERE code = ${this.db.escape(code)}`);
+        await this.cache.delete('event');
     }
 
     async editStatus(event_id, status) {
         await this.db.query(`UPDATE ${DB_PREFIX}event SET status = ${this.db.quote(status)} WHERE event_id = ${parseInt(event_id)}`);
+        await this.cache.delete('event');
     }
 
     async getEvent(event_id) {

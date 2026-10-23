@@ -5,8 +5,21 @@ module.exports = class Setting extends global['OpencartSystemEngineModel'] {
 	 * @return array
 	 */
 	async getSettings(store_id = 0) {
-		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "setting` WHERE `store_id` = " + this.db.quote(store_id) + " OR `store_id` = 0 ORDER BY `store_id` ASC");
-		return query.rows;
+		// Read on every request, so kept in the cache; admin/model/setting/setting.js clears it on save
+		store_id = parseInt(store_id) || 0;
+		let setting_data = await this.cache.get('setting.store.' + store_id);
+
+		if (!setting_data) {
+			const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "setting` WHERE `store_id` = " + this.db.quote(store_id) + " OR `store_id` = 0 ORDER BY `store_id` ASC");
+			setting_data = query.rows;
+
+			// Only stores that exist, so made-up ?store_id= values don't fill the cache
+			if (!store_id || setting_data.some(result => result['store_id'] == store_id)) {
+				await this.cache.set('setting.store.' + store_id, setting_data);
+			}
+		}
+
+		return setting_data;
 	}
 
 	/**

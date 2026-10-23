@@ -25,11 +25,16 @@ module.exports = class ExtensionModel extends global['OpencartSystemEngineModel'
         if (!codes.includes(code)) {
             await this.db.query(`INSERT INTO ${DB_PREFIX}extension SET extension = ${this.db.escape(extension)}, type = ${this.db.escape(type)}, code = ${this.db.escape(code)}`);
         }
+
+        // The catalog keeps the extension folders in the cache (catalog/model/setting/extension.js)
+        await this.cache.delete('extension');
     }
 
     async uninstall(type, code) {
         await this.db.query(`DELETE FROM ${DB_PREFIX}extension WHERE type = ${this.db.escape(type)} AND code = ${this.db.escape(code)}`);
         await this.db.query(`DELETE FROM ${DB_PREFIX}setting WHERE code = ${this.db.escape(type + '_' + code)}`);
+        await this.cache.delete('extension');
+        await this.cache.delete('setting');
     }
 
     async addInstall(data) {

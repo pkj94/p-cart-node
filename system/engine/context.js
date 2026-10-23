@@ -42,14 +42,31 @@ function run(values, callback) {
     return storage.run({ ...values }, callback);
 }
 
+// Parsed config.json files by path, re-read only when the file changes (the installer and the
+// storage move in common/security rewrite them while the app runs)
+const configs = {};
+
 // Reads a config.json; {} when it is missing or empty (not installed yet).
 function loadConfig(file) {
+    const fs = require('fs');
+    let stat;
     try {
-        const content = require('fs').readFileSync(file).toString();
-        return content.trim() ? withEnv(JSON.parse(content)) : {};
+        stat = fs.statSync(file);
     } catch (e) {
         return {};
     }
+    const cached = configs[file];
+    if (!cached || cached.mtimeMs !== stat.mtimeMs || cached.size !== stat.size) {
+        let config = {};
+        try {
+            const content = fs.readFileSync(file).toString();
+            config = content.trim() ? withEnv(JSON.parse(content)) : {};
+        } catch (e) {
+            config = {};
+        }
+        configs[file] = { mtimeMs: stat.mtimeMs, size: stat.size, config };
+    }
+    return { ...configs[file].config };
 }
 
 // DB_* environment variables (e.g. DB_USERNAME, DB_PASSWORD from .env) override config.json,

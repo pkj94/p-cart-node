@@ -30,10 +30,15 @@ module.exports = class SettingModel extends global['OpencartSystemEngineModel'] 
                 await this.db.query('INSERT INTO ' + DB_PREFIX + 'setting SET store_id = ' + this.db.quote(store_id) + ', code = ' + this.db.escape(code) + ', `key` = ' + this.db.escape(key) + ', value = ' + this.db.escape(valueToStore) + ', serialized = ' + this.db.quote(serialized));
             }
         }
+
+        // The catalog keeps settings in the cache (catalog/model/setting/setting.js)
+        await this.cache.delete('setting');
     }
 
     async deleteSetting(code, store_id = 0) {
         await this.db.query(`DELETE FROM ${DB_PREFIX}setting WHERE store_id = ${this.db.quote(store_id)} AND code = ${this.db.escape(code)}`);
+
+        await this.cache.delete('setting');
     }
 
     async getValue(key, store_id = 0) {
@@ -45,6 +50,8 @@ module.exports = class SettingModel extends global['OpencartSystemEngineModel'] 
         const serialized = Array.isArray(value) ? 1 : 0;
         const valueToStore = serialized ? JSON.stringify(value) : value;
         await this.db.query('UPDATE ' + DB_PREFIX + 'setting SET value = ' + this.db.escape(valueToStore) + ', serialized = ' + this.db.quote(serialized) + ' WHERE code = ' + this.db.escape(code) + ' AND `key` = ' + this.db.escape(key) + ' AND store_id = ' + this.db.quote(store_id));
+
+        await this.cache.delete('setting');
     }
 }
 
