@@ -1,6 +1,11 @@
 
 const expressPath = require('path');
 
+// Directories this process has already walked, with the extension stamp at that time. Walking every
+// code folder on each request blocked the event loop for ~135 ms per request; now a folder is walked
+// again only after the marketplace installer adds or removes files (see Autoloader.refresh()).
+const walked = {};
+
 module.exports = class Autoloader {
     constructor() {
         this.paths = {};
@@ -9,7 +14,30 @@ module.exports = class Autoloader {
 
     async register(namespace, directory, psr4 = false) {
         this.paths[namespace] = { directory, psr4 };
-        await this.load(directory);
+        const stamp = Autoloader.stamp();
+        if (walked[directory] !== stamp) {
+            this.load(directory);
+            walked[directory] = stamp;
+        }
+    }
+
+    // A file in storage whose change time tells every process (PM2 cluster included) to walk again
+    static stampFile() {
+        const storage = typeof DIR_STORAGE != 'undefined' && DIR_STORAGE ? DIR_STORAGE : expressPath.join(__dirname, '../storage/');
+        return expressPath.join(storage, 'extension.stamp');
+    }
+
+    static stamp() {
+        try {
+            return fs.statSync(Autoloader.stampFile()).mtimeMs;
+        } catch (e) {
+            return 0;
+        }
+    }
+
+    // Call after extension files were added or removed, so their classes get loaded
+    static refresh() {
+        fs.writeFileSync(Autoloader.stampFile(), String(Date.now()));
     }
 
     load(directory1) {

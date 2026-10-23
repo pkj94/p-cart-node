@@ -408,6 +408,8 @@ module.exports = class InstallerMarketplaceController extends global['OpencartSy
 				}
 
 			}
+			// New extension files: every process loads them on its next request
+			global['OpencartSystemEngineAutoloader'].refresh();
 			await this.model_setting_extension.editStatus(extension_install_id, 1);
 
 		}
@@ -536,6 +538,8 @@ module.exports = class InstallerMarketplaceController extends global['OpencartSy
 
 				await this.model_setting_extension.deletePath(result['extension_path_id']);
 			}
+
+			global['OpencartSystemEngineAutoloader'].refresh();
 
 			// Remove extension directory
 			await this.model_setting_extension.editStatus(extension_install_id, 0);
