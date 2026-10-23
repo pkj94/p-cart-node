@@ -167,13 +167,14 @@ module.exports = class Voucher extends global['OpencartSystemEngineController'] 
 		}
 
 		if (!Object.keys(json).length) {
-			if (await this.cart.hasProducts()(this.session.data['vouchers'] && this.session.data['vouchers'].length)) {
+			if (await this.cart.hasProducts() || !empty(this.session.data['vouchers'])) {
 				json['success'] = this.language.get('text_remove');
 			} else {
 				json['redirect'] = await this.url.link('checkout/cart', 'language=' + this.config.get('config_language'), true);
 			}
 
-			delete this.session.data['vouchers'][key];
+			// Removed without leaving a hole: the vouchers are an array that totals and confirm loop over
+			this.session.data['vouchers'].splice(Number(key), 1);
 			delete this.session.data['shipping_method'];
 			delete this.session.data['shipping_methods'];
 			delete this.session.data['payment_method'];

@@ -51,7 +51,7 @@ module.exports = class Coupon extends global['OpencartSystemEngineModel'] {
 
 
 			if (coupon_product_data.length || coupon_category_data.length) {
-				for (let product of await this.cart.getProducts()) {
+				for (let product of Object.values(await this.cart.getProducts())) {
 					if (coupon_product_data.includes(product['product_id'])) {
 						product_data.push(product['product_id']);
 

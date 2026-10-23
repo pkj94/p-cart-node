@@ -19,7 +19,7 @@ module.exports = class Reward extends global['OpencartSystemEngineController'] {
 
 		points_total = 0;
 
-		for (let product of await this.cart.getProducts()) {
+		for (let product of Object.values(await this.cart.getProducts())) {
 			if (product['points']) {
 				points_total += product['points'];
 			}
@@ -61,7 +61,7 @@ module.exports = class Reward extends global['OpencartSystemEngineController'] {
 
 		json['maximum'] = 0;
 
-		for (let product of await this.cart.getProducts()) {
+		for (let product of Object.values(await this.cart.getProducts())) {
 			if (product['points']) {
 				json['maximum'] += product['points'];
 			}

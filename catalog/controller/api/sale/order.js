@@ -200,7 +200,7 @@ module.exports = class Order extends global['OpencartSystemEngineController'] {
 		const json = { error: {} };
 
 		// Validate cart has products and has stock.
-		if ((await this.cart.hasProducts()(this.session.data['vouchers'] && this.session.data['vouchers'].length))) {
+		if (await this.cart.hasProducts() || !empty(this.session.data['vouchers'])) {
 			if (!await this.cart.hasStock() && !Number(this.config.get('config_stock_checkout'))) {
 				json['error']['stock'] = this.language.get('error_stock');
 			}
@@ -209,7 +209,7 @@ module.exports = class Order extends global['OpencartSystemEngineController'] {
 		}
 
 		// Validate minimum quantity requirements+
-		let products = await this.cart.getProducts();
+		let products = Object.values(await this.cart.getProducts());
 
 		for (let product of products) {
 			if (!product['minimum']) {
@@ -346,7 +346,7 @@ module.exports = class Order extends global['OpencartSystemEngineController'] {
 			// Products
 			order_data['products'] = [];
 
-			for (let product of await this.cart.getProducts()) {
+			for (let product of Object.values(await this.cart.getProducts())) {
 				let option_data = [];
 
 				for (let option of product['option']) {

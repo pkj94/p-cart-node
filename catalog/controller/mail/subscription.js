@@ -100,7 +100,7 @@ module.exports = class Subscription extends global['OpencartSystemEngineControll
 							order_product = await this.model_account_order.getProduct(value['order_id'], value['order_product_id']);
 
 							if (order_product && order_product['order_product_id'] == subscription['order_product_id']) {
-								let products = await this.cart.getProducts();
+								let products = Object.values(await this.cart.getProducts());
 
 								description = '';
 
