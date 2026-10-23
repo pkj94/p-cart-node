@@ -8,7 +8,8 @@ module.exports = class NotificationToolModel  extends global['OpencartSystemEngi
 	 * @return int
 	 */
 	async addNotification(data) {
-		await this.db.query("INSERT INTO `" + DB_PREFIX + "notification` SET `title` = " + this.db.escape(data['title']) + ", `text` = " + this.db.escape(data['text']) + ", `status` = " + this.db.quote(data['status']) + ", `date_added` = NOW()");
+		// Notifications from the OpenCart server keep their id, so startup/notification can tell which it already has
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "notification` SET " + (data['notification_id'] ? "`notification_id` = " + this.db.quote(data['notification_id']) + ", " : "") + "`title` = " + this.db.escape(data['title']) + ", `text` = " + this.db.escape(data['text']) + ", `status` = " + this.db.quote(data['status']) + ", `date_added` = NOW()");
 
 		return this.db.getLastId();
 	}

@@ -10,14 +10,17 @@ module.exports = class NotificationController extends global['OpencartSystemEngi
 					httpsAgent: new (require('https').Agent)({ rejectUnauthorized: false }) // for CURLOPT_SSL_VERIFYPEER = 0
 				});
 
-				let notification = response.data ? JSON.parse(response.data) : '';
+				// axios already parses a JSON response
+				let notification = typeof response.data == 'string' ? oc_json_decode(response.data, {}) : (response.data || {});
 
-				if (notification.notification) {
-					for (const result of notification.notifications) {
-						let notification_info = await this.model_notification.addNotification(result.notification_id);
+				if (Array.isArray(notification.notification)) {
+					this.load.model('tool/notification', this);
+
+					for (const result of notification.notification) {
+						let notification_info = await this.model_tool_notification.getNotification(result.notification_id);
 
 						if (empty(notification_info)) {
-							await this.model_notification.addNotification(result);
+							await this.model_tool_notification.addNotification(result);
 						}
 					}
 				}
@@ -30,7 +33,8 @@ module.exports = class NotificationController extends global['OpencartSystemEngi
 					sameSite: this.config.get('config_session_samesite')
 				};
 
-				this.response.cookie('notification', true, options);
+				// The Response library wraps Express's res, which sets cookies
+				this.response.response.cookie('notification', '1', options);
 			} catch (error) {
 				console.error('Error fetching notifications:', error);
 			}

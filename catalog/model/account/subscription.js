@@ -126,4 +126,23 @@ module.exports =class Subscription extends global['OpencartSystemEngineModel'] {
 
 		return query.row['total'];
 	}
+
+	/**
+	 * Note: the subscription_transaction table is not in this database's schema yet
+	 *
+	 * @param subscription_id
+	 * @param order_id
+	 * @param string description
+	 * @param amount
+	 * @param type
+	 * @param string payment_method
+	 * @param string payment_code
+	 *
+	 * @return int
+	 */
+	async addTransaction(subscription_id, order_id, description, amount, type, payment_method, payment_code) {
+		await this.db.query("INSERT INTO `" + DB_PREFIX + "subscription_transaction` SET `subscription_id` = " + this.db.quote(subscription_id) + ", `order_id` = " + this.db.quote(order_id) + ", `description` = " + this.db.escape(description) + ", `amount` = " + this.db.quote(amount) + ", `type` = " + this.db.quote(type) + ", `payment_method` = " + this.db.escape(payment_method) + ", `payment_code` = " + this.db.escape(payment_code) + ", `date_added` = NOW()");
+
+		return this.db.getLastId();
+	}
 }

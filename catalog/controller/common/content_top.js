@@ -38,10 +38,10 @@ module.exports = class ContentTop extends global['OpencartSystemEngineController
 			layout_id = await this.model_catalog_information.getLayoutId(this.request.get['information_id']);
 		}
 
-		if (route == 'cms/blog.info' && (this.request.get['blog_id'])) {
-			this.load.model('cms/blog', this);
+		if (route == 'cms/blog.info' && (this.request.get['article_id'])) {
+			this.load.model('cms/article', this);
 
-			layout_id = await this.model_cms_blog.getLayoutId(this.request.get['blog_id']);
+			layout_id = await this.model_cms_article.getLayoutId(this.request.get['article_id']);
 		}
 
 		if (!layout_id) {

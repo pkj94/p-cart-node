@@ -99,6 +99,17 @@ module.exports = class CustomerLibrary {
         return this.customer_id;
     }
 
+    // Trusted commenter: blog comments are published without moderation. Admin sets it with
+    // Comments > Approve (customer `safe` flag) and clears it with Comments > Spam.
+    async isCommentor() {
+        await this.init();
+        if (!this.customer_id) {
+            return false;
+        }
+        const query = await this.db.query("SELECT `safe` FROM `" + DB_PREFIX + "customer` WHERE `customer_id` = " + this.db.quote(this.customer_id));
+        return !!Number(query.row['safe']);
+    }
+
     async getFirstName() {
         await this.init();
         return this.firstname;

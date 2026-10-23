@@ -759,7 +759,7 @@ module.exports = class CustomerController extends global['OpencartSystemEngineCo
 		if (!Object.keys(json).length) {
 			this.load.model('customer/customer', this);
 
-			await this.model_customer_customer.deleteAuthorizeAttempts(this.request.get['email']);
+			await this.model_customer_customer.deleteLoginAttempts(this.request.get['email']);
 
 			json['success'] = this.language.get('text_success');
 		}

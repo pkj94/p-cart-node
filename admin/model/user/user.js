@@ -264,6 +264,17 @@ module.exports = class UserModel extends global['OpencartSystemEngineModel'] {
     }
 
     /**
+     * @param    user_authorize_id
+     *
+     * @return array
+     */
+    async getAuthorize(user_authorize_id) {
+        let query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "user_authorize` WHERE `user_authorize_id` = " + this.db.quote(user_authorize_id));
+
+        return query.row;
+    }
+
+    /**
      * @param    user_id
      * @param token
      *

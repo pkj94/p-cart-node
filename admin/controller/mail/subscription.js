@@ -44,7 +44,7 @@ module.exports = class SubscriptionController extends global['OpencartSystemEngi
             'filter_date_next'              : date('Y-m-d H:i:s')
         };
 
-        const subscriptions = await this.model_checkout_subscription.getSubscriptions(filter_data);
+        const subscriptions = await this.model_sale_subscription.getSubscriptions(filter_data);
 
         if (subscriptions) {
             for (let subscription of subscriptions) {
@@ -64,7 +64,7 @@ module.exports = class SubscriptionController extends global['OpencartSystemEngi
                         this.load.model('customer/customer', this);
 
                         // Customer payment
-                        const customer_payment_info = await this.model_customer_customer.getPaymentMehod(subscription['customer_id'], subscription['customer_payment_id']);
+                        const customer_payment_info = await this.model_customer_customer.getPaymentMethod(subscription['customer_id'], subscription['customer_payment_id']);
 
                         if (!empty(customer_payment_info)) {
                             // Since the customer payment is integrated into the customer/customer page,
@@ -216,7 +216,7 @@ module.exports = class SubscriptionController extends global['OpencartSystemEngi
             'filter_date_next'              : date('Y-m-d H:i:s')
         };
 
-        const subscriptions = await this.model_checkout_subscription.getSubscriptions(filter_data);
+        const subscriptions = await this.model_sale_subscription.getSubscriptions(filter_data);
 
         if (subscriptions) {
             for (let subscription of subscriptions) {

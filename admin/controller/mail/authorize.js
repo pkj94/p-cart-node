@@ -28,7 +28,7 @@ module.exports = class AuthorizeController extends global['OpencartSystemEngineC
 		if (email && code && (route == 'common/authorize.send') && isEmailValid(email)) {
 			await this.load.language('mail/authorize');
 
-			data['username'] = this.user.getUsername();
+			data['username'] = await this.user.getUserName();
 			data['code'] = code;
 			data['ip'] = this.request.server.headers['x-forwarded-for'] || (
 				this.request.server.connection ? (this.request.server.connection.remoteAddress ||
@@ -91,7 +91,7 @@ module.exports = class AuthorizeController extends global['OpencartSystemEngineC
 		if (email && code && (route == 'common/authorize.confirm') && isEmailValid(email)) {
 			await this.load.language('mail/authorize_reset');
 
-			data['username'] = this.user.getUsername();
+			data['username'] = await this.user.getUserName();
 			data['reset'] = await this.url.link('common/authorize.reset', 'email=' + email + '&code=' + code, true);
 			data['ip'] = this.request.server.headers['x-forwarded-for'] || (
 				this.request.server.connection ? (this.request.server.connection.remoteAddress ||

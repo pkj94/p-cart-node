@@ -301,4 +301,15 @@ if (data['limit'] < 1) {
 
 		return query.row['total'];
 	}
+
+	/**
+	 * @param subscription_id
+	 *
+	 * @return int
+	 */
+	async getTotalTransactions(subscription_id) {
+		let query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "subscription_transaction` WHERE `subscription_id` = " + this.db.quote(subscription_id));
+
+		return Number(query.row['total']) || 0;
+	}
 }

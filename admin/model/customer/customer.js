@@ -51,6 +51,28 @@ module.exports = class CustomerCustomerModel extends global['OpencartSystemEngin
 	}
 
 	/**
+	 * Trusted commenter: blog comments are published without moderation (customer `safe` flag)
+	 *
+	 * @param    customer_id
+	 * @param bool commentor
+	 *
+	 * @return void
+	 */
+	async editCommentor(customer_id, commentor) {
+		await this.db.query("UPDATE `" + DB_PREFIX + "customer` SET `safe` = " + this.db.quote(commentor ? 1 : 0) + " WHERE `customer_id` = " + this.db.quote(customer_id));
+	}
+
+	/**
+	 * @param    customer_id
+	 * @param bool status
+	 *
+	 * @return void
+	 */
+	async editStatus(customer_id, status) {
+		await this.db.query("UPDATE `" + DB_PREFIX + "customer` SET `status` = " + this.db.quote(status ? 1 : 0) + " WHERE `customer_id` = " + this.db.quote(customer_id));
+	}
+
+	/**
 	 * @param customer_id
 	 *
 	 * @return void
@@ -600,5 +622,55 @@ module.exports = class CustomerCustomerModel extends global['OpencartSystemEngin
 	 */
 	async deleteLoginAttempts(email) {
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_login` WHERE `email` = " + this.db.escape(oc_strtolower(email)) + "");
+	}
+
+	/**
+	 * Stored payment methods (customer_payment, the table catalog/model/account/payment_method.js uses)
+	 *
+	 * @param    customer_id
+	 * @param    customer_payment_id
+	 *
+	 * @return array
+	 */
+	async getPaymentMethod(customer_id, customer_payment_id) {
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "customer_payment` WHERE `customer_id` = " + this.db.quote(customer_id) + " AND `customer_payment_id` = " + this.db.quote(customer_payment_id));
+
+		return query.row;
+	}
+
+	/**
+	 * @param    customer_id
+	 * @param    start
+	 * @param    limit
+	 *
+	 * @return array
+	 */
+	async getPaymentMethods(customer_id, start = 0, limit = 10) {
+		start = Math.max(parseInt(start) || 0, 0);
+		limit = Math.max(parseInt(limit) || 10, 1);
+
+		const query = await this.db.query("SELECT * FROM `" + DB_PREFIX + "customer_payment` WHERE `customer_id` = " + this.db.quote(customer_id) + " ORDER BY `date_added` DESC LIMIT " + start + "," + limit);
+
+		return query.rows;
+	}
+
+	/**
+	 * @param    customer_id
+	 *
+	 * @return int
+	 */
+	async getTotalPaymentMethods(customer_id) {
+		const query = await this.db.query("SELECT COUNT(*) AS `total` FROM `" + DB_PREFIX + "customer_payment` WHERE `customer_id` = " + this.db.quote(customer_id));
+
+		return Number(query.row['total']) || 0;
+	}
+
+	/**
+	 * @param    customer_payment_id
+	 *
+	 * @return void
+	 */
+	async deletePaymentMethod(customer_payment_id) {
+		await this.db.query("DELETE FROM `" + DB_PREFIX + "customer_payment` WHERE `customer_payment_id` = " + this.db.quote(customer_payment_id));
 	}
 }

@@ -120,7 +120,7 @@ module.exports = class CommentController extends global['OpencartSystemEngineCon
 		for (let result of results) {
 			let approve = '';
 			if (!result['status']) {
-				approve = await this.url.link('cms/comment.approve', 'user_token=' + this.session.data['user_token'] + '&comment_id=' + result['comment_id'] + url);
+				approve = await this.url.link('cms/comment.approve', 'user_token=' + this.session.data['user_token'] + '&comment_id=' + result['article_comment_id'] + url);
 			}
 
 			data['comments'].push({
@@ -131,8 +131,8 @@ module.exports = class CommentController extends global['OpencartSystemEngineCon
 				'comment': nl2br(result['comment']),
 				'date_added': date('d/m/Y', new Date(result['date_added'])),
 				'approve': approve,
-				'spam': await this.url.link('cms/comment.spam', 'user_token=' + this.session.data['user_token'] + '&comment_id=' + result['comment_id'] + url),
-				'delete': await this.url.link('cms/comment.delete', 'user_token=' + this.session.data['user_token'] + '&comment_id=' + result['comment_id'] + url)
+				'spam': await this.url.link('cms/comment.spam', 'user_token=' + this.session.data['user_token'] + '&comment_id=' + result['article_comment_id'] + url),
+				'delete': await this.url.link('cms/comment.delete', 'user_token=' + this.session.data['user_token'] + '&comment_id=' + result['article_comment_id'] + url)
 			});
 		}
 
@@ -175,8 +175,8 @@ module.exports = class CommentController extends global['OpencartSystemEngineCon
 
 		const json = {};
 		let article_comment_id = 0;
-		if ((this.request.get['article_comment_id'])) {
-			article_comment_id = this.request.get['article_comment_id'];
+		if ((this.request.get['comment_id'])) {
+			article_comment_id = this.request.get['comment_id'];
 		}
 
 		if (!await this.user.hasPermission('modify', 'cms/comment')) {
@@ -187,7 +187,7 @@ module.exports = class CommentController extends global['OpencartSystemEngineCon
 
 		const comment_info = await this.model_cms_article.getComment(article_comment_id);
 
-		if (!comment_info.comment_id) {
+		if (!comment_info.article_comment_id) {
 			json['error'] = this.language.get('error_comment');
 		}
 
@@ -198,16 +198,7 @@ module.exports = class CommentController extends global['OpencartSystemEngineCon
 			await this.model_customer_customer.editCommentor(comment_info['customer_id'], 1);
 
 			// Approve all past comments
-			let filter_data = {
-				'filter_customer_id': comment_info['customer_id'],
-				'filter_status': 0
-			};
-
-			const results = await this.model_cms_comment.getComments(filter_data);
-
-			for (let result of results) {
-				await this.model_cms_comment.editStatus(result['customer_id'], 1);
-			}
+			await this.model_cms_article.editCommentStatusByCustomerId(comment_info['customer_id'], 1);
 
 			json['success'] = this.language.get('text_success');
 
@@ -261,7 +252,7 @@ module.exports = class CommentController extends global['OpencartSystemEngineCon
 
 		const comment_info = await this.model_cms_article.getComment(comment_id);
 
-		if (!comment_info.comment_id) {
+		if (!comment_info.article_comment_id) {
 			json['error'] = this.language.get('error_comment');
 		}
 
@@ -273,11 +264,7 @@ module.exports = class CommentController extends global['OpencartSystemEngineCon
 			await this.model_customer_customer.addHistory(comment_info['customer_id'], 'SPAMMER!!!');
 
 			// Delete all customer comments
-			const results = await this.model_cms_comment.getComments({ 'filter_customer_id': comment_info['customer_id'] });
-
-			for (let result of results) {
-				await this.model_cms_comment.deleteCommentsByCustomerId(result['comment_id']);
-			}
+			await this.model_cms_article.deleteCommentsByCustomerId(comment_info['customer_id']);
 
 			json['success'] = this.language.get('text_success');
 
@@ -331,7 +318,7 @@ module.exports = class CommentController extends global['OpencartSystemEngineCon
 
 		const comment_info = await this.model_cms_article.getComment(comment_id);
 
-		if (!comment_info.comment_id) {
+		if (!comment_info.article_comment_id) {
 			json['error'] = this.language.get('error_comment');
 		}
 

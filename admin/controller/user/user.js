@@ -462,7 +462,7 @@ module.exports = class UserController extends global['OpencartSystemEngineContro
 
 		const login_info = await this.model_user_user.getAuthorize(user_authorize_id);
 
-		if (!login_info.login_id) {
+		if (!login_info.user_authorize_id) {
 			json['error'] = this.language.get('error_authorize');
 		}
 

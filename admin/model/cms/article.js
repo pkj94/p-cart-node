@@ -300,6 +300,16 @@ module.exports = class ArticleModel extends global['OpencartSystemEngineModel'] 
 	}
 
 	/**
+	 * @param customer_id
+	 * @param status
+	 *
+	 * @return void
+	 */
+	async editCommentStatusByCustomerId(customer_id, status) {
+		await this.db.query("UPDATE `" + DB_PREFIX + "article_comment` SET `status` = " + this.db.quote(status) + " WHERE `customer_id` = " + this.db.quote(customer_id));
+	}
+
+	/**
 	 * @param article_comment_id
 	 *
 	 * @return array

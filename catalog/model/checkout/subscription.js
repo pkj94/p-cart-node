@@ -123,6 +123,56 @@ module.exports = class Subscription extends global['OpencartSystemEngineModel'] 
 	}
 
 	/**
+	 * @param subscription_id
+	 * @param remaining
+	 *
+	 * @return void
+	 */
+	async editRemaining(subscription_id, remaining) {
+		await this.db.query("UPDATE `" + DB_PREFIX + "subscription` SET `remaining` = " + this.db.quote(remaining) + " WHERE `subscription_id` = " + this.db.quote(subscription_id));
+	}
+
+	/**
+	 * Subscriptions for cron/subscription: due on or before filter_date_next, with the given status
+	 *
+	 * @param data
+	 *
+	 * @return array
+	 */
+	async getSubscriptions(data = {}) {
+		let sql = "SELECT * FROM `" + DB_PREFIX + "subscription` `s`";
+
+		let implode = [];
+
+		if ((data['filter_subscription_id'])) {
+			implode.push("`s`.`subscription_id` = " + this.db.quote(data['filter_subscription_id']));
+		}
+
+		if ((data['filter_subscription_status_id'])) {
+			implode.push("`s`.`subscription_status_id` = " + this.db.quote(data['filter_subscription_status_id']));
+		}
+
+		if ((data['filter_date_next'])) {
+			implode.push("DATE(`s`.`date_next`) <= DATE(" + this.db.escape(data['filter_date_next']) + ")");
+		}
+
+		if (implode.length) {
+			sql += " WHERE " + implode.join(" AND ");
+		}
+
+		sql += " ORDER BY `s`.`date_next` ASC";
+
+		let start = Math.max(parseInt(data['start']) || 0, 0);
+		let limit = Math.max(parseInt(data['limit']) || 20, 1);
+
+		sql += " LIMIT " + start + "," + limit;
+
+		const query = await this.db.query(sql);
+
+		return query.rows;
+	}
+
+	/**
 	 * @param    subscription_id
 	 * @param string date_next
 	 *

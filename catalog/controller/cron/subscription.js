@@ -469,12 +469,12 @@ module.exports = class Subscription extends global['OpencartSystemEngineControll
 			// Trial
 			if (result['trial_status'] && (!result['trial_duration'] || result['trial_remaining'])) {
 				if (result['trial_duration'] && result['trial_remaining']) {
-					await this.model_account_subscription.editTrialRemaining(result['subscription_id'], result['trial_remaining'] - 1);
+					await this.model_checkout_subscription.editTrialRemaining(result['subscription_id'], result['trial_remaining'] - 1);
 				}
 			} else if (!result['duration'] || result['remaining']) {
 				// Subscription
 				if (result['duration'] && result['remaining']) {
-					await this.model_account_subscription.editRemaining(result['subscription_id'], result['remaining'] - 1);
+					await this.model_checkout_subscription.editRemaining(result['subscription_id'], result['remaining'] - 1);
 				}
 			}
 		}
