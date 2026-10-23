@@ -30,11 +30,15 @@ module.exports = class Action {
             // console.log(global[namespace], namespace, this.method)
             if (global[namespace]) {
                 controller = new global[namespace](registry);
-                if (typeof controller[this.method] === 'function') {
+                // Looked up on the class: through the controller's proxy an unknown name is read from
+                // the registry, which throws "Could not call registry key"
+                if (typeof global[namespace].prototype[this.method] === 'function') {
                     return controller[this.method](...args);
-                } else {
-                    throw new Error(`Error: Could not call route ${this.route}!`);
                 }
+                // Like OpenCart's Action, a missing method is returned, not thrown: optional routes such
+                // as a payment extension's .order tab or an extension's .install / .uninstall are called
+                // and the caller checks `instanceof Error` (or ignores the result)
+                return new Error(`Error: Could not call route ${this.route}!`);
             }
         } catch (e) {
             console.error(namespace, this, e)
