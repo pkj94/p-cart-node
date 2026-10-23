@@ -1,4 +1,8 @@
-const { Client } = require('pg');
+const { Client, types } = require('pg');
+
+// NUMERIC columns (prices, totals, tax, weights) as numbers, as in the MySQL driver; as strings,
+// price + tax joined the text instead of adding
+types.setTypeParser(types.builtins.NUMERIC, (value) => parseFloat(value));
 
 module.exports = class PgSQLDBLibrary {
     constructor(hostname, username, password, database, port = '5432') {

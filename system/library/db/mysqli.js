@@ -20,7 +20,11 @@ module.exports = class MySQLiDBLibrary {
                 waitForConnections: true,
                 queueLimit: 0,
                 connectTimeout: 10000,
-                enableKeepAlive: true
+                enableKeepAlive: true,
+                // DECIMAL columns (prices, totals, tax, weights) as numbers, like PHP's numeric strings
+                // behave in arithmetic. As JS strings, price + tax joined the text ('100.0000' + '1.0000'
+                // -> NaN) instead of adding.
+                decimalNumbers: true
             });
             // Same session setup as OpenCart's mysqli driver, run once on every new pooled connection
             pool.on('connection', (connection) => {
