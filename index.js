@@ -47,23 +47,22 @@ global.AppLoad = () => {
     // Install
     if (installRoutes) {
         let path = __dirname.replaceAll('\\', '/') + '/install/';
-        app.use('/install/view/stylesheet', express.static(path + 'view/stylesheet'));
-        app.use('/install/view/javascript', express.static(path + 'view/javascript'));
-        app.use('/install/view/image', express.static(path + 'view/image'));
-        app.use('/install/language', express.static(path + 'language'));
+        assets.use('/install/view/stylesheet', express.static(path + 'view/stylesheet'));
+        assets.use('/install/view/javascript', express.static(path + 'view/javascript'));
+        assets.use('/install/view/image', express.static(path + 'view/image'));
+        assets.use('/install/language', express.static(path + 'language'));
     }
 
     // admin
-    app.use('/admin/view/stylesheet', express.static(getConfig('DIR_APPLICATION', 'admin') + 'view/stylesheet'));
-    app.use('/admin/view/javascript', express.static(getConfig('DIR_APPLICATION', 'admin') + 'view/javascript'));
-    app.use('/admin/view/image', express.static(getConfig('DIR_APPLICATION', 'admin') + 'view/image'));
-    app.use('/admin/language', express.static(getConfig('DIR_APPLICATION', 'admin') + '/language'));
+    assets.use('/admin/view/stylesheet', express.static(getConfig('DIR_APPLICATION', 'admin') + 'view/stylesheet'));
+    assets.use('/admin/view/javascript', express.static(getConfig('DIR_APPLICATION', 'admin') + 'view/javascript'));
+    assets.use('/admin/view/image', express.static(getConfig('DIR_APPLICATION', 'admin') + 'view/image'));
+    assets.use('/admin/language', express.static(getConfig('DIR_APPLICATION', 'admin') + '/language'));
     adminRoutes(registry);
 
     if (installRoutes) {
         installRoutes(registry);
     }
-    app.use('/error.html', express.static('./error.html'));
     catalogRoutes(registry);
 
 }
@@ -115,6 +114,37 @@ app.use(rateLimit({
     skip: (req) => !routeOf(req).startsWith('api/'),
     message: limitMessage('Too many requests. Please slow down.')
 }));
+
+app.use(compression());
+
+// Static files are served before the session middleware: otherwise every image, CSS and JS request
+// read and touched the session row in MySQL, and a first visit created one session per file.
+// AppLoad() adds the admin and install folders to the same router, so they stay ahead of it too.
+const assets = express.Router();
+app.use(assets);
+
+// Browser caching for static files in production (1 day, revalidated with ETag afterwards)
+const staticOptions = { maxAge: isProduction ? '1d' : 0 };
+assets.use('/image', express.static('image', staticOptions));
+
+assets.use('/catalog/view/stylesheet', express.static('catalog/view/stylesheet', staticOptions));
+assets.use('/catalog/view/javascript', express.static('catalog/view/javascript', staticOptions));
+assets.use('/catalog/view/image', express.static('catalog/view/image', staticOptions));
+assets.use('/catalog/language', express.static('catalog/language', staticOptions));
+// Only extension view assets are public (extension/<name>/admin|catalog/view/...); the controllers,
+// models and config next to them are server code and must not be downloadable
+const isExtensionAsset = (urlPath) => {
+    let decoded;
+    try {
+        decoded = decodeURIComponent(urlPath);
+    } catch (e) {
+        return false;
+    }
+    return /^\/[\w-]+\/(admin|catalog)\/view\/(?!template\/)/.test(decoded) && !decoded.split(/[\\/]/).includes('..');
+}
+assets.use('/extension', (req, res, next) => isExtensionAsset(req.path) ? next() : res.sendStatus(404), express.static('extension', staticOptions));
+assets.use('/favicon.ico', express.static('./favicon.ico', staticOptions));
+assets.use('/error.html', express.static('./error.html'));
 
 app.use(cookieParser());
 const session = require('express-session')
@@ -178,29 +208,6 @@ const bodyLimit = process.env.BODY_LIMIT || '5mb';
 app.use(bodyParser.urlencoded({ limit: bodyLimit, extended: true }));
 app.use(bodyParser.json({ limit: bodyLimit }));
 
-app.use(compression());
-
-// Browser caching for static files in production (1 day, revalidated with ETag afterwards)
-const staticOptions = { maxAge: isProduction ? '1d' : 0 };
-app.use('/image', express.static('image', staticOptions));
-
-app.use('/catalog/view/stylesheet', express.static('catalog/view/stylesheet', staticOptions));
-app.use('/catalog/view/javascript', express.static('catalog/view/javascript', staticOptions));
-app.use('/catalog/view/image', express.static('catalog/view/image', staticOptions));
-app.use('/catalog/language', express.static('catalog/language', staticOptions));
-// Only extension view assets are public (extension/<name>/admin|catalog/view/...); the controllers,
-// models and config next to them are server code and must not be downloadable
-const isExtensionAsset = (urlPath) => {
-    let decoded;
-    try {
-        decoded = decodeURIComponent(urlPath);
-    } catch (e) {
-        return false;
-    }
-    return /^\/[\w-]+\/(admin|catalog)\/view\/(?!template\/)/.test(decoded) && !decoded.split(/[\\/]/).includes('..');
-}
-app.use('/extension', (req, res, next) => isExtensionAsset(req.path) ? next() : res.sendStatus(404), express.static('extension', staticOptions));
-app.use('/favicon.ico', express.static('./favicon.ico', staticOptions));
 // Apache-style access log in production (PM2 writes it to its log files), short coloured lines in development
 app.use(morgan(isProduction ? 'combined' : 'dev'));
 const decodeObject = (obj) => {
