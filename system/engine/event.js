@@ -5,16 +5,15 @@ module.exports = class Event {
     }
 
     register(trigger, action, priority = 0) {
-        this.data.push({ trigger, action, priority });
+        // Compiled once here: trigger() runs twice for every model call and every view, and building
+        // the pattern of each registered event there took ~10% of the CPU time of a page
+        const pattern = new RegExp(`^${trigger.replace(/\*/g, '.*').replace(/\?/g, '.')}$`);
+        this.data.push({ trigger, action, priority, pattern });
         this.data.sort((a, b) => a.priority - b.priority);
     }
 
     async trigger(event, args = []) {
-        for (const { trigger, action } of this.data) {
-            const pattern = new RegExp(`^${trigger.replace(/\*/g, '.*').replace(/\?/g, '.')}$`);
-            // if (event.indexOf('view/common/header/before') >= 0)
-            //     console.log('1---', event, trigger, pattern, pattern.test(event), action)
-
+        for (const { action, pattern } of this.data) {
             if (pattern.test(event)) {
                 const result = await action.execute(this.registry, args);
                 if (result && result !== null && !(result instanceof Error)) {
