@@ -13,6 +13,9 @@ module.exports = class ThemeDesignModel  extends global['OpencartSystemEngineMod
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "theme` WHERE `store_id` = " + this.db.quote(store_id) + " AND `route` = " + this.db.escape(route) );
 		
 		await this.db.query("INSERT INTO `" + DB_PREFIX + "theme` SET `store_id` = " + this.db.quote(store_id) + ", `route` = " + this.db.escape(route) + ", `code` = " + this.db.escape(code) + ", `date_added` = NOW()");
+
+		// The catalog keeps theme overrides in the cache (catalog/model/design/theme.js)
+		await this.cache.delete('theme');
 	}
 
 	/**
@@ -22,6 +25,8 @@ module.exports = class ThemeDesignModel  extends global['OpencartSystemEngineMod
 	 */
 	async deleteTheme(theme_id) {
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "theme` WHERE `theme_id` = " + this.db.quote(theme_id));
+
+		await this.cache.delete('theme');
 	}
 
 	/**

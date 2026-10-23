@@ -9,6 +9,9 @@ module.exports = class TranslationDesignModel extends global['OpencartSystemEngi
 	 */
 	async addTranslation(data) {
 		await this.db.query("INSERT INTO `" + DB_PREFIX + "translation` SET `store_id` = " + this.db.quote(data['store_id']) + ", `language_id` = " + this.db.quote(data['language_id']) + ", `route` = " + this.db.escape(data['route']) + ", `key` = " + this.db.escape(data['key']) + ", `value` = " + this.db.escape(data['value']) + ", `date_added` = NOW()");
+
+		// The catalog keeps translation overrides in the cache (catalog/model/design/translation.js)
+		await this.cache.delete('translation');
 	}
 
 	/**
@@ -19,6 +22,8 @@ module.exports = class TranslationDesignModel extends global['OpencartSystemEngi
 	 */
 	async editTranslation(translation_id, data) {
 		await this.db.query("UPDATE `" + DB_PREFIX + "translation` SET `store_id` = " + this.db.quote(data['store_id']) + ", `language_id` = " + this.db.quote(data['language_id']) + ", `route` = " + this.db.escape(data['route']) + ", `key` = " + this.db.escape(data['key']) + ", `value` = " + this.db.escape(data['value']) + " WHERE `translation_id` = " + this.db.quote(translation_id));
+
+		await this.cache.delete('translation');
 	}
 
 	/**
@@ -28,6 +33,8 @@ module.exports = class TranslationDesignModel extends global['OpencartSystemEngi
 	 */
 	async deleteTranslation(translation_id) {
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "translation` WHERE `translation_id` = " + this.db.quote(translation_id));
+
+		await this.cache.delete('translation');
 	}
 
 	/**

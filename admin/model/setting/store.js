@@ -62,6 +62,8 @@ module.exports = class StoreSettingModel extends global['OpencartSystemEngineMod
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "subscription` WHERE `store_id` = " + this.db.quote(store_id));
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "theme` WHERE `store_id` = " + this.db.quote(store_id));
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "translation` WHERE `store_id` = " + this.db.quote(store_id));
+		await this.cache.delete('theme');
+		await this.cache.delete('translation');
 		await this.db.query("DELETE FROM `" + DB_PREFIX + "seo_url` WHERE `store_id` = " + this.db.quote(store_id));
 
 		await this.cache.delete('store');
