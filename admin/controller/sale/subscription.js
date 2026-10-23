@@ -765,12 +765,12 @@ module.exports = class SubscriptionController extends global['OpencartSystemEngi
 
 		const subscription_info = await this.model_sale_subscription.getSubscription(subscription_id);
 
-		if (empty(subscription_info)) {
+		if (!empty(subscription_info)) {
 			this.load.model('customer/customer', this);
 
 			const payment_method_info = await this.model_customer_customer.getPaymentMethod(subscription_info['customer_id'], this.request.post['customer_payment_id']);
 
-			if (!payment_method_info.payment_method_id) {
+			if (empty(payment_method_info)) {
 				json['error'] = this.language.get('error_payment_method');
 			}
 		} else {
