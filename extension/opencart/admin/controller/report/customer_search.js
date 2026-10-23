@@ -143,7 +143,7 @@ global['OpencartAdminControllerExtensionOpencartReportCustomerSearch'] = class C
 		for (let result of results) {
 			const category_info = await this.model_catalog_category.getCategory(result['category_id']);
 			let category = '';
-			if (category_info) {
+			if (!empty(category_info)) {
 				category = (category_info['path']) ? category_info['path'] + ' &gt; ' + category_info['name'] : category_info['name'];
 			}
 			let customer = this.language.get('text_guest');

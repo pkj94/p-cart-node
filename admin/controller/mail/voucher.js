@@ -31,7 +31,7 @@ module.exports = class VoucherController extends global['OpencartSystemEngineCon
 
 				const language_info = await this.model_localisation_language.getLanguage(order_info['language_id']);
 				let language_code = this.config.get('config_language');
-				if (language_info) {
+				if (!empty(language_info)) {
 					language_code = language_info['code'];
 				}
 

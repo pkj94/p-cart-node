@@ -20,7 +20,7 @@ module.exports = class Order extends global['OpencartSystemEngineController'] {
 
 		const order_info = await this.model_checkout_order.getOrder(order_id);
 
-		if (!order_info) {
+		if (empty(order_info)) {
 			json['error'] = this.language.get('error_order');
 		}
 
@@ -594,7 +594,7 @@ module.exports = class Order extends global['OpencartSystemEngineController'] {
 
 		const order_info = await this.model_checkout_order.getOrder(this.request.post['order_id']);
 
-		if (!order_info) {
+		if (empty(order_info)) {
 			json['error'] = this.language.get('error_order');
 		}
 

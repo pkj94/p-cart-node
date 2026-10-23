@@ -144,7 +144,7 @@ module.exports = class ContactController extends global['OpencartSystemEngineCon
 						for (let customer_id of customers) {
 							const customer_info = await this.model_customer_customer.getCustomer(customer_id);
 
-							if (customer_info) {
+							if (!empty(customer_info)) {
 								emails.push(customer_info['email']);
 							}
 						}

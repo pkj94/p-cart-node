@@ -119,7 +119,7 @@ module.exports = class TranslationController extends global['OpencartSystemEngin
 			const language_info = await this.model_localisation_language.getLanguage(result['language_id']);
 			let code = '';
 			let image = '';
-			if (language_info) {
+			if (!empty(language_info)) {
 				code = language_info['code'];
 				image = language_info['image'];
 			}

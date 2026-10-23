@@ -19,7 +19,7 @@ module.exports = class Currency extends global['OpencartSystemEngineController']
 
 		currency_info = await this.model_localisation_currency.getCurrencyByCode(currency);
 
-		if (!currency_info) {
+		if (empty(currency_info)) {
 			json['error'] = this.language.get('error_currency');
 		}
 

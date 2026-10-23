@@ -12,7 +12,7 @@ module.exports = class GdprController extends global['OpencartSystemEngineContro
 
 		const gdpr_info = await this.model_customer_gdpr.getGdpr(args[0]);
 
-		if (gdpr_info) {
+		if (!empty(gdpr_info)) {
 			// Choose which mail to send
 
 			// Export plus complete
@@ -67,7 +67,7 @@ module.exports = class GdprController extends global['OpencartSystemEngineContro
 
 		const language_info = await this.model_localisation_language.getLanguage(gdpr_info['language_id']);
 
-		if (language_info) {
+		if (!empty(language_info)) {
 			language_code = language_info['code'];
 		} else {
 			language_code = this.config.get('config_language');
@@ -96,14 +96,14 @@ module.exports = class GdprController extends global['OpencartSystemEngineContro
 
 		const customer_info = await this.model_customer_customer.getCustomerByEmail(gdpr_info['email']);
 
-		if (customer_info) {
+		if (!empty(customer_info)) {
 			data['text_hello'] = sprintf(this.language.get('mail_text_hello'), html_entity_decode(customer_info['firstname']));
 		} else {
 			data['text_hello'] = sprintf(this.language.get('mail_text_hello'), this.language.get('mail_text_user'));
 		}
 
 		// Personal info
-		if (customer_info) {
+		if (!empty(customer_info)) {
 			data['customer_id'] = customer_info['customer_id'];
 			data['firstname'] = customer_info['firstname'];
 			data['lastname'] = customer_info['lastname'];
@@ -114,7 +114,7 @@ module.exports = class GdprController extends global['OpencartSystemEngineContro
 		// Addresses
 		data['addresses'] = [];
 
-		if (customer_info) {
+		if (!empty(customer_info)) {
 			const results = await this.model_customer_customer.getAddresses(customer_info['customer_id']);
 
 			for (let result of results) {
@@ -181,7 +181,7 @@ module.exports = class GdprController extends global['OpencartSystemEngineContro
 		// Ip's
 		data['ips'] = [];
 
-		if (customer_info) {
+		if (!empty(customer_info)) {
 			const results = await this.model_customer_customer.getIps(customer_info['customer_id']);
 
 			for (let result of results) {
@@ -245,7 +245,7 @@ module.exports = class GdprController extends global['OpencartSystemEngineContro
 
 		const language_info = await this.model_localisation_language.getLanguage(gdpr_info['language_id']);
 
-		if (language_info) {
+		if (!empty(language_info)) {
 			language_code = language_info['code'];
 		} else {
 			language_code = this.config.get('config_language');
@@ -276,7 +276,7 @@ module.exports = class GdprController extends global['OpencartSystemEngineContro
 
 		const customer_info = await this.model_customer_customer.getCustomerByEmail(gdpr_info['email']);
 
-		if (customer_info) {
+		if (!empty(customer_info)) {
 			data['text_hello'] = sprintf(this.language.get('mail_text_hello'), html_entity_decode(customer_info['firstname']));
 		} else {
 			data['text_hello'] = sprintf(this.language.get('mail_text_hello'), this.language.get('mail_text_user'));
@@ -338,7 +338,7 @@ module.exports = class GdprController extends global['OpencartSystemEngineContro
 
 		const language_info = await this.model_localisation_language.getLanguage(gdpr_info['language_id']);
 
-		if (language_info) {
+		if (!empty(language_info)) {
 			language_code = language_info['code'];
 		} else {
 			language_code = this.config.get('config_language');
@@ -371,7 +371,7 @@ module.exports = class GdprController extends global['OpencartSystemEngineContro
 
 		const customer_info = await this.model_customer_customer.getCustomerByEmail(gdpr_info['email']);
 
-		if (customer_info) {
+		if (!empty(customer_info)) {
 			data['text_hello'] = sprintf(this.language.get('mail_text_hello'), html_entity_decode(customer_info['firstname']));
 		} else {
 			data['text_hello'] = sprintf(this.language.get('mail_text_hello'), this.language.get('mail_text_user'));
@@ -431,7 +431,7 @@ module.exports = class GdprController extends global['OpencartSystemEngineContro
 
 		const language_info = await this.model_localisation_language.getLanguage(gdpr_info['language_id']);
 
-		if (language_info) {
+		if (!empty(language_info)) {
 			language_code = language_info['code'];
 		} else {
 			language_code = this.config.get('config_language');
@@ -462,7 +462,7 @@ module.exports = class GdprController extends global['OpencartSystemEngineContro
 
 		const customer_info = await this.model_customer_customer.getCustomerByEmail(gdpr_info['email']);
 
-		if (customer_info) {
+		if (!empty(customer_info)) {
 			data['text_hello'] = sprintf(this.language.get('mail_text_hello'), html_entity_decode(customer_info['firstname']));
 		} else {
 			data['text_hello'] = sprintf(this.language.get('mail_text_hello'), this.language.get('mail_text_user'));

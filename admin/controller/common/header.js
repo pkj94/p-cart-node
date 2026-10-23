@@ -60,7 +60,7 @@ module.exports = class HeaderController extends global['OpencartSystemEngineCont
             this.load.model('user/user', this);
             const user_info = await this.model_user_user.getUser(await this.user.getId());
 
-            if (user_info) {
+            if (!empty(user_info)) {
                 data.firstname = user_info.firstname;
                 data.lastname = user_info.lastname;
                 data.username = user_info.username;

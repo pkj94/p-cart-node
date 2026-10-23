@@ -137,7 +137,7 @@ global['OpencartAdminControllerExtensionOpencartModuleBestSeller'] = class BestS
 
 		results.forEach(async result => {
 			const product_info = await this.model_catalog_product.getProduct(result.product_id);
-			const product = product_info ? product_info.name : '';
+			const product = !empty(product_info) ? product_info.name : '';
 
 			data.reports.push({
 				product: product,

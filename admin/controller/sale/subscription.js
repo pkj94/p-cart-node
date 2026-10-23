@@ -667,7 +667,7 @@ module.exports = class SubscriptionController extends global['OpencartSystemEngi
 			} else {
 				const upload_info = await this.model_tool_upload.getUploadByCode(option['value']);
 
-				if (upload_info) {
+				if (!empty(upload_info)) {
 					data['options'].push({
 						'name': option['name'],
 						'value': upload_info['name'],
@@ -711,7 +711,7 @@ module.exports = class SubscriptionController extends global['OpencartSystemEngi
 		if ((order_info)) {
 			const extension_info = await this.model_setting_extension.getExtensionByCode('payment', order_info['payment_method']['code']);
 
-			if (extension_info && await this.user.hasPermission('access', 'extension/' + extension_info['extension'] + '/payment/' + extension_info['code'])) {
+			if (!empty(extension_info) && await this.user.hasPermission('access', 'extension/' + extension_info['extension'] + '/payment/' + extension_info['code'])) {
 				output = await this.load.controller('extension/payment/' + order_info['payment_code'] + '.subscription');
 
 				if (!output instanceof \Exception) {
@@ -765,7 +765,7 @@ module.exports = class SubscriptionController extends global['OpencartSystemEngi
 
 		const subscription_info = await this.model_sale_subscription.getSubscription(subscription_id);
 
-		if (!subscription_info) {
+		if (empty(subscription_info)) {
 			this.load.model('customer/customer', this);
 
 			const payment_method_info = await this.model_customer_customer.getPaymentMethod(subscription_info['customer_id'], this.request.post['customer_payment_id']);
@@ -862,7 +862,7 @@ module.exports = class SubscriptionController extends global['OpencartSystemEngi
 
 		const subscription_info = await this.model_sale_subscription.getSubscription(subscription_id);
 
-		if (!subscription_info) {
+		if (empty(subscription_info)) {
 			json['error'] = this.language.get('error_subscription');
 		}
 
@@ -871,7 +871,7 @@ module.exports = class SubscriptionController extends global['OpencartSystemEngi
 
 		const subscription_status_info = await this.model_localisation_subscription_status.getSubscriptionStatus(this.request.post['subscription_status_id']);
 
-		if (!subscription_status_info) {
+		if (empty(subscription_status_info)) {
 			json['error'] = this.language.get('error_subscription_status');
 		}
 

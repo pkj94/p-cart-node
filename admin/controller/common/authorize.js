@@ -32,7 +32,7 @@ module.exports = class AuthorizeCommontController extends global['OpencartSystem
 
 		const login_info = await this.model_user_user.getAuthorizeByToken(await this.user.getId(), token);
 
-		if (!login_info) {
+		if (empty(login_info)) {
 			// Create a token that can be stored of a cookie and will be used to identify device is safe.
 			token = oc_token(32);
 
@@ -114,7 +114,7 @@ module.exports = class AuthorizeCommontController extends global['OpencartSystem
 
 		const authorize_info = await this.model_user_user.getAuthorizeByToken(await this.user.getId(), token);
 
-		if (authorize_info) {
+		if (!empty(authorize_info)) {
 			if ((authorize_info['attempts'] <= 2) && (!(this.request.post['code']) || !(this.session.data['code']) || (this.request.post['code'] != this.session.data['code']))) {
 				json['error'] = this.language.get('error_code');
 

@@ -239,7 +239,7 @@ module.exports = class ShippingAddress extends global['OpencartSystemEngineContr
 
 			address_info = await this.model_account_address.getAddress(await this.customer.getId(), address_id);
 
-			if (!address_info) {
+			if (empty(address_info)) {
 				json['error'] = this.language.get('error_address');
 
 				delete this.session.data['shipping_address'];

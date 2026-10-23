@@ -138,7 +138,7 @@ module.exports = class PaymentMethod extends global['OpencartSystemEngineControl
 
 			payment_method_info = await this.model_account_payment_method.getPaymentMethod(await this.customer.getId(), customer_payment_id);
 
-			if (!payment_method_info) {
+			if (empty(payment_method_info)) {
 				json['error'] = this.language.get('error_payment_method');
 			}
 		}

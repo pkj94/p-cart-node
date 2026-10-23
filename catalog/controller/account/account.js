@@ -60,7 +60,7 @@ module.exports = class Account extends global['OpencartSystemEngineController'] 
 
 			const affiliate_info = await this.model_account_affiliate.getAffiliate(await this.customer.getId());
 
-			if (affiliate_info) {
+			if (!empty(affiliate_info)) {
 				data['tracking'] = await this.url.link('account/tracking', 'language=' + this.config.get('config_language') + '&customer_token=' + this.session.data['customer_token']);
 			} else {
 				data['tracking'] = '';

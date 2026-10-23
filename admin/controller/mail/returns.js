@@ -39,12 +39,12 @@ module.exports=class ReturnsController extends global['OpencartSystemEngineContr
 
 			const return_info = await this.model_sale_returns.getReturn(return_id);
 
-			if (return_info) {
+			if (!empty(return_info)) {
 				this.load.model('sale/order',this);
 
 				const order_info = await this.model_sale_order.getOrder(return_info['order_id']);
 
-				if (order_info) {
+				if (!empty(order_info)) {
 					store_name = html_entity_decode(order_info['store_name']);
 					store_url = order_info['store_url'];
 				} else {
@@ -56,7 +56,7 @@ module.exports=class ReturnsController extends global['OpencartSystemEngineContr
 				
 				const language_info = await this.model_localisation_language.getLanguage(return_info['language_id']);
 
-				if (language_info) {
+				if (!empty(language_info)) {
 					language_code = language_info['code'];
 				} else {
 					language_code = this.config.get('config_language');

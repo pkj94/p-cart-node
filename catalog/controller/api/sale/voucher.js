@@ -21,7 +21,7 @@ module.exports = class Voucher extends global['OpencartSystemEngineController'] 
 
 			voucher_info = await this.model_checkout_voucher.getVoucher(voucher);
 
-			if (!voucher_info) {
+			if (empty(voucher_info)) {
 				json['error'] = this.language.get('error_voucher');
 			}
 		}

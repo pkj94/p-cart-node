@@ -75,7 +75,7 @@ module.exports = class Login extends global['OpencartSystemEngineController'] {
 			api_info = [];
 		}
 
-		if (api_info) {
+		if (!empty(api_info)) {
 			// Check if IP is allowed
 			ip_data = [];
 

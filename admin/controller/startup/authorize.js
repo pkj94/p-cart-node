@@ -25,11 +25,11 @@ module.exports = class AuthorizeController extends global['OpencartSystemEngineC
 			this.load.model('user/user', this);
 			const token_info = await this.model_user_user.getAuthorizeByToken(await this.user.getId(), token);
 
-			if (!token_info || !token_info.status && token_info.attempts <= 2) {
+			if (empty(token_info) || !token_info.status && token_info.attempts <= 2) {
 				return new global['OpencartSystemEngineAction']('common/authorize');
 			}
 
-			if (token_info && !token_info.status && token_info.attempts > 2) {
+			if (!empty(token_info) && !token_info.status && token_info.attempts > 2) {
 				return new global['OpencartSystemEngineAction']('common/authorize.unlock');
 			}
 		}

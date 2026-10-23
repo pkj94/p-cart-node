@@ -1081,7 +1081,7 @@ module.exports = class CustomerController extends global['OpencartSystemEngineCo
 
 		const customer_info = await this.model_customer_customer.getCustomer(customer_id);
 
-		if (!customer_info) {
+		if (empty(customer_info)) {
 			json['error'] = this.language.get('error_customer');
 		}
 
@@ -1172,7 +1172,7 @@ module.exports = class CustomerController extends global['OpencartSystemEngineCo
 
 		const customer_info = await this.model_customer_customer.getCustomer(customer_id);
 
-		if (!customer_info) {
+		if (empty(customer_info)) {
 			json['error'] = this.language.get('error_customer');
 		}
 

@@ -66,7 +66,7 @@ module.exports = class LanguageController extends global['OpencartSystemEngineCo
 
 		const language_info = await this.model_localisation_language.getLanguageByCode(code);
 
-		if (!language_info) {
+		if (empty(language_info)) {
 			json['error'] = this.language.get('error_language');
 		}
 

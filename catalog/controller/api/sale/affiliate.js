@@ -20,7 +20,7 @@ module.exports = class Affiliate extends global['OpencartSystemEngineController'
 
 			affiliate_info = await this.model_account_affiliate.getAffiliate(affiliate_id);
 
-			if (!affiliate_info) {
+			if (empty(affiliate_info)) {
 				json['error'] = this.language.get('error_affiliate');
 			}
 		}

@@ -40,7 +40,7 @@ module.exports = class CustomerController extends global['OpencartSystemEngineCo
 			const language_info = await this.model_localisation_language.getLanguage(customer_info['language_id']);
 
 			let language_code = this.config.get('config_language');
-			if (language_info) {
+			if (!empty(language_info)) {
 				language_code = language_info['code'];
 			}
 
@@ -132,7 +132,7 @@ module.exports = class CustomerController extends global['OpencartSystemEngineCo
 			const language_info = await this.model_localisation_language.getLanguage(customer_info['language_id']);
 
 			let language_code = this.config.get('config_language');
-			if (language_info) {
+			if (!empty(language_info)) {
 				language_code = language_info['code'];
 			}
 

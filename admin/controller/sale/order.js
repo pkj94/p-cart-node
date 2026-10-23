@@ -558,7 +558,7 @@ module.exports = class OrderController extends global['OpencartSystemEngineContr
 
 		const customer_group_info = await this.model_customer_customer_group.getCustomerGroup(data['customer_group_id']);
 
-		if (customer_group_info) {
+		if (!empty(customer_group_info)) {
 			data['customer_group'] = customer_group_info['name'];
 		} else {
 			data['customer_group'] = '';
@@ -643,7 +643,7 @@ module.exports = class OrderController extends global['OpencartSystemEngineContr
 				} else {
 					const upload_info = await this.model_tool_upload.getUploadByCode(option['value']);
 
-					if (upload_info) {
+					if (!empty(upload_info)) {
 						option_data.push({
 							'name': option['name'],
 							'value': upload_info['name'],
@@ -682,7 +682,7 @@ module.exports = class OrderController extends global['OpencartSystemEngineContr
 
 			subscription_info = await this.model_sale_subscription.getSubscriptionByOrderProductId(order_id, product['order_product_id']);
 			let subscription = '';
-			if (subscription_info) {
+			if (!empty(subscription_info)) {
 				subscription = await this.url.link('sale/subscription.info', 'user_token=' + this.session.data['user_token'] + '&subscription_id=' + subscription_info['subscription_id']);
 			}
 
@@ -1782,7 +1782,7 @@ module.exports = class OrderController extends global['OpencartSystemEngineContr
 
 		const order_info = await this.model_sale_order.getOrder(order_id);
 
-		if (order_info) {
+		if (!empty(order_info)) {
 			if (!order_info['customer_id']) {
 				json['error'] = this.language.get('error_customer');
 			}
@@ -1864,12 +1864,12 @@ module.exports = class OrderController extends global['OpencartSystemEngineContr
 
 		const order_info = await this.model_sale_order.getOrder(order_id);
 
-		if (order_info) {
+		if (!empty(order_info)) {
 			this.load.model('customer/customer', this);
 
 			const customer_info = await this.model_customer_customer.getCustomer(order_info['affiliate_id']);
 
-			if (!customer_info) {
+			if (empty(customer_info)) {
 				json['error'] = this.language.get('error_affiliate');
 			}
 

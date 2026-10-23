@@ -38,7 +38,7 @@ module.exports = class RewardController extends global['OpencartSystemEngineCont
 
 		const customer_info = await this.model_customer_customer.getCustomer(customer_id);
 
-		if (customer_info) {
+		if (!empty(customer_info)) {
 			await this.load.language('mail/reward');
 
 			this.load.model('setting/store', this);
@@ -58,7 +58,7 @@ module.exports = class RewardController extends global['OpencartSystemEngineCont
 			const language_info = await this.model_localisation_language.getLanguage(customer_info['language_id']);
 
 			let language_code = this.config.get('config_language');
-			if (language_info) {
+			if (!empty(language_info)) {
 				language_code = language_info['code'];
 			}
 

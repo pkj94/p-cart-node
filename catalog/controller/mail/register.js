@@ -93,7 +93,7 @@ module.exports = class Register extends global['OpencartSystemEngineController']
 
 			const customer_group_info = await this.model_account_customer_group.getCustomerGroup(customer_group_id);
 
-			if (customer_group_info) {
+			if (!empty(customer_group_info)) {
 				data['customer_group'] = customer_group_info['name'];
 			} else {
 				data['customer_group'] = '';

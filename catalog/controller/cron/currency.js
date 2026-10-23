@@ -13,7 +13,7 @@ module.exports = class Currency extends global['OpencartSystemEngineController']
 
 		const extension_info = await this.model_setting_extension.getExtensionByCode('currency', this.config.get('config_currency_engine'));
 
-		if (extension_info) {
+		if (!empty(extension_info)) {
 			await this.load.controller('extension/' + extension_info['extension'] + '/currency/' + extension_info['code'] + '.currency', this.config.get('config_currency'));
 		}
 	}

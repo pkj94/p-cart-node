@@ -106,7 +106,7 @@ module.exports = class InstallerMarketplaceController extends global['OpencartSy
 						install_info = JSON.parse(zipEntry.getData().toString('utf8'));
 					}
 				});
-				if (install_info) {
+				if (!empty(install_info)) {
 					let extension_data = {
 						'extension_id': 0,
 						'extension_download_id': 0,
@@ -254,7 +254,7 @@ module.exports = class InstallerMarketplaceController extends global['OpencartSy
 						install_info = JSON.parse(zipEntry.getData().toString('utf8'));
 					}
 				});
-				if (install_info) {
+				if (!empty(install_info)) {
 					if (!install_info['name']) {
 						json['error'] = this.language.get('error_name');
 					}
@@ -326,7 +326,7 @@ module.exports = class InstallerMarketplaceController extends global['OpencartSy
 
 		const extension_install_info = await this.model_setting_extension.getInstall(extension_install_id);
 		let file, total = 0, start = 0, end = 0,limit = 200;
-		if (extension_install_info) {
+		if (!empty(extension_install_info)) {
 			file = DIR_STORAGE + 'marketplace/' + extension_install_info['code'] + '.ocmod.zip';
 
 			if (!fs.lstatSync(file).isFile()) {
@@ -454,7 +454,7 @@ module.exports = class InstallerMarketplaceController extends global['OpencartSy
 
 		const extension_install_info = await this.model_setting_extension.getInstall(extension_install_id);
 
-		if (extension_install_info) {
+		if (!empty(extension_install_info)) {
 			if (extension_install_info['code'] == 'opencart') {
 				json['error'] = this.language.get('error_default');
 			}
@@ -695,7 +695,7 @@ module.exports = class InstallerMarketplaceController extends global['OpencartSy
 			json['error'] = this.language.get('error_default');
 		}
 
-		if (!extension_install_info) {
+		if (empty(extension_install_info)) {
 			json['error'] = this.language.get('error_extension');
 		}
 

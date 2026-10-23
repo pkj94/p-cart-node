@@ -532,7 +532,7 @@ module.exports = class MarketplaceMarketplaceController extends global['Opencart
 		let status = curl.status;
 		let response_info = response;
 
-		if (response_info) {
+		if (!empty(response_info)) {
 			await this.load.language('marketplace/marketplace');
 
 			this.document.setTitle(this.language.get('heading_title'));
@@ -684,13 +684,13 @@ module.exports = class MarketplaceMarketplaceController extends global['Opencart
 
 					// Download
 					let download = '';
-					if (!install_info) {
+					if (empty(install_info)) {
 						download = await this.url.link('marketplace/marketplace.download', 'user_token=' + this.session.data['user_token'] + '&extension_id=' + extension_id + '&extension_download_id=' + result['extension_download_id']);
 					}
 
 					// Install
 					let install = '';
-					if (install_info && !install_info['status']) {
+					if (!empty(install_info) && !install_info['status']) {
 						install = await this.url.link('marketplace/installer.install', 'user_token=' + this.session.data['user_token'] + '&extension_install_id=' + install_info['extension_install_id']);
 					}
 
@@ -702,7 +702,7 @@ module.exports = class MarketplaceMarketplaceController extends global['Opencart
 
 					// Delete
 					let remove = '';
-					if (install_info && !install_info['status']) {
+					if (!empty(install_info) && !install_info['status']) {
 						remove = await this.url.link('marketplace/installer.delete', 'user_token=' + this.session.data['user_token'] + '&extension_install_id=' + install_info['extension_install_id']);
 					}
 

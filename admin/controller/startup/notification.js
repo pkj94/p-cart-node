@@ -16,7 +16,7 @@ module.exports = class NotificationController extends global['OpencartSystemEngi
 					for (const result of notification.notifications) {
 						let notification_info = await this.model_notification.addNotification(result.notification_id);
 
-						if (!notification_info) {
+						if (empty(notification_info)) {
 							await this.model_notification.addNotification(result);
 						}
 					}

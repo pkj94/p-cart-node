@@ -280,7 +280,7 @@ module.exports = class Order extends global['OpencartSystemEngineController'] {
 					} else {
 						upload_info = await this.model_tool_upload.getUploadByCode(option['value']);
 
-						if (upload_info) {
+						if (!empty(upload_info)) {
 							value = upload_info['name'];
 						} else {
 							value = '';

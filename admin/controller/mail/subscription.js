@@ -59,19 +59,19 @@ module.exports = class SubscriptionController extends global['OpencartSystemEngi
 
                     const subscription_status_info = await this.model_localisation_subscription_status.getSubscriptionStatus(subscription_status_id);
 
-                    if (subscription_status_info) {
+                    if (!empty(subscription_status_info)) {
                         // Customers
                         this.load.model('customer/customer', this);
 
                         // Customer payment
                         const customer_payment_info = await this.model_customer_customer.getPaymentMehod(subscription['customer_id'], subscription['customer_payment_id']);
 
-                        if (customer_payment_info) {
+                        if (!empty(customer_payment_info)) {
                             // Since the customer payment is integrated into the customer/customer page,
                             // we need to gather the customer's information rather than the order
                             const customer_info = await this.model_customer_customer.getCustomer(subscription['customer_id']);
 
-                            if (customer_info) {
+                            if (!empty(customer_info)) {
                                 // Settings
                                 this.load.model('setting/setting', this);
 
@@ -95,7 +95,7 @@ module.exports = class SubscriptionController extends global['OpencartSystemEngi
 
                                 let language_info = await this.model_localisation_language.getLanguage(customer_info['language_id']);
 
-                                if (language_info) {
+                                if (!empty(language_info)) {
                                     if (comment && notify) {
                                         data['comment'] = nl2br(comment);
                                     } else {
@@ -109,7 +109,7 @@ module.exports = class SubscriptionController extends global['OpencartSystemEngi
 
                                     language_info = await this.model_localisation_language.getLanguage(customer_info['language_id']);
 
-                                    if (language_info) {
+                                    if (!empty(language_info)) {
                                         language_code = language_info['code'];
                                     } else {
                                         language_code = this.config.get('config_language');
@@ -230,7 +230,7 @@ module.exports = class SubscriptionController extends global['OpencartSystemEngi
 
                     // In this case, since we're canceling a subscription,
                     // the order ID needs to be identical
-                    if (order_info && subscription['order_id'] == order_info['order_id']) {
+                    if (!empty(order_info) && subscription['order_id'] == order_info['order_id']) {
                         // Same for the payment method
                         if (order_info['payment_method'] == subscription['payment_method'] && subscription['payment_method'] == payment_method) {
                             // Same for the payment code

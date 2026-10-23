@@ -247,7 +247,7 @@ module.exports = class Register extends global['OpencartSystemEngineController']
 
 			customer_group_info = await this.model_account_customer_group.getCustomerGroup(customer_group_id);
 
-			if (!customer_group_info || this.config.get('config_customer_group_display').indexOf(customer_group_id) === -1) {
+			if (empty(customer_group_info) || this.config.get('config_customer_group_display').indexOf(customer_group_id) === -1) {
 				json['error'] = json['error'] || {};
 				json['error']['warning'] = this.language.get('error_customer_group');
 			}
@@ -412,7 +412,7 @@ module.exports = class Register extends global['OpencartSystemEngineController']
 
 				const information_info = await this.model_catalog_information.getInformation(this.config.get('config_account_id'));
 
-				if (information_info && !this.request.post['agree']) {
+				if (!empty(information_info) && !this.request.post['agree']) {
 					json['error'] = json['error'] || {};
 					json['error']['warning'] = sprintf(this.language.get('error_agree'), information_info['title']);
 				}
@@ -424,7 +424,7 @@ module.exports = class Register extends global['OpencartSystemEngineController']
 			if (!await this.customer.isLogged()) {
 				const extension_info = await this.model_setting_extension.getExtensionByCode('captcha', this.config.get('config_captcha'));
 
-				if (extension_info && Number(this.config.get('captcha_' + this.config.get('config_captcha') + '_status')) && this.config.get('config_captcha_page').indexOf('register') !== -1) {
+				if (!empty(extension_info) && Number(this.config.get('captcha_' + this.config.get('config_captcha') + '_status')) && this.config.get('config_captcha_page').indexOf('register') !== -1) {
 					const captcha = await this.load.controller('extension/' + extension_info['extension'] + '/captcha/' + extension_info['code'] + '.validate');
 
 					if (captcha) {
@@ -472,7 +472,7 @@ module.exports = class Register extends global['OpencartSystemEngineController']
 					address_id = 0;
 				}
 
-				if (payment_country_info) {
+				if (!empty(payment_country_info)) {
 					country = payment_country_info['name'];
 					iso_code_2 = payment_country_info['iso_code_2'];
 					iso_code_3 = payment_country_info['iso_code_3'];
@@ -488,7 +488,7 @@ module.exports = class Register extends global['OpencartSystemEngineController']
 
 				zone_info = await this.model_localisation_zone.getZone(this.request.post['payment_zone_id']);
 
-				if (zone_info) {
+				if (!empty(zone_info)) {
 					zone = zone_info['name'];
 					zone_code = zone_info['code'];
 				} else {
@@ -551,7 +551,7 @@ module.exports = class Register extends global['OpencartSystemEngineController']
 						lastname = this.request.post['shipping_lastname'];
 					}
 
-					if (shipping_country_info) {
+					if (!empty(shipping_country_info)) {
 						country = shipping_country_info['name'];
 						iso_code_2 = shipping_country_info['iso_code_2'];
 						iso_code_3 = shipping_country_info['iso_code_3'];
@@ -567,7 +567,7 @@ module.exports = class Register extends global['OpencartSystemEngineController']
 
 					zone_info = await this.model_localisation_zone.getZone(this.request.post['shipping_zone_id']);
 
-					if (zone_info) {
+					if (!empty(zone_info)) {
 						zone = zone_info['name'];
 						zone_code = zone_info['code'];
 					} else {

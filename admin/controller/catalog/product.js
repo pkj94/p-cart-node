@@ -1326,7 +1326,7 @@ module.exports = class ProductController extends global['OpencartSystemEngineCon
 			for (let product_subscription of product_subscriptions) {
 				subscription_plan_info = await this.model_catalog_subscription_plan.getSubscriptionPlan(product_subscription['subscription_plan_id']);
 
-				if (subscription_plan_info) {
+				if (!empty(subscription_plan_info)) {
 					subscription_data.push({
 						'subscription_plan_id': subscription_plan_info['subscription_plan_id'],
 						'name': subscription_plan_info['name']

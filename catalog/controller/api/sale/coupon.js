@@ -20,7 +20,7 @@ module.exports = class Coupon extends global['OpencartSystemEngineController'] {
 
 			coupon_info = await this.model_marketing_coupon.getCoupon(coupon);
 
-			if (!coupon_info) {
+			if (empty(coupon_info)) {
 				json['error'] = this.language.get('error_coupon');
 			}
 		}

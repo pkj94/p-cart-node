@@ -24,7 +24,7 @@ module.exports = class Transaction extends global['OpencartSystemEngineControlle
 			const store_info = await this.model_setting_store.getStore(customer_info['store_id']);
 			let store_name = html_entity_decode(this.config.get('config_name'));
 			let store_url = this.config.get('config_url');
-			if (store_info) {
+			if (!empty(store_info)) {
 				store_name = html_entity_decode(store_info['name']);
 				store_url = store_info['store_url'];
 			} 
@@ -33,7 +33,7 @@ module.exports = class Transaction extends global['OpencartSystemEngineControlle
 
 			const language_info = await this.model_localisation_language.getLanguage(customer_info['language_id']);
 			let language_code = this.config.get('config_language');
-			if (language_info) {
+			if (!empty(language_info)) {
 				language_code = language_info['code'];
 			}
 

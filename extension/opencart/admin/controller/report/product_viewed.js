@@ -137,7 +137,7 @@ global['OpencartAdminControllerExtensionOpencartReportProductViewed'] = class Pr
 		for (let result of results) {
 			const product_info = await this.model_catalog_product.getProduct(result['product_id']);
 
-			if (product_info) {
+			if (!empty(product_info)) {
 				let percent = 0;
 				if (result['viewed']) {
 					percent = Math.round((result['viewed'] / total) * 100, 2);

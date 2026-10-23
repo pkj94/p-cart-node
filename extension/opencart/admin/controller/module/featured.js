@@ -43,7 +43,7 @@ global['OpencartAdminControllerExtensionOpencartModuleFeatured'] = class Feature
 			module_info = await this.model_setting_module.getModule(this.request.get['module_id']);
 		}
 
-		data.name = module_info ? module_info.name : '';
+		data.name = !empty(module_info) ? module_info.name : '';
 
 		data.products = [];
 		const products = module_info && module_info.product ? module_info.product : [];
@@ -51,7 +51,7 @@ global['OpencartAdminControllerExtensionOpencartModuleFeatured'] = class Feature
 
 		for (const product_id of products) {
 			const product_info = await this.model_catalog_product.getProduct(product_id);
-			if (product_info) {
+			if (!empty(product_info)) {
 				data.products.push({
 					product_id: product_info.product_id,
 					name: product_info.name

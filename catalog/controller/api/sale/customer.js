@@ -30,7 +30,7 @@ module.exports = class Customer extends global['OpencartSystemEngineController']
 		if (this.request.post['customer_id']) {
 			customer_info = await this.model_account_customer.getCustomer(this.request.post['customer_id']);
 
-			if (!customer_info) {
+			if (empty(customer_info)) {
 				json['error'] = json['error'] || {};
 				json['error']['warning'] = this.language.get('error_customer');
 			}
@@ -47,7 +47,7 @@ module.exports = class Customer extends global['OpencartSystemEngineController']
 
 		customer_group_info = await this.model_account_customer_group.getCustomerGroup(customer_group_id);
 
-		if (!customer_group_info) {
+		if (empty(customer_group_info)) {
 			json['error'] = json['error'] || {};
 			json['error']['warning'] = this.language.get('error_customer_group');
 		}

@@ -8,7 +8,7 @@ module.exports = class Gdpr extends global['OpencartSystemEngineController'] {
 
 		const information_info = await this.model_catalog_information.getInformation(this.config.get('config_gdpr_id'));
 
-		if (information_info) {
+		if (!empty(information_info)) {
 			await this.load.language('information/gdpr');
 
 			this.document.setTitle(this.language.get('heading_title'));

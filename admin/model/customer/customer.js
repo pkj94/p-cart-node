@@ -292,7 +292,7 @@ module.exports = class CustomerCustomerModel extends global['OpencartSystemEngin
 		for (let result of query.rows) {
 			let address_info = await this.getAddress(result['address_id']);
 
-			if (address_info) {
+			if (!empty(address_info)) {
 				address_data.push(address_info);
 			}
 		}

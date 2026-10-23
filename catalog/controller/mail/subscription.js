@@ -145,7 +145,7 @@ module.exports = class Subscription extends global['OpencartSystemEngineControll
 
 									const store_info = await this.model_setting_store.getStore(order_info['store_id']);
 
-									if (store_info) {
+									if (!empty(store_info)) {
 										store_logo = html_entity_decode(await this.model_setting_setting.getValue('config_logo', store_info['store_id']));
 										store_name = html_entity_decode(store_info['name']);
 
@@ -172,7 +172,7 @@ module.exports = class Subscription extends global['OpencartSystemEngineControll
 									const language_info = await this.model_localisation_language.getLanguage(order_info['language_id']);
 
 									// We need to compare both language IDs as they both need to match+
-									if (language_info) {
+									if (!empty(language_info)) {
 										language_code = language_info['code'];
 									} else {
 										language_code = this.config.get('config_language');
@@ -261,7 +261,7 @@ module.exports = class Subscription extends global['OpencartSystemEngineControll
 										if ((this.{'model_extension_payment_' + payment_info['code']}.promotion)) {
 											subscription_status_id = this.{'model_extension_payment_' + payment_info['code']}.promotion(value['subscription_id']);
 
-											if (store_info) {
+											if (!empty(store_info)) {
 												config_subscription_active_status_id = await this.model_setting_setting.getValue('config_subscription_active_status_id', store_info['store_id']);
 											} else {
 												config_subscription_active_status_id = this.config.get('config_subscription_active_status_id');
@@ -287,7 +287,7 @@ module.exports = class Subscription extends global['OpencartSystemEngineControll
 
 													// We need to validate frequencies in compliance of the admin subscription plans
 													// as with the use of the APIs
-													if (customer_info && subscription_info['cycle'] >= 0 && subscription_info['cycle'] == value['cycle'] && in_array(subscription_info['frequency'], frequencies)) {
+													if (!empty(customer_info) && subscription_info['cycle'] >= 0 && subscription_info['cycle'] == value['cycle'] && in_array(subscription_info['frequency'], frequencies)) {
 														if (subscription_info['frequency'] == 'semi_month') {
 															period = new Date("2 weeks");
 														} else {
@@ -328,7 +328,7 @@ module.exports = class Subscription extends global['OpencartSystemEngineControll
 
 															product_subscription_info = await this.model_catalog_product.getSubscription(order_product['product_id'], subscription_info['subscription_plan_id']);
 
-															if (product_subscription_info) {
+															if (!empty(product_subscription_info)) {
 																// For the next billing cycle
 																await this.model_account_subscription.addTransaction(value['subscription_id'], value['order_id'], this.language.get('text_promotion'), subscription_info['amount'], subscription_info['type'], subscription_info['payment_method'], subscription_info['payment_code']);
 															}

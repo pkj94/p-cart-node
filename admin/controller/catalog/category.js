@@ -245,7 +245,7 @@ module.exports = class CategoryCatalogController extends global['OpencartSystemE
 		for (let filter_id of filters) {
 			let filter_info = await this.model_catalog_filter.getFilter(filter_id);
 
-			if (filter_info) {
+			if (!empty(filter_info)) {
 				data['category_filters'].push({
 					'filter_id': filter_info['filter_id'],
 					'name': filter_info['group'] + ' &gt; ' + filter_info['name']

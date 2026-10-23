@@ -13,7 +13,7 @@ module.exports = class Country extends global['OpencartSystemEngineController'] 
 
 		const country_info = await this.model_localisation_country.getCountry(country_id);
 
-		if (country_info) {
+		if (!empty(country_info)) {
 			this.load.model('localisation/zone', this);
 
 			json = {

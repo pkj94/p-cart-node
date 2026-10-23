@@ -61,7 +61,7 @@ module.exports = class CategoryCatalogModel extends global['OpencartSystemEngine
 				language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 				let seo_url_info = await this.model_design_seo_url.getSeoUrlByKeyValue('path', parent_path, store_id, language_id);
 
-				if (seo_url_info) {
+				if (!empty(seo_url_info)) {
 					keyword = seo_url_info['keyword'] + '/' + keyword;
 				}
 
@@ -193,7 +193,7 @@ module.exports = class CategoryCatalogModel extends global['OpencartSystemEngine
 				language_id = language_id.indexOf('language') >= 0 ? language_id.split('-')[1] : language_id;
 				let parent_info = await this.model_design_seo_url.getSeoUrlByKeyValue('path', path_parent, store_id, language_id);
 
-				if (parent_info) {
+				if (!empty(parent_info)) {
 					keyword = parent_info['keyword'] + '/' + keyword;
 				}
 

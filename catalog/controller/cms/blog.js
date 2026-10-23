@@ -236,7 +236,7 @@ module.exports = class Blog extends global['OpencartSystemEngineController'] {
 
 		article_info = await this.model_cms_article.getArticle(article_id);
 
-		if (article_info) {
+		if (!empty(article_info)) {
 			this.document.setTitle(article_info['meta_title']);
 			this.document.setDescription(article_info['meta_description']);
 			this.document.setKeywords(article_info['meta_keyword']);
@@ -394,7 +394,7 @@ module.exports = class Blog extends global['OpencartSystemEngineController'] {
 
 		article_info = await this.model_cms_article.getArticle(article_id);
 
-		if (!article_info) {
+		if (empty(article_info)) {
 			json['error'] = json['error'] || {};
 			json['error']['warning'] = this.language.get('error_article');
 		}
@@ -419,7 +419,7 @@ module.exports = class Blog extends global['OpencartSystemEngineController'] {
 
 		const extension_info = await this.model_setting_extension.getExtensionByCode('captcha', this.config.get('config_captcha'));
 
-		if (extension_info && Number(this.config.get('captcha_' + this.config.get('config_captcha') + '_status')) && in_array('comment', this.config.get('config_captcha_page'))) {
+		if (!empty(extension_info) && Number(this.config.get('captcha_' + this.config.get('config_captcha') + '_status')) && in_array('comment', this.config.get('config_captcha_page'))) {
 			const captcha = await this.load.controller('extension/' + extension_info['extension'] + '/captcha/' + extension_info['code'] + '.validate');
 
 			if (captcha) {

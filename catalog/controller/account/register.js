@@ -88,7 +88,7 @@ module.exports = class Register extends global['OpencartSystemEngineController']
 
 		const information_info = await this.model_catalog_information.getInformation(this.config.get('config_account_id'));
 
-		if (information_info) {
+		if (!empty(information_info)) {
 			data['text_agree'] = sprintf(this.language.get('text_agree'), await this.url.link('information/information.info', 'language=' + this.config.get('config_language') + '&information_id=' + this.config.get('config_account_id')), information_info['title']);
 		} else {
 			data['text_agree'] = '';
@@ -146,7 +146,7 @@ module.exports = class Register extends global['OpencartSystemEngineController']
 
 			customer_group_info = await this.model_account_customer_group.getCustomerGroup(customer_group_id);
 
-			if (!customer_group_info || !this.config.get('config_customer_group_display').includes(customer_group_id)) {
+			if (empty(customer_group_info) || !this.config.get('config_customer_group_display').includes(customer_group_id)) {
 				json['error']['warning'] = this.language.get('error_customer_group');
 			}
 
@@ -196,7 +196,7 @@ module.exports = class Register extends global['OpencartSystemEngineController']
 
 			const extension_info = await this.model_setting_extension.getExtensionByCode('captcha', this.config.get('config_captcha'));
 
-			if (extension_info && Number(this.config.get('captcha_' + this.config.get('config_captcha') + '_status')) && this.config.get('config_captcha_page').includes('register')) {
+			if (!empty(extension_info) && Number(this.config.get('captcha_' + this.config.get('config_captcha') + '_status')) && this.config.get('config_captcha_page').includes('register')) {
 				const captcha = await this.load.controller('extension/' + extension_info['extension'] + '/captcha/' + extension_info['code'] + '.validate');
 
 				if (captcha) {
@@ -209,7 +209,7 @@ module.exports = class Register extends global['OpencartSystemEngineController']
 
 			const information_info = await this.model_catalog_information.getInformation(this.config.get('config_account_id'));
 
-			if (information_info && !this.request.post['agree']) {
+			if (!empty(information_info) && !this.request.post['agree']) {
 				json['error']['warning'] = sprintf(this.language.get('error_agree'), information_info['title']);
 			}
 		}

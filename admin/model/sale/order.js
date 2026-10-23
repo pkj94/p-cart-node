@@ -57,7 +57,7 @@ module.exports = class OrderSaleModel extends global['OpencartSystemEngineModel'
 
 			let affiliate_info = await this.model_customer_customer.getCustomer(order_query.row['affiliate_id']);
 
-			if (affiliate_info) {
+			if (!empty(affiliate_info)) {
 				affiliate = affiliate_info['firstname'] + ' ' + affiliate_info['lastname'];
 			} else {
 				affiliate = '';
@@ -68,7 +68,7 @@ module.exports = class OrderSaleModel extends global['OpencartSystemEngineModel'
 			let language_info = await this.model_localisation_language.getLanguage(order_query.row['language_id']);
 
 			let language_code = this.config.get('config_language');
-if (language_info) {
+if (!empty(language_info)) {
 				language_code = language_info['code'];
 			} 
 
@@ -594,9 +594,9 @@ if (data['limit'] < 1) {
 	 */
 	async createInvoiceNo(order_id) {
 		let order_info;
-		order_info = this.getOrder(order_id);
+		order_info = await this.getOrder(order_id);
 
-		if (order_info && !order_info['invoice_no']) {
+		if (!empty(order_info) && !order_info['invoice_no']) {
 			let query = await this.db.query("SELECT MAX(`invoice_no`) AS invoice_no FROM `" + DB_PREFIX + "order` WHERE `invoice_prefix` = " + this.db.escape(order_info['invoice_prefix']));
 			let invoice_no = 1;
 			if (query.row['invoice_no']) {

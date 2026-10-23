@@ -83,7 +83,7 @@ module.exports = class PaymentAddress extends global['OpencartSystemEngineContro
 		}
 
 		if (!Object.keys(json).length) {
-			if (country_info) {
+			if (!empty(country_info)) {
 				country = country_info['name'];
 				iso_code_2 = country_info['iso_code_2'];
 				iso_code_3 = country_info['iso_code_3'];
@@ -99,7 +99,7 @@ module.exports = class PaymentAddress extends global['OpencartSystemEngineContro
 
 			zone_info = await this.model_localisation_zone.getZone(this.request.post['zone_id']);
 
-			if (zone_info) {
+			if (!empty(zone_info)) {
 				zone = zone_info['name'];
 				zone_code = zone_info['code'];
 			} else {

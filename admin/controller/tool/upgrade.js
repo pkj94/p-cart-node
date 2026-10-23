@@ -31,7 +31,7 @@ module.exports = class UpgradeController extends global['OpencartSystemEngineCon
 		} catch (e) {
 
 		}
-		if (response_info) {
+		if (!empty(response_info)) {
 			data['latest_version'] = response_info['version'];
 			data['date_added'] = date(this.language.get('date_format_short'), new Date(response_info['date_added']));
 			data['log'] = nl2br(response_info['log']);
