@@ -467,9 +467,19 @@ module.exports = class Product extends global['OpencartSystemEngineModel'] {
 			sql += " AND `p`.`manufacturer_id` = " + this.db.quote(data['filter_manufacturer_id']);
 		}
 
-		const query = await this.db.query(sql);
+		// Cached like getProducts(): the category menu asks for one count per category on every page.
+		// Admin clears every product.* entry when products, reviews or languages change.
+		let product_total = await this.cache.get('product.' + md5(sql));
 
-		return query.row['total'];
+		if (typeof product_total != 'number') {
+			const query = await this.db.query(sql);
+
+			product_total = Number(query.row['total']) || 0;
+
+			await this.cache.set('product.' + md5(sql), product_total);
+		}
+
+		return product_total;
 	}
 
 	/**
