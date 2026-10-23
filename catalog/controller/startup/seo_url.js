@@ -68,7 +68,15 @@ module.exports = class SeoUrl extends global['OpencartSystemEngineController'] {
 		for (let part of parts) {
 			const [key, value] = part.split('=');
 
-			let result = await this.model_design_seo_url.getSeoUrlByKeyValue(key, value);
+			// Links on a page repeat the same parts (route, language, path), so each is looked up once per request
+			if (!this.registry.has('seo_urls')) {
+				this.registry.set('seo_urls', {});
+			}
+			const seo_urls = this.registry.get('seo_urls');
+			if (!(part in seo_urls)) {
+				seo_urls[part] = this.model_design_seo_url.getSeoUrlByKeyValue(key, value);
+			}
+			let result = await seo_urls[part];
 
 			if (result.seo_url_id) {
 				paths.push(result);
